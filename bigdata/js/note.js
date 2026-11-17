@@ -13,8 +13,32 @@
       a.href = B.BASE + (n ? n.href : "index.html");
       return a;
     }
-    pager.appendChild(note.prev ? link(note.prev, "← " + note.prev.title) : link(null, "← 빅분기 홈"));
-    pager.appendChild(note.next ? link(note.next, note.next.title + " →") : link(null, "목록으로 →"));
+    pager.appendChild(note.prev ? link(note.prev, "← " + note.prev.title) : link(null, "← 목차"));
+    pager.appendChild(note.next ? link(note.next, note.next.title + " →") : link(null, "목차 →"));
+  }
+
+  // 장 머리 아래 한 줄: 어느 단원의 몇 번째 장인지, 먼저 볼 단원, 단원 안내 링크
+  function initUnitBar(note) {
+    var M = window.BDA_MAP, head = document.querySelector("header.chapter");
+    if (!M || !head || !note.unit) return;
+    var u = M.units.filter(function (x) { return x.id === note.unit; })[0];
+    if (!u) return;
+    var chs = (window.BDA_CHAPTERS || {})[u.id] || [], idx = 0;
+    chs.forEach(function (c, i) { if (c.id === note.id) idx = i; });
+    var bar = el("p", "unit-bar"), a = el("a", "", u.id + " " + u.title);
+    a.href = B.BASE + "unit.html?u=" + u.id;
+    bar.appendChild(a);
+    bar.appendChild(document.createTextNode(" · " + chs.length + "장 중 " + (idx + 1) + "장"));
+    if (u.pre.length) {
+      bar.appendChild(document.createTextNode(" · 먼저: "));
+      u.pre.forEach(function (pid, i) {
+        var p = M.units.filter(function (x) { return x.id === pid; })[0], pa = el("a", "", pid + " " + p.title);
+        pa.href = B.BASE + "unit.html?u=" + pid;
+        if (i) bar.appendChild(document.createTextNode(", "));
+        bar.appendChild(pa);
+      });
+    }
+    head.parentNode.insertBefore(bar, head.nextSibling);
   }
 
   // 핵심어 가리기: 켜면 빈칸이 되고, 머릿속으로 채운 뒤 누르면 하나씩 보인다
@@ -202,7 +226,7 @@
     var id = document.body.getAttribute("data-note");
     if (!id) return;
     var note = B.findNote(id);
-    if (note) initNav(note);
+    if (note) { initNav(note); initUnitBar(note); }
     initHide();
     initWhy(id);
     var tools = document.getElementById("tools");

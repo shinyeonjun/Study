@@ -57,7 +57,7 @@
     var out = [];
     B.SUBJECTS.forEach(function (sub) {
       sub.notes.forEach(function (n, i) {
-        out.push({ id: n.id, title: n.title, href: n.href, subject: sub, prev: sub.notes[i - 1], next: sub.notes[i + 1] });
+        out.push({ id: n.id, title: n.title, href: n.href, unit: n.unit, subject: sub, prev: sub.notes[i - 1], next: sub.notes[i + 1] });
       });
     });
     return out;
