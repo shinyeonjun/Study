@@ -191,7 +191,7 @@
       input.readOnly = true;
       go.remove();
       if (q.type === "num") {
-        var mine = input.value.replace(/[^0-9.\-]/g, "");
+        var mine = input.value.replace(/[−–]/g, "-").replace(/[^0-9.\-]/g, ""); // 유니코드 빼기 기호(−)도 음수로 받는다
         box.appendChild(el("p", "q-model", "정답: " + Number(q.answer).toLocaleString("ko-KR") + (q.a ? " · " + q.a : "")));
         finish(mine !== "" && Number(mine) === Number(q.answer), input.value.trim());
       } else {
