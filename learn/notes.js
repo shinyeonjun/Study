@@ -31,6 +31,10 @@ window.BDA_CHAPTERS = {
     {"id": "U04-2", "title": "변수·첨자·단위", "href": "notes/u/u04-2.html"},
     {"id": "U04-3", "title": "비트·바이트와 kB·KiB", "href": "notes/u/u04-3.html"}
   ],
+  U06: [
+    {"id": "U06-1", "title": "자료의 종류와 믿을 정도", "href": "notes/u/u06-1.html"},
+    {"id": "U06-2", "title": "검색어 만들기와 AI 답 확인하기", "href": "notes/u/u06-2.html"}
+  ],
   AR06: [
     {"id": "AR06-1", "title": "비와 비례, 단위당 양", "href": "notes/ar/ar06-1.html"},
     {"id": "AR06-2", "title": "단위 환산과 속도·처리량", "href": "notes/ar/ar06-2.html"}
@@ -42,6 +46,10 @@ window.BDA_CHAPTERS = {
   AR10: [
     {"id": "AR10-1", "title": "합과 평균, 합 기호 Σ", "href": "notes/ar/ar10-1.html"},
     {"id": "AR10-2", "title": "가중평균과 평균의 평균 함정", "href": "notes/ar/ar10-2.html"}
+  ],
+  RS01: [
+    {"id": "RS01-1", "title": "질문에서 가설로: 조작적 정의와 측정", "href": "notes/rs/rs01-1.html"},
+    {"id": "RS01-2", "title": "큰 질문을 작은 비교로: 가정과 반례", "href": "notes/rs/rs01-2.html"}
   ]
 };
 

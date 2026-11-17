@@ -1,0 +1,466 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>자료의 종류와 믿을 정도 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e8c'/%3E%3Cpath d='M8 22V10m8 12V14m8 8V6' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="U06-1">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+
+<header class="chapter">
+<p class="chap-sub">공부·컴퓨터의 출발점 · U06 자료를 읽고 질문하기</p>
+<p class="chap-num">U06·1</p>
+<h1>자료의 종류와 믿을 정도</h1>
+<p class="lead">공부하다가 "과적합"이라는 낱말이 나와서 검색했더니 블로그 글, 교재 한 쪽, 논문, AI 답이 한꺼번에 나왔습니다. 설명이 조금씩 다르고, 하나는 아예 반대 말을 합니다. 이 장에서는 자료의 종류마다 누가 쓰고 누가 확인했는지, 자료 하나에서 무엇을 확인해야 하는지, 그리고 번역어가 여러 개인 낱말을 영어 원어로 맞춰 보는 법을 다룹니다.</p>
+</header>
+
+<div class="goal">
+<h2>이 장을 읽고 나면</h2>
+<ul>
+<li>공식 문서·교재·논문·블로그·게시판 글·AI 답을 "누가 쓰고 누가 확인했나"로 구분해 말할 수 있다.</li>
+<li>내 질문에 어떤 자료를 먼저 봐야 하는지 고를 수 있고, 그 순서가 뒤집히는 경우를 예로 들 수 있다.</li>
+<li>자료 하나에서 쓴 사람·날짜·버전·근거 네 가지를 찾아 확인할 수 있다.</li>
+<li>1차 출처와 2차 출처를 구분하고, 옮겨 적는 동안 빠지거나 부풀려진 말을 찾아낼 수 있다.</li>
+<li>번역어가 여러 개인 용어를 영어 원어로 대조해 같은 개념인지 가려낼 수 있다.</li>
+</ul>
+</div>
+
+<h2>같은 낱말, 서로 다른 설명</h2>
+
+<p>"과적합"을 검색해서 나온 설명 넷을 옮겨 보면 이렇습니다. 아래 네 글은 이 장의 설명을 위해 지어낸 예입니다.</p>
+
+<div class="sample">
+<p class="sample-k">개인 블로그 (날짜 없음)</p>
+<blockquote>과적합은 데이터가 너무 많아서 컴퓨터가 감당을 못 하는 문제입니다.</blockquote>
+</div>
+<div class="sample">
+<p class="sample-k">입문 교재의 한 쪽</p>
+<blockquote>과대적합(overfitting)은 모델이 학습에 쓴 데이터에는 아주 잘 맞지만, 처음 보는 데이터에는 잘 맞지 않는 상태를 말한다.</blockquote>
+</div>
+<div class="sample">
+<p class="sample-k">AI 챗봇의 답</p>
+<blockquote>과적합은 모델이 훈련 데이터를 지나치게 외워서 새로운 데이터에서 성능이 떨어지는 현상입니다. 데이터를 늘리면 항상 해결됩니다.</blockquote>
+</div>
+<div class="sample">
+<p class="sample-k">게시판 답글</p>
+<blockquote>오버피팅이랑 과적합은 다른 거예요. 오버피팅이 더 심한 경우임.</blockquote>
+</div>
+
+<p>교재의 설명을 쉬운 말로 바꾸면 이렇습니다. 기출문제의 답만 통째로 외운 학생은 똑같은 문제가 나오면 다 맞히지만, 숫자만 바꾼 새 문제는 못 풉니다. 연습한 문제에는 "너무 딱 맞게" 맞춰져서 새 문제에 약해진 상태, 이것이 과적합입니다. 이 개념 자체는 뒤의 머신러닝 단원에서 제대로 배웁니다. 지금 볼 것은 개념이 아니라 <b>네 글을 어떻게 저울질하느냐</b>입니다.</p>
+
+<p>네 글을 나란히 놓으면 문제가 보입니다. 블로그 글은 교재와 전혀 다른 말을 합니다. AI 답은 앞부분은 교재와 같지만 "항상 해결됩니다"라는 단정이 붙어 있습니다. 게시판 답글은 오버피팅과 과적합이 다르다고 하는데, 사실 둘은 같은 영어 낱말(overfitting)을 하나는 소리대로, 하나는 뜻으로 옮긴 것입니다. 네 글 모두 자신 있게 쓰여 있어서, 말투만으로는 무엇이 맞는지 알 수 없습니다.</p>
+
+<p><a href="u01-2.html">U01·2</a>의 말로 하면, 네 글은 모두 "확인 전 사실 주장"입니다. 그렇다면 무엇으로 확인할까요? 이럴 때 필요한 것이 이 장의 세 가지 습관입니다. <b>이 글은 어떤 종류의 자료인가</b>, <b>누가 언제 무엇을 근거로 썼나</b>, <b>낱말의 원어는 무엇인가</b>. <a href="u01-1.html">U01·1</a>에서 궁금함을 확인할 수 있는 질문으로 바꾸었다면, 이 장은 그 질문의 답을 찾을 때 <b>어떤 자료를 얼마나 믿을지</b> 정하는 일입니다.</p>
+
+<h2>자료의 여러 종류</h2>
+
+<p>공부하면서 만나는 글은 대부분 아래 여섯 가지 가운데 하나입니다. 종류를 가르는 기준은 내용이 아니라 <b>누가 썼고, 공개되기 전에 누가 확인했는가</b>입니다.</p>
+
+<div class="box">
+<p class="box-k">정의 <span class="tag memo">외우기</span></p>
+<p><b class="key">공식 문서</b>(official documentation): 그 도구·제도·자료를 <b>만든 곳이 직접</b> 낸 설명. 예: Python을 만드는 쪽이 내는 Python 문서, 시험 시행 기관의 시험 공고.</p>
+<p><b class="key">교재</b>(textbook): 이미 자리 잡은 지식을 배우는 순서에 맞게 정리한 책. 저자가 쓰고 편집자가 확인하며, 여러 해 동안 많은 사람이 읽으며 틀린 곳이 고쳐진다.</p>
+<p><b class="key">논문</b>(paper): 새로 알아낸 결과를 <b>방법과 근거와 함께</b> 보고하는 글. 학술지·학회에 실리기 전에 같은 분야 전문가가 읽고 따지는 <b class="key">동료 심사</b>(peer review)를 거친다.</p>
+<p><b>블로그·기사</b>: 개인이나 언론사가 쓴 글. 빠르고 쉽지만, 확인 과정은 쓴 사람에게 달려 있다.</p>
+<p><b>게시판 글</b>: 질문 게시판의 답글처럼 누구나 쓰는 글. 쓴 사람이 누구인지 모르는 경우가 많다.</p>
+<p><b>AI 답</b>: AI 챗봇이 질문을 받아 그 자리에서 만들어 낸 글. 미리 누군가 확인한 글이 아니다.</p>
+</div>
+
+<h3>공식 문서: 그 물건에 대한 최종 기준</h3>
+
+<p>Python의 어떤 기능이 어떻게 동작하는지 알고 싶다면, Python을 만드는 쪽이 낸 문서(docs.python.org)가 가장 먼저 볼 자료입니다. 다른 모든 설명은 결국 이 문서나 실제 동작을 보고 쓴 것이기 때문입니다. 빅데이터분석기사 시험의 일정·과목·합격 기준도 마찬가지로, 블로그 정리보다 시험 시행 기관의 공고가 기준입니다.</p>
+
+<p>공식 문서를 볼 때 꼭 확인할 것은 <b>버전</b>입니다. 프로그램은 버전이 바뀌면 동작이 달라지기도 하고, 공식 문서도 버전마다 따로 있습니다. Python 문서 페이지 위쪽에는 몇 버전 문서인지 고르는 칸이 있습니다. 시험 공고도 "몇 년도 공고"인지가 버전에 해당합니다.</p>
+
+<p>공식 문서는 쉬운 글이 아닙니다. 초보자를 위한 설명보다 정확한 규칙을 적는 데 집중하기 때문입니다. 그래서 처음에는 교재나 쉬운 글로 감을 잡고, <b>세부 규칙을 확인할 때 공식 문서로 돌아오는</b> 방식이 좋습니다.</p>
+
+<h3>교재: 자리 잡은 지식을 순서대로</h3>
+
+<p>교재는 "이미 많은 사람이 동의하는 내용"을 배우기 좋은 순서로 정리한 책입니다. 저자 한 사람만이 아니라 편집자, 그리고 그 책으로 공부한 수많은 독자가 오랫동안 틀린 곳을 찾아 고쳐 왔습니다. 기초 개념을 처음 배울 때 가장 든든한 자료입니다.</p>
+
+<p>대신 두 가지 약점이 있습니다. 첫째, <b>느립니다.</b> 책은 몇 년에 한 번 고쳐지므로, 빠르게 바뀌는 분야(AI 도구, 프로그램 버전)의 최신 내용은 없을 수 있습니다. 둘째, <b>교재마다 이름과 나누는 방식이 다릅니다.</b> 빅분기 노트의 <a href="../../../bigdata/notes/1-planning/01-빅데이터란.html">1-01</a>에서 본 것처럼, 같은 빅데이터 특징을 어떤 책은 4V, 어떤 책은 7V로 정리합니다. 어느 쪽이 틀린 것이 아니라 정리하는 방식이 다른 것입니다.</p>
+
+<h3>논문: 새 결과와 그 근거</h3>
+
+<p>논문은 "새로 알아낸 것"을 보고하는 글입니다. 무엇을 했는지(방법), 무엇이 나왔는지(결과), 어디까지 말할 수 있는지(한계)를 적어서, 다른 사람이 따져 보고 다시 해 볼 수 있게 합니다. AI 연구의 최신 결과는 교재에 실리기 훨씬 전에 논문으로 먼저 나옵니다.</p>
+
+<div class="side"><b>용어</b> <b>프리프린트</b>(preprint)는 동료 심사를 받기 전에 먼저 공개한 논문 원고입니다. AI·컴퓨터 분야에서는 arXiv(아카이브라고 읽습니다) 같은 공개 저장소에 프리프린트를 올리는 일이 흔합니다.</div>
+
+<p>여기서 조심할 점이 셋 있습니다.</p>
+<ul>
+<li><b>심사를 거쳤다고 정답이 보장되지는 않습니다.</b> 동료 심사는 방법과 근거에 큰 구멍이 없는지 보는 과정이지, 결과를 처음부터 다시 해 보는 과정이 아닙니다. 나중에 틀린 곳이 발견되어 정정되거나 철회되는 논문도 있습니다.</li>
+<li><b>논문 한 편은 아직 "한 번의 결과"입니다.</b> 다른 사람이 다른 조건에서 다시 해 봐도 같은 결과가 나와야 지식으로 자리 잡습니다. 교재에 실린다는 것은 대개 그 과정을 거쳤다는 뜻입니다.</li>
+<li><b>프리프린트는 심사 전입니다.</b> 유용하고 빠르지만, 아직 전문가가 따져 보기 전의 원고라는 것을 기억하고 읽습니다.</li>
+</ul>
+
+<h3>블로그·기사·게시판 글: 쉽고 빠르지만 확인은 쓴 사람 몫</h3>
+
+<p>블로그와 기사는 어려운 내용을 쉬운 말로 풀어 주어서 처음 감을 잡는 데 큰 도움이 됩니다. 실제로 좋은 블로그 글도 많습니다. 다만 공개되기 전에 다른 사람이 확인하는 과정이 없거나 짧습니다. 그래서 <b>글마다 품질 차이가 매우 큽니다.</b></p>
+
+<p>좋은 글과 아닌 글을 가르는 가장 쉬운 표시는 <b>원문으로 따라갈 길이 있는가</b>입니다. "공식 문서에 따르면(링크)", "이 논문의 3절을 보면(링크)"처럼 근거를 밝힌 글은 내가 직접 확인할 수 있습니다. 근거 없이 결론만 있는 글은 확인할 길이 없습니다. 게시판 답글은 여기에 더해 쓴 사람이 누구인지도 모르는 경우가 많습니다.</p>
+
+<h3>AI 답: 그 자리에서 만들어진 글</h3>
+
+<p>AI 챗봇의 답은 앞의 모든 자료와 성격이 다릅니다. 누군가 미리 써 두고 확인한 글이 아니라, 질문을 받은 순간 그럴듯한 문장을 만들어 낸 결과입니다. 맞는 답이 많지만, 틀린 내용도 같은 자신 있는 말투로 나옵니다. 있지도 않은 논문이나 함수 이름을 지어내는 일도 있습니다. 또 AI가 학습한 자료에는 끝나는 시점이 있어서, 그 뒤에 바뀐 일은 모를 수 있습니다.</p>
+
+<p>그렇다고 AI 답이 쓸모없다는 뜻은 아닙니다. 낱말의 뜻을 처음 감 잡거나, 무엇을 검색해야 할지 실마리를 얻는 데는 매우 편리합니다. 다만 <b>AI 답은 출발점이지 근거가 아닙니다.</b> AI 답을 확인하는 구체적인 방법은 다음 장(U06·2)에서 다룹니다.</p>
+
+<div class="table-wrap">
+<table>
+<tr><th>종류</th><th>누가 쓰나</th><th>공개 전에 누가 확인하나</th><th>강점</th><th>조심할 점</th></tr>
+<tr><td><b class="key">공식 문서</b></td><td>만든 곳</td><td>만든 곳 스스로</td><td>그 물건에 대한 최종 기준</td><td>버전, 자기 제품 자랑</td></tr>
+<tr><td><b class="key">교재</b></td><td>저자</td><td>편집자, 오랜 독자</td><td>기초가 안정적, 배우는 순서</td><td>느림, 책마다 이름·분류가 다름</td></tr>
+<tr><td><b class="key">논문</b></td><td>연구자</td><td>동료 심사(프리프린트는 없음)</td><td>새 결과와 근거</td><td>한 편은 한 번의 결과</td></tr>
+<tr><td>블로그·기사</td><td>개인·언론</td><td>쓴 사람, 편집자</td><td>쉽고 빠름</td><td>품질 차이 큼, 근거 확인</td></tr>
+<tr><td>게시판 글</td><td>누구나</td><td>없음</td><td>구체적인 해결 경험</td><td>쓴 사람을 모름</td></tr>
+<tr><td>AI 답</td><td>AI</td><td>없음</td><td>빠른 실마리</td><td>틀려도 자신 있는 말투</td></tr>
+</table>
+</div>
+
+<div class="check" data-q="q1"></div>
+
+<h2>믿을 정도의 사다리 <span class="tag grasp">이해하기</span></h2>
+
+<p>여섯 종류를 "공개되기 전에 확인한 사람이 많은가, 근거를 따라갈 수 있는가"로 줄 세우면 사다리 모양이 됩니다. 처음 보는 자료를 만났을 때 어느 칸에 놓을지 생각해 보면, 얼마나 믿고 시작할지 첫 짐작을 할 수 있습니다.</p>
+
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 404" role="img" aria-label="믿을 정도의 사다리. 위에서 아래로 여섯 칸: 공식 문서·원자료(만든 곳이 직접 쓴 기준, 버전 확인), 동료 심사 논문·검증된 교재(전문가 심사, 편집과 오랜 사용), 프리프린트·기술 보고서(근거는 있지만 심사 전), 원문을 밝힌 기사·블로그(쓴 사람이 확인, 원문으로 따라갈 수 있음), 출처 없는 블로그·게시판 글(확인한 사람을 모름), 출처 없는 AI 답(확인한 사람이 없음). 왼쪽 위로 향한 화살표는 위로 갈수록 확인 장치가 많고 근거가 드러난다는 뜻이다.">
+<text class="f-s" x="230" y="20" text-anchor="middle">확인한 사람이 많고 근거가 드러난 쪽</text>
+<line class="f-ink" x1="30" y1="372" x2="30" y2="36" marker-end="url(#f-arrow)"/>
+<line class="f-ink" x1="58" y1="30" x2="58" y2="378"/>
+<line class="f-ink" x1="402" y1="30" x2="402" y2="378"/>
+<rect class="f-soft" x="70" y="40" width="320" height="44" rx="4"/>
+<text class="f-t f-b" x="86" y="68" text-anchor="start">공식 문서 · 원자료</text>
+<text class="f-s" x="420" y="58" text-anchor="start">만든 곳이 직접 쓴 기준</text>
+<text class="f-s" x="420" y="76" text-anchor="start">버전과 날짜를 확인한다</text>
+<rect class="f-box" x="70" y="96" width="320" height="44" rx="4"/>
+<text class="f-t" x="86" y="124" text-anchor="start">동료 심사 논문 · 검증된 교재</text>
+<text class="f-s" x="420" y="114" text-anchor="start">전문가 심사, 또는 편집과</text>
+<text class="f-s" x="420" y="132" text-anchor="start">오랜 사용을 거쳤다</text>
+<rect class="f-box" x="70" y="152" width="320" height="44" rx="4"/>
+<text class="f-t" x="86" y="180" text-anchor="start">프리프린트 · 기술 보고서</text>
+<text class="f-s" x="420" y="170" text-anchor="start">근거는 있지만</text>
+<text class="f-s" x="420" y="188" text-anchor="start">심사 전이거나 내부 검토뿐이다</text>
+<rect class="f-box" x="70" y="208" width="320" height="44" rx="4"/>
+<text class="f-t" x="86" y="236" text-anchor="start">원문을 밝힌 기사 · 블로그</text>
+<text class="f-s" x="420" y="226" text-anchor="start">쓴 사람 한 명이 확인했다</text>
+<text class="f-s" x="420" y="244" text-anchor="start">원문으로 따라갈 수 있다</text>
+<rect class="f-box" x="70" y="264" width="320" height="44" rx="4"/>
+<text class="f-t" x="86" y="292" text-anchor="start">출처 없는 블로그 · 게시판 글</text>
+<text class="f-s" x="420" y="282" text-anchor="start">누가 확인했는지 모른다</text>
+<text class="f-s" x="420" y="300" text-anchor="start">따라갈 원문이 없다</text>
+<rect class="f-box" x="70" y="320" width="320" height="44" rx="4"/>
+<text class="f-t" x="86" y="348" text-anchor="start">출처 없는 AI 답</text>
+<text class="f-s" x="420" y="338" text-anchor="start">공개 전에 확인한 사람이 없다</text>
+<text class="f-s" x="420" y="356" text-anchor="start">말투가 자신 있어도 근거가 아니다</text>
+<text class="f-s" x="230" y="396" text-anchor="middle">확인 장치가 없거나 근거가 숨은 쪽</text>
+</svg>
+<figcaption>믿을 정도의 사다리. 처음 만난 자료를 얼마나 믿고 시작할지 정하는 첫 짐작이지, 최종 판정이 아니다.</figcaption>
+</figure>
+
+<p>이 사다리에서 칸을 가르는 기준은 두 가지입니다. 하나는 <b>공개되기 전에 몇 사람이 따져 봤는가</b>이고, 다른 하나는 <b>내가 근거를 직접 따라가 볼 수 있는가</b>입니다. 같은 블로그라도 원문 링크가 있으면 넷째 칸, 없으면 다섯째 칸입니다. AI 답도 "공식 문서의 이 부분"이라고 확인할 수 있는 원문을 함께 내놓았고 내가 그것을 열어 확인했다면, 그때 믿는 것은 AI 답이 아니라 그 원문입니다.</p>
+
+<h3>사다리가 뒤집히는 경우</h3>
+
+<p>사다리는 편리하지만 그대로 외워 쓰면 틀리는 경우가 있습니다. 세 가지를 기억해 둡니다.</p>
+
+<ul>
+<li><b>질문에 따라 맨 윗칸이 달라집니다.</b> "Python의 이 함수는 무엇을 돌려주나?"에는 공식 문서가 맨 위입니다. 그런데 "이 회사의 AI가 다른 회사 것보다 낫나?"라는 질문에서, 그 회사가 낸 공식 발표는 자기 제품을 좋게 말할 이유가 있는 자료입니다. 이렇게 <b>쓴 쪽이 결과에 이해관계가 있는</b> 질문에서는, 이해관계가 없는 쪽의 비교가 더 중요한 근거가 됩니다.</li>
+<li><b>같은 칸 안에서도 차이가 큽니다.</b> 근거를 꼼꼼히 밝힌 블로그 글이, 근거 없이 단정한 교재 한 문장보다 더 확인하기 쉬울 수 있습니다.</li>
+<li><b>윗칸도 틀릴 수 있습니다.</b> 교재에도 오타와 실수가 있고, 논문도 정정됩니다. 사다리는 "어디서부터 의심을 시작할까"를 정해 줄 뿐, 의심을 멈춰도 되는 칸은 없습니다.</li>
+</ul>
+
+<div class="box trap">
+<p class="box-k">흔한 실수</p>
+<p><b>"검색 결과 맨 위에 나왔으니 믿을 만하다."</b> 검색 결과의 순서는 많이 클릭되었는지, 질문 낱말과 얼마나 겹치는지 같은 여러 기준으로 정해집니다. 내용이 맞는지 확인한 순서가 아닙니다. 광고가 맨 위에 오기도 합니다.</p>
+<p><b>"말투가 전문적이고 자신 있으니 맞다."</b> 처음 본 네 글은 모두 자신 있게 쓰여 있었지만 그중 둘은 틀렸습니다. 말투는 근거가 아닙니다.</p>
+</div>
+
+<div class="check" data-q="q3"></div>
+
+<h2>자료 하나에서 확인할 네 가지</h2>
+
+<p>자료의 종류를 정했으면, 그 자료 자체를 살펴봅니다. 어떤 자료든 다음 네 가지를 찾아보는 것이 기본입니다.</p>
+
+<div class="box">
+<p class="box-k">출처 확인의 네 가지 <span class="tag memo">외우기</span></p>
+<p><b class="key">누가</b>: 쓴 사람 또는 기관. 그 분야를 다루는 사람이나 곳인가?</p>
+<p><b class="key">언제</b>: 쓴 날짜와 마지막으로 고친 날짜. 그 사이에 바뀐 것은 없나?</p>
+<p><b class="key">어느 버전·대상</b>: 어떤 프로그램 버전, 몇 년도 제도, 어떤 대상에 대한 이야기인가?</p>
+<p><b class="key">무엇을 근거로</b>: 원문 링크, 참고 문헌, 데이터, 직접 해 본 결과가 있는가?</p>
+</div>
+
+<p>실제로 이 네 가지가 어떻게 드러나는지, 예전에 쓰인 짧은 블로그 글 하나로 살펴봅니다(지어낸 예입니다).</p>
+
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 300" role="img" aria-label="블로그 글 한 장과 네 군데 지시선. 글의 제목은 '파이썬으로 hello 출력하기', 글쓴이는 닉네임 '코딩곰', 작성일은 2012-03-04, 본문의 코드는 print 다음에 따옴표 hello, 참고한 자료는 없음, 수정한 날도 없음. 지시선: 누가 - 닉네임뿐이라 전문 분야를 모른다. 언제 - 2012년 글이고 고친 적이 없다. 버전 - Python 2 문법이라 Python 3에서는 오류가 난다. 근거 - 참고 자료가 없다.">
+<rect class="f-box" x="20" y="20" width="420" height="262" rx="4"/>
+<text class="f-t f-b" x="40" y="52" text-anchor="start">파이썬으로 hello 출력하기</text>
+<text class="f-s" x="40" y="78" text-anchor="start">글쓴이: 코딩곰</text>
+<text class="f-s" x="40" y="98" text-anchor="start">작성: 2012-03-04</text>
+<line class="f-ink" x1="40" y1="112" x2="420" y2="112"/>
+<text class="f-s" x="40" y="136" text-anchor="start">아래처럼 한 줄이면 됩니다.</text>
+<rect class="f-soft" x="40" y="148" width="200" height="36" rx="3"/>
+<text class="f-t" x="54" y="171" text-anchor="start">print "hello"</text>
+<text class="f-s" x="40" y="210" text-anchor="start">잘 되네요! 끝.</text>
+<text class="f-s" x="40" y="242" text-anchor="start">참고한 자료: 없음</text>
+<text class="f-s" x="40" y="266" text-anchor="start">수정한 날: 없음</text>
+<line class="f-ink" x1="136" y1="74" x2="456" y2="74"/>
+<circle class="f-fill" cx="136" cy="74" r="3"/>
+<text class="f-s f-ink-t" x="464" y="70" text-anchor="start">누가: 닉네임뿐이다</text>
+<text class="f-s" x="464" y="88" text-anchor="start">어떤 사람인지, 전문 분야인지 모른다</text>
+<line class="f-ink" x1="156" y1="94" x2="200" y2="94"/>
+<line class="f-ink" x1="200" y1="94" x2="456" y2="126"/>
+<circle class="f-fill" cx="156" cy="94" r="3"/>
+<text class="f-s f-ink-t" x="464" y="122" text-anchor="start">언제: 2012년 글</text>
+<text class="f-s" x="464" y="140" text-anchor="start">고친 적이 없다(수정한 날: 없음)</text>
+<line class="f-ink" x1="240" y1="166" x2="456" y2="182"/>
+<circle class="f-fill" cx="240" cy="166" r="3"/>
+<text class="f-s f-ink-t" x="464" y="180" text-anchor="start">버전: Python 2 문법</text>
+<text class="f-s" x="464" y="198" text-anchor="start">Python 3에서는 오류가 난다</text>
+<line class="f-ink" x1="150" y1="238" x2="456" y2="238"/>
+<circle class="f-fill" cx="150" cy="238" r="3"/>
+<text class="f-s f-ink-t" x="464" y="242" text-anchor="start">근거: 참고 자료가 없다</text>
+</svg>
+<figcaption>오래된 블로그 글 한 장을 네 가지로 살펴본 모습. 글 자체에는 틀린 말이 없었지만, 지금 그대로 따라 하면 실패한다.</figcaption>
+</figure>
+
+<p>이 글을 2012년에 따라 했다면 잘 되었을 것입니다. 당시 많이 쓰던 Python 2에서는 <code>print "hello"</code>가 맞는 문법이었기 때문입니다. Python 2는 2020년에 공식 지원이 끝났고, 지금 쓰는 Python 3에서는 <code>print</code> 뒤에 괄호를 써야 합니다. 이 글의 코드를 Python 3.14에서 그대로 실행하면 실제로 이런 오류가 납니다.</p>
+
+<pre><code>  File "C:\Users\...\old.py", line 1
+    print "hello"
+    ^^^^^^^^^^^^^
+SyntaxError: Missing parentheses in call to 'print'. Did you mean print(...)?</code></pre>
+
+<p><code>print("hello")</code>로 고치면 <code>hello</code>가 출력됩니다.</p>
+
+<p>이 예에서 배울 점은, <b>글쓴이가 거짓말을 한 것이 아니라는 것</b>입니다. 그때는 맞았던 글이 시간이 지나 맞지 않게 되었습니다. 날짜와 버전을 확인하지 않으면 이런 글을 구별할 수 없습니다.</p>
+
+<h3>날짜가 특히 중요한 자료</h3>
+
+<ul>
+<li><b>시험 일정·과목·기준</b>: 해마다 공고가 새로 나옵니다. 작년 정리 글의 일정을 그대로 믿으면 안 되고, 올해 시행 기관 공고를 확인합니다.</li>
+<li><b>프로그램과 도구</b>: 버전이 바뀌면 사용법이 바뀝니다. 글의 날짜와 내가 쓰는 버전을 비교합니다.</li>
+<li><b>숫자와 통계</b>: "사용자 수", "시장 규모" 같은 숫자는 <b>언제 기준</b>인지가 함께 있어야 뜻이 있습니다.</li>
+<li><b>AI 분야 소식</b>: "가장 성능이 좋은 모델"은 몇 달 만에 바뀝니다. 그 글이 쓰인 시점에서만 맞는 말일 수 있습니다.</li>
+</ul>
+
+<div class="box trap">
+<p class="box-k">흔한 실수</p>
+<p><b>"최근 날짜의 글이니 최신 내용이다."</b> 최근에 쓴 글이 오래된 글을 그대로 옮겨 적었을 수도 있습니다. 날짜와 함께 그 글이 말하는 <b>버전·대상</b>을 확인해야 합니다. 앞의 블로그 글을 2025년에 누군가 그대로 베껴 올렸다면, 날짜는 최근이어도 내용은 Python 2 시절 그대로입니다.</p>
+</div>
+
+<div class="check" data-q="q4"></div>
+<div class="check" data-q="q10"></div>
+
+<h2>원문과 옮겨 적은 글</h2>
+
+<p>네 가지 가운데 마지막 "무엇을 근거로"를 따라가다 보면, 자료가 두 종류로 나뉜다는 것을 알게 됩니다. 결과를 직접 만든 글과, 그것을 읽고 옮긴 글입니다.</p>
+
+<div class="box">
+<p class="box-k">정의 <span class="tag memo">외우기</span></p>
+<p><b class="key">1차 출처</b>(primary source): 결과나 기록을 <b>직접 만든 곳</b>의 원문. 예: 실험을 한 연구자의 논문, 통계를 낸 기관의 원래 표, 도구를 만든 곳의 공식 문서.</p>
+<p><b class="key">2차 출처</b>(secondary source): 1차 출처를 <b>읽고 옮기거나 풀어 쓴</b> 글. 예: 논문을 소개한 기사, 기사를 읽고 쓴 블로그, 여러 자료를 요약한 AI 답, 여러 연구를 정리한 교재의 한 절.</p>
+<p>분류 관례는 분야마다 조금씩 다릅니다. 교재·백과사전·색인처럼 2차 출처를 다시 모아 정리한 것을 <b>3차 출처</b>(tertiary source)로 따로 나누기도 합니다. 이 장에서는 "원문인가, 옮긴 글인가"만 가르므로 둘로 나눕니다.</p>
+</div>
+
+<p>2차 출처가 나쁜 것은 아닙니다. 어려운 원문을 쉽게 풀어 주기 때문에, 처음 공부할 때는 2차 출처가 더 도움이 됩니다. 문제는 <b>옮길 때마다 무언가가 빠지거나 붙는다</b>는 것입니다. 아래는 그 과정을 보여 주는 예입니다. 연구도, 기사도, 숫자도 모두 이 장에서 지어낸 것입니다.</p>
+
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 256" role="img" aria-label="옮겨 적을 때마다 바뀌는 말. (가) 논문 원문: 학생 40명, 한 학기, 수학 한 과목에서 AI 도우미를 쓴 반의 기말 평균이 100점 만점에 4점 높았고 한계로 한 학교뿐이라고 적었다. (나) 기사: AI 쓰면 성적 오른다, 학생 40명 언급, 한계는 빠졌다. (다) 블로그: AI로 공부하면 성적이 무조건 오른다, 숫자와 조건이 빠지고 무조건이 붙었다. (라) AI 답: 연구에 따르면 AI는 학습 효과를 높입니다, 어떤 연구인지가 사라졌다. (가)는 1차 출처, (나)(다)(라)는 2차 출처.">
+<text class="f-s" x="93" y="20" text-anchor="middle">1차 출처</text>
+<path class="f-ink" d="M200 30 v-6 h546 v6"/>
+<text class="f-s" x="473" y="16" text-anchor="middle">2차 출처</text>
+<rect class="f-soft" x="10" y="40" width="166" height="132" rx="4"/>
+<text class="f-s f-ink-t" x="22" y="62" text-anchor="start">학생 40명, 한 학기,</text>
+<text class="f-s f-ink-t" x="22" y="82" text-anchor="start">수학 한 과목에서</text>
+<text class="f-s f-ink-t" x="22" y="102" text-anchor="start">AI 도우미를 쓴 반의</text>
+<text class="f-s f-ink-t" x="22" y="122" text-anchor="start">기말 평균이 4점 높음</text>
+<text class="f-s f-ink-t" x="22" y="142" text-anchor="start">(100점 만점)</text>
+<text class="f-s f-ink-t" x="22" y="162" text-anchor="start">한계: 한 학교뿐</text>
+<line class="f-line" x1="176" y1="106" x2="198" y2="106" marker-end="url(#f-arrow)"/>
+<rect class="f-box" x="200" y="40" width="166" height="132" rx="4"/>
+<text class="f-s f-ink-t" x="212" y="62" text-anchor="start">"AI 쓰면</text>
+<text class="f-s f-ink-t" x="212" y="82" text-anchor="start">성적 오른다"</text>
+<text class="f-s f-ink-t" x="212" y="112" text-anchor="start">학생 40명 연구</text>
+<text class="f-s f-ink-t" x="212" y="132" text-anchor="start">라고 소개</text>
+<line class="f-line" x1="366" y1="106" x2="388" y2="106" marker-end="url(#f-arrow)"/>
+<rect class="f-box" x="390" y="40" width="166" height="132" rx="4"/>
+<text class="f-s f-ink-t" x="402" y="62" text-anchor="start">"AI로 공부하면</text>
+<text class="f-s f-ink-t" x="402" y="82" text-anchor="start">성적이 무조건</text>
+<text class="f-s f-ink-t" x="402" y="102" text-anchor="start">오른다"</text>
+<line class="f-line" x1="556" y1="106" x2="578" y2="106" marker-end="url(#f-arrow)"/>
+<rect class="f-box" x="580" y="40" width="166" height="132" rx="4"/>
+<text class="f-s f-ink-t" x="592" y="62" text-anchor="start">"연구에 따르면</text>
+<text class="f-s f-ink-t" x="592" y="82" text-anchor="start">AI는 학습 효과를</text>
+<text class="f-s f-ink-t" x="592" y="102" text-anchor="start">높입니다"</text>
+<text class="f-s" x="93" y="196" text-anchor="middle">조건이 모두 있다</text>
+<text class="f-s" x="283" y="196" text-anchor="middle">한계가 빠졌다</text>
+<text class="f-s" x="473" y="196" text-anchor="middle">숫자가 빠지고</text>
+<text class="f-s" x="473" y="214" text-anchor="middle">'무조건'이 붙었다</text>
+<text class="f-s" x="663" y="196" text-anchor="middle">어떤 연구인지</text>
+<text class="f-s" x="663" y="214" text-anchor="middle">사라졌다</text>
+<text class="f-cap" x="93" y="246" text-anchor="middle">(가) 논문 원문</text>
+<text class="f-cap" x="283" y="246" text-anchor="middle">(나) 기사</text>
+<text class="f-cap" x="473" y="246" text-anchor="middle">(다) 블로그</text>
+<text class="f-cap" x="663" y="246" text-anchor="middle">(라) AI 답</text>
+</svg>
+<figcaption>한 단계씩 옮길 때마다 조건이 빠지고 말이 커진다. (라)만 읽은 사람은 (가)의 "40명, 한 학기, 한 학교"를 알 길이 없다.</figcaption>
+</figure>
+
+<p>(가)의 연구가 실제로 말한 것은 "한 학교, 한 과목, 한 학기, 학생 40명에서 평균 4점 차이가 있었다"입니다. 이것은 꽤 좁고 조심스러운 결과입니다. 그런데 (다)에 오면 "무조건"이 붙고, (라)에 오면 어떤 연구였는지조차 사라집니다. 한 단계 한 단계는 큰 거짓말이 아니지만, 모이면 원문과 전혀 다른 말이 됩니다.</p>
+
+<p>그래서 <b>중요한 주장일수록 1차 출처까지 거슬러 올라가서</b> 확인합니다. 원문 전체를 다 읽을 필요는 없습니다. 논문이라면 맨 앞의 요약(초록)과 결과 부분에서 "누구를 대상으로, 무엇을 쟀고, 얼마나 차이가 났는가"만 확인해도 (다)·(라) 같은 부풀림은 대부분 걸러집니다. 논문을 읽는 방법은 RS03에서 자세히 다룹니다.</p>
+
+<div class="why">
+<p class="box-k">왜 그럴까?</p>
+<p>(라)의 AI 답 "연구에 따르면 AI는 학습 효과를 높입니다"는 (가)와 비교해 한 글자도 거짓이라고 하기 어렵습니다. 그런데도 왜 이 문장을 근거로 쓰면 안 될까요?</p>
+<details><summary>모범 답 보기</summary><p>어떤 연구인지 밝히지 않아서 확인할 길이 없고, 연구의 조건(한 학교, 한 과목, 40명, 한 학기)이 빠져서 "누구에게나, 어떤 공부에나" 그렇다는 말처럼 읽히기 때문입니다. 원래 결과가 닿는 범위보다 훨씬 넓게 말하고 있으므로, 원문을 찾아 조건을 확인하기 전에는 근거로 쓸 수 없습니다.</p></details>
+</div>
+
+<div class="check" data-q="q5"></div>
+<div class="check" data-q="q6"></div>
+
+<h2>영어 원어로 대조하기</h2>
+
+<p>처음 장면의 게시판 답글은 "오버피팅과 과적합은 다르다"고 했습니다. 이런 혼란은 데이터·AI 분야를 공부할 때 아주 자주 생깁니다. 이 분야의 용어 대부분이 영어로 먼저 생기고, 한국어로 옮기는 사람·분야·시기에 따라 번역어가 달라지기 때문입니다.</p>
+
+<div class="side"><b>용어</b> <b>원어</b>는 낱말이 처음 만들어진 말, 여기서는 영어 낱말입니다. <b>번역어</b>는 그 낱말을 한국어로 옮긴 말입니다. 소리대로 적은 말(오버피팅)도 번역어에 넣어 생각합니다.</div>
+
+<p>원어와 번역어 사이에서 생기는 혼란은 크게 세 가지 모양입니다.</p>
+
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 312" role="img" aria-label="용어 대조의 세 모양. (가) 하나의 원어 overfitting에서 세 번역어 과적합, 과대적합, 오버피팅으로 선이 갈라진다. (나) 하나의 원어 parameter에서 두 갈래: 프로그래밍·머신러닝의 매개변수, 통계의 모수. (다) 비슷한 번역어 정확도와 정밀도가 각각 다른 원어 accuracy와 precision에 이어진다. accuracy는 전체에서 맞힌 비율, precision은 '예'라고 한 것 중 실제로 예인 비율.">
+<line class="f-dash" x1="253" y1="12" x2="253" y2="270"/>
+<line class="f-dash" x1="507" y1="12" x2="507" y2="270"/>
+<rect class="f-soft" x="66" y="40" width="120" height="32" rx="4"/>
+<text class="f-t" x="126" y="61" text-anchor="middle">overfitting</text>
+<line class="f-line" x1="126" y1="72" x2="50" y2="148"/>
+<line class="f-line" x1="126" y1="72" x2="126" y2="148"/>
+<line class="f-line" x1="126" y1="72" x2="202" y2="148"/>
+<rect class="f-box" x="18" y="148" width="64" height="32" rx="4"/>
+<text class="f-s f-ink-t" x="50" y="169" text-anchor="middle">과적합</text>
+<rect class="f-box" x="94" y="148" width="64" height="32" rx="4"/>
+<text class="f-s f-ink-t" x="126" y="169" text-anchor="middle">과대적합</text>
+<rect class="f-box" x="170" y="148" width="64" height="32" rx="4"/>
+<text class="f-s f-ink-t" x="202" y="169" text-anchor="middle">오버피팅</text>
+<text class="f-s" x="126" y="212" text-anchor="middle">세 낱말 모두 같은 개념</text>
+<rect class="f-soft" x="320" y="40" width="120" height="32" rx="4"/>
+<text class="f-t" x="380" y="61" text-anchor="middle">parameter</text>
+<line class="f-line" x1="380" y1="72" x2="320" y2="140"/>
+<line class="f-line" x1="380" y1="72" x2="440" y2="140"/>
+<rect class="f-box" x="268" y="140" width="104" height="52" rx="4"/>
+<text class="f-s f-ink-t f-b" x="320" y="162" text-anchor="middle">매개변수</text>
+<text class="f-s" x="320" y="181" text-anchor="middle">프로그래밍·ML</text>
+<rect class="f-box" x="388" y="140" width="104" height="52" rx="4"/>
+<text class="f-s f-ink-t f-b" x="440" y="162" text-anchor="middle">모수</text>
+<text class="f-s" x="440" y="181" text-anchor="middle">통계</text>
+<text class="f-s" x="380" y="222" text-anchor="middle">분야를 보고 뜻을 정한다</text>
+<rect class="f-box" x="535" y="40" width="90" height="32" rx="4"/>
+<text class="f-s f-ink-t f-b" x="580" y="61" text-anchor="middle">정확도</text>
+<rect class="f-box" x="645" y="40" width="90" height="32" rx="4"/>
+<text class="f-s f-ink-t f-b" x="690" y="61" text-anchor="middle">정밀도</text>
+<line class="f-line" x1="580" y1="72" x2="580" y2="140"/>
+<line class="f-line" x1="690" y1="72" x2="690" y2="140"/>
+<rect class="f-soft" x="535" y="140" width="90" height="32" rx="4"/>
+<text class="f-t" x="580" y="161" text-anchor="middle">accuracy</text>
+<rect class="f-soft" x="645" y="140" width="90" height="32" rx="4"/>
+<text class="f-t" x="690" y="161" text-anchor="middle">precision</text>
+<text class="f-s" x="580" y="198" text-anchor="middle">전체에서</text>
+<text class="f-s" x="580" y="216" text-anchor="middle">맞힌 비율</text>
+<text class="f-s" x="690" y="198" text-anchor="middle">'예'라고 한 것 중</text>
+<text class="f-s" x="690" y="216" text-anchor="middle">실제 예인 비율</text>
+<text class="f-cap" x="126" y="298" text-anchor="middle">(가) 원어 하나, 번역어 여럿</text>
+<text class="f-cap" x="380" y="298" text-anchor="middle">(나) 원어 하나, 분야별 뜻</text>
+<text class="f-cap" x="634" y="298" text-anchor="middle">(다) 닮은 번역어, 다른 원어</text>
+</svg>
+<figcaption>파란 칸이 원어 쪽이다. (가)는 이름만 다르고, (나)와 (다)는 실제로 뜻이 다르다.</figcaption>
+</figure>
+
+<h3>원어 하나, 번역어 여럿</h3>
+<p>overfitting은 자료에 따라 과적합, 과대적합, 오버피팅으로 씁니다. 세 낱말은 <b>같은 개념</b>입니다. 처음 장면의 게시판 답글은 이 경우를 "다른 개념"으로 착각한 것입니다. 이런 낱말은 자료마다 이름이 다르게 나와도 원어를 확인하면 바로 정리됩니다.</p>
+<p>비슷한 예가 많습니다. feature는 특성, 특징, 피처로 옮기고, sample은 표본, 샘플로 옮깁니다. 머신러닝 성능 지표인 recall은 재현율이라고 하는데, 의학·통계 쪽에서는 같은 계산을 민감도(sensitivity)라고 부릅니다. 이름도 원어도 다르지만 계산은 같은 경우입니다.</p>
+
+<h3>원어 하나, 분야마다 다른 뜻</h3>
+<p>parameter는 프로그래밍에서는 함수에 건네는 값의 자리(매개변수)를, 머신러닝에서는 모델이 학습하며 정하는 값을 가리킵니다. 그런데 통계학에서는 모집단 전체의 특성을 나타내는 값(모수, 예를 들어 "전체 학생의 평균 키")을 가리킵니다. 같은 원어지만 분야마다 뜻이 다르므로, <b>원어가 같다고 무조건 같은 뜻은 아닙니다.</b> 그 글이 어느 분야의 글인지까지 확인해야 합니다. bias도 비슷해서, 통계에서 말하는 편향과 신경망에서 말하는 bias(더해 주는 값)는 서로 다른 것입니다.</p>
+
+<h3>닮은 번역어, 다른 원어</h3>
+<p>정확도(accuracy)와 정밀도(precision)는 우리말로는 거의 같은 말처럼 들립니다. 하지만 머신러닝에서 두 낱말은 계산하는 방법이 다른 별개의 지표입니다. 정확도는 전체 가운데 맞힌 비율이고, 정밀도는 모델이 "예"라고 답한 것 가운데 실제로 "예"였던 비율입니다. 번역어만 보고 비슷하다고 넘기면 다른 개념을 섞게 됩니다. 이 두 지표는 뒤의 머신러닝 평가 단원에서 숫자로 직접 계산해 봅니다.</p>
+
+<h3>용어 대조표 만들기 <span class="tag grasp">이해하기</span></h3>
+<p>새 용어를 만나면 <b>"번역어(원어)" 짝으로 적는</b> 습관을 들입니다. <a href="u01-3.html">U01·3</a>의 낱말 노트에 원어 칸을 따로 둔 이유가 이것입니다. 공부가 쌓이면 낱말 노트의 원어 칸을 모아 이런 표를 만들 수 있습니다.</p>
+
+<div class="table-wrap">
+<table>
+<tr><th>원어</th><th>이 교재에서 쓰는 말</th><th>다른 자료에서 보이는 말</th><th>주의할 점</th></tr>
+<tr><td>overfitting</td><td>과적합</td><td>과대적합, 오버피팅</td><td>모두 같은 개념</td></tr>
+<tr><td>feature</td><td>특성</td><td>특징, 피처</td><td>통계 쪽 글에서는 '설명 변수'처럼 부르기도 한다</td></tr>
+<tr><td>recall</td><td>재현율</td><td>민감도(sensitivity)</td><td>원어는 다르지만 계산은 같다</td></tr>
+<tr><td>parameter</td><td>매개변수 / 모수</td><td>파라미터</td><td>프로그래밍·ML과 통계에서 뜻이 다르다</td></tr>
+<tr><td>accuracy / precision</td><td>정확도 / 정밀도</td><td>-</td><td>번역어는 닮았지만 다른 지표</td></tr>
+</table>
+</div>
+
+<p>이 표가 있으면 세 가지가 쉬워집니다. 다른 교재를 볼 때 이름이 달라도 같은 개념인지 바로 알 수 있고, 영어 자료를 검색할 때 원어로 찾을 수 있으며(다음 장), 논문을 읽을 때 낯선 낱말을 덜 만나게 됩니다.</p>
+
+<div class="box trap">
+<p class="box-k">흔한 실수</p>
+<p><b>"이름이 다르면 다른 개념이다."</b> 과적합과 과대적합처럼 원어가 같으면 같은 개념일 가능성이 큽니다. 먼저 원어를 확인합니다.</p>
+<p><b>"원어가 같으면 무조건 같은 뜻이다."</b> parameter처럼 분야마다 뜻이 다른 낱말이 있습니다. 원어와 함께 분야도 확인합니다.</p>
+</div>
+
+<div class="check" data-q="q7"></div>
+
+<h2>이 습관이 다시 나오는 곳</h2>
+
+<ul>
+<li><b>다음 장(U06·2)</b>: 원어와 핵심어로 검색어를 만들고, AI 답을 교차 확인·원문 찾기·직접 계산으로 확인합니다.</li>
+<li><b>RS02 자료와 선행연구</b>: 논문을 찾고, 원문을 인용하고, 출처를 기록하는 일을 더 체계적으로 합니다. 용어 대조표는 거기서 "기술 영어 사전"으로 커집니다.</li>
+<li><b>DB06 외부 데이터 받기</b>: 데이터를 내려받을 때도 누가 만든 자료인지, 언제 기준인지, 써도 되는 조건이 무엇인지를 같은 방식으로 확인합니다.</li>
+</ul>
+
+<h2>한눈에 정리</h2>
+
+<div class="table-wrap">
+<table>
+<tr><th>묻는 것</th><th>답</th></tr>
+<tr><td>자료 종류를 가르는 기준</td><td>누가 썼고, 공개 전에 누가 확인했나</td></tr>
+<tr><td>그 물건·제도에 대한 최종 기준</td><td><b class="key">공식 문서</b> (버전 확인)</td></tr>
+<tr><td>새 결과를 근거와 함께 보고하는 글</td><td><b class="key">논문</b>. 공개 전 전문가 확인은 <b class="key">동료 심사</b>, 심사 전 원고는 <b class="key">프리프린트</b></td></tr>
+<tr><td>사다리의 두 기준</td><td>확인한 사람의 수, 근거를 따라갈 수 있는가</td></tr>
+<tr><td>자료 하나에서 확인할 네 가지</td><td><b class="key">누가</b>, <b class="key">언제</b>, <b class="key">어느 버전·대상</b>, <b class="key">무엇을 근거로</b></td></tr>
+<tr><td>결과를 직접 만든 원문 / 옮긴 글</td><td><b class="key">1차 출처</b> / <b class="key">2차 출처</b></td></tr>
+<tr><td>번역어가 여럿일 때</td><td><b class="key">원어</b>를 확인하고, 분야까지 본다</td></tr>
+</table>
+</div>
+
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>자료는 누가 쓰고 누가 확인했는지로 믿을 정도를 처음 짐작하고, 쓴 사람·날짜·버전·근거와 원어를 확인해 1차 출처까지 따라갈 수 있을 때 근거로 쓴다.</p></div>
+
+<h2>확인 문제</h2>
+<p>본문 중간에서 푼 문제 말고 남은 문제입니다. 보기를 누르면 바로 정답과 해설이 나옵니다.</p>
+<div id="quiz"></div>
+
+<section class="work" id="tools"></section>
+
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>
