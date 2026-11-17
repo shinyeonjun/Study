@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>한 행의 뜻과 예측할 값부터 정하기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="ML01-1">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">머신러닝 · ML01 학습 문제 정의</p>
+<p class="chap-num">ML01·1</p>
+<h1>한 행의 뜻과 예측할 값부터 정하기</h1>
+<p class="lead">주문이 들어올 때 배송에 몇 분이 걸릴지 알고 싶습니다. 접수 시점에 알 수 있는 정보와 배송이 끝나야 알 수 있는 정보가 한 표에 있다면, 학습에 들어가기 전에 두 정보를 구분해야 합니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul>
+<li>관측 단위와 예측 시점을 정해 X와 y를 구성한다.</li>
+<li>같은 주문 기록으로 회귀 문제와 분류 문제를 정의한다.</li>
+<li>과거 자료에서 규칙을 얻는 학습과 새 입력에 규칙을 적용하는 추론을 구별한다.</li>
+</ul></div>
+
+<h2>한 주문을 한 행으로 만들고 열의 역할을 정한다</h2>
+<p>이 장의 표는 계산을 위한 합성 자료입니다. 접수 시점에 주문 <em>한 건</em>의 배송 소요 시간을 예측합니다. 그래서 <b class="key">관측 단위</b>는 주문 한 건입니다. 한 주문의 상자가 세 개여도 목표 시간을 한 번만 예측한다면 주문 한 행에 상자 수 3을 둡니다. 같은 기사나 같은 거점에서 주문 여러 건이 들어왔을 수 있으므로, 주문이 네 행이라는 사실만으로 행들이 독립이라고 할 수는 없습니다.</p>
+<p>새 주문에도 접수 즉시 얻을 수 있는 거리와 상자 수를 <b class="key">특성</b>(feature)으로 씁니다. 특성을 행과 열로 묶은 배열을 <code>X</code>라고 합니다. 맞히려는 답인 배송 소요 시간은 <b class="key">목표</b>(target)이며, 이 예의 한 행에 답을 하나씩 모은 배열을 <code>y</code>라고 합니다. 완료된 자료에서는 X와 y를 주문 ID로 맞춥니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 315" role="img" aria-label="배송 주문 네 건에서 열 두 개를 특성 X로, 배송 완료 시간 열을 목표 y로 묶는다. 한 줄은 한 주문이다.">
+<text class="f-cap" x="286" y="31" text-anchor="middle">특성 X · 4행 2열</text>
+<text class="f-cap" x="493" y="31" text-anchor="middle">목표 y · 길이 4</text>
+<line class="f-line" x1="155" y1="42" x2="416" y2="42"/>
+<line class="f-ink" x1="424" y1="42" x2="558" y2="42"/>
+<rect class="f-box" x="58" y="62" width="90" height="40"/>
+<text class="f-s" x="103" y="87" text-anchor="middle">주문 ID</text>
+<rect class="f-soft" x="148" y="62" width="136" height="40"/>
+<text class="f-s" x="216" y="87" text-anchor="middle">거리 km</text>
+<rect class="f-soft" x="284" y="62" width="134" height="40"/>
+<text class="f-s" x="351" y="87" text-anchor="middle">상자 수</text>
+<rect class="f-over" x="418" y="62" width="143" height="40"/>
+<text class="f-s" x="489.5" y="87" text-anchor="middle">소요 분</text>
+<rect class="f-box" x="58" y="102" width="90" height="40"/>
+<text class="f-s" x="103" y="127" text-anchor="middle">A1</text>
+<rect class="f-box" x="148" y="102" width="136" height="40"/>
+<text class="f-s" x="216" y="127" text-anchor="middle">1</text>
+<rect class="f-box" x="284" y="102" width="134" height="40"/>
+<text class="f-s" x="351" y="127" text-anchor="middle">1</text>
+<rect class="f-box" x="418" y="102" width="143" height="40"/>
+<text class="f-s" x="489.5" y="127" text-anchor="middle">12</text>
+<rect class="f-box" x="58" y="142" width="90" height="40"/>
+<text class="f-s" x="103" y="167" text-anchor="middle">A2</text>
+<rect class="f-box" x="148" y="142" width="136" height="40"/>
+<text class="f-s" x="216" y="167" text-anchor="middle">2</text>
+<rect class="f-box" x="284" y="142" width="134" height="40"/>
+<text class="f-s" x="351" y="167" text-anchor="middle">2</text>
+<rect class="f-box" x="418" y="142" width="143" height="40"/>
+<text class="f-s" x="489.5" y="167" text-anchor="middle">16</text>
+<rect class="f-box" x="58" y="182" width="90" height="40"/>
+<text class="f-s" x="103" y="207" text-anchor="middle">A3</text>
+<rect class="f-box" x="148" y="182" width="136" height="40"/>
+<text class="f-s" x="216" y="207" text-anchor="middle">4</text>
+<rect class="f-box" x="284" y="182" width="134" height="40"/>
+<text class="f-s" x="351" y="207" text-anchor="middle">1</text>
+<rect class="f-box" x="418" y="182" width="143" height="40"/>
+<text class="f-s" x="489.5" y="207" text-anchor="middle">24</text>
+<rect class="f-box" x="58" y="222" width="90" height="40"/>
+<text class="f-s" x="103" y="247" text-anchor="middle">A4</text>
+<rect class="f-box" x="148" y="222" width="136" height="40"/>
+<text class="f-s" x="216" y="247" text-anchor="middle">6</text>
+<rect class="f-box" x="284" y="222" width="134" height="40"/>
+<text class="f-s" x="351" y="247" text-anchor="middle">3</text>
+<rect class="f-box" x="418" y="222" width="143" height="40"/>
+<text class="f-s" x="489.5" y="247" text-anchor="middle">28</text>
+<line class="f-ink" x1="563" y1="161" x2="596" y2="161"/>
+<text class="f-s" x="607" y="166" text-anchor="start">한 주문</text>
+<text class="f-s" x="308" y="289" text-anchor="middle">주문 ID로 행을 찾아 입력과 목표를 맞춘다.</text>
+</svg>
+<figcaption>정답 소요 시간은 완료 뒤 알 수 있다. 주문 번호는 행을 식별하는 데 쓴다.</figcaption>
+</figure>
+<p>거리와 상자 수가 열 두 개라 X는 <code>(4, 2)</code> 모양입니다. <code>X[2]</code>는 세 번째 주문 A3의 거리와 상자 수, <code>y[2]</code>는 같은 주문의 완료까지 걸린 분입니다. ML 문맥에서 <b>샘플 하나</b>는 관측값 또는 행 하나를 가리킵니다. 통계 문맥의 표본은 여러 관측값을 모은 자료 전체를 가리킬 때가 있습니다.</p>
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+
+<h2>숫자를 맞힐지 범주를 맞힐지 결정한다</h2>
+<p>과거 입력과 정답의 짝 <code>(X, y)</code>를 주고 새 입력의 정답을 예측하도록 규칙을 정하는 방식을 <b class="key">지도학습</b>이라고 합니다. 숫자량을 예측하는 <b class="key">회귀</b>와 범주를 예측하는 <b class="key">분류</b>가 대표적입니다.</p>
+<div class="table-wrap"><table><thead><tr><th scope="col">질문</th><th scope="col">목표 예시</th><th scope="col">학습 문제</th></tr></thead><tbody>
+<tr><th scope="row">배송에 몇 분이 걸리나?</th><td>12, 16, 24, 28분</td><td>회귀</td></tr>
+<tr><th scope="row">20분을 초과하는가?</th><td>정상, 정상, 지연, 지연</td><td>이진 분류</td></tr>
+<tr><th scope="row">어떤 배송 유형인가?</th><td>방문, 보관함, 지정 장소</td><td>다중 클래스 분류</td></tr>
+</tbody></table></div>
+<p>20분을 초과하면 지연 1, 그 이하면 정상 0으로 표시할 수 있습니다. 0과 1은 두 범주를 구분하는 번호입니다. 분류인지 회귀인지를 정하려면 숫자로 저장했는지보다 그 숫자가 <em>양을 뜻하는지 범주를 뜻하는지</em>를 확인합니다. 15분과 19분은 회귀에서는 다른 정답이지만 이 분류 기준에서는 둘 다 정상입니다.</p>
+<div class="why"><p class="box-k">왜 그럴까?</p><p>같은 주문을 회귀로 풀 때와 지연 여부 분류로 풀 때 왜 틀렸다는 뜻이 달라질까요?</p><details><summary>모범 답 보기</summary><p>회귀에서는 18분을 20분으로 예측하면 2분 오차입니다. 지연 여부의 기준이 20분 초과라면 두 값은 모두 정상입니다. 선택한 목표가 평가에서 보려는 차이를 정합니다.</p></details></div>
+<div class="check" data-q="q3"></div>
+<div class="check" data-q="q4"></div>
+
+<h2>학습에서 규칙을 얻고 추론에서 적용한다</h2>
+<p>가장 단순한 예부터 봅니다. 거리가 3 km 이하면 가까운 주문, 3 km를 초과하면 먼 주문으로 나누는 규칙을 먼저 정합니다. 이전 자료에 가까운 주문이 12, 16분, 먼 주문이 24, 28분 걸렸습니다. 가까운 그룹의 평균은 14분, 먼 그룹의 평균은 26분입니다. 거리를 구간으로 나누는 기준은 이 예에서 사람이 정했고, 각 구간에서 쓸 예상 시간은 자료에서 얻었습니다.</p>
+<dl><dt><b class="key">학습</b>(fit)</dt><dd>과거 주문의 거리와 정답 소요 시간으로 그룹별 평균을 계산해 저장합니다.</dd><dt><b class="key">추론</b>(predict)</dt><dd>거리 5 km인 새 주문을 먼 그룹에 넣고 저장한 26분을 출력합니다. 실제 소요 시간은 완료 후 평가할 때 얻습니다.</dd></dl>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 244" role="img" aria-label="훈련 시 가까운 두 주문의 12분과 16분을 평균 내 14분으로, 먼 두 주문의 24분과 28분을 평균 내 26분으로 저장한다. 예측 시 거리 5 km인 새 주문에는 26분을 출력한다.">
+<text class="f-cap" x="65" y="25" text-anchor="start">학습</text>
+<text class="f-cap" x="65" y="147" text-anchor="start">추론</text>
+<rect class="f-box" x="65" y="42" width="230" height="55"/>
+<text class="f-s" x="180" y="74.5" text-anchor="middle">≤ 3 km: 12, 16분</text>
+<rect class="f-box" x="65" y="97" width="230" height="34"/>
+<text class="f-s" x="180" y="119" text-anchor="middle">&gt; 3 km: 24, 28분</text>
+<line class="f-line" x1="306" y1="83" x2="365" y2="83" marker-end="url(#f-arrow)"/>
+<rect class="f-soft" x="380" y="42" width="300" height="89"/>
+<text class="f-t" x="530" y="91.5" text-anchor="middle">가까운 14분 · 먼 26분</text>
+<rect class="f-box" x="65" y="164" width="230" height="47"/>
+<text class="f-s" x="180" y="192.5" text-anchor="middle">새 주문 · 거리 5 km</text>
+<line class="f-line" x1="306" y1="187" x2="365" y2="187" marker-end="url(#f-arrow)"/>
+<rect class="f-soft" x="380" y="164" width="300" height="47"/>
+<text class="f-t" x="530" y="192.5" text-anchor="middle">먼 거리 → 예상 26분</text>
+</svg>
+<figcaption>학습에서 정한 대표값을 저장한다. 새 주문을 처리할 때는 같은 규칙으로 거리를 확인한다.</figcaption>
+</figure>
+<p class="small">실행 예제</p>
+<pre data-example="python"><code>from statistics import mean
+
+features = [(1, 1), (2, 2), (4, 1), (6, 3)]
+targets = [12, 16, 24, 28]
+
+def route(distance):
+    return &quot;near&quot; if distance &lt;= 3 else &quot;far&quot;
+
+groups = {&quot;near&quot;: [], &quot;far&quot;: []}
+for (distance, box_count), target in zip(features, targets):
+    groups[route(distance)].append(target)
+fitted = {name: mean(values) for name, values in groups.items()}
+
+new_distance = 5
+print(f&quot;training shape: ({len(features)}, {len(features[0])})&quot;)
+print(f&quot;near={fitted['near']:.1f} min, far={fitted['far']:.1f} min&quot;)
+print(f&quot;new order: {fitted[route(new_distance)]:.1f} min&quot;)</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>training shape: (4, 2)
+near=14.0 min, far=26.0 min
+new order: 26.0 min</code></pre>
+<p>표에는 후보 특성이 두 열 있지만 이 규칙은 거리만 씁니다. 이 계산이 잘 작동했는지 알기 위해서는 학습할 때 못 본 주문을 예측하고 처음 정한 목표로 평가합니다. 실제 문제를 정할 때는 입력 열의 확보 시각과 예측을 사용할 대상도 함께 적어야 합니다.</p>
+<div class="check" data-q="q6"></div>
+<div class="check" data-q="q7"></div>
+
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table><thead><tr><th scope="col">개념</th><th scope="col">주문 배송 예시</th></tr></thead><tbody>
+<tr><th scope="row"><b class="key">관측 단위</b></th><td>주문 한 건</td></tr>
+<tr><th scope="row"><b class="key">특성 X</b></th><td>접수 시 확보 가능한 거리·상자 수</td></tr>
+<tr><th scope="row"><b class="key">목표 y</b></th><td>배송에 걸린 분 또는 정해 둔 지연 범주</td></tr>
+<tr><th scope="row"><b class="key">학습과 추론</b></th><td>학습에서는 자료로 평균을 정하고, 추론에서는 새 주문에 평균을 적용</td></tr>
+</tbody></table></div>
+<div class="box sum"><p class="box-k">다음 장으로</p><p><a href="ml01-2.html">다음 장</a>에서는 사람이 붙인 정답 없이도 학습 과제를 만드는 방법을 봅니다.</p></div>
+
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://scikit-learn.org/stable/getting_started.html">scikit-learn · 학습, 예측, 데이터 모양</a></li>
+</ul>
+<h2>확인 문제</h2>
+<p>직접 계산하거나 설명을 먼저 적고 답을 확인해 보세요.</p>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

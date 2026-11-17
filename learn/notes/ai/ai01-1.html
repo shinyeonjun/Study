@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>인공지능이 푸는 문제와 출력 읽기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="AI01-1">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">인공지능</p>
+<p class="chap-num">AI01·1</p>
+<h1>인공지능이 푸는 문제와 출력 읽기</h1>
+<p class="lead">도서관 길을 추천하는 프로그램, 책을 반납할 시간을 예측하는 프로그램, 안내문 초안을 쓰는 프로그램은 사용자에게 서로 다른 결과를 줍니다. ‘AI로 하자’는 말부터 시작하기 전에 무엇을 받아 무엇을 내야 하는지 살펴봅니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>예측·추론·계획·생성·행동을 출력에 따라 구별한다.</li><li>작은 지도에서 주어진 모형을 이용해 계획을 계산한다.</li><li>한 시스템에 여러 방식이 쓰일 때 각 단계의 역할을 설명한다.</li></ul></div>
+
+<h2>도서 배송 요청을 여러 질문으로 나눈다</h2>
+<p>작은 도서관 로봇이 반납대에서 서가까지 책을 옮긴다고 합시다. 지금 필요한 질문은 하나일 수도 있고 여러 개일 수도 있습니다. ‘몇 분이 걸릴까’에는 숫자가 필요하고, ‘어떻게 이동할까’에는 선택한 행동들의 순서가 필요합니다. 그림이나 설명문을 만들어 달라면 결과물 자체가 달라집니다.</p>
+<div class="table-wrap"><table><thead><tr><th scope="col">과업</th><th scope="col">입력과 질문</th><th scope="col">출력의 예</th></tr></thead><tbody><tr><td>예측</td><td>현재 통행량과 과거 기록에서 이동 시간이 얼마나 걸릴까?</td><td>도착까지 6분</td></tr><tr><td>추론</td><td>반납함은 열쇠가 있어야 연다. 로봇에게 열쇠가 없다면?</td><td>현재는 반납함을 열 수 없음</td></tr><tr><td>계획</td><td>연결된 통로와 통행 시간을 알 때 어떻게 목적지에 갈까?</td><td>시작점 → 통로 A → 서가</td></tr><tr><td>생성</td><td>정해 둔 조건에 맞춰 반납 안내문을 만들어 달라.</td><td>영업 시간과 장소를 알려 주는 문장</td></tr><tr><td>행동</td><td>지도와 지금 센서 값을 받았을 때 이 순간에 무엇을 할까?</td><td>정지 또는 다음 칸으로 전진</td></tr></tbody></table></div>
+<p>이 나눔은 질문에 필요한 <b class="key">결과의 역할</b>을 설명합니다. 같은 프로그램이 시간을 예측하고, 그 예측으로 이동 순서를 계획하고, 책 배송 상태를 설명하는 문장까지 만들 수 있습니다. 계획 단계가 좋았는지는 실제 경로가 허용되는지와 전체 비용으로, 생성된 안내문이 좋았는지는 내용과 조건을 만족하는지로 평가합니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 160" role="img" aria-label="문제 조건이 들어오고, 방식에 맞춘 계산을 거쳐 필요한 출력을 얻는다.">
+<rect class="f-box" x="42" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="135" y="61" text-anchor="middle">입력</text><text class="f-s" x="135" y="89" text-anchor="middle">관측이나 문제 조건</text><text class="f-s" x="135" y="110" text-anchor="middle">예: 통과할 수 있는 길</text><line class="f-line" x1="235" y1="84" x2="278" y2="84" marker-end="url(#f-arrow)"/><rect class="f-soft" x="287" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="380" y="61" text-anchor="middle">계산</text><text class="f-s" x="380" y="89" text-anchor="middle">규칙·탐색 또는 학습한 모형</text><text class="f-s" x="380" y="110" text-anchor="middle">예: 각 경로의 시간 합</text><line class="f-line" x1="480" y1="84" x2="523" y2="84" marker-end="url(#f-arrow)"/><rect class="f-box" x="532" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="625" y="61" text-anchor="middle">출력</text><text class="f-s" x="625" y="89" text-anchor="middle">예측·계획·생성물·행동</text><text class="f-s" x="625" y="110" text-anchor="middle">예: 이용할 경로</text>
+</svg><figcaption>목표가 달라지면 필요한 출력과 결과를 검증하는 방법도 달라진다.</figcaption></figure>
+<div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
+<h2>기록 없이도 주어진 지도에서 계획할 수 있다</h2>
+<p>지도에 세로로 놓인 점이나 선은 장소와 연결을 간단히 나타낸 것입니다. S에서 G로 이동할 수 있는 후보가 그림의 두 개뿐이라고 가정합니다. 간선에 적힌 수는 그 통로를 가는 데 걸리는 분입니다. 지금 연결 상태와 각 시간이 주어졌으므로, 정해진 후보의 비용을 합해 가장 작은 쪽을 고릅니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 222" role="img" aria-label="출발 S에서 목적 G까지 두 경로가 있다. S-A-G는 간선 비용 3, 2로 총 5이고 S-B-C-G는 각 2로 총 6이다.">
+<line class="f-ink" x1="143" y1="118" x2="368" y2="66"/><line class="f-ink" x1="392" y1="66" x2="617" y2="118"/><line class="f-ink" x1="143" y1="135" x2="255" y2="170"/><line class="f-ink" x1="291" y1="180" x2="469" y2="180"/><line class="f-ink" x1="505" y1="170" x2="617" y2="135"/><circle class="f-soft" cx="125" cy="126" r="20"/><text class="f-t f-b" x="125" y="131" text-anchor="middle">S</text><circle class="f-soft" cx="380" cy="64" r="20"/><text class="f-t f-b" x="380" y="69" text-anchor="middle">A</text><circle class="f-soft" cx="635" cy="126" r="20"/><text class="f-t f-b" x="635" y="131" text-anchor="middle">G</text><circle class="f-soft" cx="274" cy="179" r="20"/><text class="f-t f-b" x="274" y="184" text-anchor="middle">B</text><circle class="f-soft" cx="486" cy="179" r="20"/><text class="f-t f-b" x="486" y="184" text-anchor="middle">C</text><text class="f-cap" x="250" y="81" text-anchor="middle">3</text><text class="f-cap" x="510" y="81" text-anchor="middle">2</text><text class="f-cap" x="197" y="172" text-anchor="middle">2</text><text class="f-cap" x="380" y="168" text-anchor="middle">2</text><text class="f-cap" x="564" y="172" text-anchor="middle">2</text>
+</svg><figcaption>이 도식의 선 길이는 걸리는 시간을 뜻하지 않는다. 통행 가능 여부와 선에 적힌 분을 비교한다.</figcaption></figure>
+<div class="box ex"><p class="box-k">풀이 예제</p><p>S→A→G의 비용은 3+2=5분이고 S→B→C→G는 2+2+2=6분입니다. 평소에는 A를 지나는 길이 더 짧습니다. ‘A를 지날 수 없다’는 조건이 생기면 그 길은 가능한 후보에서 빠져 B와 C를 지나는 6분짜리 길이 선택됩니다.</p></div>
+<pre data-example="python"><code>paths = {&quot;S-A-G&quot;: [3, 2], &quot;S-B-C-G&quot;: [2, 2, 2]}
+
+def choose_path(closed):
+    candidates = [name for name in paths
+                  if closed is None or closed not in name.split(&quot;-&quot;)]
+    return min(candidates, key=lambda name: sum(paths[name]))
+
+for closed in (None, &quot;A&quot;):
+    selected = choose_path(closed)
+    print(selected, sum(paths[selected]), &quot;min&quot;)</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>S-A-G 5 min
+S-B-C-G 6 min</code></pre>
+<p>이 작은 코드에는 후보 두 개를 직접 적었습니다. 큰 지도에서는 가능한 모든 길을 미리 적기 어렵기 때문에, 현재 위치에서 가능한 다음 위치를 차근히 조사하는 <b>탐색</b>으로 후보를 얻습니다. 여기 필요한 전제는 간선 시간과 폐쇄 상태입니다. 그 시간이 실제로 언제 바뀌는지 모른다면 과거 관측으로 시간을 예측하는 별도 단계를 추가할 수 있습니다.</p>
+<div class="check" data-q="q3"></div><div class="check" data-q="q4"></div><div class="check" data-q="q5"></div>
+<h2>계획을 만들기와 실제로 따라가기</h2>
+<p>S에서 길을 골라 A를 향하다가 새 장애물을 발견할 수 있습니다. 무엇이 실행 중 바뀌었는지를 관측하고 현재 위치에서 다시 계산합니다. 계획은 앞으로 할 행동을 미리 계산한 결과입니다. 실제 움직임은 계획과 센서 관측을 함께 받아 다음 행동을 고른 뒤 환경에 영향을 줍니다.</p>
+<p>각 문제를 시작할 때 <b>무슨 정보가 들어오며, 시스템이 무엇을 내놓고, 결과는 어떤 기준으로 비교하는가</b>를 먼저 적어 두면 구현 기술을 갈아 끼워도 연구 질문을 같은 말로 설명할 수 있습니다.</p>
+<h2>한눈에 정리</h2>
+<ul><li>예측은 아직 알지 못하는 값, 추론은 주어진 근거에서 따라오는 판단을 구한다.</li><li>계획은 목표를 위한 행동 순서를 고른다. 행동을 고르면 현재 환경과의 상호작용으로 이어진다.</li><li>생성은 입력 조건에 맞는 결과물을 만든다. 결과가 맞는지 살필 기준을 별도로 둔다.</li></ul>
+
+<h2>참고 자료</h2>
+<ul><li><a href="https://aima.cs.berkeley.edu/">Russell·Norvig · Artificial Intelligence: A Modern Approach</a></li><li><a href="https://aima.cs.berkeley.edu/contents.html">Russell·Norvig · 탐색·추론·계획·학습의 장별 구성</a></li></ul>
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

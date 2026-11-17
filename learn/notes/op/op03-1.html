@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>최솟값을 정의하고 한 변수에서 내려가기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e8c'/%3E%3Cpath d='M8 22V10m8 12V14m8 8V6' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="OP03-1">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+
+<header class="chapter">
+<p class="chap-sub">수치계산·최적화·정보이론 · OP03 손실과 경사하강</p>
+<p class="chap-num">OP03·1</p>
+<h1>최솟값을 정의하고 한 변수에서 내려가기</h1>
+<p class="lead">어떤 값을 바꿀 수 있고, 무엇을 가장 작게 만들고 싶은지 정합니다. 제곱 손실의 예에서 기울기를 따라 업데이트하고, 보폭이 커질 때 왜 실패하는지 계산합니다.</p>
+</header>
+
+<div class="goal">
+<h2>이 장을 읽고 나면</h2>
+<ul>
+<li>최적화 문제에서 바꾸는 변수, 작게 만들 목적함수, 허용하는 제약을 정한다.</li>
+<li>목적함수의 최솟값과 그 값을 만드는 변수의 위치를 구분한다.</li>
+<li>제곱 손실의 경사하강을 손으로 반복하고, 이 예에서 학습률의 안정 범위를 구한다.</li>
+</ul>
+</div>
+
+<h2>고를 값과 평가할 값을 따로 적는다</h2>
+<p>목표가 3인 장치 출력을 조절한다고 합시다. 우리가 선택하는 출력 w가 <b class="key">변수</b>입니다. 출력과 목표의 차이는 w−3입니다. 작게 만들 값으로 차이의 제곱 J(w)=(w−3)²를 쓰겠습니다. 양쪽으로 벗어나는 차이를 음이 아닌 수로 비교합니다. 이렇게 후보를 평가하는 J가 <b class="key">목적함수</b>이며, 예측이나 출력이 목표에서 어긋난 정도를 나타낼 때는 <b class="key">손실함수</b>라고도 합니다.</p>
+<p>장치에서 가능한 출력이 0부터 2까지라면 0 ≤ w ≤ 2는 <b class="key">제약</b>입니다. 그 범위의 후보들만 비교합니다. 기호 J(w)가 같아도 어떤 w를 고를 수 있는지에 따라 문제가 달라집니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 315" role="img" aria-label="제곱 손실 곡선의 가장 낮은 점은 w=3, 손실 0이다. 허용 범위 0에서 2는 음영으로 표시되어 있으며 그 범위의 가장 낮은 점은 w=2, 손실 1이다.">
+<rect class="f-soft" x="125" y="40" width="180" height="207"/>
+<path class="f-ink" d="M108 247h546" marker-end="url(#f-arrow)"/>
+<path class="f-ink" d="M125 261V26" marker-end="url(#f-arrow)"/>
+<path class="f-line" d="M125 67Q350 367 575 167" style="stroke-width:2"/>
+<path class="f-dash" d="M125 227h180 M305 227v20"/>
+<circle class="f-fill" cx="305" cy="227" r="5"/>
+<circle class="f-fill" cx="395" cy="247" r="5"/>
+<path class="f-ink" d="M310 222l43-39 M399 242l58-36"/>
+<text class="f-t" x="110" y="231" text-anchor="end">1</text>
+<text class="f-t" x="125" y="272" text-anchor="middle">0</text>
+<text class="f-t" x="305" y="272" text-anchor="middle">2</text>
+<text class="f-t" x="395" y="272" text-anchor="middle">3</text>
+<text class="f-t" x="664" y="253">w</text>
+<text class="f-cap" x="143" y="29">J(w)</text>
+<text class="f-t" x="359" y="179">허용 범위 안의 최소 (2,1)</text>
+<text class="f-t" x="463" y="204">제약이 없을 때 (3,0)</text>
+<text class="f-cap" x="215" y="298" text-anchor="middle">허용 범위 [0, 2]</text>
+</svg>
+<figcaption>가능한 w가 [0,2]일 때, 그 안에서 손실이 가장 작은 점은 오른쪽 경계 w=2다.</figcaption>
+</figure>
+<div class="box ex"><p class="box-k">최솟값과 최소로 만드는 위치</p>
+<p>0 ≤ w ≤ 2에서 w가 2에 가까울수록 (w−3)²은 작아집니다. 따라서 최소 손실은 J(2)=1이고 그때의 변수는 w=2입니다. <code>min</code>은 값, <code>argmin</code>은 그 값을 달성하는 변수의 집합을 반환하는 기호로 쓰겠습니다.</p>
+<p class="calc">min<sub>w∈[0,2]</sub> J(w) = 1. &nbsp; argmin<sub>w∈[0,2]</sub> J(w) = {2}.</p>
+</div>
+<p>제약이 없으면 min은 0, argmin은 {3}입니다. 서로 다른 선택이 같은 최솟값을 줄 수도 있습니다. 예를 들어 J(w)=w²을 허용 후보 {−2,2}에서 비교하면 argmin은 {−2,2}입니다. 또 열린 구간 0 &lt; w &lt; 1에서 J(w)=w라면 0에 아무리 가까이 갈 수 있어도 0을 고를 수는 없습니다. 이 경우 최솟값을 달성하는 후보가 없습니다.</p>
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+
+<h2>기울기가 향하는 쪽의 반대로 작은 한 걸음을 옮긴다</h2>
+<p>w를 자유롭게 움직일 수 있다고 합시다. 제곱 손실의 도함수 J′(w)=2(w−3)입니다. w=0에서 도함수는 −6이므로 w를 오른쪽으로 조금 움직이면 손실이 줄어듭니다. w=5에서는 도함수가 4이므로 왼쪽으로 조금 움직이면 줄어듭니다. 작은 변화 Δw에 대해 J(w+Δw)−J(w) ≈ J′(w)Δw입니다. 변화량을 도함수와 반대 부호로 정하면 이 근삿값이 음수가 됩니다.</p>
+<p class="calc">w<sub>k+1</sub> = w<sub>k</sub> − η J′(w<sub>k</sub>).</p>
+<p>이 갱신을 반복하는 방법을 <b class="key">경사하강</b>이라고 합니다. 양수 η는 <b class="key">학습률</b>로, 도함수에 곱해 얼마나 옮길지 정합니다. 실제 이동 거리의 크기는 η|J′(w<sub>k</sub>)|입니다. 갱신할 때는 도함수를 새 위치에서 다시 계산합니다.</p>
+<div class="box ex"><p class="box-k">두 번 갱신하기</p>
+<p>w<sub>0</sub>=0, η=1/4로 둡니다. 첫 도함수 −6을 쓰면 w<sub>1</sub>=0 − (1/4)(−6)=1.5입니다. w<sub>1</sub>에서 도함수는 −3이므로 w<sub>2</sub>=1.5 − (1/4)(−3)=2.25입니다. 손실은 차례로 9, 2.25, 0.5625입니다.</p>
+</div>
+<p>제약이 있다면 새 w가 허용 범위 안에 있는지 확인해야 합니다. 예를 들어 [0,2]에서 1.5 다음으로 나온 2.25를 가까운 허용점 2로 보내는 방법이 있습니다. 이 문제의 해 2에서 J′(2)=−2입니다. 제약의 경계에서는 도함수가 0이 아닌 점도 최적일 수 있습니다. 아래 학습률 계산은 자유롭게 w를 움직이는 경우입니다.</p>
+<div class="check" data-q="q3"></div>
+<div class="check" data-q="q4"></div>
+
+<h2>이 제곱 함수에서 수렴이 가능한 학습률</h2>
+<p>정답 w=3에서 얼마나 벗어났는지 e<sub>k</sub>=w<sub>k</sub>−3이라 놓습니다. 갱신식의 양쪽에서 3을 빼면 오차는 다음처럼 매번 같은 수가 곱해집니다.</p>
+<p class="calc">e<sub>k+1</sub> = e<sub>k</sub> − 2ηe<sub>k</sub> = (1 − 2η)e<sub>k</sub>.</p>
+<p>w<sub>0</sub>가 3이 아니면, |1−2η| &lt; 1일 때 오차가 0으로 수렴합니다. 이 부등식을 풀면 <b>0 &lt; η &lt; 1</b>입니다. 0 &lt; η &lt; 1/2에서는 정답의 같은 편에서 접근합니다. η=1/2에서는 한 번에 3에 닿고, 1/2 &lt; η &lt; 1에서는 양쪽을 오가며 가까워집니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 354" role="img" aria-label="w0=0이므로 시작 오차는 -3이다. 학습률 0.25는 아래에서 0에 접근하고, 0.75는 좌우의 오차 부호를 교대하며 0에 접근한다. 학습률 1은 오차가 -3과 3을 반복한다.">
+<path class="f-ink" d="M95 183h530" marker-end="url(#f-arrow)"/>
+<path class="f-ink" d="M110 275V83" marker-end="url(#f-arrow)"/>
+<path class="f-ink" d="M106 108h8 M106 258h8 M225 179v8 M340 179v8 M455 179v8 M570 179v8"/>
+<polyline class="f-dash" points="110,258.000 225,108.000 340,258.000 455,108.000 570,258.000"/>
+<polyline class="f-ink" points="110,258.000 225,145.500 340,201.750 455,173.625 570,187.688" style="stroke-width:2"/>
+<polyline class="f-line" points="110,258.000 225,220.500 340,201.750 455,192.375 570,187.688" style="stroke-width:3"/>
+<circle class="f-fill" cx="110" cy="258" r="4"/>
+<text class="f-cap" x="122" y="69">변수 오차 wₖ − 3</text>
+<text class="f-t" x="98" y="112" text-anchor="end">3</text>
+<text class="f-t" x="98" y="187" text-anchor="end">0</text>
+<text class="f-t" x="98" y="262" text-anchor="end">−3</text>
+<text class="f-t" x="110" y="298" text-anchor="middle">0</text>
+<text class="f-t" x="225" y="298" text-anchor="middle">1</text>
+<text class="f-t" x="340" y="298" text-anchor="middle">2</text>
+<text class="f-t" x="455" y="298" text-anchor="middle">3</text>
+<text class="f-t" x="570" y="298" text-anchor="middle">4</text>
+<text class="f-t" x="639" y="188">반복 k</text>
+<path class="f-line" d="M116 323h35" style="stroke-width:3"/>
+<text class="f-t" x="159" y="328">η = 0.25</text>
+<path class="f-ink" d="M305 323h35" style="stroke-width:2"/>
+<text class="f-t" x="348" y="328">η = 0.75</text>
+<path class="f-dash" d="M496 323h35"/>
+<text class="f-t" x="539" y="328">η = 1</text>
+</svg>
+<figcaption>k는 정수다. 선은 같은 학습률에서 얻은 값들을 잇는다. η=0.25와 η=0.75의 오차 크기는 같으므로 짝수 k에서는 점이 겹친다.</figcaption>
+</figure>
+<p>η=1이면 오차는 부호만 바뀌고 손실 e<sub>k</sub>²은 같게 유지됩니다. η &gt; 1이면 처음 오차가 0인 경우를 제외하고 그 크기가 늘어납니다. η=0이면 처음 위치에서 움직이지 않습니다. 이 범위는 J(w)=(w−3)²의 곡률에서 나온 값입니다. 손실에 양의 상수를 곱하면 가장 좋은 w는 그대로여도 도함수와 안정적인 학습률 범위는 바뀝니다.</p>
+<div class="check" data-q="q5"></div>
+<div class="check" data-q="q6"></div>
+
+<h2>같은 시작점에서 학습률만 바꾸어 실행한다</h2>
+<pre data-example="python"><code>def loss(w):
+    return (w - 3)**2
+
+def run(rate, steps):
+    w = 0.0
+    values = [w]
+    for _ in range(steps):
+        slope = 2 * (w - 3)
+        w = w - rate * slope
+        values.append(w)
+    positions = " ".join(f"{value:.4f}" for value in values)
+    print(f"η={rate:.2f}: {positions} | 마지막 손실={loss(w):.4f}")
+
+for rate in (0.25, 0.75, 1.0, 1.1):
+    run(rate, 4)</code></pre>
+<pre data-output><code>η=0.25: 0.0000 1.5000 2.2500 2.6250 2.8125 | 마지막 손실=0.0352
+η=0.75: 0.0000 4.5000 2.2500 3.3750 2.8125 | 마지막 손실=0.0352
+η=1.00: 0.0000 6.0000 0.0000 6.0000 0.0000 | 마지막 손실=9.0000
+η=1.10: 0.0000 6.6000 -1.3200 8.1840 -3.2208 | 마지막 손실=38.6984</code></pre>
+<p>출력의 마지막 값은 네 번 갱신했을 때의 값입니다. 경사하강을 어디서 끝낼지는 정해 둔 반복 한도나 도함수 크기 같은 기준으로 판단할 수 있습니다. 이 예에서는 |J′(w)|=2|w−3|이므로, 도함수가 작다는 기준을 정답과 가까운 정도로 해석할 수 있습니다. 다음 장에서는 여러 변수에서 기울기와 종료 조건을 다룹니다.</p>
+
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table>
+<tr><th scope="col">기호 또는 표현</th><th scope="col">읽는 뜻</th></tr>
+<tr><td>min J와 argmin J</td><td>달성한 최솟값과 그 값을 달성한 허용 후보의 집합.</td></tr>
+<tr><td>w − ηJ′(w)</td><td>현재 도함수의 반대 방향으로 학습률을 곱한 만큼 갱신한다.</td></tr>
+<tr><td>|1−2η| &lt; 1</td><td>이 장의 제곱 손실에서 오차 크기가 각 걸음에 감소하는 조건.</td></tr>
+</table></div>
+
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://web.stanford.edu/~boyd/cvxbook/">Boyd·Vandenberghe, Convex Optimization · 최적화 문제와 무제약 최소화</a></li>
+<li><a href="https://introml.mit.edu/notes/gradient_descent.html">MIT 6.390 · 경사하강의 갱신 규칙과 학습률</a></li>
+</ul>
+
+<h2>확인 문제</h2>
+<p>아직 풀지 않은 문제입니다. 먼저 식이나 근거를 적어 보고 해설을 확인합니다.</p>
+<div id="quiz"></div>
+
+<section class="work" id="tools"></section>
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

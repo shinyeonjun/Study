@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>브라우저로 웹 요청을 관찰하고 API 값 읽기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="NW02-2">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">네트워크</p>
+<p class="chap-num">NW02·2</p>
+<h1>브라우저로 웹 요청을 관찰하고 API 값 읽기</h1>
+<p class="lead">한 주소를 열었어도 브라우저는 문서와 꾸밈 파일, 코드 등 여러 자료를 읽어 옵니다. 네트워크 기록에서 어느 요청의 결과를 보고 있는지 찾고, 내가 만든 작은 서버에서 JSON 응답을 받아 봅니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>브라우저에서 문서와 추가 파일 요청을 찾는다.</li><li>한 요청의 주소·메서드·상태·헤더·본문을 확인한다.</li><li>로컬 API에 요청을 보내 JSON 데이터로 해석한다.</li></ul></div>
+
+<h2>문서 한 장과 요청 한 개를 구별한다</h2>
+<p>이 교재 페이지를 열면 맨 먼저 HTML 문서를 받습니다. HTML에는 꾸밈을 담당하는 CSS와 목차를 계산하는 JavaScript를 읽으라는 내용이 들어 있습니다. 따라서 주소창에서 한 번 이동했더라도 아래처럼 여러 항목이 남을 수 있습니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 259" role="img" aria-label="브라우저가 문서를 요청해 HTML을 받는다. 이어 CSS와 JavaScript를 요청해 파일을 받는다.">
+<line class="f-ink" x1="154" y1="34" x2="154" y2="241"/><line class="f-ink" x1="626" y1="34" x2="626" y2="241"/><text class="f-cap" x="154" y="23" text-anchor="middle">브라우저</text><text class="f-cap" x="626" y="23" text-anchor="middle">서버</text><line class="f-line" x1="159" y1="59" x2="621" y2="59" marker-end="url(#f-arrow)"/><text class="f-s" x="388" y="54" text-anchor="middle">① 문서 요청</text><line class="f-ink" x1="621" y1="104" x2="159" y2="104" marker-end="url(#f-arrow)"/><text class="f-s" x="388" y="99" text-anchor="middle">② HTML 응답</text><line class="f-line" x1="159" y1="149" x2="621" y2="149" marker-end="url(#f-arrow)"/><text class="f-s" x="388" y="144" text-anchor="middle">③ 문서에서 찾은 CSS·JS 요청</text><line class="f-ink" x1="621" y1="194" x2="159" y2="194" marker-end="url(#f-arrow)"/><text class="f-s" x="388" y="189" text-anchor="middle">④ CSS·JS 응답</text>
+</svg><figcaption>브라우저는 문서 안에서 필요한 파일을 발견하면 요청을 더 보낸다. 실제 요청은 겹쳐서 진행될 수 있다.</figcaption></figure>
+<p>브라우저의 개발자 도구에서 <b class="key">Network</b>(네트워크) 탭을 열고, 열린 상태에서 이 교재를 새로고침합니다. 요청을 이름이나 주소로 찾아봅니다. 먼저 현재 문서의 항목을 열어 메서드와 상태를 읽고, 그 뒤 <code>notes.js</code>를 골라 자료가 별도로 불리는지 확인합니다. 브라우저가 파일을 미리 받아 놓았다면 캐시에서 제공됐다고 표시될 수 있습니다.</p>
+<div class="table-wrap"><table><thead><tr><th scope="col">화면에서 찾는 것</th><th scope="col">관찰할 질문</th></tr></thead><tbody><tr><td>이름·URL</td><td>지금 보고 있는 항목은 문서인가, 스크립트인가?</td></tr><tr><td>Method·Status</td><td>GET으로 요청했는가? 어떤 상태가 찍혔는가?</td></tr><tr><td>Headers</td><td>서버와 브라우저가 알아들을 자료 형식은 무엇인가?</td></tr><tr><td>Response</td><td>실제로 받은 데이터는 HTML, JavaScript, JSON 중 무엇인가?</td></tr><tr><td>Timing</td><td>보내기와 기다리기, 내려받기 등 어느 단계에서 시간이 들었는가?</td></tr></tbody></table></div>
+<p>관찰 단계마다 항목을 지정합니다. 예를 들어 문서는 200이어도 뒤이어 읽는 파일 하나가 404일 수 있습니다. 목록이 이상할 때 페이지 한 줄의 상태뿐 아니라 기능에 필요한 요청 항목을 확인합니다.</p>
+<div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
+<h2>프로그램끼리 쓰는 약속을 지정한다</h2>
+<p><b class="key">API</b>는 프로그램에서 다른 코드나 서비스에 일을 요청하는 방식과 결과를 사용하는 방법을 정한 접점입니다. 웹 API에서는 요청 경로·메서드·입력과 응답의 상태·데이터 형식 등을 약속합니다. 이 장의 API에서 <code>GET /api/summary</code>는 노트 수를 조회하며, 성공하면 JSON의 <code>count</code> 항목에 정수를 담습니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 160" role="img" aria-label="클라이언트가 API에 요약 요청을 보낸다. 서버는 200과 JSON을 돌려주고 클라이언트는 count를 값으로 읽는다.">
+<rect class="f-box" x="42" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="135" y="61" text-anchor="middle">요청</text><text class="f-s" x="135" y="89" text-anchor="middle">GET /api/summary</text><text class="f-s" x="135" y="110" text-anchor="middle">노트 수를 묻는다</text><line class="f-line" x1="235" y1="84" x2="278" y2="84" marker-end="url(#f-arrow)"/><rect class="f-soft" x="287" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="380" y="61" text-anchor="middle">응답</text><text class="f-s" x="380" y="89" text-anchor="middle">200 및 JSON</text><text class="f-s" x="380" y="110" text-anchor="middle">count 항목을 받는다</text><line class="f-line" x1="480" y1="84" x2="523" y2="84" marker-end="url(#f-arrow)"/><rect class="f-box" x="532" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="625" y="61" text-anchor="middle">클라이언트</text><text class="f-s" x="625" y="89" text-anchor="middle">JSON을 읽어 표시</text><text class="f-s" x="625" y="110" text-anchor="middle">예: 등록 노트 2개</text>
+</svg><figcaption>주소뿐 아니라 허용 메서드, 상태, 응답 데이터의 항목과 뜻까지 알아야 API를 안정적으로 사용할 수 있다.</figcaption></figure>
+<p>JSON은 프로그램이 구조를 알아보기 쉬운 텍스트 자료 형식입니다. 웹 API가 항상 JSON을 쓰는 것은 아닙니다. 응답의 <code>Content-Type</code>을 확인한 뒤 본문을 해석합니다. 상태 200만 보고 <code>count</code>가 반드시 있다고 가정하면, 다른 형식이나 변경된 응답이 왔을 때 확인할 근거가 없습니다.</p>
+<div class="check" data-q="q3"></div><div class="check" data-q="q4"></div>
+<h2>같은 컴퓨터에서 실제 요청을 만들어 본다</h2>
+<p>아래 코드는 Python 표준 라이브러리만 씁니다. <code>127.0.0.1</code>은 지금 프로그램이 실행된 컴퓨터만 가리킵니다. 포트 자리에 0을 넣어 운영체제가 사용하지 않는 포트를 정합니다. 같은 컴퓨터에서 접속할 뿐이며 외부 사이트의 상태나 인터넷 연결에 따라 결과가 바뀌지 않습니다.</p>
+<pre data-example="python"><code>from http.client import HTTPConnection
+from http.server import BaseHTTPRequestHandler, HTTPServer
+from threading import Thread
+import json
+
+class Handler(BaseHTTPRequestHandler):
+    def do_GET(self):
+        if self.path != &quot;/api/summary&quot;:
+            self.send_response(404)
+            self.end_headers()
+            return
+
+        body = json.dumps({&quot;count&quot;: 2}).encode(&quot;utf-8&quot;)
+        self.send_response(200)
+        self.send_header(&quot;Content-Type&quot;, &quot;application/json&quot;)
+        self.send_header(&quot;Content-Length&quot;, str(len(body)))
+        self.end_headers()
+        self.wfile.write(body)
+
+    def log_message(self, format, *args):
+        pass
+
+with HTTPServer((&quot;127.0.0.1&quot;, 0), Handler) as server:
+    worker = Thread(target=server.serve_forever)
+    worker.start()
+    client = HTTPConnection(&quot;127.0.0.1&quot;, server.server_port, timeout=3)
+    try:
+        for path in (&quot;/api/summary&quot;, &quot;/absent&quot;):
+            client.request(&quot;GET&quot;, path)
+            response = client.getresponse()
+            body = response.read()
+            print(path, response.status)
+            if response.status != 200:
+                continue
+            media_type = response.headers.get_content_type()
+            if media_type != &quot;application/json&quot;:
+                raise ValueError(&quot;JSON 응답을 기대했습니다.&quot;)
+            data = json.loads(body)
+            if not isinstance(data, dict) or type(data.get(&quot;count&quot;)) is not int:
+                raise ValueError(&quot;count가 정수여야 합니다.&quot;)
+            print(media_type)
+            print(&quot;노트 수&quot;, data[&quot;count&quot;])
+    finally:
+        client.close()
+        server.shutdown()
+        worker.join()</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>/api/summary 200
+application/json
+노트 수 2
+/absent 404</code></pre>
+<p>먼저 서버의 <code>do_GET</code>이 요청 대상을 읽습니다. <code>self.path</code>에는 쿼리가 있을 때 그 부분도 함께 들어옵니다. 이 예제에서는 예약한 문자열 <code>/api/summary</code>와 같으면 응답을 만들고, 다른 요청 대상에는 404를 돌려줍니다. 클라이언트는 200 응답의 자료 형식이 JSON인지 확인한 뒤 본문을 읽습니다. 읽은 JSON은 객체여야 하고 <code>count</code>는 정수여야 값을 사용합니다. 마지막에는 연결과 서버를 닫습니다.</p>
+<p>이 작은 예제에서는 실행할 때 서버와 요청 기능을 한 파일에 두었습니다. 역할은 여전히 각각 서버와 클라이언트입니다. 나중에 <a href="../../unit.html?u=NW09">소켓 프로그래밍</a>에서는 프로그램이 서로 데이터를 보내는 연결 자체를 다룹니다.</p>
+<div class="check" data-q="q5"></div><div class="check" data-q="q6"></div>
+<h2>한눈에 정리</h2>
+<ul><li>Network 화면에서 요청 하나를 골라 주소·메서드·상태·헤더·본문을 함께 읽는다.</li><li>웹 API는 요청 방법과 응답 형태를 프로그램 사이에 함께 정하는 약속이다.</li><li>작은 로컬 서버에 요청을 보내도 HTTP의 메서드, 상태, 자료 형식을 확인할 수 있다.</li></ul>
+
+<h2>참고 자료</h2>
+<ul><li><a href="https://www.rfc-editor.org/rfc/rfc9110.html">IETF RFC 9110 · HTTP 의미, 메서드, 상태코드</a></li><li><a href="https://learn.microsoft.com/en-us/microsoft-edge/devtools/network/">Microsoft Edge DevTools · 네트워크 요청 검사</a></li><li><a href="https://docs.python.org/3/library/http.server.html">Python · HTTP 서버</a></li><li><a href="https://docs.python.org/3/library/http.client.html">Python · HTTP 연결</a></li></ul>
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

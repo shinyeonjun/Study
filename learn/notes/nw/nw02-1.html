@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>웹 주소에서 HTTP 요청과 응답 읽기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="NW02-1">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">네트워크</p>
+<p class="chap-num">NW02·1</p>
+<h1>웹 주소에서 HTTP 요청과 응답 읽기</h1>
+<p class="lead">브라우저에 주소를 입력하면 어느 서버에 무슨 자료를 요청할지 정해집니다. 주소 한 줄을 조각으로 나누고, 글자로 읽기 쉬운 HTTP/1.1 예로 실제 요청과 응답의 구조를 확인합니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>URL에서 스킴·호스트·포트·경로·쿼리·프래그먼트를 찾는다.</li><li>HTTP 요청과 응답의 첫 줄, 헤더, 본문을 구별한다.</li><li>자주 만나는 상태코드를 설명한다.</li></ul></div>
+
+<h2>URL에서 통신 상대와 원하는 자원을 찾는다</h2>
+<p>다음처럼 예시용 주소를 정합니다. <code>https://study.example:8443/notes?page=2#table</code>을 왼쪽부터 읽어 봅니다. <b class="key">URL</b>은 웹에서 자원에 접근할 위치와 방법을 적는 표현입니다. 주소의 각 부분을 어디에서 쓰는지가 다릅니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 186" role="img" aria-label="https://study.example:8443/notes?page=2#table에서 https는 scheme, study.example은 호스트, 8443은 포트, /notes는 경로, page=2는 쿼리, table은 프래그먼트.">
+<text class="f-cap f-b" x="380" y="47" text-anchor="middle">https://study.example:8443/notes?page=2#table</text><rect class="f-box" x="37" y="82" width="106" height="77" rx="3"/><text class="f-s" x="90" y="111" text-anchor="middle">https</text><text class="f-t" x="90" y="138" text-anchor="middle">스킴</text><rect class="f-box" x="153" y="82" width="106" height="77" rx="3"/><text class="f-s" x="206" y="111" text-anchor="middle">study.example</text><text class="f-t" x="206" y="138" text-anchor="middle">호스트</text><rect class="f-box" x="269" y="82" width="106" height="77" rx="3"/><text class="f-s" x="322" y="111" text-anchor="middle">8443</text><text class="f-t" x="322" y="138" text-anchor="middle">포트</text><rect class="f-soft" x="385" y="82" width="106" height="77" rx="3"/><text class="f-s" x="438" y="111" text-anchor="middle">/notes</text><text class="f-t" x="438" y="138" text-anchor="middle">경로</text><rect class="f-soft" x="501" y="82" width="106" height="77" rx="3"/><text class="f-s" x="554" y="111" text-anchor="middle">page=2</text><text class="f-t" x="554" y="138" text-anchor="middle">쿼리</text><rect class="f-soft" x="617" y="82" width="106" height="77" rx="3"/><text class="f-s" x="670" y="111" text-anchor="middle">table</text><text class="f-t" x="670" y="138" text-anchor="middle">프래그먼트</text>
+</svg><figcaption>물음표와 우물정 표시는 구성 요소의 시작을 알려 준다. 프래그먼트는 브라우저가 받은 문서 안의 위치를 가리킬 수 있다.</figcaption></figure>
+<div class="table-wrap"><table><thead><tr><th scope="col">부분</th><th scope="col">예</th><th scope="col">쓰임</th></tr></thead><tbody><tr><td>스킴</td><td>https</td><td>HTTP 통신을 보호하는 연결을 쓰도록 지정</td></tr><tr><td>호스트</td><td>study.example</td><td>접속할 서버 쪽 이름</td></tr><tr><td>포트</td><td>8443</td><td>이 연결이 향하는 서버 쪽 접속 번호</td></tr><tr><td>경로</td><td>/notes</td><td>자원의 위치를 구별할 문자열</td></tr><tr><td>쿼리</td><td>page=2</td><td>페이지 번호 같은 조건을 서버에 전달</td></tr><tr><td>프래그먼트</td><td>table</td><td>받은 문서 안에서 이동할 위치 등을 브라우저가 해석</td></tr></tbody></table></div>
+<p>이 URL에는 포트를 따로 적었으므로 8443으로 연결을 시도합니다. 일반적인 HTTPS 주소에서 포트가 비어 있으면 기본값 443입니다. 이 장은 주소의 역할을 먼저 배우고, 연결 과정은 DNS·포트·암호화 단원에서 이어 살펴봅니다.</p>
+<p><code>#table</code>은 일반 웹 요청의 목적 문자열에 넣지 않습니다. 서버에 원하는 경로와 쿼리를 보내고, 브라우저가 응답을 읽은 뒤 스스로 <code>table</code> 위치를 찾을 수 있습니다.</p>
+<div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
+<h2>HTTP/1.1 메시지는 어떤 줄로 나뉘나</h2>
+<p>브라우저가 예시 자료를 읽어 온다고 합시다. <b class="key">HTTP</b>는 이 요청과 응답이 어떤 뜻을 갖는지 정한 웹 통신의 프로토콜입니다. 예를 들어 <code>GET</code>은 대상 자원의 표현을 받으려는 요청에 쓰고, <code>POST</code>는 요청에 담긴 데이터를 대상 자원의 규칙대로 처리하도록 요청할 때 씁니다.</p>
+<p>설명용으로, 위 주소의 자원에 HTTP/1.1 방식으로 보내는 메시지를 보여 줍니다. 명시한 포트를 포함한 접속 대상을 <code>Host</code>에 적고 <code>Accept</code>로 희망 응답 형식을 표시합니다.</p>
+<pre><code>GET /notes?page=2 HTTP/1.1
+Host: study.example:8443
+Accept: application/json
+
+</code></pre>
+<p>맨 위는 요청 줄입니다. 두 헤더 줄이 이어지고 빈 줄이 헤더의 끝을 표시합니다. 이 GET에는 요청 본문이 없습니다. 서버는 자료를 찾아 상태코드와 응답 본문을 보낼 수 있습니다. 여기서는 JSON 문자열의 길이가 11바이트입니다.</p>
+<pre><code>HTTP/1.1 200 OK
+Content-Type: application/json
+Content-Length: 11
+
+{"count":2}</code></pre>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 230" role="img" aria-label="다음 HTTP/1.1 메시지를 비교한다. GET 요청은 헤더와 빈 줄까지 있고 본문 없음. 200 응답은 헤더 뒤 본문을 담음.">
+<rect class="f-soft" x="53" y="38" width="318" height="58" rx="3"/><rect class="f-soft" x="389" y="38" width="318" height="58" rx="3"/><rect class="f-box" x="53" y="96" width="318" height="58" rx="3"/><rect class="f-box" x="389" y="96" width="318" height="58" rx="3"/><rect class="f-box" x="53" y="154" width="318" height="48" rx="3"/><rect class="f-box" x="389" y="154" width="318" height="48" rx="3"/><text class="f-t f-b" x="212" y="72" text-anchor="middle">요청 줄 · GET /notes?page=2</text><text class="f-t f-b" x="548" y="72" text-anchor="middle">상태 줄 · 200 OK</text><text class="f-s" x="212" y="132" text-anchor="middle">Host, Accept 같은 요청 헤더</text><text class="f-s" x="548" y="132" text-anchor="middle">Content-Type 같은 응답 헤더</text><text class="f-s" x="212" y="184" text-anchor="middle">빈 줄 / 본문 없음</text><text class="f-s" x="548" y="184" text-anchor="middle">빈 줄 뒤 본문 {&quot;count&quot;:2}</text>
+</svg><figcaption>메서드는 클라이언트가 요청할 일을 적고, 상태코드는 서버가 처리한 결과를 나타낸다.</figcaption></figure>
+<p><b class="key">헤더</b>는 메시지와 전달할 데이터의 형식 등에 관한 항목을 담습니다. <b>본문</b>은 실제로 보내는 메시지 데이터입니다. HTTP/1.1에서는 위처럼 문자 줄을 읽어도 되지만, HTTP/2나 HTTP/3의 전송 형식은 다릅니다. 상태코드와 요청 메서드 등 HTTP가 주고받는 내용의 의미는 버전 사이에서 공통됩니다.</p>
+<div class="check" data-q="q3"></div><div class="check" data-q="q4"></div>
+<h2>상태코드가 알려 주는 응답의 종류</h2>
+<div class="table-wrap"><table><thead><tr><th scope="col">대표 코드</th><th scope="col">어떤 경우인가</th><th scope="col">예</th></tr></thead><tbody><tr><td>200</td><td>요청을 성공적으로 처리</td><td>자료를 조회해 본문에 담음</td></tr><tr><td>204</td><td>성공했으며 응답 내용 없음</td><td>설정을 적용하고 별도 본문은 돌려주지 않음</td></tr><tr><td>304</td><td>조건부 조회에서 예전 자료를 재사용 가능</td><td>조건부 GET에 응답하고 브라우저는 보관한 값 사용</td></tr><tr><td>404</td><td>요청한 자원의 현재 표현을 찾을 수 없거나 공개하지 않음</td><td>없는 장 주소를 요청</td></tr><tr><td>500</td><td>서버에서 요청 처리를 막는 예기치 않은 조건 발생</td><td>응답을 만드는 내부 프로그램 오류</td></tr></tbody></table></div>
+<p>예를 들어 404가 실제 HTTP 응답으로 돌아왔다면, 브라우저는 어느 응답자에게서 HTTP 메시지를 받았습니다. ‘아무 서버에도 연결하지 못했다’는 브라우저 오류와 구분할 수 있습니다. 중간 서비스가 404를 돌려줬다면 원래 의도한 응답자와 다를 수 있습니다.</p>
+<div class="check" data-q="q5"></div><div class="check" data-q="q6"></div>
+<h2>파이썬으로 주소가 잘리는 위치 확인하기</h2>
+<pre data-example="python"><code>from urllib.parse import urlsplit, parse_qs
+
+url = &quot;https://study.example:8443/notes?page=2#table&quot;
+parts = urlsplit(url)
+target = parts.path + (&quot;?&quot; + parts.query if parts.query else &quot;&quot;)
+print(parts.scheme, parts.hostname, parts.port)
+print(&quot;target&quot;, target)
+print(&quot;query&quot;, parse_qs(parts.query))
+print(&quot;fragment&quot;, parts.fragment)</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>https study.example 8443
+target /notes?page=2
+query {'page': ['2']}
+fragment table</code></pre>
+<p><code>urlsplit</code>은 여기서 문자열을 나눠 보여 줄 뿐입니다. 서버에 연결하는 동작은 다음 장 예제에서 직접 봅니다.</p>
+<h2>한눈에 정리</h2>
+<ul><li>스킴·호스트·포트는 연결 방식과 상대를, 경로·쿼리는 접근할 자료나 조건을 고른다. 프래그먼트는 브라우저가 사용한다.</li><li>요청 줄에는 메서드와 목적 문자열, 응답 줄에는 상태코드가 들어간다.</li><li>헤더는 형식 등 추가 정보를 준다. 응답 본문이 없는 성공도 있다.</li></ul>
+
+<h2>참고 자료</h2>
+<ul><li><a href="https://www.rfc-editor.org/rfc/rfc3986.html#section-3">IETF RFC 3986 · URI의 다섯 구성 요소</a></li><li><a href="https://www.rfc-editor.org/rfc/rfc9110.html">IETF RFC 9110 · HTTP 의미, 메서드, 상태코드</a></li><li><a href="https://www.rfc-editor.org/rfc/rfc9112.html#section-2.1">IETF RFC 9112 · HTTP/1.1 메시지 구조</a></li><li><a href="https://docs.python.org/3/library/urllib.parse.html">Python · urllib.parse 분리 함수</a></li></ul>
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>회귀 오차를 평균 내는 세 가지 방법 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="ML03-1">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">머신러닝 · ML03 오차와 평가</p>
+<p class="chap-num">ML03·1</p>
+<h1>회귀 오차를 평균 내는 세 가지 방법</h1>
+<p class="lead">어떤 배송 예측은 세 건을 정확히 맞혔지만 한 건에서 8분을 틀렸습니다. 다른 예측은 네 건마다 3분씩 틀렸습니다. 보통의 오차와 큰 실수가 얼마나 중요한지에 따라 같은 결과를 다르게 평가할 수 있습니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul>
+<li>관측별 오차, 학습 손실, 평가 지표를 구별한다.</li>
+<li>MAE, MSE, RMSE를 손으로 계산하고 단위를 확인한다.</li>
+<li>같은 예측에서 절대값과 제곱이 다른 판단을 만드는 이유를 설명한다.</li>
+</ul></div>
+
+<h2>오차에 부호를 붙여 하나씩 계산한다</h2>
+<p>아래는 교육용 배송 예측 결과입니다. 실제 시간은 <code>y</code>, 예측은 <code>ŷ</code>입니다. 여기서는 <code>e = y−ŷ</code>를 <b class="key">오차</b>로 정합니다. 실제 40분을 48분으로 예측하면 오차 <code>−8분</code>은 8분만큼 오래 걸린다고 예측했다는 뜻입니다. 실제보다 짧게 예측하면 반대로 양수입니다.</p>
+<div class="table-wrap"><table><thead><tr><th scope="col">주문</th><th scope="col">실제 (분)</th><th scope="col">모델 A (분)</th><th scope="col">모델 B (분)</th></tr></thead><tbody>
+<tr><th scope="row">1</th><td>10</td><td>10</td><td>13</td></tr>
+<tr><th scope="row">2</th><td>20</td><td>20</td><td>23</td></tr>
+<tr><th scope="row">3</th><td>30</td><td>30</td><td>33</td></tr>
+<tr><th scope="row">4</th><td>40</td><td>48</td><td>43</td></tr>
+</tbody></table></div>
+<p>부호가 있는 오차의 평균은 과대·과소 예측 방향을 살필 때 도움이 됩니다. 크기를 보고 싶으면 절대값이나 제곱을 사용합니다. 예를 들어 오차가 <code>+5, −5</code>면 부호를 포함한 평균은 0이지만 모든 예측은 실제 값에서 5만큼 떨어져 있습니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 264" role="img" aria-label="주문 네 건의 절대오차에서 A는 0, 0, 0, 8분, B는 3, 3, 3, 3분이다.">
+<line class="f-ink" x1="102" y1="42" x2="102" y2="190"/>
+<line class="f-ink" x1="102" y1="190" x2="699" y2="190"/>
+<line class="f-dash" x1="102" y1="126" x2="699" y2="126"/>
+<text class="f-s" x="86" y="130" text-anchor="end">4</text>
+<line class="f-dash" x1="102" y1="62" x2="699" y2="62"/>
+<text class="f-s" x="86" y="66" text-anchor="end">8</text>
+<line class="f-line" x1="142" y1="190" x2="166" y2="190"/>
+<text class="f-s" x="154" y="180" text-anchor="middle">0</text>
+<rect class="f-soft" x="174" y="142" width="24" height="48"/>
+<text class="f-s" x="186" y="134" text-anchor="middle">3</text>
+<text class="f-s" x="170" y="214" text-anchor="middle">주문 1</text>
+<line class="f-line" x1="285" y1="190" x2="309" y2="190"/>
+<text class="f-s" x="297" y="180" text-anchor="middle">0</text>
+<rect class="f-soft" x="317" y="142" width="24" height="48"/>
+<text class="f-s" x="329" y="134" text-anchor="middle">3</text>
+<text class="f-s" x="313" y="214" text-anchor="middle">주문 2</text>
+<line class="f-line" x1="428" y1="190" x2="452" y2="190"/>
+<text class="f-s" x="440" y="180" text-anchor="middle">0</text>
+<rect class="f-soft" x="460" y="142" width="24" height="48"/>
+<text class="f-s" x="472" y="134" text-anchor="middle">3</text>
+<text class="f-s" x="456" y="214" text-anchor="middle">주문 3</text>
+<rect class="f-over" x="571" y="62" width="24" height="128"/>
+<rect class="f-soft" x="603" y="142" width="24" height="48"/>
+<text class="f-s" x="583" y="51" text-anchor="middle">8</text>
+<text class="f-s" x="615" y="134" text-anchor="middle">3</text>
+<text class="f-s" x="599" y="214" text-anchor="middle">주문 4</text>
+<text class="f-s" x="102" y="30" text-anchor="start">절대오차 (분)</text>
+<rect class="f-over" x="265" y="232" width="20" height="17"/>
+<text class="f-s" x="306" y="247" text-anchor="start">모델 A</text>
+<rect class="f-soft" x="434" y="232" width="20" height="17"/>
+<text class="f-s" x="475" y="247" text-anchor="start">모델 B</text>
+</svg>
+<figcaption>A는 세 건에서 정확하지만 한 건에서 8분을 틀린다. B는 모든 건에서 3분을 틀린다.</figcaption>
+</figure>
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+
+<h2>절대오차 평균과 제곱오차 평균을 비교한다</h2>
+<p><b class="key">평균절대오차(MAE)</b>는 각 오차의 절대값을 더해 관측 수로 나눈 값입니다. 모델 A의 MAE는 <code>(0+0+0+8)/4 = 2분</code>, 모델 B의 MAE는 <code>(3+3+3+3)/4 = 3분</code>입니다.</p>
+<p><b class="key">평균제곱오차(MSE)</b>는 각 오차를 제곱한 뒤 평균을 냅니다. 모델 A의 MSE는 <code>(0+0+0+64)/4 = 16분²</code>, 모델 B는 <code>(9+9+9+9)/4 = 9분²</code>입니다. 제곱을 사용하면 8분의 실수는 3분의 실수에 비해 더 무겁게 반영됩니다.</p>
+<p><b class="key">평균제곱근오차(RMSE)</b>는 MSE의 제곱근입니다. 모델 A는 <code>√16=4분</code>, 모델 B는 <code>√9=3분</code>입니다. 제곱 뒤 제곱근을 취하므로 목표와 같은 단위로 돌아갑니다. 같은 관측에서 비교할 때 제곱근은 증가함수이므로 MSE가 더 작은 모델의 RMSE도 더 작습니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 247" role="img" aria-label="가로축이 오차의 크기다. 왼쪽은 크기 0부터 8분까지를 그대로 쓰고, 오른쪽은 크기를 제곱한다. 3분과 8분에서 절대값은 3과 8, 제곱값은 9와 64이다.">
+<line class="f-ink" x1="78" y1="42" x2="78" y2="174"/>
+<line class="f-ink" x1="78" y1="174" x2="339" y2="174"/>
+<polyline class="f-line" points="78,174 85.5,170.06 93,166.13 100.5,162.19 108,158.25 115.5,154.31 123,150.38 130.5,146.44 138,142.5 145.5,138.56 153,134.63 160.5,130.69 168,126.75 175.5,122.81 183,118.88 190.5,114.94 198,111 205.5,107.06 213,103.13 220.5,99.19 228,95.25 235.5,91.31 243,87.38 250.5,83.44 258,79.5 265.5,75.56 273,71.63 280.5,67.69 288,63.75 295.5,59.81 303,55.88 310.5,51.94 318,48"/>
+<text class="f-cap" x="78" y="27" text-anchor="start">절대오차 (분)</text>
+<line class="f-ink" x1="78" y1="174" x2="78" y2="181"/>
+<text class="f-s" x="78" y="200" text-anchor="middle">0</text>
+<line class="f-ink" x1="168" y1="174" x2="168" y2="181"/>
+<text class="f-s" x="168" y="200" text-anchor="middle">3</text>
+<line class="f-dash" x1="78" y1="126.75" x2="168" y2="126.75"/>
+<line class="f-dash" x1="168" y1="126.75" x2="168" y2="174"/>
+<circle class="f-fill" cx="168" cy="126.75" r="5"/>
+<text class="f-s" x="66" y="131.75" text-anchor="end">3</text>
+<line class="f-ink" x1="318" y1="174" x2="318" y2="181"/>
+<text class="f-s" x="318" y="200" text-anchor="middle">8</text>
+<line class="f-dash" x1="78" y1="48" x2="318" y2="48"/>
+<line class="f-dash" x1="318" y1="48" x2="318" y2="174"/>
+<circle class="f-fill" cx="318" cy="48" r="5"/>
+<text class="f-s" x="66" y="53" text-anchor="end">8</text>
+<text class="f-s" x="206" y="228" text-anchor="middle">오차 크기 (분)</text>
+<line class="f-ink" x1="433" y1="42" x2="433" y2="174"/>
+<line class="f-ink" x1="433" y1="174" x2="694" y2="174"/>
+<polyline class="f-line" points="433,174 440.5,173.88 448,173.51 455.5,172.89 463,172.03 470.5,170.92 478,169.57 485.5,167.97 493,166.13 500.5,164.03 508,161.7 515.5,159.11 523,156.28 530.5,153.21 538,149.88 545.5,146.31 553,142.5 560.5,138.44 568,134.13 575.5,129.58 583,124.78 590.5,119.74 598,114.45 605.5,108.91 613,103.13 620.5,97.1 628,90.82 635.5,84.3 643,77.53 650.5,70.52 658,63.26 665.5,55.75 673,48"/>
+<text class="f-cap" x="433" y="27" text-anchor="start">제곱오차 (분²)</text>
+<line class="f-ink" x1="433" y1="174" x2="433" y2="181"/>
+<text class="f-s" x="433" y="200" text-anchor="middle">0</text>
+<line class="f-ink" x1="523" y1="174" x2="523" y2="181"/>
+<text class="f-s" x="523" y="200" text-anchor="middle">3</text>
+<line class="f-dash" x1="433" y1="156.28" x2="523" y2="156.28"/>
+<line class="f-dash" x1="523" y1="156.28" x2="523" y2="174"/>
+<circle class="f-fill" cx="523" cy="156.28" r="5"/>
+<text class="f-s" x="421" y="161.28" text-anchor="end">9</text>
+<line class="f-ink" x1="673" y1="174" x2="673" y2="181"/>
+<text class="f-s" x="673" y="200" text-anchor="middle">8</text>
+<line class="f-dash" x1="433" y1="48" x2="673" y2="48"/>
+<line class="f-dash" x1="673" y1="48" x2="673" y2="174"/>
+<circle class="f-fill" cx="673" cy="48" r="5"/>
+<text class="f-s" x="421" y="53" text-anchor="end">64</text>
+<text class="f-s" x="561" y="228" text-anchor="middle">오차 크기 (분)</text>
+</svg>
+<figcaption>가로축의 단위는 같다. 세로축의 숫자와 단위는 절대오차와 제곱오차에서 다르다.</figcaption>
+</figure>
+<p class="small">실행 예제</p>
+<pre data-example="python"><code>from math import sqrt
+from statistics import mean
+
+actual = [10, 20, 30, 40]
+models = {&quot;A&quot;: [10, 20, 30, 48], &quot;B&quot;: [13, 23, 33, 43]}
+
+for name, predicted in models.items():
+    errors = [y - pred for y, pred in zip(actual, predicted, strict=True)]
+    mae = mean(abs(e) for e in errors)
+    mse = mean(e**2 for e in errors)
+    print(f&quot;{name}: errors={errors}&quot;)
+    print(f&quot;MAE={mae:.1f} min, MSE={mse:.1f} min^2, RMSE={sqrt(mse):.1f} min&quot;)</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>A: errors=[0, 0, 0, -8]
+MAE=2.0 min, MSE=16.0 min^2, RMSE=4.0 min
+B: errors=[-3, -3, -3, -3]
+MAE=3.0 min, MSE=9.0 min^2, RMSE=3.0 min</code></pre>
+<div class="check" data-q="q3"></div>
+<div class="check" data-q="q4"></div>
+<div class="check" data-q="q5"></div>
+
+<h2>어느 오차를 줄이려고 학습하는지 정한다</h2>
+<p>예측에서 틀린 정도를 숫자로 바꾸는 규칙을 <b class="key">손실</b>이라고 합니다. 예로 관측 하나에서 <code>|y−ŷ|</code>와 <code>(y−ŷ)²</code>를 쓸 수 있습니다. 학습에서는 훈련 자료의 손실을 합하거나 평균해 얻은 <b>목적함수</b>를 줄이도록 모델 값을 정합니다. 목적함수에는 나중에 배울 복잡도 항을 더할 수도 있습니다.</p>
+<p><b class="key">평가 지표</b>는 학습한 모델이 평가 자료에서 낸 성능을 보고할 계산입니다. 훈련 MSE를 줄여 모델을 만들고 평가 자료에서는 MAE와 RMSE를 함께 보여 줄 수 있습니다. 같은 평균제곱오차 식도 훈련에 쓰면 학습 목적에, 테스트에 쓰면 평가에 쓰입니다.</p>
+<div class="why"><p class="box-k">왜 그럴까?</p><p>MAE를 쓰면 A, RMSE를 쓰면 B가 낮게 나올 때 무엇을 보고 지표를 고를까요?</p><details><summary>모범 답 보기</summary><p>이 예에서 MAE는 개별 절대오차를 그대로 평균합니다. 큰 실수의 부담을 더 크게 보고 싶다면 제곱을 반영한 RMSE가 차이를 잘 드러냅니다. 배송이 약속보다 늦는 것과 일찍 오는 것의 비용도 다르다면 양 방향을 나누어 보고 별도 지표를 정할 수 있습니다.</p></details></div>
+<p>평균만 보고할 때는 특정 거점이나 매우 긴 주문에서 큰 오차가 몰리는지 숨을 수 있습니다. 같은 시험 자료와 같은 단위를 사용해 비교하고, 예측에 쓰이는 상황에 맞춰 오차의 분포와 필요한 하위 그룹의 지표도 확인합니다.</p>
+<div class="check" data-q="q6"></div>
+<div class="check" data-q="q7"></div>
+
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table><thead><tr><th scope="col">지표</th><th scope="col">계산 순서</th><th scope="col">목표가 분일 때 단위</th></tr></thead><tbody>
+<tr><th scope="row"><b class="key">MAE</b></th><td>|오차|를 평균</td><td>분</td></tr>
+<tr><th scope="row"><b class="key">MSE</b></th><td>오차를 제곱해 평균</td><td>분²</td></tr>
+<tr><th scope="row"><b class="key">RMSE</b></th><td>MSE에 제곱근</td><td>분</td></tr>
+</tbody></table></div>
+<div class="box sum"><p class="box-k">다음 장으로</p><p><a href="ml03-2.html">다음 장</a>에서는 지연 여부처럼 범주를 예측할 때 틀린 경우를 네 종류로 나눕니다.</p></div>
+
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://scikit-learn.org/stable/modules/model_evaluation.html">scikit-learn · 학습 모델의 평가 지표</a></li>
+</ul>
+<h2>확인 문제</h2>
+<p>직접 계산하거나 설명을 먼저 적고 답을 확인해 보세요.</p>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

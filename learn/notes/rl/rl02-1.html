@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>밴딧의 행동 가치를 보상 평균으로 추정하기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e8c'/%3E%3Cpath d='M8 22V10m8 12V14m8 8V6' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="RL02-1">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+
+<header class="chapter">
+<p class="chap-sub">강화학습 · RL02 밴딧과 탐험</p>
+<p class="chap-num">RL02·1</p>
+<h1>밴딧의 행동 가치를 보상 평균으로 추정하기</h1>
+<p class="lead">두 선택지 가운데 하나를 누르면 그 선택지의 보상 하나만 받습니다. 행동마다 보상을 따로 모으고, 새 보상 하나가 들어올 때 이전 평균에서 얼마나 움직여야 할지 계산합니다.</p>
+</header>
+
+<div class="goal">
+<h2>이 장을 읽고 나면</h2>
+<ul>
+<li>밴딧의 행동별 참 기댓값과 실제 보상 및 추정값을 구분한다.</li>
+<li>같은 행동의 보상만 사용하여 표본평균을 계산한다.</li>
+<li>새 보상과 누적 횟수만으로 표본평균을 갱신한다.</li>
+</ul>
+</div>
+
+<h2>고른 행동의 보상만 보이는 작은 문제</h2>
+<p>기계에 버튼 A와 B가 있습니다. 누를 때마다 보상은 0 또는 1점이며, 고른 버튼의 결과만 볼 수 있습니다. 이번 모형은 버튼을 누르기 전과 후에 다음번 선택지나 보상 규칙이 바뀌지 않는다고 가정합니다. 맥락도 주어지지 않습니다. 이런 식으로 고정된 선택지 중 하나를 반복해 고르는 문제를 <b class="key">다중 선택지 밴딧</b>이라고 합니다. 각 버튼 하나가 영어로 arm입니다.</p>
+<p>설명에서는 A의 보상 1 확률이 1/2, B는 3/4라고 정합니다. 각 선택 이후, 과거 경험을 알고 있어도 다음 보상은 선택한 버튼의 고정 분포에서 새로 정해집니다. 실제 에이전트에게 이 확률은 알려 주지 않습니다. 행동 a의 <b class="key">참 행동 가치</b> <code>q(a)</code>는 버튼 a를 고를 때 받을 보상의 기댓값입니다. 이 예에서는 q(A)=0.5, q(B)=0.75입니다. A에서도 1이 나오고 B에서도 0이 나올 수 있습니다. 한 번 받은 보상과 참 평균은 다릅니다.</p>
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+<h2>다른 버튼의 보상과 섞지 않는다</h2>
+<p>실제 기록에서 A의 보상이 1, 0, 1, 0이고 B의 보상이 0, 1, 1이라고 합시다. 그 행동으로 받은 보상의 평균을 <b class="key">행동 가치 추정값</b> Q(a)로 씁니다. 아직 누른 적이 없는 버튼은 받은 것이 없어 표본평균이 정의되지 않습니다. 프로그램에서 Q=0을 처음 넣더라도 그 값은 관측 결과가 아니라 초기값입니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 249" role="img" aria-label="A의 관측 보상 1,0,1,0은 평균 1/2, B의 관측 보상 0,1,1은 평균 2/3. 같은 행에는 같은 행동으로 얻은 보상만 넣는다.">
+<text class="f-cap" x="93" y="44" text-anchor="middle">행동</text>
+<text class="f-cap" x="328" y="44" text-anchor="middle">실제로 얻은 보상</text>
+<text class="f-cap" x="627" y="44" text-anchor="middle">현재 평균</text>
+<rect class="f-box" x="54" y="67" width="78" height="50" rx="4"/>
+<text class="f-t" x="93" y="98" text-anchor="middle">A</text>
+<rect class="f-box" x="174" y="67" width="66" height="50" rx="4"/><text class="f-t" x="207" y="98" text-anchor="middle">1</text>
+<rect class="f-box" x="262" y="67" width="66" height="50" rx="4"/><text class="f-t" x="295" y="98" text-anchor="middle">0</text>
+<rect class="f-box" x="350" y="67" width="66" height="50" rx="4"/><text class="f-t" x="383" y="98" text-anchor="middle">1</text>
+<rect class="f-box" x="438" y="67" width="66" height="50" rx="4"/><text class="f-t" x="471" y="98" text-anchor="middle">0</text>
+<line class="f-line" x1="514" y1="92" x2="546" y2="92" marker-end="url(#f-arrow)"/>
+<rect class="f-soft" x="552" y="67" width="151" height="50" rx="4"/>
+<text class="f-t" x="627" y="98" text-anchor="middle">1/2</text>
+<rect class="f-box" x="54" y="148" width="78" height="50" rx="4"/>
+<text class="f-t" x="93" y="179" text-anchor="middle">B</text>
+<rect class="f-box" x="174" y="148" width="66" height="50" rx="4"/><text class="f-t" x="207" y="179" text-anchor="middle">0</text>
+<rect class="f-box" x="262" y="148" width="66" height="50" rx="4"/><text class="f-t" x="295" y="179" text-anchor="middle">1</text>
+<rect class="f-box" x="350" y="148" width="66" height="50" rx="4"/><text class="f-t" x="383" y="179" text-anchor="middle">1</text>
+<line class="f-line" x1="514" y1="173" x2="546" y2="173" marker-end="url(#f-arrow)"/>
+<rect class="f-soft" x="552" y="148" width="151" height="50" rx="4"/>
+<text class="f-t" x="627" y="179" text-anchor="middle">2/3</text>
+<text class="f-s" x="383" y="226" text-anchor="middle">두 행동에 대한 관측 횟수는 다를 수 있다.</text>
+</svg>
+<figcaption>표는 각 행동 안에서 보상을 받은 순서를 보존한다. 히스토리에서 행동이 섞여 있어도 분리해 계산한다.</figcaption>
+</figure>
+<p>A의 추정값은 (1+0+1+0)/4=1/2, B는 (0+1+1)/3=2/3입니다. 전체 일곱 보상을 더하고 7로 나누면 선택했던 전체 과정의 평균을 계산할 수 있지만, 버튼 하나의 평균 보상을 묻는 질문에는 답하지 않습니다. 한 버튼을 충분히 관측하면 고정 분포 아래에서 그 버튼의 표본평균은 참 기댓값을 추정합니다. 누르지 않는 버튼에는 새 근거가 쌓이지 않습니다.</p>
+<div class="check" data-q="q3"></div>
+<div class="check" data-q="q4"></div>
+<h2>새 값과 차이를 이용해 평균을 한 번만 갱신한다</h2>
+<p>어떤 버튼에서 보상 n−1개를 받아 평균이 Q<sub>old</sub>입니다. n번째 보상 r을 받은 뒤 그 버튼의 평균은 <code>[(n−1)Q_old + r]/n</code>입니다. 이 식을 정리하면 <code>Q_new = Q_old + (r−Q_old)/n</code>입니다. n은 <b>새 보상까지 포함한 해당 버튼의 횟수</b>입니다. 게임의 전체 시간이나 모든 버튼을 누른 합계가 아닙니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 265" role="img" aria-label="A 보상 1,0,1,0의 순차 평균은 1, 1/2, 2/3, 1/2. 첫 실행 결과가 평균 1을 만들어도 그 뒤 추정값은 바뀐다.">
+<line class="f-ink" x1="101" y1="210" x2="632" y2="210" marker-end="url(#f-arrow)"/>
+<line class="f-ink" x1="101" y1="210" x2="101" y2="35" marker-end="url(#f-arrow)"/>
+<line class="f-ink" x1="95" y1="135" x2="101" y2="135"/><text class="f-s" x="90" y="139" text-anchor="end">0.5</text>
+<line class="f-ink" x1="95" y1="60" x2="101" y2="60"/><text class="f-s" x="90" y="64" text-anchor="end">1</text>
+<text class="f-s" x="90" y="227" text-anchor="end">0</text>
+<line class="f-ink" x1="215" y1="210" x2="215" y2="216"/><text class="f-s" x="215" y="233" text-anchor="middle">1</text>
+<line class="f-ink" x1="329" y1="210" x2="329" y2="216"/><text class="f-s" x="329" y="233" text-anchor="middle">2</text>
+<line class="f-ink" x1="443" y1="210" x2="443" y2="216"/><text class="f-s" x="443" y="233" text-anchor="middle">3</text>
+<line class="f-ink" x1="557" y1="210" x2="557" y2="216"/><text class="f-s" x="557" y="233" text-anchor="middle">4</text>
+<line class="f-dash" x1="101" y1="135" x2="557" y2="135"/>
+<polyline class="f-line" points="215,60 329,135 443,110 557,135"/>
+<circle class="f-fill" cx="215" cy="60" r="4"/>
+<circle class="f-fill" cx="329" cy="135" r="4"/>
+<circle class="f-fill" cx="443" cy="110" r="4"/>
+<circle class="f-fill" cx="557" cy="135" r="4"/>
+<text class="f-cap" x="101" y="25" text-anchor="middle">A의 평균</text>
+<text class="f-s" x="646" y="235" text-anchor="start">A를 누른 횟수</text>
+<text class="f-s" x="454" y="99" text-anchor="start">2/3</text>
+<text class="f-s" x="480" y="173" text-anchor="start">A의 참평균 1/2</text>
+</svg>
+<figcaption>첫 점은 A의 보상을 한 번 관측했을 때다. B를 사이에 눌러도 A의 횟수와 평균은 그 순간 업데이트되지 않는다.</figcaption>
+</figure>
+<div class="box ex"><p class="box-k">A 버튼의 세 번째 관측</p>
+<p>첫 두 보상 1, 0의 평균은 1/2입니다. 새 보상 1을 받으면 평균과의 차이는 +1/2입니다. n=3이므로 기존 평균에 (1/2)/3=1/6을 더합니다. 새 평균은 2/3입니다. 새 값이 평균보다 작으면 차이는 음수여서 추정값이 내려갑니다.</p>
+</div>
+<p>처음 한 번은 n=1이므로 유한한 초기값이 무엇이었든 첫 관측 r이 그대로 새 Q가 됩니다. 이전 결과를 모두 보관할 필요 없이 버튼마다 Q와 횟수를 저장하면 됩니다. 고정 확률 가정이 깨져 성능이 시간에 따라 바뀐다면 오래된 기록을 똑같이 가중하는 평균이 지금의 값을 잘 따라가지 못할 수 있습니다. 코드로 계산한 평균과 실제 시스템에서 추정할 값을 구분합니다.</p>
+<div class="check" data-q="q5"></div>
+<div class="check" data-q="q6"></div>
+<h2>매번 전체를 더한 답과 대조한다</h2>
+<pre data-example="python"><code>from fractions import Fraction as F
+
+records = [("A", 1), ("B", 0), ("A", 0), ("A", 1),
+           ("B", 1), ("B", 1), ("A", 0)]
+count = {"A": 0, "B": 0}
+estimate = {"A": F(0), "B": F(0)}
+observed = {"A": [], "B": []}
+
+for arm, reward in records:
+    count[arm] += 1
+    estimate[arm] += (reward - estimate[arm]) / count[arm]
+    observed[arm].append(reward)
+    assert estimate[arm] == F(sum(observed[arm]), count[arm])
+
+for arm in ("A", "B"):
+    print(arm, "횟수", count[arm], "평균", estimate[arm])</code></pre>
+<pre data-output><code>A 횟수 4 평균 1/2
+B 횟수 3 평균 2/3</code></pre>
+<p>코드의 <code>observed</code>는 갱신 공식을 매 단계 검산하려고 넣었습니다. 실제로 평균만 갱신할 때는 누적 횟수와 추정값을 저장하면 됩니다. 다음 장에서는 이 평균이 아직 불완전할 때 어떤 버튼을 눌러 볼지 결정합니다.</p>
+<h2>참고 자료</h2>
+<ul><li><a href="https://mitpress.mit.edu/9780262039246/reinforcement-learning/">Sutton·Barto, Reinforcement Learning 2판 · §2.1–2.5 밴딧과 증분 평균</a></li></ul>
+
+<h2>확인 문제</h2>
+<p>본문에서 푼 것 말고 남은 문제입니다. 먼저 답을 정한 뒤 해설을 확인합니다.</p>
+<div id="quiz"></div>
+
+<section class="work" id="tools"></section>
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

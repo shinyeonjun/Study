@@ -164,6 +164,18 @@ window.BDA_CHAPTERS = {
     {"id": "DM03-1", "title": "경우의 수를 세는 두 법칙과 순열", "href": "notes/dm/dm03-1.html"},
     {"id": "DM03-2", "title": "순서를 빼고 세기: 조합과 이항계수", "href": "notes/dm/dm03-2.html"}
   ],
+  NW01: [
+    {"id": "NW01-1", "title": "호스트가 어떻게 역할을 나눠 통신하는가", "href": "notes/nw/nw01-1.html"},
+    {"id": "NW01-2", "title": "집의 LAN에서 여러 네트워크로 건너가기", "href": "notes/nw/nw01-2.html"}
+  ],
+  NW02: [
+    {"id": "NW02-1", "title": "웹 주소에서 HTTP 요청과 응답 읽기", "href": "notes/nw/nw02-1.html"},
+    {"id": "NW02-2", "title": "브라우저로 웹 요청을 관찰하고 API 값 읽기", "href": "notes/nw/nw02-2.html"}
+  ],
+  NW03: [
+    {"id": "NW03-1", "title": "패킷으로 나눠 보내고 계층을 따라 다시 읽기", "href": "notes/nw/nw03-1.html"},
+    {"id": "NW03-2", "title": "지연·용량·처리량·손실을 단위로 계산하기", "href": "notes/nw/nw03-2.html"}
+  ],
   LA01: [
     {"id": "LA01-1", "title": "벡터와 성분: 한 관측을 숫자 여러 개로 나타내기", "href": "notes/la/la01-1.html"},
     {"id": "LA01-2", "title": "벡터 덧셈과 스칼라곱: 방향과 성분으로 계산하기", "href": "notes/la/la01-2.html"}
@@ -250,6 +262,10 @@ window.BDA_CHAPTERS = {
     {"id": "PR09-1", "title": "조건부기댓값과 전기댓값: 집단 비율로 평균을 합치기", "href": "notes/pr/pr09-1.html"},
     {"id": "PR09-2", "title": "전분산: 집단 안의 차이와 집단 사이의 차이", "href": "notes/pr/pr09-2.html"}
   ],
+  PR10: [
+    {"id": "PR10-1", "title": "현재 상태와 여러 단계의 전이", "href": "notes/pr/pr10-1.html"},
+    {"id": "PR10-2", "title": "정상분포가 있을 때 어디로 수렴하는가", "href": "notes/pr/pr10-2.html"}
+  ],
   ST01: [
     {"id": "ST01-1", "title": "기술과 추론 · 어떤 평균을 추정하는가", "href": "notes/st/st01-1.html"},
     {"id": "ST01-2", "title": "반복 관측·표집 편향·측정 편향", "href": "notes/st/st01-2.html"}
@@ -266,6 +282,39 @@ window.BDA_CHAPTERS = {
   ST04: [
     {"id": "ST04-1", "title": "귀무가설, 검정통계량, p값", "href": "notes/st/st04-1.html"},
     {"id": "ST04-2", "title": "틀릴 확률과 검정력, 표본 수를 정하는 법", "href": "notes/st/st04-2.html"}
+  ],
+  OP03: [
+    {"id": "OP03-1", "title": "최솟값을 정의하고 한 변수에서 내려가기", "href": "notes/op/op03-1.html"},
+    {"id": "OP03-2", "title": "두 매개변수에서 기울기를 계산하고 멈추기", "href": "notes/op/op03-2.html"}
+  ],
+  AI01: [
+    {"id": "AI01-1", "title": "인공지능이 푸는 문제와 출력 읽기", "href": "notes/ai/ai01-1.html"},
+    {"id": "AI01-2", "title": "규칙과 학습을 구분하고 AI 계열 연결하기", "href": "notes/ai/ai01-2.html"}
+  ],
+  ML01: [
+    {"id": "ML01-1", "title": "한 행의 뜻과 예측할 값부터 정하기", "href": "notes/ml/ml01-1.html"},
+    {"id": "ML01-2", "title": "정답 열 없이 군집과 자기지도 과제 만들기", "href": "notes/ml/ml01-2.html"}
+  ],
+  ML02: [
+    {"id": "ML02-1", "title": "기준 모델과 훈련·검증·테스트", "href": "notes/ml/ml02-1.html"},
+    {"id": "ML02-2", "title": "새 거점과 미래 주문을 위한 분할과 누출 방지", "href": "notes/ml/ml02-2.html"}
+  ],
+  ML03: [
+    {"id": "ML03-1", "title": "회귀 오차를 평균 내는 세 가지 방법", "href": "notes/ml/ml03-1.html"},
+    {"id": "ML03-2", "title": "혼동행렬로 보고 정밀도·재현율 계산하기", "href": "notes/ml/ml03-2.html"},
+    {"id": "ML03-3", "title": "ROC와 PR 곡선, AP와 면적 읽기", "href": "notes/ml/ml03-3.html"}
+  ],
+  RL01: [
+    {"id": "RL01-1", "title": "에이전트와 환경: 무엇을 보고 무엇을 바꾸나", "href": "notes/rl/rl01-1.html"},
+    {"id": "RL01-2", "title": "정책을 따라 경험 한 줄씩 기록하기", "href": "notes/rl/rl01-2.html"}
+  ],
+  RL02: [
+    {"id": "RL02-1", "title": "밴딧의 행동 가치를 보상 평균으로 추정하기", "href": "notes/rl/rl02-1.html"},
+    {"id": "RL02-2", "title": "ε-greedy: 평균을 쓰면서 새 선택지도 확인하기", "href": "notes/rl/rl02-2.html"}
+  ],
+  RL03: [
+    {"id": "RL03-1", "title": "반환과 할인: 나중의 보상을 지금 비교하기", "href": "notes/rl/rl03-1.html"},
+    {"id": "RL03-2", "title": "에피소드의 종료와 기록의 중단을 가려내기", "href": "notes/rl/rl03-2.html"}
   ],
   RS01: [
     {"id": "RS01-1", "title": "질문에서 가설로: 조작적 정의와 측정", "href": "notes/rs/rs01-1.html"},

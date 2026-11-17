@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>집의 LAN에서 여러 네트워크로 건너가기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="NW01-2">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">네트워크</p>
+<p class="chap-num">NW01·2</p>
+<h1>집의 LAN에서 여러 네트워크로 건너가기</h1>
+<p class="lead">집에서 같은 프린터에 문서를 보내는 일과 인터넷에 있는 교재를 여는 일은 둘 다 통신입니다. 목적지가 같은 로컬 네트워크에 있는지에 따라 통신이 지나갈 범위가 달라집니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>LAN과 서로 연결된 네트워크들의 관계를 그린다.</li><li>가정용 공유기의 로컬 연결과 라우팅 역할을 구별한다.</li><li>집 안 목적지와 외부 서버의 모형 경로를 비교한다.</li></ul></div>
+
+<h2>한 공간의 기기를 서로 통신할 수 있게 묶는다</h2>
+<p>집 안에 휴대폰, 노트북, 프린터가 있습니다. 세 기기가 같은 집의 로컬 네트워크에 연결됐다면, 설정이 허용하는 경우 휴대폰에서 프린터로 인쇄를 보낼 수 있습니다. 이때 메시지는 집 외부의 인터넷 서버를 꼭 거쳐야 하는 것은 아닙니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 297" role="img" aria-label="한 LAN에 휴대폰과 프린터, 노트북이 있다. 공유기의 로컬 연결 기능이 셋을 연결하고 라우터 기능은 외부 네트워크를 잇는다.">
+<rect class="f-box" x="36" y="32" width="434" height="239" rx="3"/><text class="f-cap" x="107" y="61" text-anchor="middle">집의 LAN</text><rect class="f-box" x="69" y="94" width="123" height="51" rx="3"/><rect class="f-box" x="69" y="185" width="123" height="51" rx="3"/><rect class="f-box" x="315" y="185" width="123" height="51" rx="3"/><text class="f-t" x="130" y="126" text-anchor="middle">휴대폰</text><text class="f-t" x="130" y="217" text-anchor="middle">프린터</text><text class="f-t" x="376" y="217" text-anchor="middle">노트북</text><line class="f-ink" x1="193" y1="119" x2="269" y2="133"/><line class="f-ink" x1="193" y1="210" x2="269" y2="146"/><line class="f-ink" x1="376" y1="184" x2="377" y2="160"/><rect class="f-soft" x="270" y="105" width="166" height="55" rx="3"/><text class="f-t f-b" x="353" y="130" text-anchor="middle">집의 공유기</text><text class="f-s" x="353" y="150" text-anchor="middle">LAN 연결 및 라우팅</text><rect class="f-box" x="553" y="105" width="162" height="55" rx="3"/><text class="f-t" x="634" y="139" text-anchor="middle">외부 네트워크</text><line class="f-line" x1="437" y1="133" x2="551" y2="133" marker-end="url(#f-arrow)"/>
+</svg><figcaption>집에서는 여러 기능이 한 기기에 들어 있는 경우가 많다. 집 밖으로 나가는 통신과 집 안에서 끝나는 통신을 구별한다.</figcaption></figure>
+<p>이렇게 비교적 제한된 범위에서 기기를 연결한 망을 <b class="key">LAN</b>(Local Area Network)이라 부릅니다. 유선과 무선은 기기를 그 망에 연결하는 방식입니다. 같은 이름의 Wi-Fi가 잡힌다는 사실만으로 서로 통신할 수 있다고 단정할 수는 없습니다. 예를 들어 손님용 망을 집안 장치와 분리해 운영하는 설정이 있습니다.</p>
+<div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
+<h2>서로 다른 망 사이에서 다음 연결을 고른다</h2>
+<p><b class="key">라우터</b>는 여러 네트워크를 잇고, 목적지 쪽으로 어느 연결에 데이터를 내보낼지 결정하는 장치입니다. 가정용 공유기는 라우터 역할과 함께 무선 기기를 LAN에 연결하는 액세스 포인트, 여러 유선 기기를 잇는 스위치 기능을 한 기기에 넣은 제품이 많습니다. 이때 휴대폰에서 같은 LAN의 프린터로 보내는 데이터는 공유기 기기를 지나더라도 집 밖으로 나가는 라우팅을 할 필요는 없습니다.</p>
+<p>외부 웹 서버에 요청이 가면 집 LAN에서는 그 목적지의 호스트로 곧바로 보낼 수 없습니다. 집의 라우터에 넘기고, 이후 통신사의 네트워크와 연결된 여러 장치가 목적지 쪽으로 전달합니다. <b class="key">인터넷</b>은 공통된 통신을 할 수 있도록 서로 연결된 여러 네트워크의 집합입니다. 웹은 그 위에서 이용하는 서비스의 하나입니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 160" role="img" aria-label="노트북의 집 LAN에서 시작한 외부 요청이 중간 네트워크의 라우터를 거쳐 서버 쪽 네트워크에 닿는다.">
+<rect class="f-box" x="42" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="135" y="61" text-anchor="middle">집 LAN</text><text class="f-s" x="135" y="89" text-anchor="middle">요청을 보낸 노트북</text><text class="f-s" x="135" y="110" text-anchor="middle">바깥 목적지는 출구로</text><line class="f-line" x1="235" y1="84" x2="278" y2="84" marker-end="url(#f-arrow)"/><rect class="f-soft" x="287" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="380" y="61" text-anchor="middle">여러 중간 네트워크</text><text class="f-s" x="380" y="89" text-anchor="middle">라우터를 경유</text><text class="f-s" x="380" y="110" text-anchor="middle">각 구간은 별도 연결</text><line class="f-line" x1="480" y1="84" x2="523" y2="84" marker-end="url(#f-arrow)"/><rect class="f-box" x="532" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="625" y="61" text-anchor="middle">서버 쪽 네트워크</text><text class="f-s" x="625" y="89" text-anchor="middle">목적지에서 요청을 받음</text><text class="f-s" x="625" y="110" text-anchor="middle">서버가 응답을 보냄</text>
+</svg><figcaption>화살표는 요청이 진행하는 방향이다. 응답은 돌아오되 같은 중간 경로를 탄다는 보장은 없다.</figcaption></figure>
+<div class="check" data-q="q3"></div><div class="check" data-q="q4"></div>
+<h2>목적지에 따라 두 모델 경로를 비교한다</h2>
+<div class="box ex"><p class="box-k">작은 예제의 조건</p><p>이 집에서는 프린터와 노트북이 같은 LAN에 있고, 교재 서버는 다른 망에 있습니다. 내부 프린터는 연결 설정이 허용합니다. 인터넷 교재 서버로 나가는 출구는 집의 라우터 한 곳으로 정했습니다. 각 통신이 어디에서 끝나는지 아래 코드로 표시합니다.</p></div>
+<pre data-example="python"><code>destinations = {&quot;프린터&quot;: &quot;집 LAN&quot;, &quot;교재 서버&quot;: &quot;외부 네트워크&quot;}
+
+def initial_route(name):
+    if destinations[name] == &quot;집 LAN&quot;:
+        return &quot;노트북 → 집 LAN 안의 프린터&quot;
+    return &quot;노트북 → 집 라우터 → 외부 네트워크 → 교재 서버&quot;
+
+for name in destinations:
+    print(name + &quot;:&quot;, initial_route(name))</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>프린터: 노트북 → 집 LAN 안의 프린터
+교재 서버: 노트북 → 집 라우터 → 외부 네트워크 → 교재 서버</code></pre>
+<p>코드는 두 경우를 구별하는 개념도입니다. 같은 LAN에 있는지 계산하려면 주소와 네트워크 범위가 필요하고, 여러 목적지 중 다음 연결을 찾는 방법도 알아야 합니다. 이 내용은 이름과 주소 단원 및 IP 단원에서 이어집니다.</p>
+<div class="check" data-q="q5"></div>
+<h2>중간의 어디에서 일이 멈췄는지 생각한다</h2>
+<p>인터넷이 끊겼는데 집 프린터는 여전히 동작한다면 집 LAN의 연결은 적어도 그 두 기기 사이에서 작동하고 있습니다. 반대로 인터넷 접속이 된다고 해서 모든 로컬 장치에 접근할 수 있는 것은 아닙니다. 프린터가 다른 네트워크에 연결돼 있거나 인쇄 서비스가 멈췄을 수 있습니다. 이처럼 한 통신이 지나가는 범위와 그 안에서 요청을 처리하는 프로그램을 각각 생각합니다.</p>
+<h2>한눈에 정리</h2>
+<ul><li>LAN은 가까운 범위에서 기기를 연결하는 네트워크다.</li><li>라우터는 네트워크 사이를 잇고 목적지 쪽으로 전달한다. 가정용 공유기에는 다른 연결 기능도 들어갈 수 있다.</li><li>외부로 나가는 요청과 집 안에서 끝나는 요청은 지나가는 구간이 다르다.</li></ul>
+
+<h2>참고 자료</h2>
+<ul><li><a href="https://www.rfc-editor.org/rfc/rfc1122.html#section-1.1">IETF RFC 1122 · 호스트와 인터넷 계층</a></li><li><a href="https://www.rfc-editor.org/rfc/rfc1812.html#section-2.2.3">IETF RFC 1812 · IP 라우터의 역할</a></li></ul>
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

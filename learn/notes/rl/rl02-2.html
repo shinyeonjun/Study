@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ε-greedy: 평균을 쓰면서 새 선택지도 확인하기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e8c'/%3E%3Cpath d='M8 22V10m8 12V14m8 8V6' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="RL02-2">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+
+<header class="chapter">
+<p class="chap-sub">강화학습 · RL02 밴딧과 탐험</p>
+<p class="chap-num">RL02·2</p>
+<h1>ε-greedy: 평균을 쓰면서 새 선택지도 확인하기</h1>
+<p class="lead">첫 결과만 보고 가장 좋아 보이는 버튼을 계속 누르면 다른 버튼을 알아볼 기회가 줄어듭니다. 어느 정도를 이미 아는 선택에 쓰고, 어느 정도를 탐험에 쓰는지 나누어 봅니다.</p>
+</header>
+
+<div class="goal">
+<h2>이 장을 읽고 나면</h2>
+<ul>
+<li>ε-greedy에서 활용과 탐험을 구분하고 실제 선택 확률을 계산한다.</li>
+<li>미관측 행동의 초기화와 최대값 동률을 처리한다.</li>
+<li>확장으로 UCB의 탐험 항과 누적 후회의 계산 기준을 읽는다.</li>
+</ul>
+</div>
+
+<h2>지금 좋아 보이는 행동과 더 알아볼 행동</h2>
+<p>실제 참 평균 q(a)는 몰라서 앞 장의 Q(a)를 씁니다. <b class="key">활용</b>은 지금 Q가 가장 큰 행동을 고르는 것입니다. <b class="key">탐험</b>은 지금까지 덜 좋아 보인 행동도 시도하여 새 정보를 얻는 것입니다. 예를 들어 참 평균이 더 높은 버튼의 첫 보상이 우연히 0이면, 활용만 하는 규칙은 당장 1을 받은 다른 버튼으로 굳어질 수 있습니다.</p>
+<p><b class="key">ε-greedy</b>의 ε(엡실론)은 0부터 1까지 정합니다. 확률 ε로 모든 행동에서 균등하게 고르고, 확률 1−ε로 최대 Q 행동만 모아서 그중 균등하게 고르겠습니다. 다른 구현은 탐험에서 최댓값 행동을 제외하기도 합니다. 이 장에서 계산하는 확률과 코드는 <strong>탐험 시에도 모든 행동을 후보로 둔다</strong>는 규약입니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 251" role="img" aria-label="행동 셋에서 A만 추정값이 가장 크다. ε=0.2를 써서 활용 0.8, 탐험은 행동당 1/15이다. A의 최종 확률은 13/15이고 B,C는 각각 1/15다.">
+<text class="f-cap" x="179" y="35" text-anchor="start">활용과 탐험의 확률을 행동별로 더한다</text>
+<text class="f-t" x="155" y="81" text-anchor="end">A</text>
+<rect class="f-box" x="179" y="61" width="450" height="28" rx="4"/>
+<rect class="f-soft" x="179" y="61" width="360" height="28" rx="4"/>
+<text class="f-s" x="358" y="80" text-anchor="middle">활용 0.8</text>
+<rect class="f-over" x="539" y="61" width="30" height="28" rx="4"/>
+<text class="f-s" x="585" y="81" text-anchor="start">13/15</text>
+<text class="f-t" x="155" y="127" text-anchor="end">B</text>
+<rect class="f-box" x="179" y="107" width="450" height="28" rx="4"/>
+<rect class="f-over" x="179" y="107" width="30" height="28" rx="4"/>
+<text class="f-s" x="225" y="127" text-anchor="start">1/15</text>
+<text class="f-t" x="155" y="173" text-anchor="end">C</text>
+<rect class="f-box" x="179" y="153" width="450" height="28" rx="4"/>
+<rect class="f-over" x="179" y="153" width="30" height="28" rx="4"/>
+<text class="f-s" x="225" y="173" text-anchor="start">1/15</text>
+<line class="f-ink" x1="179" y1="202" x2="629" y2="202" marker-end="url(#f-arrow)"/>
+<text class="f-s" x="179" y="225" text-anchor="middle">0</text>
+<text class="f-s" x="629" y="225" text-anchor="middle">1</text>
+<rect class="f-over" x="320" y="216" width="19" height="15" rx="4"/>
+<text class="f-s" x="350" y="229" text-anchor="start">탐험 확률은 행동당 1/15</text>
+</svg>
+<figcaption>탐험할 때도 A를 고를 수 있다. 그래서 A의 최종 확률은 활용 확률 0.8보다 크다.</figcaption>
+</figure>
+<p>세 행동에서 A가 유일한 최대이고 ε=0.2라면 A를 고를 확률은 <code>(1−0.2)+0.2/3=13/15</code>입니다. B와 C는 탐험으로만 고르므로 각각 1/15입니다. 최대 Q가 두 개로 동률이면 활용 확률 1−ε을 두 행동이 절반씩 나눕니다. ε=0이면 지금 추정값에만 의존하고, ε=1이면 항상 전체 행동에서 균등하게 뽑습니다.</p>
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+<h2>초기값과 동률은 실험의 일부다</h2>
+<p>아무 버튼도 누르지 않았으면 Q는 평균으로 계산할 수 없습니다. 작은 실험에서는 <b>버튼마다 한 번씩 먼저 누르기</b>를 초기화로 두면 모든 행동에 관측값 하나가 생깁니다. Q를 임의의 같은 값으로 시작하는 방법도 있지만, 그 값과 동률 규칙이 첫 행동을 좌우합니다. 코드는 번호가 작은 행동을 무조건 먼저 고르는 대신, 최대값 후보를 모아서 균등하게 나눕니다. 난수 시드를 기록해 선택 과정을 재현할 수 있습니다.</p>
+<div class="check" data-q="q3"></div>
+<div class="check" data-q="q4"></div>
+<h2>확장 · 한 번 본 행동에 얼마나 탐험 점수를 줄까</h2>
+<p><b class="key">UCB</b>(upper confidence bound)는 지금 평균에 덜 알아본 행동의 탐험 점수를 더합니다. 이 장은 Sutton·Barto의 형태인 <code>Q(a)+c√[ln(t)/N(a)]</code>를 씁니다. t는 지금 고를 시행 번호(1부터 시작), N(a)는 그 이전에 해당 행동을 고른 횟수, c는 탐험 크기를 조절하는 음이 아닌 수입니다. ln은 자연로그입니다. N(a)=0이면 식으로 나눌 수 없으므로 먼저 한 번씩 시도합니다. 이 간단한 형태의 점수를 그대로 통계적 신뢰구간이라고 해석하려면 보상 범위 등 추가 조건이 필요합니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 225" role="img" aria-label="t=16에서 A는 평균 0.75, 12번 관측으로 추가점수 약 0.4807, 총 1.2307. B는 평균 2/3, 3번 관측으로 추가점수 0.9614, 총 1.6280이라 선택된다.">
+<text class="f-cap" x="178" y="35" text-anchor="start">관측 평균</text>
+<text class="f-cap" x="445" y="35" text-anchor="start">덜 본 행동에 주는 추가점수</text>
+<text class="f-cap" x="158" y="80" text-anchor="end">A</text>
+<rect class="f-soft" x="178" y="58" width="195" height="34" rx="4"/>
+<rect class="f-over" x="373" y="58" width="124.97566350540986" height="34" rx="4"/>
+<text class="f-s" x="275.5" y="81" text-anchor="middle">0.75</text>
+<text class="f-s" x="435.4878317527049" y="81" text-anchor="middle">+0.4807</text>
+<text class="f-t" x="510.97566350540984" y="81" text-anchor="start">1.2307</text>
+<text class="f-cap" x="158" y="140" text-anchor="end">B</text>
+<rect class="f-soft" x="178" y="118" width="173.33333333333331" height="34" rx="4"/>
+<rect class="f-over" x="351.3333333333333" y="118" width="249.9513270108197" height="34" rx="4"/>
+<text class="f-s" x="264.66666666666663" y="141" text-anchor="middle">2/3</text>
+<text class="f-s" x="476.3089968387432" y="141" text-anchor="middle">+0.9614</text>
+<text class="f-t" x="614.284660344153" y="141" text-anchor="start">1.6280</text>
+<line class="f-ink" x1="178" y1="179" x2="668" y2="179" marker-end="url(#f-arrow)"/>
+<line class="f-ink" x1="178" y1="179" x2="178" y2="184"/><text class="f-s" x="178" y="204" text-anchor="middle">0</text>
+<line class="f-ink" x1="308" y1="179" x2="308" y2="184"/><text class="f-s" x="308" y="204" text-anchor="middle">0.5</text>
+<line class="f-ink" x1="438" y1="179" x2="438" y2="184"/><text class="f-s" x="438" y="204" text-anchor="middle">1</text>
+<line class="f-ink" x1="568" y1="179" x2="568" y2="184"/><text class="f-s" x="568" y="204" text-anchor="middle">1.5</text>
+<text class="f-s" x="696" y="183" text-anchor="middle">점수</text>
+</svg>
+<figcaption>두 버튼을 모두 눌러 본 뒤의 비교다. B가 선택되는 이유는 낮은 추정 평균을 더 큰 탐험 점수가 보완하기 때문이다.</figcaption>
+</figure>
+<p>지금까지 A를 12번, B를 3번 눌렀으므로 이제 t=16입니다. Q(A)=0.75, Q(B)=2/3, c=1이면 A의 점수는 약 1.2307, B는 약 1.6280입니다. 보상이 0·1점뿐이더라도 선택에 쓰는 UCB 점수는 1보다 클 수 있습니다. 시도가 늘면 같은 t에서 점수가 더해지는 크기는 작아집니다.</p>
+<div class="check" data-q="q5"></div>
+<h2>확장 · 가장 좋은 참 평균과 얼마나 차이 났나</h2>
+<p>각 버튼의 참 평균이 q(A)=0.75, q(B)=0.50인 환경을 평가한다고 합시다. 최선의 참 평균 q*=0.75는 우리가 만든 모형에서는 알고 있지만, 실제 에이전트에게는 보통 알려 주지 않습니다. 특정 실행에서 고른 행동 Aₜ마다 평균 차이 <code>q*−q(Aₜ)</code>를 쌓으면 그 실행의 <b>누적 평균 격차</b>를 얻습니다. A,B,B,A를 골랐다면 B의 격차가 0.25점씩 두 번 발생해 합은 0.5점입니다.</p>
+<p>실행을 여러 번 되풀이할 때 이 합의 기댓값을 <b class="key">누적 기대 의사후회</b>(expected pseudo-regret)라고 부르겠습니다. 분포가 고정되고, 각 시점의 보상은 행동을 고른 뒤 그 행동 분포에서 새로 나온다는 가정 아래 <code>Tq*−E[받은 보상의 합]</code>과 같습니다. 각 실행의 실제 보상 합은 운에 영향을 받습니다. 예를 들어 위 실행에서 1점을 네 번 받았다면 최선 정책의 <b>기대 기준</b> 4×0.75에서 실제 합 4를 뺀 값은 −1입니다. 평균 차이의 합 0.5가 음수로 바뀐 것이 아닙니다.</p>
+<div class="check" data-q="q6"></div>
+<h2>선택 규칙과 계산 예제를 코드로 대조한다</h2>
+<pre data-example="python"><code>from fractions import Fraction as F
+from math import log, sqrt
+from random import Random
+
+def epsilon_greedy(values, epsilon, rng):
+    actions = list(range(len(values)))
+    if rng.random() &lt; epsilon:
+        return rng.choice(actions)
+    best_value = max(values)
+    tied = [a for a in actions if values[a] == best_value]
+    return rng.choice(tied)
+
+rng = Random(7)
+fixed_estimates = [0.6, 0.2, 0.3]
+choices = [epsilon_greedy(fixed_estimates, 0.2, rng) for _ in range(6)]
+scores = [q + sqrt(log(16) / n) for q, n in [(0.75, 12), (2 / 3, 3)]]
+means = {"A": F(3, 4), "B": F(1, 2)}
+best = max(means.values())
+path = "ABBA"
+gap = sum(best - means[arm] for arm in path)
+observed_loss = len(path) * best - sum([1, 1, 1, 1])
+
+print("ε-greedy 선택:", choices)
+print("UCB 점수:", *(f"{score:.4f}" for score in scores))
+print("누적 평균 격차:", gap)
+print("기대 기준과 관측 합계의 차:", observed_loss)
+
+selector, environment = Random(7), Random(4)
+probabilities = [0.5, 0.75]
+counts, estimates = [0, 0], [F(0), F(0)]
+for step in range(10):
+    if step &lt; len(probabilities):
+        arm = step
+    else:
+        arm = epsilon_greedy(estimates, 0.2, selector)
+    reward = int(environment.random() &lt; probabilities[arm])
+    counts[arm] += 1
+    estimates[arm] += (reward - estimates[arm]) / counts[arm]
+
+print("모의실험 선택 횟수:", counts)
+print("모의실험 보상 평균:", *estimates)</code></pre>
+<pre data-output><code>ε-greedy 선택: [0, 0, 2, 2, 2, 0]
+UCB 점수: 1.2307 1.6280
+누적 평균 격차: 1/2
+기대 기준과 관측 합계의 차: -1
+모의실험 선택 횟수: [7, 3]
+모의실험 보상 평균: 5/7 2/3</code></pre>
+<p>코드의 첫 선택 여섯 번은 Q를 고정해 행동 선택 규칙만 점검합니다. 그 뒤 별도 모의실험에서는 앞 장의 두 버튼을 각각 한 번씩 누른 뒤부터 ε-greedy를 적용합니다. 환경이 보상을 하나 뽑고, 에이전트는 <b>선택한 행동의 Q와 횟수만</b> 갱신합니다. 이 실행에서는 실제 평균이 0.5인 A의 추정값 5/7이 B의 추정값 2/3보다 큽니다. 열 번의 실행으로 참 평균의 순위를 확정할 수는 없습니다.</p>
+<h2>참고 자료</h2>
+<ul><li><a href="https://mitpress.mit.edu/9780262039246/reinforcement-learning/">Sutton·Barto, Reinforcement Learning 2판 · §2.2, §2.6–2.7 행동 선택</a></li>
+<li><a href="https://www.cambridge.org/core/books/abs/bandit-algorithms/stochastic-bandits/DC0198418EE228E8FE8CC99F1668C124">Lattimore·Szepesvári, Bandit Algorithms · §4 확률적 밴딧과 후회</a></li></ul>
+
+<h2>확인 문제</h2>
+<p>본문에서 푼 것 말고 남은 문제입니다. 먼저 답을 정한 뒤 해설을 확인합니다.</p>
+<div id="quiz"></div>
+
+<section class="work" id="tools"></section>
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

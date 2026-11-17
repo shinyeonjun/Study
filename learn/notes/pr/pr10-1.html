@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>현재 상태와 여러 단계의 전이 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e8c'/%3E%3Cpath d='M8 22V10m8 12V14m8 8V6' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="PR10-1">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+
+<header class="chapter">
+<p class="chap-sub">확률 · PR10 마르코프 연쇄</p>
+<p class="chap-num">PR10·1</p>
+<h1>현재 상태와 여러 단계의 전이</h1>
+<p class="lead">현재 상태에 따라 다음 상태의 확률이 정해지는 모형을 만듭니다. 한 걸음의 화살표를 표로 옮기고, 가능한 경로를 합해 두 걸음 뒤의 확률을 계산합니다.</p>
+</header>
+
+<div class="goal">
+<h2>이 장을 읽고 나면</h2>
+<ul>
+<li>상태를 정하고, 다음 상태의 확률을 정하는 데 현재 상태가 충분하다는 가정을 설명한다.</li>
+<li>전이행렬에서 행과 열의 역할을 읽고, 확률의 한 걸음 이동을 행벡터로 계산한다.</li>
+<li>지정한 경로의 확률을 곱하고, 시작과 끝 사이의 여러 경로를 합해 두 걸음 전이를 구한다.</li>
+</ul>
+</div>
+
+<h2>다음 상태를 설명하는 데 필요한 정보를 정한다</h2>
+<p>서버의 부하를 1분마다 관찰하고 낮으면 L, 높으면 H로 기록한다고 합시다. t번째 관찰의 상태를 S<sub>t</sub>라고 쓰겠습니다. 다음 분의 부하가 H일 확률을 구할 때 현재 부하 등급만으로 충분하다고 가정하면, 과거 기록의 나머지 부분을 조건에서 뺄 수 있습니다.</p>
+<p class="calc">P(S<sub>t+1</sub>=j | S<sub>0</sub>=i<sub>0</sub>, …, S<sub>t</sub>=i) = P(S<sub>t+1</sub>=j | S<sub>t</sub>=i).</p>
+<p>조건에 붙인 사건의 확률이 양수일 때 이 관계가 모든 시각과 가능한 이력에서 성립하면 <b class="key">마르코프 성질</b>을 만족합니다. 과거의 영향이 현재 상태에 반영되어 있어도 됩니다. 예컨대 H가 오래 지속된 서버와 방금 H가 된 서버의 다음 상태 확률이 다르면, 현재 등급 하나만 담은 상태로는 가정이 성립하기 어렵습니다. 최근 부하나 H의 지속 시간을 상태에 추가하고, 그 표현이 충분한지 다시 살펴볼 수 있습니다.</p>
+<p>이 장에서는 한 걸음의 확률이 어느 시각에서도 같은 <b class="key">시간 동질</b> 모형을 씁니다. 점심과 자정의 전이확률이 다르면 시간에 따라 행렬을 달리할 수 있습니다. 시간 동질성과 마르코프 성질은 별개의 가정입니다.</p>
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+
+<h2>한 행은 출발 상태를 고정한 확률분포다</h2>
+<p>가상의 부하 모형에서 낮은 부하는 다음 분도 낮을 확률이 3/4입니다. 높은 부하는 L과 H로 각각 1/2의 확률로 갑니다. 자기 자신으로 향하는 화살표는 한 분이 지났고 상태 등급이 같았음을 뜻합니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 265" role="img" aria-label="낮은 부하 L에서 L은 3/4, H는 1/4이다. 높은 부하 H에서 L은 1/2, H는 1/2다.">
+<circle class="f-box" cx="220" cy="137" r="34"/>
+<circle class="f-box" cx="540" cy="137" r="34"/>
+<path class="f-line" d="M193 116C98 41 226 27 218 101" marker-end="url(#f-arrow)"/>
+<path class="f-line" d="M567 116C662 41 534 27 542 101" marker-end="url(#f-arrow)"/>
+<path class="f-line" d="M251 123Q380 68 509 123" marker-end="url(#f-arrow)"/>
+<path class="f-line" d="M509 151Q380 206 251 151" marker-end="url(#f-arrow)"/>
+<text class="f-cap" x="220" y="143" text-anchor="middle">L</text>
+<text class="f-cap" x="540" y="143" text-anchor="middle">H</text>
+<text class="f-t" x="160" y="45" text-anchor="middle">3/4</text>
+<text class="f-t" x="600" y="45" text-anchor="middle">1/2</text>
+<text class="f-t" x="380" y="85" text-anchor="middle">1/4</text>
+<text class="f-t" x="380" y="206" text-anchor="middle">1/2</text>
+<text class="f-s" x="220" y="232" text-anchor="middle">낮은 부하</text>
+<text class="f-s" x="540" y="232" text-anchor="middle">높은 부하</text>
+</svg>
+<figcaption>L에서 출발하는 화살표의 확률 합은 3/4 + 1/4 = 1이다. H에서 출발하는 화살표도 1/2 + 1/2 = 1이다.</figcaption>
+</figure>
+<p>행을 출발, 열을 도착으로 정하면 <b class="key">전이행렬</b> P의 원소 P<sub>ij</sub>는 P(S<sub>t+1</sub>=j | S<sub>t</sub>=i)입니다. 행과 열 모두 (L,H) 순서로 놓습니다.</p>
+<div class="table-wrap"><table>
+<tr><th scope="col">출발 ↓ / 도착 →</th><th scope="col">L</th><th scope="col">H</th><th scope="col">행 합</th></tr>
+<tr><th scope="row">L</th><td>3/4</td><td>1/4</td><td>1</td></tr>
+<tr><th scope="row">H</th><td>1/2</td><td>1/2</td><td>1</td></tr>
+</table></div>
+<p>각 행의 원소가 음이 아니고 합이 1입니다. 열은 서로 다른 출발 조건의 확률을 모은 것이니 합이 1일 필요가 없습니다. 이 예에서 첫 열의 합은 5/4입니다. 책이나 프로그램에서 상태를 열벡터로 놓고 다른 관례를 쓸 수 있습니다. 여기서는 행을 출발, 분포는 행벡터로 계속 사용합니다.</p>
+<p>현재 상태가 L일 확률이 0.6이고 H일 확률이 0.4라면, 현재 분포는 p<sub>0</sub> = (0.6, 0.4)입니다. 다음 분에 H일 확률은 L에서 온 0.6·(1/4)와 H에서 온 0.4·(1/2)를 더한 0.35입니다. L일 확률도 같은 방식으로 0.65입니다.</p>
+<p class="calc">p<sub>t+1</sub> = p<sub>t</sub>P. &nbsp; (p<sub>t+1</sub>)<sub>j</sub> = Σ<sub>i</sub>(p<sub>t</sub>)<sub>i</sub>P<sub>ij</sub>.</p>
+<div class="check" data-q="q3"></div>
+<div class="check" data-q="q4"></div>
+
+<h2>지정한 경로는 곱하고 가능한 경로를 더한다</h2>
+<p>L에서 시작해 두 걸음 뒤가 H인 사건을 봅시다. 중간 상태가 L인 경로 L→L→H와 중간 상태가 H인 경로 L→H→H 두 가지가 있습니다. 시작이 L이라는 조건에서 각 경로의 확률을 따로 계산합니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 278" role="img" aria-label="시작 L에서 첫 걸음 L은 3/4, H는 1/4이다. 둘째 걸음 H에 닿는 경로는 L을 거친 3/4 곱하기 1/4와 H를 거친 1/4 곱하기 1/2다.">
+<path class="f-ink" d="M126 138L316 91 M126 138L316 188 M357 87L554 60 M357 94L554 113 M357 185L554 165 M357 192L554 220"/>
+<circle class="f-box" cx="106" cy="138" r="20"/>
+<circle class="f-box" cx="336" cy="90" r="20"/>
+<circle class="f-box" cx="336" cy="188" r="20"/>
+<circle class="f-box" cx="574" cy="59" r="19"/>
+<circle class="f-soft" cx="574" cy="113" r="19"/>
+<circle class="f-box" cx="574" cy="164" r="19"/>
+<circle class="f-soft" cx="574" cy="221" r="19"/>
+<text class="f-t" x="106" y="143" text-anchor="middle">L</text>
+<text class="f-t" x="336" y="95" text-anchor="middle">L</text>
+<text class="f-t" x="336" y="193" text-anchor="middle">H</text>
+<text class="f-t" x="574" y="64" text-anchor="middle">L</text>
+<text class="f-t" x="574" y="118" text-anchor="middle">H</text>
+<text class="f-t" x="574" y="169" text-anchor="middle">L</text>
+<text class="f-t" x="574" y="226" text-anchor="middle">H</text>
+<text class="f-t" x="219" y="103" text-anchor="middle">3/4</text>
+<text class="f-t" x="219" y="183" text-anchor="middle">1/4</text>
+<text class="f-t" x="458" y="63" text-anchor="middle">3/4</text>
+<text class="f-t" x="458" y="127" text-anchor="middle">1/4</text>
+<text class="f-t" x="458" y="166" text-anchor="middle">1/2</text>
+<text class="f-t" x="458" y="226" text-anchor="middle">1/2</text>
+<text class="f-t" x="632" y="117">3/16</text>
+<text class="f-t" x="632" y="225">1/8</text>
+<text class="f-cap" x="106" y="263" text-anchor="middle">시작</text>
+<text class="f-cap" x="336" y="263" text-anchor="middle">한 걸음</text>
+<text class="f-cap" x="574" y="263" text-anchor="middle">두 걸음</text>
+</svg>
+<figcaption>착색한 H 두 지점은 서로 다른 경로의 도착 상태다. 두 확률을 더하면 두 걸음 뒤 H일 확률은 3/16 + 1/8 = 5/16이다.</figcaption>
+</figure>
+<p>첫 경로의 확률은 P(S<sub>1</sub>=L | S<sub>0</sub>=L) · P(S<sub>2</sub>=H | S<sub>1</sub>=L,S<sub>0</sub>=L)입니다. 마르코프 가정으로 두 번째 항에서는 S<sub>1</sub>만 남겨 P<sub>LH</sub>를 쓸 수 있습니다. 두 경로는 중간 상태가 달라 동시에 일어날 수 없으므로 확률을 더합니다.</p>
+<p class="calc">P(S<sub>2</sub>=H | S<sub>0</sub>=L) = (3/4)(1/4) + (1/4)(1/2) = 5/16.</p>
+<p>가능한 모든 중간 상태 k를 합하는 식은 행렬곱의 정의와 같습니다. (P²)<sub>ij</sub> = Σ<sub>k</sub>P<sub>ik</sub>P<sub>kj</sub>입니다. P²의 모든 원소는 두 걸음 뒤 도착 확률이며, P²는 P의 원소를 각자 제곱한 배열과 다릅니다. 같은 전이행렬이 매번 쓰인다면 n걸음 뒤 분포는 p<sub>0</sub>P<sup>n</sup>입니다.</p>
+<div class="check" data-q="q5"></div>
+<div class="check" data-q="q6"></div>
+
+<h2>경로의 합과 행렬곱을 계산해 대조한다</h2>
+<p>파이썬에서 <code>@</code>는 행렬곱입니다. <code>p0</code>는 길이 2인 1차원 배열이며, <code>p0 @ P</code>에서 왼쪽에 있으므로 행벡터의 계산으로 해석합니다. <code>P[0, 1]</code>은 (L 출발, H 도착)입니다.</p>
+<pre data-example="python"><code>import numpy as np
+
+P = np.array([[0.75, 0.25], [0.50, 0.50]])
+p0 = np.array([0.60, 0.40])
+two_steps = P @ P
+via_L = P[0, 0] * P[0, 1]
+via_H = P[0, 1] * P[1, 1]
+assert np.isclose(two_steps[0, 1], via_L + via_H)
+assert np.allclose(two_steps.sum(axis=1), 1)
+
+def row_text(row):
+    return " ".join(f"{value:.4f}" for value in row)
+
+for label, row in zip(("L", "H"), two_steps):
+    print(f"{label} 출발, 두 걸음: {row_text(row)}")
+print(f"한 걸음 뒤 분포: {row_text(p0 @ P)}")
+print(f"두 걸음 뒤 분포: {row_text(p0 @ two_steps)}")
+print(f"L에서 H로 두 걸음: {via_L:.4f} + {via_H:.4f}")</code></pre>
+<pre data-output><code>L 출발, 두 걸음: 0.6875 0.3125
+H 출발, 두 걸음: 0.6250 0.3750
+한 걸음 뒤 분포: 0.6500 0.3500
+두 걸음 뒤 분포: 0.6625 0.3375
+L에서 H로 두 걸음: 0.1875 + 0.1250</code></pre>
+<p>두 번째 행을 검산하면 H에서 H로 끝나는 경로는 H→L→H의 1/8과 H→H→H의 1/4입니다. 합은 3/8 = 0.375입니다. 다음 장에서는 같은 행렬을 여러 번 곱할 때 분포가 어디로 가는지 봅니다.</p>
+
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table>
+<tr><th scope="col">구하려는 양</th><th scope="col">계산</th></tr>
+<tr><td>한 걸음 뒤 상태</td><td>P<sub>ij</sub>에서 출발 행 i와 도착 열 j를 읽는다.</td></tr>
+<tr><td>한 걸음 뒤 분포</td><td>현재 행벡터 p<sub>t</sub>에 오른쪽으로 P를 곱한다.</td></tr>
+<tr><td>여러 걸음 뒤 도착 확률</td><td>경로 안에서는 전이확률을 곱하고, 서로 다른 경로를 더한다.</td></tr>
+</table></div>
+
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://ocw.mit.edu/courses/6-041sc-probabilistic-systems-analysis-and-applied-probability-fall-2013/pages/unit-iii/lecture-16/">MIT OpenCourseWare 6.041SC · 마르코프 성질과 전이확률</a></li>
+<li><a href="https://ocw.mit.edu/courses/6-041sc-probabilistic-systems-analysis-and-applied-probability-fall-2013/pages/unit-iii/lecture-17/">MIT OpenCourseWare 6.041SC · 여러 단계의 전이와 장기 거동</a></li>
+</ul>
+
+<h2>확인 문제</h2>
+<p>아직 풀지 않은 문제입니다. 먼저 식이나 근거를 적어 보고 해설을 확인합니다.</p>
+<div id="quiz"></div>
+
+<section class="work" id="tools"></section>
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

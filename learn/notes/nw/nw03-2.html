@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>지연·용량·처리량·손실을 단위로 계산하기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="NW03-2">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">네트워크</p>
+<p class="chap-num">NW03·2</p>
+<h1>지연·용량·처리량·손실을 단위로 계산하기</h1>
+<p class="lead">파일 내려받기가 느리다는 말에는 시작까지 오래 기다렸다는 뜻과, 내려오는 동안 초당 자료가 적었다는 뜻이 섞일 수 있습니다. 시간을 더하는 계산과 초당 자료를 재는 계산을 따로 해 봅니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>송신·전파·처리·대기 지연을 나누어 계산한다.</li><li>링크 용량과 실제 처리량을 계산하고 병목을 찾는다.</li><li>보낸 패킷과 받은 패킷으로 손실률을 구한다.</li></ul></div>
+
+<h2>같은 방향으로 이동해도 걸리는 이유가 다르다</h2>
+<p>길이 L 비트인 데이터 묶음을 한 링크에 내보냅니다. 링크가 초당 R 비트를 전달할 수 있다면 모든 비트를 밀어 넣는 시간은 <b class="key">송신 지연</b> <code>L/R</code>입니다. 이미 내보낸 첫 비트가 거리 d인 링크를 속도 v로 이동하는 시간은 <b class="key">전파 지연</b> <code>d/v</code>입니다. 비트의 길이와 링크의 길이가 각각 다른 계산에 들어갑니다.</p>
+<p>중간 장치가 받은 정보를 읽어 어디로 보낼지 결정하는 데 <b>처리 지연</b>이 들 수 있습니다. 다른 패킷들이 앞서 있어 기다리는 동안은 <b>대기 지연</b>입니다. 관측 지점과 모델을 지정한 뒤 한 묶음의 한 방향 이동에 해당하는 시간을 더합니다.</p>
+<div class="box ex"><p class="box-k">풀이 예제</p><p>1,500바이트를 초당 12,000,000비트로 밀어 넣습니다. 1바이트는 8비트이므로 송신은 12,000/12,000,000=0.001초=1 ms입니다. 200 km인 경로에서 신호가 초당 2×10⁸ m로 간다는 가정이면 전파 역시 200,000/(2×10⁸)=1 ms입니다.</p><p>모델의 처리 시간을 0.2 ms, 대기를 0.8 ms로 더하면 한 방향 전체는 3 ms입니다.</p></div>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 198" role="img" aria-label="한 방향 지연 3 ms를 송신 1, 전파 1, 처리 0.2, 대기 0.8로 분해했다.">
+<text class="f-cap" x="380" y="44" text-anchor="middle">한 방향 지연 3.0 ms</text><rect class="f-soft" x="122" y="69" width="172" height="53" rx="3"/><text class="f-cap" x="208" y="102" text-anchor="middle">1</text><text class="f-s" x="132" y="174" text-anchor="middle">1. 송신 1.0</text><rect class="f-box" x="294" y="69" width="172" height="53" rx="3"/><text class="f-cap" x="380" y="102" text-anchor="middle">2</text><text class="f-s" x="298" y="174" text-anchor="middle">2. 전파 1.0</text><rect class="f-soft" x="466" y="69" width="34.4" height="53" rx="3"/><text class="f-cap" x="483.2" y="102" text-anchor="middle">3</text><text class="f-s" x="464" y="174" text-anchor="middle">3. 처리 0.2</text><rect class="f-box" x="500.40000000000003" y="69" width="137.6" height="53" rx="3"/><text class="f-cap" x="569.2" y="102" text-anchor="middle">4</text><text class="f-s" x="630" y="174" text-anchor="middle">4. 대기 0.8</text><line class="f-ink" x1="122" y1="124" x2="122" y2="133"/><text class="f-s" x="122" y="148" text-anchor="middle">0</text><line class="f-ink" x1="294" y1="124" x2="294" y2="133"/><text class="f-s" x="294" y="148" text-anchor="middle">1</text><line class="f-ink" x1="466" y1="124" x2="466" y2="133"/><text class="f-s" x="466" y="148" text-anchor="middle">2</text><line class="f-ink" x1="638" y1="124" x2="638" y2="133"/><text class="f-s" x="638" y="148" text-anchor="middle">3</text>
+</svg><figcaption>길이는 예제에서 각 항이 차지하는 시간의 비율이다. 장치가 겪는 물리적 순서는 모델과 관측 위치에 따라 다르다.</figcaption></figure>
+<p>왕복시간은 요청이 나가고 대응하는 응답이 돌아오는 두 방향을 포함하는 시간입니다. 두 방향의 연결 상태와 경로, 상대가 응답하는 데 든 시간이 다르면 한 방향 시간의 단순한 두 배가 아닐 수 있습니다.</p>
+<div class="check" data-q="q1"></div><div class="check" data-q="q2"></div><div class="check" data-q="q3"></div>
+<h2>링크가 담을 수 있는 속도와 실제로 얻은 속도</h2>
+<p>여기서 <b class="key">대역폭</b>은 링크 용량의 뜻으로 사용합니다. 16 Mb/s인 링크는 조건대로 작동할 때 초당 16,000,000비트를 내보낼 수 있습니다. 전달이 여러 링크를 순서대로 거친다면, 단순 모델에서 가장 느린 링크보다 빠르게 끝까지 계속 운반할 수 없습니다. 그런 제약을 주는 링크를 <b>병목</b>이라 합니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 187" role="img" aria-label="연결 용량이 100, 16, 80 Mb/s로 이어진다. 한 흐름의 장기 처리량 상한은 가운데 16 Mb/s 이하이다.">
+<rect class="f-box" x="44" y="61" width="180" height="92" rx="3"/><rect class="f-soft" x="290" y="61" width="180" height="92" rx="3"/><rect class="f-box" x="536" y="61" width="180" height="92" rx="3"/><text class="f-cap" x="134" y="93" text-anchor="middle">첫 구간</text><text class="f-t" x="134" y="127" text-anchor="middle">100 Mb/s</text><text class="f-cap" x="380" y="93" text-anchor="middle">둘째 구간</text><text class="f-t" x="380" y="127" text-anchor="middle">16 Mb/s</text><text class="f-cap" x="626" y="93" text-anchor="middle">셋째 구간</text><text class="f-t" x="626" y="127" text-anchor="middle">80 Mb/s</text><line class="f-line" x1="232" y1="108" x2="282" y2="108" marker-end="url(#f-arrow)"/><line class="f-line" x1="478" y1="108" x2="528" y2="108" marker-end="url(#f-arrow)"/>
+</svg><figcaption>모든 전달 데이터가 세 구간을 지나야 하는 단순 모델이다. 가운데 링크가 더 많은 데이터를 밀어내기 어려운 병목이다.</figcaption></figure>
+<p>초당 실제로 전달된 자료 수를 <b class="key">처리량</b>이라 합니다. 무엇을 전달량에 넣는지 함께 기록해야 합니다. 예를 들어 실제 사용 데이터만 세는 속도는 유효 처리량(goodput)이라고도 합니다. 연결의 헤더, 재전송, 다른 사람과의 경쟁, 대기 때문에 실제 파일 내려받기 속도는 단순 용량 계산보다 작을 수 있습니다.</p>
+<p>1 MB를 1,000,000바이트로 쓸 때 4 MB는 32 Mb입니다. 16 Mb/s인 병목만 고려한 이상적인 최소 전송 시간은 32/16=2초입니다. 관측자가 유용한 4 MB의 도착까지 2.5초를 재었다면, 그 구간의 평균 유효 처리량은 32/2.5=12.8 Mb/s입니다. 주어진 <code>MB</code>와 <code>Mb</code>에서 대문자 B는 바이트, 소문자 b는 비트입니다.</p>
+<div class="check" data-q="q4"></div><div class="check" data-q="q5"></div>
+<h2>손실률은 센 범위와 함께 읽는다</h2>
+<p>작은 실험에서 번호가 다른 패킷 1,000개를 보내고, 정한 관측 시간 안에 980개가 수신 장치에 도착했다고 합시다. 중복 도착은 한 개로 세며, 도착의 시간 기준을 넘긴 패킷은 이 측정에서 도착하지 않은 것으로 처리합니다. 이 절차에서 사라진 비율은 <code>(1000−980)/1000 = 0.02</code>, 즉 2%입니다.</p>
+<pre data-example="python"><code>packet_bytes, rate_mbps = 1500, 12
+distance_m, propagation_speed = 200_000, 200_000_000
+send_ms = 1000 * (packet_bytes * 8) / (rate_mbps * 1_000_000)
+travel_ms = 1000 * distance_m / propagation_speed
+total_ms = send_ms + travel_ms + 0.2 + 0.8
+
+file_mb = 4
+capacity = min(100, 16, 80)
+observed_seconds = 2.5
+sent, received = 1000, 980
+loss = (sent - received) / sent
+print(f&quot;{send_ms:.1f} {travel_ms:.1f} {total_ms:.1f} ms&quot;)
+print(f&quot;{file_mb * 8 / capacity:.1f} s&quot;)
+print(f&quot;{file_mb * 8 / observed_seconds:.1f} Mb/s&quot;)
+print(f&quot;{loss:.1%}&quot;)</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>1.0 1.0 3.0 ms
+2.0 s
+12.8 Mb/s
+2.0%</code></pre>
+<div class="check" data-q="q6"></div>
+<p>이 자료만으로 손실이 용량 문제인지, 무선 연결이 끊겼는지, 받는 프로그램에서 처리하지 못했는지 판정하기는 어렵습니다. 여러 번 잴 때 출발지와 목적지, 관측 시간, 보낸 것과 도착한 것을 같은 기준으로 기록합니다.</p>
+<h2>한눈에 정리</h2>
+<ul><li>송신 지연은 비트÷비트/초, 전파 지연은 거리÷속도다. 처리와 대기는 따로 관찰한다.</li><li>단순 경로에서 용량의 최솟값이 가능한 전송 속도를 제약한다.</li><li>실제 처리량과 손실률은 관측 기간, 전송량을 센 기준과 함께 읽는다.</li></ul>
+
+<h2>참고 자료</h2>
+<ul><li><a href="https://www.rfc-editor.org/rfc/rfc7679.html">IETF RFC 7679 · 한 방향 지연 측정</a></li><li><a href="https://www.rfc-editor.org/rfc/rfc7680.html">IETF RFC 7680 · 한 방향 패킷 손실 측정</a></li></ul>
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>
