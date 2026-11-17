@@ -1,0 +1,425 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>저장·열기·복사·백업 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e8c'/%3E%3Cpath d='M8 22V10m8 12V14m8 8V6' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="U02-3">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+
+<header class="chapter">
+<p class="chap-sub">공부·컴퓨터의 출발점 · U02 파일과 폴더</p>
+<p class="chap-num">U02·3</p>
+<h1>저장·열기·복사·백업</h1>
+<p class="lead">두 시간 동안 정리한 메모를 닫으려는데 "변경 내용을 저장하시겠습니까?"라는 창이 뜹니다. 무심코 "저장 안 함"을 누르면 두 시간이 사라집니다. 반대로 꼬박꼬박 저장했는데 노트북이 고장 나도 모두 사라집니다. 이 장에서는 저장과 열기가 실제로 무엇을 옮기는지, 복사와 이동은 어떻게 다른지, 그리고 왜 백업은 "다른 곳에 둔 복사본"이어야 하는지를 다룹니다.</p>
+</header>
+
+<div class="goal">
+<h2>이 장을 읽고 나면</h2>
+<ul>
+<li>저장과 열기를 메모리와 저장 장치 사이의 이동으로 설명할 수 있다.</li>
+<li>"저장"과 "다른 이름으로 저장"이 원래 파일에 각각 어떤 일을 하는지 말할 수 있다.</li>
+<li>복사·이동·바로 가기의 차이를 말하고, 파일 탐색기에서 원하는 쪽으로 할 수 있다.</li>
+<li>백업이 막아 주는 위험과 막지 못하는 위험을 장소별로 가려낼 수 있다.</li>
+<li>동기화와 백업이 왜 다른지 지운 파일의 예로 설명할 수 있다.</li>
+</ul>
+</div>
+
+<h2>저장: 메모리에서 저장 장치로</h2>
+
+<p>컴퓨터가 일하는 동안 쓰는 메모리(RAM)와 나중을 위해 남겨 두는 저장 장치(SSD·하드디스크·USB 메모리)는 다릅니다(U03-2 "부품과 프로그램"). 메모리는 빠르지만 전원이 꺼지면 내용이 사라지고, 저장 장치는 전원이 꺼져도 내용이 남습니다.</p>
+
+<p>메모장에 글을 쓰고 있을 때, 화면에 보이는 글은 <b>메모리에</b> 있습니다. 아직 파일이 아닙니다. 저장 단추를 눌러야 그 내용이 저장 장치에 파일로 적힙니다.</p>
+
+<div class="box">
+<p class="box-k">정의 <span class="tag memo">외우기</span></p>
+<p><b class="key">저장</b>(save): 프로그램이 메모리에서 다루고 있는 내용을 저장 장치의 <b>파일로 적는</b> 일.</p>
+<p><b class="key">열기</b>(open): 저장 장치의 파일 내용을 <b>메모리로 읽어 와</b> 프로그램이 다룰 수 있게 하는 일. 여는 것만으로는 파일이 바뀌지 않는다.</p>
+</div>
+
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 240" role="img" aria-label="두 상자 그림. 왼쪽 메모리 상자: 프로그램 창에서 고치고 있는 글 hello world, 전원을 끄면 사라진다. 오른쪽 저장 장치 상자: 파일 메모.txt의 내용 hello, 전원을 꺼도 남는다. 위쪽 화살표는 메모리에서 저장 장치로 '저장(Ctrl + S)', 아래쪽 화살표는 저장 장치에서 메모리로 '열기'. 아래에 지금은 창에 hello world, 파일에 hello로 서로 달라 아직 저장하지 않은 상태라는 설명.">
+<rect class="f-box" x="30" y="30" width="280" height="160" rx="6"/>
+<text class="f-cap" x="170" y="56" text-anchor="middle">메모리 (RAM)</text>
+<text class="f-s" x="50" y="82" text-anchor="start">프로그램 창에서 고치는 중</text>
+<rect class="f-soft" x="50" y="92" width="240" height="40" rx="4"/>
+<text class="f-t" x="170" y="117" text-anchor="middle">hello world</text>
+<text class="f-s" x="170" y="164" text-anchor="middle">전원을 끄면 사라진다</text>
+<rect class="f-box" x="450" y="30" width="280" height="160" rx="6"/>
+<text class="f-cap" x="590" y="56" text-anchor="middle">저장 장치 (SSD 등)</text>
+<text class="f-s" x="470" y="82" text-anchor="start">파일 메모.txt</text>
+<rect class="f-box" x="470" y="92" width="240" height="40" rx="4"/>
+<text class="f-t" x="590" y="117" text-anchor="middle">hello</text>
+<text class="f-s" x="590" y="164" text-anchor="middle">전원을 꺼도 남는다</text>
+<line class="f-line" x1="312" y1="90" x2="446" y2="90" marker-end="url(#f-arrow)"/>
+<text class="f-t" x="380" y="80" text-anchor="middle">저장</text>
+<text class="f-s" x="380" y="108" text-anchor="middle">Ctrl + S</text>
+<line class="f-line" x1="448" y1="140" x2="314" y2="140" marker-end="url(#f-arrow)"/>
+<text class="f-t" x="380" y="160" text-anchor="middle">열기</text>
+<text class="f-s f-ink-t" x="380" y="222" text-anchor="middle">지금: 창에는 hello world, 파일에는 hello → 둘이 다르다 = 아직 저장하지 않았다</text>
+</svg>
+<figcaption>저장하기 전까지 메모리의 내용과 파일의 내용은 서로 다를 수 있다. 저장하는 순간 파일이 메모리 쪽 내용으로 바뀐다.</figcaption>
+</figure>
+
+<p>그림처럼 <code>메모.txt</code>를 열어(hello) 뒤에 " world"를 덧붙였다고 합시다. 이 순간 창에는 "hello world"가, 파일에는 여전히 "hello"가 있습니다. 여기서 저장 없이 창을 닫거나 전원이 나가면, 메모리의 "hello world"는 사라지고 파일에는 "hello"만 남습니다. 많은 프로그램이 창 제목 옆에 <code>*</code>나 점(●) 같은 표시를 띄워 "저장하지 않은 변경이 있다"고 알려 주는데, 바로 이 "둘이 다른 상태"를 알리는 것입니다.</p>
+
+<div class="box trap">
+<p class="box-k">흔한 실수</p>
+<p><b>"화면에 보이니 저장된 것이다."</b> 화면에 보이는 것은 메모리의 내용입니다. 파일에 적혔는지는 저장했는지에 달려 있습니다.</p>
+<p><b>"프로그램이 알아서 저장해 준다."</b> 일부 프로그램은 자동 저장을 합니다. 예를 들어 최근 Windows 11 메모장은 설정에 따라 저장하지 않은 내용을 다음에 열 때 되살려 주기도 합니다. 하지만 자동 저장을 하는지, 어디에 하는지는 프로그램과 설정마다 다르고, 되살려 준 내용이 원하는 폴더의 파일로 저장된 것도 아닙니다. 작업을 마쳤거나 잠시 손을 뗄 때는 직접 <code>Ctrl + S</code>를 누르는 습관이 가장 확실합니다.</p>
+</div>
+
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+
+<h3>저장 창에서 정하는 세 가지</h3>
+
+<p>새 글을 처음 저장하거나 "다른 이름으로 저장"을 고르면 저장 창이 뜹니다. 이 창에서 정하는 것은 세 가지입니다.</p>
+
+<ul>
+<li><b>위치</b>: 어느 폴더에 둘지. 창 위쪽의 주소 표시줄과 왼쪽 목록에 보입니다. 앞 장에서 본 경로가 바로 이것입니다. 여기를 확인하지 않고 저장하면, 나중에 파일이 어디 갔는지 몰라 헤매게 됩니다.</li>
+<li><b>파일 이름</b>: 기본 이름. 확장자는 보통 프로그램이 붙여 줍니다.</li>
+<li><b>파일 형식</b>: 어떤 형식으로 적을지. 메모장은 텍스트 문서(*.txt), Word는 Word 문서(*.docx)가 기본이고, 여기서 PDF 같은 다른 형식을 고르면 앞 장(U02-1)에서 본 변환이 일어납니다. 메모장 저장 창에는 문자 인코딩을 고르는 칸도 있는데, 처음 값인 UTF-8을 그대로 두면 됩니다.</li>
+</ul>
+
+<p>인터넷에서 받은 파일은 대부분 브라우저가 묻지 않고 <b>다운로드</b> 폴더(<code>C:\Users\(사용자 이름)\Downloads</code>)에 저장합니다. "받았는데 어디 있는지 모르겠다"면 먼저 여기를 봅니다.</p>
+
+<h3>"저장"과 "다른 이름으로 저장" <span class="tag grasp">이해하기</span></h3>
+
+<p>이미 파일로 저장된 글을 고친 뒤에는 두 가지 선택이 있습니다. 둘은 원래 파일에 전혀 다른 일을 합니다.</p>
+
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 280" role="img" aria-label="두 칸 그림. (가) 저장: 내용이 1장인 보고서.txt를 고친 뒤 저장하면 같은 보고서.txt가 1장 + 2장 내용으로 바뀐다. 같은 파일을 덮어써서 옛 내용은 사라진다. (나) 다른 이름으로 저장: 내용이 1장인 보고서.txt는 그대로 남고, 1장 + 2장 내용의 새 파일 보고서_2.txt가 생긴다. 프로그램 창은 이제 새 파일 보고서_2.txt를 가리킨다.">
+<line class="f-dash" x1="380" y1="10" x2="380" y2="240"/>
+<rect class="f-box" x="110" y="20" width="160" height="56" rx="4"/>
+<text class="f-cap" x="190" y="43" text-anchor="middle">보고서.txt</text>
+<text class="f-s" x="190" y="64" text-anchor="middle">내용: 1장</text>
+<line class="f-line" x1="190" y1="76" x2="190" y2="136" marker-end="url(#f-arrow)"/>
+<text class="f-s f-ink-t" x="202" y="104" text-anchor="start">고친 뒤 저장</text>
+<rect class="f-soft" x="110" y="140" width="160" height="56" rx="4"/>
+<text class="f-cap" x="190" y="163" text-anchor="middle">보고서.txt</text>
+<text class="f-s f-ink-t" x="190" y="184" text-anchor="middle">내용: 1장 + 2장</text>
+<text class="f-s" x="190" y="216" text-anchor="middle">같은 파일을 덮어씀 · 옛 내용은 사라짐</text>
+<rect class="f-box" x="490" y="20" width="160" height="56" rx="4"/>
+<text class="f-cap" x="570" y="43" text-anchor="middle">보고서.txt</text>
+<text class="f-s" x="570" y="64" text-anchor="middle">내용: 1장</text>
+<line class="f-ink" x1="530" y1="76" x2="480" y2="136"/>
+<line class="f-line" x1="610" y1="76" x2="660" y2="136" marker-end="url(#f-arrow)"/>
+<text class="f-s f-ink-t" x="654" y="100" text-anchor="start">고친 뒤</text>
+<text class="f-s f-ink-t" x="654" y="116" text-anchor="start">다른 이름으로</text>
+<rect class="f-box" x="400" y="140" width="160" height="56" rx="4"/>
+<text class="f-cap" x="480" y="163" text-anchor="middle">보고서.txt</text>
+<text class="f-s" x="480" y="184" text-anchor="middle">내용: 1장 (그대로)</text>
+<rect class="f-soft" x="580" y="140" width="160" height="56" rx="4"/>
+<text class="f-cap" x="660" y="163" text-anchor="middle">보고서_2.txt</text>
+<text class="f-s f-ink-t" x="660" y="184" text-anchor="middle">내용: 1장 + 2장</text>
+<line class="f-ink" x1="660" y1="196" x2="660" y2="210"/>
+<text class="f-s f-ink-t" x="660" y="226" text-anchor="middle">창은 이제 이 파일을 가리킨다</text>
+<text class="f-cap" x="190" y="266" text-anchor="middle">(가) 저장</text>
+<text class="f-cap" x="570" y="266" text-anchor="middle">(나) 다른 이름으로 저장</text>
+</svg>
+<figcaption>(나)에서 원래 파일과 이어진 회색 선은 "손대지 않음"을 뜻한다. 파란 칸은 방금 쓴 내용이 들어간 파일이다.</figcaption>
+</figure>
+
+<ul>
+<li><b>저장</b>(<code>Ctrl + S</code>): 지금 열려 있는 그 파일에 덮어씁니다. 옛 내용은 사라집니다.</li>
+<li><b>다른 이름으로 저장</b>(많은 프로그램에서 <code>Ctrl + Shift + S</code>, 또는 파일 메뉴): 새 이름(또는 새 위치)으로 <b>새 파일</b>을 만듭니다. 원래 파일은 손대지 않은 채 그대로 남습니다.</li>
+</ul>
+
+<p>(나)에서 놓치기 쉬운 점이 있습니다. "다른 이름으로 저장"을 한 뒤에는 프로그램 창이 <b>새 파일</b>을 가리킵니다. 이어서 글을 더 쓰고 <code>Ctrl + S</code>를 누르면 <code>보고서_2.txt</code>에 저장되지, <code>보고서.txt</code>에 저장되지 않습니다. 창 제목 줄의 파일 이름을 보면 지금 어느 파일을 고치고 있는지 알 수 있습니다.</p>
+
+<p>이 성질을 이용하면, 크게 고치기 전에 "다른 이름으로 저장"으로 새 판을 만들어 옛 판을 지켜 둘 수 있습니다. 이것은 아래에서 볼 백업과도 이어집니다.</p>
+
+<div class="check" data-q="q3"></div>
+
+<h2>열기: 두 가지 길</h2>
+
+<p>파일을 여는 길은 두 가지입니다.</p>
+<ul>
+<li><b>파일 탐색기에서 두 번 누르기</b>: Windows가 확장자를 보고 연결 프로그램을 골라 엽니다(U02-1).</li>
+<li><b>프로그램 안에서 열기</b>: 프로그램을 먼저 켜고 "파일 → 열기"(<code>Ctrl + O</code>)로 파일을 고릅니다. 연결 프로그램과 다른 프로그램으로 열고 싶을 때 씁니다. 예를 들어 메모장을 켜고 열기 창에서 <code>.csv</code> 파일을 고르면, Excel 대신 메모장으로 CSV의 실제 글자를 볼 수 있습니다. 열기 창에 원하는 파일이 안 보이면 오른쪽 아래의 형식 칸을 "모든 파일"로 바꿉니다.</li>
+</ul>
+
+<div class="box ex">
+<p class="box-k">풀이 예제</p>
+<p><code>메모.txt</code>(내용: hello)를 두고 아래 순서대로 했습니다. 각 단계 뒤에 <b>창의 내용</b>과 <b>파일의 내용</b>을 적어 봅니다.</p>
+<p class="calc">① 메모장으로 연다. → 창: hello / 파일: hello (열기는 파일을 바꾸지 않는다)<br>
+② " world"를 덧붙인다. → 창: hello world / 파일: hello (아직 메모리에서만 바뀜)<br>
+③ <code>Ctrl + S</code>를 누른다. → 창: hello world / 파일: hello world (저장으로 같아짐)<br>
+④ "!!!"를 덧붙인다. → 창: hello world!!! / 파일: hello world<br>
+⑤ 닫기를 누르고 저장하겠느냐는 물음에 "저장 안 함"을 고른다. → 창: 없음 / 파일: hello world<br>
+⑥ 다시 연다. → 창: hello world / 파일: hello world</p>
+<p>⑤에서 "!!!"만 사라지고 ③에서 저장한 내용은 남았습니다. 저장은 "그 순간의 메모리 내용"을 파일에 적는 것이고, 그 뒤의 변경은 다시 저장해야 남습니다.</p>
+</div>
+
+<h2>복사·이동·바로 가기</h2>
+
+<p>파일을 다른 폴더에 두고 싶을 때 하는 일은 세 가지로 나뉩니다. 결과가 다르니 정확히 구분합니다.</p>
+
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 240" role="img" aria-label="세 칸 그림. (가) 복사: 폴더 A와 폴더 B에 각각 메모.txt가 있다. 내용이 같은 파일이 두 개이고 서로 독립이다. (나) 이동: 폴더 A는 비었고 폴더 B에 메모.txt가 있다. 파일은 하나이고 자리만 바뀌었다. (다) 바로 가기: 폴더 A에 메모.txt가 있고, 폴더 B에는 메모.txt 바로 가기가 있으며 점선 화살표가 A의 원본을 가리킨다. B에는 원본을 가리키는 표시만 있다.">
+<rect class="f-none" x="15" y="30" width="110" height="110" rx="4"/>
+<text class="f-s" x="70" y="48" text-anchor="middle">폴더 A</text>
+<rect class="f-box" x="25" y="70" width="90" height="30" rx="3"/>
+<text class="f-s f-ink-t" x="70" y="90" text-anchor="middle">메모.txt</text>
+<rect class="f-none" x="135" y="30" width="110" height="110" rx="4"/>
+<text class="f-s" x="190" y="48" text-anchor="middle">폴더 B</text>
+<rect class="f-soft" x="145" y="70" width="90" height="30" rx="3"/>
+<text class="f-s f-ink-t" x="190" y="90" text-anchor="middle">메모.txt</text>
+<text class="f-s" x="130" y="166" text-anchor="middle">내용이 같은 파일 2개</text>
+<text class="f-s" x="130" y="184" text-anchor="middle">한쪽을 고쳐도 다른 쪽은 그대로</text>
+<rect class="f-none" x="265" y="30" width="110" height="110" rx="4"/>
+<text class="f-s" x="320" y="48" text-anchor="middle">폴더 A</text>
+<rect class="f-dash" x="275" y="70" width="90" height="30" rx="3"/>
+<text class="f-s" x="320" y="90" text-anchor="middle">(비었음)</text>
+<rect class="f-none" x="385" y="30" width="110" height="110" rx="4"/>
+<text class="f-s" x="440" y="48" text-anchor="middle">폴더 B</text>
+<rect class="f-soft" x="395" y="70" width="90" height="30" rx="3"/>
+<text class="f-s f-ink-t" x="440" y="90" text-anchor="middle">메모.txt</text>
+<text class="f-s" x="380" y="166" text-anchor="middle">파일은 1개</text>
+<text class="f-s" x="380" y="184" text-anchor="middle">자리만 바뀌었다</text>
+<rect class="f-none" x="515" y="30" width="110" height="110" rx="4"/>
+<text class="f-s" x="570" y="48" text-anchor="middle">폴더 A</text>
+<rect class="f-box" x="525" y="70" width="90" height="30" rx="3"/>
+<text class="f-s f-ink-t" x="570" y="90" text-anchor="middle">메모.txt</text>
+<rect class="f-none" x="635" y="30" width="110" height="110" rx="4"/>
+<text class="f-s" x="690" y="48" text-anchor="middle">폴더 B</text>
+<rect class="f-dash" x="645" y="70" width="90" height="44" rx="3"/>
+<text class="f-s f-ink-t" x="690" y="88" text-anchor="middle">메모.txt</text>
+<text class="f-s" x="690" y="106" text-anchor="middle">바로 가기</text>
+<line class="f-dash" x1="645" y1="92" x2="619" y2="86" marker-end="url(#f-arrow)"/>
+<text class="f-s" x="630" y="166" text-anchor="middle">B에는 원본을 가리키는</text>
+<text class="f-s" x="630" y="184" text-anchor="middle">표시만 있다</text>
+<text class="f-cap" x="130" y="224" text-anchor="middle">(가) 복사</text>
+<text class="f-cap" x="380" y="224" text-anchor="middle">(나) 이동</text>
+<text class="f-cap" x="630" y="224" text-anchor="middle">(다) 바로 가기</text>
+</svg>
+<figcaption>파란 칸은 이 작업으로 새로 생기거나 옮겨진 파일이다. (다)의 바로 가기는 원본이 없어지면 아무것도 열지 못한다.</figcaption>
+</figure>
+
+<div class="box">
+<p class="box-k">정의</p>
+<p><b class="key">복사</b>(copy): 같은 내용의 파일을 <b>하나 더</b> 만든다. 만들어진 뒤에는 두 파일이 서로 독립이다.</p>
+<p><b class="key">이동</b>(move): 파일을 다른 폴더로 <b>옮긴다</b>. 파일 수는 그대로이고 경로만 바뀐다.</p>
+<p><b>바로 가기</b>(shortcut): 원본 파일의 위치를 가리키는 작은 표시 파일. 내용을 담고 있지 않다. 바로 가기를 지워도 원본은 남고, 원본을 지우면 바로 가기는 쓸모없어진다.</p>
+</div>
+
+<h3>파일 탐색기에서 하는 법</h3>
+
+<div class="table-wrap">
+<table>
+<tr><th>하고 싶은 일</th><th>키보드</th><th>끌어다 놓기</th></tr>
+<tr><td>복사</td><td>파일 고르고 <code>Ctrl + C</code> → 대상 폴더에서 <code>Ctrl + V</code></td><td><b>다른 드라이브</b>로 끌면 복사. 같은 드라이브에서는 <code>Ctrl</code>을 누른 채 끌기</td></tr>
+<tr><td>이동</td><td><code>Ctrl + X</code>(잘라내기) → 대상 폴더에서 <code>Ctrl + V</code></td><td><b>같은 드라이브</b> 안에서 끌면 이동. 다른 드라이브로는 <code>Shift</code>를 누른 채 끌기</td></tr>
+<tr><td>방금 한 일 되돌리기</td><td><code>Ctrl + Z</code></td><td></td></tr>
+<tr><td>휴지통으로 지우기</td><td><code>Delete</code></td><td>휴지통 아이콘에 끌기</td></tr>
+<tr><td>휴지통을 거치지 않고 지우기</td><td><code>Shift + Delete</code></td><td></td></tr>
+</table>
+</div>
+
+<p>끌어다 놓기는 같은 동작인데 결과가 달라서 헷갈립니다. 규칙은 이렇습니다. 같은 드라이브 안(예: C: 안의 두 폴더)에서 끌면 <b>이동</b>, 다른 드라이브(예: C:에서 USB 메모리 E:로)로 끌면 <b>복사</b>입니다. 끄는 도중 마우스 옆에 "이동" 또는 "복사"라는 작은 글자가 뜨니, 놓기 전에 확인합니다.</p>
+
+<div class="box trap">
+<p class="box-k">흔한 실수</p>
+<p><b>대상 폴더에 같은 이름이 있는데 "바꾸기"를 누른다.</b> 붙여 넣을 곳에 같은 이름의 파일이 있으면 Windows가 바꿀지, 건너뛸지 묻습니다. "바꾸기"는 대상 폴더의 파일을 덮어씁니다. 덮어쓴 파일은 휴지통에도 가지 않아 되살리기 어렵습니다. 어느 쪽이 최신인지 모르면 건너뛰거나 이름을 바꿔 둘 다 남깁니다.</p>
+<p><b>USB 메모리에서 지운 것도 휴지통에 있다.</b> 휴지통은 대개 컴퓨터 안의 드라이브에서 지운 파일만 받아 줍니다. USB 메모리나 네트워크 폴더에서 지운 파일은 보통 휴지통을 거치지 않고 바로 지워집니다. <code>Shift + Delete</code>도 마찬가지입니다.</p>
+<p><b>바탕화면의 바로 가기를 USB에 복사해 간다.</b> 바로 가기에는 내용이 없으니, 다른 컴퓨터에서는 아무것도 열리지 않습니다. 아이콘 왼쪽 아래의 작은 화살표가 바로 가기 표시입니다.</p>
+</div>
+
+<div class="check" data-q="q5"></div>
+<div class="check" data-q="q6"></div>
+<div class="check" data-q="q9"></div>
+
+<h2>백업: 다른 곳에 둔 복사본</h2>
+
+<p>꼬박꼬박 저장해도 파일이 사라지는 일은 생깁니다. 저장 장치가 고장 날 수 있고, 노트북을 잃어버릴 수 있고, 실수로 덮어쓰거나 지울 수 있으며, 파일을 망가뜨리는 악성 프로그램에 걸릴 수도 있습니다. 저장은 메모리의 내용을 저장 장치로 옮겨 줄 뿐, 그 저장 장치에 생기는 일까지 막아 주지는 않습니다.</p>
+
+<div class="box">
+<p class="box-k">정의 <span class="tag memo">외우기</span></p>
+<p><b class="key">백업</b>(backup): 원본이 망가지거나 사라졌을 때 <b>되살리려고</b>, 원본과 <b>떨어진 곳</b>에 따로 만들어 둔 복사본.</p>
+</div>
+
+<p>정의의 두 조건이 중요합니다. 첫째, <b>떨어진 곳</b>이어야 합니다. 같은 폴더나 같은 디스크 안의 복사본은 그 디스크가 고장 나면 원본과 함께 사라집니다. 둘째, <b>되살릴 수 있어야</b> 합니다. 만들어만 두고 한 번도 열어 본 적 없는 백업은, 막상 필요할 때 비어 있거나 망가져 있을 수 있습니다.</p>
+
+<h3>어디에 둔 복사본이 무엇을 막아 주나</h3>
+
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 240" role="img" aria-label="표 모양 그림. 행은 복사본을 둔 곳 세 가지, 열은 위험 세 가지. 같은 폴더의 복사본: 원본을 실수로 덮어씀은 막는다, 디스크 고장은 못 막는다, 노트북 분실·화재는 못 막는다. 외장 USB, 집에 함께 보관: 실수로 덮어씀은 막는다, 디스크 고장은 막는다, 분실·화재는 같이 잃을 수 있어 못 막는다. 클라우드 백업, 지난 판 보관: 세 가지 모두 막는다.">
+<text class="f-t f-b" x="335" y="30" text-anchor="middle">원본을 실수로</text>
+<text class="f-t f-b" x="335" y="48" text-anchor="middle">덮어씀</text>
+<text class="f-t f-b" x="500" y="30" text-anchor="middle">컴퓨터 디스크</text>
+<text class="f-t f-b" x="500" y="48" text-anchor="middle">고장</text>
+<text class="f-t f-b" x="665" y="30" text-anchor="middle">노트북 분실</text>
+<text class="f-t f-b" x="665" y="48" text-anchor="middle">· 화재</text>
+<rect class="f-box" x="20" y="64" width="230" height="44" rx="4"/>
+<text class="f-t" x="34" y="91" text-anchor="start">같은 폴더의 복사본</text>
+<rect class="f-soft" x="260" y="64" width="150" height="44" rx="4"/>
+<text class="f-t" x="335" y="91" text-anchor="middle">막는다</text>
+<rect class="f-over" x="425" y="64" width="150" height="44" rx="4"/>
+<text class="f-t" x="500" y="91" text-anchor="middle">못 막는다</text>
+<rect class="f-over" x="590" y="64" width="150" height="44" rx="4"/>
+<text class="f-t" x="665" y="91" text-anchor="middle">못 막는다</text>
+<rect class="f-box" x="20" y="118" width="230" height="44" rx="4"/>
+<text class="f-t" x="34" y="138" text-anchor="start">외장 USB</text>
+<text class="f-s" x="34" y="155" text-anchor="start">집에 노트북과 함께 보관</text>
+<rect class="f-soft" x="260" y="118" width="150" height="44" rx="4"/>
+<text class="f-t" x="335" y="145" text-anchor="middle">막는다</text>
+<rect class="f-soft" x="425" y="118" width="150" height="44" rx="4"/>
+<text class="f-t" x="500" y="145" text-anchor="middle">막는다</text>
+<rect class="f-over" x="590" y="118" width="150" height="44" rx="4"/>
+<text class="f-t" x="665" y="145" text-anchor="middle">같이 잃을 수 있다</text>
+<rect class="f-box" x="20" y="172" width="230" height="44" rx="4"/>
+<text class="f-t" x="34" y="192" text-anchor="start">클라우드 백업</text>
+<text class="f-s" x="34" y="209" text-anchor="start">지난 판도 보관하는 방식</text>
+<rect class="f-soft" x="260" y="172" width="150" height="44" rx="4"/>
+<text class="f-t" x="335" y="199" text-anchor="middle">막는다</text>
+<rect class="f-soft" x="425" y="172" width="150" height="44" rx="4"/>
+<text class="f-t" x="500" y="199" text-anchor="middle">막는다</text>
+<rect class="f-soft" x="590" y="172" width="150" height="44" rx="4"/>
+<text class="f-t" x="665" y="199" text-anchor="middle">막는다</text>
+</svg>
+<figcaption>"막는다"는 그 위험이 생겨도 복사본에서 되살릴 수 있다는 뜻이다. 복사본을 언제 만들었느냐에 따라 되살릴 수 있는 시점이 정해진다.</figcaption>
+</figure>
+
+<p>표를 보면 장소마다 막는 위험이 다릅니다. 같은 폴더의 복사본은 "방금 실수로 덮어썼다" 정도만 막고, 외장 USB는 디스크 고장까지 막지만 노트북과 함께 도둑맞거나 불에 타면 소용없습니다. 그래서 흔히 쓰는 기준이 다음과 같습니다.</p>
+
+<div class="box memo">
+<p class="box-k">외우는 법 · 3-2-1 규칙</p>
+<p><b class="key">3-2-1</b>: 원본을 포함해 <b>3</b>개의 사본을, <b>2</b>가지 서로 다른 저장 매체에, 그중 <b>1</b>개는 다른 장소에 둔다. 법이나 표준이 아니라 백업을 계획할 때 널리 쓰는 어림 기준이다.</p>
+</div>
+
+<div class="box ex">
+<p class="box-k">풀이 예제</p>
+<p>공부 폴더를 이렇게 두고 있습니다. 3-2-1을 지키는지 따져 봅니다.</p>
+<p class="calc">상황: 원본은 노트북 SSD에 있다. 매주 일요일 외장 USB에 폴더째 복사해 책상 서랍에 둔다. 클라우드 백업 서비스에도 매일 자동으로 올라간다.<br><br>
+① 사본 수: 노트북 원본 1 + USB 1 + 클라우드 1 = 3개 → "3" 만족.<br>
+② 매체 종류: 노트북 SSD, 외장 USB, 클라우드 서버의 저장 장치 → 2가지 이상 → "2" 만족.<br>
+③ 다른 장소: 클라우드는 집 밖에 있다 → "1" 만족.<br>
+④ 남은 확인: 되살릴 수 있는가? 한 달에 한 번 USB와 클라우드에서 파일 하나를 꺼내 열어 본다.</p>
+<p>만약 클라우드가 없다면 사본은 2개, 다른 장소에 둔 것은 0개가 됩니다. 이때는 USB를 하나 더 두어 회사나 가족 집에 보관하는 식으로 채울 수 있습니다.</p>
+</div>
+
+<div class="check" data-q="q10"></div>
+<div class="check" data-q="q12"></div>
+
+<h3>동기화는 백업과 같지 않다</h3>
+
+<p>OneDrive, Google 드라이브 같은 서비스는 흔히 <b>동기화</b>(sync) 방식으로 동작합니다. 동기화는 두 곳의 폴더를 <b>늘 똑같은 상태로 맞추는</b> 것입니다. 노트북에서 파일을 고치면 클라우드도 고쳐지고, 노트북에서 지우면 클라우드에서도 지워집니다. 편리하지만, 바로 그 성질 때문에 백업과 다릅니다.</p>
+
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 260" role="img" aria-label="두 칸 그림. (가) 동기화: 노트북 폴더와 클라우드 폴더가 양쪽 화살표로 이어져 있다. 노트북에서 우유.csv를 지우자 클라우드의 우유.csv도 지워진다. (나) 백업: 노트북에서 백업 쪽으로 한쪽 화살표. 백업에는 11-11 사본과 11-18 사본이 있고 둘 다 우유.csv를 갖고 있다. 노트북에서 우유.csv를 지워도 지난 사본에는 남아 있다.">
+<line class="f-dash" x1="380" y1="10" x2="380" y2="220"/>
+<rect class="f-none" x="20" y="30" width="140" height="120" rx="6"/>
+<text class="f-cap" x="90" y="52" text-anchor="middle">노트북</text>
+<rect class="f-over" x="35" y="70" width="110" height="30" rx="3"/>
+<text class="f-s f-ink-t" x="90" y="90" text-anchor="middle">우유.csv 지움</text>
+<rect class="f-none" x="220" y="30" width="140" height="120" rx="6"/>
+<text class="f-cap" x="290" y="52" text-anchor="middle">클라우드</text>
+<rect class="f-over" x="235" y="70" width="110" height="30" rx="3"/>
+<text class="f-s f-ink-t" x="290" y="90" text-anchor="middle">같이 지워짐</text>
+<line class="f-line" x1="164" y1="85" x2="216" y2="85" marker-start="url(#f-arrow)" marker-end="url(#f-arrow)"/>
+<text class="f-s" x="190" y="124" text-anchor="middle">똑같이</text>
+<text class="f-s" x="190" y="140" text-anchor="middle">맞춘다</text>
+<text class="f-s f-ink-t" x="190" y="182" text-anchor="middle">지운 것·잘못 고친 것도</text>
+<text class="f-s f-ink-t" x="190" y="200" text-anchor="middle">그대로 따라간다</text>
+<rect class="f-none" x="400" y="30" width="140" height="120" rx="6"/>
+<text class="f-cap" x="470" y="52" text-anchor="middle">노트북</text>
+<rect class="f-over" x="415" y="70" width="110" height="30" rx="3"/>
+<text class="f-s f-ink-t" x="470" y="90" text-anchor="middle">우유.csv 지움</text>
+<rect class="f-none" x="600" y="30" width="140" height="150" rx="6"/>
+<text class="f-cap" x="670" y="52" text-anchor="middle">백업</text>
+<rect class="f-soft" x="615" y="66" width="110" height="46" rx="3"/>
+<text class="f-s f-ink-t" x="670" y="84" text-anchor="middle">11-11 사본</text>
+<text class="f-s" x="670" y="102" text-anchor="middle">우유.csv 있음</text>
+<rect class="f-soft" x="615" y="120" width="110" height="46" rx="3"/>
+<text class="f-s f-ink-t" x="670" y="138" text-anchor="middle">11-18 사본</text>
+<text class="f-s" x="670" y="156" text-anchor="middle">우유.csv 있음</text>
+<line class="f-line" x1="544" y1="85" x2="596" y2="85" marker-end="url(#f-arrow)"/>
+<text class="f-s" x="570" y="124" text-anchor="middle">때마다</text>
+<text class="f-s" x="570" y="140" text-anchor="middle">사본</text>
+<text class="f-s f-ink-t" x="570" y="200" text-anchor="middle">원본을 지워도 지난 사본은 남는다</text>
+<text class="f-cap" x="190" y="246" text-anchor="middle">(가) 동기화</text>
+<text class="f-cap" x="570" y="246" text-anchor="middle">(나) 백업</text>
+</svg>
+<figcaption>많은 동기화 서비스가 지운 파일이나 지난 판을 얼마 동안 따로 보관해 주기도 한다. 보관 기간과 조건은 서비스마다 다르니 쓰는 서비스의 안내를 확인한다.</figcaption>
+</figure>
+
+<p>(가)에서 실수로 파일을 지우거나 잘못 덮어쓰면 그 실수가 클라우드까지 그대로 퍼집니다. (나)의 백업은 한 방향으로, 시점마다 따로 사본을 남기므로 오늘 지운 파일을 지난주 사본에서 되살릴 수 있습니다. 동기화 서비스에 "휴지통"이나 "버전 기록" 기능이 있다면 그 기능이 백업 역할을 일부 해 주는 것이지, 동기화 자체가 백업인 것은 아닙니다. OneDrive의 "폴더 백업"처럼 이름에 "백업"이 붙어 있어도 실제 동작은 동기화인 경우가 있으니, 이름이 아니라 <b>지운 파일이 어떻게 되는지</b>로 판단합니다.</p>
+
+<div class="why">
+<p class="box-k">왜 그럴까?</p>
+<p>어떤 사람이 "내 파일은 전부 클라우드와 동기화되니까 백업은 따로 필요 없다"고 말합니다. 이 말이 위험한 경우를 하나 들어 보세요.</p>
+<details><summary>모범 답 보기</summary><p>실수로 폴더를 통째로 지우거나, 악성 프로그램이 파일을 모두 망가뜨린 경우입니다. 동기화는 두 곳을 같게 맞추는 것이 목적이라, 노트북에서 일어난 삭제나 망가짐을 클라우드에도 그대로 옮깁니다. 서비스가 지운 파일이나 지난 판을 보관해 주지 않거나 보관 기간이 지났다면 되살릴 곳이 없습니다. 그래서 동기화와 별개로, 시점별 사본이 남는 백업을 두는 것이 안전합니다.</p></details>
+</div>
+
+<div class="check" data-q="q11"></div>
+
+<h3>판 이름 붙이기</h3>
+
+<p>백업까지는 아니어도, 중요한 파일을 크게 고치기 전에는 "다른 이름으로 저장"으로 옛 판을 남겨 둘 수 있습니다. 이때 이름은 앞 장에서 본 대로 날짜를 연-월-일 순서로 붙입니다.</p>
+
+<div class="table-wrap">
+<table>
+<tr><th>나쁜 이름</th><th>좋은 이름</th></tr>
+<tr><td>보고서_최종.docx, 보고서_진짜최종.docx, 보고서_최종2.docx</td><td>보고서_2026-11-11.docx, 보고서_2026-11-18.docx</td></tr>
+</table>
+</div>
+
+<p>"최종"은 언제든 또 고칠 수 있어서 금방 의미를 잃습니다. 날짜 이름은 순서가 분명하고 이름순 정렬이 곧 시간순입니다. 코드와 문서의 고친 이력을 체계적으로 남기는 도구(Git)는 SY07 "Git와 재현 가능한 작업"에서 다룹니다.</p>
+
+<h2>직접 해 보기</h2>
+
+<p class="calc">① 파일 탐색기에서 "문서" 안에 <code>공부</code> 폴더를 만든다.<br>
+② 앞 장에서 만든 <code>메모.txt</code>를 <code>Ctrl + X</code>, <code>공부</code> 폴더 안에서 <code>Ctrl + V</code>로 옮긴다. 문서 폴더에서 사라지고 공부 폴더에 생겼는지 본다.<br>
+③ <code>메모.txt</code>를 고르고 <code>Ctrl + C</code>, 같은 폴더에서 <code>Ctrl + V</code>를 누른다. "메모 - 복사본.txt"처럼 이름이 바뀐 복사본이 생긴다.<br>
+④ 원본 <code>메모.txt</code>를 열어 한 줄을 덧붙이고 저장한다. 복사본을 열어 그 줄이 없는지 확인한다(복사본은 독립).<br>
+⑤ USB 메모리가 있다면 <code>공부</code> 폴더를 USB로 끌어다 놓는다. 끄는 동안 "복사"라고 뜨는지 본다.<br>
+⑥ USB에 복사된 <code>메모.txt</code>를 열어 내용이 그대로인지 확인한다. 이것이 가장 작은 백업과 되살리기 확인이다.</p>
+
+<h2>한눈에 정리</h2>
+
+<div class="table-wrap">
+<table>
+<tr><th>묻는 것</th><th>답</th></tr>
+<tr><td>저장</td><td>메모리의 내용을 저장 장치의 파일로 적기 (<code>Ctrl + S</code>)</td></tr>
+<tr><td>열기</td><td>파일 내용을 메모리로 읽어 오기. 파일은 바뀌지 않음 (<code>Ctrl + O</code>)</td></tr>
+<tr><td>저장 vs <b class="key">다른 이름으로 저장</b></td><td>같은 파일 덮어쓰기 vs 새 파일 만들기(원래 파일은 그대로, 창은 새 파일을 가리킴)</td></tr>
+<tr><td>복사 · 이동 · 바로 가기</td><td>하나 더 만듦 · 자리만 바꿈 · 원본을 가리키는 표시</td></tr>
+<tr><td>끌어다 놓기</td><td>같은 드라이브 = <b class="key">이동</b>, 다른 드라이브 = <b class="key">복사</b></td></tr>
+<tr><td>휴지통을 거치지 않는 삭제</td><td><code>Shift + Delete</code>, 대개 USB·네트워크 폴더에서의 삭제</td></tr>
+<tr><td>백업</td><td>되살리려고 <b class="key">떨어진 곳</b>에 둔 복사본. 되살려 보기까지 해야 완성</td></tr>
+<tr><td>3-2-1</td><td>사본 3개, 매체 2가지, 1개는 다른 장소</td></tr>
+<tr><td><b class="key">동기화</b></td><td>두 곳을 같게 맞춤. 지운 것도 따라가므로 백업과 다르다</td></tr>
+</table>
+</div>
+
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>저장은 메모리를 파일로 적는 일이고, 복사는 독립된 파일을 하나 더 만드는 일이며, 백업은 원본과 떨어진 곳에 둔 되살릴 수 있는 복사본이다.</p></div>
+
+<h2>확인 문제</h2>
+<p>본문 중간에서 푼 문제 말고 남은 문제입니다. 보기를 누르면 바로 정답과 해설이 나옵니다.</p>
+<div id="quiz"></div>
+
+<section class="work" id="tools"></section>
+
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

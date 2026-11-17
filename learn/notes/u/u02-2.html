@@ -1,0 +1,412 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>폴더와 경로 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e8c'/%3E%3Cpath d='M8 22V10m8 12V14m8 8V6' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="U02-2">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+
+<header class="chapter">
+<p class="chap-sub">공부·컴퓨터의 출발점 · U02 파일과 폴더</p>
+<p class="chap-num">U02·2</p>
+<h1>폴더와 경로</h1>
+<p class="lead">"그 파일 어디 있어?" "문서에 있어." 그런데 문서 폴더를 열어 보니 하위 폴더가 스무 개입니다. 사람에게 길을 알려 줄 때 "서울"이 아니라 도로명과 번지까지 말하듯, 컴퓨터에게 파일 위치를 알려 줄 때도 정확한 주소가 필요합니다. 이 장에서는 폴더가 이루는 나무 구조, 파일의 주소인 경로, 그리고 절대 경로와 상대 경로의 차이를 Windows 파일 탐색기에서 직접 확인하며 익힙니다.</p>
+</header>
+
+<div class="goal">
+<h2>이 장을 읽고 나면</h2>
+<ul>
+<li>폴더가 나무 구조를 이룬다는 것을 그림으로 그리고, 드라이브·폴더·파일의 관계를 설명할 수 있다.</li>
+<li>경로 하나를 드라이브·구분 기호·폴더·파일 이름으로 나누어 읽을 수 있다.</li>
+<li>파일 탐색기에서 지금 폴더의 실제 경로를 보고, 파일 경로를 복사할 수 있다.</li>
+<li>기준 폴더가 주어지면 상대 경로를 절대 경로로 바꿀 수 있다(<code>..</code> 포함).</li>
+<li>폴더를 통째로 옮겼을 때 절대 경로와 상대 경로 가운데 무엇이 깨지는지 설명할 수 있다.</li>
+</ul>
+</div>
+
+<h2>폴더: 파일을 담는 그릇</h2>
+
+<p>앞 장(U02-1)에서 파일을 저장 장치에 이름 붙여 남긴 데이터 덩어리라고 했습니다. 파일이 수백, 수천 개가 되면 한곳에 늘어놓을 수 없습니다. 그래서 서류를 서랍과 서류철로 나누듯, 파일을 <b>폴더</b>로 나누어 담습니다.</p>
+
+<div class="box">
+<p class="box-k">정의 <span class="tag memo">외우기</span></p>
+<p><b class="key">폴더</b>(folder): 파일과 다른 폴더를 담는 그릇. 같은 것을 <b>디렉터리</b>(directory)라고도 한다. 폴더 안의 폴더를 <b>하위 폴더</b>, 바깥 폴더를 <b>상위 폴더</b>(부모 폴더)라고 한다.</p>
+<p><b class="key">드라이브</b>(drive): 저장 장치 하나(또는 그 한 구역)에 Windows가 붙인 이름. <code>C:</code>, <code>D:</code>처럼 알파벳 한 글자와 쌍점(:)으로 쓴다. 보통 Windows가 설치된 곳이 <code>C:</code>다.</p>
+</div>
+
+<p>"폴더"와 "디렉터리"는 같은 것을 가리킵니다. Windows 화면은 주로 "폴더"라고 하고, 뒤에서 배울 터미널과 Linux, 프로그래밍 문서에서는 "디렉터리"라는 말을 많이 씁니다. 둘 다 만나게 되니 같은 뜻임을 기억해 둡니다.</p>
+
+<h3>폴더는 나무 모양을 이룬다</h3>
+
+<p>폴더 안에 폴더가, 그 안에 또 폴더가 들어가다 보면 전체 모양이 거꾸로 선 나무처럼 됩니다. 맨 위에 드라이브가 뿌리처럼 있고, 거기서 가지가 갈라져 내려가며, 가지 끝에 파일이 잎처럼 달립니다. 이것을 <b>폴더 나무</b>(디렉터리 트리)라고 합니다. 이 장 전체에서 쓸 예를 그림으로 봅시다. 사용자 이름이 <code>hana</code>인 컴퓨터라고 합니다.</p>
+
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 420" role="img" aria-label="폴더 나무 그림. 맨 위 C: 드라이브 아래에 Users 폴더(화면에는 사용자로 보임), 그 아래 hana 폴더, 그 아래 Documents 폴더(화면에는 문서로 보임). Documents 안에 파일 메모.txt와 폴더 공부가 있다. 공부 안에 폴더 notes와 data가 있다. notes 안에 파일 요약.txt와 메모.txt가 있고, data 안에 파일 우유.csv가 있다. 메모.txt는 Documents와 notes 두 곳에 있으며, 이름이 같아도 폴더가 다르면 다른 파일이라는 설명이 붙어 있다. 아래에 폴더는 파란 칸, 파일은 흰 칸이라는 범례.">
+<line class="f-ink" x1="54" y1="39" x2="54" y2="59"/>
+<line class="f-ink" x1="54" y1="59" x2="80" y2="59"/>
+<line class="f-ink" x1="94" y1="73" x2="94" y2="93"/>
+<line class="f-ink" x1="94" y1="93" x2="120" y2="93"/>
+<line class="f-ink" x1="134" y1="107" x2="134" y2="127"/>
+<line class="f-ink" x1="134" y1="127" x2="160" y2="127"/>
+<line class="f-ink" x1="174" y1="141" x2="174" y2="195"/>
+<line class="f-ink" x1="174" y1="161" x2="200" y2="161"/>
+<line class="f-ink" x1="174" y1="195" x2="200" y2="195"/>
+<line class="f-ink" x1="214" y1="209" x2="214" y2="331"/>
+<line class="f-ink" x1="214" y1="229" x2="240" y2="229"/>
+<line class="f-ink" x1="214" y1="331" x2="240" y2="331"/>
+<line class="f-ink" x1="254" y1="243" x2="254" y2="297"/>
+<line class="f-ink" x1="254" y1="263" x2="280" y2="263"/>
+<line class="f-ink" x1="254" y1="297" x2="280" y2="297"/>
+<line class="f-ink" x1="254" y1="345" x2="254" y2="365"/>
+<line class="f-ink" x1="254" y1="365" x2="280" y2="365"/>
+<rect class="f-soft" x="40" y="11" width="50" height="28" rx="4"/>
+<text class="f-t f-b" x="50" y="30" text-anchor="start">C:</text>
+<rect class="f-soft" x="80" y="45" width="70" height="28" rx="4"/>
+<text class="f-t" x="90" y="64" text-anchor="start">Users</text>
+<rect class="f-soft" x="120" y="79" width="64" height="28" rx="4"/>
+<text class="f-t" x="130" y="98" text-anchor="start">hana</text>
+<rect class="f-soft" x="160" y="113" width="104" height="28" rx="4"/>
+<text class="f-t" x="170" y="132" text-anchor="start">Documents</text>
+<rect class="f-box" x="200" y="147" width="90" height="28" rx="4"/>
+<text class="f-t" x="210" y="166" text-anchor="start">메모.txt</text>
+<rect class="f-soft" x="200" y="181" width="60" height="28" rx="4"/>
+<text class="f-t" x="210" y="200" text-anchor="start">공부</text>
+<rect class="f-soft" x="240" y="215" width="70" height="28" rx="4"/>
+<text class="f-t" x="250" y="234" text-anchor="start">notes</text>
+<rect class="f-box" x="280" y="249" width="90" height="28" rx="4"/>
+<text class="f-t" x="290" y="268" text-anchor="start">요약.txt</text>
+<rect class="f-box" x="280" y="283" width="90" height="28" rx="4"/>
+<text class="f-t" x="290" y="302" text-anchor="start">메모.txt</text>
+<rect class="f-soft" x="240" y="317" width="60" height="28" rx="4"/>
+<text class="f-t" x="250" y="336" text-anchor="start">data</text>
+<rect class="f-box" x="280" y="351" width="96" height="28" rx="4"/>
+<text class="f-t" x="290" y="370" text-anchor="start">우유.csv</text>
+<line class="f-ink" x1="96" y1="25" x2="440" y2="25"/>
+<text class="f-s f-ink-t" x="448" y="29" text-anchor="start">드라이브 = 나무의 뿌리</text>
+<line class="f-ink" x1="156" y1="59" x2="440" y2="59"/>
+<text class="f-s f-ink-t" x="448" y="63" text-anchor="start">화면에는 "사용자"로 보인다</text>
+<line class="f-ink" x1="190" y1="93" x2="440" y2="93"/>
+<text class="f-s f-ink-t" x="448" y="97" text-anchor="start">사용자 이름 (이 책의 예)</text>
+<line class="f-ink" x1="270" y1="127" x2="440" y2="127"/>
+<text class="f-s f-ink-t" x="448" y="131" text-anchor="start">화면에는 "문서"로 보인다</text>
+<line class="f-dash" x1="296" y1="161" x2="440" y2="161"/>
+<line class="f-dash" x1="376" y1="297" x2="440" y2="297"/>
+<line class="f-dash" x1="440" y1="161" x2="440" y2="297"/>
+<text class="f-s f-ink-t" x="448" y="225" text-anchor="start">이름이 같아도 폴더가 다르면</text>
+<text class="f-s f-ink-t" x="448" y="243" text-anchor="start">서로 다른 파일이다</text>
+<rect class="f-soft" x="40" y="392" width="20" height="16" rx="3"/>
+<text class="f-s" x="68" y="405" text-anchor="start">폴더</text>
+<rect class="f-box" x="120" y="392" width="20" height="16" rx="3"/>
+<text class="f-s" x="148" y="405" text-anchor="start">파일</text>
+</svg>
+<figcaption>실제 컴퓨터의 C: 아래에는 Windows, Program Files 같은 폴더가 더 있다. 여기서는 이 장에 필요한 가지만 그렸다.</figcaption>
+</figure>
+
+<p>그림에서 두 가지를 눈여겨봅니다.</p>
+<ul>
+<li><b>같은 이름의 파일이 두 개</b> 있습니다. <code>Documents</code> 안의 <code>메모.txt</code>와 <code>notes</code> 안의 <code>메모.txt</code>입니다. 한 폴더 안에서는 같은 이름을 둘 수 없지만, 폴더가 다르면 괜찮습니다. 그래서 파일을 가리킬 때 이름만으로는 부족하고, <b>어느 폴더에 있는지</b>까지 말해야 합니다.</li>
+<li><b>화면 이름과 실제 이름이 다른 폴더</b>가 있습니다. 한국어 Windows의 파일 탐색기는 <code>Users</code>를 "사용자"로, <code>Documents</code>를 "문서"로 보여 줍니다. 하지만 저장 장치에 실제로 적힌 폴더 이름은 영어입니다. "다운로드"(Downloads), "바탕 화면"(Desktop), "사진"(Pictures)도 마찬가지입니다. 아래에서 볼 경로에는 실제 이름이 쓰입니다.</li>
+</ul>
+
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q12"></div>
+
+<h2>경로: 파일의 주소</h2>
+
+<p>그림의 <code>우유.csv</code>에 가려면 나무의 뿌리 <code>C:</code>에서 출발해 <code>Users</code> → <code>hana</code> → <code>Documents</code> → <code>공부</code> → <code>data</code>를 차례로 지나야 합니다. 이 길을 한 줄로 적은 것이 경로입니다.</p>
+
+<div class="box">
+<p class="box-k">정의 <span class="tag memo">외우기</span></p>
+<p><b class="key">경로</b>(path): 파일이나 폴더가 폴더 나무의 어디에 있는지, 거쳐 가는 폴더 이름을 <b>구분 기호</b>로 이어 적은 것. Windows의 구분 기호는 <code>\</code>(역슬래시, backslash)다.</p>
+</div>
+
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 240" role="img" aria-label="경로 C:\Users\hana\Documents\공부\data\우유.csv를 조각으로 나눈 그림. 맨 앞 C:는 드라이브. 각 조각 사이의 \는 구분 기호. Users, hana, Documents, 공부, data 다섯 개는 거쳐 가는 폴더로 위에서 아래 순서. 맨 끝 우유.csv는 파일 이름. 아래에 이 경로를 말로 읽는 법과, macOS에서는 /Users/hana/Documents/공부/data/우유.csv처럼 / 로 쓴다는 설명.">
+<line class="f-ink" x1="139" y1="50" x2="139" y2="34"/>
+<text class="f-s f-ink-t" x="148" y="30" text-anchor="start">구분 기호 \ (역슬래시)</text>
+<rect class="f-soft" x="88" y="50" width="40" height="40" rx="4"/>
+<text class="f-t f-b" x="108" y="75" text-anchor="middle">C:</text>
+<rect class="f-none" x="128" y="50" width="22" height="40"/>
+<text class="f-t f-b" x="139" y="75" text-anchor="middle">\</text>
+<rect class="f-box" x="150" y="50" width="64" height="40" rx="4"/>
+<text class="f-t" x="182" y="75" text-anchor="middle">Users</text>
+<rect class="f-none" x="214" y="50" width="22" height="40"/>
+<text class="f-t f-b" x="225" y="75" text-anchor="middle">\</text>
+<rect class="f-box" x="236" y="50" width="56" height="40" rx="4"/>
+<text class="f-t" x="264" y="75" text-anchor="middle">hana</text>
+<rect class="f-none" x="292" y="50" width="22" height="40"/>
+<text class="f-t f-b" x="303" y="75" text-anchor="middle">\</text>
+<rect class="f-box" x="314" y="50" width="100" height="40" rx="4"/>
+<text class="f-t" x="364" y="75" text-anchor="middle">Documents</text>
+<rect class="f-none" x="414" y="50" width="22" height="40"/>
+<text class="f-t f-b" x="425" y="75" text-anchor="middle">\</text>
+<rect class="f-box" x="436" y="50" width="50" height="40" rx="4"/>
+<text class="f-t" x="461" y="75" text-anchor="middle">공부</text>
+<rect class="f-none" x="486" y="50" width="22" height="40"/>
+<text class="f-t f-b" x="497" y="75" text-anchor="middle">\</text>
+<rect class="f-box" x="508" y="50" width="52" height="40" rx="4"/>
+<text class="f-t" x="534" y="75" text-anchor="middle">data</text>
+<rect class="f-none" x="560" y="50" width="22" height="40"/>
+<text class="f-t f-b" x="571" y="75" text-anchor="middle">\</text>
+<rect class="f-soft" x="582" y="50" width="90" height="40" rx="4"/>
+<text class="f-t" x="627" y="75" text-anchor="middle">우유.csv</text>
+<line class="f-ink" x1="108" y1="90" x2="108" y2="110"/>
+<text class="f-cap" x="108" y="128" text-anchor="middle">드라이브</text>
+<line class="f-ink" x1="150" y1="104" x2="560" y2="104"/>
+<line class="f-ink" x1="150" y1="98" x2="150" y2="104"/>
+<line class="f-ink" x1="560" y1="98" x2="560" y2="104"/>
+<text class="f-cap" x="355" y="128" text-anchor="middle">거쳐 가는 폴더 5개 (위에서 아래 순서)</text>
+<line class="f-ink" x1="627" y1="90" x2="627" y2="110"/>
+<text class="f-cap" x="627" y="128" text-anchor="middle">파일 이름</text>
+<text class="f-s f-ink-t" x="380" y="172" text-anchor="middle">읽는 법: C 드라이브의 Users 안 hana 안 Documents 안 공부 안 data 폴더에 있는 우유.csv</text>
+<text class="f-s" x="380" y="206" text-anchor="middle">macOS 예: /Users/hana/Documents/공부/data/우유.csv  (드라이브 글자 없이 / 로 시작)</text>
+</svg>
+<figcaption>경로는 왼쪽에서 오른쪽으로 갈수록 나무의 아래쪽으로 내려간다. 마지막 조각이 파일이면 파일의 경로, 폴더면 폴더의 경로다.</figcaption>
+</figure>
+
+<p>경로를 읽을 때는 <b>왼쪽에서 오른쪽으로, 뿌리에서 잎으로</b> 내려간다고 생각합니다. <code>\</code> 하나를 지날 때마다 폴더 한 칸 안으로 들어갑니다. 경로의 마지막 조각이 파일 이름이면 그 파일의 경로이고, 폴더 이름에서 끝나면(<code>C:\Users\hana\Documents\공부</code>) 그 폴더의 경로입니다.</p>
+
+<h3>구분 기호는 운영체제마다 다르다</h3>
+
+<p>Windows는 <code>\</code>를 쓰지만, macOS와 Linux는 <code>/</code>(슬래시)를 쓰고 드라이브 글자도 없습니다. 웹 주소(<code>https://…/learn/index.html</code>)도 <code>/</code>를 씁니다. 다행히 Python을 비롯한 많은 프로그램은 Windows에서도 <code>/</code>로 쓴 경로를 알아듣습니다. 이 차이는 PY07과 SY06에서 코드로 경로를 다룰 때 다시 봅니다.</p>
+
+<div class="box trap">
+<p class="box-k">흔한 실수</p>
+<p><b>₩와 \를 다른 글자로 안다.</b> 한국어 Windows의 일부 글꼴(굴림·바탕 등)에서는 <code>\</code>가 원화 기호 <code>₩</code>처럼 보입니다. 그래서 <code>C:₩Users₩hana</code>처럼 보이는 경로를 만날 수 있는데, 같은 글자입니다. 한국어 키보드의 원화 기호(₩) 키를 누르면 이 글자가 입력됩니다. 다만 웹 글 등에서 복사한 ₩는 진짜 원화 기호(유니코드의 다른 글자)일 수도 있으니, 경로는 직접 치거나 아래의 "경로로 복사"로 얻습니다.</p>
+<p><b>화면 이름으로 경로를 쓴다.</b> <code>C:\사용자\hana\문서\공부</code>는 틀린 경로입니다. 화면에 "사용자", "문서"로 보이는 폴더의 실제 이름은 <code>Users</code>, <code>Documents</code>입니다. 실제 경로는 다음 절의 방법으로 확인합니다.</p>
+</div>
+
+<div class="check" data-q="q2"></div>
+<div class="check" data-q="q3"></div>
+
+<h2>파일 탐색기에서 경로 보기 <span class="tag grasp">이해하기</span></h2>
+
+<p>경로는 머릿속으로 짐작하지 말고 화면에서 확인합니다. 파일 탐색기 위쪽의 <b>주소 표시줄</b>이 지금 보고 있는 폴더의 경로를 알려 줍니다. 다만 평소에는 보기 좋게 바꾼 모양으로 보여 줍니다.</p>
+
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 190" role="img" aria-label="파일 탐색기 주소 표시줄 두 모습. (가) 평소: 내 PC, 로컬 디스크 (C:), 사용자, hana, 문서, 공부가 꺾쇠 기호로 이어진 단추들. 오른쪽에 글자가 없는 빈 곳이 점선으로 표시되어 있다. (나) 그 빈 곳을 누른 뒤: C:\Users\hana\Documents\공부라는 실제 경로 글자가 나타난다.">
+<rect class="f-box" x="20" y="20" width="720" height="40" rx="6"/>
+<text class="f-t" x="36" y="46" text-anchor="start">›  내 PC  ›  로컬 디스크 (C:)  ›  사용자  ›  hana  ›  문서  ›  공부</text>
+<rect class="f-dash" x="580" y="26" width="152" height="28" rx="4"/>
+<text class="f-s" x="656" y="45" text-anchor="middle">빈 곳</text>
+<text class="f-cap" x="20" y="82" text-anchor="start">(가) 평소 모습</text>
+<line class="f-line" x1="656" y1="60" x2="656" y2="98" marker-end="url(#f-arrow)"/>
+<text class="f-s" x="644" y="84" text-anchor="end">빈 곳을 누르면</text>
+<rect class="f-soft" x="20" y="102" width="720" height="40" rx="6"/>
+<text class="f-t" x="36" y="128" text-anchor="start">C:\Users\hana\Documents\공부</text>
+<text class="f-cap" x="20" y="166" text-anchor="start">(나) 실제 경로가 글자로 나타난다</text>
+</svg>
+<figcaption>(가)의 조각 하나하나는 누를 수 있는 단추다. 어떤 길로 들어왔느냐에 따라 (가)의 앞부분이 "문서"부터 보이기도 한다.</figcaption>
+</figure>
+
+<div class="box ex">
+<p class="box-k">따라 하기 · 폴더 경로 보기와 파일 경로 복사</p>
+<p class="calc">① <code>Windows 로고 키 + E</code>로 파일 탐색기를 열고, 왼쪽에서 "문서"를 누른다.<br>
+② 위쪽 주소 표시줄의 <b>글자가 없는 오른쪽 빈 곳</b>을 누른다. 단추 모양이 <code>C:\Users\(사용자 이름)\Documents</code> 같은 글자로 바뀐다. 이것이 실제 경로다. (<code>Alt + D</code>를 눌러도 된다.)<br>
+③ <code>Esc</code>를 누르면 원래 모양으로 돌아간다.<br>
+④ 이번에는 폴더 안의 파일 하나를 마우스 오른쪽 단추로 누르고 <b>"경로로 복사"</b>를 고른다. (Windows 버전·메뉴에 따라 이름이 "경로 복사"로 보이기도 한다. 최근 Windows 11에서는 파일을 고른 뒤 <code>Ctrl + Shift + C</code>도 된다. Windows 10에서는 <code>Shift</code>를 누른 채 오른쪽 단추를 눌러야 이 메뉴가 보인다.)<br>
+⑤ 메모장을 열고 <code>Ctrl + V</code>로 붙여 넣는다. <code>"C:\Users\…\Documents\메모.txt"</code>처럼 앞뒤에 큰따옴표가 붙은 경로가 나온다.</p>
+<p>⑤에서 큰따옴표가 붙는 것은, 경로 안에 띄어쓰기가 있어도 한 덩어리로 다루게 하려는 것입니다. 뒤에서 터미널이나 코드에 경로를 붙여 넣을 때 이 큰따옴표가 쓸모 있습니다.</p>
+<p>컴퓨터에 따라 "문서" 폴더의 실제 경로가 <code>C:\Users\(사용자 이름)\OneDrive\…</code>처럼 OneDrive 아래로 나올 수 있습니다. OneDrive의 폴더 백업을 켜 두면 문서 폴더 위치가 그쪽으로 바뀌기 때문입니다. 이때는 화면에 나온 경로가 실제 경로입니다.</p>
+</div>
+
+<p>반대로 주소 표시줄에 경로를 직접 써넣고 <code>Enter</code>를 누르면 그 폴더로 바로 갑니다. 긴 폴더 나무를 하나씩 눌러 내려가는 대신, 복사해 둔 경로를 붙여 넣는 것이 빠르고 정확합니다.</p>
+
+<div class="check" data-q="q8"></div>
+
+<h2>절대 경로와 상대 경로</h2>
+
+<p>길을 알려 주는 방법은 두 가지입니다. "서울시 ○○구 △△로 12"처럼 <b>누가 어디서 들어도 같은</b> 주소를 말할 수도 있고, "여기서 나가서 오른쪽 두 번째 건물"처럼 <b>지금 있는 곳을 기준으로</b> 말할 수도 있습니다. 경로도 똑같이 두 가지가 있습니다.</p>
+
+<div class="box">
+<p class="box-k">정의 <span class="tag memo">외우기</span></p>
+<p><b class="key">절대 경로</b>(absolute path): 드라이브(나무의 뿌리)부터 시작해 끝까지 적은 경로. 지금 어디에 있든 같은 곳을 가리킨다. 예: <code>C:\Users\hana\Documents\공부\data\우유.csv</code></p>
+<p><b class="key">상대 경로</b>(relative path): 지금 있는 폴더(<b>기준 폴더</b>)에서 출발해 적은 경로. 드라이브로 시작하지 않는다. 기준 폴더가 바뀌면 가리키는 곳도 바뀐다. 예: <code>..\data\우유.csv</code></p>
+<p>상대 경로에 쓰는 두 기호: <code>.</code>(점 하나)은 <b>지금 폴더</b>, <code>..</code>(점 둘)은 <b>한 칸 위 폴더</b>(상위 폴더)다.</p>
+</div>
+
+<p>상대 경로를 읽는 법은 하나입니다. <b>기준 폴더에 서서, 조각을 왼쪽부터 하나씩 따라간다.</b> <code>..</code>을 만나면 한 칸 올라가고, 폴더 이름을 만나면 그 안으로 들어갑니다.</p>
+
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 340" role="img" aria-label="상대 경로 ..\data\우유.csv를 따라가는 그림. 위에 공부 폴더, 그 아래 왼쪽에 notes 폴더, 오른쪽에 data 폴더, notes 아래에 요약.txt, data 아래에 우유.csv. notes 옆에 '지금 여기(기준 폴더)'. 화살표 ①은 notes에서 공부로 올라가며 '..: 한 칸 위로'. 화살표 ②는 공부에서 data로 내려가며 'data 폴더로'. 화살표 ③은 data에서 우유.csv로 내려간다. 아래에 상대 경로 ..\data\우유.csv와 절대 경로 C:\Users\hana\Documents\공부\data\우유.csv.">
+<line class="f-ink" x1="380" y1="64" x2="220" y2="130"/>
+<line class="f-ink" x1="380" y1="64" x2="540" y2="130"/>
+<line class="f-ink" x1="220" y1="164" x2="220" y2="220"/>
+<line class="f-ink" x1="540" y1="164" x2="540" y2="220"/>
+<rect class="f-soft" x="330" y="30" width="100" height="34" rx="4"/>
+<text class="f-t" x="380" y="52" text-anchor="middle">공부</text>
+<rect class="f-soft" x="160" y="130" width="120" height="34" rx="4"/>
+<text class="f-t f-b" x="220" y="152" text-anchor="middle">notes</text>
+<rect class="f-soft" x="480" y="130" width="120" height="34" rx="4"/>
+<text class="f-t" x="540" y="152" text-anchor="middle">data</text>
+<rect class="f-box" x="160" y="220" width="120" height="34" rx="4"/>
+<text class="f-t" x="220" y="242" text-anchor="middle">요약.txt</text>
+<rect class="f-box" x="480" y="220" width="120" height="34" rx="4"/>
+<text class="f-t f-b" x="540" y="242" text-anchor="middle">우유.csv</text>
+<text class="f-s f-ink-t" x="150" y="152" text-anchor="end">지금 여기 (기준 폴더)</text>
+<line class="f-line" x1="196" y1="128" x2="340" y2="68" marker-end="url(#f-arrow)"/>
+<text class="f-s f-ink-t" x="250" y="84" text-anchor="end">① .. : 한 칸 위로</text>
+<line class="f-line" x1="420" y1="68" x2="566" y2="128" marker-end="url(#f-arrow)"/>
+<text class="f-s f-ink-t" x="510" y="84" text-anchor="start">② data 폴더로</text>
+<line class="f-line" x1="566" y1="166" x2="566" y2="216" marker-end="url(#f-arrow)"/>
+<text class="f-s f-ink-t" x="578" y="196" text-anchor="start">③ 우유.csv</text>
+<text class="f-t" x="380" y="292" text-anchor="middle">상대 경로   ..\data\우유.csv</text>
+<text class="f-s" x="380" y="318" text-anchor="middle">= 절대 경로   C:\Users\hana\Documents\공부\data\우유.csv</text>
+</svg>
+<figcaption>공부 폴더 위쪽(Documents, hana, Users, C:)은 생략했다. 상대 경로는 기준 폴더에서 출발하므로 위쪽을 몰라도 따라갈 수 있다.</figcaption>
+</figure>
+
+<div class="box ex">
+<p class="box-k">풀이 예제</p>
+<p>기준 폴더가 <code>C:\Users\hana\Documents\공부\notes</code>일 때, 세 상대 경로를 절대 경로로 바꿉니다. 방법은 기준 폴더의 절대 경로를 적어 놓고, 조각을 하나씩 처리하는 것입니다.</p>
+<p class="calc">(가) <code>요약.txt</code><br>
+① 출발: <code>C:\Users\hana\Documents\공부\notes</code><br>
+② <code>요약.txt</code> → 이 폴더 안의 파일. 끝에 붙인다.<br>
+③ 결과: <code>C:\Users\hana\Documents\공부\notes\요약.txt</code><br><br>
+(나) <code>..\data\우유.csv</code><br>
+① 출발: <code>C:\Users\hana\Documents\공부\notes</code><br>
+② <code>..</code> → 한 칸 위로. 맨 끝 조각 <code>notes</code>를 지운다: <code>C:\Users\hana\Documents\공부</code><br>
+③ <code>data</code> → 안으로 들어간다: <code>C:\Users\hana\Documents\공부\data</code><br>
+④ <code>우유.csv</code> → 끝에 붙인다: <code>C:\Users\hana\Documents\공부\data\우유.csv</code><br><br>
+(다) <code>..\..\메모.txt</code><br>
+① 출발: <code>C:\Users\hana\Documents\공부\notes</code><br>
+② 첫째 <code>..</code> → <code>C:\Users\hana\Documents\공부</code><br>
+③ 둘째 <code>..</code> → <code>C:\Users\hana\Documents</code><br>
+④ <code>메모.txt</code> → <code>C:\Users\hana\Documents\메모.txt</code></p>
+<p>(다)의 결과는 <code>Documents</code> 바로 안의 <code>메모.txt</code>로, notes 안의 <code>메모.txt</code>와는 다른 파일입니다. 이름만 보고는 같은 파일인 줄 알기 쉬운데, 경로가 다르면 다른 파일입니다. 같은 상대 경로 <code>메모.txt</code>도 기준 폴더가 notes이면 notes 안의 것을, Documents이면 Documents 안의 것을 가리킵니다.</p>
+</div>
+
+<h3>실제 예: 이 페이지의 상대 경로</h3>
+
+<p>지금 읽고 있는 이 페이지도 상대 경로를 씁니다. 이 페이지 파일은 교재 폴더 안의 <code>notes\u\u02-2.html</code>에 있고, 페이지 모양을 정하는 파일 <code>style.css</code>는 교재 폴더 맨 위에 있습니다. 그래서 이 페이지 안에는 다음과 같은 줄이 적혀 있습니다.</p>
+
+<pre><code>&lt;link rel="stylesheet" href="../../style.css"&gt;</code></pre>
+
+<p>웹 페이지라 구분 기호가 <code>/</code>입니다. 기준 폴더는 이 페이지가 있는 <code>u</code> 폴더입니다. 첫째 <code>..</code>로 <code>notes</code>에, 둘째 <code>..</code>로 교재 폴더 맨 위에 올라간 뒤 그 안의 <code>style.css</code>를 가리킵니다. 이 교재 폴더를 통째로 다른 컴퓨터나 웹 서버로 옮겨도 페이지 모양이 그대로 나오는 이유가 바로 이것입니다. 다음 절에서 그 이유를 자세히 봅니다.</p>
+
+<div class="check" data-q="q5"></div>
+<div class="check" data-q="q10"></div>
+
+<h2>폴더를 옮기면 무엇이 깨지나</h2>
+
+<p><code>notes</code> 폴더 안에서 쓰는 분석 메모가 <code>data</code> 폴더의 <code>우유.csv</code>를 가리키고 있다고 합시다. 그런데 C 드라이브가 꽉 차서 <code>공부</code> 폴더를 통째로 <code>D:\백업</code> 아래로 옮겼습니다. 메모에 적어 둔 경로가 절대 경로였는지 상대 경로였는지에 따라 결과가 달라집니다.</p>
+
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 240" role="img" aria-label="표 모양 그림. 행은 notes 폴더 안 파일에 적어 둔 두 경로, 열은 (가) 옮기기 전과 (나) D 드라이브로 옮긴 뒤. 절대 경로 C:\Users\hana\Documents\공부\data\우유.csv는 옮기기 전에는 찾았지만, 옮긴 뒤에는 옛 위치를 가리켜 찾지 못한다(붉은 칸). 상대 경로 ..\data\우유.csv는 옮기기 전에는 C:\…\공부\data\우유.csv를, 옮긴 뒤에는 D:\백업\공부\data\우유.csv를 찾는다.">
+<text class="f-s" x="20" y="30" text-anchor="start">notes 안 파일에 적어 둔 경로</text>
+<text class="f-cap" x="430" y="30" text-anchor="middle">(가) 옮기기 전</text>
+<text class="f-cap" x="645" y="30" text-anchor="middle">(나) D:\백업 으로 옮긴 뒤</text>
+<rect class="f-box" x="20" y="44" width="310" height="76" rx="4"/>
+<text class="f-cap" x="34" y="68" text-anchor="start">절대 경로</text>
+<text class="f-s f-ink-t" x="34" y="90" text-anchor="start">C:\Users\hana\Documents\공부\</text>
+<text class="f-s f-ink-t" x="34" y="108" text-anchor="start">data\우유.csv</text>
+<rect class="f-soft" x="340" y="44" width="180" height="76" rx="4"/>
+<text class="f-t f-b" x="430" y="78" text-anchor="middle">찾았다</text>
+<text class="f-s" x="430" y="100" text-anchor="middle">그 자리에 있다</text>
+<rect class="f-over" x="555" y="44" width="180" height="76" rx="4"/>
+<text class="f-t f-b" x="645" y="78" text-anchor="middle">찾지 못한다</text>
+<text class="f-s f-ink-t" x="645" y="100" text-anchor="middle">옛 위치 C:\…를 가리킴</text>
+<rect class="f-box" x="20" y="136" width="310" height="76" rx="4"/>
+<text class="f-cap" x="34" y="160" text-anchor="start">상대 경로</text>
+<text class="f-s f-ink-t" x="34" y="182" text-anchor="start">..\data\우유.csv</text>
+<text class="f-s" x="34" y="200" text-anchor="start">(기준: 이 파일이 있는 notes 폴더)</text>
+<rect class="f-soft" x="340" y="136" width="180" height="76" rx="4"/>
+<text class="f-t f-b" x="430" y="170" text-anchor="middle">찾았다</text>
+<text class="f-s" x="430" y="192" text-anchor="middle">C:\…\공부\data\우유.csv</text>
+<rect class="f-soft" x="555" y="136" width="180" height="76" rx="4"/>
+<text class="f-t f-b" x="645" y="170" text-anchor="middle">찾았다</text>
+<text class="f-s" x="645" y="192" text-anchor="middle">D:\백업\공부\data\우유.csv</text>
+</svg>
+<figcaption>상대 경로는 공부 폴더 안에서의 위치 관계만 적었기 때문에, 공부 폴더가 통째로 어디로 가든 함께 따라간다.</figcaption>
+</figure>
+
+<p>절대 경로는 "C 드라이브의 그 자리"를 못 박아 둔 것이라, 폴더를 옮기면 아무것도 없는 옛 자리를 가리킵니다. 상대 경로는 "notes에서 한 칸 올라가 data 안"이라는 <b>관계</b>만 적은 것이라, 공부 폴더 전체가 함께 옮겨 가는 한 관계가 그대로 유지됩니다.</p>
+
+<p>그렇다고 상대 경로가 언제나 낫지는 않습니다. 정리하면 이렇습니다.</p>
+
+<div class="table-wrap">
+<table>
+<tr><th></th><th>절대 경로</th><th>상대 경로</th></tr>
+<tr><td>시작</td><td>드라이브부터 (<code>C:\…</code>)</td><td>기준 폴더부터 (<code>..\…</code>, <code>data\…</code>)</td></tr>
+<tr><td>기준 폴더가 바뀌면</td><td>그대로 같은 곳</td><td>다른 곳을 가리킨다</td></tr>
+<tr><td>폴더를 통째로 옮기면</td><td>깨진다</td><td>안에서의 관계는 유지된다</td></tr>
+<tr><td>잘 맞는 쓰임</td><td>컴퓨터 안의 한 자리를 정확히 가리킬 때 (예: 탐색기 주소 표시줄)</td><td>함께 움직이는 묶음 안에서 서로를 가리킬 때 (예: 교재 페이지, 분석 폴더 안의 코드와 데이터)</td></tr>
+</table>
+</div>
+
+<div class="box trap">
+<p class="box-k">흔한 실수</p>
+<p><b>상대 경로의 기준 폴더를 잘못 잡는다.</b> 상대 경로는 "어디서 출발했나"가 전부입니다. 웹 페이지 안의 상대 경로는 그 페이지 파일이 있는 폴더가 기준입니다. 프로그램을 실행할 때의 상대 경로는 대개 프로그램을 실행한 "작업 폴더"가 기준인데, 이것이 코드 파일이 있는 폴더와 다를 수 있습니다. 같은 코드가 어떤 때는 파일을 찾고 어떤 때는 못 찾는 흔한 원인입니다. 작업 폴더는 U05 "코드를 실행하는 자리"에서 다룹니다.</p>
+</div>
+
+<div class="why">
+<p class="box-k">왜 그럴까?</p>
+<p>분석 결과를 동료에게 보낼 때, 코드 안에 <code>C:\Users\hana\Documents\공부\data\우유.csv</code>라고 적어 보내면 동료의 컴퓨터에서는 거의 언제나 파일을 찾지 못합니다. 동료가 data 폴더까지 함께 받았는데도 그렇습니다. 왜 그럴까요? 어떻게 적어 보내면 될까요?</p>
+<details><summary>모범 답 보기</summary><p>절대 경로에는 내 컴퓨터만의 정보가 들어 있습니다. 동료의 사용자 이름은 hana가 아니고, 받은 폴더를 Documents가 아닌 다른 곳에 둘 수도 있습니다. 그러니 같은 경로에 파일이 없습니다. 코드와 데이터를 한 폴더 묶음으로 보내고, 코드 안에는 그 묶음 안에서의 상대 경로(예: <code>data\우유.csv</code> 또는 <code>data/우유.csv</code>)를 적으면, 동료가 묶음을 어디에 두든 관계가 유지되어 파일을 찾습니다. 덤으로, 절대 경로에 든 사용자 이름 같은 개인 정보도 남에게 보내지 않게 됩니다.</p></details>
+</div>
+
+<div class="check" data-q="q7"></div>
+
+<h2>폴더를 정리하는 작은 규칙</h2>
+
+<p>경로를 알면 폴더를 어떻게 정리해야 편한지도 보입니다. 정답이 정해진 것은 아니지만, 데이터와 코드를 다룰 때 오래 쓰이는 습관이 있습니다.</p>
+
+<ul>
+<li><b>일 하나에 폴더 하나.</b> 한 가지 공부나 분석에 쓰는 코드·데이터·결과를 한 폴더 아래에 모읍니다. 그래야 상대 경로로 서로를 가리킬 수 있고, 폴더째 옮기거나 백업하기 쉽습니다.</li>
+<li><b>안에서 역할별로 나눈다.</b> 예: <code>data</code>(받은 원본 자료), <code>notes</code>(메모), <code>result</code>(만든 결과). 원본 자료는 고치지 않고 둡니다.</li>
+<li><b>이름에 날짜를 넣을 때는 연-월-일 순서로.</b> <code>2026-11-18_회의.txt</code>처럼 월·일을 두 자리로 쓰면 어느 프로그램에서든 이름순 정렬이 곧 날짜순 정렬이 됩니다. <code>11월18일_회의.txt</code>와 <code>2월3일_회의.txt</code>는 글자를 앞에서부터 비교하는 정렬(Python의 <code>sorted</code>, 많은 터미널 명령)에서 "1"이 "2"보다 앞이라 11월이 2월보다 먼저 옵니다. Windows 파일 탐색기는 이름 속 숫자를 수로 보고 정렬해서 이 경우는 맞게 놓지만, 프로그램마다 다르니 연-월-일 두 자리가 안전합니다.</li>
+<li><b>코드에서 쓸 이름에는 띄어쓰기를 피한다.</b> <code>milk data.csv</code>보다 <code>milk_data.csv</code>가 다루기 쉽습니다. 띄어쓰기가 있으면 경로를 쓸 때마다 큰따옴표로 감싸야 하는 경우가 생깁니다.</li>
+</ul>
+
+<div class="check" data-q="q13"></div>
+
+<p>폴더 나무와 경로는 이 교재에서 계속 다시 나옵니다. U05에서는 터미널이 "지금 어느 폴더에 있는지"를 경로로 보여 주고, PY07에서는 Python이 상대 경로로 데이터 파일을 엽니다. SY06에서는 Linux의 <code>/</code> 경로와 명령으로 폴더 사이를 옮겨 다닙니다.</p>
+
+<h2>한눈에 정리</h2>
+
+<div class="table-wrap">
+<table>
+<tr><th>묻는 것</th><th>답</th></tr>
+<tr><td>폴더</td><td>파일과 폴더를 담는 그릇. <b class="key">디렉터리</b>와 같은 말</td></tr>
+<tr><td>폴더 나무의 뿌리</td><td><b class="key">드라이브</b> (C:, D:)</td></tr>
+<tr><td>경로</td><td>거쳐 가는 폴더 이름을 구분 기호로 이은 주소</td></tr>
+<tr><td>Windows 구분 기호</td><td><b class="key">\</b> (역슬래시, 글꼴에 따라 ₩로 보임). macOS·Linux·웹은 /</td></tr>
+<tr><td>화면 이름 vs 실제 이름</td><td>사용자 = Users, 문서 = <b class="key">Documents</b>, 다운로드 = Downloads</td></tr>
+<tr><td>실제 경로 보기 · 복사</td><td>주소 표시줄 빈 곳 누르기 · 오른쪽 단추 → 경로로 복사</td></tr>
+<tr><td>절대 경로</td><td>드라이브부터. 어디서 보든 같은 곳. 폴더를 옮기면 깨짐</td></tr>
+<tr><td>상대 경로</td><td><b class="key">기준 폴더</b>부터. 묶음째 옮겨도 관계 유지</td></tr>
+<tr><td>. 과 ..</td><td><code>.</code> 지금 폴더, <code>..</code> <b class="key">한 칸 위</b> 폴더</td></tr>
+</table>
+</div>
+
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>폴더는 드라이브를 뿌리로 하는 나무를 이루고, 경로는 그 나무에서 파일까지 가는 길을 \로 이은 주소이며, 절대 경로는 뿌리부터, 상대 경로는 기준 폴더부터 적는다.</p></div>
+
+<h2>확인 문제</h2>
+<p>본문 중간에서 푼 문제 말고 남은 문제입니다. 보기를 누르면 바로 정답과 해설이 나옵니다.</p>
+<div id="quiz"></div>
+
+<section class="work" id="tools"></section>
+
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

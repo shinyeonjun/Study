@@ -12,7 +12,14 @@
 
 window.BDA_CHAPTERS = {
   U01: [
-    {"id": "U01-1", "title": "궁금함을 질문으로 바꾸기", "href": "notes/u/u01-1.html"}
+    {"id": "U01-1", "title": "궁금함을 질문으로 바꾸기", "href": "notes/u/u01-1.html"},
+    {"id": "U01-2", "title": "사실·추측·가정 가려 읽기", "href": "notes/u/u01-2.html"},
+    {"id": "U01-3", "title": "모르는 낱말 노트", "href": "notes/u/u01-3.html"}
+  ],
+  U02: [
+    {"id": "U02-1", "title": "파일과 확장자", "href": "notes/u/u02-1.html"},
+    {"id": "U02-2", "title": "폴더와 경로", "href": "notes/u/u02-2.html"},
+    {"id": "U02-3", "title": "저장·열기·복사·백업", "href": "notes/u/u02-3.html"}
   ],
   U03: [
     {"id": "U03-1", "title": "입력·처리·출력·저장", "href": "notes/u/u03-1.html"},

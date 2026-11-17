@@ -1,0 +1,382 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>사실·추측·가정 가려 읽기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e8c'/%3E%3Cpath d='M8 22V10m8 12V14m8 8V6' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="U01-2">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+
+<header class="chapter">
+<p class="chap-sub">공부·컴퓨터의 출발점 · U01 질문과 배움</p>
+<p class="chap-num">U01·2</p>
+<h1>사실·추측·가정 가려 읽기</h1>
+<p class="lead">가게 사장님의 메모에 "어제 비가 와서 우유가 40개나 팔렸다. 다음 주 장마 때는 두 배로 들여놓자."라고 적혀 있습니다. 이 두 문장 안에는 확인된 것, 짐작한 것, 말없이 깔고 들어간 것, 그리고 결정이 함께 섞여 있습니다. 이 장에서는 글을 읽거나 쓸 때 이것들을 하나씩 가려내는 법을 익힙니다.</p>
+</header>
+
+<div class="goal">
+<h2>이 장을 읽고 나면</h2>
+<ul>
+<li>사실·추측·가정·의견의 뜻을 말하고, 문장 하나가 어느 것인지 가려낼 수 있다.</li>
+<li>"확인할 수 있는 말"과 "확인된 말"이 왜 다른지 예를 들어 설명할 수 있다.</li>
+<li>추측 하나를 받치고 있는 숨은 가정을 찾아 적을 수 있다.</li>
+<li>같은 문장이 쓰임에 따라 가정도, 추측도, 사실도 될 수 있음을 설명할 수 있다.</li>
+<li>AI 답이나 인터넷 글을 읽을 때 "확인 전"인 부분을 표시할 수 있다.</li>
+</ul>
+</div>
+
+<h2>한 메모 안에 섞여 있는 것</h2>
+
+<p>앞 장(U01-1)에서는 막연한 궁금함을 확인할 수 있는 질문으로 바꾸었습니다. 질문을 만들면 그다음에는 자료와 글을 읽게 됩니다. 그런데 우리가 읽는 글은 거의 언제나 <b>확인된 것과 확인되지 않은 것이 한 문장 안에 섞여</b> 있습니다.</p>
+
+<p>처음 본 메모를 다시 봅시다.</p>
+
+<div class="sample">
+<p class="sample-k">가게 사장님의 메모</p>
+<blockquote>어제 비가 와서 우유가 40개나 팔렸다. 비 오는 날엔 우유가 잘 팔리니, 다음 주 장마 때는 두 배로 들여놓자.</blockquote>
+</div>
+
+<p>읽기에는 아무 문제가 없어 보입니다. 하지만 이 메모대로 우유를 두 배로 들여놓았다가 절반이 남아 버려야 한다면, 어디서부터 잘못된 것일까요? 그것을 찾으려면 메모를 조각내어 각 조각이 <b>어떤 종류의 말</b>인지 보아야 합니다.</p>
+
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 320" role="img" aria-label="메모를 여섯 조각으로 나눈 표 모양 그림. 열은 문장 조각, 종류, 왜. 1행: 어제 우유가 40개 팔렸다, 사실, 판매 기록을 보면 확인된다. 2행: 어제 비가 왔다, 사실, 날씨 기록으로 확인된다. 3행: 비가 와서 많이 팔렸다, 추측, 원인은 아직 확인하지 않았다. 4행: 다음 주에도 잘 팔릴 것이다, 추측, 아직 모르는 값을 짐작했다. 5행은 점선 칸으로, 글에 적혀 있지 않은 '그 밖의 조건은 평소와 같았다', 가정, 확인 없이 깔고 들어간 전제. 6행: 두 배로 들여놓자, 의견, 무엇을 할지 정하는 판단.">
+<text class="f-cap" x="30" y="30" text-anchor="start">문장 조각</text>
+<text class="f-cap" x="415" y="30" text-anchor="middle">종류</text>
+<text class="f-cap" x="470" y="30" text-anchor="start">왜</text>
+<rect class="f-box" x="20" y="46" width="340" height="36" rx="4"/>
+<text class="f-t" x="34" y="69" text-anchor="start">어제 우유가 40개 팔렸다</text>
+<rect class="f-box" x="380" y="46" width="70" height="36" rx="4"/>
+<text class="f-t f-b" x="415" y="69" text-anchor="middle">사실</text>
+<text class="f-s" x="470" y="69" text-anchor="start">판매 기록을 보면 확인된다</text>
+<rect class="f-box" x="20" y="90" width="340" height="36" rx="4"/>
+<text class="f-t" x="34" y="113" text-anchor="start">어제 비가 왔다</text>
+<rect class="f-box" x="380" y="90" width="70" height="36" rx="4"/>
+<text class="f-t f-b" x="415" y="113" text-anchor="middle">사실</text>
+<text class="f-s" x="470" y="113" text-anchor="start">날씨 기록으로 확인된다</text>
+<rect class="f-box" x="20" y="134" width="340" height="36" rx="4"/>
+<text class="f-t" x="34" y="157" text-anchor="start">비가 와서 많이 팔렸다</text>
+<rect class="f-soft" x="380" y="134" width="70" height="36" rx="4"/>
+<text class="f-t f-b" x="415" y="157" text-anchor="middle">추측</text>
+<text class="f-s" x="470" y="157" text-anchor="start">원인은 아직 확인하지 않았다</text>
+<rect class="f-box" x="20" y="178" width="340" height="36" rx="4"/>
+<text class="f-t" x="34" y="201" text-anchor="start">다음 주에도 잘 팔릴 것이다</text>
+<rect class="f-soft" x="380" y="178" width="70" height="36" rx="4"/>
+<text class="f-t f-b" x="415" y="201" text-anchor="middle">추측</text>
+<text class="f-s" x="470" y="201" text-anchor="start">아직 모르는 값을 짐작했다</text>
+<rect class="f-dash" x="20" y="222" width="340" height="36" rx="4"/>
+<text class="f-t" x="34" y="245" text-anchor="start">(글에 없음) 그 밖의 조건은 평소와 같았다</text>
+<rect class="f-dash" x="380" y="222" width="70" height="36" rx="4"/>
+<text class="f-t f-b" x="415" y="245" text-anchor="middle">가정</text>
+<text class="f-s" x="470" y="245" text-anchor="start">확인 없이 깔고 들어간 전제</text>
+<rect class="f-box" x="20" y="266" width="340" height="36" rx="4"/>
+<text class="f-t" x="34" y="289" text-anchor="start">두 배로 들여놓자</text>
+<rect class="f-box" x="380" y="266" width="70" height="36" rx="4"/>
+<text class="f-t f-b" x="415" y="289" text-anchor="middle">의견</text>
+<text class="f-s" x="470" y="289" text-anchor="start">무엇을 할지 정하는 판단</text>
+</svg>
+<figcaption>점선 칸은 글에 적혀 있지 않지만, 메모의 결론이 서려면 참이어야 하는 조각이다.</figcaption>
+</figure>
+
+<p>여섯 조각 가운데 <b>확인된 것은 두 개뿐</b>입니다. "40개 팔렸다"와 "비가 왔다"는 판매 기록과 날씨 기록을 보면 됩니다. 나머지는 짐작이거나, 말없이 깔고 들어간 전제이거나, 결정입니다. 두 배로 들여놓았다가 실패했다면, 문제는 확인된 두 조각이 아니라 나머지 조각 어딘가에 있습니다. 예를 들어 어제 우유 할인 행사를 했다면 "그 밖의 조건은 평소와 같았다"가 무너지고, 그 위에 서 있던 "비가 와서 많이 팔렸다"도 함께 무너집니다.</p>
+
+<p>이렇게 글을 조각내어 종류를 붙이는 일을 이 장에서는 <b>가려 읽기</b>라고 부르겠습니다. 가려 읽기를 하려면 먼저 각 종류의 뜻을 정확히 알아야 합니다.</p>
+
+<h2>네 가지 말의 뜻 <span class="tag memo">외우기</span></h2>
+
+<div class="side"><b>진술</b> 무엇이 어떠하다고 말하는 문장. "어제 비가 왔다", "내일 비가 올 것이다"는 진술입니다. "비가 올까?" 같은 물음이나 "우산을 챙겨라" 같은 명령은 진술이 아닙니다.</div>
+
+<div class="box">
+<p class="box-k">정의</p>
+<p><b class="key">사실</b>(fact): 보거나, 세거나, 기록을 찾아 참인지 거짓인지 가릴 수 있고, <b>실제로 확인된</b> 내용. 예: "어제 우유가 40개 팔렸다"(판매 기록에서 확인함).</p>
+<p><b class="key">추측</b>(inference, guess): 알고 있는 것을 바탕으로 <b>끌어냈지만 아직 확인하지 않은</b> 판단. 결론 자리에 온다. 예: "비 때문에 많이 팔렸을 것이다", "다음 주에도 잘 팔릴 것이다".</p>
+<p><b class="key">가정</b>(assumption): 확인하지 않은 채 <b>일단 참이라고 놓고</b> 생각을 시작하는 전제. 출발점 자리에 온다. 글에 적혀 있지 않은 경우가 많다. 예: "그 밖의 조건은 평소와 같았다".</p>
+<p><b class="key">의견</b>(opinion): 무엇이 좋은지, 무엇을 해야 하는지에 대한 판단. 자료만으로는 참·거짓이 정해지지 않는다. 예: "두 배로 들여놓자", "이 노래가 가장 좋다".</p>
+</div>
+
+<p>네 가지를 가르는 기준은 두 개입니다. 첫째, <b>자료로 참·거짓을 가릴 수 있는 꼴의 말인가</b>. 의견은 여기서 떨어져 나갑니다. "두 배로 들여놓자"가 맞는지는 손해를 얼마나 감수할지, 손님에게 얼마나 미안할지 같은 사람의 판단에 달려 있습니다. 앞 장에서 본 "값어치 판단"이 바로 이것입니다.</p>
+
+<p>둘째, 가릴 수 있는 꼴의 말이라면 <b>실제로 확인했는가, 그리고 생각 속에서 어느 자리에 있는가</b>. 확인했으면 사실입니다. 확인하지 않았는데 결론으로 끌어냈으면 추측, 출발점으로 깔았으면 가정입니다.</p>
+
+<h3>"확인할 수 있다"와 "확인했다"는 다르다 <span class="tag grasp">이해하기</span></h3>
+
+<p>일상에서 "그건 사실이야"라고 하면 "그건 참이야"라는 뜻입니다. 그런데 공부할 때는 한 단계를 더 나누어야 합니다. "서울은 부산보다 남쪽에 있다"를 봅시다. 이 문장은 지도를 보면 참·거짓을 가릴 수 있는 꼴의 말입니다. 그런데 지도를 보면 거짓입니다. 서울이 부산보다 북쪽에 있으니까요.</p>
+
+<p>이처럼 <b>확인할 수 있는 꼴로 쓰였지만 아직 확인하지 않은 말</b>을 이 교재에서는 <b>사실 주장</b>이라고 부릅니다. 사실 주장은 확인해 보면 참일 수도, 거짓일 수도 있습니다. 확인해서 참으로 드러난 것만 사실로 받아들입니다.</p>
+
+<div class="table-wrap">
+<table>
+<tr><th>문장</th><th>참·거짓을 가릴 수 있나</th><th>확인했나</th><th>결과</th></tr>
+<tr><td>어제 우유가 40개 팔렸다</td><td>예 (판매 기록)</td><td>예, 기록에 40개</td><td>사실</td></tr>
+<tr><td>서울은 부산보다 남쪽에 있다</td><td>예 (지도)</td><td>예, 확인하니 틀림</td><td>거짓으로 드러난 사실 주장</td></tr>
+<tr><td>그 가게는 다음 달 문을 닫는다 (소문)</td><td>예 (다음 달에 보면 됨)</td><td>아니오</td><td>확인 전 사실 주장 → 확인될 때까지 추측처럼 다룸</td></tr>
+<tr><td>그 가게 빵이 제일 맛있다</td><td>아니오</td><td>해당 없음</td><td>의견</td></tr>
+</table>
+</div>
+
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q4"></div>
+
+<h2>가려내는 순서</h2>
+
+<p>문장마다 아래 세 물음을 순서대로 던지면 대부분 가려집니다.</p>
+
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 380" role="img" aria-label="문장 하나를 가려내는 흐름도. 맨 위 '문장 하나를 읽는다'에서 아래로 첫째 물음 '보거나 세거나 기록을 찾아 참·거짓을 가릴 수 있나?'. 아니오이면 오른쪽 '의견'. 예이면 아래로 둘째 물음 '실제로 확인했나? 기록·관찰·믿을 만한 출처'. 예이면 오른쪽 '사실'. 아니오이면 아래로 셋째 물음 '확인 없이 생각의 출발점으로 깔아 둔 것인가?'. 예이면 오른쪽 '가정'. 아니오, 곧 결론으로 끌어낸 것이면 아래로 '추측'.">
+<rect class="f-box" x="140" y="16" width="220" height="36" rx="18"/>
+<text class="f-t" x="250" y="39" text-anchor="middle">문장 하나를 읽는다</text>
+<line class="f-line" x1="250" y1="52" x2="250" y2="76" marker-end="url(#f-arrow)"/>
+<rect class="f-box" x="40" y="80" width="420" height="44" rx="4"/>
+<text class="f-t" x="250" y="107" text-anchor="middle">① 보거나 세거나 기록을 찾아 참·거짓을 가릴 수 있나?</text>
+<line class="f-line" x1="460" y1="102" x2="556" y2="102" marker-end="url(#f-arrow)"/>
+<text class="f-s" x="508" y="94" text-anchor="middle">아니오</text>
+<rect class="f-box" x="560" y="84" width="180" height="36" rx="4"/>
+<text class="f-t f-b" x="650" y="107" text-anchor="middle">의견</text>
+<line class="f-line" x1="250" y1="124" x2="250" y2="156" marker-end="url(#f-arrow)"/>
+<text class="f-s" x="262" y="145" text-anchor="start">예</text>
+<rect class="f-box" x="40" y="160" width="420" height="44" rx="4"/>
+<text class="f-t" x="250" y="187" text-anchor="middle">② 실제로 확인했나? (기록·관찰·믿을 만한 출처)</text>
+<line class="f-line" x1="460" y1="182" x2="556" y2="182" marker-end="url(#f-arrow)"/>
+<text class="f-s" x="508" y="174" text-anchor="middle">예</text>
+<rect class="f-box" x="560" y="164" width="180" height="36" rx="4"/>
+<text class="f-t f-b" x="650" y="187" text-anchor="middle">사실</text>
+<line class="f-line" x1="250" y1="204" x2="250" y2="236" marker-end="url(#f-arrow)"/>
+<text class="f-s" x="262" y="225" text-anchor="start">아니오</text>
+<rect class="f-box" x="40" y="240" width="420" height="44" rx="4"/>
+<text class="f-t" x="250" y="267" text-anchor="middle">③ 확인 없이 생각의 출발점으로 깔아 둔 것인가?</text>
+<line class="f-line" x1="460" y1="262" x2="556" y2="262" marker-end="url(#f-arrow)"/>
+<text class="f-s" x="508" y="254" text-anchor="middle">예</text>
+<rect class="f-dash" x="560" y="244" width="180" height="36" rx="4"/>
+<text class="f-t f-b" x="650" y="267" text-anchor="middle">가정</text>
+<line class="f-line" x1="250" y1="284" x2="250" y2="316" marker-end="url(#f-arrow)"/>
+<text class="f-s" x="262" y="305" text-anchor="start">아니오 (결론으로 끌어냈다)</text>
+<rect class="f-soft" x="140" y="320" width="220" height="36" rx="4"/>
+<text class="f-t f-b" x="250" y="343" text-anchor="middle">추측</text>
+</svg>
+<figcaption>②에서 "출처가 있다"는 것은 출처를 직접 보았다는 뜻이다. "누가 그랬대"는 확인이 아니다.</figcaption>
+</figure>
+
+<p>남에게 들은 말(소문, 챗봇 답)처럼 내가 끌어내지도 확인하지도 않은 말은 흐름도에서 맨 아래 "추측"으로 떨어집니다. 엄밀히는 앞에서 정의한 <b>확인 전 사실 주장</b>이지만, 다루는 법은 추측과 같습니다. 확인되기 전까지는 결론의 근거로 쓰지 않습니다.</p>
+
+<div class="box ex">
+<p class="box-k">풀이 예제</p>
+<p>다음 네 문장을 순서대로 가려 봅니다. 모두 어느 카페 주인이 쓴 글입니다.</p>
+<p class="calc">(가) "지난달 아메리카노는 1,200잔 팔렸다." (매출 장부를 보고 씀)<br>
+① 장부를 보면 참·거짓을 가릴 수 있다 → 예. ② 장부를 보고 썼다 → 확인함 → <b>사실</b>.<br><br>
+(나) "손님들은 아메리카노를 라테보다 좋아한다."<br>
+① "좋아한다"는 마음이라 바로 셀 수는 없지만, "더 많이 주문한다"로 바꾸면 장부로 가릴 수 있다. ② 주문 수를 비교해 보지 않았다 → 확인 안 함. ③ 출발점으로 깔았나, 결론으로 끌어냈나? 앞 문장 (가)를 보고 끌어낸 것이다 → <b>추측</b>.<br>
+(아메리카노가 1,200잔 팔렸다는 것만으로는 라테와 비교할 수 없습니다. 라테가 1,500잔 팔렸을 수도 있습니다.)<br><br>
+(다) "가게 앞을 지나는 사람 수는 매달 비슷하다고 보고, 다음 달 매출을 계산했다."<br>
+① 사람 수는 세면 가릴 수 있다. ② 세어 보지 않았다. ③ "~라고 보고" 계산을 시작했다 → 출발점 → <b>가정</b>.<br><br>
+(라) "메뉴판 글씨를 더 크게 바꾸는 게 좋겠다."<br>
+① "좋겠다"는 무엇을 중요하게 여기느냐에 달린 판단이다 → <b>의견</b>.</p>
+<p>(나)처럼 한 번에 가려지지 않는 문장도 있습니다. 이럴 때는 "어떻게 바꾸면 셀 수 있을까"를 먼저 생각하고, 그다음 "그걸 실제로 셌나"를 묻습니다. 앞 장에서 막연한 낱말을 잴 수 있는 것으로 바꾼 것과 같은 일입니다.</p>
+</div>
+
+<h3>낱말 신호는 참고만 한다</h3>
+
+<p>추측과 가정에는 흔히 붙는 말이 있습니다. 추측에는 "~일 것이다", "아마", "~로 보인다", "~하겠다"가, 가정에는 "~라고 하자", "~라고 보고", "~라고 치면", "만약 ~라면"이 자주 붙습니다. 이런 말이 보이면 좋은 신호입니다. 하지만 <b>신호가 없다고 사실은 아닙니다.</b> 사람들은 추측도 단정하는 말투로 씁니다.</p>
+
+<div class="box trap">
+<p class="box-k">흔한 실수</p>
+<p><b>"끝이 '~다'로 끝나니 사실이다."</b> "그 가게는 다음 달에 문을 닫는다."는 단정하는 말투지만, 소문으로 들은 것이라면 확인하지 않은 말입니다. 말투가 아니라 <b>확인했는지</b>를 봅니다.</p>
+<p><b>"숫자가 들어 있으니 사실이다."</b> "우리 반 학생의 70%가 찬성할 것이다."에는 숫자가 있지만, 아직 투표하지 않았다면 추측입니다. 숫자는 정확해 보이게 만들 뿐, 확인했다는 증거가 아닙니다.</p>
+<p><b>"출처가 붙어 있으니 사실이다."</b> "○○ 연구에 따르면"이라고 적혀 있어도, 그 연구가 정말 그렇게 말하는지는 원문을 보아야 압니다. 출처는 <b>확인할 곳</b>을 알려 줄 뿐입니다. 출처를 읽는 법은 U06 "자료를 읽고 질문하기"에서 다룹니다.</p>
+</div>
+
+<div class="check" data-q="q2"></div>
+<div class="check" data-q="q5"></div>
+
+<h2>추측 밑에는 가정이 숨어 있다</h2>
+
+<p>추측은 허공에서 나오지 않습니다. 대개 <b>사실 몇 개와 가정 몇 개를 바탕으로</b> 끌어낸 것입니다. 그런데 사실은 글에 잘 적혀 있는 반면, 가정은 적혀 있지 않은 경우가 많습니다. 글쓴이 자신도 그런 가정을 했다는 것을 모를 때가 많습니다. 이렇게 글에 적히지 않은 가정을 <b>숨은 가정</b>이라고 합니다.</p>
+
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 280" role="img" aria-label="두 칸 그림. (가) 가정이 맞을 때: 사실 '어제 비가 왔다', 사실 '어제 40개, 평소 하루 25개', 점선 칸의 가정 '그 밖의 조건은 평소와 같았다' 세 칸이 위에서 아래로 쌓이고, 아래쪽 화살표가 추측 '비 때문에 15개 더 팔렸다'로 이어진다. (나) 가정이 틀렸을 때: 같은 두 사실 칸 아래에 붉은 칸 '실제로는 어제 할인 행사를 했다'가 있고, 화살표가 점선 칸 '비 때문인지 알 수 없다'로 이어진다.">
+<line class="f-dash" x1="380" y1="10" x2="380" y2="240"/>
+<rect class="f-box" x="30" y="20" width="310" height="34" rx="4"/>
+<text class="f-t" x="185" y="42" text-anchor="middle">사실: 어제 비가 왔다</text>
+<rect class="f-box" x="30" y="62" width="310" height="34" rx="4"/>
+<text class="f-t" x="185" y="84" text-anchor="middle">사실: 어제 40개, 평소 하루 25개</text>
+<rect class="f-dash" x="30" y="104" width="310" height="34" rx="4"/>
+<text class="f-t" x="185" y="126" text-anchor="middle">가정: 그 밖의 조건은 평소와 같았다</text>
+<line class="f-line" x1="185" y1="138" x2="185" y2="176" marker-end="url(#f-arrow)"/>
+<text class="f-s" x="197" y="162" text-anchor="start">끌어낸다</text>
+<rect class="f-soft" x="30" y="180" width="310" height="34" rx="4"/>
+<text class="f-t" x="185" y="202" text-anchor="middle">추측: 비 때문에 15개 더 팔렸다</text>
+<rect class="f-box" x="420" y="20" width="310" height="34" rx="4"/>
+<text class="f-t" x="575" y="42" text-anchor="middle">사실: 어제 비가 왔다</text>
+<rect class="f-box" x="420" y="62" width="310" height="34" rx="4"/>
+<text class="f-t" x="575" y="84" text-anchor="middle">사실: 어제 40개, 평소 하루 25개</text>
+<rect class="f-over" x="420" y="104" width="310" height="34" rx="4"/>
+<text class="f-t" x="575" y="126" text-anchor="middle">실제로는 어제 할인 행사를 했다</text>
+<line class="f-line" x1="575" y1="138" x2="575" y2="176" marker-end="url(#f-arrow)"/>
+<text class="f-s" x="587" y="162" text-anchor="start">가정이 무너진다</text>
+<rect class="f-dash" x="420" y="180" width="310" height="34" rx="4"/>
+<text class="f-t" x="575" y="202" text-anchor="middle">비 때문인지 알 수 없다</text>
+<text class="f-cap" x="185" y="266" text-anchor="middle">(가) 가정이 맞을 때</text>
+<text class="f-cap" x="575" y="266" text-anchor="middle">(나) 가정이 틀렸을 때</text>
+</svg>
+<figcaption>두 칸의 사실은 똑같다. 달라진 것은 가정 하나뿐인데, 그 아래 추측이 서지 못한다.</figcaption>
+</figure>
+
+<p>(가)의 추측 "15개 더"는 40 − 25 = 15에서 나왔습니다. 계산 자체는 맞습니다. 그런데 이 15개를 <b>모두 비 때문</b>이라고 말하려면, 비 말고는 어제와 평소가 달라진 것이 없어야 합니다. 그것이 숨은 가정입니다. (나)처럼 어제 할인 행사를 했다면, 늘어난 15개 가운데 얼마가 비 때문이고 얼마가 할인 때문인지 알 수 없습니다. 사실은 하나도 틀리지 않았는데 결론이 무너졌습니다.</p>
+
+<h3>숨은 가정을 찾는 질문</h3>
+
+<p>추측 하나를 보면 이렇게 물어봅니다. <b>"이 결론이 맞으려면, 무엇이 참이어야 하지?"</b> 떠오르는 대답이 숨은 가정 후보입니다.</p>
+
+<div class="box ex">
+<p class="box-k">풀이 예제</p>
+<p>추측: "지난주에 광고를 시작한 뒤로 매출이 늘었으니, 광고 효과가 있었다."</p>
+<p class="calc">① 들어 있는 사실을 적는다. "지난주에 광고를 시작했다", "그 뒤로 매출이 늘었다". 둘 다 기록으로 확인할 수 있다.<br>
+② 결론을 적는다. "매출이 는 것은 광고 때문이다."<br>
+③ "이 결론이 맞으려면 무엇이 참이어야 하지?"를 묻는다.<br>
+　- 같은 기간에 매출을 늘릴 다른 일(명절, 할인, 경쟁 가게 휴업)이 없었다.<br>
+　- 광고를 하지 않았다면 매출이 늘지 않았을 것이다.<br>
+　- 매출이 늘어난 것이 그냥 주마다 오르내리는 범위를 넘는다.<br>
+④ 확인할 수 있는 가정부터 확인한다. 달력을 보면 명절이 있었는지 바로 알 수 있다.</p>
+<p>③의 둘째 가정 "광고를 하지 않았다면 늘지 않았을 것이다"는 직접 확인할 수 없습니다. 광고를 한 세상과 안 한 세상을 동시에 볼 수는 없기 때문입니다. 이 어려움이 뒤의 통계·인과 단원에서 다루는 "비교 집단"과 "실험"이 필요한 이유입니다. 셋째 가정의 "오르내리는 범위"는 통계의 "변동" 개념으로 다시 나옵니다.</p>
+</div>
+
+<h3>가정은 나쁜 것이 아니다</h3>
+
+<p><b>가정 없이는 추론도 계획도 할 수 없습니다.</b> 내일 장사를 준비하려면 "내일도 가게 문이 정상적으로 열린다"고 가정해야 하고, 지도를 보려면 "이 지도가 대체로 맞다"고 가정해야 합니다. 수학 문제의 "x가 양수라고 하자"도 가정이고, 뒤에서 배울 통계 방법과 머신러닝 모델도 모두 가정 위에 서 있습니다.</p>
+
+<p>문제는 가정을 하는 것이 아니라 <b>가정을 했다는 것을 모르는 것</b>입니다. 그래서 할 일은 두 가지입니다.</p>
+<ul>
+<li><b>드러내어 적는다.</b> "그 밖의 조건은 평소와 같았다고 가정함"처럼 글로 남깁니다. 적어 두면 나중에 결과가 이상할 때 어디를 의심할지 압니다.</li>
+<li><b>확인할 수 있는 것은 확인한다.</b> 할인 행사를 했는지는 달력 한 번 보면 압니다. 확인하면 그 가정은 사실로 바뀝니다. 확인할 수 없는 것은 가정으로 남겨 둡니다.</li>
+</ul>
+
+<div class="why">
+<p class="box-k">왜 그럴까?</p>
+<p>(가)와 (나)의 사실은 똑같은데 (나)에서만 결론이 무너졌습니다. 그렇다면 결론이 틀렸을 때 "사실을 다시 확인하자"보다 "가정을 다시 확인하자"가 먼저인 경우가 많은 이유는 무엇일까요?</p>
+<details><summary>모범 답 보기</summary><p>사실은 이미 기록이나 관찰로 확인한 것이라 틀릴 가능성이 비교적 낮고, 가정은 확인하지 않은 채 깔아 둔 것이라 틀릴 가능성이 더 큽니다. 게다가 숨은 가정은 글에 적혀 있지 않아 아무도 점검하지 않았을 수 있습니다. 그래서 결론이 이상하면 "내가 무엇을 확인 없이 참이라고 놓았지?"를 먼저 묻는 것이 효율적입니다. 물론 사실이라고 믿은 것이 잘못 기록된 경우도 있으니 사실 점검을 아예 빼지는 않습니다.</p></details>
+</div>
+
+<div class="check" data-q="q6"></div>
+
+<h2>같은 문장이 쓰임에 따라 달라진다 <span class="tag grasp">이해하기</span></h2>
+
+<p>어떤 문장이 사실인지, 추측인지, 가정인지는 문장의 글자만 보고 정해지지 않습니다. <b>그 문장을 지금 어떻게 쓰고 있는가</b>에 따라 정해집니다. "비가 온다"라는 같은 내용이 세 가지 역할을 하는 모습을 봅시다.</p>
+
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 210" role="img" aria-label="세 칸 그림. (가) '비가 온다고 치자'는 가정이다. 확인 없이 출발점으로 두고, 그 위에서 우산을 챙길지 정한다. (나) '구름이 짙으니 비가 오겠다'는 추측이다. 구름이라는 사실에서 끌어냈고 아직 확인되지 않았다. (다) '오늘 비가 왔다(직접 봄)'는 사실이다. 직접 보고 확인했고 기록으로 남길 수 있다.">
+<rect class="f-box" x="15" y="20" width="230" height="40" rx="4"/>
+<text class="f-t" x="130" y="45" text-anchor="middle">비가 온다고 치자</text>
+<rect class="f-box" x="265" y="20" width="230" height="40" rx="4"/>
+<text class="f-t" x="380" y="45" text-anchor="middle">구름이 짙으니 비가 오겠다</text>
+<rect class="f-box" x="515" y="20" width="230" height="40" rx="4"/>
+<text class="f-t" x="630" y="45" text-anchor="middle">오늘 비가 왔다 (직접 봄)</text>
+<line class="f-ink" x1="130" y1="60" x2="130" y2="82"/>
+<line class="f-ink" x1="380" y1="60" x2="380" y2="82"/>
+<line class="f-ink" x1="630" y1="60" x2="630" y2="82"/>
+<rect class="f-dash" x="90" y="82" width="80" height="32" rx="4"/>
+<text class="f-t f-b" x="130" y="103" text-anchor="middle">가정</text>
+<rect class="f-soft" x="340" y="82" width="80" height="32" rx="4"/>
+<text class="f-t f-b" x="380" y="103" text-anchor="middle">추측</text>
+<rect class="f-box" x="590" y="82" width="80" height="32" rx="4"/>
+<text class="f-t f-b" x="630" y="103" text-anchor="middle">사실</text>
+<text class="f-s" x="130" y="138" text-anchor="middle">확인 없이 출발점으로 둔다</text>
+<text class="f-s" x="130" y="156" text-anchor="middle">→ 우산을 챙길지 정한다</text>
+<text class="f-s" x="380" y="138" text-anchor="middle">구름(사실)에서 끌어냈다</text>
+<text class="f-s" x="380" y="156" text-anchor="middle">→ 아직 확인되지 않았다</text>
+<text class="f-s" x="630" y="138" text-anchor="middle">직접 보고 확인했다</text>
+<text class="f-s" x="630" y="156" text-anchor="middle">→ 기록으로 남길 수 있다</text>
+<text class="f-cap" x="130" y="194" text-anchor="middle">(가) 계획할 때</text>
+<text class="f-cap" x="380" y="194" text-anchor="middle">(나) 하늘을 볼 때</text>
+<text class="f-cap" x="630" y="194" text-anchor="middle">(다) 지나고 나서</text>
+</svg>
+<figcaption>내용은 모두 "비가 온다"이다. 역할은 그 문장이 생각 속 어느 자리에 있느냐로 정해진다.</figcaption>
+</figure>
+
+<p>(나)의 추측은 내일이 되면 확인할 수 있습니다. 비가 왔으면 (다)처럼 사실이 되고, 오지 않았으면 틀린 추측으로 드러납니다. 이렇게 <b>추측은 확인을 거쳐 사실이 되거나 버려집니다.</b> 가정도 확인하면 사실이 되거나 틀린 가정으로 드러납니다.</p>
+
+<p>이 생각은 앞 장의 설명·예측과도 이어집니다. 예측은 "아직 모르는 값"을 짐작하는 것이었습니다. 그러니 예측의 결과는 확인되기 전까지 언제나 <b>추측</b>입니다. 머신러닝 모델이 내놓는 예측값도 마찬가지입니다. 아무리 정확한 모델이라도, 그 값은 실제 결과로 확인되기 전까지는 추측입니다.</p>
+
+<div class="check" data-q="q7"></div>
+
+<h2>AI 답과 인터넷 글을 가려 읽기</h2>
+
+<p>공부하다 보면 AI 챗봇에 묻거나 블로그 글을 찾아 읽는 일이 많습니다. 이때도 같은 순서가 그대로 쓰입니다. 특히 조심할 점은 <b>AI 챗봇의 답은 말투가 자신 있어도 확인된 것이 아니라는 점</b>입니다. 챗봇은 그럴듯한 문장을 만들어 내는 프로그램이고, 사실과 다른 내용을 단정하는 말투로 내놓을 때가 있습니다. 그러니 챗봇이 "이 함수는 이렇게 동작합니다"라고 말하면, 그것은 <b>확인 전 사실 주장</b>입니다.</p>
+
+<p>확인하는 방법은 내용에 따라 다릅니다.</p>
+
+<div class="table-wrap">
+<table>
+<tr><th>읽은 말</th><th>지금 상태</th><th>확인하는 곳</th></tr>
+<tr><td>"Python의 print는 줄을 바꾼다" (챗봇 답)</td><td>확인 전 사실 주장</td><td>직접 실행해 보기, Python 공식 문서</td></tr>
+<tr><td>"빅분기 필기는 4과목이다" (블로그)</td><td>확인 전 사실 주장</td><td>시행 기관의 공식 공지</td></tr>
+<tr><td>"이 방법을 쓰면 성적이 오를 것이다" (블로그)</td><td>추측</td><td>그 근거로 든 사실과 가정을 따로 점검</td></tr>
+<tr><td>"이 교재가 가장 좋다" (후기)</td><td>의견</td><td>확인 대상이 아님. 내 기준으로 판단</td></tr>
+</table>
+</div>
+
+<p>시험 과목처럼 바뀔 수 있는 내용은 블로그나 챗봇이 아니라 <b>시행 기관의 공식 공지</b>로 확인합니다. 이 교재에서도 시험 일정·과목 같은 내용은 단정하지 않고 "공식 공지 확인"을 권하는데, 바로 이 이유 때문입니다. 출처의 종류(공식 문서·교재·논문·블로그)를 구분하는 법은 U06에서 자세히 다룹니다.</p>
+
+<div class="check" data-q="q8"></div>
+
+<h2>내 노트에 표시하기</h2>
+
+<p>가려 읽기는 남의 글에만 쓰는 것이 아닙니다. 내가 쓰는 공부 노트에도 씁니다. 공부하며 적은 문장 끝에 짧은 꼬리표를 붙이는 것만으로도 충분합니다.</p>
+
+<div class="sample">
+<p class="sample-k">꼬리표를 붙인 공부 메모의 예</p>
+<blockquote>
+· 빅데이터의 3V는 규모·다양성·속도다. [사실 · 교재 1-01에서 확인]<br>
+· 비정형 데이터가 정형보다 훨씬 많다. [확인 전 · 블로그에서 읽음, 숫자 출처 없음]<br>
+· 하루 1시간이면 3개월 안에 필기를 끝낼 수 있다. [추측 · 지금 속도로 짐작]<br>
+· 위 계산은 매일 빠지지 않고 공부한다고 가정. [가정]<br>
+· 2과목부터 공부하는 게 낫겠다. [의견]
+</blockquote>
+</div>
+
+<p>이렇게 적어 두면 나중에 다시 볼 때 <b>무엇을 믿고 쓸 수 있고, 무엇을 아직 확인해야 하는지</b>가 바로 보입니다. "확인 전" 꼬리표가 붙은 문장은 확인하는 대로 [사실]이나 [틀림]으로 바꿉니다. 이 페이지 맨 아래 "내 공책" 칸에 직접 해 보아도 됩니다.</p>
+
+<p>이 습관은 연구로 이어집니다. 연구 논문은 "우리는 ~라고 가정한다"를 따로 적고, 실험으로 확인한 결과와 저자의 해석(추측)을 구분해서 씁니다. 뒤의 RS01 "연구 가능한 질문" 단원에서 가정과 가설을 다시 만납니다.</p>
+
+<h2>한눈에 정리</h2>
+
+<div class="table-wrap">
+<table>
+<tr><th>종류</th><th>뜻</th><th>예</th></tr>
+<tr><td><b class="key">사실</b></td><td>참·거짓을 가릴 수 있고 실제로 확인된 내용</td><td>어제 우유가 40개 팔렸다 (장부 확인)</td></tr>
+<tr><td><b class="key">사실 주장</b></td><td>확인할 수 있는 꼴이지만 아직 확인하지 않은 말. 참일 수도 거짓일 수도 있다</td><td>챗봇이 말한 함수 동작</td></tr>
+<tr><td><b class="key">추측</b></td><td>아는 것에서 끌어냈지만 확인 안 된 판단. 결론 자리</td><td>비 때문에 더 팔렸을 것이다</td></tr>
+<tr><td><b class="key">가정</b></td><td>확인 없이 일단 참으로 놓은 전제. 출발점 자리. 자주 숨어 있다</td><td>그 밖의 조건은 평소와 같았다</td></tr>
+<tr><td><b class="key">의견</b></td><td>무엇이 좋은지·무엇을 할지에 대한 판단</td><td>두 배로 들여놓자</td></tr>
+<tr><td>숨은 가정 찾기</td><td>"이 결론이 맞으려면 무엇이 참이어야 하지?"</td><td>광고 말고 다른 변화가 없었다</td></tr>
+<tr><td>함정</td><td>단정하는 말투·숫자·출처 표시는 확인의 증거가 아니다</td><td>"70%가 찬성할 것이다"</td></tr>
+</table>
+</div>
+
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>사실은 확인된 것, 추측은 끌어냈지만 확인 안 된 결론, 가정은 확인 없이 깔고 시작한 전제이고, 결론이 이상하면 숨은 가정부터 찾는다.</p></div>
+
+<h2>확인 문제</h2>
+<p>본문 중간에서 푼 문제 말고 남은 문제입니다. 보기를 누르면 바로 정답과 해설이 나옵니다.</p>
+<div id="quiz"></div>
+
+<section class="work" id="tools"></section>
+
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>
