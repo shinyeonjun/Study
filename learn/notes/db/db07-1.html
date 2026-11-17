@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>수집·검증·변환·적재와 수 대조 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="DB07-1">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">데이터베이스 · DB07 데이터 파이프라인</p>
+<p class="chap-num">DB07·1</p>
+<h1>수집·검증·변환·적재와 수 대조</h1>
+<p class="lead">JSON을 가져오는 데 성공해도 모든 값이 주문 표에 맞는 것은 아닙니다. 여섯 기록을 검증한 뒤 적재된 네 건의 행 수와 금액을 다시 계산합니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul>
+<li>수집, 변환, 적재가 각각 하는 일을 구분한다.</li>
+<li>입도·키·필수값·범위를 검사하고 실패한 행을 구분한다.</li>
+<li>입력·제외·저장 행 수와 금액 집계를 대조한다.</li>
+</ul></div>
+
+<h2>여러 단계가 이어지는 과정</h2>
+<p><b class="key">데이터 파이프라인</b>은 여러 단계에 걸쳐 자료를 가져와 검증하고 변환한 뒤 쓰는 과정입니다. 수집 단계에는 <a href="db06-2.html">목록의 여러 페이지</a>와 수집 시각을 기록할 수 있습니다. 변환은 파이썬 객체를 목적에 맞는 열, 단위, 유형으로 바꾸는 일입니다. 적재는 안정적으로 분석할 수 있도록 결과를 데이터베이스 표에 저장하는 일입니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 265" role="img" aria-label="모의 JSON 6건을 모으고 행 검증과 변환 뒤 유효한 주문 4건, 제외 2건을 기록한다. 유효한 4건을 SQLite 분석 표에 적재한다.">
+<text class="f-cap" x="380" y="29" text-anchor="middle">수집 → 검증과 변환 → 적재</text>
+<rect class="f-box" x="40" y="75" width="202" height="50"/>
+<text class="f-t" x="141" y="105" text-anchor="middle">수집 · JSON 6건</text>
+<rect class="f-soft" x="284" y="75" width="192" height="50"/>
+<text class="f-t" x="380" y="105" text-anchor="middle">검증 · 4건 통과</text>
+<rect class="f-box" x="518" y="75" width="202" height="50"/>
+<text class="f-t" x="619" y="105" text-anchor="middle">적재 · 주문 4행</text>
+<line class="f-line" x1="247" y1="100" x2="279" y2="100" marker-end="url(#f-arrow)"/>
+<line class="f-line" x1="481" y1="100" x2="513" y2="100" marker-end="url(#f-arrow)"/>
+<line class="f-line" x1="380" y1="130" x2="380" y2="172" marker-end="url(#f-arrow)"/>
+<rect class="f-box" x="280" y="178" width="200" height="46"/>
+<text class="f-t" x="380" y="206" text-anchor="middle">제외 · 사유 2건</text>
+</svg>
+<figcaption>지표를 내기 전에 입력·통과·제외 수를 맞춰 봅니다. 제외된 기록이 적재된 주문에는 섞이지 않습니다.</figcaption>
+</figure>
+<p>원본을 별도로 보존하면 어떤 변환이 결과를 바꿨는지 조사하기 쉽습니다. 보존은 자료의 이용 조건과 접근 권한, 가능한 저장 기간을 확인한 뒤 필요한 범위에서 합니다. 이번 예의 원본과 SQLite 표는 모두 메모리의 모의 자료입니다.</p>
+<div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
+
+<h2>한 행이 올바른지 기준을 쓰기</h2>
+<p>적재할 <code>clean_orders</code>의 입도는 주문 한 건입니다. 식별자인 <code>order_id</code>는 양의 정수, <code>status</code>는 <code>paid</code> 또는 <code>pending</code>, <code>total_won</code>은 원 단위의 0 이상 정수여야 합니다. 한 배치에서 검증을 통과한 같은 번호가 두 번 오면 어떤 기록을 믿어야 하는지 판단할 수 없으므로 여기서는 배치를 중단합니다. 반복 전달과 정정의 규칙을 가진 경우는 다음 장에서 봅니다.</p>
+<p>필요한 열이 빠지면 기본값을 넣기 전에 계약을 확인합니다. 예제의 <code>true</code>는 '사실이다'라는 불 값으로, 금액 1원을 의미하지 않습니다. Python에서 불 값은 정수의 하위 유형이라 <code>type(amount) is int</code>로 실제 정수만 허용합니다. 음수와 불 값을 담은 두 기록은 분석 표에 넣지 않고 위치와 사유만 따로 기록합니다.</p>
+<div class="check" data-q="q3"></div><div class="check" data-q="q4"></div>
+
+<h2>통과 수와 열의 의미를 확인</h2>
+<p>원래 여섯 건 중 네 건이 통과하고 두 건이 제외되어 총합이 맞습니다. 상태별 합을 계산하면 완료 40,000원과 미결제 12,000원이 나옵니다. 결제 완료 주문의 할인 전 금액을 묻는 보고서에서는 완료 상태의 40,000원을 사용합니다. 이 예의 <code>total_won</code>은 할인 전 주문액이어서 실제 정산 금액을 알려면 추가 자료가 필요합니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 209" role="img" aria-label="적재된 유효 주문은 네 건으로, 결제 완료 40000원과 미결제 12000원을 합하면 52000원이다.">
+<text class="f-cap" x="380" y="29" text-anchor="middle">분석 표에서 상태별 수와 금액 합 재검산</text>
+<rect class="f-soft" x="47" y="43" width="143" height="37"/>
+<text class="f-s" x="118.5" y="66.5" text-anchor="middle">status</text>
+<rect class="f-soft" x="190" y="43" width="195" height="37"/>
+<text class="f-s" x="287.5" y="66.5" text-anchor="middle">남은 주문 번호</text>
+<rect class="f-soft" x="385" y="43" width="151" height="37"/>
+<text class="f-s" x="460.5" y="66.5" text-anchor="middle">COUNT(*)</text>
+<rect class="f-soft" x="536" y="43" width="177" height="37"/>
+<text class="f-s" x="624.5" y="66.5" text-anchor="middle">SUM(total_won)</text>
+<rect class="f-box" x="47" y="80" width="143" height="37"/>
+<text class="f-t" x="118.5" y="103.5" text-anchor="middle">paid</text>
+<rect class="f-box" x="190" y="80" width="195" height="37"/>
+<text class="f-t" x="287.5" y="103.5" text-anchor="middle">101, 102, 104</text>
+<rect class="f-box" x="385" y="80" width="151" height="37"/>
+<text class="f-t" x="460.5" y="103.5" text-anchor="middle">3</text>
+<rect class="f-box" x="536" y="80" width="177" height="37"/>
+<text class="f-t" x="624.5" y="103.5" text-anchor="middle">40,000</text>
+<rect class="f-box" x="47" y="117" width="143" height="37"/>
+<text class="f-t" x="118.5" y="140.5" text-anchor="middle">pending</text>
+<rect class="f-box" x="190" y="117" width="195" height="37"/>
+<text class="f-t" x="287.5" y="140.5" text-anchor="middle">103</text>
+<rect class="f-box" x="385" y="117" width="151" height="37"/>
+<text class="f-t" x="460.5" y="140.5" text-anchor="middle">1</text>
+<rect class="f-box" x="536" y="117" width="177" height="37"/>
+<text class="f-t" x="624.5" y="140.5" text-anchor="middle">12,000</text>
+<rect class="f-box" x="47" y="154" width="143" height="37"/>
+<text class="f-t" x="118.5" y="177.5" text-anchor="middle">합</text>
+<rect class="f-box" x="190" y="154" width="195" height="37"/>
+<text class="f-t" x="287.5" y="177.5" text-anchor="middle">101~104</text>
+<rect class="f-box" x="385" y="154" width="151" height="37"/>
+<text class="f-t" x="460.5" y="177.5" text-anchor="middle">4</text>
+<rect class="f-box" x="536" y="154" width="177" height="37"/>
+<text class="f-t" x="624.5" y="177.5" text-anchor="middle">52,000</text>
+</svg>
+<figcaption>유효 주문 전체의 합과 결제 완료 합은 12,000원 차이입니다. 보고서에서 어느 대상을 합치는지 명시합니다.</figcaption>
+</figure>
+<div class="why"><p class="box-k">왜 그럴까?</p><p>파이프라인이 오류 없이 끝났는데도 적재 행이 틀릴 수 있는 이유는?</p><details><summary>모범 답 보기</summary><p>모든 문자열이 정상적으로 해석돼도 일부 행을 잘못 제외하거나 키를 반복해 기록할 수 있습니다. 원본과 적재 결과의 행 대응, 값의 단위와 범위를 별도로 검증합니다.</p></details></div>
+<div class="check" data-q="q5"></div><div class="check" data-q="q6"></div>
+
+<h2>로컬 JSON에서 SQLite 표 만들기</h2>
+
+<p class="small">실행 예제</p>
+<pre data-example="python"><code>import json
+import sqlite3
+
+body = &quot;&quot;&quot;[
+    {&quot;order_id&quot;:101,&quot;status&quot;:&quot;paid&quot;,&quot;total_won&quot;:10000},
+    {&quot;order_id&quot;:102,&quot;status&quot;:&quot;paid&quot;,&quot;total_won&quot;:15000},
+    {&quot;order_id&quot;:103,&quot;status&quot;:&quot;pending&quot;,&quot;total_won&quot;:12000},
+    {&quot;order_id&quot;:104,&quot;status&quot;:&quot;paid&quot;,&quot;total_won&quot;:15000},
+    {&quot;order_id&quot;:105,&quot;status&quot;:&quot;paid&quot;,&quot;total_won&quot;:-1},
+    {&quot;order_id&quot;:106,&quot;status&quot;:&quot;paid&quot;,&quot;total_won&quot;:true}
+]&quot;&quot;&quot;
+rows = json.loads(body)
+
+def check(row):
+    if not isinstance(row, dict):
+        return &quot;invalid order object&quot;
+    if type(row.get(&quot;order_id&quot;)) is not int or row[&quot;order_id&quot;] &lt;= 0:
+        return &quot;invalid order_id&quot;
+    if row.get(&quot;status&quot;) not in (&quot;paid&quot;, &quot;pending&quot;):
+        return &quot;invalid status&quot;
+    if type(row.get(&quot;total_won&quot;)) is not int or row[&quot;total_won&quot;] &lt; 0:
+        return &quot;invalid total_won&quot;
+    return None
+
+kept = []
+rejected = []
+seen_ids = set()
+for position, row in enumerate(rows, start=1):
+    reason = check(row)
+    if reason:
+        rejected.append((position, reason))
+        continue
+    order_id = row[&quot;order_id&quot;]
+    if order_id in seen_ids:
+        raise ValueError(&quot;duplicate valid order_id in batch&quot;)
+    seen_ids.add(order_id)
+    kept.append((order_id, row[&quot;status&quot;], row[&quot;total_won&quot;]))
+
+with sqlite3.connect(&quot;:memory:&quot;) as db:
+    db.execute(&quot;&quot;&quot;
+        CREATE TABLE clean_orders (
+            order_id INTEGER PRIMARY KEY,
+            status TEXT NOT NULL CHECK (status IN ('paid', 'pending')),
+            total_won INTEGER NOT NULL CHECK (total_won &gt;= 0)
+        )
+    &quot;&quot;&quot;)
+    db.executemany(&quot;INSERT INTO clean_orders VALUES (?, ?, ?)&quot;, kept)
+    saved = db.execute(&quot;SELECT COUNT(*) FROM clean_orders&quot;).fetchone()[0]
+    summary = db.execute(&quot;&quot;&quot;
+        SELECT status, COUNT(*), SUM(total_won)
+        FROM clean_orders GROUP BY status ORDER BY status
+    &quot;&quot;&quot;).fetchall()
+
+db.close()
+assert saved + len(rejected) == len(rows)
+print(&quot;read, stored, rejected:&quot;, len(rows), saved, len(rejected))
+print(&quot;rejected:&quot;, rejected)
+print(&quot;summary:&quot;, summary)</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>read, stored, rejected: 6 4 2
+rejected: [(5, 'invalid total_won'), (6, 'invalid total_won')]
+summary: [('paid', 3, 40000), ('pending', 1, 12000)]</code></pre>
+<p>제외 목록은 모의 원본의 위치와 이유입니다. 자료 일부가 누락된 상태로 분석할 수 있는지는 목적과 사전 규칙에 따라 결정합니다. 일부 기록만 적재한 배치를 허용하지 않는 운영이라면 제외가 생긴 순간 분석 표에 변경을 확정하기 전에 멈출 수 있습니다.</p>
+<div class="check" data-q="q7"></div><div class="check" data-q="q8"></div>
+
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table><thead><tr><th scope="col">개념</th><th scope="col">확인할 것</th></tr></thead><tbody>
+<tr><th scope="row"><b class="key">변환</b></th><td>받은 값을 업무의 열·단위·유형으로 해석한다.</td></tr>
+<tr><th scope="row"><b class="key">검증</b></th><td>키, 값의 범위와 유형, 자료 수를 확인한다.</td></tr>
+<tr><th scope="row"><b class="key">적재</b></th><td>통과한 값을 정한 구조로 저장하고 결과를 대조한다.</td></tr>
+</tbody></table></div><div class="box sum"><p class="box-k">다음 장으로</p><p><a href="db07-2.html">다음 장</a>에서는 같은 시작 자료로 적재를 재실행해도 중복 저장되지 않도록 합니다.</p></div>
+
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://www.rfc-editor.org/rfc/rfc8259">RFC 8259 · JSON의 구조와 값</a></li>
+<li><a href="https://www.sqlite.org/lang_createtable.html">SQLite · CREATE TABLE와 열 제약</a></li>
+<li><a href="https://www.w3.org/TR/prov-overview/">W3C · PROV 개요</a></li>
+</ul>
+<h2>확인 문제</h2>
+<p>직접 계산하거나 설명을 먼저 적고 답을 확인해 보세요.</p>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

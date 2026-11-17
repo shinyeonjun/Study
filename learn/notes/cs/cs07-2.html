@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>가중치가 다르면 다익스트라로 먼저 확정할 거리를 고른다 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e8c'/%3E%3Cpath d='M8 22V10m8 12V14m8 8V6' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="CS07-2">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+
+<header class="chapter">
+<p class="chap-sub">자료구조·알고리즘 · CS07 그래프 알고리즘</p>
+<p class="chap-num">CS07·2</p>
+<h1>가중치가 다르면 다익스트라로 먼저 확정할 거리를 고른다</h1>
+<p class="lead">가중치가 모두 0 이상인 길에서 지금 가장 가까운 정점을 하나씩 확정합니다. 먼저 발견한 길이 나중에 더 짧아질 수 있음을 확인합니다.</p>
+</header>
+
+<div class="goal">
+<h2>이 장을 읽고 나면</h2>
+<ul>
+<li>경로 비용을 간선 가중치의 합으로 계산한다.</li>
+<li>후보 거리를 완화하면서 최단경로를 복원한다.</li>
+<li>비음수 조건과 우선순위 큐의 역할을 설명한다.</li>
+</ul>
+</div>
+<h2>경로에서 몇 번 움직였는지와 비용의 합을 구분한다</h2>
+<p>화살표마다 이동 비용이 붙은 그래프에서 경로의 길이는 비용의 합입니다. A→B 직행은 간선 하나지만 5가 듭니다. A→C→B는 간선 두 개에 1+2=3만 듭니다. 모든 링크의 비용이 같을 때처럼 간선 수만 세면 더 싼 경로를 고르지 못할 수 있습니다.</p>
+<p>이 장에서 <b class="key">다익스트라 알고리즘</b>이 받는 가중치는 유한한 0 이상 수입니다. 거리의 시작값은 A에는 0, 다른 정점에는 아직 경로가 없음을 나타내는 ∞로 둡니다. 실습에서는 정수 비용을 사용하고 시작점에서 도달하지 못하는 F도 포함합니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 236" role="img" aria-label="A→B는 5, A→C는 1, C→B는 2, B→D는 1, C→D는 5, C→E는 8, D→E는 2다. F는 고립.">
+<text class="f-cap" x="380" y="28" text-anchor="middle">화살표 바로 옆 숫자가 이동 비용</text>
+<line class="f-line" x1="162.60924575206045" y1="108.96775626590122" x2="303.4279689382195" y2="81.4162669468701" marker-end="url(#f-arrow)"/>
+<line class="f-line" x1="160.85270391740139" y1="122.25070564891124" x2="282.3518004714175" y2="181.86827476547816" marker-end="url(#f-arrow)"/>
+<line class="f-line" x1="307.11843883790186" y1="171.4078058104907" x2="321.48932889182174" y2="99.55335554089116" marker-end="url(#f-arrow)"/>
+<line class="f-line" x1="347" y1="77" x2="466" y2="77" marker-end="url(#f-arrow)"/>
+<line class="f-line" x1="320.8617049918918" y1="180.9564727200669" x2="469.43718024697563" y2="89.09529178278389" marker-end="url(#f-arrow)"/>
+<line class="f-line" x1="323.9540451762794" y1="190.61147893410197" x2="612.0503314735988" y2="171.52076116741213" marker-end="url(#f-arrow)"/>
+<line class="f-line" x1="506.71189420688245" y1="88.28223398109634" x2="615.6012587257954" y2="157.64326754451355" marker-end="url(#f-arrow)"/>
+<circle class="f-soft" cx="142" cy="113" r="19"/>
+<text class="f-cap" x="142" y="118" text-anchor="middle">A</text>
+<circle class="f-box" cx="326" cy="77" r="19"/>
+<text class="f-cap" x="326" y="82" text-anchor="middle">B</text>
+<circle class="f-box" cx="303" cy="192" r="19"/>
+<text class="f-cap" x="303" y="197" text-anchor="middle">C</text>
+<circle class="f-box" cx="489" cy="77" r="19"/>
+<text class="f-cap" x="489" y="82" text-anchor="middle">D</text>
+<circle class="f-soft" cx="635" cy="170" r="19"/>
+<text class="f-cap" x="635" y="175" text-anchor="middle">E</text>
+<circle class="f-box" cx="646" cy="54" r="19"/>
+<text class="f-cap" x="646" y="59" text-anchor="middle">F</text>
+<text class="f-s" x="232" y="81" text-anchor="middle">5</text>
+<text class="f-s" x="210" y="166" text-anchor="middle">1</text>
+<text class="f-s" x="300" y="133" text-anchor="middle">2</text>
+<text class="f-s" x="407" y="63" text-anchor="middle">1</text>
+<text class="f-s" x="406" y="124" text-anchor="middle">5</text>
+<text class="f-s" x="480" y="200" text-anchor="middle">8</text>
+<text class="f-s" x="575" y="111" text-anchor="middle">2</text>
+</svg>
+<figcaption>A에서 E로 가는 가장 싼 경로는 A→C→B→D→E입니다. 비용은 1+2+1+2=6입니다.</figcaption>
+</figure>
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+
+<h2>지금 가장 작은 후보를 확정하고 그 이웃을 갱신한다</h2>
+<p>A를 선택하면 B까지 5, C까지 1이라는 후보를 얻습니다. 다음에 가장 가까운 C(1)를 고릅니다. C를 통해 B로 가면 1+2=3으로 기존 5보다 적습니다. D는 6, E는 9를 얻습니다. 이렇게 <code>거리[u]+비용(u,v)</code>가 현재 <code>거리[v]</code>보다 작을 때 갱신하는 것을 <b class="key">완화</b>라고 합니다.</p>
+<p>다음에 B(3)가 D를 4로 줄이고, D(4)가 E를 6으로 줄입니다. 아직 확정되지 않은 정점 중 후보가 가장 작은 정점은 이보다 싸게 갈 수 없습니다. 더 싼 경로가 있다면 이미 확정한 쪽에서 벗어나는 첫 간선 뒤의 정점에 그만큼 작은 후보가 기록됐어야 합니다. 남은 간선 비용은 0 이상이어서 그 경로의 뒷부분에서 이미 지불한 비용을 줄일 수도 없습니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 303" role="img" aria-label="초기 A 뒤 B=5, C=1, C 뒤 B=3 D=6 E=9, B 뒤 D=4, D 뒤 E=6으로 바뀐다. F는 ∞다.">
+<text class="f-cap" x="380" y="33" text-anchor="middle">선택한 정점 처리 직후의 후보 거리</text>
+<text class="f-t" x="180" y="82" text-anchor="end">열</text>
+<rect class="f-box" x="206" y="58" width="78" height="38" rx="3"/>
+<text class="f-t" x="245" y="83" text-anchor="middle">A</text>
+<rect class="f-box" x="290" y="58" width="78" height="38" rx="3"/>
+<text class="f-t" x="329" y="83" text-anchor="middle">B</text>
+<rect class="f-box" x="374" y="58" width="78" height="38" rx="3"/>
+<text class="f-t" x="413" y="83" text-anchor="middle">C</text>
+<rect class="f-box" x="458" y="58" width="78" height="38" rx="3"/>
+<text class="f-t" x="497" y="83" text-anchor="middle">D</text>
+<rect class="f-box" x="542" y="58" width="78" height="38" rx="3"/>
+<text class="f-t" x="581" y="83" text-anchor="middle">E</text>
+<rect class="f-box" x="626" y="58" width="78" height="38" rx="3"/>
+<text class="f-t" x="665" y="83" text-anchor="middle">F</text>
+<text class="f-t" x="180" y="128" text-anchor="end">A 뒤</text>
+<rect class="f-box" x="206" y="104" width="78" height="38" rx="3"/>
+<text class="f-t" x="245" y="129" text-anchor="middle">0</text>
+<rect class="f-soft" x="290" y="104" width="78" height="38" rx="3"/>
+<text class="f-t" x="329" y="129" text-anchor="middle">5</text>
+<rect class="f-soft" x="374" y="104" width="78" height="38" rx="3"/>
+<text class="f-t" x="413" y="129" text-anchor="middle">1</text>
+<rect class="f-box" x="458" y="104" width="78" height="38" rx="3"/>
+<text class="f-t" x="497" y="129" text-anchor="middle">∞</text>
+<rect class="f-box" x="542" y="104" width="78" height="38" rx="3"/>
+<text class="f-t" x="581" y="129" text-anchor="middle">∞</text>
+<rect class="f-box" x="626" y="104" width="78" height="38" rx="3"/>
+<text class="f-t" x="665" y="129" text-anchor="middle">∞</text>
+<text class="f-t" x="180" y="174" text-anchor="end">C 뒤</text>
+<rect class="f-box" x="206" y="150" width="78" height="38" rx="3"/>
+<text class="f-t" x="245" y="175" text-anchor="middle">0</text>
+<rect class="f-soft" x="290" y="150" width="78" height="38" rx="3"/>
+<text class="f-t" x="329" y="175" text-anchor="middle">3</text>
+<rect class="f-box" x="374" y="150" width="78" height="38" rx="3"/>
+<text class="f-t" x="413" y="175" text-anchor="middle">1</text>
+<rect class="f-soft" x="458" y="150" width="78" height="38" rx="3"/>
+<text class="f-t" x="497" y="175" text-anchor="middle">6</text>
+<rect class="f-soft" x="542" y="150" width="78" height="38" rx="3"/>
+<text class="f-t" x="581" y="175" text-anchor="middle">9</text>
+<rect class="f-box" x="626" y="150" width="78" height="38" rx="3"/>
+<text class="f-t" x="665" y="175" text-anchor="middle">∞</text>
+<text class="f-t" x="180" y="220" text-anchor="end">B 뒤</text>
+<rect class="f-box" x="206" y="196" width="78" height="38" rx="3"/>
+<text class="f-t" x="245" y="221" text-anchor="middle">0</text>
+<rect class="f-box" x="290" y="196" width="78" height="38" rx="3"/>
+<text class="f-t" x="329" y="221" text-anchor="middle">3</text>
+<rect class="f-box" x="374" y="196" width="78" height="38" rx="3"/>
+<text class="f-t" x="413" y="221" text-anchor="middle">1</text>
+<rect class="f-soft" x="458" y="196" width="78" height="38" rx="3"/>
+<text class="f-t" x="497" y="221" text-anchor="middle">4</text>
+<rect class="f-box" x="542" y="196" width="78" height="38" rx="3"/>
+<text class="f-t" x="581" y="221" text-anchor="middle">9</text>
+<rect class="f-box" x="626" y="196" width="78" height="38" rx="3"/>
+<text class="f-t" x="665" y="221" text-anchor="middle">∞</text>
+<text class="f-t" x="180" y="266" text-anchor="end">D 뒤</text>
+<rect class="f-box" x="206" y="242" width="78" height="38" rx="3"/>
+<text class="f-t" x="245" y="267" text-anchor="middle">0</text>
+<rect class="f-box" x="290" y="242" width="78" height="38" rx="3"/>
+<text class="f-t" x="329" y="267" text-anchor="middle">3</text>
+<rect class="f-box" x="374" y="242" width="78" height="38" rx="3"/>
+<text class="f-t" x="413" y="267" text-anchor="middle">1</text>
+<rect class="f-box" x="458" y="242" width="78" height="38" rx="3"/>
+<text class="f-t" x="497" y="267" text-anchor="middle">4</text>
+<rect class="f-soft" x="542" y="242" width="78" height="38" rx="3"/>
+<text class="f-t" x="581" y="267" text-anchor="middle">6</text>
+<rect class="f-box" x="626" y="242" width="78" height="38" rx="3"/>
+<text class="f-t" x="665" y="267" text-anchor="middle">∞</text>
+</svg>
+<figcaption>가장 많이 줄어든 표의 변화가 있다고 먼저 고르지 않습니다. 후보 거리 자체가 가장 작은 정점부터 고릅니다.</figcaption>
+</figure>
+<div class="check" data-q="q3"></div>
+<div class="check" data-q="q4"></div>
+
+<h2>우선순위 큐에서 오래된 후보를 넘긴다</h2>
+<p>최소 힙에는 (후보 거리, 정점)을 넣습니다. B의 새 거리 3을 넣어도 예전 후보 5가 힙에 남습니다. 5가 나중에 꺼내지면 표의 3과 달라서 건너뜁니다. 더 좋은 후보를 발견할 때 바로 이전 정점도 기록하면 마지막 E에서 A까지 거꾸로 경로를 얻습니다.</p>
+<div class="check" data-q="q5"></div>
+<div class="check" data-q="q6"></div>
+<pre data-example="python"><code>from heapq import heappush, heappop
+from math import inf
+
+graph = {&quot;A&quot;: [(&quot;B&quot;, 5), (&quot;C&quot;, 1)], &quot;B&quot;: [(&quot;D&quot;, 1)],
+         &quot;C&quot;: [(&quot;B&quot;, 2), (&quot;D&quot;, 5), (&quot;E&quot;, 8)], &quot;D&quot;: [(&quot;E&quot;, 2)],
+         &quot;E&quot;: [], &quot;F&quot;: []}
+
+def dijkstra(edges, start):
+    if any(weight &lt; 0 for row in edges.values() for _, weight in row):
+        raise ValueError(&quot;edge weights must be nonnegative&quot;)
+    best = dict.fromkeys(edges, inf)
+    best[start] = 0
+    parent = {start: None}
+    heap = [(0, start)]
+    while heap:
+        cost, node = heappop(heap)
+        if cost != best[node]:
+            continue
+        for nxt, weight in edges[node]:
+            alt = cost + weight
+            if alt &lt; best[nxt]:
+                best[nxt] = alt
+                parent[nxt] = node
+                heappush(heap, (alt, nxt))
+    return best, parent
+
+best, parent = dijkstra(graph, &quot;A&quot;)
+route = []
+current = &quot;E&quot;
+while current is not None:
+    route.append(current)
+    current = parent[current]
+print(&quot;distances:&quot;, [best[node] for node in graph])
+print(&quot;path to E:&quot;, &quot; -&gt; &quot;.join(reversed(route)))
+print(&quot;F reachable:&quot;, best[&quot;F&quot;] &lt; inf)</code></pre>
+<pre data-output><code>distances: [0, 3, 1, 4, 6, inf]
+path to E: A -&gt; C -&gt; B -&gt; D -&gt; E
+F reachable: False</code></pre>
+<p>부호 조건은 필수입니다. 예로 A→B의 비용 2, A→C의 비용 4, C→B의 비용 −3이면 B를 비용 2로 먼저 확정할 수 없습니다. C를 거쳐 1에 가는 길이 뒤에 있습니다. 음수 간선이 있는 문제에서는 그 조건을 지원하는 다른 알고리즘을 사용합니다. 실습의 경로 복원은 E가 도달 가능하다는 것을 알고 실행합니다. 임의 목적지라면 먼저 거리나 부모 표에서 도달 여부를 확인합니다.</p>
+<p>V개 정점을 거리 표에 두고, E개 간선의 완화 시도마다 힙에 후보를 최대 한 번 넣습니다. 이 구현은 옛 후보도 넣어 두어서 힙에 O(E+1)개까지 들어갈 수 있습니다. 간선이 하나 이상일 때 전체 시간은 O(V+E log(E+1)), 입력 외 공간은 O(V+E)입니다.</p>
+
+<h2>참고 자료</h2>
+<ul>
+<li><a href="cs05-2.html">CS05 · 최소 힙</a></li>
+<li><a href="cs07-1.html">CS07 · 간선 비용이 같은 BFS</a></li>
+<li><a href="https://ocw.mit.edu/courses/6-006-introduction-to-algorithms-spring-2020/resources/lecture-notes/">MIT 6.006 · 가중 최단경로와 다익스트라</a></li>
+</ul>
+
+<h2>확인 문제</h2>
+<p>아직 풀지 않은 문제입니다. 먼저 식이나 근거를 적어 보고 해설을 확인합니다.</p>
+<div id="quiz"></div>
+
+<section class="work" id="tools"></section>
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

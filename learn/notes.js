@@ -202,6 +202,25 @@ window.BDA_CHAPTERS = {
     {"id": "CS04-1", "title": "해시로 후보 위치를 찾고 충돌 처리하기", "href": "notes/cs/cs04-1.html"},
     {"id": "CS04-2", "title": "딕셔너리로 세고 집합으로 첫 등장을 고르기", "href": "notes/cs/cs04-2.html"}
   ],
+  CS05: [
+    {"id": "CS05-1", "title": "재귀 호출과 이진 트리의 세 순회", "href": "notes/cs/cs05-1.html"},
+    {"id": "CS05-2", "title": "검색할 때는 탐색 트리, 가장 작은 값은 힙", "href": "notes/cs/cs05-2.html"},
+    {"id": "CS05-3", "title": "분할 정복으로 작은 답을 합쳐 최댓값 찾기", "href": "notes/cs/cs05-3.html"}
+  ],
+  CS06: [
+    {"id": "CS06-1", "title": "어떤 키로 정렬하고 동점 순서는 어떻게 남길까", "href": "notes/cs/cs06-1.html"},
+    {"id": "CS06-2", "title": "이진 탐색으로 동점의 첫 위치 찾기", "href": "notes/cs/cs06-2.html"}
+  ],
+  CS07: [
+    {"id": "CS07-1", "title": "BFS는 가까운 층부터, DFS는 한 가지 끝까지", "href": "notes/cs/cs07-1.html"},
+    {"id": "CS07-2", "title": "가중치가 다르면 다익스트라로 먼저 확정할 거리를 고른다", "href": "notes/cs/cs07-2.html"},
+    {"id": "CS07-3", "title": "선행 작업이 있는 순서와 막히는 사이클", "href": "notes/cs/cs07-3.html"}
+  ],
+  CS08: [
+    {"id": "CS08-1", "title": "탐욕 규칙이 맞는지 반례와 교환으로 확인하기", "href": "notes/cs/cs08-1.html"},
+    {"id": "CS08-2", "title": "남은 금액을 상태로 만들고 작은 답을 재사용하기", "href": "notes/cs/cs08-2.html"},
+    {"id": "CS08-3", "title": "결정 문제에서 답을 찾기와 검증하기", "href": "notes/cs/cs08-3.html"}
+  ],
   SY01: [
     {"id": "SY01-1", "title": "같은 비트를 어떤 정수로 읽을지 정한다", "href": "notes/sy/sy01-1.html"},
     {"id": "SY01-2", "title": "문자·픽셀·소리를 바이트로 기록한다", "href": "notes/sy/sy01-2.html"}
@@ -217,6 +236,23 @@ window.BDA_CHAPTERS = {
   SY04: [
     {"id": "SY04-1", "title": "운영체제는 실행할 스레드에 CPU 시간을 나눈다", "href": "notes/sy/sy04-1.html"},
     {"id": "SY04-2", "title": "운영체제에 자원을 요청하고 실행 공간을 나눈다", "href": "notes/sy/sy04-2.html"}
+  ],
+  SY05: [
+    {"id": "SY05-1", "title": "주소와 포인터는 값이 놓인 위치를 가리킨다", "href": "notes/sy/sy05-1.html"},
+    {"id": "SY05-2", "title": "파일의 이름과 버퍼의 데이터는 다른 상태다", "href": "notes/sy/sy05-2.html"}
+  ],
+  SY06: [
+    {"id": "SY06-1", "title": "셸에서 경로를 고르고 권한을 읽는다", "href": "notes/sy/sy06-1.html"},
+    {"id": "SY06-2", "title": "환경 변수와 표준 입출력이 명령을 연결한다", "href": "notes/sy/sy06-2.html"}
+  ],
+  SY07: [
+    {"id": "SY07-1", "title": "diff에서 바뀐 일을 보고 commit에 넣을 내용을 정한다", "href": "notes/sy/sy07-1.html"},
+    {"id": "SY07-2", "title": "브랜치와 실행 기록으로 실험의 입력을 다시 찾는다", "href": "notes/sy/sy07-2.html"}
+  ],
+  SY08: [
+    {"id": "SY08-1", "title": "같은 값을 동시에 고칠 때 락으로 순서를 정한다", "href": "notes/sy/sy08-1.html"},
+    {"id": "SY08-2", "title": "입출력을 기다리는 동안 다른 태스크를 진행한다", "href": "notes/sy/sy08-2.html"},
+    {"id": "SY08-3", "title": "연산 시간과 데이터 이동 비용을 따로 잰다", "href": "notes/sy/sy08-3.html"}
   ],
   NW01: [
     {"id": "NW01-1", "title": "호스트가 어떻게 역할을 나눠 통신하는가", "href": "notes/nw/nw01-1.html"},
@@ -243,6 +279,23 @@ window.BDA_CHAPTERS = {
     {"id": "NW06-1", "title": "TCP 바이트 스트림과 UDP 데이터그램", "href": "notes/nw/nw06-1.html"},
     {"id": "NW06-2", "title": "흐름 제어와 혼잡 제어의 두 윈도우", "href": "notes/nw/nw06-2.html"}
   ],
+  NW07: [
+    {"id": "NW07-1", "title": "IP 목적지와 가까운 링크의 MAC 주소 구분하기", "href": "notes/nw/nw07-1.html"},
+    {"id": "NW07-2", "title": "유선과 무선 링크에서 실제 전송 시간이 늘어나는 이유", "href": "notes/nw/nw07-2.html"}
+  ],
+  NW08: [
+    {"id": "NW08-1", "title": "HTTPS에서 인증서와 암호화 연결 확인하기", "href": "notes/nw/nw08-1.html"},
+    {"id": "NW08-2", "title": "해시·암호화·서명과 인증·인가의 역할 비교하기", "href": "notes/nw/nw08-2.html"}
+  ],
+  NW09: [
+    {"id": "NW09-1", "title": "로컬 TCP 소켓에서 길이를 붙여 메시지 주고받기", "href": "notes/nw/nw09-1.html"},
+    {"id": "NW09-2", "title": "소켓의 타임아웃과 수신 종료 구분하기", "href": "notes/nw/nw09-2.html"}
+  ],
+  NW10: [
+    {"id": "NW10-1", "title": "DNS·연결·TLS·HTTP 중 어느 단계에서 실패했는지 찾기", "href": "notes/nw/nw10-1.html"},
+    {"id": "NW10-2", "title": "왕복 시간과 응답 누락을 함께 보고하기", "href": "notes/nw/nw10-2.html"},
+    {"id": "NW10-3", "title": "한 연결의 패킷 시각과 웹 요청 시각 맞춰 읽기", "href": "notes/nw/nw10-3.html"}
+  ],
   DB01: [
     {"id": "DB01-1", "title": "표, 스키마, 한 행의 의미", "href": "notes/db/db01-1.html"},
     {"id": "DB01-2", "title": "기본 키, 외래 키와 복합 키", "href": "notes/db/db01-2.html"}
@@ -260,6 +313,24 @@ window.BDA_CHAPTERS = {
     {"id": "DB04-1", "title": "저장할 값과 관계에 제약조건 두기", "href": "notes/db/db04-1.html"},
     {"id": "DB04-2", "title": "함수 종속과 갱신 이상을 줄이는 정규화", "href": "notes/db/db04-2.html"},
     {"id": "DB04-3", "title": "트랜잭션과 ACID로 변경을 함께 확정하기", "href": "notes/db/db04-3.html"}
+  ],
+  DB05: [
+    {"id": "DB05-1", "title": "인덱스에서 찾고 실행 계획으로 확인하기", "href": "notes/db/db05-1.html"},
+    {"id": "DB05-2", "title": "복합 인덱스의 접두 순서와 병목 찾기", "href": "notes/db/db05-2.html"}
+  ],
+  DB06: [
+    {"id": "DB06-1", "title": "API의 요청·응답, JSON과 웹 페이지 구조", "href": "notes/db/db06-1.html"},
+    {"id": "DB06-2", "title": "페이지를 따라 수집하고 권한·출처 남기기", "href": "notes/db/db06-2.html"}
+  ],
+  DB07: [
+    {"id": "DB07-1", "title": "수집·검증·변환·적재와 수 대조", "href": "notes/db/db07-1.html"},
+    {"id": "DB07-2", "title": "멱등 적재와 재실행의 경계", "href": "notes/db/db07-2.html"},
+    {"id": "DB07-3", "title": "배치와 스트리밍, 스키마 변경과 자료 계보", "href": "notes/db/db07-3.html"}
+  ],
+  DB08: [
+    {"id": "DB08-1", "title": "샤딩은 나누고 복제는 사본을 둔다", "href": "notes/db/db08-1.html"},
+    {"id": "DB08-2", "title": "메시지 큐와 재전달을 견디는 처리", "href": "notes/db/db08-2.html"},
+    {"id": "DB08-3", "title": "CAP 정리에서 일관성과 가용성이 충돌하는 조건", "href": "notes/db/db08-3.html"}
   ],
   LA01: [
     {"id": "LA01-1", "title": "벡터와 성분: 한 관측을 숫자 여러 개로 나타내기", "href": "notes/la/la01-1.html"},
@@ -412,6 +483,14 @@ window.BDA_CHAPTERS = {
   ST10: [
     {"id": "ST10-1", "title": "시간의 순서, 자기상관과 과거만 쓴 검증", "href": "notes/st/st10-1.html"},
     {"id": "ST10-2", "title": "반복 측정의 단위를 정하고 묶음으로 재표집하기", "href": "notes/st/st10-2.html"}
+  ],
+  OP01: [
+    {"id": "OP01-1", "title": "부동소수점으로 값을 저장할 때 생기는 반올림", "href": "notes/op/op01-1.html"},
+    {"id": "OP01-2", "title": "상쇄와 표현 범위를 피하는 계산식 고르기", "href": "notes/op/op01-2.html"}
+  ],
+  OP02: [
+    {"id": "OP02-1", "title": "조건수와 잔차로 선형계 풀이의 민감도 읽기", "href": "notes/op/op02-1.html"},
+    {"id": "OP02-2", "title": "수치미분으로 도함수와 기울기 검산하기", "href": "notes/op/op02-2.html"}
   ],
   OP03: [
     {"id": "OP03-1", "title": "최솟값을 정의하고 한 변수에서 내려가기", "href": "notes/op/op03-1.html"},

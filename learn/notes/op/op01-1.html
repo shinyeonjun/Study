@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>부동소수점으로 값을 저장할 때 생기는 반올림 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="OP01-1">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">수치 계산·최적화</p>
+<p class="chap-num">OP01·1</p>
+<h1>부동소수점으로 값을 저장할 때 생기는 반올림</h1>
+<p class="lead">0.1과 0.2를 더한 값이 Python에서 0.3과 정확히 같지 않을 수 있습니다. 이진으로 표현할 수 있는 수의 간격부터 확인합니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>유한한 이진 소수로 쓸 수 있는 분수를 구분한다.</li><li>절대오차와 허용 오차의 용도를 설명한다.</li><li>Decimal과 이진 부동소수점이 각각 언제 적합한지 판단한다.</li></ul></div>
+
+<h2>컴퓨터가 간격을 두고 수를 고른다</h2>
+<p>이진 소수는 1/2, 1/4, 1/8처럼 2의 거듭제곱의 역수를 더해서 쓸 수 있습니다. 0.125는 1/8이므로 이진에서 0.001입니다. 반면 0.1은 1/10이며 분모에 5가 들어 있습니다. 2의 거듭제곱을 분모로 하는 어떤 유한한 분수와도 정확히 같지 않습니다.</p>
+<p>설명용으로 1/8의 배수만 저장하는 작은 모형을 생각합니다. 0.1을 넣으면 가까운 0.125를 선택합니다. 실제 Python <code>float</code>는 훨씬 촘촘하고 넓은 범위를 씁니다. 그래서 0.1에 아주 가까운 이진 값을 쓰지만, 차이가 완전히 없어지지는 않습니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 188" role="img" aria-label="1/8 간격의 이진 격자에서 0.1은 0과 0.125 사이이고 0.125에 더 가까움">
+<line class="f-line" x1="125" y1="113" x2="722.5" y2="113" marker-end="url(#f-arrow)"/><line class="f-ink" x1="161" y1="98" x2="161" y2="128"/><text class="f-s" x="161" y="158" text-anchor="middle">0</text><line class="f-ink" x1="338.5" y1="98" x2="338.5" y2="128"/><text class="f-s" x="338.5" y="158" text-anchor="middle">0.125</text><line class="f-ink" x1="516" y1="98" x2="516" y2="128"/><text class="f-s" x="516" y="158" text-anchor="middle">0.25</text><line class="f-ink" x1="693.5" y1="98" x2="693.5" y2="128"/><text class="f-s" x="693.5" y="158" text-anchor="middle">0.375</text><line class="f-dash" x1="303" y1="53" x2="303" y2="109" marker-end="url(#f-arrow)"/><text class="f-s" x="277" y="40" text-anchor="middle">입력 0.1</text><text class="f-s" x="398.5" y="78" text-anchor="middle">가까운 저장값 0.125</text>
+</svg><figcaption>격자 눈금은 예시입니다. 실제 부동소수점은 수의 크기에 따라 인접한 값 간격이 달라집니다.</figcaption></figure>
+<div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
+<h2>표시되는 숫자와 저장된 값</h2>
+<p>일반적인 Python 환경의 float는 IEEE 754 배정밀도 이진 부동소수점을 사용합니다. 표현 가능한 수들 사이에서 반올림이 일어나고, 연산 결과도 다시 표현 범위에 맞춰 반올림됩니다. 출력의 자릿수를 줄이면 0.3처럼 보이게 만들 수 있지만, 이미 저장한 값 자체는 바뀌지 않습니다. 1 바로 다음 표현 가능 수와 1의 차이는 이 환경에서 약 2.22×10⁻¹⁶입니다. 더 큰 수 주변의 간격은 달라질 수 있습니다.</p>
+<div class="check" data-q="q3"></div>
+<pre data-example="python"><code>from decimal import Decimal
+from math import inf, isclose, nextafter
+
+value = 0.1 + 0.2
+print(&quot;17자리:&quot;, f&quot;{value:.17f}&quot;)
+print(&quot;정확히 같은 float?&quot;, value == 0.3)
+print(&quot;허용 범위 안?&quot;, isclose(value, 0.3, rel_tol=1e-12))
+print(&quot;1 다음 간격:&quot;, f&quot;{nextafter(1.0, inf) - 1.0:.2e}&quot;)
+print(&quot;문자에서 읽은 Decimal:&quot;, Decimal(&quot;0.1&quot;) + Decimal(&quot;0.2&quot;))</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>17자리: 0.30000000000000004
+정확히 같은 float? False
+허용 범위 안? True
+1 다음 간격: 2.22e-16
+문자에서 읽은 Decimal: 0.3</code></pre>
+<div class="check" data-q="q4"></div>
+<h2>비교의 허용 오차를 계산 목적에 맞춘다</h2>
+<div class="table-wrap"><table><thead><tr><th scope="col">비교 종류</th><th scope="col">어떤 차이를 보는가</th><th scope="col">예</th></tr></thead><tbody><tr><td>절대오차</td><td>|측정값−기준값|</td><td>0.1mm보다 작은 차이를 허용</td></tr><tr><td>상대오차</td><td>기준이 0이 아닐 때 기준 크기로 나눈 차이</td><td>큰 값과 작은 값의 상대적인 변동</td></tr><tr><td>정확한 정수·십진 계산</td><td>정의에 맞는 정확 값으로 비교</td><td>센트 단위 정수나 문자열에서 만든 Decimal</td></tr></tbody></table></div>
+<p>기준이 0이면 상대오차의 분모가 0이 됩니다. <code>math.isclose</code>로 0 근처를 비교할 때는 허용할 절대 차이 <code>abs_tol</code>을 함께 정합니다. <code>math.isclose</code>의 상대 항은 두 입력의 절댓값 중 큰 값에 상대 허용 비율을 곱합니다. 표의 한 기준값에 대한 상대오차와 구분합니다. 원과 센트처럼 정확한 십진값을 다룬다면 0.1을 먼저 float로 만들기보다 문자열에서 직접 <code>Decimal("0.1")</code>을 만드는 편이 의도를 지킵니다. Decimal도 끝나지 않는 나눗셈 등에서는 설정한 정밀도로 반올림합니다.</p>
+<div class="check" data-q="q5"></div><div class="check" data-q="q6"></div>
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>저장 가능한 간격과 원래 의도한 단위를 구분하고, 근사값은 허용할 오차와 함께 비교합니다.</p></div>
+
+<h2>참고 자료</h2>
+<ul><li><a href="https://docs.python.org/3/tutorial/floatingpoint.html">Python · 부동소수점과 한계</a></li><li><a href="https://docs.python.org/3/library/decimal.html">Python · Decimal</a></li></ul>
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

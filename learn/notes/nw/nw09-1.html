@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>로컬 TCP 소켓에서 길이를 붙여 메시지 주고받기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="NW09-1">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">네트워크</p>
+<p class="chap-num">NW09·1</p>
+<h1>로컬 TCP 소켓에서 길이를 붙여 메시지 주고받기</h1>
+<p class="lead">서버와 클라이언트를 같은 컴퓨터에서 실행합니다. 문자열 하나를 보내고 돌려받으면서, TCP가 보장하는 바이트 순서와 프로그램이 직접 정할 메시지 경계를 구분합니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>서버의 대기 소켓과 연결 소켓을 구분한다.</li><li>TCP에서 recv의 한 번 반환과 메시지가 다른 이유를 설명한다.</li><li>길이 머리말을 읽는 로컬 에코를 실행한다.</li></ul></div>
+
+<h2>주소와 포트를 정해 연결한다</h2>
+<p>서버는 들어오는 연결을 받을 주소와 포트에 <code>bind</code>하고 <code>listen</code>합니다. 이 장은 자신의 컴퓨터에만 연결되는 IPv4 루프백 127.0.0.1을 씁니다. 포트에 0을 주면 운영체제가 사용 가능한 포트를 정합니다. 서버는 실제 포트를 <code>getsockname()</code>으로 읽고, 클라이언트는 그 주소와 포트로 연결합니다.</p>
+<p>대기 중인 소켓에서 <code>accept</code>하면 이 클라이언트와 대화할 새 소켓을 얻습니다. 대기 소켓은 연결을 받는 데, 연결 소켓은 그 연결의 데이터를 주고받는 데 사용합니다.</p>
+<div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 160" role="img" aria-label="로컬 TCP 에코 서버에서 접속을 받아 연결 소켓으로 응답">
+<rect class="f-box" x="42" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="135" y="61" text-anchor="middle">서버</text><text class="f-s" x="135" y="89" text-anchor="middle">127.0.0.1에 대기</text><text class="f-s" x="135" y="110" text-anchor="middle">사용 가능한 포트 선택</text><line class="f-line" x1="235" y1="84" x2="278" y2="84" marker-end="url(#f-arrow)"/><rect class="f-soft" x="287" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="380" y="61" text-anchor="middle">연결</text><text class="f-s" x="380" y="89" text-anchor="middle">클라이언트가 연결</text><text class="f-s" x="380" y="110" text-anchor="middle">서버에서 accept</text><line class="f-line" x1="480" y1="84" x2="523" y2="84" marker-end="url(#f-arrow)"/><rect class="f-box" x="532" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="625" y="61" text-anchor="middle">에코</text><text class="f-s" x="625" y="89" text-anchor="middle">길이와 본문을 읽음</text><text class="f-s" x="625" y="110" text-anchor="middle">같은 메시지 응답</text>
+</svg><figcaption>예제는 같은 컴퓨터에서 한 연결만 처리합니다. 다른 장치와 통신하지 않습니다.</figcaption></figure>
+<h2>바이트 흐름에 메시지 경계를 넣는다</h2>
+<p>TCP는 순서가 있는 바이트 스트림을 전달합니다. 송신자가 한 번에 10바이트를 넣어도 수신자의 <code>recv(10)</code>은 한 번에 10을 넘겨준다는 약속이 없습니다. 반대로 송신 쪽에서 논리적으로 두 번 보낸 바이트가 한 읽기에서 같이 들어올 수 있습니다.</p>
+<p>이 예에서는 처음 4바이트에 본문의 길이(빅엔디언 정수)를 적고 이어서 그 수만큼 읽습니다. 한 글자가 여러 바이트일 수 있으므로 문자열을 UTF-8로 바꾼 뒤 바이트 수를 셉니다. ‘공부’의 UTF-8 본문은 6바이트이므로 보내는 단위는 4+6=10바이트입니다.</p>
+<div class="check" data-q="q3"></div><div class="check" data-q="q4"></div>
+<pre data-example="python"><code>import socket
+from concurrent.futures import ThreadPoolExecutor
+
+MAX_MESSAGE = 64
+
+def read_exact(connection, count):
+    data = bytearray()
+    while len(data) &lt; count:
+        chunk = connection.recv(min(count - len(data), 3))
+        if not chunk:
+            raise EOFError(&quot;메시지가 끝나기 전에 연결이 종료됐습니다.&quot;)
+        data.extend(chunk)
+    return bytes(data)
+
+def send_message(connection, message):
+    if len(message) &gt; MAX_MESSAGE:
+        raise ValueError(&quot;본문이 너무 깁니다.&quot;)
+    connection.sendall(len(message).to_bytes(4, &quot;big&quot;) + message)
+
+def read_message(connection):
+    length = int.from_bytes(read_exact(connection, 4), &quot;big&quot;)
+    if length &gt; MAX_MESSAGE:
+        raise ValueError(&quot;본문이 너무 깁니다.&quot;)
+    return read_exact(connection, length)
+
+def serve_once(listener):
+    connection, _ = listener.accept()
+    with connection:
+        connection.settimeout(5)
+        send_message(connection, read_message(connection))
+
+with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as listener:
+    listener.bind((&quot;127.0.0.1&quot;, 0))
+    listener.listen(1)
+    listener.settimeout(5)
+    with ThreadPoolExecutor(max_workers=1) as executor:
+        worker = executor.submit(serve_once, listener)
+        with socket.create_connection(listener.getsockname(), timeout=5) as client:
+            message = &quot;공부&quot;.encode(&quot;utf-8&quot;)
+            send_message(client, message)
+            reply = read_message(client)
+            assert reply == message
+            print(&quot;본문 바이트:&quot;, len(message))
+            print(&quot;되돌아온 문자열:&quot;, reply.decode(&quot;utf-8&quot;))
+        worker.result(timeout=7)</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>본문 바이트: 6
+되돌아온 문자열: 공부</code></pre>
+<div class="check" data-q="q5"></div>
+<h2>읽기 크기와 올바른 범위를 함께 정한다</h2>
+<p>이 실습은 한 번의 <code>recv</code>에서 최대 3바이트만 요청해 4바이트 머리말부터 계속 읽는 연습을 합니다. 받은 데이터에 적힌 길이를 그대로 신뢰하지 않고 최대 64바이트로 제한했습니다. 실제 응용에서도 메시지 규칙과 지원하는 크기를 함께 정합니다. 필요한 바이트 수를 다 받기 전에 연결이 끝나면 온전한 메시지가 아니라는 오류를 내보냅니다.</p>
+<div class="check" data-q="q6"></div>
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>TCP는 바이트의 순서를 보존합니다. 응용은 길이 또는 별도 규칙을 정하고 그만큼 받을 때까지 읽습니다.</p></div>
+
+<h2>참고 자료</h2>
+<ul><li><a href="https://docs.python.org/3/howto/sockets.html">Python · 소켓 개요와 부분 송수신</a></li><li><a href="https://www.rfc-editor.org/rfc/rfc9293">IETF RFC 9293 · TCP</a></li><li><a href="nw06-1.html">공부 교재 · TCP와 UDP</a></li></ul>
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

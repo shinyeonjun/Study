@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>샤딩은 나누고 복제는 사본을 둔다 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="DB08-1">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">데이터베이스 · DB08 분산 데이터 입문</p>
+<p class="chap-num">DB08·1</p>
+<h1>샤딩은 나누고 복제는 사본을 둔다</h1>
+<p class="lead">주문이 많아질 때 두 저장 노드에 서로 다른 고객을 맡길 수 있습니다. 같은 주문을 두 노드에 복사하는 경우도 있습니다. 두 설계의 목적과 읽기 비용을 구분합니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul>
+<li>샤드 키로 주문을 어느 저장 노드에 둘지 구한다.</li>
+<li>복제 지연이 읽기와 장애 복구에 미치는 영향을 설명한다.</li>
+<li>논리 행 수와 실제 보관 사본 수의 차이를 계산한다.</li>
+</ul></div>
+
+<h2>같은 표의 다른 부분을 나눠 맡기기</h2>
+<p><b class="key">샤딩</b>은 데이터의 서로 다른 부분을 여러 저장 단위에 나누어 두는 방식입니다. 여기서는 고객 번호를 2로 나눈 나머지를 <strong>샤드 번호</strong>로 씁니다. 짝수 번호의 고객 2는 샤드 0, 홀수 번호 1은 샤드 1입니다. 주문 식별자는 그대로이며, 같은 고객의 주문이 함께 저장되므로 고객 번호를 아는 질의를 한 샤드로 보낼 수 있습니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 172" role="img" aria-label="고객 2의 주문 103과 104를 샤드 0에, 고객 1의 101과 102를 샤드 1에 둔다.">
+<text class="f-cap" x="380" y="29" text-anchor="middle">customer_id를 2로 나눈 나머지로 샤드 선택</text>
+<rect class="f-soft" x="64" y="43" width="188" height="37"/>
+<text class="f-s" x="158" y="66.5" text-anchor="middle">노드에 맡길 부분</text>
+<rect class="f-soft" x="252" y="43" width="116" height="37"/>
+<text class="f-s" x="310" y="66.5" text-anchor="middle">고객 번호</text>
+<rect class="f-soft" x="368" y="43" width="156" height="37"/>
+<text class="f-s" x="446" y="66.5" text-anchor="middle">주문</text>
+<rect class="f-soft" x="524" y="43" width="172" height="37"/>
+<text class="f-s" x="610" y="66.5" text-anchor="middle">담당 금액</text>
+<rect class="f-box" x="64" y="80" width="188" height="37"/>
+<text class="f-t" x="158" y="103.5" text-anchor="middle">샤드 0</text>
+<rect class="f-box" x="252" y="80" width="116" height="37"/>
+<text class="f-t" x="310" y="103.5" text-anchor="middle">2</text>
+<rect class="f-box" x="368" y="80" width="156" height="37"/>
+<text class="f-t" x="446" y="103.5" text-anchor="middle">103, 104</text>
+<rect class="f-box" x="524" y="80" width="172" height="37"/>
+<text class="f-t" x="610" y="103.5" text-anchor="middle">27,000원</text>
+<rect class="f-box" x="64" y="117" width="188" height="37"/>
+<text class="f-t" x="158" y="140.5" text-anchor="middle">샤드 1</text>
+<rect class="f-box" x="252" y="117" width="116" height="37"/>
+<text class="f-t" x="310" y="140.5" text-anchor="middle">1</text>
+<rect class="f-box" x="368" y="117" width="156" height="37"/>
+<text class="f-t" x="446" y="140.5" text-anchor="middle">101, 102</text>
+<rect class="f-box" x="524" y="117" width="172" height="37"/>
+<text class="f-t" x="610" y="140.5" text-anchor="middle">25,000원</text>
+</svg>
+<figcaption>전체 주문 합을 구하려면 두 샤드의 27,000원과 25,000원을 더합니다.</figcaption>
+</figure>
+<p>번호만으로 주문을 찾을 때 샤드 키인 고객 번호를 모르면 별도의 위치 정보가 필요하거나 여러 샤드를 조회해야 합니다. 전체 합을 계산하는 경우처럼 샤드 여러 곳에 가는 질의에는 호출과 집계 비용이 듭니다. 작은 예의 두 샤드처럼 행 수가 같아도 한 고객에게 요청이나 주문이 집중되면 부담이 고르게 나뉘지 않을 수 있습니다.</p>
+<div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
+
+<h2>같은 주문에 사본을 마련하기</h2>
+<p><b class="key">복제</b>는 동일 데이터의 사본을 다른 노드에도 두는 것입니다. 쓰기를 한 주 노드에서 먼저 받고 변경 내역을 다른 노드에 전달하는 방식을 생각합니다. 주 노드의 쓰기를 확정한 뒤에 변경을 전달한다면 그 사이에는 복제 노드에 예전 버전이 남습니다. 일종의 <strong>복제 지연</strong>입니다. 아래 예는 어느 노드에서 읽는지에 따라 같은 주문의 결과가 달라질 수 있음을 보입니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 272" role="img" aria-label="주 노드의 주문 101을 10500원 버전 2로 갱신한 직후 복제 노드는 10000원 버전 1이다. 전달한 뒤 둘 다 버전 2다.">
+<text class="f-cap" x="380" y="29" text-anchor="middle">같은 데이터의 버전 두 개가 잠시 관측될 수 있습니다</text>
+<rect class="f-soft" x="46" y="53" width="210" height="40"/>
+<text class="f-s" x="151" y="78" text-anchor="middle">시점</text>
+<rect class="f-soft" x="256" y="53" width="230" height="40"/>
+<text class="f-s" x="371" y="78" text-anchor="middle">먼저 쓰는 노드</text>
+<rect class="f-soft" x="486" y="53" width="228" height="40"/>
+<text class="f-s" x="600" y="78" text-anchor="middle">복제 노드</text>
+<rect class="f-box" x="46" y="93" width="210" height="40"/>
+<text class="f-s" x="151" y="118" text-anchor="middle">쓰기 전</text>
+<rect class="f-box" x="256" y="93" width="230" height="40"/>
+<text class="f-s" x="371" y="118" text-anchor="middle">v1 · 10,000원</text>
+<rect class="f-box" x="486" y="93" width="228" height="40"/>
+<text class="f-s" x="600" y="118" text-anchor="middle">v1 · 10,000원</text>
+<rect class="f-box" x="46" y="133" width="210" height="40"/>
+<text class="f-s" x="151" y="158" text-anchor="middle">주 노드 확정 직후</text>
+<rect class="f-soft" x="256" y="133" width="230" height="40"/>
+<text class="f-s" x="371" y="158" text-anchor="middle">v2 · 10,500원</text>
+<rect class="f-box" x="486" y="133" width="228" height="40"/>
+<text class="f-s" x="600" y="158" text-anchor="middle">v1 · 10,000원</text>
+<rect class="f-box" x="46" y="173" width="210" height="40"/>
+<text class="f-s" x="151" y="198" text-anchor="middle">복제 변경 적용 뒤</text>
+<rect class="f-soft" x="256" y="173" width="230" height="40"/>
+<text class="f-s" x="371" y="198" text-anchor="middle">v2 · 10,500원</text>
+<rect class="f-soft" x="486" y="173" width="228" height="40"/>
+<text class="f-s" x="600" y="198" text-anchor="middle">v2 · 10,500원</text>
+</svg>
+<figcaption>쓰기 직후 복제 노드로 읽기 요청을 보내면 예전 값이 돌아올 수 있습니다.</figcaption>
+</figure>
+<p>변경을 확정하기 전에 정해진 복제 노드의 응답을 기다리는 방식은 장애 때 잃을 수 있는 범위를 바꿀 수 있습니다. 어떤 응답을 기다리는지에 따라 단순 수신, 디스크 기록, 읽기 결과에 반영됨의 범위가 다릅니다. 기다리는 만큼 지연이 늘 수 있고 파일이나 노드가 함께 손상될 수 있으므로 복제 배치와 별도 백업은 다른 설계가 필요합니다.</p>
+<div class="check" data-q="q3"></div><div class="check" data-q="q4"></div>
+
+<h2>장애 때 같은 데이터와 접근 경로를 확인</h2>
+<p>한 샤드에 한 사본만 있는 상태에서 그 장소에 장애가 나면 그 샤드의 주문을 읽기 어렵습니다. 샤드 각각을 다른 장소에 복제할 수 있습니다. 네 주문을 두 사본씩 두면 논리적으로 주문은 네 건이지만 보관한 행 사본 수는 여덟 개입니다. 두 사본의 주문액을 모두 하나의 보고에서 합하면 같은 주문을 두 번 센 결과가 됩니다.</p>
+<p>주 노드에 접근할 수 없을 때 다른 노드가 대신 쓰기를 받으려면 어떤 변경을 반영했는지와 주 노드를 안전하게 교체하는 규칙이 필요합니다. 변경을 아직 받지 못한 사본에 바꾸면 최신 값을 잃을 수 있습니다. 동시 실행과 대기에 관한 기초는 <a href="../../unit.html?u=SY08">SY08 동시성과 성능</a>과 연결합니다.</p>
+<div class="check" data-q="q5"></div><div class="check" data-q="q6"></div>
+
+<h2>네 주문을 나누고 한 복제 지연을 모의로 읽기</h2>
+
+<p class="small">실행 예제</p>
+<pre data-example="python"><code>orders = [
+    (101, 1, 10000), (102, 1, 15000),
+    (103, 2, 12000), (104, 2, 15000),
+]
+shards = [[], []]
+for order_id, customer_id, amount in orders:
+    shards[customer_id % 2].append((order_id, amount))
+for shard_id, rows in enumerate(shards):
+    print(shard_id, [order_id for order_id, _ in rows], sum(amount for _, amount in rows))
+print(&quot;logical rows and two copies:&quot;, len(orders), len(orders) * 2)
+
+primary = {order_id: (1, amount) for order_id, _, amount in orders}
+replica = primary.copy()
+primary[101] = (2, 10500)
+print(&quot;before apply:&quot;, primary[101], replica[101])
+replica[101] = primary[101]
+print(&quot;after apply:&quot;, primary[101], replica[101])</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>0 [103, 104] 27000
+1 [101, 102] 25000
+logical rows and two copies: 4 8
+before apply: (2, 10500) (1, 10000)
+after apply: (2, 10500) (2, 10500)</code></pre>
+<p>두 파이썬 사전은 값을 따로 보관하는 모형입니다. 실제 저장 노드나 통신을 만들지 않고, 변경을 언제 반영하느냐에 따라 관측 값이 달라질 수 있는 이유를 비교합니다.</p>
+<div class="check" data-q="q7"></div><div class="check" data-q="q8"></div>
+
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table><thead><tr><th scope="col">개념</th><th scope="col">확인할 것</th></tr></thead><tbody>
+<tr><th scope="row"><b class="key">샤딩</b></th><td>서로 다른 행을 나누어 보관한다.</td></tr>
+<tr><th scope="row"><b class="key">복제</b></th><td>같은 행의 사본을 여럿 둔다.</td></tr>
+<tr><th scope="row"><b class="key">지연</b></th><td>언제 어디에서 읽는지에 따라 보이는 버전이 달라진다.</td></tr>
+</tbody></table></div><div class="box sum"><p class="box-k">다음 장으로</p><p><a href="db08-2.html">다음 장</a>에서는 한 번에 전달하지 못한 작업과 중복 메시지를 다룹니다.</p></div>
+
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://www.postgresql.org/docs/current/warm-standby.html">PostgreSQL · 로그 기반 복제와 대기 서버</a></li>
+<li><a href="https://www.mongodb.com/docs/manual/sharding/">MongoDB · 데이터 샤딩</a></li>
+</ul>
+<h2>확인 문제</h2>
+<p>직접 계산하거나 설명을 먼저 적고 답을 확인해 보세요.</p>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

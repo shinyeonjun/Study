@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>검색할 때는 탐색 트리, 가장 작은 값은 힙 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e8c'/%3E%3Cpath d='M8 22V10m8 12V14m8 8V6' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="CS05-2">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+
+<header class="chapter">
+<p class="chap-sub">자료구조·알고리즘 · CS05 재귀와 트리</p>
+<p class="chap-num">CS05·2</p>
+<h1>검색할 때는 탐색 트리, 가장 작은 값은 힙</h1>
+<p class="lead">검색 대상과 가장 작은 항목은 서로 다른 방식으로 찾습니다. 이진 탐색 트리와 최소 힙에서 지키는 규칙을 손으로 확인합니다.</p>
+</header>
+
+<div class="goal">
+<h2>이 장을 읽고 나면</h2>
+<ul>
+<li>이진 탐색 트리에서 값에 따라 내려갈 방향을 고른다.</li>
+<li>인덱스로 최소 힙의 부모와 자식을 찾는다.</li>
+<li>탐색 트리의 높이와 힙의 우선순위 동작을 비교한다.</li>
+</ul>
+</div>
+<h2>탐색 트리는 왼쪽 전체와 오른쪽 전체를 나눈다</h2>
+<p>이 장에서는 서로 다른 정수를 키로 씁니다. <b class="key">이진 탐색 트리</b>의 모든 노드에서 왼쪽 하위 트리의 키는 현재 키보다 작고, 오른쪽 하위 트리의 키는 더 큽니다. 즉 바로 옆의 자식뿐 아니라 그 아래 모든 키까지 비교 규칙이 적용됩니다. 중복 키를 허용하는 구현은 저장하거나 세는 정책을 따로 정합니다.</p>
+<p>루트 8에서 6을 찾으려면 6&lt;8이어서 왼쪽 3으로, 다시 6&gt;3이어서 오른쪽 6으로 갑니다. 세 노드를 비교했습니다. 11을 찾으면 8→12→10까지 간 뒤 10의 빈 오른쪽에서 끝납니다. 중위 순회는 작은 쪽 전체, 현재 키, 큰 쪽 전체를 읽으므로 오름차순입니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 229" role="img" aria-label="이진 탐색 트리에서 8의 왼쪽은 3, 3의 오른쪽은 6이다.">
+<text class="f-cap" x="380" y="28" text-anchor="middle">6은 8 → 3 → 6에서 찾는다</text>
+<line class="f-line" x1="360.6719140181349" y1="66.21127835830872" x2="248.16885607537608" y2="114.00669513137618"/>
+<line class="f-line" x1="399.3280859818651" y1="66.21127835830872" x2="511.8311439246239" y2="114.00669513137618"/>
+<line class="f-line" x1="211.66109482205624" y1="137.34287237418118" x2="166.79975329012888" y2="179.2911397806587"/>
+<line class="f-line" x1="242.33890517794376" y1="137.34287237418118" x2="287.2002467098711" y2="179.2911397806587"/>
+<line class="f-line" x1="517.6610948220563" y1="137.34287237418118" x2="472.7997532901289" y2="179.2911397806587"/>
+<line class="f-line" x1="548.3389051779437" y1="137.34287237418118" x2="593.2002467098711" y2="179.2911397806587"/>
+<circle class="f-box" cx="150" cy="195" r="19"/>
+<text class="f-cap" x="150" y="200" text-anchor="middle">1</text>
+<circle class="f-soft" cx="227" cy="123" r="19"/>
+<text class="f-cap" x="227" y="128" text-anchor="middle">3</text>
+<circle class="f-soft" cx="304" cy="195" r="19"/>
+<text class="f-cap" x="304" y="200" text-anchor="middle">6</text>
+<circle class="f-soft" cx="380" cy="58" r="19"/>
+<text class="f-cap" x="380" y="63" text-anchor="middle">8</text>
+<circle class="f-box" cx="456" cy="195" r="19"/>
+<text class="f-cap" x="456" y="200" text-anchor="middle">10</text>
+<circle class="f-box" cx="533" cy="123" r="19"/>
+<text class="f-cap" x="533" y="128" text-anchor="middle">12</text>
+<circle class="f-box" cx="610" cy="195" r="19"/>
+<text class="f-cap" x="610" y="200" text-anchor="middle">14</text>
+</svg>
+<figcaption>파란 칸만 비교합니다. 오른쪽 하위 트리 12, 10, 14는 살펴보지 않습니다.</figcaption>
+</figure>
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+
+<h2>최소 힙은 루트에 항상 최소값을 둔다</h2>
+<p><b class="key">최소 힙</b>은 왼쪽부터 채운 완전 이진 트리로 생각할 수 있습니다. 마지막 층을 제외하고 모두 차 있으며, 마지막 층은 왼쪽부터 채웁니다. 빈칸 없는 배열의 0번이 루트라면 i의 자식은 존재할 때 2i+1과 2i+2입니다. 부모 키는 각 자식 키 이하입니다. 이 규칙을 부모에서 자식으로 거듭 적용하면 루트 1이 전체에서 가장 작습니다.</p>
+<p>아래 배열에서 1, 4, 3의 순서로 나와도 최소 힙입니다. 4와 3은 서로의 조상과 자식 관계가 아니므로 순서를 강제하지 않습니다. 루트에서 최솟값을 읽는 일은 O(1)입니다. 새 값은 끝에 놓고 부모와 비교하며 올립니다. 최솟값을 꺼내고 나면 끝값을 루트에 놓아 더 작은 자식 쪽으로 내려 규칙을 복구합니다. 배열의 용량을 바꾸는 비용을 따로 두면, 두 연산은 최악에도 길이가 O(log n)인 경로 하나만 이동합니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 211" role="img" aria-label="최소 힙 [1,4,3,9,7,6,8]에서 인덱스 2에 있는 3의 두 자식은 인덱스 5와 6의 6, 8.">
+<text class="f-cap" x="380" y="33" text-anchor="middle">최소 힙 배열에서 부모와 자식의 번호</text>
+<text class="f-t" x="180" y="82" text-anchor="end">인덱스</text>
+<rect class="f-box" x="206" y="58" width="66" height="38" rx="3"/>
+<text class="f-t" x="239" y="83" text-anchor="middle">0</text>
+<rect class="f-box" x="278" y="58" width="66" height="38" rx="3"/>
+<text class="f-t" x="311" y="83" text-anchor="middle">1</text>
+<rect class="f-soft" x="350" y="58" width="66" height="38" rx="3"/>
+<text class="f-t" x="383" y="83" text-anchor="middle">2</text>
+<rect class="f-box" x="422" y="58" width="66" height="38" rx="3"/>
+<text class="f-t" x="455" y="83" text-anchor="middle">3</text>
+<rect class="f-box" x="494" y="58" width="66" height="38" rx="3"/>
+<text class="f-t" x="527" y="83" text-anchor="middle">4</text>
+<rect class="f-soft" x="566" y="58" width="66" height="38" rx="3"/>
+<text class="f-t" x="599" y="83" text-anchor="middle">5</text>
+<rect class="f-soft" x="638" y="58" width="66" height="38" rx="3"/>
+<text class="f-t" x="671" y="83" text-anchor="middle">6</text>
+<text class="f-t" x="180" y="128" text-anchor="end">저장한 키</text>
+<rect class="f-box" x="206" y="104" width="66" height="38" rx="3"/>
+<text class="f-t" x="239" y="129" text-anchor="middle">1</text>
+<rect class="f-box" x="278" y="104" width="66" height="38" rx="3"/>
+<text class="f-t" x="311" y="129" text-anchor="middle">4</text>
+<rect class="f-soft" x="350" y="104" width="66" height="38" rx="3"/>
+<text class="f-t" x="383" y="129" text-anchor="middle">3</text>
+<rect class="f-box" x="422" y="104" width="66" height="38" rx="3"/>
+<text class="f-t" x="455" y="129" text-anchor="middle">9</text>
+<rect class="f-box" x="494" y="104" width="66" height="38" rx="3"/>
+<text class="f-t" x="527" y="129" text-anchor="middle">7</text>
+<rect class="f-soft" x="566" y="104" width="66" height="38" rx="3"/>
+<text class="f-t" x="599" y="129" text-anchor="middle">6</text>
+<rect class="f-soft" x="638" y="104" width="66" height="38" rx="3"/>
+<text class="f-t" x="671" y="129" text-anchor="middle">8</text>
+<text class="f-t" x="180" y="174" text-anchor="end">부모→자식</text>
+<rect class="f-box" x="206" y="150" width="66" height="38" rx="3"/>
+<text class="f-t" x="239" y="175" text-anchor="middle">2 → 5</text>
+<rect class="f-box" x="278" y="150" width="66" height="38" rx="3"/>
+<text class="f-t" x="311" y="175" text-anchor="middle">2 → 6</text>
+</svg>
+<figcaption>키 3은 자식 6, 8 이하입니다. 형제끼리는 크기 순서를 지킬 이유가 없습니다.</figcaption>
+</figure>
+<div class="check" data-q="q3"></div>
+<div class="check" data-q="q4"></div>
+
+<h2>같은 데이터라도 자주 할 연산을 보고 고른다</h2>
+<p>탐색 트리에서 특정 키 하나를 찾는 시간은 한 경로에서 비교한 노드 수에 비례합니다. 균형을 유지해 높이가 로그 규모라면 O(log n)입니다. 평범한 이진 탐색 트리에 키가 늘 한쪽으로만 붙으면 높이에 n개의 노드가 놓여 최악 O(n)입니다. 최소 힙은 최소값을 자주 꺼내는 우선순위 큐에 쓰입니다. 임의의 키를 힙 전체에서 찾는 일은 이 장의 부모 규칙만으로는 최악 O(n)이 걸립니다.</p>
+<div class="check" data-q="q5"></div>
+<div class="check" data-q="q6"></div>
+<pre data-example="python"><code>from heapq import heappop
+
+tree = (8, (3, (1, None, None), (6, None, None)),
+           (12, (10, None, None), (14, None, None)))
+
+def trace_search(node, target):
+    path = []
+    while node is not None:
+        key, left, right = node
+        path.append(key)
+        if target == key:
+            return True, path
+        node = left if target &lt; key else right
+    return False, path
+
+heap = [1, 4, 3, 9, 7, 6, 8]
+assert all(heap[(i - 1) // 2] &lt;= heap[i] for i in range(1, len(heap)))
+print(&quot;find 6:&quot;, trace_search(tree, 6))
+print(&quot;find 11:&quot;, trace_search(tree, 11))
+print(&quot;pop:&quot;, [heappop(heap) for _ in range(len(heap))])</code></pre>
+<pre data-output><code>find 6: (True, [8, 3, 6])
+find 11: (False, [8, 12, 10])
+pop: [1, 3, 4, 6, 7, 8, 9]</code></pre>
+<div class="table-wrap"><table>
+<thead><tr><th scope="col">연산</th><th scope="col">이진 탐색 트리</th><th scope="col">최소 힙</th></tr></thead>
+<tbody>
+<tr><td>특정 키 확인</td><td>매 비교에서 왼쪽이나 오른쪽만 선택</td><td>다수의 가지를 조사할 수 있음</td></tr>
+<tr><td>최솟값 읽기</td><td>가장 왼쪽 노드까지 방문</td><td>루트 하나 읽기</td></tr>
+<tr><td>정렬된 결과</td><td>중위 순회</td><td>최소값을 반복해 꺼내기</td></tr>
+</tbody>
+</table></div>
+
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://ocw.mit.edu/courses/6-006-introduction-to-algorithms-spring-2020/resources/lecture-notes/">MIT 6.006 · 이진 탐색 트리와 이진 힙</a></li>
+<li><a href="https://docs.python.org/3/library/heapq.html">Python · heapq의 배열 규칙과 삭제</a></li>
+</ul>
+
+<h2>확인 문제</h2>
+<p>아직 풀지 않은 문제입니다. 먼저 식이나 근거를 적어 보고 해설을 확인합니다.</p>
+<div id="quiz"></div>
+
+<section class="work" id="tools"></section>
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

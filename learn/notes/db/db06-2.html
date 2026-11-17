@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>페이지를 따라 수집하고 권한·출처 남기기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="DB06-2">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">데이터베이스 · DB06 외부 데이터 받기</p>
+<p class="chap-num">DB06·2</p>
+<h1>페이지를 따라 수집하고 권한·출처 남기기</h1>
+<p class="lead">한 번에 주문을 두 건씩 보내는 자료를 다룹니다. 다음 페이지 신호로 네 건을 모두 모으고, 자료를 다시 확인할 수 있는 기록을 남깁니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul>
+<li>페이지 번호와 제공자가 정한 커서 방식의 차이를 설명한다.</li>
+<li>정상적으로 부여받은 권한을 사용하며 응답 상태별로 처리한다.</li>
+<li>출처와 이용 조건을 남기면서 인증 정보를 보호한다.</li>
+</ul></div>
+
+<h2>한 응답에 일부 행만 올 수 있다</h2>
+<p>API는 결과를 한꺼번에 보내는 대신 페이지로 나눌 수 있습니다. 제공자는 페이지 번호, 시작 위치와 개수, 다음 링크, 불투명한 <b class="key">커서</b> 등 여러 방식을 사용합니다. 커서는 서버가 정한 다음 요청의 값입니다. 첫 페이지는 주문 101, 102와 다음 커서 <code>p2</code>를 줍니다. 두 번째 페이지는 주문 103, 104를 주고 다음 커서는 <code>null</code>입니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 254" role="img" aria-label="첫 요청은 주문 101,102와 다음 커서 p2를 받고, p2 요청은 주문 103,104와 null을 받아 중단한다.">
+<text class="f-cap" x="380" y="29" text-anchor="middle">커서가 있는 동안 다음 페이지를 요청</text>
+<rect class="f-box" x="54" y="70" width="274" height="55"/>
+<text class="f-t" x="191" y="102.5" text-anchor="middle">첫 페이지 · 101, 102</text>
+<rect class="f-soft" x="432" y="70" width="274" height="55"/>
+<text class="f-t" x="569" y="102.5" text-anchor="middle">두 번째 페이지 · 103, 104</text>
+<line class="f-line" x1="333" y1="97" x2="427" y2="97" marker-end="url(#f-arrow)"/>
+<text class="f-s" x="380" y="68" text-anchor="middle">p2</text>
+<text class="f-s" x="191" y="157" text-anchor="middle">다음 커서: p2</text>
+<text class="f-s" x="569" y="157" text-anchor="middle">다음 커서: null</text>
+<text class="f-t" x="380" y="214" text-anchor="middle">결과 네 건 · 2 + 2</text>
+</svg>
+<figcaption>커서는 제공자가 준 다음 요청값입니다. 그 내부 숫자나 다른 기호를 사용해 번호를 계산할 필요가 없습니다.</figcaption>
+</figure>
+<p>예제의 종료 기준은 다음 커서가 <code>null</code>인 경우입니다. 페이지당 최대 두 건인데 한 건만 왔다고 끝을 임의로 판단하지 않습니다. 수집 중 원자료가 바뀌면 페이지 사이에 중복과 누락이 생길 수 있어 제공자가 스냅샷이나 일정 기준 시점을 지원하는지 확인합니다.</p>
+<div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
+
+<h2>권한과 응답 상태를 읽는다</h2>
+<p><b class="key">인증</b>은 요청자의 신원을 확인하는 과정이고 <b class="key">권한 부여</b>는 그 신원이 어느 자료에 어떤 동작을 할 수 있는지 정하는 과정입니다. 제공자가 발급하고 사용이 허용된 자격만 사용합니다. 실행 환경에 보관한 인증 정보는 소스와 실행 로그, 공유 예제에 복사하지 않습니다. 응답에 개인정보가 있다면 자료를 저장·공유하는 목적과 허용 범위를 확인합니다.</p>
+<p>HTTP <code>401</code>은 유효한 인증 정보가 없는 요청에 사용될 수 있고 <code>403</code>은 요청을 이해했지만 허용하지 않은 경우를 나타냅니다. 이런 때는 공식 안내와 권한을 확인합니다. <code>429</code>는 요청이 너무 많다는 상태이며 <code>Retry-After</code>를 줄 수 있습니다. 제공자가 정한 간격과 재시도 한도를 따르고 실패한 응답을 성공으로 기록하지 않습니다.</p>
+<div class="check" data-q="q3"></div><div class="check" data-q="q4"></div>
+
+<h2>자료를 사용할 수 있는 범위까지 기록하기</h2>
+<p>자료 위치와 제공자, 이름·버전, 수집 시각·대상 범위·필터, 수집한 페이지와 행, 이용 조건과 표시할 출처를 기록합니다. 웹 화면에 보이거나 요청에 성공했다는 사실만으로 재배포 권리를 결정할 수 없습니다. 개인 연구, 팀 안에서의 공유, 공개 재배포에 각각 어떤 이용 제한이 있는지 확인합니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 246" role="img" aria-label="제공자, 받은 시각, 권리와 조건, 결과 수를 기록한다.">
+<text class="f-cap" x="380" y="29" text-anchor="middle">수집 기록에 남길 정보</text>
+<rect class="f-soft" x="53.5" y="43" width="224" height="37"/>
+<text class="f-s" x="165.5" y="66.5" text-anchor="middle">항목</text>
+<rect class="f-soft" x="277.5" y="43" width="429" height="37"/>
+<text class="f-s" x="492" y="66.5" text-anchor="middle">모의 주문 목록 예</text>
+<rect class="f-box" x="53.5" y="80" width="224" height="37"/>
+<text class="f-t" x="165.5" y="103.5" text-anchor="middle">제공자·자료 위치</text>
+<rect class="f-box" x="277.5" y="80" width="429" height="37"/>
+<text class="f-t" x="492" y="103.5" text-anchor="middle">실습 자료 · 주문 목록 v1</text>
+<rect class="f-box" x="53.5" y="117" width="224" height="37"/>
+<text class="f-t" x="165.5" y="140.5" text-anchor="middle">받은 시각과 범위</text>
+<rect class="f-box" x="277.5" y="117" width="429" height="37"/>
+<text class="f-t" x="492" y="140.5" text-anchor="middle">2025-01-08 UTC · 페이지 2개</text>
+<rect class="f-box" x="53.5" y="154" width="224" height="37"/>
+<text class="f-t" x="165.5" y="177.5" text-anchor="middle">권리·조건</text>
+<rect class="f-box" x="277.5" y="154" width="429" height="37"/>
+<text class="f-t" x="492" y="177.5" text-anchor="middle">교재 자체 제작 합성 자료</text>
+<rect class="f-box" x="53.5" y="191" width="224" height="37"/>
+<text class="f-t" x="165.5" y="214.5" text-anchor="middle">결과 검사</text>
+<rect class="f-box" x="277.5" y="191" width="429" height="37"/>
+<text class="f-t" x="492" y="214.5" text-anchor="middle">응답에 기록 4건 · 예외 없음</text>
+</svg>
+<figcaption>인증 정보와 분석에 필요하지 않은 개인 식별 정보는 수집 기록에서 제외합니다.</figcaption>
+</figure>
+<div class="check" data-q="q5"></div><div class="check" data-q="q6"></div>
+
+<h2>인터넷에 접속하지 않는 두 페이지 예제</h2>
+<p>아래 함수는 메모리에 준비한 JSON 문자열을 돌려줍니다. 상태와 필수 구조를 검사하며, 반복되는 커서면 모의 실행을 멈춥니다. 받은 시각은 고정된 예시입니다.</p>
+<p class="small">실행 예제</p>
+<pre data-example="python"><code>import json
+
+fixtures = {
+    None: '{&quot;orders&quot;:[{&quot;order_id&quot;:101},{&quot;order_id&quot;:102}],&quot;next_cursor&quot;:&quot;p2&quot;}',
+    &quot;p2&quot;: '{&quot;orders&quot;:[{&quot;order_id&quot;:103},{&quot;order_id&quot;:104}],&quot;next_cursor&quot;:null}',
+}
+
+def get_mock_page(cursor):
+    if cursor not in fixtures:
+        return 404, &quot;{}&quot;
+    return 200, fixtures[cursor]
+
+cursor = None
+seen = set()
+orders = []
+while True:
+    if cursor in seen:
+        raise ValueError(&quot;repeated cursor&quot;)
+    seen.add(cursor)
+    status, body = get_mock_page(cursor)
+    if status != 200:
+        raise ValueError(f&quot;page failed: {status}&quot;)
+    page = json.loads(body)
+    if not isinstance(page, dict) or not isinstance(page.get(&quot;orders&quot;), list):
+        raise ValueError(&quot;invalid orders list&quot;)
+    if &quot;next_cursor&quot; not in page:
+        raise ValueError(&quot;missing next cursor&quot;)
+    page_orders = page[&quot;orders&quot;]
+    if any(not isinstance(row, dict) or type(row.get(&quot;order_id&quot;)) is not int
+           or row[&quot;order_id&quot;] &lt;= 0 for row in page_orders):
+        raise ValueError(&quot;invalid order row&quot;)
+    orders.extend(page_orders)
+    cursor = page[&quot;next_cursor&quot;]
+    if cursor is None:
+        break
+    if not isinstance(cursor, str) or not cursor:
+        raise ValueError(&quot;invalid cursor&quot;)
+
+print(&quot;order ids:&quot;, [row[&quot;order_id&quot;] for row in orders])
+print(&quot;source:&quot;, &quot;training-order-fixture/v1&quot;)
+print(&quot;retrieved:&quot;, &quot;2025-01-08T00:00:00Z&quot;, &quot;pages:&quot;, len(seen), &quot;rows:&quot;, len(orders))</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>order ids: [101, 102, 103, 104]
+source: training-order-fixture/v1
+retrieved: 2025-01-08T00:00:00Z pages: 2 rows: 4</code></pre>
+<div class="check" data-q="q7"></div><div class="check" data-q="q8"></div>
+
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table><thead><tr><th scope="col">개념</th><th scope="col">확인할 것</th></tr></thead><tbody>
+<tr><th scope="row"><b class="key">페이지</b></th><td>제공자가 정한 다음 값과 종료 신호를 사용한다.</td></tr>
+<tr><th scope="row"><b class="key">권한</b></th><td>허용 범위 안에서 요청하고 자격 정보는 기록에서 제외한다.</td></tr>
+<tr><th scope="row"><b class="key">출처</b></th><td>제공·수집·재사용 조건을 확인한다.</td></tr>
+</tbody></table></div><div class="box sum"><p class="box-k">다음 장으로</p><p><a href="db07-1.html">다음 장</a>에서는 받은 기록을 검증하고 분석용 값으로 변환합니다.</p></div>
+
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://www.rfc-editor.org/rfc/rfc9110">RFC 9110 · HTTP 요청 메서드와 응답 코드</a></li>
+<li><a href="https://www.rfc-editor.org/rfc/rfc6585#section-4">RFC 6585 · 요청 제한 429</a></li>
+<li><a href="https://www.rfc-editor.org/rfc/rfc8259">RFC 8259 · JSON의 구조와 값</a></li>
+</ul>
+<h2>확인 문제</h2>
+<p>직접 계산하거나 설명을 먼저 적고 답을 확인해 보세요.</p>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

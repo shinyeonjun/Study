@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>파일의 이름과 버퍼의 데이터는 다른 상태다 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e8c'/%3E%3Cpath d='M8 22V10m8 12V14m8 8V6' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="SY05-2">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+
+<header class="chapter">
+<p class="chap-sub">시스템 · SY05 메모리와 파일</p>
+<p class="chap-num">SY05·2</p>
+<h1>파일의 이름과 버퍼의 데이터는 다른 상태다</h1>
+<p class="lead">쓰기 함수가 성공했다고 저장장치에 읽을 값이 모두 도착한 것은 아닐 수 있습니다. 파일을 여는 위치, 쓰기 버퍼, 운영체제의 저장 단계를 구분합니다.</p>
+</header>
+
+<div class="goal">
+<h2>이 장을 읽고 나면</h2>
+<ul>
+<li>파일시스템, 경로, 열린 파일 객체의 역할을 구분한다.</li>
+<li>스트림의 버퍼와 읽는 위치를 작은 바이트열로 추적한다.</li>
+<li>flush, close, fsync를 각각 언제 사용하는지 설명한다.</li>
+</ul>
+</div>
+
+<h2>경로에서 파일을 찾고 열린 스트림에서 읽는다</h2>
+<p><b class="key">파일시스템</b>은 파일의 이름과 디렉터리, 내용, 크기 같은 정보를 보관하고 찾을 수 있게 합니다. 파일을 연 뒤 읽는 값은 경로 문자열만으로 결정되지 않습니다. 현재 어떤 파일을 열었는지와, 그 파일 안에서 다음에 읽을 위치가 중요합니다. 상대경로 <code>results/table.csv</code>는 보통 현재 작업 폴더를 기준으로 해석합니다. 같은 이름의 파일을 다른 폴더에 두어도 서로 다른 경로가 될 수 있습니다.</p>
+<p>바이너리 모드의 파일에서는 바이트 단위로 읽거나 움직일 수 있습니다. 예를 들어 원본이 <code>b"ABCDEF"</code>이고 처음부터 두 바이트를 읽으면 <code>b"AB"</code>가 나오고 다음 위치는 2입니다. 이어서 두 바이트를 읽으면 <code>b"CD"</code>가 나옵니다. <code>seek(2)</code>는 시작으로부터 두 바이트 위치를 다시 가리킵니다. 텍스트 모드에서는 문자 인코딩이나 줄바꿈 처리가 들어가므로 문자 수를 바이트 위치로 그대로 바꾸지 않습니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 181" role="img" aria-label="파일 바이트 ABCDEF에서 인덱스 0,1을 읽어 AB를 얻고 다음 위치 2를 가리킨다. 이어서 C,D를 읽을 수 있다.">
+<text class="f-s" x="140" y="43" text-anchor="middle">0</text>
+<rect class="f-soft" x="107" y="56" width="66" height="42" rx="0"/>
+<text class="f-cap" x="140" y="84" text-anchor="middle">A</text>
+<text class="f-s" x="216" y="43" text-anchor="middle">1</text>
+<rect class="f-soft" x="183" y="56" width="66" height="42" rx="0"/>
+<text class="f-cap" x="216" y="84" text-anchor="middle">B</text>
+<text class="f-s" x="292" y="43" text-anchor="middle">2</text>
+<rect class="f-box" x="259" y="56" width="66" height="42" rx="0"/>
+<text class="f-cap" x="292" y="84" text-anchor="middle">C</text>
+<text class="f-s" x="368" y="43" text-anchor="middle">3</text>
+<rect class="f-box" x="335" y="56" width="66" height="42" rx="0"/>
+<text class="f-cap" x="368" y="84" text-anchor="middle">D</text>
+<text class="f-s" x="444" y="43" text-anchor="middle">4</text>
+<rect class="f-box" x="411" y="56" width="66" height="42" rx="0"/>
+<text class="f-cap" x="444" y="84" text-anchor="middle">E</text>
+<text class="f-s" x="520" y="43" text-anchor="middle">5</text>
+<rect class="f-box" x="487" y="56" width="66" height="42" rx="0"/>
+<text class="f-cap" x="520" y="84" text-anchor="middle">F</text>
+<line class="f-line" x1="292" y1="142" x2="292" y2="105" marker-end="url(#f-arrow)"/>
+<text class="f-s" x="392" y="151" text-anchor="middle">두 바이트를 읽은 뒤 위치 2</text>
+</svg>
+<figcaption>바이너리 예의 인덱스 2는 세 번째 값 C의 위치다.</figcaption>
+</figure>
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+<h2>쓴 내용은 사용자 공간과 운영체제의 여러 층을 지나갈 수 있다</h2>
+<p>작게 쓰는 내용을 매번 바로 다음층에 넘기면 작은 요청이 많아집니다. <b class="key">버퍼</b>는 값을 임시로 모아 두는 공간입니다. 쓰기 스트림에 버퍼가 있는 경우 <code>write()</code>로 받은 데이터가 아직 그 버퍼에만 있을 수 있습니다. <code>flush()</code>는 이 스트림에 쌓인 쓰기를 아래 층으로 내보냅니다. 운영체제는 전달받은 파일 데이터를 메모리에 둔 다음 나중에 저장장치에 기록할 수 있습니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 189" role="img" aria-label="파일 쓰기에는 프로그램의 버퍼, 운영체제, 저장장치의 단계가 있다. flush는 프로그램의 버퍼에서 아래로 내보내고 fsync는 파일을 저장장치에 동기화하도록 운영체제에 요청한다.">
+<rect class="f-soft" x="54" y="53" width="174" height="53" rx="3"/>
+<text class="f-cap" x="141" y="84" text-anchor="middle">스트림 버퍼</text>
+<rect class="f-box" x="292" y="53" width="174" height="53" rx="3"/>
+<text class="f-cap" x="379" y="84" text-anchor="middle">운영체제</text>
+<rect class="f-box" x="530" y="53" width="174" height="53" rx="3"/>
+<text class="f-cap" x="617" y="84" text-anchor="middle">저장장치</text>
+<line class="f-line" x1="231" y1="80" x2="287" y2="80" marker-end="url(#f-arrow)"/>
+<line class="f-line" x1="469" y1="80" x2="525" y2="80" marker-end="url(#f-arrow)"/>
+<text class="f-s" x="258" y="132" text-anchor="middle">flush로 배출</text>
+<text class="f-s" x="498" y="132" text-anchor="middle">fsync로 동기화 요청</text>
+<text class="f-s" x="379" y="167" text-anchor="middle">파일 객체를 닫는 일과 저장장치 동기화를 구분한다.</text>
+</svg>
+<figcaption>호출 관계를 단순화했다. 파일시스템과 장치 설정에 따라 장애에 대한 보장 범위가 달라진다.</figcaption>
+</figure>
+<p><code>close()</code>는 열린 스트림을 정리하고 필요한 경우 버퍼를 비웁니다. <code>with open(...) as f:</code>를 쓰면 그 범위를 나올 때 파일 객체를 닫을 수 있습니다. 장애가 나도 보존하는 것이 중요한 작업에서는 버퍼를 비운 뒤 <code>os.fsync(f.fileno())</code>로 파일의 동기화를 별도로 요청하는 경우가 있습니다. 운영체제·파일시스템·장치가 어느 범위까지 보장하는지 확인해야 하고, 파일을 새로 만들거나 바꿀 때 디렉터리 항목의 지속성은 별도 문제일 수 있습니다.</p>
+<div class="check" data-q="q3"></div>
+<div class="check" data-q="q4"></div>
+<h2>버퍼에서 쓴 값이 언제 보이는지 실습한다</h2>
+<p>예제의 첫 부분은 파일 대신 메모리의 <code>BytesIO</code> 위에 8바이트 쓰기 버퍼를 붙입니다. 3바이트인 <code>cat</code>을 버퍼에 넣은 다음, 아래쪽의 원본 스트림을 직접 살펴 언제 보이는지 구분할 수 있습니다. OS의 파일 캐시를 측정하는 실습은 아닙니다. 두 번째는 임시 파일을 열어 바이트 위치와 파일 객체의 수명을 확인합니다.</p>
+<pre data-example="python"><code>from io import BufferedWriter, BytesIO
+from pathlib import Path
+from tempfile import TemporaryDirectory
+
+raw = BytesIO()
+with BufferedWriter(raw, buffer_size=8) as stream:
+    stream.write(b&quot;cat&quot;)
+    print(&quot;raw before:&quot;, raw.getvalue())
+    stream.flush()
+    print(&quot;raw after:&quot;, raw.getvalue())
+print(&quot;underlying closed:&quot;, raw.closed)
+
+with TemporaryDirectory() as folder:
+    path = Path(folder) / &quot;sample.bin&quot;
+    path.write_bytes(b&quot;ABCDEF&quot;)
+    with path.open(&quot;rb&quot;) as file:
+        print(&quot;first:&quot;, file.read(2), &quot;offset:&quot;, file.tell())
+        print(&quot;next:&quot;, file.read(2))
+        file.seek(2)
+        print(&quot;read again:&quot;, file.read(2))
+    print(&quot;file closed:&quot;, file.closed)</code></pre>
+<pre data-output><code>raw before: b''
+raw after: b'cat'
+underlying closed: True
+first: b'AB' offset: 2
+next: b'CD'
+read again: b'CD'
+file closed: True</code></pre>
+<p>파일을 열어 사용한 기간은 코드 블록에서 관리하고, 그 파일의 내용이 알아서 바뀌어서는 안 되는 경우에는 따로 입력과 출력 경로를 정합니다. 기존 파일을 읽는다면 <code>rb</code>, 새 내용을 쓰는 모드에는 기존 내용을 잘라 버리는 종류도 있으므로 모드를 먼저 확인합니다.</p>
+<div class="check" data-q="q5"></div>
+<div class="check" data-q="q6"></div>
+
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table>
+<thead><tr><th scope="col">핵심어</th><th scope="col">기억할 기준</th></tr></thead>
+<tbody>
+<tr><td><b class="key">파일 위치</b></td><td>경로는 파일을 찾고, 오프셋은 열린 파일에서 다음 바이트를 고른다.</td></tr>
+<tr><td><b class="key">버퍼</b></td><td>작은 쓰기를 잠시 모았다가 아래 층에 보낼 수 있다.</td></tr>
+<tr><td><b class="key">닫기와 동기화</b></td><td>열린 자원을 정리하는 일과 장치까지 저장을 요청하는 일을 구분한다.</td></tr>
+</tbody></table></div>
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>파일에 쓴 값이 어느 층까지 전달됐는지와 열린 스트림이 언제 끝나는지를 구별한다.</p></div>
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://docs.python.org/3/library/io.html">Python 공식 문서 · 바이너리 스트림과 버퍼</a></li>
+<li><a href="https://docs.python.org/3/library/os.html#os.fsync">Python 공식 문서 · os.fsync와 flush</a></li>
+<li><a href="https://docs.python.org/3/library/pathlib.html">Python 공식 문서 · 경로 객체</a></li>
+</ul>
+
+<h2>확인 문제</h2>
+<p>아직 풀지 않은 문제입니다. 먼저 식이나 근거를 적어 보고 해설을 확인합니다.</p>
+<div id="quiz"></div>
+
+<section class="work" id="tools"></section>
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

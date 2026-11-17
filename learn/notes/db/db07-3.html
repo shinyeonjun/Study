@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>배치와 스트리밍, 스키마 변경과 자료 계보 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="DB07-3">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">데이터베이스 · DB07 데이터 파이프라인</p>
+<p class="chap-num">DB07·3</p>
+<h1>배치와 스트리밍, 스키마 변경과 자료 계보</h1>
+<p class="lead">어떤 주문이 오전에 발생하고 오후에 도착했다면 오전 합계는 언제 완성될까요? 이벤트 시각과 도착 시각을 나누고, 변경된 열을 이전 값과 같은 단위로 읽는 규칙을 세웁니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul>
+<li>배치 처리와 스트리밍 처리를 비교한다.</li>
+<li>이벤트 시각 윈도, 지연 도착과 워터마크를 해석한다.</li>
+<li>스키마 변경에 대응하는 규칙과 자료 계보를 기록한다.</li>
+</ul></div>
+
+<h2>정해진 구간을 모아서 계산하거나 도착 즉시 계산</h2>
+<p><b class="key">배치 처리</b>는 정해진 시간이나 기간에 수집한 유한한 자료를 모아 처리합니다. 모든 입력을 기다려 매일 마감 주문을 계산하는 것이 예입니다. <b class="key">스트리밍</b>은 기록이 계속 도착한다고 보고 새 기록을 받아 요약을 갱신합니다. 작은 묶음을 짧은 간격으로 이어서 처리하는 방식도 가능합니다. 결과가 언제 필요하고 어느 정도 지연을 허용할지 정합니다.</p>
+<p>주문이 발생한 <b class="key">이벤트 시각</b>과 수집기가 받은 <b class="key">도착 시각</b>은 다를 수 있습니다. 집계 구간을 <code>[0,10)</code>으로 잡으면 0 이상 10 미만 발생 주문을 같은 묶음으로 계산합니다. 기준을 도착 시각으로 바꾸면 질문이 바뀝니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 295" role="img" aria-label="주문 101,102,103,104의 이벤트 시각은 1,4,11,8이고 도착 시각은 2,5,12,15다. 이벤트 시각 [0,10) 집계에는 101,102,104가 속한다.">
+<text class="f-cap" x="380" y="29" text-anchor="middle">기록이 발생한 시각과 받은 시각</text>
+<line class="f-ink" x1="202" y1="95" x2="682" y2="95"/>
+<line class="f-ink" x1="202" y1="199" x2="682" y2="199"/>
+<text class="f-s" x="184" y="99" text-anchor="end">이벤트 시각</text>
+<text class="f-s" x="184" y="203" text-anchor="end">도착 시각</text>
+<line class="f-ink" x1="202" y1="190" x2="202" y2="205"/>
+<text class="f-s" x="202" y="227" text-anchor="middle">0</text>
+<line class="f-ink" x1="352" y1="190" x2="352" y2="205"/>
+<text class="f-s" x="352" y="227" text-anchor="middle">5</text>
+<line class="f-ink" x1="502" y1="190" x2="502" y2="205"/>
+<text class="f-s" x="502" y="227" text-anchor="middle">10</text>
+<line class="f-ink" x1="652" y1="190" x2="652" y2="205"/>
+<text class="f-s" x="652" y="227" text-anchor="middle">15</text>
+<line class="f-dash" x1="502" y1="64" x2="502" y2="173"/>
+<text class="f-s" x="502" y="51" text-anchor="middle">이벤트 구간 끝 10</text>
+<circle class="f-fill" cx="232" cy="95" r="5"/>
+<circle class="f-fill" cx="262" cy="199" r="5"/>
+<line class="f-dash" x1="232" y1="101" x2="262" y2="193"/>
+<text class="f-s" x="232" y="79" text-anchor="middle">101</text>
+<text class="f-s" x="262" y="184" text-anchor="middle">101</text>
+<circle class="f-fill" cx="322" cy="95" r="5"/>
+<circle class="f-fill" cx="352" cy="199" r="5"/>
+<line class="f-dash" x1="322" y1="101" x2="352" y2="193"/>
+<text class="f-s" x="322" y="79" text-anchor="middle">102</text>
+<text class="f-s" x="352" y="184" text-anchor="middle">102</text>
+<circle class="f-fill" cx="442" cy="95" r="5"/>
+<circle class="f-fill" cx="652" cy="199" r="5"/>
+<line class="f-dash" x1="442" y1="101" x2="652" y2="193"/>
+<text class="f-s" x="442" y="79" text-anchor="middle">104</text>
+<text class="f-s" x="652" y="184" text-anchor="middle">104</text>
+<circle class="f-fill" cx="532" cy="95" r="5"/>
+<circle class="f-fill" cx="562" cy="199" r="5"/>
+<line class="f-dash" x1="532" y1="101" x2="562" y2="193"/>
+<text class="f-s" x="532" y="79" text-anchor="middle">103</text>
+<text class="f-s" x="562" y="184" text-anchor="middle">103</text>
+<text class="f-t" x="380" y="270" text-anchor="middle">주문 104는 구간 안에서 발생하고 다른 주문보다 늦게 도착합니다.</text>
+</svg>
+<figcaption>시간 숫자는 모두 같은 단위입니다. 이벤트 시각 8인 주문 104는 도착 시각 15까지 집계에 들어오지 않습니다.</figcaption>
+</figure>
+<div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
+
+<h2>늦은 자료와 윈도의 마감</h2>
+<p>도착 시각 12까지는 101, 102, 103이 도착했습니다. 이벤트 구간 <code>[0,10)</code>의 합은 10,000+15,000=25,000원입니다. 주문 103은 시각 11에 발생해 그 윈도에서 제외됩니다. 뒤늦게 도착한 주문 104는 이벤트 시각이 8이므로 원래 같은 윈도 소속입니다. 이를 포함하면 40,000원입니다.</p>
+<p><b class="key">워터마크</b>는 처리기가 어떤 이벤트 시각까지 자료가 들어왔을 것으로 보는 진행 경계입니다. 학습 모형은 그때까지 관측한 가장 큰 이벤트 시각에서 1을 빼서 경계를 둡니다. 시각 12에 이벤트 시각 11을 보았으므로 경계는 10입니다. 그 경계는 뒤늦은 기록이 없다는 증명이 아닙니다. 아래 정책은 경계를 넘긴 윈도라도 늦게 도착한 기록의 정정을 허용합니다. 운영에서는 허용할 지연과 정정을 알리는 방법을 정합니다.</p>
+<div class="check" data-q="q3"></div><div class="check" data-q="q4"></div>
+
+<h2>열의 모양뿐 아니라 단위도 바뀔 수 있다</h2>
+<p>제공자가 선택적인 쿠폰 필드를 추가하면 이전 소비자가 그 필드를 모르더라도 기존 주문 조회는 유지될 수 있습니다. 필수 열을 지우거나, 원 단위 값을 100원 단위로 바꾸면 의미가 바뀝니다. 버전별 형식과 단위를 명시하고, 아는 버전만 변환합니다. 모르는 버전에서 비슷한 값을 발견해 같은 단위로 단정하지 않습니다.</p>
+<p><b class="key">자료 계보</b>는 결과가 어떤 입력에서 어떤 변환 단계를 거쳐 나왔는지 따라가는 정보입니다. 파일과 스키마 버전, 변환 코드의 버전, 구간과 필터, 검증과 출력 요약을 남깁니다. 코드를 기록하는 방법은 <a href="../../unit.html?u=SY07">SY07 Git와 재현 가능한 작업</a>에서 이어서 봅니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 246" role="img" aria-label="자료 출처, 열의 의미, 변환과 설정, 결과를 계보에 기록한다.">
+<text class="f-cap" x="380" y="29" text-anchor="middle">집계 하나를 다시 따라가려면</text>
+<rect class="f-soft" x="49.5" y="43" width="233" height="37"/>
+<text class="f-s" x="166" y="66.5" text-anchor="middle">기록</text>
+<rect class="f-soft" x="282.5" y="43" width="428" height="37"/>
+<text class="f-s" x="496.5" y="66.5" text-anchor="middle">예제에서 남길 값</text>
+<rect class="f-box" x="49.5" y="80" width="233" height="37"/>
+<text class="f-t" x="166" y="103.5" text-anchor="middle">입력</text>
+<rect class="f-box" x="282.5" y="80" width="428" height="37"/>
+<text class="f-t" x="496.5" y="103.5" text-anchor="middle">훈련용 주문 기록 · 받은 시간 범위</text>
+<rect class="f-box" x="49.5" y="117" width="233" height="37"/>
+<text class="f-t" x="166" y="140.5" text-anchor="middle">열의 의미와 버전</text>
+<rect class="f-box" x="282.5" y="117" width="428" height="37"/>
+<text class="f-t" x="496.5" y="140.5" text-anchor="middle">이벤트 시각, 원과 100원 단위 구별</text>
+<rect class="f-box" x="49.5" y="154" width="233" height="37"/>
+<text class="f-t" x="166" y="177.5" text-anchor="middle">변환과 설정</text>
+<rect class="f-box" x="282.5" y="154" width="428" height="37"/>
+<text class="f-t" x="496.5" y="177.5" text-anchor="middle">버전 대응 규칙, 윈도와 지연 자료 처리</text>
+<rect class="f-box" x="49.5" y="191" width="233" height="37"/>
+<text class="f-t" x="166" y="214.5" text-anchor="middle">결과·대조</text>
+<rect class="f-box" x="282.5" y="191" width="428" height="37"/>
+<text class="f-t" x="496.5" y="214.5" text-anchor="middle">첫 합 25,000원, 정정 +15,000원</text>
+</svg>
+<figcaption>같은 입력도 버전·윈도·지연 정책에 따라 보고시점의 결과가 다를 수 있습니다.</figcaption>
+</figure>
+<div class="check" data-q="q5"></div><div class="check" data-q="q6"></div>
+
+<h2>같은 윈도에서 정정까지 계산하기</h2>
+
+<p class="small">실행 예제</p>
+<pre data-example="python"><code>events = [
+    # order_id, event_time, arrival_time, amount_won
+    (101, 1, 2, 10000),
+    (102, 4, 5, 15000),
+    (103, 11, 12, 12000),
+    (104, 8, 15, 15000),
+]
+received = [row for row in events if row[2] &lt;= 12]
+watermark = max(row[1] for row in received) - 1
+
+def window_total(rows):
+    return sum(amount for _, t, _, amount in rows if 0 &lt;= t &lt; 10)
+
+initial = window_total(received)
+corrected = window_total(events)
+print(&quot;watermark:&quot;, watermark)
+print(&quot;initial:&quot;, initial, &quot;correction:&quot;, corrected - initial, &quot;final:&quot;, corrected)
+
+def to_won(row):
+    if row[&quot;schema&quot;] == 1:
+        return row[&quot;total_won&quot;]
+    if row[&quot;schema&quot;] == 2:
+        return 100 * row[&quot;total_hundred_won&quot;]
+    raise ValueError(&quot;unknown schema&quot;)
+
+print(&quot;same amount:&quot;, to_won({&quot;schema&quot;: 1, &quot;total_won&quot;: 15000}),
+      to_won({&quot;schema&quot;: 2, &quot;total_hundred_won&quot;: 150}))</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>watermark: 10
+initial: 25000 correction: 15000 final: 40000
+same amount: 15000 15000</code></pre>
+<p>마지막 줄은 각 버전이 실제로 단위를 그렇게 문서화한 경우입니다. 버전이 알려졌어도 열이 필수로 존재하는지, 정수인지, 금액 범위를 만족하는지는 앞 장의 검증 단계에서 확인합니다.</p>
+<div class="check" data-q="q7"></div><div class="check" data-q="q8"></div>
+
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table><thead><tr><th scope="col">개념</th><th scope="col">확인할 것</th></tr></thead><tbody>
+<tr><th scope="row"><b class="key">이벤트 시간</b></th><td>언제 발생한 일인지 기준으로 윈도를 정한다.</td></tr>
+<tr><th scope="row"><b class="key">워터마크</b></th><td>시각 진행과 지연 자료의 처리 정책을 구분한다.</td></tr>
+<tr><th scope="row"><b class="key">계보</b></th><td>입력, 변환과 설정, 버전, 검증 결과가 연결된다.</td></tr>
+</tbody></table></div><div class="box sum"><p class="box-k">다음 장으로</p><p><a href="db08-1.html">다음 장</a>에서는 같은 주문을 복제하거나 서로 다른 저장 노드에 나누어 둡니다.</p></div>
+
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://beam.apache.org/documentation/programming-guide/#watermarks-and-late-data">Apache Beam · 이벤트 시간, 윈도와 워터마크</a></li>
+<li><a href="https://www.w3.org/TR/prov-overview/">W3C · PROV 개요</a></li>
+<li><a href="https://www.rfc-editor.org/rfc/rfc8259">RFC 8259 · JSON의 구조와 값</a></li>
+</ul>
+<h2>확인 문제</h2>
+<p>직접 계산하거나 설명을 먼저 적고 답을 확인해 보세요.</p>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

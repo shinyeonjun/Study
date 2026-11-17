@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>선행 작업이 있는 순서와 막히는 사이클 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e8c'/%3E%3Cpath d='M8 22V10m8 12V14m8 8V6' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="CS07-3">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+
+<header class="chapter">
+<p class="chap-sub">자료구조·알고리즘 · CS07 그래프 알고리즘</p>
+<p class="chap-num">CS07·3</p>
+<h1>선행 작업이 있는 순서와 막히는 사이클</h1>
+<p class="lead">먼저 끝나야 할 작업이 모두 끝났을 때 다음 작업을 꺼냅니다. 서로 기다리는 작업 때문에 순서를 만들 수 없는 경우도 판별합니다.</p>
+</header>
+
+<div class="goal">
+<h2>이 장을 읽고 나면</h2>
+<ul>
+<li>간선 방향과 진입 차수로 실행 가능한 작업을 찾는다.</li>
+<li>유효한 위상 순서가 둘 이상일 수 있음을 확인한다.</li>
+<li>방향 사이클 때문에 남은 작업을 처리할 수 없는 경우를 검출한다.</li>
+</ul>
+</div>
+<h2>화살표의 출발 작업을 먼저 끝내야 한다</h2>
+<p>분석 작업 D를 시작하려면 입력을 만드는 B와 C가 먼저 끝나야 합니다. 원본 받기 A는 B와 C보다 앞에, 결과 제출 E는 D보다 뒤에 둡니다. 이 장에서 화살표 u→v는 u가 먼저여야 한다는 뜻입니다. 별도 점검 F는 이 그래프에서 들어오는 간선도 나가는 간선도 없습니다.</p>
+<p>모든 간선의 출발 정점이 도착 정점보다 앞에 오도록 전체 정점을 나열한 결과를 <b class="key">위상 순서</b>라 합니다. 예를 들어 A,F,B,C,D,E가 한 순서입니다. A 뒤에서 C와 B의 순서를 바꾸고 F를 맨 뒤에 놓은 A,C,B,D,E,F도 조건을 모두 지킵니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 239" role="img" aria-label="A는 B와 C의 선행 작업, B와 C는 D의 선행 작업, D는 E의 선행 작업, F는 독립이다.">
+<text class="f-cap" x="380" y="28" text-anchor="middle">방향은 선행 작업에서 다음 작업으로</text>
+<line class="f-line" x1="163.13761937203608" y1="116.04380272094707" x2="262.94451211634146" y2="86.52345416277225" marker-end="url(#f-arrow)"/>
+<line class="f-line" x1="162.93634441498057" y1="128.59864920777525" x2="263.164956116926" y2="161.77290801053186" marker-end="url(#f-arrow)"/>
+<line class="f-line" x1="305.3434707930551" y1="85.20991325187997" x2="426.71905579808254" y2="116.29390453365528" marker-end="url(#f-arrow)"/>
+<line class="f-line" x1="305.1873513137926" y1="163.2146005381204" x2="426.8900437991795" y2="128.33638988682048" marker-end="url(#f-arrow)"/>
+<line class="f-line" x1="470" y1="122" x2="590" y2="122" marker-end="url(#f-arrow)"/>
+<circle class="f-box" cx="143" cy="122" r="19"/>
+<text class="f-cap" x="143" y="127" text-anchor="middle">A</text>
+<circle class="f-box" cx="285" cy="80" r="19"/>
+<text class="f-cap" x="285" y="85" text-anchor="middle">B</text>
+<circle class="f-box" cx="285" cy="169" r="19"/>
+<text class="f-cap" x="285" y="174" text-anchor="middle">C</text>
+<circle class="f-box" cx="449" cy="122" r="19"/>
+<text class="f-cap" x="449" y="127" text-anchor="middle">D</text>
+<circle class="f-box" cx="613" cy="122" r="19"/>
+<text class="f-cap" x="613" y="127" text-anchor="middle">E</text>
+<circle class="f-box" cx="614" cy="201" r="19"/>
+<text class="f-cap" x="614" y="206" text-anchor="middle">F</text>
+</svg>
+<figcaption>B와 C 사이에는 제약이 없으므로 둘의 순서는 바꿀 수 있습니다.</figcaption>
+</figure>
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+
+<h2>들어오는 선행 의존성이 0개인 작업을 꺼낸다</h2>
+<p>정점으로 들어오는 화살표 수가 <b class="key">진입 차수</b>입니다. 처음 A,F는 0, B,C,E는 1, D는 2입니다. A와 F를 처리 가능한 큐에 넣습니다. A를 처리해 A의 화살표를 제거하면 B와 C가 각각 0이 되어 큐 뒤로 들어갑니다. B를 처리하면 D는 1이어서 아직 기다립니다. C도 처리하면 D는 0, D를 처리하면 E도 0이 됩니다.</p>
+<p>이 방법은 새로 0이 된 정점만 큐에 넣습니다. 같은 단계에서 넣을 것이 여러 개라면 그중 어떤 것을 먼저 고르느냐에 따라 유효한 결과가 바뀔 수 있습니다. 예제에서는 그래프에 적힌 순서와 FIFO 큐를 사용합니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 303" role="img" aria-label="A,F에서 A를 처리해 F,B,C가 남고, F 뒤 B,C, C까지 처리하면 D가 남으며 최종 순서는 A,F,B,C,D,E이다.">
+<text class="f-cap" x="380" y="33" text-anchor="middle">큐 맨 앞부터 꺼내고 새로 가능한 작업을 뒤에 넣는다</text>
+<text class="f-t" x="180" y="82" text-anchor="end">처음 큐</text>
+<rect class="f-soft" x="206" y="58" width="78" height="38" rx="3"/>
+<text class="f-t" x="245" y="83" text-anchor="middle">A</text>
+<rect class="f-box" x="290" y="58" width="78" height="38" rx="3"/>
+<text class="f-t" x="329" y="83" text-anchor="middle">F</text>
+<text class="f-t" x="180" y="128" text-anchor="end">A를 처리</text>
+<rect class="f-soft" x="206" y="104" width="78" height="38" rx="3"/>
+<text class="f-t" x="245" y="129" text-anchor="middle">F</text>
+<rect class="f-box" x="290" y="104" width="78" height="38" rx="3"/>
+<text class="f-t" x="329" y="129" text-anchor="middle">B</text>
+<rect class="f-box" x="374" y="104" width="78" height="38" rx="3"/>
+<text class="f-t" x="413" y="129" text-anchor="middle">C</text>
+<text class="f-t" x="180" y="174" text-anchor="end">F를 처리</text>
+<rect class="f-soft" x="206" y="150" width="78" height="38" rx="3"/>
+<text class="f-t" x="245" y="175" text-anchor="middle">B</text>
+<rect class="f-box" x="290" y="150" width="78" height="38" rx="3"/>
+<text class="f-t" x="329" y="175" text-anchor="middle">C</text>
+<text class="f-t" x="180" y="220" text-anchor="end">C까지 처리</text>
+<rect class="f-soft" x="206" y="196" width="78" height="38" rx="3"/>
+<text class="f-t" x="245" y="221" text-anchor="middle">D</text>
+<text class="f-t" x="180" y="266" text-anchor="end">출력 순서</text>
+<rect class="f-box" x="206" y="242" width="78" height="38" rx="3"/>
+<text class="f-t" x="245" y="267" text-anchor="middle">A</text>
+<rect class="f-box" x="290" y="242" width="78" height="38" rx="3"/>
+<text class="f-t" x="329" y="267" text-anchor="middle">F</text>
+<rect class="f-box" x="374" y="242" width="78" height="38" rx="3"/>
+<text class="f-t" x="413" y="267" text-anchor="middle">B</text>
+<rect class="f-box" x="458" y="242" width="78" height="38" rx="3"/>
+<text class="f-t" x="497" y="267" text-anchor="middle">C</text>
+<rect class="f-box" x="542" y="242" width="78" height="38" rx="3"/>
+<text class="f-t" x="581" y="267" text-anchor="middle">D</text>
+<rect class="f-box" x="626" y="242" width="78" height="38" rx="3"/>
+<text class="f-t" x="665" y="267" text-anchor="middle">E</text>
+</svg>
+<figcaption>B 처리 뒤 진입 차수 1인 D는 큐 밖에 있습니다. C도 끝나야 D가 들어옵니다.</figcaption>
+</figure>
+<div class="check" data-q="q3"></div>
+<div class="check" data-q="q4"></div>
+
+<h2>큐가 비었는데 남은 정점이 있으면 막힌 이유가 있다</h2>
+<p>처리되지 않은 정점들 중 진입 차수가 0인 것이 없으면, 각 정점에 아직 남은 선행 정점이 있습니다. 그 선행 정점을 계속 거슬러 가면 유한한 그래프에서는 어느 정점을 다시 만나 <b class="key">방향 사이클</b>이 생깁니다. E→B를 더하면 B→D→E→B가 함께 서로를 기다립니다. A,F,C는 처리할 수 있지만 나머지를 포함하는 위상 순서는 없습니다.</p>
+<div class="check" data-q="q5"></div>
+<div class="check" data-q="q6"></div>
+<pre data-example="python"><code>from collections import deque
+
+graph = {&quot;A&quot;: [&quot;B&quot;, &quot;C&quot;], &quot;B&quot;: [&quot;D&quot;], &quot;C&quot;: [&quot;D&quot;],
+         &quot;D&quot;: [&quot;E&quot;], &quot;E&quot;: [], &quot;F&quot;: []}
+
+def topological_order(edges):
+    indegree = dict.fromkeys(edges, 0)
+    for row in edges.values():
+        for nxt in row:
+            indegree[nxt] += 1
+
+    ready = deque(node for node in edges if indegree[node] == 0)
+    order = []
+    while ready:
+        node = ready.popleft()
+        order.append(node)
+        for nxt in edges[node]:
+            indegree[nxt] -= 1
+            if indegree[nxt] == 0:
+                ready.append(nxt)
+    return order if len(order) == len(edges) else None
+
+order = topological_order(graph)
+rank = {name: i for i, name in enumerate(order)}
+assert all(rank[u] &lt; rank[v] for u, row in graph.items() for v in row)
+with_cycle = {**graph, &quot;E&quot;: [&quot;B&quot;]}
+print(&quot;order:&quot;, &quot; &quot;.join(order))
+print(&quot;cycle detected:&quot;, topological_order(with_cycle) is None)</code></pre>
+<pre data-output><code>order: A F B C D E
+cycle detected: True</code></pre>
+<p>유한한 방향 그래프에서 방향 사이클이 없을 때, 그리고 그때에만 위상 순서가 존재합니다. 빈 그래프에서는 빈 순서가 하나의 정상 결과입니다. 진입 차수를 처음 계산하고 처리에서 각 간선을 한 번 더 보면 전체 시간은 O(V+E), 입력 외 진입 차수 표와 큐 등은 O(V) 공간입니다.</p>
+
+<h2>참고 자료</h2>
+<ul>
+<li><a href="../dm/dm05-2.html">DM05 · 경로와 사이클</a></li>
+<li><a href="https://ocw.mit.edu/courses/6-006-introduction-to-algorithms-spring-2020/resources/lecture-notes/">MIT 6.006 · 깊이 우선 탐색과 위상 순서</a></li>
+</ul>
+
+<h2>확인 문제</h2>
+<p>아직 풀지 않은 문제입니다. 먼저 식이나 근거를 적어 보고 해설을 확인합니다.</p>
+<div id="quiz"></div>
+
+<section class="work" id="tools"></section>
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

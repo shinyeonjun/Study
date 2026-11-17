@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>환경 변수와 표준 입출력이 명령을 연결한다 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e8c'/%3E%3Cpath d='M8 22V10m8 12V14m8 8V6' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="SY06-2">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+
+<header class="chapter">
+<p class="chap-sub">시스템 · SY06 터미널과 Linux</p>
+<p class="chap-num">SY06·2</p>
+<h1>환경 변수와 표준 입출력이 명령을 연결한다</h1>
+<p class="lead">두 프로그램을 연결할 때 각 프로그램은 서로의 내부 변수를 몰라도 됩니다. 필요한 설정은 환경으로 건네고, 데이터는 입출력 통로로 전달합니다.</p>
+</header>
+
+<div class="goal">
+<h2>이 장을 읽고 나면</h2>
+<ul>
+<li>셸 변수와 자식 프로그램에 전달되는 환경의 관계를 설명한다.</li>
+<li>표준 입력·출력·오류와 파이프·리다이렉션의 연결을 읽는다.</li>
+<li>Python에서 로컬 프로세스의 환경과 실제 파이프로 작은 데이터를 전달한다.</li>
+</ul>
+</div>
+
+<h2>현재 셸의 변수를 새 프로그램에도 전할까</h2>
+<p>Bash에서 <code>WORD_LIMIT=2</code>라고 적으면 현재 셸의 변수를 정합니다. 자식 프로세스에 이 설정이 필요하다면 <code>export WORD_LIMIT</code>로 환경에 포함할 수 있습니다. <b class="key">환경 변수</b>는 실행할 프로그램에 넘기는 이름과 문자열 값입니다. 설정을 읽은 프로그램이 <code>2</code>를 정수로 사용하려면 스스로 바꿔야 합니다. <code>WORD_LIMIT=2 command</code>처럼 외부 명령 앞에 넣으면 그 실행의 환경에 값을 줄 수 있습니다.</p>
+<p>Python에서는 <code>subprocess.run(..., env=...)</code>으로 자식이 받을 환경 사전을 전달할 수 있습니다. 아래 예에서는 현재 환경을 복사한 뒤 실습에 필요한 설정 한 개만 추가합니다. 부모의 환경을 그 자리에서 변경하지 않습니다. 새 프로세스가 내부의 환경 값을 바꾸어도 부모에게 변경이 자동으로 돌아오는 것은 아닙니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 169" role="img" aria-label="부모에서 설정 WORD_LIMIT의 값 2를 환경으로 전달한다. 자식은 문자열 2를 정수 2로 읽어 결과 항목을 둘로 제한한다.">
+<rect class="f-box" x="53" y="49" width="184" height="58" rx="3"/>
+<text class="f-cap" x="145" y="75" text-anchor="middle">부모 프로세스</text>
+<text class="f-s" x="145" y="96" text-anchor="middle">환경을 복사</text>
+<rect class="f-soft" x="288" y="49" width="184" height="58" rx="3"/>
+<text class="f-cap" x="380" y="75" text-anchor="middle">자식 환경</text>
+<text class="f-s" x="380" y="96" text-anchor="middle">WORD_LIMIT = 2</text>
+<rect class="f-box" x="523" y="49" width="184" height="58" rx="3"/>
+<text class="f-cap" x="615" y="75" text-anchor="middle">자식 프로그램</text>
+<text class="f-s" x="615" y="96" text-anchor="middle">문자열을 정수로 읽음</text>
+<line class="f-line" x1="240" y1="79" x2="284" y2="79" marker-end="url(#f-arrow)"/>
+<line class="f-line" x1="475" y1="79" x2="519" y2="79" marker-end="url(#f-arrow)"/>
+<text class="f-s" x="380" y="145" text-anchor="middle">사용하는 이름과 값만 문서에 기록한다.</text>
+</svg>
+<figcaption>인자 목록은 프로그램이 받을 별도 입력이다. 환경으로 주는 설정과 같은 통로가 아니다.</figcaption>
+</figure>
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+<h2>표준 출력과 오류를 다른 곳으로 보낼 수 있다</h2>
+<p>명령줄 프로그램은 흔히 <b class="key">표준 입력</b>(stdin)으로 데이터를 읽고 <b>표준 출력</b>(stdout)으로 결과를 냅니다. 진단 메시지는 <b>표준 오류</b>(stderr)로 보낼 수 있습니다. <code>A | B</code> 형태의 기본 파이프는 A의 표준 출력을 B의 표준 입력으로 연결합니다. A의 표준 오류는 따로 리다이렉션하지 않으면 이 연결에 들어가지 않습니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 199" role="img" aria-label="프로그램 A의 stdout이 파이프로 프로그램 B의 stdin에 연결되고, A의 stderr는 별도 통로를 유지한다.">
+<rect class="f-box" x="63" y="50" width="163" height="55" rx="3"/>
+<text class="f-cap" x="144.5" y="83" text-anchor="middle">프로그램 A</text>
+<rect class="f-soft" x="534" y="50" width="163" height="55" rx="3"/>
+<text class="f-cap" x="615.5" y="83" text-anchor="middle">프로그램 B</text>
+<line class="f-line" x1="230" y1="77" x2="527" y2="77" marker-end="url(#f-arrow)"/>
+<text class="f-s" x="379" y="65" text-anchor="middle">A의 stdout → B의 stdin</text>
+<line class="f-ink" x1="144.5" y1="109" x2="144.5" y2="143" marker-end="url(#f-arrow)"/>
+<text class="f-s" x="296" y="160" text-anchor="middle">A의 stderr는 별도로 전달</text>
+</svg>
+<figcaption>운영체제가 받은 바이트를 흐름으로 전달한다. 줄이나 표의 뜻은 B가 자기 규칙으로 해석한다.</figcaption>
+</figure>
+<p>Bash에서 <code>printf '%s\n' ink book ink pen | sort | uniq -c</code>는 단어 네 줄을 만들어, 정렬하고, 이어진 동일한 줄의 수를 셉니다. <code>uniq -c</code> 앞에서 정렬해야 떨어져 있던 두 <code>ink</code> 줄도 같은 묶음에 놓입니다. 셸의 <b>리다이렉션</b> <code>&gt; file</code>은 표준 출력을 파일로 보내며 기존 파일을 잘라 쓸 수 있습니다. <code>&gt;&gt; file</code>은 끝에 붙입니다. <code>&lt; file</code>은 표준 입력을 파일에서 읽도록 연결하고 <code>2&gt; file</code>은 오류 통로를 보냅니다. 쓰기 대상은 자기 연습용 파일처럼 내용을 바꿔도 되는 경로로 명확하게 정합니다.</p>
+<div class="check" data-q="q3"></div>
+<div class="check" data-q="q4"></div>
+<h2>Windows에서도 두 Python 프로세스 사이에 실제 파이프를 잇는다</h2>
+<p>예제에서 A의 출력은 네 단어가 들어 있는 줄입니다. B는 파이프로 들어온 줄의 빈도를 구하고, 전달받은 <code>WORD_LIMIT</code> 값으로 두 개만 골라 표시합니다. 그런 다음 stderr에 'processed 4'를 적습니다. 부모에서 stdout과 stderr를 각각 읽으면 결과와 진행 메시지를 구분할 수 있습니다.</p>
+<pre data-example="python"><code>import os
+import subprocess
+import sys
+
+emit = &quot;print('ink\\nbook\\nink\\npen')&quot;
+count = &quot;&quot;&quot;
+import os
+import sys
+from collections import Counter
+
+words = sys.stdin.read().splitlines()
+counts = Counter(words)
+limit = int(os.environ[&quot;WORD_LIMIT&quot;])
+for word in sorted(counts)[:limit]:
+    print(word, counts[word])
+print(&quot;processed&quot;, len(words), file=sys.stderr)
+&quot;&quot;&quot;
+environment = dict(os.environ, WORD_LIMIT=&quot;2&quot;)
+with subprocess.Popen([sys.executable, &quot;-c&quot;, emit], stdout=subprocess.PIPE) as first:
+    result = subprocess.run(
+        [sys.executable, &quot;-c&quot;, count], stdin=first.stdout, env=environment,
+        capture_output=True, encoding=&quot;utf-8&quot;, check=True,
+    )
+    first.stdout.close()
+    if first.wait() != 0:
+        raise RuntimeError(&quot;producer failed&quot;)
+
+print(&quot;stdout:&quot;, result.stdout.strip().replace(&quot;\n&quot;, &quot; / &quot;))
+print(&quot;stderr:&quot;, result.stderr.strip())</code></pre>
+<pre data-output><code>stdout: book 1 / ink 2
+stderr: processed 4</code></pre>
+<p>Python이 셸의 <code>|</code> 문장을 해석한 것은 아닙니다. 프로그램 A의 파이프에 연결된 출력을 B의 입력으로 직접 전달하도록 인자를 명시했습니다. 실제 스크립트에서는 전체 작업이 성공했는지 확인하려면 각 단계의 종료 상태를 살핍니다.</p>
+<div class="check" data-q="q5"></div>
+<div class="check" data-q="q6"></div>
+
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table>
+<thead><tr><th scope="col">핵심어</th><th scope="col">기억할 기준</th></tr></thead>
+<tbody>
+<tr><td><b class="key">환경 변수</b></td><td>자식 프로세스가 읽을 이름과 문자열 설정을 제공한다.</td></tr>
+<tr><td><b class="key">파이프</b></td><td>기본적으로 앞 명령의 표준 출력을 뒤 명령의 표준 입력으로 잇는다.</td></tr>
+<tr><td><b class="key">리다이렉션</b></td><td>입출력이 읽고 쓰는 파일이나 통로를 바꾼다.</td></tr>
+</tbody></table></div>
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>설정은 환경으로, 데이터는 표준 스트림으로 보내고, 어떤 결과가 어떤 통로로 돌아오는지 확인한다.</p></div>
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://manpages.debian.org/bookworm/bash/bash.1.en.html">Debian의 Bash 매뉴얼 · 환경과 리다이렉션</a></li>
+<li><a href="https://www.man7.org/linux/man-pages/man7/pipe.7.html">Linux man-pages · 파이프</a></li>
+<li><a href="https://docs.python.org/3/library/subprocess.html#subprocess.run">Python 공식 문서 · subprocess와 자식 프로세스</a></li>
+</ul>
+
+<h2>확인 문제</h2>
+<p>아직 풀지 않은 문제입니다. 먼저 식이나 근거를 적어 보고 해설을 확인합니다.</p>
+<div id="quiz"></div>
+
+<section class="work" id="tools"></section>
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

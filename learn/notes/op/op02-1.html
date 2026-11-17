@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>조건수와 잔차로 선형계 풀이의 민감도 읽기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="OP02-1">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">수치 계산·최적화</p>
+<p class="chap-num">OP02·1</p>
+<h1>조건수와 잔차로 선형계 풀이의 민감도 읽기</h1>
+<p class="lead">관측한 합이 아주 조금 달라졌는데 연립식의 해가 크게 움직이는 사례를 살핍니다. 입력의 민감도와 계산값이 식을 얼마나 잘 맞추는지를 구분합니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>조건이 좋지 않은 선형계에서 작은 입력 변화의 영향을 계산한다.</li><li>조건수와 잔차가 말해 주는 정보를 구분한다.</li><li>NumPy의 선형계 풀이로 두 입력을 대조한다.</li></ul></div>
+
+<h2>거의 같은 내용을 담은 두 식</h2>
+<p>두 미지수 u와 v의 합은 2입니다. 두 번째 식은 u+1.001v=2.001입니다. 두 식을 빼면 0.001v=0.001이라 v=1, u=1입니다. 다른 측정에서 두 번째 우변만 2.002가 되었다고 합시다. 이제 0.001v=0.002여서 v=2, u=0입니다.</p>
+<div class="table-wrap"><table><thead><tr><th scope="col">행</th><th scope="col">행렬 A와 우변 b</th><th scope="col">바뀐 우변</th></tr></thead><tbody><tr><td>첫 식</td><td>u + v = 2</td><td>u + v = 2</td></tr><tr><td>둘째 식</td><td>u + 1.001v = 2.001</td><td>u + 1.001v = 2.002</td></tr><tr><td>해</td><td>(1, 1)</td><td>(0, 2)</td></tr></tbody></table></div>
+<div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
+<p>두 식이 거의 같은 방향으로 u와 v를 합치기 때문에, 둘의 차이로 각 값을 분리하려면 아주 정확한 조건이 필요합니다. 예처럼 우변의 작은 변동만으로 해가 크게 이동할 수 있습니다. 계산 프로그램의 결과가 달라졌다고 하기 전에 식 자체가 민감한지 확인합니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 160" role="img" aria-label="우변의 변화가 거의 같은 두 식의 차이에 증폭되어 해가 달라짐">
+<rect class="f-box" x="42" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="135" y="61" text-anchor="middle">입력의 변화</text><text class="f-s" x="135" y="89" text-anchor="middle">둘째 값 0.001 증가</text><text class="f-s" x="135" y="110" text-anchor="middle">A는 동일</text><line class="f-line" x1="235" y1="84" x2="278" y2="84" marker-end="url(#f-arrow)"/><rect class="f-soft" x="287" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="380" y="61" text-anchor="middle">두 식의 차</text><text class="f-s" x="380" y="89" text-anchor="middle">0.001v = 0.002</text><text class="f-s" x="380" y="110" text-anchor="middle">작은 계수 0.001</text><line class="f-line" x1="480" y1="84" x2="523" y2="84" marker-end="url(#f-arrow)"/><rect class="f-box" x="532" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="625" y="61" text-anchor="middle">해의 변화</text><text class="f-s" x="625" y="89" text-anchor="middle">v: 1에서 2</text><text class="f-s" x="625" y="110" text-anchor="middle">u: 1에서 0</text>
+</svg><figcaption>식 A가 일정한데도 우변에 있던 작은 차이가 해에서 크게 나타납니다.</figcaption></figure>
+<h2>조건수로 잠재적인 증폭을 표시한다</h2>
+<p>벡터의 무한 노름은 성분 절댓값 중 가장 큰 값입니다. 대응하는 행렬의 무한 노름은 행별로 성분 절댓값을 더한 것 중 가장 큰 값입니다. 가역인 행렬 A의 조건수는 같은 노름을 사용한 κ(A)=‖A‖·‖A⁻¹‖입니다. 이 예에서 ‖A‖∞=2.001이고, 역행렬의 첫 번째 행에서 절댓값을 더한 2001이 ‖A⁻¹‖∞입니다. 따라서 κ∞=2.001×2001=4004.001입니다.</p>
+<div class="check" data-q="q3"></div>
+<p>가역인 A에서 처음 우변 b가 영벡터가 아니고 b만 달라진다고 합시다. 모두 같은 무한 노름으로 재면 해의 상대 변화는 조건수와 입력의 상대 변화의 곱 이하입니다. 이 예의 입력 상대 변화는 0.001/2.001≈0.000500이고, 해의 상대 변화는 1/1=1입니다. 상한은 4004.001×(0.001/2.001)=2.001로, 실제 변화보다 큽니다. 민감한 문제라도 작은 변화가 어떤 방향이냐에 따라 매번 상한까지 증폭되지는 않습니다.</p>
+<div class="check" data-q="q4"></div>
+<pre data-example="python"><code>import numpy as np
+
+matrix = np.array([[1, 1], [1, 1.001]])
+for right in (np.array([2, 2.001]), np.array([2, 2.002])):
+    solution = np.linalg.solve(matrix, right)
+    residual = np.linalg.norm(matrix @ solution - right, ord=np.inf)
+    shown = [int(round(float(v))) for v in solution]
+    print(&quot;해:&quot;, shown, &quot;잔차가 기준 이내:&quot;, residual &lt; 1e-12)
+    assert residual &lt; 1e-12
+print(&quot;조건수:&quot;, f&quot;{np.linalg.cond(matrix, np.inf):.3f}&quot;)</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>해: [1, 1] 잔차가 기준 이내: True
+해: [0, 2] 잔차가 기준 이내: True
+조건수: 4004.001</code></pre>
+<h2>식을 잘 만족해도 원래 값과 멀 수 있다</h2>
+<p>잔차 A·계산해−b가 작으면 그 계산해가 주어진 식에는 가깝게 맞습니다. 입력 b가 실제 측정에서 흔들리거나 민감한 A를 썼다면 원래 기대한 해가 무엇인지는 별도로 확인해야 합니다. 이 예는 잔차가 작지만 서로 다른 두 해가 나온 사례입니다. 수치 풀이에서는 대개 역행렬을 먼저 구해 곱하기보다 <code>solve(A,b)</code>로 직접 해를 구합니다. 방법을 바꿔 계산 오차를 줄여도 주어진 문제의 조건수 자체가 새로 좋아지는 것은 아닙니다.</p>
+<div class="check" data-q="q5"></div><div class="check" data-q="q6"></div>
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>잔차로 주어진 식의 적합을 확인하고, 조건수와 입력의 정확도로 해가 얼마나 믿을 만한지 판단합니다.</p></div>
+
+<h2>참고 자료</h2>
+<ul><li><a href="https://numpy.org/doc/stable/reference/generated/numpy.linalg.cond.html">NumPy · linalg.cond</a></li><li><a href="https://numpy.org/doc/stable/reference/generated/numpy.linalg.solve.html">NumPy · linalg.solve</a></li><li><a href="../la/la05-1.html">공부 교재 · 연립식</a></li></ul>
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

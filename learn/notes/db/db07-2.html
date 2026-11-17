@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>멱등 적재와 재실행의 경계 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="DB07-2">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">데이터베이스 · DB07 데이터 파이프라인</p>
+<p class="chap-num">DB07·2</p>
+<h1>멱등 적재와 재실행의 경계</h1>
+<p class="lead">같은 주문 페이지를 다시 받으면 주문 수가 두 배가 될까요? 주문 번호와 제공자 버전으로 같은 입력의 재처리와 실제 값의 정정을 구별합니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul>
+<li>같은 입력을 재실행해도 결과가 변하지 않는 멱등의 의미를 설명한다.</li>
+<li>올바른 키와 버전으로 중복, 정정, 오래된 기록을 구별한다.</li>
+<li>트랜잭션과 처리 위치 기록을 어떤 순서로 다루는지 설명한다.</li>
+</ul></div>
+
+<h2>중단 뒤 같은 자료가 도착한다</h2>
+<p>자료를 받은 뒤 DB에 저장하고, 저장 성공을 수집 기록에 남기기 전에 작업이 멈출 수 있습니다. 저장했더라도 다음 실행은 어디까지 끝났는지 몰라 방금 페이지를 다시 읽을 수 있습니다. 이미 적재한 기록을 한 줄씩 새로 추가하면 행 수와 금액이 틀어집니다.</p>
+<p>같은 입력을 한 번 처리하거나 그 효과가 반영된 상태에서 여러 번 다시 적용해도 관찰할 결과가 같으면 <b class="key">멱등</b>이라고 합니다. 최신 주문 표에서 관리할 대상은 주문 번호 하나당 한 행입니다. 다만 주문 번호만 비교해 모든 재등장을 무시하면 진짜 금액 정정을 놓칠 수 있습니다.</p>
+<div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
+
+<h2>같은 키의 어떤 버전인지 보기</h2>
+<p>예제의 제공자는 한 주문에 대해 버전이 증가할수록 최신이라고 보장합니다. 첫 입력은 101번 버전 1, 10,000원입니다. 이 입력을 한 번 더 처리하면 같은 값이라 한 행 그대로입니다. 정정된 버전 2는 10,500원으로 바꿉니다. 뒤늦은 버전 1이 버전 2를 덮으면 최신 금액을 잃으므로 무시합니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 269" role="img" aria-label="버전 1 금액 10000원을 첫 적재한다. 같은 버전 반복은 그대로이고 버전 2 정정 10500원만 반영된다. 버전 1이 뒤늦게 다시 와도 최신 값이 유지된다.">
+<text class="f-cap" x="380" y="29" text-anchor="middle">최신 주문 표에서 재실행과 정정을 구분</text>
+<rect class="f-soft" x="49" y="48" width="218" height="40"/>
+<text class="f-s" x="158" y="73" text-anchor="middle">도착한 입력</text>
+<rect class="f-soft" x="267" y="48" width="230" height="40"/>
+<text class="f-s" x="382" y="73" text-anchor="middle">입력에 대한 처리</text>
+<rect class="f-soft" x="497" y="48" width="214" height="40"/>
+<text class="f-s" x="604" y="73" text-anchor="middle">저장 금액</text>
+<rect class="f-box" x="49" y="88" width="218" height="40"/>
+<text class="f-s" x="158" y="113" text-anchor="middle">101 · v1 · 10,000</text>
+<rect class="f-box" x="267" y="88" width="230" height="40"/>
+<text class="f-s" x="382" y="113" text-anchor="middle">첫 삽입</text>
+<rect class="f-box" x="497" y="88" width="214" height="40"/>
+<text class="f-s" x="604" y="113" text-anchor="middle">10,000</text>
+<rect class="f-box" x="49" y="128" width="218" height="40"/>
+<text class="f-s" x="158" y="153" text-anchor="middle">101 · v1 · 10,000</text>
+<rect class="f-box" x="267" y="128" width="230" height="40"/>
+<text class="f-s" x="382" y="153" text-anchor="middle">같은 기록</text>
+<rect class="f-box" x="497" y="128" width="214" height="40"/>
+<text class="f-s" x="604" y="153" text-anchor="middle">10,000</text>
+<rect class="f-box" x="49" y="168" width="218" height="40"/>
+<text class="f-s" x="158" y="193" text-anchor="middle">101 · v2 · 10,500</text>
+<rect class="f-box" x="267" y="168" width="230" height="40"/>
+<text class="f-s" x="382" y="193" text-anchor="middle">새 버전으로 교체</text>
+<rect class="f-box" x="497" y="168" width="214" height="40"/>
+<text class="f-s" x="604" y="193" text-anchor="middle">10,500</text>
+<rect class="f-box" x="49" y="208" width="218" height="40"/>
+<text class="f-s" x="158" y="233" text-anchor="middle">101 · v1 · 10,000</text>
+<rect class="f-box" x="267" y="208" width="230" height="40"/>
+<text class="f-s" x="382" y="233" text-anchor="middle">이전 버전</text>
+<rect class="f-box" x="497" y="208" width="214" height="40"/>
+<text class="f-s" x="604" y="233" text-anchor="middle">10,500</text>
+</svg>
+<figcaption>정정 버전은 제공자가 번호가 커질수록 최신이라고 보장하는 모의 계약입니다.</figcaption>
+</figure>
+<p>동일한 최신 키와 버전에 서로 다른 값이 들어오면 계약 위반이므로 예제는 해당 배치를 중단합니다. 최신 상태만 보관하면 오래전에 대체된 버전의 모든 값은 검증할 수 없습니다. 과거 버전의 동일성도 검증해야 하면 별도로 버전 이력을 둡니다.</p>
+<div class="check" data-q="q3"></div><div class="check" data-q="q4"></div>
+
+<h2>한 번의 쓰기와 수집 위치</h2>
+<p><b class="key">UPSERT</b>는 삽입할 때 고유 키와 충돌하면 정해 둔 규칙에 따라 갱신하거나 넘어갑니다. 다음 질의는 <code>ON CONFLICT(order_id) DO UPDATE</code>로 충돌 행을 찾고, 새 버전이 더 큰 경우에만 바꿉니다. <code>excluded</code>는 이번에 삽입하려던 값을 가리킵니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 187" role="img" aria-label="한 배치를 SQLite 트랜잭션에 적용해 커밋한 후에만 완료한 위치를 기록한다.">
+<text class="f-cap" x="380" y="29" text-anchor="middle">다시 시작할 위치는 저장 성공 뒤에 기록</text>
+<rect class="f-box" x="45" y="59" width="198" height="48"/>
+<text class="f-t" x="144" y="88" text-anchor="middle">배치 쓰기와 검증</text>
+<rect class="f-soft" x="282" y="59" width="196" height="48"/>
+<text class="f-t" x="380" y="88" text-anchor="middle">COMMIT 확인</text>
+<rect class="f-box" x="518" y="59" width="197" height="48"/>
+<text class="f-t" x="616.5" y="88" text-anchor="middle">수집 위치 기록</text>
+<line class="f-line" x1="248" y1="83" x2="277" y2="83" marker-end="url(#f-arrow)"/>
+<line class="f-line" x1="483" y1="83" x2="513" y2="83" marker-end="url(#f-arrow)"/>
+<text class="f-s" x="380" y="144" text-anchor="middle">확정 뒤 위치 기록 전에 멈추면 같은 배치를 다시 읽을 수 있습니다.</text>
+</svg>
+<figcaption>트랜잭션 커밋과 체크포인트를 같은 저장소에 넣을 수 있으면 함께 갱신할 수 있습니다.</figcaption>
+</figure>
+<p>수집의 <b class="key">체크포인트</b>는 방금 작업을 끝낸 위치를 기록해 다음 실행의 시작점을 정합니다. DB가 쓰기를 확정하기 전에 완료로 기록하면 중단 시 저장되지 않은 기록을 건너뛸 수 있습니다. 두 기록이 같은 DB에 있다면 같은 트랜잭션에 쓸 수 있습니다. 별도 시스템이면 재실행 시 중복 효과를 막고, 입력과 출력의 개수를 대조합니다.</p>
+<div class="check" data-q="q5"></div><div class="check" data-q="q6"></div>
+
+<h2>재실행, 정정, 배치 실패를 인메모리로 확인</h2>
+
+<p class="small">실행 예제</p>
+<pre data-example="python"><code>import sqlite3
+
+db = sqlite3.connect(&quot;:memory:&quot;, autocommit=sqlite3.LEGACY_TRANSACTION_CONTROL)
+db.execute(&quot;&quot;&quot;
+    CREATE TABLE latest_orders (
+        order_id INTEGER PRIMARY KEY,
+        source_version INTEGER NOT NULL CHECK (source_version &gt; 0),
+        total_won INTEGER NOT NULL CHECK (total_won &gt;= 0)
+    )
+&quot;&quot;&quot;)
+upsert = &quot;&quot;&quot;
+    INSERT INTO latest_orders VALUES (?, ?, ?)
+    ON CONFLICT(order_id) DO UPDATE SET
+        source_version = excluded.source_version,
+        total_won = excluded.total_won
+    WHERE excluded.source_version &gt; latest_orders.source_version
+&quot;&quot;&quot;
+
+def apply_batch(rows):
+    with db:
+        db.execute(&quot;BEGIN IMMEDIATE&quot;)
+        for order_id, version, amount in rows:
+            if not all(type(value) is int for value in (order_id, version, amount)):
+                raise ValueError(&quot;order fields must be integers&quot;)
+            if order_id &lt;= 0 or version &lt;= 0 or amount &lt; 0:
+                raise ValueError(&quot;invalid order fields&quot;)
+            stored = db.execute(&quot;&quot;&quot;
+                SELECT source_version, total_won
+                FROM latest_orders WHERE order_id = ?
+            &quot;&quot;&quot;, (order_id,)).fetchone()
+            if stored is not None and stored[0] == version and stored[1] != amount:
+                raise ValueError(&quot;inconsistent current version&quot;)
+            db.execute(upsert, (order_id, version, amount))
+
+def show(label):
+    print(label, db.execute(&quot;SELECT * FROM latest_orders ORDER BY order_id&quot;).fetchall())
+
+first = [(101, 1, 10000)]
+apply_batch(first)
+show(&quot;first:&quot;)
+apply_batch(first)
+show(&quot;retry:&quot;)
+apply_batch([(101, 2, 10500)])
+show(&quot;corrected:&quot;)
+apply_batch(first)
+show(&quot;old version:&quot;)
+try:
+    apply_batch([(102, 1, 15000), (101, 2, 9999)])
+except ValueError as error:
+    print(&quot;failed:&quot;, error)
+show(&quot;after rollback:&quot;)
+db.close()</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>first: [(101, 1, 10000)]
+retry: [(101, 1, 10000)]
+corrected: [(101, 2, 10500)]
+old version: [(101, 2, 10500)]
+failed: inconsistent current version
+after rollback: [(101, 2, 10500)]</code></pre>
+<p>마지막 배치는 102번 삽입 뒤 101번의 최신 버전 충돌을 발견합니다. <code>with db</code>에서 예외가 빠져나갈 때 트랜잭션을 롤백해 102번도 보이지 않습니다. 이 예제는 Python 3.12 이상에서 트랜잭션 제어 방식을 명시하고, 첫 조회 전 BEGIN IMMEDIATE로 쓰기 트랜잭션을 시작합니다. 앞 장과 같이 양의 정수 주문 번호와 버전, 0 이상의 정수 금액만 받아들입니다. 여러 연결이 동시에 쓰려는 환경에서는 잠금 대기와 실패의 처리도 설계합니다.</p>
+<div class="check" data-q="q7"></div><div class="check" data-q="q8"></div>
+
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table><thead><tr><th scope="col">개념</th><th scope="col">확인할 것</th></tr></thead><tbody>
+<tr><th scope="row"><b class="key">멱등</b></th><td>같은 입력 반복에 저장 효과가 누적되지 않는다.</td></tr>
+<tr><th scope="row"><b class="key">버전</b></th><td>최신 순서와 실제 정정의 조건을 입력 계약에 맡긴다.</td></tr>
+<tr><th scope="row"><b class="key">체크포인트</b></th><td>합의한 쓰기가 완료된 뒤 처리 위치를 기록한다.</td></tr>
+</tbody></table></div><div class="box sum"><p class="box-k">다음 장으로</p><p><a href="db07-3.html">다음 장</a>에서는 도착 시간이 들쭉날쭉한 자료와 변경된 스키마를 다룹니다.</p></div>
+
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://www.sqlite.org/lang_upsert.html">SQLite · 고유 키 충돌 시 UPSERT</a></li>
+<li><a href="https://www.sqlite.org/lang_transaction.html">SQLite · 트랜잭션과 단일 쓰기 규칙</a></li>
+<li><a href="https://www.w3.org/TR/prov-overview/">W3C · PROV 개요</a></li>
+</ul>
+<h2>확인 문제</h2>
+<p>직접 계산하거나 설명을 먼저 적고 답을 확인해 보세요.</p>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

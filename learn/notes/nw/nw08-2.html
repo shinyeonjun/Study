@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>해시·암호화·서명과 인증·인가의 역할 비교하기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="NW08-2">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">네트워크</p>
+<p class="chap-num">NW08·2</p>
+<h1>해시·암호화·서명과 인증·인가의 역할 비교하기</h1>
+<p class="lead">전송 내용을 감출지, 바뀌었는지 확인할지, 누가 보냈는지 확인할지는 다른 질문입니다. 작은 메시지와 공유 비밀의 예로 구별합니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>해시·암호화·메시지 인증·디지털 서명을 구분한다.</li><li>확인하려는 각 속성에 필요한 정보를 설명한다.</li><li>인증과 인가를 작은 웹 업무에 적용한다.</li></ul></div>
+
+<h2>보안 용어를 확인하려는 질문으로 바꾼다</h2>
+<div class="table-wrap"><table><thead><tr><th scope="col">방법</th><th scope="col">질문</th><th scope="col">사용하는 것</th></tr></thead><tbody><tr><td>암호화</td><td>정해진 대상만 내용을 읽을 수 있는가?</td><td>암호와 복호에 필요한 키</td></tr><tr><td>해시</td><td>데이터가 기준 사본과 같은지 빠르게 대조할 수 있는가?</td><td>원본에서 만든 고정 길이 요약과 신뢰할 수 있는 기준값</td></tr><tr><td>메시지 인증 코드</td><td>공유 비밀을 아는 쪽이 만든 메시지이며 바뀌지 않았는가?</td><td>공유 비밀과 메시지에 대한 인증 값</td></tr><tr><td>디지털 서명</td><td>해당 개인키의 소유자가 서명했고 내용이 그대로인가?</td><td>개인키로 서명, 공개키로 검증</td></tr></tbody></table></div>
+<p>일반 해시는 메시지와 함께 새로 계산해 바꿀 수 있으므로, 메시지에 붙은 해시만으로 누가 보냈는지 알 수 없습니다. 원본 파일의 해시를 믿을 수 있는 별도 경로에서 받았다면 내려받은 파일의 해시와 비교할 수 있습니다. 서로 다른 데이터가 같은 해시를 낼 수 있다는 한계도 있어서, 용도에 맞는 검증된 해시 알고리즘을 씁니다.</p>
+<div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
+<h2>공유 비밀이 있는 두 장치</h2>
+<p>두 장치가 같은 비밀을 사전에 가진 경우, HMAC은 그 비밀과 메시지를 결합해 인증 값을 계산합니다. 수신자는 받은 메시지로 같은 계산을 한 뒤 비교합니다. 두 장치는 모두 같은 비밀을 쓰므로 어느 장치가 값을 생성했는지 제삼자에게 구분해 증명하는 디지털 서명과는 용도가 다릅니다. HMAC 자체가 내용을 숨기거나 같은 메시지의 반복 전송을 자동으로 제한하는 것도 아닙니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 160" role="img" aria-label="HMAC은 메시지와 공유 비밀을 입력으로 받아 양쪽에서 같은 태그를 비교">
+<rect class="f-box" x="42" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="135" y="61" text-anchor="middle">송신 측</text><text class="f-s" x="135" y="89" text-anchor="middle">공유 비밀과 메시지</text><text class="f-s" x="135" y="110" text-anchor="middle">HMAC 태그 계산</text><line class="f-line" x1="235" y1="84" x2="278" y2="84" marker-end="url(#f-arrow)"/><rect class="f-soft" x="287" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="380" y="61" text-anchor="middle">전달</text><text class="f-s" x="380" y="89" text-anchor="middle">메시지 + 태그</text><text class="f-s" x="380" y="110" text-anchor="middle">내용 자체는 암호화 안 됨</text><line class="f-line" x1="480" y1="84" x2="523" y2="84" marker-end="url(#f-arrow)"/><rect class="f-box" x="532" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="625" y="61" text-anchor="middle">수신 측</text><text class="f-s" x="625" y="89" text-anchor="middle">같은 비밀로 재계산</text><text class="f-s" x="625" y="110" text-anchor="middle">태그 유효성 비교</text>
+</svg><figcaption>실제 비밀은 코드에 적지 않습니다. 아래의 바이트열은 동작을 보기 위한 예시 값입니다.</figcaption></figure>
+<div class="check" data-q="q3"></div><div class="check" data-q="q4"></div>
+<pre data-example="python"><code>import hashlib
+import hmac
+
+example_key = b&quot;example-key&quot;
+original = b&quot;order:16&quot;
+changed = b&quot;order:17&quot;
+
+digest = hashlib.sha256(original).hexdigest()
+original_tag = hmac.digest(example_key, original, &quot;sha256&quot;)
+
+def verifies(message, tag):
+    expected = hmac.digest(example_key, message, &quot;sha256&quot;)
+    return hmac.compare_digest(expected, tag)
+
+print(&quot;SHA-256 바이트 수:&quot;, len(bytes.fromhex(digest)))
+print(&quot;원본 메시지:&quot;, verifies(original, original_tag))
+print(&quot;바뀐 메시지:&quot;, verifies(changed, original_tag))</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>SHA-256 바이트 수: 32
+원본 메시지: True
+바뀐 메시지: False</code></pre>
+<h2>누구인지와 무엇을 할 수 있는지를 차례로 확인한다</h2>
+<p>학습 사이트에 로그인할 때의 인증은 요청한 사용자가 어떤 계정인지 확인하는 일입니다. 계정이 문서를 읽거나 편집할 수 있는지 결정하는 것은 인가입니다. 읽기 전용 계정의 신원을 확인했어도 편집 권한을 주지 않을 수 있습니다. 서버는 보호해야 하는 자원에 대한 요청에서 권한 규칙을 적용합니다.</p>
+<p>TLS에서 서버를 인증하는 일과 학습 사이트의 사용자가 로그인하는 일도 구별합니다. 서버 인증서는 서버와의 연결을 확인하고, 응용에서 계정 세션과 권한은 별도의 규칙을 따릅니다.</p>
+<div class="check" data-q="q5"></div><div class="check" data-q="q6"></div>
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>보호하려는 정보와 검증 주체를 정하고, 내용 보호·키 소유·계정 확인·접근 권한을 각각 대응시킵니다.</p></div>
+
+<h2>참고 자료</h2>
+<ul><li><a href="https://www.rfc-editor.org/rfc/rfc2104">IETF RFC 2104 · HMAC</a></li><li><a href="https://docs.python.org/3/library/hmac.html">Python · hmac 표준 모듈</a></li><li><a href="https://csrc.nist.gov/pubs/fips/186-5/final">NIST FIPS 186-5 · Digital Signature Standard</a></li></ul>
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>
