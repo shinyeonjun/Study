@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>다항 softmax, 가장 큰 로짓과 교차엔트로피 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="ML05-2">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">머신러닝 · ML05 확률로 분류하기</p>
+<p class="chap-num">ML05·2</p>
+<h1>다항 softmax, 가장 큰 로짓과 교차엔트로피</h1>
+<p class="lead">문의 종류 하나를 배달, 결제, 계정 중에서 고르려 합니다. 세 점수를 각각 따로 시그모이드로 바꾸면 합이 1일 필요가 없습니다. 함께 정규화해 한 범주의 확률분포를 만드는 계산을 봅니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul>
+<li>로짓에서 softmax 확률 분포를 계산한다.</li>
+<li>softmax의 argmax와 클래스 경계를 설명한다.</li>
+<li>최댓값을 뺀 로짓으로 다항 교차엔트로피를 안정적으로 구한다.</li>
+</ul></div>
+
+<h2>서로 배타적인 클래스의 확률 합을 1로 만든다</h2>
+<p>하나의 문의에 정확히 한 범주 A, B, C만 붙인다고 둡니다. 모형은 입력마다 로짓 <code>z=(z_A,z_B,z_C)</code>를 냅니다. <b class="key">softmax</b>는 각 로짓에 지수를 적용한 뒤 <code>pᵢ=exp(zᵢ)/Σⱼ exp(zⱼ)</code>로 나눕니다. 확률은 양수이고 합은 1입니다. 로짓이 <code>(ln 4, ln 2, 0)</code>이면 다음과 같습니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 240" role="img" aria-label="로짓 ln4, ln2, 0을 지수로 바꾸면 4,2,1이다. 합 7로 나눈 확률은 4/7,2/7,1/7이다.">
+<rect class="f-box" x="75" y="29" width="130" height="40"/>
+<text class="f-s" x="140" y="54" text-anchor="middle">클래스</text>
+<rect class="f-box" x="205" y="29" width="163" height="40"/>
+<text class="f-s" x="286.5" y="54" text-anchor="middle">로짓</text>
+<rect class="f-box" x="368" y="29" width="161" height="40"/>
+<text class="f-s" x="448.5" y="54" text-anchor="middle">지수값</text>
+<rect class="f-box" x="529" y="29" width="148" height="40"/>
+<text class="f-s" x="603" y="54" text-anchor="middle">정규화</text>
+<rect class="f-box" x="75" y="69" width="130" height="40"/>
+<text class="f-s" x="140" y="94" text-anchor="middle">A</text>
+<rect class="f-box" x="205" y="69" width="163" height="40"/>
+<text class="f-s" x="286.5" y="94" text-anchor="middle">ln 4</text>
+<rect class="f-box" x="368" y="69" width="161" height="40"/>
+<text class="f-s" x="448.5" y="94" text-anchor="middle">4</text>
+<rect class="f-soft" x="529" y="69" width="148" height="40"/>
+<text class="f-s" x="603" y="94" text-anchor="middle">4/7</text>
+<rect class="f-box" x="75" y="109" width="130" height="40"/>
+<text class="f-s" x="140" y="134" text-anchor="middle">B</text>
+<rect class="f-box" x="205" y="109" width="163" height="40"/>
+<text class="f-s" x="286.5" y="134" text-anchor="middle">ln 2</text>
+<rect class="f-box" x="368" y="109" width="161" height="40"/>
+<text class="f-s" x="448.5" y="134" text-anchor="middle">2</text>
+<rect class="f-soft" x="529" y="109" width="148" height="40"/>
+<text class="f-s" x="603" y="134" text-anchor="middle">2/7</text>
+<rect class="f-box" x="75" y="149" width="130" height="40"/>
+<text class="f-s" x="140" y="174" text-anchor="middle">C</text>
+<rect class="f-box" x="205" y="149" width="163" height="40"/>
+<text class="f-s" x="286.5" y="174" text-anchor="middle">0</text>
+<rect class="f-box" x="368" y="149" width="161" height="40"/>
+<text class="f-s" x="448.5" y="174" text-anchor="middle">1</text>
+<rect class="f-soft" x="529" y="149" width="148" height="40"/>
+<text class="f-s" x="603" y="174" text-anchor="middle">1/7</text>
+<text class="f-cap" x="381" y="217" text-anchor="middle">합: exp(ln 4)+exp(ln 2)+exp(0)=7</text>
+</svg>
+<figcaption>실제 라벨이 B라면 손실에는 B의 확률 2/7이 쓰인다.</figcaption>
+</figure>
+<p>서로 배타적이지 않은 여러 라벨을 붙이는 문제는 다릅니다. 예를 들어 한 글에 결제와 배달 문의가 동시에 있을 수 있다면, 각 라벨의 포함 여부를 별도 이진 문제처럼 다룰 수 있습니다.</p>
+<div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
+
+<h2>가장 큰 로짓이 어느 클래스인지 확인한다</h2>
+<p>지수 함수는 증가하고 분모가 모든 클래스에서 같으므로 큰 로짓은 큰 확률을 냅니다. 가장 큰 값의 위치인 <b class="key">argmax</b>는 로짓과 확률에서 같습니다. 어느 클래스를 예측할지만 필요하면 순위만 비교해도 됩니다.</p>
+<p>입력 x에 대한 로짓이 <code>(−x,1,x)</code>라면 x&lt;−1에서 A, −1&lt;x&lt;1에서 B, x&gt;1에서 C가 가장 큽니다. x=±1에서는 동률입니다. 두 로짓이 같은 점도 두 값이 다른 모든 로짓보다 높거나 같아야 실제 예측 경계가 됩니다. 예를 들어 x=0에서는 A와 C가 동률이지만 둘 다 B보다 작습니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 289" role="img" aria-label="클래스 점수 A=−x, B=1, C=x에서 가장 큰 값은 x가 −1보다 작을 때 A, −1과 1 사이에서 B, 1보다 클 때 C다.">
+<line class="f-ink" x1="94" y1="139" x2="666" y2="139"/>
+<line class="f-ink" x1="380" y1="30" x2="380" y2="231"/>
+<line class="f-line" x1="120" y1="55" x2="640" y2="223"/>
+<line class="f-ink" x1="120" y1="97" x2="640" y2="97"/>
+<line class="f-dash" x1="120" y1="223" x2="640" y2="55"/>
+<line class="f-dash" x1="250" y1="97" x2="250" y2="231"/>
+<circle class="f-fill" cx="250" cy="97" r="5"/>
+<text class="f-s" x="250" y="250" text-anchor="middle">-1</text>
+<line class="f-dash" x1="510" y1="97" x2="510" y2="231"/>
+<circle class="f-fill" cx="510" cy="97" r="5"/>
+<text class="f-s" x="510" y="250" text-anchor="middle">1</text>
+<text class="f-s" x="120" y="42" text-anchor="middle">A의 로짓 −x</text>
+<text class="f-s" x="387" y="86" text-anchor="middle">B의 로짓 1</text>
+<text class="f-s" x="640" y="42" text-anchor="middle">C의 로짓 x</text>
+<text class="f-s" x="381" y="271" text-anchor="middle">입력 x</text>
+</svg>
+<figcaption>x=−1과 x=1에서 가장 큰 로짓이 동률이다. 예측 규칙은 동률 처리를 별도로 정한다.</figcaption>
+</figure>
+<div class="check" data-q="q3"></div><div class="check" data-q="q4"></div><div class="check" data-q="q5"></div>
+
+<h2>실제 클래스에 준 확률로 손실을 낸다</h2>
+<p>관측 라벨이 B이면 정답 분포를 <code>(0,1,0)</code>으로 둡니다. <b class="key">다항 교차엔트로피</b>는 <code>−ln p_B</code>이고 위 예에서 <code>ln(7/2)≈1.2528</code> 나트입니다. 클래스가 맞았는지만 보는 정확도와 달리, 교차엔트로피는 실제 클래스에 준 확률의 크기도 반영합니다.</p>
+<p>모든 로짓에 같은 값을 더하면 지수의 공통 배수가 약분되므로 확률은 바뀌지 않습니다. 큰 양의 로짓의 지수를 계산하는 대신 최대 로짓을 먼저 뺍니다. 이동한 값을 <code>uᵢ=zᵢ−max(z)</code>라 하면 로그 손실은 <code>ln(Σ exp(uᵢ))−u_y</code>입니다. 가장 큰 u가 0이므로 분모에는 적어도 1이 있습니다. 실제 클래스의 확률이 계산에서 0으로 반올림되어도 로짓으로 손실을 구할 수 있습니다.</p>
+<p class="small">실행 예제</p>
+<pre data-example="python"><code>from math import exp, log
+
+def softmax_and_loss(logits, target):
+    peak = max(logits)
+    shifted = [z - peak for z in logits]
+    exponents = [exp(u) for u in shifted]
+    total = sum(exponents)
+    probability = [v / total for v in exponents]
+    return probability, log(total) - shifted[target]
+
+normal = [log(4), log(2), 0]
+for name, logits in [(&quot;original&quot;, normal), (&quot;shifted&quot;, [z+1000 for z in normal])]:
+    p, loss = softmax_and_loss(logits, 1)
+    print(f&quot;{name}: p={[round(q,4) for q in p]}, B loss={loss:.4f}&quot;)
+p, loss = softmax_and_loss([1000,0,-1000], 2)
+print(f&quot;extreme: C probability={p[2]:.1f}, C loss={loss:.1f}&quot;)</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>original: p=[0.5714, 0.2857, 0.1429], B loss=1.2528
+shifted: p=[0.5714, 0.2857, 0.1429], B loss=1.2528
+extreme: C probability=0.0, C loss=2000.0</code></pre>
+<div class="why"><p class="box-k">왜 그럴까?</p><p>확률의 순위만 맞히는 모형을 교차엔트로피로 비교하면 무엇을 더 구별할 수 있을까요?</p><details><summary>모범 답 보기</summary><p>정답에 가장 높은 확률을 줘 맞힌 두 모형도 그 확률이 0.45와 0.95라면 손실이 다릅니다. 확률 자체를 비교할 때에는 보정도 따로 확인합니다.</p></details></div>
+<div class="check" data-q="q6"></div><div class="check" data-q="q7"></div>
+
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table><thead><tr><th scope="col">개념</th><th scope="col">확인할 것</th></tr></thead><tbody>
+<tr><th scope="row"><b class="key">softmax</b></th><td>같은 로짓 묶음에서 지수값을 확률 합 1로 바꿈</td></tr>
+<tr><th scope="row"><b class="key">argmax</b></th><td>로짓과 확률의 최대 위치가 같음</td></tr>
+<tr><th scope="row"><b class="key">교차엔트로피</b></th><td>정답 클래스의 음의 로그확률을 로짓에서 안정 계산</td></tr>
+</tbody></table></div><div class="box sum"><p class="box-k">다음 장으로</p><p><a href="../../unit.html?u=ML06">다음 장</a>에서는 거리와 나무를 사용한 다른 분류 방식을 배웁니다.</p></div>
+
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression">scikit-learn · 로지스틱 회귀의 확률과 다항 모형</a></li>
+<li><a href="https://pytorch.org/docs/stable/generated/torch.nn.CrossEntropyLoss.html">PyTorch · 클래스 로짓의 교차엔트로피</a></li>
+<li><a href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.special.logsumexp.html">SciPy · 로그합지수의 안정적인 계산</a></li>
+</ul>
+<h2>확인 문제</h2>
+<p>직접 계산하거나 설명을 먼저 적고 답을 확인해 보세요.</p>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

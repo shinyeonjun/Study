@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>선형회귀식 만들기와 잔차 읽기 · 빅분기 노트</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="3-03">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">빅분기 노트</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">3과목 · 빅데이터 모델링</p>
+<p class="chap-num">03</p>
+<h1>선형회귀식 만들기와 잔차 읽기</h1>
+<p class="lead">작업량을 알면 처리 시간이 얼마나 걸릴까? 작은 기록에서 회귀식의 계수를 계산한 뒤, 잔차를 통해 식의 적합성을 살핀다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>기울기와 절편을 계산하고 원래 단위로 읽는다.</li><li>잔차와 잔차 제곱합을 구한다.</li><li>다중회귀의 계수와 외삽을 해석한다.</li></ul></div>
+
+<h2>평균을 지나는 직선</h2>
+<p>작업 묶음 수 x와 처리 시간 y분을 관측했다. 단순 선형회귀는 설명변수 하나로 ŷ=b₀+b₁x를 만든다. 실제값에서 예측값을 뺀 eᵢ=yᵢ−ŷᵢ가 <strong>잔차</strong>다. 부호가 양수면 실제 시간이 예측보다 길었다.</p>
+<div class="table-wrap"><table><thead><tr><th scope="col">작업량 x</th><th scope="col">실제 y</th><th scope="col">예측 ŷ</th><th scope="col">잔차 e</th></tr></thead><tbody><tr><td>0</td><td>2</td><td>2.3</td><td>−0.3</td></tr><tr><td>1</td><td>5</td><td>4.1</td><td>0.9</td></tr><tr><td>2</td><td>5</td><td>5.9</td><td>−0.9</td></tr><tr><td>3</td><td>8</td><td>7.7</td><td>0.3</td></tr></tbody></table></div>
+<p>x̄=1.5, ȳ=5다. Σ(xᵢ−x̄)²=5, Σ(xᵢ−x̄)(yᵢ−ȳ)=9이므로 b₁=9/5=1.8이고 b₀=ȳ−b₁x̄=5−2.7=2.3이다. 작업량이 한 묶음 많으면 모형의 예측 시간이 1.8분 길어진다. 작업량이 0일 때 예측값은 2.3분이다.</p>
+<div class="check" data-q="q1"></div>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 210" role="img" aria-label="작업량과 처리 시간 네 관측점 및 회귀 직선">
+<line class="f-line" x1="95" y1="178" x2="671" y2="178"/><line class="f-line" x1="108" y1="178" x2="108" y2="20"/><line class="f-ink" x1="135" y1="138" x2="630" y2="30"/><line class="f-dash" x1="135" y1="144" x2="135" y2="138"/><circle cx="135" cy="144" r="5" fill="currentColor"/><line class="f-dash" x1="300" y1="84" x2="300" y2="102"/><circle cx="300" cy="84" r="5" fill="currentColor"/><line class="f-dash" x1="465" y1="84" x2="465" y2="66"/><circle cx="465" cy="84" r="5" fill="currentColor"/><line class="f-dash" x1="630" y1="24" x2="630" y2="30"/><circle cx="630" cy="24" r="5" fill="currentColor"/><text class="f-t" x="135" y="195" text-anchor="middle">0</text><text class="f-t" x="300" y="195" text-anchor="middle">1</text><text class="f-t" x="465" y="195" text-anchor="middle">2</text><text class="f-t" x="630" y="195" text-anchor="middle">3</text><text class="f-t" x="117" y="18" text-anchor="middle">처리 시간</text><text class="f-t" x="690" y="174" text-anchor="middle">작업량</text><text class="f-t" x="550" y="68" text-anchor="middle">회귀 직선</text>
+</svg><figcaption>점과 직선 사이의 세로 차이를 잔차로 읽는다.</figcaption></figure>
+<div class="check" data-q="q2"></div>
+<h2>잔차를 제곱해서 더하는 이유</h2>
+<p>잔차를 바로 더하면 양과 음이 상쇄된다. 최소제곱법은 SSE=Σ eᵢ²가 가장 작은 직선을 찾는다. 여기서 SSE는 0.09+0.81+0.81+0.09=1.8이다. 절편을 포함한 보통최소제곱 회귀의 학습 잔차 합은 수치 오차를 제외하면 0이다. 미래의 오차는 별도 자료에서 평가한다.</p>
+<div class="check" data-q="q3"></div>
+<pre data-example="python"><code>from fractions import Fraction as F
+
+x, y = [0, 1, 2, 3], [2, 5, 5, 8]
+x_mean, y_mean = F(sum(x), len(x)), F(sum(y), len(y))
+sxx = sum((a - x_mean)**2 for a in x)
+sxy = sum((a - x_mean)*(b - y_mean) for a, b in zip(x, y))
+slope = sxy / sxx
+intercept = y_mean - slope*x_mean
+residuals = [b - (intercept + slope*a) for a, b in zip(x, y)]
+print(&quot;계수:&quot;, f&quot;{float(intercept):.1f}&quot;, f&quot;{float(slope):.1f}&quot;)
+print(&quot;잔차:&quot;, *(f&quot;{float(e):.1f}&quot; for e in residuals))
+print(&quot;SSE:&quot;, f&quot;{float(sum(e**2 for e in residuals)):.1f}&quot;)</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>계수: 2.3 1.8
+잔차: -0.3 0.9 -0.9 0.3
+SSE: 1.8</code></pre>
+<div class="check" data-q="q4"></div>
+<h2>설명변수를 추가할 때</h2>
+<p>담당 인원 z도 쓰면 ŷ=b₀+b₁x+b₂z다. b₁은 모형에서 <strong>담당 인원을 고정했을 때</strong> 작업량 1단위에 따른 예측 차이다. 두 변수가 강하게 함께 변하면 개별 계수를 분리해 추정하기가 어렵고 표본에 따라 추정치가 크게 달라질 수 있다.</p>
+<p>학습 범위가 0~3묶음인 예에서 100묶음의 시간을 추정하는 것은 외삽이다. 처리 체계가 달라질 가능성이 있다면 그 구간의 검증 기록을 확보한다. 관찰 자료로 추정한 양의 기울기는 변수 사이의 관계를 보여준다. 작업량을 직접 바꾼 개입의 효과를 판단하려면 설계와 가정을 따로 확인해야 한다.</p>
+<div class="check" data-q="q5"></div>
+<p>가로에 예측값, 세로에 잔차를 그려 곡선이나 부채꼴을 찾는다. 시간 순서의 잔차에서 같은 부호가 연속되는지도 살핀다. 오차 정규성은 최소제곱 계수 계산에 필요하지 않으며 고전적 소표본 검정과 신뢰구간의 근거로 쓰인다.</p>
+<div class="check" data-q="q6"></div>
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>계수는 원래 단위로 해석하고, 잔차의 구조와 새 자료의 예측 오차를 확인한다.</p></div>
+
+<h2>참고 자료</h2>
+<ul><li><a href="https://www.dataq.or.kr/www/dataq_brochure_2022.pdf">한국데이터산업진흥원 · 빅데이터분석기사 과목 안내</a></li><li><a href="https://www.itl.nist.gov/div898/handbook/pmd/section1/pmd141.htm">NIST · 선형 최소제곱 회귀</a></li><li><a href="../../../learn/notes/st/st07-1.html">공부 교재 · 단순 선형회귀</a></li></ul>
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"><a href="../../index.html">← 빅분기 홈</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

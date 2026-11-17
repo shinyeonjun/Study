@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>교차엔트로피와 KL, 실제와 다른 확률의 비용 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="OP07-2">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">수치계산·최적화·정보이론 · OP07 정보량</p>
+<p class="chap-num">OP07·2</p>
+<h1>교차엔트로피와 KL, 실제와 다른 확률의 비용</h1>
+<p class="lead">실제로 A가 자주 나오는데 A와 B가 비슷하게 나온다고 짐작했습니다. 그 모형의 확률로 길이를 고르면 평균 비용이 얼마나 늘어날까요? 실제 사례의 빈도로 평균을 내되 로그 안의 확률은 모형에서 얻습니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul>
+<li>위치가 같은 두 이산분포에서 교차엔트로피와 KL을 계산한다.</li>
+<li>확률이 0일 때 유한한 항과 무한대인 항을 구별한다.</li>
+<li>관측 정답 한 건의 로그 손실과 평균 손실을 설명한다.</li>
+</ul></div>
+
+<h2>평균을 내는 확률과 비용을 정하는 확률을 구별한다</h2>
+<p>실제 출처의 분포를 <code>P=(0.75,0.25)</code>, 이를 예측한 모형의 분포를 <code>Q=(0.50,0.50)</code>이라 합니다. 동일한 순서의 두 결과 A,B에 대한 분포입니다. <b class="key">교차엔트로피</b>는 <code>H(P,Q)=−Σ pᵢ log₂ qᵢ</code>입니다. 실제로 관측하는 빈도에 p를, 모형이 정한 예상 비용에 q를 씁니다. Q가 둘 다 1/2로 보면 비용은 모두 1비트라 평균도 1비트입니다.</p>
+<p>P의 엔트로피는 <code>−0.75log₂(0.75)−0.25log₂(0.25)≈0.8113</code>비트입니다. Q를 써서 늘어난 평균 비용 <code>H(P,Q)−H(P)</code>을 <b class="key">KL 발산</b>이라 합니다. 같은 로그 밑에서 <code>D(P‖Q)=Σ pᵢ log₂(pᵢ/qᵢ)</code>이고 이 예에서는 0.1887비트입니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 246" role="img" aria-label="P=(0.75,0.25)일 때 엔트로피는 약 0.811비트다. Q=(0.5,0.5)를 쓴 교차엔트로피는 1비트다. 차이가 KL 약 0.189비트다.">
+<text class="f-cap" x="394" y="30" text-anchor="middle">P에서 평균 낸 비용</text>
+<text class="f-t" x="212" y="91" text-anchor="end">H(P)</text>
+<rect class="f-soft" x="233" y="67" width="310.72" height="36"/>
+<text class="f-s" x="530.72" y="90" text-anchor="end">0.811</text>
+<text class="f-t" x="212" y="157" text-anchor="end">H(P,Q)</text>
+<rect class="f-soft" x="233" y="133" width="383" height="36"/>
+<rect class="f-over" x="543.72" y="133" width="72.28" height="36"/>
+<text class="f-s" x="603" y="156" text-anchor="end">1.000</text>
+<text class="f-s" x="579.86" y="196" text-anchor="middle">KL 0.189</text>
+<line class="f-ink" x1="579.86" y1="173" x2="579.86" y2="181"/>
+<text class="f-s" x="609" y="221" text-anchor="middle">단위: 비트</text>
+</svg>
+<figcaption>막대 길이는 비트 값에 비례한다. Q를 쓰면 이 예에서는 평균 비용이 0.189비트 늘어난다.</figcaption>
+</figure>
+<div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
+
+<h2>KL은 방향과 양의 확률이 있는 범위를 살핀다</h2>
+<p>KL은 0 이상입니다. 양의 p가 있는 자리에서 <code>−ln(q/p)≥1−q/p</code> 이므로 p를 곱해 더하면 <code>Σ(p−q)≥0</code>입니다. 이때 P의 양의 범위에서 p의 합은 1이고, q의 합은 최대 1입니다. 같은 분포일 때 0입니다. P와 Q를 뒤집으면 가중치가 달라져 이 예에서는 <code>D(Q‖P)≈0.2075</code>비트입니다. 따라서 KL은 일반적인 거리처럼 대칭일 필요가 없습니다.</p>
+<p>분포가 확률을 양수로 배정한 결과들의 집합을 <b class="key">지지집합</b>이라 합니다. 어떤 결과에서 p&gt;0인데 q=0이면 그 결과가 현실에서 나올 수 있는데 모형은 불가능하다고 대답한 셈입니다. 이 경우 CE와 <code>D(P‖Q)</code>는 모두 양의 무한대입니다. p=0인 자리의 항은 0으로 다룹니다. 유한한 KL에는 P의 지지집합이 Q에 포함되어야 합니다.</p>
+<p class="small">실행 예제</p>
+<pre data-example="python"><code>from math import inf, log2
+
+def entropy(p):
+    return -sum(v * log2(v) for v in p if v &gt; 0)
+
+def cross_entropy(p, q):
+    pairs = list(zip(p, q, strict=True))
+    if any(a &gt; 0 and b == 0 for a, b in pairs):
+        return inf
+    return -sum(a * log2(b) for a, b in pairs if a &gt; 0)
+
+p, q = (0.75, 0.25), (0.5, 0.5)
+print(f&quot;H(P)={entropy(p):.4f}, CE(P,Q)={cross_entropy(p,q):.4f}&quot;)
+print(f&quot;KL(P||Q)={cross_entropy(p,q)-entropy(p):.4f}&quot;)
+print(f&quot;KL(Q||P)={cross_entropy(q,p)-entropy(q):.4f}&quot;)
+print(f&quot;q(B)=0 with p(B)&gt;0: {cross_entropy(p,(1,0))}&quot;)</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>H(P)=0.8113, CE(P,Q)=1.0000
+KL(P||Q)=0.1887
+KL(Q||P)=0.2075
+q(B)=0 with p(B)&gt;0: inf</code></pre>
+<p>코드는 합이 1이고 음수가 없는 두 분포를 입력으로 가정합니다. 수치 오차로 계산 중 확률이 0처럼 보인 상황과 모형에서 정확히 0을 지정한 상황도 구별합니다.</p>
+<div class="check" data-q="q3"></div><div class="check" data-q="q4"></div><div class="check" data-q="q5"></div>
+
+<h2>정답 한 건의 교차엔트로피를 계산한다</h2>
+<p>정답이 A라면 그 한 건의 정답 분포를 <code>(1,0)</code>으로 놓습니다. 교차엔트로피는 A에 예측한 확률이 q일 때 <code>−log₂(q)</code> 하나만 남습니다. 여러 사례의 값을 평균하면 모형의 확률 예측을 비교하는 <b class="key">로그 손실</b>이 됩니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 224" role="img" aria-label="실제 결과 A에 0.9를 준 모델의 손실은 약 0.152비트, 0.1을 준 모델의 손실은 약 3.322비트다.">
+<rect class="f-box" x="80" y="31" width="181" height="40"/>
+<text class="f-s" x="170.5" y="56" text-anchor="middle">실제 결과</text>
+<rect class="f-box" x="261" y="31" width="166" height="40"/>
+<text class="f-s" x="344" y="56" text-anchor="middle">A에 준 확률</text>
+<rect class="f-box" x="427" y="31" width="252" height="40"/>
+<text class="f-s" x="553" y="56" text-anchor="middle">손실 −log₂ q(A)</text>
+<rect class="f-box" x="80" y="71" width="181" height="40"/>
+<text class="f-s" x="170.5" y="96" text-anchor="middle">A</text>
+<rect class="f-box" x="261" y="71" width="166" height="40"/>
+<text class="f-s" x="344" y="96" text-anchor="middle">0.9</text>
+<rect class="f-box" x="427" y="71" width="252" height="40"/>
+<text class="f-s" x="553" y="96" text-anchor="middle">0.152 비트</text>
+<rect class="f-box" x="80" y="111" width="181" height="40"/>
+<text class="f-s" x="170.5" y="136" text-anchor="middle">A</text>
+<rect class="f-box" x="261" y="111" width="166" height="40"/>
+<text class="f-s" x="344" y="136" text-anchor="middle">0.1</text>
+<rect class="f-over" x="427" y="111" width="252" height="40"/>
+<text class="f-s" x="553" y="136" text-anchor="middle">3.322 비트</text>
+<text class="f-cap" x="375" y="186" text-anchor="middle">실제 정답에 작은 확률을 주면 손실이 커진다.</text>
+</svg>
+<figcaption>관측된 정답 한 건의 손실이다. 여러 정답을 모아 평균을 내면 분류의 교차엔트로피 손실이 된다.</figcaption>
+</figure>
+<div class="why"><p class="box-k">왜 그럴까?</p><p>실제 분포 P가 같은 문제에서 KL과 교차엔트로피로 고른 모형의 순서는 왜 같을까요?</p><details><summary>모범 답 보기</summary><p>교차엔트로피는 두 모형에 공통인 H(P)에 각 모형의 KL을 더한 값입니다. 같은 만큼을 더해도 두 값의 순서가 유지됩니다.</p></details></div>
+<div class="check" data-q="q6"></div><div class="check" data-q="q7"></div>
+
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table><thead><tr><th scope="col">개념</th><th scope="col">확인할 것</th></tr></thead><tbody>
+<tr><th scope="row"><b class="key">교차엔트로피</b></th><td>P의 빈도로 Q가 준 로그 비용을 평균</td></tr>
+<tr><th scope="row"><b class="key">KL</b></th><td>Q를 써 늘어난 비용. P와 Q의 순서가 중요</td></tr>
+<tr><th scope="row"><b class="key">로그 손실</b></th><td>실제 한 정답에 예측한 확률의 음의 로그</td></tr>
+</tbody></table></div><div class="box sum"><p class="box-k">다음 장으로</p><p><a href="op07-3.html">다음 장</a>에서는 두 변수가 얼마나 많은 정보를 공유하는지 계산합니다.</p></div>
+
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.entropy.html">SciPy · 엔트로피, 교차엔트로피와 KL</a></li>
+<li><a href="https://people.math.harvard.edu/~ctm/home/text/others/shannon/entropy/entropy.pdf">Shannon(1948) · 정보량과 부호화</a></li>
+</ul>
+<h2>확인 문제</h2>
+<p>직접 계산하거나 설명을 먼저 적고 답을 확인해 보세요.</p>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

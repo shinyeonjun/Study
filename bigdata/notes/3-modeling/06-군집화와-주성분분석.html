@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>군집으로 묶고 주성분으로 요약하기 · 빅분기 노트</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="3-06">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">빅분기 노트</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">3과목 · 빅데이터 모델링</p>
+<p class="chap-num">06</p>
+<h1>군집으로 묶고 주성분으로 요약하기</h1>
+<p class="lead">라벨이 없는 주문 기록으로 비슷한 사례를 묶고, 함께 움직이는 변수의 방향을 요약한다. 군집과 주성분이 각각 어떤 질문에 답하는지 계산으로 살핀다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>K-평균의 할당과 갱신을 계산한다.</li><li>계층 군집과 DBSCAN을 구분한다.</li><li>주성분의 설명 분산을 해석한다.</li></ul></div>
+
+<h2>중심에 가까운 주문끼리 묶기</h2>
+<p>배송 거리 0, 2, 8, 10km의 주문을 두 묶음으로 나눈다고 하자. K-평균은 중심을 먼저 놓고, 각 점을 가장 가까운 중심에 배정한 뒤, 각 군집의 평균으로 중심을 갱신한다. 군집 내부의 점에서 중심까지의 제곱거리 합을 줄이는 절차다. 시작점을 바꾸면 해가 달라질 수 있어 여러 초기화를 검토한다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 200" role="img" aria-label="배송 거리 0, 2, 8, 10와 갱신 중심 1, 9">
+<line class="f-line" x1="113" y1="119" x2="655" y2="119"/><circle cx="135" cy="119" r="6" fill="currentColor"/><text class="f-t" x="135" y="144" text-anchor="middle">0</text><circle cx="235" cy="119" r="6" fill="currentColor"/><text class="f-t" x="235" y="144" text-anchor="middle">2</text><circle cx="535" cy="119" r="6" fill="currentColor"/><text class="f-t" x="535" y="144" text-anchor="middle">8</text><circle cx="635" cy="119" r="6" fill="currentColor"/><text class="f-t" x="635" y="144" text-anchor="middle">10</text><line class="f-dash" x1="185" y1="62" x2="185" y2="110"/><line class="f-dash" x1="585" y1="62" x2="585" y2="110"/><text class="f-t" x="185" y="51" text-anchor="middle">중심 1</text><text class="f-t" x="585" y="51" text-anchor="middle">중심 9</text><text class="f-t" x="395" y="178" text-anchor="middle">배송 거리(km)</text>
+</svg><figcaption>각 점을 가까운 중심에 할당하고 같은 군집의 평균을 새 중심으로 둔다.</figcaption></figure>
+<p>초깃값을 0과 10으로 두면 첫 군집은 0과 2, 둘째 군집은 8과 10이다. 중심은 1과 9가 된다. 갱신 뒤 네 점이 각각 중심에서 1km 떨어져 있으므로 제곱거리 합은 4km²다. 배정이 다시 바뀌지 않으면 이 예의 절차는 멈춘다.</p>
+<div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
+<pre data-example="python"><code>from statistics import mean
+
+points = [0, 2, 8, 10]
+centers = [0, 10]
+groups = [[], []]
+for point in points:
+    nearest = min(range(2), key=lambda i: abs(point - centers[i]))
+    groups[nearest].append(point)
+new_centers = [mean(group) for group in groups]
+sse = sum((point - center)**2
+          for group, center in zip(groups, new_centers)
+          for point in group)
+print(&quot;군집:&quot;, groups)
+print(&quot;중심:&quot;, new_centers)
+print(&quot;제곱거리 합:&quot;, sse)</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>군집: [[0, 2], [8, 10]]
+중심: [1, 9]
+제곱거리 합: 4</code></pre>
+<h2>거리를 비교할 다른 기준</h2>
+<div class="table-wrap"><table><thead><tr><th scope="col">방법</th><th scope="col">기준</th><th scope="col">읽을 결과</th></tr></thead><tbody><tr><td>K-평균</td><td>가까운 중심과 군집 내부 제곱거리</td><td>정한 개수의 군집과 각 중심</td></tr><tr><td>응집형 계층 군집</td><td>가까운 군집부터 합치는 연결 기준</td><td>어느 높이에서 나누는지 보여주는 덴드로그램</td></tr><tr><td>DBSCAN</td><td>반경 안의 이웃 밀도와 연결</td><td>핵심점·경계점·잡음, 군집 수는 결과로 얻음</td></tr></tbody></table></div>
+<p>계층 군집에서 단일 연결은 두 군집의 가장 가까운 점 사이 거리, 완전 연결은 가장 먼 점 사이 거리를 쓴다. DBSCAN은 반경 ε 내에 자신을 포함해 최소 표본 수만큼 점이 있으면 핵심점으로 판정한다. K-평균이나 DBSCAN에서 센티미터와 분처럼 단위가 다른 특징을 그대로 쓰면 수치 폭이 큰 쪽이 거리를 지배할 수 있다. 위치·스케일 추정은 평가 분할의 학습 부분으로 한정한다.</p>
+<div class="check" data-q="q3"></div><div class="check" data-q="q4"></div>
+<h2>군집 대신 좌표를 바꾸는 PCA</h2>
+<p>중심화한 자료에서 <strong>주성분 분석(PCA)</strong>은 첫 축 위의 분산을 최대화하는 방향을 찾는다. 다음 축은 앞 축과 직교한다. 두 축의 분산이 각각 4와 1이면 첫 축 하나가 보존하는 비율은 4/(4+1)=0.8이다. 한 축으로 줄이면 행마다 새 좌표 하나를 얻는다. 새 좌표의 분산이 크더라도 업무 결과를 잘 구분하는지는 별도의 평가로 판단한다.</p>
+<div class="check" data-q="q5"></div><div class="check" data-q="q6"></div>
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>군집은 행을 묶고, PCA는 행을 요약할 좌표축을 바꾼다. 두 방법 모두 스케일과 비교 기준이 결과에 영향을 준다.</p></div>
+
+<h2>참고 자료</h2>
+<ul><li><a href="https://www.dataq.or.kr/www/dataq_brochure_2022.pdf">한국데이터산업진흥원 · 빅데이터분석기사 과목 안내</a></li><li><a href="https://scikit-learn.org/stable/modules/clustering.html">scikit-learn · 군집화</a></li><li><a href="https://scikit-learn.org/stable/modules/decomposition.html#pca">scikit-learn · 주성분 분석</a></li><li><a href="../../../learn/notes/ml/ml09-1.html">공부 교재 · 군집화</a></li><li><a href="../../../learn/notes/la/la08-1.html">공부 교재 · 주성분 분석</a></li></ul>
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"><a href="../../index.html">← 빅분기 홈</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

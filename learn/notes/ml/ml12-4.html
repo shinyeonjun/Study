@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>관측 주변의 밀도를 더하는 커널 밀도 추정 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="ML12-4">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">머신러닝 · ML12 모델 계열의 확장</p>
+<p class="chap-num">ML12·4</p>
+<h1>관측 주변의 밀도를 더하는 커널 밀도 추정</h1>
+<p class="lead">센서 값의 분포가 필요하지만 정규분포가 몇 개 섞였는지 정하기 어렵습니다. 각 관측 주변에 작은 상자를 두고 합치면, 어디에 관측이 몰리는지 밀도로 나타낼 수 있습니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul>
+<li>1차원 커널 밀도 추정의 대역폭과 정규화를 계산한다.</li>
+<li>다른 대역폭의 밀도와 검증 로그우도를 비교한다.</li>
+<li>밀도값과 확률, 이상점 표시와 실제 오류를 구별한다.</li>
+</ul></div>
+
+<h2>관측 하나에 면적 1인 작은 모양을 놓는다</h2>
+<p><b class="key">커널 밀도 추정(KDE)</b>에서는 관측 <code>x₁,…,xₙ</code> 각각을 중심으로 작은 밀도 모양을 놓고 평균 냅니다. 1차원 식은 <code>f̂(t)=(1/(nh))Σ K((t−xᵢ)/h)</code>입니다. <code>h&gt;0</code>는 너비를 정하는 <b class="key">대역폭</b>입니다. 여기서는 <code>|u|&lt;1</code>에서 1/2, 나머지에서 0인 상자 커널 K를 씁니다.</p>
+<p>한 관측 주변의 상자 폭은 2h, 평균에 들어가는 높이는 <code>1/(2nh)</code>입니다. 한 상자의 면적은 1/n이며 n개를 모두 합치면 전체 면적 1입니다. 이 커널은 SVM에서 두 특성의 내적을 계산하는 커널과 용도가 다릅니다.</p>
+<div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
+
+<h2>폭을 바꾸어 겹치는 부분을 손으로 계산한다</h2>
+<p>훈련 값은 0과 2, n은 2입니다. h=1이면 각 상자는 자기 중심에서 좌우 1의 범위를 가지고 높이는 0.25입니다. h=2이면 각 상자의 높이는 0.125입니다. x=1.5는 두 상자에 모두 들어가 밀도 <code>0.125+0.125=0.25</code>입니다. x=3.5는 중심 2의 상자에만 들어가 0.125입니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 328" role="img" aria-label="훈련점 0,2 주위에 상자 커널을 놓는다. h=1은 −1에서 3까지 밀도 0.25의 두 인접 구간이다. h=2는 −2~0과 2~4에서 0.125, 두 상자가 겹치는 0~2에서 0.25다.">
+<text class="f-cap" x="129" y="85" text-anchor="end">h=1</text>
+<line class="f-ink" x1="147" y1="117" x2="654" y2="117"/>
+<rect class="f-soft" x="244" y="62" width="156" height="55"/>
+<text class="f-s" x="322" y="53" text-anchor="middle">0.250</text>
+<rect class="f-soft" x="400" y="62" width="156" height="55"/>
+<text class="f-s" x="478" y="53" text-anchor="middle">0.250</text>
+<circle class="f-fill" cx="322" cy="117" r="5"/>
+<circle class="f-fill" cx="478" cy="117" r="5"/>
+<text class="f-cap" x="129" y="198" text-anchor="end">h=2</text>
+<line class="f-ink" x1="147" y1="230" x2="654" y2="230"/>
+<rect class="f-soft" x="166" y="202.5" width="156" height="27.5"/>
+<text class="f-s" x="244" y="193.5" text-anchor="middle">0.125</text>
+<rect class="f-soft" x="322" y="175" width="156" height="55"/>
+<text class="f-s" x="400" y="166" text-anchor="middle">0.250</text>
+<rect class="f-soft" x="478" y="202.5" width="156" height="27.5"/>
+<text class="f-s" x="556" y="193.5" text-anchor="middle">0.125</text>
+<circle class="f-fill" cx="322" cy="230" r="5"/>
+<circle class="f-fill" cx="478" cy="230" r="5"/>
+<line class="f-ink" x1="166" y1="230" x2="166" y2="238"/>
+<text class="f-s" x="166" y="260" text-anchor="middle">-2</text>
+<line class="f-ink" x1="244" y1="230" x2="244" y2="238"/>
+<text class="f-s" x="244" y="260" text-anchor="middle">-1</text>
+<line class="f-ink" x1="322" y1="230" x2="322" y2="238"/>
+<text class="f-s" x="322" y="260" text-anchor="middle">0</text>
+<line class="f-ink" x1="400" y1="230" x2="400" y2="238"/>
+<text class="f-s" x="400" y="260" text-anchor="middle">1</text>
+<line class="f-ink" x1="478" y1="230" x2="478" y2="238"/>
+<text class="f-s" x="478" y="260" text-anchor="middle">2</text>
+<line class="f-ink" x1="556" y1="230" x2="556" y2="238"/>
+<text class="f-s" x="556" y="260" text-anchor="middle">3</text>
+<line class="f-ink" x1="634" y1="230" x2="634" y2="238"/>
+<text class="f-s" x="634" y="260" text-anchor="middle">4</text>
+<text class="f-s" x="383" y="289" text-anchor="middle">값 x · 점은 훈련 관측 0과 2</text>
+</svg>
+<figcaption>높이는 추정 밀도다. 상자의 경계와 겹치는 한 점의 밀도 표기는 생략했다. 그 한 점은 구간의 확률에 영향을 주지 않는다.</figcaption>
+</figure>
+<p>폭이 작은 경우 각 관측이 어디에 있는지 더 드러나지만 보기 드문 새 값에서 밀도가 낮게 나올 수 있습니다. 너무 넓으면 서로 구분해 보고 싶은 구조도 섞입니다. 매끄러운 모양을 원하면 가우시안 커널 같은 다른 K를 사용할 수 있습니다. 혼합 모형처럼 성분 수를 미리 고르는 대신 작은 모양 하나씩을 관측에서 둡니다.</p>
+<div class="check" data-q="q3"></div><div class="check" data-q="q4"></div><div class="check" data-q="q5"></div>
+
+<h2>폭을 학습 자료 바깥에서 평가한다</h2>
+<p>검증점이 <code>[0.5,1.5,3.5]</code>입니다. 각 점에서 밀도를 평가하고 자연로그를 평균해 대역폭을 비교합니다. 같은 단위와 같은 평가점에 더 높은 로그밀도를 준 모형이 이 기준에서 더 좋은 점수를 얻습니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 248" role="img" aria-label="검증점 0.5,1.5,3.5에서 h=1의 밀도는 0.25,0.25,0이다. h=2에서는 0.25,0.25,0.125다.">
+<rect class="f-box" x="68" y="36" width="167" height="40"/>
+<text class="f-s" x="151.5" y="61" text-anchor="middle">검증점</text>
+<rect class="f-box" x="235" y="36" width="137" height="40"/>
+<text class="f-s" x="303.5" y="61" text-anchor="middle">0.5</text>
+<rect class="f-box" x="372" y="36" width="137" height="40"/>
+<text class="f-s" x="440.5" y="61" text-anchor="middle">1.5</text>
+<rect class="f-box" x="509" y="36" width="137" height="40"/>
+<text class="f-s" x="577.5" y="61" text-anchor="middle">3.5</text>
+<rect class="f-box" x="68" y="76" width="167" height="40"/>
+<text class="f-s" x="151.5" y="101" text-anchor="middle">h=1 밀도</text>
+<rect class="f-box" x="235" y="76" width="137" height="40"/>
+<text class="f-s" x="303.5" y="101" text-anchor="middle">0.250</text>
+<rect class="f-box" x="372" y="76" width="137" height="40"/>
+<text class="f-s" x="440.5" y="101" text-anchor="middle">0.250</text>
+<rect class="f-over" x="509" y="76" width="137" height="40"/>
+<text class="f-s" x="577.5" y="101" text-anchor="middle">0.000</text>
+<rect class="f-box" x="68" y="116" width="167" height="40"/>
+<text class="f-s" x="151.5" y="141" text-anchor="middle">h=2 밀도</text>
+<rect class="f-box" x="235" y="116" width="137" height="40"/>
+<text class="f-s" x="303.5" y="141" text-anchor="middle">0.250</text>
+<rect class="f-box" x="372" y="116" width="137" height="40"/>
+<text class="f-s" x="440.5" y="141" text-anchor="middle">0.250</text>
+<rect class="f-box" x="509" y="116" width="137" height="40"/>
+<text class="f-s" x="577.5" y="141" text-anchor="middle">0.125</text>
+<text class="f-cap" x="382" y="193" text-anchor="middle">h=1의 마지막 값은 상자 두 개의 범위를 벗어났다.</text>
+</svg>
+<figcaption>밀도가 0인 검증점이 하나라도 있으면 그 모형의 검증 로그우도는 −∞가 된다.</figcaption>
+</figure>
+<p class="small">실행 예제</p>
+<pre data-example="python"><code>from math import inf, log
+from statistics import mean
+
+train = [0,2]
+validation = [.5,1.5,3.5]
+
+def density(t, h):
+    return sum(abs(t - x) &lt; h for x in train) / (2 * len(train) * h)
+
+for h in [1,2]:
+    values = [density(x,h) for x in validation]
+    score = mean(log(v) for v in values) if all(v &gt; 0 for v in values) else -inf
+    print(f&quot;h={h}: densities={values}, mean log-density={score:.3f}&quot;)</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>h=1: densities=[0.25, 0.25, 0.0], mean log-density=-inf
+h=2: densities=[0.25, 0.25, 0.125], mean log-density=-1.617</code></pre>
+<p>이 검증에서는 h=2가 낫지만 세 점을 바꾸면 순서도 바뀔 수 있습니다. 훈련점에서만 폭을 고르면 아주 작은 상자를 놓아 훈련점 자체의 밀도가 매우 높아질 수 있습니다. 폭과 커널을 정한 뒤 별도의 테스트에서 점검합니다.</p>
+<p>밀도는 단위 길이당 확률의 크기라 1을 넘을 수 있고, 구간에서 적분한 값이 확률입니다. 특성 수가 많으면 점 주변의 공간이 넓어져 밀도를 추정할 근접 관측이 부족해질 수 있습니다. 낮은 밀도를 받은 관측도 드물지만 정당한 사례일 수 있으므로 판정 맥락을 함께 확인합니다.</p>
+<div class="why"><p class="box-k">왜 그럴까?</p><p>폭을 바꾸기 전후의 밀도 높이를 서로 다른 단위로 그대로 비교할 수 있을까요?</p><details><summary>모범 답 보기</summary><p>밀도는 길이 단위에 따라 값이 달라집니다. 같은 평가점과 같은 단위에서 밀도를 비교하거나, 동일한 물리적 구간의 확률을 대조합니다.</p></details></div>
+<div class="check" data-q="q6"></div><div class="check" data-q="q7"></div>
+
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table><thead><tr><th scope="col">개념</th><th scope="col">확인할 것</th></tr></thead><tbody>
+<tr><th scope="row"><b class="key">KDE</b></th><td>관측에 놓은 정규화된 작은 밀도 모양을 평균</td></tr>
+<tr><th scope="row"><b class="key">대역폭</b></th><td>작은 모양의 너비와 매끄러움 조절</td></tr>
+<tr><th scope="row">평가</th><td>새 관측의 로그밀도나 필요한 구간 확률로 비교</td></tr>
+</tbody></table></div><div class="box sum"><p class="box-k">이어 읽기</p><p><a href="../../unit.html?u=ML11">모델의 신뢰성과 실패 분석</a>에서도 자료의 범위와 평가 조건이 모형 결과를 좌우하는 예를 다룹니다.</p></div>
+
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://scikit-learn.org/stable/modules/density.html">scikit-learn · 커널 밀도 추정</a></li>
+<li><a href="https://scikit-learn.org/stable/modules/mixture.html">scikit-learn · 가우시안 혼합모형</a></li>
+</ul>
+<h2>확인 문제</h2>
+<p>직접 계산하거나 설명을 먼저 적고 답을 확인해 보세요.</p>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

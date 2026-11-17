@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>주문 지연을 예측할 때 모형을 고르는 순서 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="BD03-1">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">빅데이터분석기사 연결</p>
+<p class="chap-num">BD03·1</p>
+<h1>주문 지연을 예측할 때 모형을 고르는 순서</h1>
+<p class="lead">운영팀은 오늘 출고할 주문 중 내일까지 지연될 건을 먼저 볼 수 있는 도구를 원합니다. 관측 단위와 기준선을 정하고, 작은 수로 이전 규칙을 교체할 수 있는지 판단합니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>연속 예측, 분류, 군집화를 업무 질문에 연결한다.</li><li>최종 판정 전에 쓸 수 있는 입력을 정한다.</li><li>놓친 건과 잘못 알린 건을 다른 비용으로 평가한다.</li></ul></div>
+
+<h2>무엇을 예측하고 누구에게 전달할까</h2>
+<p>출고 시작 시점의 주문마다 어제부터 밀린 상품 수와 주소 검토 신호를 가지고 있다고 합시다. ‘다음 날까지 출고되지 않음’을 양성으로 정의합니다. 시작 시점의 입력으로 양성 알림을 만들고, 다음 날이 지나 실제 라벨을 붙입니다. 최종 출고 시각은 라벨을 만들 때 사용하지만 예측 시점의 입력으로 가져오면 미래 정보가 새어 들어옵니다.</p>
+<div class="table-wrap"><table><thead><tr><th scope="col">질문</th><th scope="col">결과 모양</th><th scope="col">후보</th></tr></thead><tbody><tr><td>출고까지 몇 시간이 걸리나?</td><td>시간 단위의 수</td><td>회귀</td></tr><tr><td>다음 날까지 지연될 가능성이 높은가?</td><td>0/1 결과의 확률 또는 판정</td><td>분류</td></tr><tr><td>설명 변수가 비슷한 주문 유형은 무엇인가?</td><td>정답 라벨 없이 묶은 주문 집합</td><td>군집화</td></tr></tbody></table></div>
+<div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 160" role="img" aria-label="주문 분류에서 특징·라벨·평가의 시간 경계">
+<rect class="f-box" x="42" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="135" y="61" text-anchor="middle">예측 시점</text><text class="f-s" x="135" y="89" text-anchor="middle">본 시점까지 아는 특징</text><text class="f-s" x="135" y="110" text-anchor="middle">지연 신호와 주문 정보</text><line class="f-line" x1="235" y1="84" x2="278" y2="84" marker-end="url(#f-arrow)"/><rect class="f-soft" x="287" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="380" y="61" text-anchor="middle">검증 시점</text><text class="f-s" x="380" y="89" text-anchor="middle">예측 기한 후 라벨 확정</text><text class="f-s" x="380" y="110" text-anchor="middle">모형 후보의 비용 비교</text><line class="f-line" x1="480" y1="84" x2="523" y2="84" marker-end="url(#f-arrow)"/><rect class="f-box" x="532" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="625" y="61" text-anchor="middle">시험 시점</text><text class="f-s" x="625" y="89" text-anchor="middle">후보를 정한 다음 사용</text><text class="f-s" x="625" y="110" text-anchor="middle">최종 비용과 적용 범위</text>
+</svg><figcaption>다음 날의 출고 기한이 지나고 그 기한까지의 로그가 완전한지 확인하면 지연 여부를 확정할 수 있습니다.</figcaption></figure>
+<h2>여섯 주문의 알림을 비교한다</h2>
+<p>학습 기간을 지나 별도 검증 기간의 여섯 주문에 모형 A와 B를 적용했습니다. 양성을 놓치면 재배송으로 비용 5, 음성을 잘못 알리면 사람이 검토하므로 비용 1이 든다고 정했습니다. 올바른 판정의 비용은 이 연습에서 0입니다. 기준선은 모든 주문을 음성으로 둡니다.</p>
+<div class="table-wrap"><table><thead><tr><th scope="col">주문</th><th scope="col">실제 지연</th><th scope="col">모형 A</th><th scope="col">모형 B</th></tr></thead><tbody><tr><td>1</td><td>1</td><td>1</td><td>1</td></tr><tr><td>2</td><td>0</td><td>1</td><td>0</td></tr><tr><td>3</td><td>0</td><td>1</td><td>0</td></tr><tr><td>4</td><td>1</td><td>1</td><td>0</td></tr><tr><td>5</td><td>0</td><td>0</td><td>0</td></tr><tr><td>6</td><td>0</td><td>0</td><td>0</td></tr></tbody></table></div>
+<p>A는 두 지연 건을 모두 찾지만 주문 2·3을 잘못 알립니다. 비용은 2입니다. B는 하나만 놓쳐 비용이 5입니다. B의 정답 개수는 5개로 A의 4개보다 많습니다. 이 비용에서는 A가 더 낫습니다. 기준선은 지연 두 건을 모두 놓쳐 비용 10입니다.</p>
+<div class="check" data-q="q3"></div><div class="check" data-q="q4"></div>
+<pre data-example="python"><code>actual = [1, 0, 0, 1, 0, 0]
+candidates = {
+    &quot;항상 음성&quot;: [0] * len(actual),
+    &quot;A&quot;: [1, 1, 1, 1, 0, 0],
+    &quot;B&quot;: [1, 0, 0, 0, 0, 0],
+}
+for name, predictions in candidates.items():
+    fn = sum(y == 1 and p == 0 for y, p in zip(actual, predictions))
+    fp = sum(y == 0 and p == 1 for y, p in zip(actual, predictions))
+    print(name, &quot;FN:&quot;, fn, &quot;FP:&quot;, fp, &quot;비용:&quot;, 5*fn + fp)</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>항상 음성 FN: 2 FP: 0 비용: 10
+A FN: 0 FP: 2 비용: 2
+B FN: 1 FP: 0 비용: 5</code></pre>
+<div class="check" data-q="q5"></div>
+<h2>채택 전에 한 번 더 분할한다</h2>
+<p>검증 자료에서 후보 A를 골랐으므로 같은 자료에서 낸 비용 2는 후보 선택에도 사용한 결과입니다. 검증보다 나중 기간을 시험 자료로 남겨 비용과 알림 건수를 한 번 더 보고합니다. 주문을 합칠 때 같은 주문의 여러 상품 행을 따로 분할하지 않도록 먼저 주문 단위로 집계합니다. 이 연습에서는 출고 가능 시간이나 알림 담당 인원의 처리량에 따라 비용과 알림 규칙을 다시 정할 수 있습니다.</p>
+<div class="check" data-q="q6"></div>
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>질문과 라벨을 정한 뒤 기준선과 후보를 같은 검증 건에서 비교하고, 채택한 후보는 별도 기간에서 확인합니다.</p></div>
+
+<h2>참고 자료</h2>
+<ul><li><a href="../../../bigdata/notes/3-modeling/01-모형-설계와-기준선.html">빅분기 교재 · 모형과 기준선</a></li><li><a href="../../../bigdata/notes/3-modeling/02-검증-분할과-판정-기준.html">빅분기 교재 · 검증 분할과 판정 기준</a></li><li><a href="../ml/ml10-1.html">공부 교재 · 모형 평가</a></li></ul>
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

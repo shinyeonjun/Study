@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DQN의 재생 버퍼와 목표 신경망을 구별한다 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e8c'/%3E%3Cpath d='M8 22V10m8 12V14m8 8V6' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="RL09-2">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+
+<header class="chapter">
+<p class="chap-sub">강화학습 · RL09 함수근사와 DQN</p>
+<p class="chap-num">RL09·2</p>
+<h1>DQN의 재생 버퍼와 목표 신경망을 구별한다</h1>
+<p class="lead">지금 경험한 전이를 다시 볼 수 있게 저장하고, 가치의 기준에 쓰는 신경망은 잠시 고정합니다. DQN과 Double DQN의 다음 행동 계산을 작은 표에서 비교합니다.</p>
+</header>
+
+<div class="goal">
+<h2>이 장을 읽고 나면</h2>
+<ul>
+<li>재생 버퍼와 목표 신경망이 해결하려는 문제가 다른 이유를 설명한다.</li>
+<li>같은 전이에서 DQN과 Double DQN의 목표를 계산한다.</li>
+<li>함수근사·부트스트랩·오프폴리시가 겹칠 때의 위험을 설명한다.</li>
+</ul>
+</div>
+
+<h2>겪은 순서 그대로 한 줄씩만 배우지 않는다</h2>
+<p>확인 일만 반복하는 구간에서는 특정 상태의 전이가 아주 가까이 놓입니다. 이웃한 전이만 묶으면 같은 상황의 오차가 연달아 들어옵니다. <b class="key">경험 재생</b>(experience replay)은 경험 (s,a,r,s′,종료 표시)을 버퍼에 보관한 뒤 그중 작은 묶음인 미니배치를 뽑아 학습합니다. 과거 전이를 재사용하고 바로 이웃한 기록만 연달아 학습하는 경향을 줄일 수 있습니다. 무작위로 꺼내도 원래 수집한 행동의 범위와 관련성이 사라지는 것은 아닙니다. 한 번도 해 보지 않은 행동은 그 버퍼에서 가져올 수 없습니다.</p>
+<p><b class="key">DQN</b>(Deep Q-Network)의 온라인 신경망은 상태를 받아 각 이산 행동의 Q를 출력합니다. 환경에서 행동할 때에는 이 값으로 큰 행동을 고르되 일정 확률로 탐험할 수 있습니다. 현재 전이를 학습할 때 대조할 목표가 매번 같은 가중치에 따라 즉시 따라 움직이면 훈련이 불안정할 수 있습니다. 원래 DQN은 온라인 가중치를 일정 횟수마다 별도의 <b class="key">목표 신경망</b>에 복사했습니다. 복사 사이에는 현재 예측 네트워크만 학습하고 목표 네트워크는 고정합니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 224" role="img" aria-label="환경이 준 전이 A·B·C·D가 재생 버퍼에 차례로 저장된다. 표본 B·D를 뽑아 온라인 예측과 별개의 고정 목표를 비교한다.">
+<text class="f-cap" x="139" y="46" text-anchor="middle">도착 순서</text>
+<text class="f-cap" x="398" y="46" text-anchor="middle">버퍼</text>
+<text class="f-cap" x="637" y="46" text-anchor="middle">학습 배치</text>
+<rect class="f-box" x="59" y="75" width="37" height="38" rx="3"/>
+<text class="f-t" x="77.5" y="100" text-anchor="middle">A</text>
+<rect class="f-box" x="104" y="75" width="37" height="38" rx="3"/>
+<text class="f-t" x="122.5" y="100" text-anchor="middle">B</text>
+<rect class="f-box" x="149" y="75" width="37" height="38" rx="3"/>
+<text class="f-t" x="167.5" y="100" text-anchor="middle">C</text>
+<rect class="f-box" x="194" y="75" width="37" height="38" rx="3"/>
+<text class="f-t" x="212.5" y="100" text-anchor="middle">D</text>
+<line class="f-line" x1="233" y1="94" x2="294" y2="94" marker-end="url(#f-arrow)"/>
+<rect class="f-box" x="299" y="67" width="44" height="55" rx="3"/>
+<text class="f-t" x="321" y="101" text-anchor="middle">A</text>
+<rect class="f-soft" x="352" y="67" width="44" height="55" rx="3"/>
+<text class="f-t" x="374" y="101" text-anchor="middle">B</text>
+<rect class="f-box" x="405" y="67" width="44" height="55" rx="3"/>
+<text class="f-t" x="427" y="101" text-anchor="middle">C</text>
+<rect class="f-soft" x="458" y="67" width="44" height="55" rx="3"/>
+<text class="f-t" x="480" y="101" text-anchor="middle">D</text>
+<line class="f-line" x1="507" y1="94" x2="559" y2="94" marker-end="url(#f-arrow)"/>
+<rect class="f-soft" x="565" y="72" width="62" height="44" rx="3"/>
+<text class="f-t" x="596" y="100" text-anchor="middle">B</text>
+<rect class="f-soft" x="633" y="72" width="62" height="44" rx="3"/>
+<text class="f-t" x="664" y="100" text-anchor="middle">D</text>
+<text class="f-s" x="382" y="155" text-anchor="middle">배치 예측은 온라인 신경망에서</text>
+<text class="f-s" x="382" y="184" text-anchor="middle">배치의 목표값 계산에는 고정한 목표 신경망도 사용</text>
+</svg>
+<figcaption>B와 D는 가능한 무작위 표본 한 가지다. 목표 신경망의 복사 시점과 버퍼 표본을 뽑는 시점은 별개다.</figcaption>
+</figure>
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+<h2>최댓값을 고르는 일과 그 값을 평가하는 일을 분리한다</h2>
+<p>다음 상태 C에서 두 후보 행동을 확인, 바로 통과 순서로 놓습니다. 온라인 Q는 [7,5], 목표 Q는 [3,6]이라고 합시다. 보상 r=1, γ=0.5인 비종료 전이 하나를 업데이트합니다. 일반 DQN은 목표망 Q 중 가장 큰 값을 써서 Y=1+0.5×6=4를 만듭니다. <b class="key">Double DQN</b>은 온라인망에서 가장 큰 행동인 확인을 고르고, 그 행동의 값 3을 목표망에서 읽어서 Y=1+0.5×3=2.5로 계산합니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 224" role="img" aria-label="온라인망의 확인 7이 통과 5보다 크다. 일반 DQN은 목표망의 통과 6을 사용한다. Double DQN은 온라인망의 확인 선택을 목표망에서 평가해 3을 사용한다.">
+<text class="f-cap" x="144" y="42" text-anchor="middle">다음 C의 행동</text>
+<text class="f-cap" x="365" y="42" text-anchor="middle">온라인 Q</text>
+<text class="f-cap" x="590" y="42" text-anchor="middle">목표 Q</text>
+<text class="f-t" x="144" y="94" text-anchor="middle">확인</text>
+<rect class="f-soft" x="290" y="66" width="150" height="37" rx="3"/>
+<text class="f-t" x="365" y="91" text-anchor="middle">7</text>
+<rect class="f-box" x="515" y="66" width="150" height="37" rx="3"/>
+<text class="f-t" x="590" y="91" text-anchor="middle">3</text>
+<text class="f-t" x="144" y="141" text-anchor="middle">바로 통과</text>
+<rect class="f-box" x="290" y="113" width="150" height="37" rx="3"/>
+<text class="f-t" x="365" y="138" text-anchor="middle">5</text>
+<rect class="f-soft" x="515" y="113" width="150" height="37" rx="3"/>
+<text class="f-t" x="590" y="138" text-anchor="middle">6</text>
+<line class="f-line" x1="440" y1="84" x2="508" y2="84" marker-end="url(#f-arrow)"/>
+<text class="f-s" x="166" y="178" text-anchor="middle">Double DQN은 확인의 값 3</text>
+<text class="f-s" x="555" y="178" text-anchor="middle">일반 DQN은 목표망의 최대 6</text>
+<text class="f-s" x="381" y="205" text-anchor="middle">음영은 각 신경망에서 큰 행동</text>
+</svg>
+<figcaption>Double DQN의 화살표는 두 망의 같은 행동 칸을 연결한다.</figcaption>
+</figure>
+<p>여러 행동의 추정값에 오차가 있으면 우연히 과대평가한 행동이 최댓값으로 더 자주 뽑힐 수 있습니다. Double DQN은 선택과 평가를 별개 추정치로 계산해 과대평가를 줄이는 방법입니다. 목표망은 온라인망을 복사한 것이므로 두 오차가 독립이라고 볼 수 없고, 언제나 정확하다는 보장도 없습니다. 동률일 때는 행동 순서나 시드에 따라 정한 규칙을 기록합니다.</p>
+<p>과제에서 종료한 전이의 목표는 받은 보상입니다. 외부 시간 제한에서 원래 과제의 값을 추정한다면 마지막 비종료 관측에서 미래 항을 계산합니다. 배열이나 신경망 코드에서는 그 미래 항을 계산할 때 현재 전이에서 실제로 고른 행동 a와 다음 상태의 후보 행동을 구별합니다. 학습으로 고칠 예측은 <em>현재</em> (s,a)의 Q입니다.</p>
+<div class="check" data-q="q3"></div>
+<div class="check" data-q="q4"></div>
+<div class="check" data-q="q5"></div>
+<h2>부트스트랩, 오프폴리시, 공통 가중치가 함께 쓰인다</h2>
+<p>세 설정의 조합을 <b class="key">deadly triad</b>(위험한 세 조건의 결합)라고 부릅니다. 하나는 여러 상태의 값이 같은 매개변수를 공유하는 함수근사입니다. 둘째는 목표 안에 추정값을 쓰는 부트스트랩입니다. 셋째는 현재 배우려는 정책과 자료를 모은 행동 정책이 다를 수 있는 오프폴리시입니다. 세 조건이 만나면 한 곳의 예측 오차가 다른 상태로 이동하고 목표에도 들어가, 참값에서 점점 멀어지는 경우가 있습니다. 항상 발산한다는 명제는 아닙니다. 재생 버퍼와 목표망이 실험의 안정성을 돕더라도 모든 데이터와 목표에서 수렴을 보장하지 않습니다.</p>
+<p>실험에서는 손실을 반환 점수와 함께 봅니다. 배치 TD 오차가 작아져도 어떤 상태와 행동이 저장되지 않았다면 정책의 실제 성능이 낮을 수 있습니다. 돌아보고 싶은 사례를 버퍼에서 찾을 수 있는지, 다른 시드의 실행에서도 학습이 되는지 확인합니다.</p>
+<div class="check" data-q="q6"></div>
+<div class="check" data-q="q7"></div>
+<h2>두 목표와 종료 마스크를 손계산처럼 분리한다</h2>
+<pre data-example="python"><code>from fractions import Fraction as F
+
+gamma = F(1, 2)
+online_next = [7, 5]
+target_next = [3, 6]
+
+def targets(reward, terminated):
+    if terminated:
+        return F(reward), F(reward)
+    chosen = max(range(len(online_next)), key=online_next.__getitem__)
+    return (
+        reward + gamma * max(target_next),
+        reward + gamma * target_next[chosen],
+    )
+
+def squared_loss(prediction, target):
+    return (target - prediction)**2
+
+dqn, double = targets(1, False)
+print(&quot;nonterminal:&quot;, dqn, double)
+print(&quot;terminal:&quot;, *targets(2, True))
+print(&quot;one squared loss:&quot;, squared_loss(2, dqn), squared_loss(2, double))</code></pre>
+<pre data-output><code>nonterminal: 4 5/2
+terminal: 2 2
+one squared loss: 4 1/4</code></pre>
+<p>코드의 숫자는 신경망 출력이라고 가정한 예입니다. DQN 원 논문과 같이 오차를 최소화하는 맥락에서, 마지막 줄은 현재 행동의 예측 2에 대한 두 목표의 제곱오차만 비교합니다. 이 한 번의 오차가 더 작다는 사실만으로 Double DQN의 다음 행동 평가가 참값에 가깝다고 판단할 수는 없습니다.</p>
+
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table>
+<thead><tr><th scope="col">핵심어</th><th scope="col">기억할 기준</th></tr></thead>
+<tbody>
+<tr><td><b class="key">재생 버퍼</b></td><td>경험을 저장하고 배치를 뽑는다.</td></tr>
+<tr><td><b class="key">목표 신경망</b></td><td>온라인망을 복사한 뒤 목표를 계산하는 동안 일정 기간 고정한다.</td></tr>
+<tr><td><b class="key">Double DQN</b></td><td>온라인망으로 행동을 고르고 목표망의 해당 Q를 읽는다.</td></tr>
+<tr><td><b class="key">deadly triad</b></td><td>함수근사·오프폴리시·부트스트랩이 결합할 때 불안정성이 나타날 수 있다.</td></tr>
+</tbody></table></div>
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>어떤 기록으로 배우는가, 어떤 망으로 목표를 만드는가, 다음 행동을 어디서 고르는가를 구분한다.</p></div>
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://doi.org/10.1038/nature14236">Mnih 외 (2015) · DQN</a></li>
+<li><a href="https://arxiv.org/abs/1509.06461">van Hasselt 외 (2016) · Double DQN</a></li>
+<li><a href="https://arxiv.org/abs/1812.02648">van Hasselt 외 (2018) · Deep RL과 deadly triad</a></li>
+<li><a href="https://mitpress.mit.edu/9780262039246/reinforcement-learning/">Sutton·Barto, Reinforcement Learning 2판 · 11장 off-policy 근사 학습</a></li>
+<li><a href="https://gymnasium.farama.org/tutorials/gymnasium_basics/handling_time_limits/">Gymnasium · 종료와 외부 시간 제한</a></li>
+</ul>
+
+<h2>확인 문제</h2>
+<p>아직 풀지 않은 문제입니다. 먼저 식이나 근거를 적어 보고 해설을 확인합니다.</p>
+<div id="quiz"></div>
+
+<section class="work" id="tools"></section>
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

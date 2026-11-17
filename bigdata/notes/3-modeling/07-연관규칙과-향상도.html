@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>거래에서 연관 규칙과 향상도 구하기 · 빅분기 노트</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="3-07">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">빅분기 노트</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">3과목 · 빅데이터 모델링</p>
+<p class="chap-num">07</p>
+<h1>거래에서 연관 규칙과 향상도 구하기</h1>
+<p class="lead">함께 장바구니에 들어온 품목을 찾는다. 많이 함께 등장했는지, 한 품목을 고른 사람에게서 다른 품목이 평소보다 자주 등장했는지를 서로 다른 수로 답한다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>지지도·신뢰도·향상도를 계산한다.</li><li>규칙의 방향을 바꾸고 각 지표를 비교한다.</li><li>Apriori의 후보 제거 원리를 설명한다.</li></ul></div>
+
+<h2>거래 수와 함께 산 수를 구분하기</h2>
+<p>한 장바구니를 한 건으로 센다. 품목 A가 든 거래는 5건, 품목 B가 든 거래는 6건이며, 둘 다 든 거래는 4건이다. 전체는 10건이다. A만 담긴 거래가 1건, B만 담긴 거래가 2건, 둘 다 없는 거래가 3건이다. 품목의 수량을 여러 번 세지 않고 거래마다 등장 여부를 먼저 정한다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 168" role="img" aria-label="전체 열 거래에서 두 품목의 교차 분할">
+<rect class="f-box" x="75" y="46" width="610" height="104" rx="3"/><rect class="f-soft" x="77" y="53" width="137" height="66" rx="3"/><rect class="f-box" x="224" y="53" width="137" height="66" rx="3"/><rect class="f-box" x="371" y="53" width="137" height="66" rx="3"/><rect class="f-box" x="518" y="53" width="165" height="66" rx="3"/><text class="f-t" x="145" y="79" text-anchor="middle">A만</text><text class="f-t" x="292" y="79" text-anchor="middle">둘 다</text><text class="f-t" x="440" y="79" text-anchor="middle">B만</text><text class="f-t" x="601" y="79" text-anchor="middle">둘 다 없음</text><text class="f-t" x="145" y="102" text-anchor="middle">1건</text><text class="f-t" x="292" y="102" text-anchor="middle">4건</text><text class="f-t" x="440" y="102" text-anchor="middle">2건</text><text class="f-t" x="601" y="102" text-anchor="middle">3건</text><text class="f-t" x="380" y="142" text-anchor="middle">전체 10건</text>
+</svg><figcaption>네 칸은 서로 겹치지 않는다. A의 등장 횟수는 A만 1건과 둘 다 4건을 더한 5건이다.</figcaption></figure>
+<h2>서로 다른 분모 세 개</h2>
+<div class="table-wrap"><table><thead><tr><th scope="col">지표</th><th scope="col">묻는 내용</th><th scope="col">A→ B</th></tr></thead><tbody><tr><td>지지도</td><td>전체 거래 중 A와 B가 동시에 등장한 비율</td><td>4/10=0.4</td></tr><tr><td>신뢰도</td><td>A를 산 거래에서 B를 산 비율</td><td>4/5=0.8</td></tr><tr><td>향상도</td><td>A 거래의 B 비율을 전체 B 비율과 비교</td><td>0.8/(6/10)=4/3</td></tr></tbody></table></div>
+<div class="check" data-q="q1"></div><div class="check" data-q="q2"></div><div class="check" data-q="q3"></div>
+<p>화살표를 바꾸면 신뢰도는 4/6=2/3이다. 향상도는 (2/3)/(5/10)=4/3으로 같다. 식을 P(A∩ B)/(P(A)P(B))로 정리하면 왜 대칭인지 볼 수 있다. 양쪽 품목이 관측되어 분모가 양수일 때, 향상도 1은 독립일 때 기대되는 동시 등장과 같은 비율, 1 초과는 그보다 자주 등장함을 뜻한다. 작은 표본의 1 초과만으로 안정적인 관계나 원인 관계를 결론 내리기 어렵다.</p>
+<div class="check" data-q="q4"></div>
+<pre data-example="python"><code>from fractions import Fraction as F
+
+baskets = [set(&quot;AB&quot;)]*4 + [set(&quot;A&quot;)] + [set(&quot;B&quot;)]*2 + [set(&quot;C&quot;)]*3
+joint = sum({&quot;A&quot;, &quot;B&quot;} &lt;= basket for basket in baskets)
+a = sum(&quot;A&quot; in basket for basket in baskets)
+b = sum(&quot;B&quot; in basket for basket in baskets)
+size = len(baskets)
+print(&quot;지지도:&quot;, F(joint, size))
+print(&quot;신뢰도 A → B:&quot;, F(joint, a))
+print(&quot;신뢰도 B → A:&quot;, F(joint, b))
+print(&quot;향상도:&quot;, F(joint, a) / F(b, size))</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>지지도: 2/5
+신뢰도 A → B: 4/5
+신뢰도 B → A: 2/3
+향상도: 4/3</code></pre>
+<h2>후보를 미리 버리는 조건</h2>
+<p><strong>Apriori</strong>는 일정 지지도 이상인 품목 집합부터 찾는다. A가 등장하지 않는 거래에서는 A와 B도 함께 등장할 수 없다. 따라서 품목이 추가될수록 집합의 지지도는 커질 수 없다. {A,B}의 지지도가 0.4이고 최소 지지도가 0.5라면 {A,B,C}의 지지도도 최대 0.4다. 세 품목 후보를 직접 세지 않고 제거할 수 있다.</p>
+<div class="check" data-q="q5"></div><div class="check" data-q="q6"></div>
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>지지도는 전체, 신뢰도는 왼쪽 품목의 거래, 향상도는 오른쪽 품목의 전체 등장률을 기준에 넣는다.</p></div>
+
+<h2>참고 자료</h2>
+<ul><li><a href="https://www.dataq.or.kr/www/dataq_brochure_2022.pdf">한국데이터산업진흥원 · 빅데이터분석기사 과목 안내</a></li><li><a href="https://www.vldb.org/conf/1994/P487.PDF">Agrawal·Srikant · Fast Algorithms for Mining Association Rules</a></li></ul>
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"><a href="../../index.html">← 빅분기 홈</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

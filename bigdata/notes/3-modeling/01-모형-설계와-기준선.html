@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>분석 목적에서 모형 종류와 기준선 정하기 · 빅분기 노트</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="3-01">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">빅분기 노트</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">3과목 · 빅데이터 모델링</p>
+<p class="chap-num">01</p>
+<h1>분석 목적에서 모형 종류와 기준선 정하기</h1>
+<p class="lead">대기시간을 예측하고 싶다는 말에는 몇 분인지, 긴 대기인지, 고객 유형을 찾아볼지가 섞일 수 있습니다. 첫 예측을 만들기 전에 출력과 비교 기준을 정합니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>분석 질문의 입력·출력·관측 단위를 적는다.</li><li>회귀·분류·군집·연관 분석을 구별한다.</li><li>훈련자료에서 만든 기준 모형을 같은 검증 자료에서 비교한다.</li></ul></div>
+
+<h2>예측할 순간과 한 행의 뜻을 맞춘다</h2>
+<p>방문자가 접수할 때 대기를 안내하려 합니다. 한 행은 방문 한 건입니다. 현재 대기열 인원과 자리 수는 접수 순간에 알 수 있습니다. 실제 대기시간은 나중에 정답으로 붙습니다. 모형을 설계할 때는 어떤 출력이 업무에 필요한지 먼저 적습니다.</p>
+<div class="table-wrap"><table><thead><tr><th scope="col">분석 목적</th><th scope="col">출력의 예</th><th scope="col">기법의 계열</th></tr></thead><tbody><tr><td>몇 분 기다릴지 안내</td><td>6.5분</td><td>회귀</td></tr><tr><td>긴 대기인지 분류</td><td>긴 대기 확률 0.7 또는 두 범주</td><td>분류</td></tr><tr><td>이용 유형을 정답 없이 묶음</td><td>이용 패턴이 비슷한 집단</td><td>군집</td></tr><tr><td>같은 방문에서 함께 요청한 항목</td><td>함께 나타난 서비스의 규칙</td><td>연관 분석</td></tr></tbody></table></div>
+<p>긴 대기의 정의를 8분 이상이라고 정하면 분류의 정답을 만들 수 있습니다. 실제로 측정한 8분은 정답을 만드는 값입니다. 접수 때 8분 이상인지 알 수 없으므로 실제 대기시간을 입력에 넣으면 미래 정보가 섞입니다. 분석 방법을 고르기 전에 관측 단위, 예측 순간, 입력, 정답과 사용자의 결정을 한 줄씩 남깁니다.</p>
+<div class="check" data-q="q1"></div><div class="check" data-q="q2"></div><div class="check" data-q="q3"></div>
+<h2>간단한 기준선과 공정하게 비교한다</h2>
+<p><b class="key">기준 모형</b>은 더 복잡한 모형이 무엇을 개선했는지 살피는 비교 대상입니다. 훈련 자료의 평균으로 회귀를 시작하고, 분류에서는 가장 많은 범주를 늘 선택하는 방식을 쓸 수 있습니다. 이 예에서 훈련 대기시간 3,5,7,9분의 평균은 6분입니다. 별도 검증 대기시간 4,8분에서 두 모형을 같은 평균 절대오차로 비교합니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 187" role="img" aria-label="검증 실제값 4분과 8분. 평균 기준 예측은 각각 6분이라 절대오차가 2와 2. 후보는 5와 7이라 오차 1과 1.">
+<rect class="f-box" x="83" y="46" width="256" height="117" rx="3"/><text class="f-cap" x="211" y="76" text-anchor="middle">실제 4분</text><text class="f-s" x="211" y="109" text-anchor="middle">기준 6분 · 오차 2</text><text class="f-t" x="211" y="141" text-anchor="middle">후보 5분 · 오차 1</text><rect class="f-box" x="421" y="46" width="256" height="117" rx="3"/><text class="f-cap" x="549" y="76" text-anchor="middle">실제 8분</text><text class="f-s" x="549" y="109" text-anchor="middle">기준 6분 · 오차 2</text><text class="f-t" x="549" y="141" text-anchor="middle">후보 7분 · 오차 1</text>
+</svg><figcaption>두 모형은 같은 두 건에서 같은 지표로 확인한다.</figcaption></figure>
+<pre data-example="python"><code>from statistics import mean
+
+training = [3, 5, 7, 9]
+actual = [4, 8]
+baseline = [mean(training)] * len(actual)
+candidate = [5, 7]
+
+def mae(predictions):
+    return mean(abs(y - prediction)
+                for y, prediction in zip(actual, predictions, strict=True))
+
+print(&quot;baseline&quot;, baseline, &quot;MAE&quot;, mae(baseline))
+print(&quot;candidate&quot;, candidate, &quot;MAE&quot;, mae(candidate))</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>baseline [6, 6] MAE 2
+candidate [5, 7] MAE 1</code></pre>
+<p>두 관측만 보았으므로 차이가 나왔다는 사실을 기록할 수 있습니다. 다른 기간에도 비슷한 결과가 나는지는 아직 별도 확인이 필요합니다. 후보를 개발할 때 본 표와 최종적으로 독립된 평가 표를 구별합니다.</p>
+<div class="check" data-q="q4"></div><div class="check" data-q="q5"></div>
+<h2>문제에 알맞은 학습 순서를 지킨다</h2>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 160" role="img" aria-label="훈련으로 설정을 얻고, 검증으로 모델과 설정을 고른 뒤, 별도로 남긴 시험에서 확정한 절차를 평가한다.">
+<rect class="f-box" x="42" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="135" y="61" text-anchor="middle">훈련</text><text class="f-s" x="135" y="89" text-anchor="middle">관측으로 계수를 정함</text><text class="f-s" x="135" y="110" text-anchor="middle">변환·대치 기준도 학습</text><line class="f-line" x1="235" y1="84" x2="278" y2="84" marker-end="url(#f-arrow)"/><rect class="f-soft" x="287" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="380" y="61" text-anchor="middle">검증</text><text class="f-s" x="380" y="89" text-anchor="middle">비교할 후보를 정함</text><text class="f-s" x="380" y="110" text-anchor="middle">모형·설정·임계값 비교</text><line class="f-line" x1="480" y1="84" x2="523" y2="84" marker-end="url(#f-arrow)"/><rect class="f-box" x="532" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="625" y="61" text-anchor="middle">최종 시험</text><text class="f-s" x="625" y="89" text-anchor="middle">고정한 절차 평가</text><text class="f-s" x="625" y="110" text-anchor="middle">새 자료의 결과 기록</text>
+</svg><figcaption>같은 자료를 다시 사용해 설정을 고르면 그 자료는 독립된 시험이 되기 어렵다.</figcaption></figure>
+<p>자료에 한 이용자의 여러 번 방문이 섞여 있으면 같은 이용자의 과거를 알고 새 방문을 예측하는 과제인지, 처음 보는 사람의 예측인지 먼저 정합니다. 목표에 따라 쓸 수 있는 정보와 분할 방법이 달라질 수 있습니다.</p>
+<div class="check" data-q="q6"></div>
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table><thead><tr><th scope="col">핵심어</th><th scope="col">기억할 기준</th></tr></thead><tbody><tr><td><b class='key'>회귀·분류</b></td><td>수치나 범주를 목표로 학습</td></tr><tr><td><b class='key'>군집·연관</b></td><td>정답 없이 닮은 집단이나 함께 나타나는 항목을 찾음</td></tr><tr><td><b class='key'>기준 모형</b></td><td>훈련에서 정한 단순 기준과 후보를 같은 자료와 지표로 비교</td></tr></tbody></table></div>
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>관측의 단위와 예측의 목표를 정한 뒤, 단순한 기준선부터 같은 조건으로 평가한다.</p></div>
+<p><a href="../../../learn/unit.html?u=ML01">학습 문제 정의</a> · <a href="../../../learn/unit.html?u=ML02">공정한 첫 비교</a></p>
+
+<h2>참고 자료</h2>
+<ul><li><a href="https://www.dataq.or.kr/www/dataq_brochure_2022.pdf">한국데이터산업진흥원 · 빅데이터분석기사 과목 안내</a></li><li><a href="https://scikit-learn.org/stable/modules/cross_validation.html">scikit-learn · 교차검증과 평가 분할</a></li><li><a href="https://scikit-learn.org/stable/common_pitfalls.html">scikit-learn · 데이터 누출 방지</a></li></ul>
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"><a href="../../index.html">← 빅분기 홈</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

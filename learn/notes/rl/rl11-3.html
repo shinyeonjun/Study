@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>연속 행동에서 TD3와 SAC의 목표를 비교한다 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e8c'/%3E%3Cpath d='M8 22V10m8 12V14m8 8V6' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="RL11-3">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+
+<header class="chapter">
+<p class="chap-sub">강화학습 · RL11 Actor–Critic</p>
+<p class="chap-num">RL11·3</p>
+<h1>연속 행동에서 TD3와 SAC의 목표를 비교한다</h1>
+<p class="lead">가상 이동 장치의 속도 비율을 0부터 1 사이에서 고릅니다. 이 구간의 모든 수에 Q 표를 만들 수 없으니, 행동을 직접 내놓는 정책과 그 행동을 평가하는 Critic을 씁니다.</p>
+</header>
+
+<div class="goal">
+<h2>이 장을 읽고 나면</h2>
+<ul>
+<li>연속 행동에서 정책과 Q 함수의 입출력을 구별한다.</li>
+<li>TD3의 두 Critic과 목표 행동 평활화를 계산한다.</li>
+<li>SAC의 확률 정책과 보상 이외의 엔트로피 항을 구별한다.</li>
+</ul>
+</div>
+
+<h2>행동 번호 대신 연속값을 낸다</h2>
+<p>확인대의 확인·직행은 두 가지 번호로 표시할 수 있습니다. 속도 비율 a를 [0,1]에서 직접 고르는 가상 이동 장치는 후보가 연속으로 이어집니다. 행동마다 Q값을 하나씩 내놓는 DQN 출력을 그대로 만들기 어렵습니다. 대신 Actor는 상태에서 행동을 제안하고, Critic은 상태와 그 행동을 둘 다 받아 <code>Q(s,a)</code> 하나를 계산할 수 있습니다. 연속 확률 정책을 쓰는 PPO도 가능합니다. 여기서는 경험 재생으로 학습하는 두 가지 별도 알고리즘을 봅니다.</p>
+<p>아래 숫자는 다음 상태 하나에서의 가정입니다. 한 전이의 보상은 1, 할인율은 0.5, 다음 상태는 비종료입니다. 목표 Critic 둘이 그 상태에서 계산한 값을 <code>Q₁(a)=4−(a−0.5)²</code>, <code>Q₂(a)=3−(a−0.5)²</code>라고 놓습니다. 실제 학습에서 이 함수는 자료에서 추정하며 다음 상태가 달라지면 값도 달라집니다.</p>
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+<h2>TD3는 주변 목표 행동을 평가하고 두 값 중 작은 쪽을 쓴다</h2>
+<p><b class="key">TD3</b>(Twin Delayed DDPG)의 Actor는 정해진 상태에서 행동 하나를 내놓습니다. 자료를 모을 때는 그 행동에 탐험 잡음을 붙일 수 있습니다. 학습 목표를 만들 때는 별도의 목표 Actor의 행동 주위에 작은 잡음을 줍니다. 이 잡음을 정해 둔 범위로 자르고, 더한 뒤 행동 전체도 환경의 허용 범위로 자릅니다. 목표가 특정 행동의 뾰족한 Q 오차만 따라가지 않도록 하는 <b>목표 행동 평활화</b>입니다. 수집 시 탐험과 목표 계산의 잡음은 다른 곳에서 씁니다.</p>
+<p>목표 Actor가 0.9를 냈고 목표 잡음의 한 표본이 0.3이라 합시다. 잡음 한계를 ±0.2로 두어 0.2로 자릅니다. 합친 1.1은 행동 구간에서 1로 자릅니다. 이 행동에서 두 Critic 값은 3.75와 2.75입니다. 더 작은 쪽을 써서 목표는 <code>1+0.5×2.75=2.375</code>입니다. 높은 추정치에만 끌려가는 현상을 줄이려는 계산입니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 219" role="img" aria-label="행동축에서 0.9에 잘라낸 잡음 0.2를 더하면 1.1이다. 허용 행동 최대는 1이므로 두 Critic은 a=1을 평가한다.">
+<line class="f-ink" x1="100" y1="143" x2="691" y2="143" marker-end="url(#f-arrow)"/>
+<line class="f-ink" x1="111" y1="138" x2="111" y2="150"/>
+<text class="f-s" x="111" y="170" text-anchor="middle">0</text>
+<line class="f-ink" x1="205" y1="138" x2="205" y2="150"/>
+<text class="f-s" x="205" y="170" text-anchor="middle">0.2</text>
+<line class="f-ink" x1="299" y1="138" x2="299" y2="150"/>
+<text class="f-s" x="299" y="170" text-anchor="middle">0.4</text>
+<line class="f-ink" x1="393" y1="138" x2="393" y2="150"/>
+<text class="f-s" x="393" y="170" text-anchor="middle">0.6</text>
+<line class="f-ink" x1="487" y1="138" x2="487" y2="150"/>
+<text class="f-s" x="487" y="170" text-anchor="middle">0.8</text>
+<line class="f-ink" x1="581" y1="138" x2="581" y2="150"/>
+<text class="f-s" x="581" y="170" text-anchor="middle">1</text>
+<line class="f-ink" x1="628" y1="138" x2="628" y2="150"/>
+<text class="f-s" x="628" y="170" text-anchor="middle">1.1</text>
+<line class="f-dash" x1="111" y1="127" x2="581" y2="127"/>
+<text class="f-s" x="335" y="113" text-anchor="middle">허용 행동 [0, 1]</text>
+<line class="f-line" x1="534" y1="63" x2="628" y2="63" marker-end="url(#f-arrow)"/>
+<text class="f-s" x="580" y="51" text-anchor="middle">0.9 + 0.2</text>
+<line class="f-line" x1="628" y1="91" x2="581" y2="91" marker-end="url(#f-arrow)"/>
+<text class="f-s" x="606" y="82" text-anchor="middle">잘라내기</text>
+<circle class="f-fill" cx="581" cy="143" r="4"/>
+<text class="f-s" x="581" y="197" text-anchor="middle">두 Critic에 넣는 a=1</text>
+</svg>
+<figcaption>0.9는 목표 Actor 값이다. 1.1은 계산 중간값이라 실제 행동 범위 밖에 있다.</figcaption>
+</figure>
+<p>두 Critic은 같은 보수적 목표에 맞추더라도 서로 독립으로 초기화한 가치 예측기입니다. 기본 TD3에서는 Actor와 목표망을 Critic보다 덜 자주 갱신합니다. 예를 들어 Critic을 두 번 갱신한 뒤 Actor를 한 번 고칩니다. 원래 TD3에서 Actor 경사에 쓰는 값은 첫 번째 Critic의 출력이며, 두 Critic의 최소를 쓰는 곳은 앞에서 계산한 목표입니다.</p>
+<div class="check" data-q="q3"></div>
+<div class="check" data-q="q4"></div>
+<h2>SAC는 행동을 뽑는 분포와 그 무작위성도 다룬다</h2>
+<p><b class="key">SAC</b>(Soft Actor-Critic)의 Actor는 연속 행동의 확률분포를 만듭니다. 환경 보상과 함께 정책의 엔트로피를 보상에 포함해 행동을 어느 정도 다양하게 뽑도록 합니다. 여기서 온도 계수 α는 엔트로피 항의 크기를 조절합니다. 학습률에 쓰는 α와 역할이 다릅니다. 연속 행동에서 π(a|s)는 한 점의 확률이 아니라 <b>확률밀도</b>입니다. 그래서 숫자 1을 넘을 수 있으며, 확률을 얻을 때는 구간에 대해 밀도를 적분합니다.</p>
+<p>별도 V망 없이 두 Q망을 쓰는 SAC 형태에서는 다음 상태의 정책으로 a′를 표본추출합니다. 한 표본의 미래 평가는 <code>min(Q₁(s′,a′),Q₂(s′,a′))−α log π(a′|s′)</code>입니다. 이 설명에서는 a′=0.5에서 두 값이 4와 3이고, 밀도는 0.5이며 α=0.2라 놓습니다. 미래 평가는 <code>3−0.2 ln(0.5)≈3.1386</code>입니다. 따라서 목표는 1+0.5×3.1386≈2.5693입니다. 연속 밀도가 1을 넘으면 이 표본의 음의 로그밀도는 음수가 될 수 있습니다. 엔트로피는 전체 분포에서 음의 로그밀도를 평균한 값입니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 189" role="img" aria-label="SAC 표본에서 두 Q의 작은 값은 3.0000이고 −0.2 ln 0.5는 약 0.1386이다. 합쳐 다음 상태 평가 3.1386이 된다.">
+<text class="f-cap" x="91" y="51" text-anchor="start">미래 평가</text>
+<rect class="f-soft" x="91" y="75" width="510" height="40" rx="0"/>
+<rect class="f-over" x="601" y="75" width="23.56700413903814" height="40" rx="0"/>
+<text class="f-t" x="346" y="101" text-anchor="middle">작은 Q = 3.0000</text>
+<line class="f-ink" x1="612.78" y1="116" x2="612.78" y2="132"/>
+<text class="f-s" x="613" y="148" text-anchor="middle">0.1386</text>
+<text class="f-s" x="613" y="170" text-anchor="middle">−α log 밀도</text>
+</svg>
+<figcaption>Q 부분의 눈금과 엔트로피 항의 눈금은 한 단위당 170으로 같다.</figcaption>
+</figure>
+<p>위 수치 두 개는 동작 방식만 보여 주는 서로 다른 표본입니다. 같은 모형이나 실제 벤치마크에서 SAC의 성능이 앞선다는 비교는 할 수 없습니다. 두 알고리즘 모두 부트스트랩하는 원래 과제가 종료하면 미래 항을 빼고, 외부 수집 제한에서 원래 과제를 평가할 때는 최종 비종료 관측을 사용합니다.</p>
+<div class="check" data-q="q5"></div>
+<div class="check" data-q="q6"></div>
+<h2>한 전이의 두 목표를 계산한다</h2>
+<pre data-example="python"><code>from math import log
+
+def clip(x, low, high):
+    return max(low, min(x, high))
+
+def critic_values(action):
+    distance_penalty = (action - 0.5)**2
+    return 4 - distance_penalty, 3 - distance_penalty
+
+filtered_noise = clip(0.3, -0.2, 0.2)
+td3_action = clip(0.9 + filtered_noise, 0, 1)
+td3_target = 1 + 0.5 * min(critic_values(td3_action))
+
+sac_action = 0.5
+entropy_term = -0.2 * log(0.5)
+sac_target = 1 + 0.5 * (min(critic_values(sac_action)) + entropy_term)
+print(f&quot;TD3 action={td3_action:.1f}, target={td3_target:.4f}&quot;)
+print(f&quot;SAC entropy term={entropy_term:.4f}, target={sac_target:.4f}&quot;)</code></pre>
+<pre data-output><code>TD3 action=1.0, target=2.3750
+SAC entropy term=0.1386, target=2.5693</code></pre>
+<p>속도의 범위, 목표 잡음의 범위, 엔트로피 계수는 서로 다른 단위와 역할을 가집니다. 예제는 한 표본의 목적값을 계산합니다. 학습에서는 재생 버퍼에서 이전 전이를 뽑습니다. 다음 상태의 목표 행동은 TD3에서 목표 Actor 출력에 제한된 잡음을 더해 구하고, SAC에서 현재 확률 정책으로 표본을 뽑습니다.</p>
+
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table>
+<thead><tr><th scope="col">핵심어</th><th scope="col">기억할 기준</th></tr></thead>
+<tbody>
+<tr><td><b class="key">연속 Actor</b></td><td>가능 행동을 일일이 열거하는 대신 행동이나 행동 분포를 직접 낸다.</td></tr>
+<tr><td><b class="key">TD3</b></td><td>목표 행동의 주변을 보고 두 목표 Q 중 작은 쪽으로 부트스트랩한다.</td></tr>
+<tr><td><b class="key">SAC</b></td><td>확률 정책을 쓰고 보상과 더불어 엔트로피를 고려한다.</td></tr>
+</tbody></table></div>
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>같은 연속 행동 문제에서 TD3는 결정적 정책을, SAC는 엔트로피를 고려한 확률 정책을 사용한다.</p></div>
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://proceedings.mlr.press/v80/fujimoto18a.html">Fujimoto 외 (2018) · TD3</a></li>
+<li><a href="https://proceedings.mlr.press/v80/haarnoja18b.html">Haarnoja 외 (2018) · SAC</a></li>
+<li><a href="https://arxiv.org/abs/1812.05905">Haarnoja 외 (2018) · 별도 V망을 생략한 SAC와 온도 계수</a></li>
+<li><a href="https://gymnasium.farama.org/tutorials/gymnasium_basics/handling_time_limits/">Gymnasium · 종료와 외부 시간 제한</a></li>
+</ul>
+
+<h2>확인 문제</h2>
+<p>아직 풀지 않은 문제입니다. 먼저 식이나 근거를 적어 보고 해설을 확인합니다.</p>
+<div id="quiz"></div>
+
+<section class="work" id="tools"></section>
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

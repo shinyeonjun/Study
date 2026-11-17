@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>REINFORCE는 에피소드의 반환으로 정책을 고친다 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e8c'/%3E%3Cpath d='M8 22V10m8 12V14m8 8V6' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="RL10-2">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+
+<header class="chapter">
+<p class="chap-sub">강화학습 · RL10 정책을 직접 개선</p>
+<p class="chap-num">RL10·2</p>
+<h1>REINFORCE는 에피소드의 반환으로 정책을 고친다</h1>
+<p class="lead">한 번의 선택 뒤에 점수가 바로 결정되지 않을 수도 있습니다. 각 행동에서 다시 시작하듯 이후의 반환을 구하고, 선택한 행동의 확률을 높일지 낮출지 판단합니다.</p>
+</header>
+
+<div class="goal">
+<h2>이 장을 읽고 나면</h2>
+<ul>
+<li>에피소드에서 각 시점의 이후 반환을 계산한다.</li>
+<li>시작 상태의 할인 목표에서 REINFORCE 표본 기울기의 두 할인 역할을 구분한다.</li>
+<li>행동에 의존하지 않는 baseline이 기대 경사를 유지하는 이유를 설명한다.</li>
+</ul>
+</div>
+
+<h2>첫 행동과 마지막 행동에 돌아가는 보상을 구별한다</h2>
+<p>기존 확인대에서 S는 확인하면 보상 0으로 C에 갑니다. C는 직행하면 6으로 끝나고 확인하면 −1로 C에 남거나 3으로 끝납니다. 이번에 관측한 궤적은 S에서 확인, C에서 확인해 남기, C에서 직행입니다. 보상은 [0,−1,6]이고 γ=0.5입니다. 정책은 S에서 확인 확률 pₛ=0.75인 로짓 θₛ를 쓰고, C에서는 직행 확률 p꜀=0.5인 별도 로짓 θ꜀를 씁니다. 선택한 행동들의 로그확률 기울기는 차례로 θₛ 방향 0.25, θ꜀ 방향 −0.5, θ꜀ 방향 0.5입니다.</p>
+<p>지금 선택 이후에 받을 반환을 <b class="key">이후 반환</b>(return-to-go) Gₜ라고 씁니다. 마지막 행동은 G₂=6, 그 직전은 G₁=−1+γ×6=2, 첫 시작은 G₀=0+γ×2=1입니다. 마지막 행동은 과거의 −1을 만든 선택이 아니므로 G₂는 직전 단계 보상을 담지 않습니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 183" role="img" aria-label="보상 0, −1, 6을 따라 각 시점 이후 할인 반환은 S의 G0=1, 첫 C의 G1=2, 둘째 C의 G2=6이다.">
+<rect class="f-box" x="33" y="52" width="106" height="38" rx="3"/>
+<text class="f-t" x="86" y="77" text-anchor="middle">S₀ · S</text>
+<rect class="f-box" x="227" y="52" width="106" height="38" rx="3"/>
+<text class="f-t" x="280" y="77" text-anchor="middle">S₁ · C</text>
+<rect class="f-box" x="421" y="52" width="106" height="38" rx="3"/>
+<text class="f-t" x="474" y="77" text-anchor="middle">S₂ · C</text>
+<rect class="f-soft" x="615" y="52" width="106" height="38" rx="3"/>
+<text class="f-t" x="668" y="77" text-anchor="middle">완료</text>
+<line class="f-line" x1="143" y1="72" x2="223" y2="72" marker-end="url(#f-arrow)"/>
+<text class="f-s" x="183" y="55" text-anchor="middle">0</text>
+<line class="f-line" x1="337" y1="72" x2="417" y2="72" marker-end="url(#f-arrow)"/>
+<text class="f-s" x="377" y="55" text-anchor="middle">−1</text>
+<line class="f-line" x1="531" y1="72" x2="611" y2="72" marker-end="url(#f-arrow)"/>
+<text class="f-s" x="571" y="55" text-anchor="middle">6</text>
+<line class="f-ink" x1="86" y1="94" x2="86" y2="124"/>
+<text class="f-cap" x="86" y="146" text-anchor="middle">G₀ = 1</text>
+<line class="f-ink" x1="280" y1="94" x2="280" y2="124"/>
+<text class="f-cap" x="280" y="146" text-anchor="middle">G₁ = 2</text>
+<line class="f-ink" x1="474" y1="94" x2="474" y2="124"/>
+<text class="f-cap" x="474" y="146" text-anchor="middle">G₂ = 6</text>
+</svg>
+<figcaption>오른쪽에서 한 칸씩 돌아오며 Gₜ = Rₜ₊₁ + γGₜ₊₁으로 계산한다.</figcaption>
+</figure>
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+<h2>시작 상태 목표에서는 시점 t만큼 또 할인한다</h2>
+<p>출발 S에서 얻는 할인 기대 반환 J(θ)=E[G₀]을 최대화한다면, <b class="key">REINFORCE</b>의 한 에피소드 표본 방향은 <code>Σₜ γᵗ Gₜ ∇θ ln πθ(Aₜ | Sₜ)</code>입니다. Gₜ 내부의 할인은 시점 t를 기준으로 다시 1부터 시작합니다. 식 바깥에 있는 γᵗ는 시점 0에서 t까지 할인하는 별도의 배율입니다. 할인하지 않는 유한 과제에서는 γ=1로 둘 수 있습니다.</p>
+<p>그 이유를 짧게 따라가 봅시다. 한 궤적 확률은 행동 확률들과 환경의 전이 확률들의 곱입니다. 정책 변수로 로그를 미분하면 환경 규칙은 고정되어 있으므로 행동의 로그확률 기울기들만 남습니다. 처음에는 궤적 반환 전체가 각 항에 붙습니다. 행동 t를 고르기 전에 이미 일어난 보상의 기여는, 현재 상태와 이전 기록을 고정하고 행동을 다시 뽑아 평균할 때 0입니다. 그래서 이후 반환만 남기고, 그 이후 반환을 첫 시점 기준으로 돌리기 위해 γᵗ를 붙입니다.</p>
+<div class="table-wrap"><table>
+<thead><tr><th scope="col">t</th><th scope="col">γᵗ</th><th scope="col">Gₜ</th><th scope="col">선택 행동 기울기</th><th scope="col">더할 값</th></tr></thead>
+<tbody>
+<tr><td>0</td><td>1</td><td>1</td><td>θₛ 방향 +1/4</td><td>θₛ에 +1/4</td></tr>
+<tr><td>1</td><td>1/2</td><td>2</td><td>θ꜀ 방향 −1/2</td><td>θ꜀에 −1/2</td></tr>
+<tr><td>2</td><td>1/4</td><td>6</td><td>θ꜀ 방향 +1/2</td><td>θ꜀에 +3/4</td></tr>
+</tbody></table></div>
+<p>θₛ 방향과 θ꜀ 방향은 각각 +1/4입니다. 예제에서는 한 정책으로 전이를 모두 뽑고, 그 정책에서 평가한 기울기를 합쳐 한 번 갱신합니다. 맨 마지막까지 계산하므로 외부에서 잘린 로그에 순수 몬테카를로 반환을 붙이기는 어렵습니다. 마지막 보상 이후를 추정 값으로 잇는 방식은 다음 단원처럼 다른 목표를 씁니다.</p>
+<div class="check" data-q="q3"></div>
+<div class="check" data-q="q4"></div>
+<h2>같은 상태의 보통 성적을 빼고 방향을 잡는다</h2>
+<p><b class="key">baseline</b>(기준값)은 “이 상태라면 보통 얼마인가”를 비교할 값입니다. 상태만으로 정한 b(s)를 Gₜ에서 빼면, 평균 기울기를 바꾸지 않고도 표본의 산포를 줄일 수 있습니다. 이유는 같은 s에서 행동별 기울기를 π로 평균하면 <code>Σₐ π(a|s) ∇ln π(a|s)=∇Σₐ π(a|s)=∇1=0</code>이기 때문입니다. 행동에 따라 다른 항을 그대로 빼거나 같은 표본의 선택에 의존하도록 기준값을 만들면 이 조건을 점검해야 합니다. 기준값을 학습하는 모델은 정책 손실에서 기준값을 고정한 값처럼 다룹니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 191" role="img" aria-label="G2가 6인 표본에 baseline 4를 쓰면 차이는 2다. G1이 2인 표본에 같은 baseline을 쓰면 차이는 −2다.">
+<line class="f-ink" x1="86" y1="140" x2="678" y2="140" marker-end="url(#f-arrow)"/>
+<line class="f-ink" x1="118" y1="134" x2="118" y2="146"/>
+<text class="f-s" x="118" y="167" text-anchor="middle">0</text>
+<line class="f-ink" x1="197" y1="134" x2="197" y2="146"/>
+<text class="f-s" x="197" y="167" text-anchor="middle">1</text>
+<line class="f-ink" x1="276" y1="134" x2="276" y2="146"/>
+<text class="f-s" x="276" y="167" text-anchor="middle">2</text>
+<line class="f-ink" x1="355" y1="134" x2="355" y2="146"/>
+<text class="f-s" x="355" y="167" text-anchor="middle">3</text>
+<line class="f-ink" x1="434" y1="134" x2="434" y2="146"/>
+<text class="f-s" x="434" y="167" text-anchor="middle">4</text>
+<line class="f-ink" x1="513" y1="134" x2="513" y2="146"/>
+<text class="f-s" x="513" y="167" text-anchor="middle">5</text>
+<line class="f-ink" x1="592" y1="134" x2="592" y2="146"/>
+<text class="f-s" x="592" y="167" text-anchor="middle">6</text>
+<line class="f-dash" x1="434" y1="38" x2="434" y2="139"/>
+<text class="f-cap" x="434" y="30" text-anchor="middle">b(C) = 4</text>
+<line class="f-line" x1="434" y1="68" x2="592" y2="68" marker-end="url(#f-arrow)"/>
+<text class="f-s" x="513" y="58" text-anchor="middle">6 − 4 = +2</text>
+<line class="f-line" x1="434" y1="104" x2="276" y2="104" marker-end="url(#f-arrow)"/>
+<text class="f-s" x="355" y="93" text-anchor="middle">2 − 4 = −2</text>
+</svg>
+<figcaption>두 화살표는 같은 기준값에서 출발한다. 반환이 기준을 밑돌면 정책 신호의 부호가 바뀔 수 있다.</figcaption>
+</figure>
+<p>예에서 b(S)=2, b(C)=4를 고정하면 θₛ 방향은 −1/4입니다. θ꜀ 방향은 (1/2)(2−4)(−1/2)+(1/4)(6−4)(1/2)=3/4입니다. 기준값을 넣으면 이 궤적의 방향은 달라졌습니다. 여러 궤적에서의 기댓값이 같다는 말과 한 샘플 값이 그대로라는 말은 다릅니다. 적절한 기준은 분산을 줄이는 데 도움이 되지만, 어떤 기준값이든 반드시 줄이는 것은 아닙니다.</p>
+<div class="check" data-q="q5"></div>
+<div class="check" data-q="q6"></div>
+<h2>한 기록을 뒤에서 앞으로 읽고 방향을 합친다</h2>
+<pre data-example="python"><code>from fractions import Fraction as F
+
+gamma = F(1, 2)
+rewards = [0, -1, 6]
+returns = [F(0)] * len(rewards)
+future = F(0)
+for t in reversed(range(len(rewards))):
+    future = rewards[t] + gamma * future
+    returns[t] = future
+
+states = [&quot;S&quot;, &quot;C&quot;, &quot;C&quot;]
+scores = [F(1, 4), F(-1, 2), F(1, 2)]
+baseline = {&quot;S&quot;: 2, &quot;C&quot;: 4}
+
+def gradient(use_baseline):
+    result = {&quot;S&quot;: F(0), &quot;C&quot;: F(0)}
+    for t, (state, score) in enumerate(zip(states, scores)):
+        comparison = baseline[state] if use_baseline else 0
+        result[state] += gamma**t * (returns[t] - comparison) * score
+    return result[&quot;S&quot;], result[&quot;C&quot;]
+
+print(&quot;return-to-go:&quot;, *returns)
+print(&quot;raw:&quot;, *gradient(False))
+print(&quot;with baseline:&quot;, *gradient(True))</code></pre>
+<pre data-output><code>return-to-go: 1 2 6
+raw: 1/4 1/4
+with baseline: -1/4 3/4</code></pre>
+<p>정책의 로짓이 각 상태마다 하나이므로 분수 두 개로 경사를 표현할 수 있습니다. 신경망의 매개변수를 공유하는 정책에서는 이 기울기들이 공통 매개변수 벡터에 함께 더해집니다.</p>
+
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table>
+<thead><tr><th scope="col">핵심어</th><th scope="col">기억할 기준</th></tr></thead>
+<tbody>
+<tr><td><b class="key">이후 반환</b></td><td>현재 행동부터 끝까지 관측한 보상을 현재 시점 기준으로 할인한다.</td></tr>
+<tr><td><b class="key">REINFORCE</b></td><td>이후 반환과 선택 행동 로그확률의 기울기를 이용한 몬테카를로 정책경사다.</td></tr>
+<tr><td><b class="key">baseline</b></td><td>행동에 의존하지 않는 기준으로 표본의 흔들림을 줄일 수 있다.</td></tr>
+</tbody></table></div>
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>시작 시점 기준의 할인, 행동 이후 반환, 상태 기준값의 차이를 각자 계산한다.</p></div>
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://mitpress.mit.edu/9780262039246/reinforcement-learning/">Sutton·Barto, Reinforcement Learning 2판 · 13.3–13.4절 REINFORCE와 baseline</a></li>
+<li><a href="https://doi.org/10.1007/BF00992696">Williams (1992) · REINFORCE</a></li>
+</ul>
+
+<h2>확인 문제</h2>
+<p>아직 풀지 않은 문제입니다. 먼저 식이나 근거를 적어 보고 해설을 확인합니다.</p>
+<div id="quiz"></div>
+
+<section class="work" id="tools"></section>
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>선형층과 활성함수로 작은 MLP 만들기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e8c'/%3E%3Cpath d='M8 22V10m8 12V14m8 8V6' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="DL01-2">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+
+<header class="chapter">
+<p class="chap-sub">딥러닝 · DL01 작은 신경망</p>
+<p class="chap-num">DL01·2</p>
+<h1>선형층과 활성함수로 작은 MLP 만들기</h1>
+<p class="lead">가중치를 곱하고 편향을 더한 뒤 활성함수를 적용합니다. 이 과정을 두 번 이어 입력 둘이 서로 다를 때만 1을 내는 네트워크를 직접 계산합니다.</p>
+</header>
+
+<div class="goal">
+<h2>이 장을 읽고 나면</h2>
+<ul>
+<li>한 선형층의 가중치와 편향을 배치 모양에 맞춰 곱한다.</li>
+<li>활성함수로 왜 여러 직선 계산을 합칠 때 생기는 제약을 넘을 수 있는지 설명한다.</li>
+<li>고정 가중치를 사용해 XOR의 로짓과 분류 결과를 직접 계산한다.</li>
+</ul>
+</div>
+
+<h2>선형층이 한 행에서 여러 값을 계산한다</h2>
+<p>관측의 두 특성을 (x₁,x₂)로 놓습니다. 가중치 w₁,w₂와 편향 b로 z=w₁x₁+w₂x₂+b를 계산합니다. 이런 계산을 출력마다 하나씩 가지면 <b class="key">선형층</b>입니다. 편향을 포함하면 수학적으로는 아핀 변환이라고 합니다. PyTorch의 <code>Linear(in_features, out_features)</code>는 편향을 기본으로 둡니다.</p>
+<p>가중치 W의 한 행은 출력 하나를 만드는 계수입니다. 입력 특성 F개, 출력 H개, 배치 B개라면 X는 (B,F), W는 (H,F), b는 (H,)입니다. 층의 결과는 Z=XWᵀ+b로, 모양은 (B,H)입니다. 마지막의 b는 각 관측 행에 적용됩니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 182" role="img" aria-label="관측 4건과 특성 2개의 입력은 선형층과 ReLU에서 4행 2열, 마지막 출력에서 4행 1열이다.">
+<rect class="f-box" x="17" y="58" width="163" height="72" rx="3"/>
+<text class="f-s" x="98" y="84" text-anchor="middle">입력 X</text>
+<text class="f-cap" x="98" y="113" text-anchor="middle">(4, 2)</text>
+<line class="f-line" x1="182" y1="92" x2="201" y2="92" marker-end="url(#f-arrow)"/>
+<rect class="f-box" x="204" y="58" width="163" height="72" rx="3"/>
+<text class="f-s" x="285" y="84" text-anchor="middle">선형층 + 편향</text>
+<text class="f-cap" x="285" y="113" text-anchor="middle">(4, 2)</text>
+<line class="f-line" x1="369" y1="92" x2="388" y2="92" marker-end="url(#f-arrow)"/>
+<rect class="f-soft" x="391" y="58" width="163" height="72" rx="3"/>
+<text class="f-s" x="472" y="84" text-anchor="middle">ReLU 후 은닉값</text>
+<text class="f-cap" x="472" y="113" text-anchor="middle">(4, 2)</text>
+<line class="f-line" x1="556" y1="92" x2="575" y2="92" marker-end="url(#f-arrow)"/>
+<rect class="f-box" x="578" y="58" width="163" height="72" rx="3"/>
+<text class="f-s" x="659" y="84" text-anchor="middle">출력 로짓</text>
+<text class="f-cap" x="659" y="113" text-anchor="middle">(4, 1)</text>
+
+<text class="f-s" x="380" y="159" text-anchor="middle">첫 축 4는 같은 네 관측을 뜻한다.</text>
+</svg>
+<figcaption>층은 마지막 특성 축을 바꾼다. 이 예에서 배치의 네 행은 같은 관측 순서를 유지한다.</figcaption>
+</figure>
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+
+<h2>활성함수로 입력 범위에 따라 계산을 달리한다</h2>
+<p>두 층이 모두 아핀 변환이면 합성도 아핀입니다. 첫 결과 W₁x+b₁에 W₂와 b₂를 적용하면, (W₂W₁)x+(W₂b₁+b₂)로 한 번에 정리할 수 있습니다. 층 사이에 <b class="key">활성함수</b>를 넣으면 이런 단순 합성으로 줄지 않는 함수를 만들 수 있습니다.</p>
+<p><b class="key">ReLU</b>는 max(0,z)입니다. z가 음수면 출력 0이고 양수면 입력이 그대로 나옵니다. z=0에서 두 부분이 만납니다. 예로 ReLU(−2)=0, ReLU(3)=3입니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 226" role="img" aria-label="ReLU는 z가 0 이하이면 가로축의 0, 양수이면 입력과 같은 값이다. z=2에 출력 2를 표시했다.">
+<line class="f-ink" x1="102" y1="184" x2="625" y2="184" marker-end="url(#f-arrow)"/>
+<line class="f-ink" x1="345" y1="217" x2="345" y2="39" marker-end="url(#f-arrow)"/>
+<line class="f-line" x1="166" y1="184" x2="345" y2="184"/>
+<line class="f-line" x1="345" y1="184" x2="497" y2="70"/>
+<line class="f-dash" x1="345" y1="107" x2="448" y2="107"/>
+<line class="f-dash" x1="448" y1="107" x2="448" y2="184"/>
+<text class="f-t" x="641" y="188" text-anchor="start">z</text>
+<text class="f-cap" x="362" y="45" text-anchor="start">ReLU(z)</text>
+<text class="f-s" x="345" y="211" text-anchor="middle">0</text>
+<text class="f-s" x="448" y="210" text-anchor="middle">2</text>
+<text class="f-s" x="334" y="112" text-anchor="end">2</text>
+<text class="f-s" x="222" y="158" text-anchor="middle">음수 구간에서는 0</text>
+<text class="f-s" x="548" y="98" text-anchor="middle">양수에서는 z</text>
+</svg>
+<figcaption>같은 함수가 값의 부호에 따라 다른 직선을 적용한다. ReLU는 원소마다 작동하므로 모양을 유지한다.</figcaption>
+</figure>
+<p>여러 선형층과 활성함수를 합성한 구조를 <b class="key">다층 퍼셉트론</b>(MLP)이라고 합니다. 시그모이드는 실수 로짓을 0과 1 사이로 바꿉니다. 출력이 이진 분류의 점수라면 로짓 0이 시그모이드 0.5에 대응합니다. 은닉층의 활성함수와 최종 출력의 해석은 문제에 맞춰 골라야 합니다.</p>
+<div class="check" data-q="q3"></div>
+<div class="check" data-q="q4"></div>
+
+<h2>입력 두 값이 서로 다를 때 1이 되는 네 점</h2>
+<p>이진 입력에서 두 값이 다르면 1, 같으면 0인 규칙을 XOR이라고 합니다. (0,0)과 (1,1)은 0이고 (0,1),(1,0)은 1입니다. 두 클래스의 점들을 각각 잇는 선분이 가운데에서 만나므로 직선 하나로 두 쌍을 엄격히 분리할 수 없습니다.</p>
+<p>이 장의 네트워크는 먼저 s=x₁+x₂를 구합니다. 은닉층의 두 값은 h₁=ReLU(s), h₂=ReLU(s−1)입니다. 마지막 출력 z=h₁−2h₂−0.5를 계산합니다. z≥0이면 클래스 1로 정합니다.</p>
+<div class="table-wrap"><table>
+<thead><tr><th scope="col">입력의 합 s</th><th scope="col">h₁</th><th scope="col">h₂</th><th scope="col">로짓 z</th><th scope="col">예측 클래스</th></tr></thead>
+<tbody>
+<tr><td>0</td><td>0</td><td>0</td><td>−0.5</td><td>0</td></tr>
+<tr><td>1</td><td>1</td><td>0</td><td>0.5</td><td>1</td></tr>
+<tr><td>2</td><td>2</td><td>1</td><td>−0.5</td><td>0</td></tr>
+</tbody>
+</table></div>
+<p>(1,1)에서는 은닉값이 (2,1)이므로 로짓은 2−2×1−0.5=−0.5입니다. (0,1)과 (1,0)에서는 은닉값이 (1,0)으로 같아 둘 다 0.5입니다. 가중치는 이 규칙을 보여 주려고 우리가 직접 정한 값입니다.</p>
+<div class="check" data-q="q5"></div>
+<div class="check" data-q="q6"></div>
+
+<h2>가중치를 정한 뒤 네 입력을 한 번에 넣는다</h2>
+<pre data-example="python"><code>import torch
+from torch import nn
+
+torch.manual_seed(7)
+model = nn.Sequential(nn.Linear(2, 2), nn.ReLU(), nn.Linear(2, 1))
+model = model.to(device=&quot;cpu&quot;, dtype=torch.float32)
+with torch.no_grad():
+    model[0].weight.copy_(torch.tensor([[1., 1.], [1., 1.]]))
+    model[0].bias.copy_(torch.tensor([0., -1.]))
+    model[2].weight.copy_(torch.tensor([[1., -2.]]))
+    model[2].bias.fill_(-0.5)
+
+x = torch.tensor([[0., 0.], [0., 1.], [1., 0.], [1., 1.]], dtype=torch.float32)
+with torch.no_grad():
+    hidden = model[1](model[0](x))
+    logits = model(x)
+    decision = (logits[:, 0] &gt;= 0).to(torch.int64)
+    assert torch.equal(decision, torch.tensor([0, 1, 1, 0]))
+    positive_prob = torch.sigmoid(logits[:, 0])
+
+print(&quot;hidden:&quot;, hidden.tolist())
+print(&quot;logits:&quot;, logits[:, 0].tolist())
+print(&quot;sigmoid:&quot;, &quot; &quot;.join(f&quot;{p:.4f}&quot; for p in positive_prob))
+print(&quot;classes:&quot;, decision.tolist())</code></pre>
+<pre data-output><code>hidden: [[0.0, 0.0], [1.0, 0.0], [1.0, 0.0], [2.0, 1.0]]
+logits: [-0.5, 0.5, 0.5, -0.5]
+sigmoid: 0.3775 0.6225 0.6225 0.3775
+classes: [0, 1, 1, 0]</code></pre>
+<p class="small">실행 확인 환경 · Python 3.14.6, PyTorch 2.14.1+cu130, CPU. 시드 7로 초기화하고 계산에 쓰는 가중치와 편향은 직접 넣었습니다.</p>
+<p><code>Sequential</code>은 적은 순서대로 모듈을 적용합니다. <code>no_grad()</code>로 직접 값을 복사하는 작업과 예측 계산을 미분 기록에서 제외했습니다. 다음 단원에서 이 기록이 실제로 어디에 쓰이는지 살펴봅니다.</p>
+
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table>
+<thead><tr><th scope="col">단계</th><th scope="col">하는 일</th></tr></thead>
+<tbody>
+<tr><td>선형층</td><td>가중치와 편향으로 특성을 다른 값들의 묶음으로 바꾼다.</td></tr>
+<tr><td>활성함수</td><td>각 원소에 ReLU 같은 비선형 함수를 적용한다.</td></tr>
+<tr><td>합성</td><td>앞 층의 출력 특성 차원이 다음 층의 입력과 맞는지 확인한다.</td></tr>
+</tbody>
+</table></div>
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://docs.pytorch.org/docs/stable/generated/torch.nn.Linear.html">PyTorch 공식 문서 · Linear의 W 모양과 입력·출력</a></li>
+<li><a href="https://docs.pytorch.org/docs/stable/generated/torch.nn.ReLU.html">PyTorch 공식 문서 · ReLU</a></li>
+<li><a href="https://www.deeplearningbook.org/contents/mlp.html">Goodfellow·Bengio·Courville · 순전파 신경망과 XOR</a></li>
+</ul>
+
+
+<h2>확인 문제</h2>
+<p>아직 풀지 않은 문제입니다. 먼저 식이나 근거를 적어 보고 해설을 확인합니다.</p>
+<div id="quiz"></div>
+
+<section class="work" id="tools"></section>
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

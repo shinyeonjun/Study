@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>로짓과 시그모이드, 이진 분류의 안정적인 손실 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="ML05-1">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">머신러닝 · ML05 확률로 분류하기</p>
+<p class="chap-num">ML05·1</p>
+<h1>로짓과 시그모이드, 이진 분류의 안정적인 손실</h1>
+<p class="lead">도서관 방문 전에 긴 대기가 생길 확률을 내고 싶습니다. 선형식으로 얻은 값을 0과 1 사이로 바꾼 뒤, 어느 확률에서 경보를 낼지 정하고 관측된 정답의 손실을 계산합니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul>
+<li>오즈와 로그오즈를 시그모이드 확률로 바꾼다.</li>
+<li>임계값을 정하고 이진 분류 경계를 계산한다.</li>
+<li>로짓에서 이진 교차엔트로피를 안정적으로 평가한다.</li>
+</ul></div>
+
+<h2>확률의 비율을 로그로 바꾸어 선형식과 연결한다</h2>
+<p>이진 목표에서 긴 대기를 양성 1이라고 합시다. 양성 확률 p가 0.8이면 음성 확률은 0.2이고 양성과 음성의 확률 비인 <b class="key">오즈</b>는 <code>p/(1−p)=4</code>입니다. 양의 값인 오즈에 자연로그를 쓴 <b class="key">로짓</b>은 <code>ln[p/(1−p)]</code>입니다. 확률 p가 0과 1 사이를 움직이면 로짓은 모든 실수 값을 가질 수 있습니다.</p>
+<p><b class="key">로지스틱 회귀</b>는 <code>z=b+wᵀx</code>로 로짓을 표현합니다. 이를 확률로 돌려 놓는 <b class="key">시그모이드</b>는 <code>p=1/(1+exp(−z))</code>입니다. z=0이면 p=0.5이며 z가 커질 때 p가 커집니다. 이 장의 합성 모형은 <code>z=2x−4</code>입니다. x=1,2,3일 때 로짓은 −2,0,2이고 확률은 약 0.119,0.500,0.881입니다.</p>
+<div class="check" data-q="q1"></div><div class="check" data-q="q2"></div><div class="check" data-q="q3"></div>
+
+<h2>예측 확률과 경보 결정은 서로 다른 단계다</h2>
+<p>확률이 기준 이상이면 경보를 보낸다고 정합니다. 임계값 0.5는 로짓 0을 뜻하므로 이 예에서는 x≥2에서 경보합니다. 임계값이 0.8이면 <code>2x−4≥ln 4</code>이므로 <code>x≥(4+ln 4)/2≈2.693</code>입니다. x가 벡터일 때는 일정한 로짓을 내는 <code>b+wᵀx=상수</code>가 경계입니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 295" role="img" aria-label="로짓 z=2x−4에 시그모이드를 적용했다. p=0.5인 x는 2, p=0.8인 x는 약 2.693이다.">
+<line class="f-ink" x1="134" y1="51" x2="134" y2="226"/>
+<line class="f-ink" x1="134" y1="226" x2="690" y2="226"/>
+<polyline class="f-line" points="134,222.85 138.96,222.62 143.93,222.38 148.89,222.12 153.86,221.84 158.82,221.54 163.79,221.21 168.75,220.87 173.71,220.5 178.68,220.11 183.64,219.69 188.61,219.24 193.57,218.76 198.54,218.25 203.5,217.7 208.46,217.12 213.43,216.5 218.39,215.83 223.36,215.13 228.32,214.37 233.29,213.57 238.25,212.72 243.21,211.82 248.18,210.86 253.14,209.85 258.11,208.77 263.07,207.62 268.04,206.42 273,205.14 277.96,203.79 282.93,202.37 287.89,200.87 292.86,199.29 297.82,197.64 302.79,195.9 307.75,194.08 312.71,192.17 317.68,190.18 322.64,188.1 327.61,185.93 332.57,183.69 337.54,181.35 342.5,178.94 347.46,176.44 352.43,173.86 357.39,171.21 362.36,168.49 367.32,165.69 372.29,162.84 377.25,159.93 382.21,156.97 387.18,153.96 392.14,150.92 397.11,147.84 402.07,144.74 407.04,141.62 412,138.5 416.96,135.38 421.93,132.26 426.89,129.16 431.86,126.08 436.82,123.04 441.79,120.03 446.75,117.07 451.71,114.16 456.68,111.31 461.64,108.51 466.61,105.79 471.57,103.14 476.54,100.56 481.5,98.06 486.46,95.65 491.43,93.31 496.39,91.07 501.36,88.9 506.32,86.82 511.29,84.83 516.25,82.92 521.21,81.1 526.18,79.36 531.14,77.71 536.11,76.13 541.07,74.63 546.04,73.21 551,71.86 555.96,70.58 560.93,69.38 565.89,68.23 570.86,67.15 575.82,66.14 580.79,65.18 585.75,64.28 590.71,63.43 595.68,62.63 600.64,61.87 605.61,61.17 610.57,60.5 615.54,59.88 620.5,59.3 625.46,58.75 630.43,58.24 635.39,57.76 640.36,57.31 645.32,56.89 650.29,56.5 655.25,56.13 660.21,55.79 665.18,55.46 670.14,55.16 675.11,54.88 680.07,54.62 685.04,54.38 690,54.15"/>
+<line class="f-dash" x1="134" y1="138.5" x2="412" y2="138.5"/>
+<line class="f-dash" x1="412" y1="138.5" x2="412" y2="226"/>
+<circle class="f-fill" cx="412" cy="138.5" r="5"/>
+<text class="f-s" x="115" y="142.5" text-anchor="end">0.5</text>
+<line class="f-dash" x1="134" y1="86" x2="508.35" y2="86"/>
+<line class="f-dash" x1="508.35" y1="86" x2="508.35" y2="226"/>
+<circle class="f-fill" cx="508.35" cy="86" r="5"/>
+<text class="f-s" x="115" y="90" text-anchor="end">0.8</text>
+<line class="f-ink" x1="134" y1="226" x2="134" y2="233"/>
+<text class="f-s" x="134" y="254" text-anchor="middle">0</text>
+<line class="f-ink" x1="273" y1="226" x2="273" y2="233"/>
+<text class="f-s" x="273" y="254" text-anchor="middle">1</text>
+<line class="f-ink" x1="412" y1="226" x2="412" y2="233"/>
+<text class="f-s" x="412" y="254" text-anchor="middle">2</text>
+<line class="f-ink" x1="551" y1="226" x2="551" y2="233"/>
+<text class="f-s" x="551" y="254" text-anchor="middle">3</text>
+<line class="f-ink" x1="690" y1="226" x2="690" y2="233"/>
+<text class="f-s" x="690" y="254" text-anchor="middle">4</text>
+<text class="f-cap" x="134" y="30" text-anchor="start">양성 예측 확률 p</text>
+<text class="f-s" x="541.27" y="103" text-anchor="start">x≈2.693</text>
+<text class="f-s" x="641" y="276" text-anchor="middle">입력 x</text>
+</svg>
+<figcaption>높은 임계값을 선택하면 같은 확률 곡선에서 양성으로 부르는 경계가 달라진다.</figcaption>
+</figure>
+<p>경보 기준을 바꾸는 데 모형을 다시 학습할 필요는 없습니다. 임계값은 지연 누락과 거짓 경보의 비용에 맞춰 검증 자료에서 고릅니다. 연속 값에 맞춘 모형의 출력이 얼마나 잘 보정됐는지는 평가에서 따로 확인합니다.</p>
+<div class="check" data-q="q4"></div><div class="check" data-q="q5"></div>
+
+<h2>실제 라벨에 준 확률에 손실을 매긴다</h2>
+<p>관측 라벨 y가 1이면 손실은 <code>−ln p</code>, y가 0이면 <code>−ln(1−p)</code>입니다. 이를 합친 <b class="key">이진 교차엔트로피(BCE)</b>는 <code>−[y ln p+(1−y)ln(1−p)]</code>입니다. 여러 관측의 BCE를 줄이도록 회귀 계수를 정합니다. 자연로그를 쓰므로 손실 단위는 나트입니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 230" role="img" aria-label="x가 1,2,3이면 로짓 −2,0,2와 확률 0.119,0.500,0.881을 얻는다. 관측 라벨 0,1,1에 대한 자연로그 손실은 0.127,0.693,0.127이다.">
+<rect class="f-box" x="77" y="28" width="108" height="40"/>
+<text class="f-s" x="131" y="53" text-anchor="middle">입력 x</text>
+<rect class="f-box" x="185" y="28" width="132" height="40"/>
+<text class="f-s" x="251" y="53" text-anchor="middle">로짓 z</text>
+<rect class="f-box" x="317" y="28" width="125" height="40"/>
+<text class="f-s" x="379.5" y="53" text-anchor="middle">양성 확률</text>
+<rect class="f-box" x="442" y="28" width="119" height="40"/>
+<text class="f-s" x="501.5" y="53" text-anchor="middle">실제 y</text>
+<rect class="f-box" x="561" y="28" width="118" height="40"/>
+<text class="f-s" x="620" y="53" text-anchor="middle">BCE</text>
+<rect class="f-box" x="77" y="68" width="108" height="40"/>
+<text class="f-s" x="131" y="93" text-anchor="middle">1</text>
+<rect class="f-box" x="185" y="68" width="132" height="40"/>
+<text class="f-s" x="251" y="93" text-anchor="middle">−2</text>
+<rect class="f-box" x="317" y="68" width="125" height="40"/>
+<text class="f-s" x="379.5" y="93" text-anchor="middle">0.119</text>
+<rect class="f-box" x="442" y="68" width="119" height="40"/>
+<text class="f-s" x="501.5" y="93" text-anchor="middle">0</text>
+<rect class="f-soft" x="561" y="68" width="118" height="40"/>
+<text class="f-s" x="620" y="93" text-anchor="middle">0.127</text>
+<rect class="f-box" x="77" y="108" width="108" height="40"/>
+<text class="f-s" x="131" y="133" text-anchor="middle">2</text>
+<rect class="f-box" x="185" y="108" width="132" height="40"/>
+<text class="f-s" x="251" y="133" text-anchor="middle">0</text>
+<rect class="f-box" x="317" y="108" width="125" height="40"/>
+<text class="f-s" x="379.5" y="133" text-anchor="middle">0.500</text>
+<rect class="f-box" x="442" y="108" width="119" height="40"/>
+<text class="f-s" x="501.5" y="133" text-anchor="middle">1</text>
+<rect class="f-soft" x="561" y="108" width="118" height="40"/>
+<text class="f-s" x="620" y="133" text-anchor="middle">0.693</text>
+<rect class="f-box" x="77" y="148" width="108" height="40"/>
+<text class="f-s" x="131" y="173" text-anchor="middle">3</text>
+<rect class="f-box" x="185" y="148" width="132" height="40"/>
+<text class="f-s" x="251" y="173" text-anchor="middle">2</text>
+<rect class="f-box" x="317" y="148" width="125" height="40"/>
+<text class="f-s" x="379.5" y="173" text-anchor="middle">0.881</text>
+<rect class="f-box" x="442" y="148" width="119" height="40"/>
+<text class="f-s" x="501.5" y="173" text-anchor="middle">1</text>
+<rect class="f-soft" x="561" y="148" width="118" height="40"/>
+<text class="f-s" x="620" y="173" text-anchor="middle">0.127</text>
+<text class="f-s" x="377" y="213" text-anchor="middle">손실은 실제 라벨에 배정한 확률을 사용한다.</text>
+</svg>
+<figcaption>라벨 0에는 1−p, 라벨 1에는 p를 써 로그 손실을 계산한다.</figcaption>
+</figure>
+<p>로짓 z가 큰 양수이면 유한한 컴퓨터 정밀도에서 시그모이드가 1로 반올림될 수 있습니다. 그 뒤 <code>ln(1−p)</code>를 구하면 문제가 생깁니다. 유한한 z에 대한 같은 BCE를 <code>max(z,0)−y·z+log1p(exp(−|z|))</code>로 계산할 수 있습니다. 지수의 입력이 0 이하라 큰 양수의 지수를 계산하지 않습니다. <code>log1p(u)</code>는 u가 아주 작을 때도 <code>ln(1+u)</code>를 안정적으로 구합니다.</p>
+<p class="small">실행 예제</p>
+<pre data-example="python"><code>from math import exp, log1p
+from statistics import mean
+
+def sigmoid(z):
+    scale = exp(-abs(z))
+    return 1 / (1 + scale) if z &gt;= 0 else scale / (1 + scale)
+
+def loss(z, y):
+    return max(z, 0) - y*z + log1p(exp(-abs(z)))
+
+labels = [0,1,1]
+z_values = [-2,0,2]
+for z, y in zip(z_values, labels, strict=True):
+    print(f&quot;z={z:2d}, p={sigmoid(z):.3f}, y={y}, BCE={loss(z,y):.3f}&quot;)
+print(f&quot;mean BCE={mean(loss(z,y) for z,y in zip(z_values,labels,strict=True)):.4f}&quot;)
+print(f&quot;z=1000: y=1 loss={loss(1000,1):.1f}, y=0 loss={loss(1000,0):.1f}&quot;)</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>z=-2, p=0.119, y=0, BCE=0.127
+z= 0, p=0.500, y=1, BCE=0.693
+z= 2, p=0.881, y=1, BCE=0.127
+mean BCE=0.3157
+z=1000: y=1 loss=0.0, y=0 loss=1000.0</code></pre>
+<div class="why"><p class="box-k">왜 그럴까?</p><p>z=1000인데 실제 라벨이 0이면 왜 큰 손실이 나올까요?</p><details><summary>모범 답 보기</summary><p>모형은 양성에 거의 모든 확률을 줬습니다. 실제 정답인 음성 확률을 매우 작게 지정했으므로 그 음의 로그가 큽니다.</p></details></div>
+<div class="check" data-q="q6"></div><div class="check" data-q="q7"></div>
+
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table><thead><tr><th scope="col">개념</th><th scope="col">확인할 것</th></tr></thead><tbody>
+<tr><th scope="row"><b class="key">로짓</b></th><td>확률의 오즈에 자연로그를 적용한 값</td></tr>
+<tr><th scope="row"><b class="key">시그모이드</b></th><td>유한한 실수 로짓을 0과 1 사이 확률로 변환</td></tr>
+<tr><th scope="row"><b class="key">BCE</b></th><td>실제 라벨에 준 확률의 음의 로그</td></tr>
+</tbody></table></div><div class="box sum"><p class="box-k">다음 장으로</p><p><a href="ml05-2.html">다음 장</a>에서는 서로 배타적인 클래스가 셋 이상일 때의 확률과 손실을 계산합니다.</p></div>
+
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression">scikit-learn · 로지스틱 회귀의 확률과 다항 모형</a></li>
+<li><a href="https://pytorch.org/docs/stable/generated/torch.nn.BCEWithLogitsLoss.html">PyTorch · 로그오즈에서 계산하는 안정적인 BCE</a></li>
+</ul>
+<h2>확인 문제</h2>
+<p>직접 계산하거나 설명을 먼저 적고 답을 확인해 보세요.</p>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

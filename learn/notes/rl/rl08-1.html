@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>n-step 목표로 여러 전이의 보상을 잇는다 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e8c'/%3E%3Cpath d='M8 22V10m8 12V14m8 8V6' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="RL08-1">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+
+<header class="chapter">
+<p class="chap-sub">강화학습 · RL08 시간 간격 연결</p>
+<p class="chap-num">RL08·1</p>
+<h1>n-step 목표로 여러 전이의 보상을 잇는다</h1>
+<p class="lead">확인대에서 시작한 결정의 결과를 그다음 한 걸음만 보고 판단할 수도, 마지막까지 기다려 판단할 수도 있습니다. 몇 걸음까지 직접 확인할지 숫자로 정해 봅니다.</p>
+</header>
+
+<div class="goal">
+<h2>이 장을 읽고 나면</h2>
+<ul>
+<li>n-step 목표에서 관측 보상과 부트스트랩 부분을 구별한다.</li>
+<li>같은 기록의 한 단계·두 단계·완주 목표를 계산한다.</li>
+<li>수집이 끊긴 경계와 과제 자체의 종료를 따로 다룬다.</li>
+</ul>
+</div>
+
+<h2>같은 시작을 세 가지 길이로 읽는다</h2>
+<p><a href="../../unit.html?u=RL07">앞 장의 TD</a>는 바로 다음에 받은 보상 한 개를 씁니다. 확인대 모형에서 정책은 S와 C 모두 확인 행동을 고릅니다. S에서는 0을 받으며 C로 갑니다. C에서는 절반씩 −1을 받으며 그대로 C에 남거나, 3을 받으며 완료 상태 T로 갑니다. 할인율 γ는 0.5입니다. 이 장에서는 길이의 효과만 비교하기 위해 가치 추정표를 고정해서 V(S)=0, V(C)=1로 놓습니다.</p>
+<p>한 에피소드에서 S₀=S → S₁=C → S₂=C → S₃=T를 보았습니다. 보상은 R₁=0, R₂=−1, R₃=3입니다. 여기서 아래첨자는 관측 시점을 가리킵니다. R₁은 첫 행동을 고른 뒤 받습니다. 시작 S₀의 목표를 만들 때 <b class="key">n-step</b>은 앞으로 관측한 보상을 최대 n개까지 쓰고, 아직 끝나지 않았으면 n번째로 도달한 상태의 추정값을 덧붙입니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 216" role="img" aria-label="S, C, C, 완료로 이어지며 보상은 0, −1, 3이다. 첫째, 둘째, 셋째 화살표의 끝에서 각각 1·2·3단계 목표가 보상을 읽는 범위가 끝난다.">
+<rect class="f-box" x="32" y="54" width="108" height="44" rx="3"/>
+<text class="f-t" x="86" y="82" text-anchor="middle">S₀ · S</text>
+<rect class="f-box" x="226" y="54" width="108" height="44" rx="3"/>
+<text class="f-t" x="280" y="82" text-anchor="middle">S₁ · C</text>
+<rect class="f-box" x="420" y="54" width="108" height="44" rx="3"/>
+<text class="f-t" x="474" y="82" text-anchor="middle">S₂ · C</text>
+<rect class="f-soft" x="614" y="54" width="108" height="44" rx="3"/>
+<text class="f-t" x="668" y="82" text-anchor="middle">S₃ · 완료</text>
+<line class="f-line" x1="143" y1="76" x2="223" y2="76" marker-end="url(#f-arrow)"/>
+<text class="f-s" x="183" y="62" text-anchor="middle">0</text>
+<line class="f-line" x1="337" y1="76" x2="417" y2="76" marker-end="url(#f-arrow)"/>
+<text class="f-s" x="377" y="62" text-anchor="middle">−1</text>
+<line class="f-line" x1="531" y1="76" x2="611" y2="76" marker-end="url(#f-arrow)"/>
+<text class="f-s" x="571" y="62" text-anchor="middle">3</text>
+<line class="f-ink" x1="86" y1="124" x2="280" y2="124" marker-end="url(#f-arrow)"/>
+<text class="f-s" x="268" y="116" text-anchor="end">1단계</text>
+<line class="f-ink" x1="86" y1="156" x2="474" y2="156" marker-end="url(#f-arrow)"/>
+<text class="f-s" x="462" y="148" text-anchor="end">2단계</text>
+<line class="f-ink" x1="86" y1="188" x2="668" y2="188" marker-end="url(#f-arrow)"/>
+<text class="f-s" x="656" y="180" text-anchor="end">3단계</text>
+</svg>
+<figcaption>세 줄의 시작점이 같으므로 세 목표는 모두 S₀을 고치는 데 쓸 수 있다.</figcaption>
+</figure>
+<p class="calc">Gₜ⁽ⁿ⁾ = Rₜ₊₁ + γRₜ₊₂ + … + γⁿ⁻¹Rₜ₊ₙ + γⁿV(Sₜ₊ₙ).</p>
+<p>이 줄은 n번째 전이까지 과제가 계속될 때의 식입니다. 쉽게 확인하려면 할인율의 거듭제곱을 시간표에 먼저 적습니다. 첫 보상은 지금 선택의 바로 다음에 받으므로 할인하지 않습니다. 두 번째 보상에는 γ가 있고, 두 보상 뒤의 가치에는 γ²가 있습니다. 갱신은 TD와 같은 V(Sₜ) ← V(Sₜ)+α(Gₜ⁽ⁿ⁾−V(Sₜ))입니다.</p>
+<div class="table-wrap"><table>
+<thead><tr><th scope="col">길이</th><th scope="col">시작점 S의 목표 계산</th><th scope="col">목표</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>0 + 0.5×1</td><td>0.5</td></tr>
+<tr><td>2</td><td>0 + 0.5×(−1) + 0.25×1</td><td>−0.25</td></tr>
+<tr><td>3</td><td>0 + 0.5×(−1) + 0.25×3</td><td>0.25</td></tr>
+</tbody></table></div>
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+<h2>언제 모으고, 언제 기다릴까</h2>
+<p>한 단계라면 첫 전이만으로 시작 S의 값을 고칠 수 있습니다. 두 단계는 한 시점 더 기다립니다. 온라인 구현은 최근 전이 n개를 순서대로 보관해 충분히 모였을 때 가장 앞 상태를 고칠 수 있습니다. 중간부터 시작한 상태도 같은 방법을 씁니다. 세 전이보다 보상을 더 기다리기로 했어도 이 과제는 T에서 이미 끝났습니다. 마지막까지 관측할 수 있던 보상을 모두 반영해, 아직 목표를 만들지 못한 최근의 시작점을 각각 처리합니다.</p>
+<p>길이가 길어지면 멀리 있는 관측 보상이 더 일찍 이전 상태의 학습에 직접 들어갑니다. 대가도 있습니다. 실제 보상을 여러 개 포함하면 궤적의 우연한 차이 때문에 목표값이 달라질 수 있습니다. 짧으면 지금의 가치 오차가 목표로 넘어옵니다. 정책과 추정표 고정이라는 조건에서, n번째 상태의 가치 오차가 목표에 들어가는 크기는 그 오차에 γⁿ을 곱한 값입니다. 참 가치가 이미 정확하면 이 부트스트랩 때문에 생기는 편향은 없습니다. n이 커질 때 분산이 얼마나 달라지는지는 실제 보상과 상태 사이의 의존 구조에 달려 있습니다.</p>
+<div class="check" data-q="q3"></div>
+<div class="check" data-q="q4"></div>
+<h2>종료와 잘림을 구분해 남은 목표를 계산한다</h2>
+<p>과제 자체의 종료에서 부트스트랩 항은 0입니다. 환경 수집기가 처음 두 전이만 보여 주고 비종료 C에서 외부 시간 제한으로 <b class="key">잘랐다면</b>, 이 기록으로는 세 번째 보상 3을 모릅니다. 원래 과제의 가치를 추정한다면 지금 본 두 보상에 마지막 C의 가치 1을 붙여 −0.25로 계산할 수 있습니다. 완주를 기록한 경우와 잘린 경우가 서로 다른 목표를 내는 이유입니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 192" role="img" aria-label="두 전이 뒤 외부에서 멈추면 마지막 C의 추정치로 이어 2단계 목표 −0.25를 얻는다. 세 전이로 과제 자체가 끝나면 보상 3까지 기록해 0.25를 얻는다.">
+<rect class="f-box" x="80" y="36" width="267" height="113" rx="3"/>
+<rect class="f-soft" x="413" y="36" width="267" height="113" rx="3"/>
+<text class="f-cap" x="213.5" y="65" text-anchor="middle">두 전이 후 수집 중단</text>
+<text class="f-cap" x="546.5" y="65" text-anchor="middle">세 전이 후 과제 종료</text>
+<text class="f-t" x="213.5" y="98" text-anchor="middle">보상 0, −1 · 마지막 C</text>
+<text class="f-t" x="546.5" y="98" text-anchor="middle">보상 0, −1, 3 · 완료</text>
+<text class="f-s" x="213.5" y="128" text-anchor="middle">0 − 0.5 + 0.25×1 = −0.25</text>
+<text class="f-s" x="546.5" y="128" text-anchor="middle">0 − 0.5 + 0.25×3 = 0.25</text>
+</svg>
+<figcaption>잘림 뒤의 초기화로 새로 얻은 S는 이전 기록의 마지막 C를 대체할 수 없다.</figcaption>
+</figure>
+<div class="check" data-q="q5"></div>
+<div class="check" data-q="q6"></div>
+<h2>시작 시점과 기록 경계를 코드에 넣는다</h2>
+<pre data-example="python"><code>from fractions import Fraction as F
+
+gamma = F(1, 2)
+value = {&quot;S&quot;: F(0), &quot;C&quot;: F(1)}
+
+def target(start, n, states, rewards, terminated):
+    stop = min(start + n, len(rewards))
+    observed = sum(
+        (gamma**(j - start) * rewards[j] for j in range(start, stop)),
+        F(0),
+    )
+    if terminated and stop == len(rewards):
+        return observed
+    return observed + gamma**(stop - start) * value[states[stop]]
+
+states = [&quot;S&quot;, &quot;C&quot;, &quot;C&quot;, &quot;T&quot;]
+rewards = [0, -1, 3]
+for n in (1, 2, 3, 5):
+    print(n, target(0, n, states, rewards, True))
+print(&quot;later:&quot;, target(1, 2, states, rewards, True))
+print(&quot;truncated:&quot;, target(0, 3, states[:3], rewards[:2], False))</code></pre>
+<pre data-output><code>1 1/2
+2 -1/4
+3 1/4
+5 1/4
+later: 1/2
+truncated: -1/4</code></pre>
+<p>상태 배열에는 시작 상태와 보상 하나마다 도달한 상태가 들어갑니다. 마지막 전이로 과제 종료를 관측해도 앞에서 끝나는 목표는 해당 중간 상태를 참고합니다. 뒤에서 시작한 C의 두 단계 목표는 −1+0.5×3=0.5입니다.</p>
+
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table>
+<thead><tr><th scope="col">핵심어</th><th scope="col">기억할 기준</th></tr></thead>
+<tbody>
+<tr><td><b class="key">n-step 목표</b></td><td>보상 최대 n개와 관측한 마지막 비종료 상태의 현재 가치를 결합한다.</td></tr>
+<tr><td><b class="key">완주 경계</b></td><td>종료 뒤의 미래 항은 0이다.</td></tr>
+<tr><td><b class="key">외부 잘림</b></td><td>원래 과제의 값을 배울 때 마지막 관측을 참고한다.</td></tr>
+</tbody></table></div>
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>보상을 실제로 본 길이를 정한 다음, 기록의 경계에서 미래를 덧붙일 수 있는지 판단한다.</p></div>
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://mitpress.mit.edu/9780262039246/reinforcement-learning/">Sutton·Barto, Reinforcement Learning 2판 · 7장 n-step 부트스트래핑</a></li>
+<li><a href="https://gymnasium.farama.org/tutorials/gymnasium_basics/handling_time_limits/">Gymnasium · 종료와 외부 시간 제한</a></li>
+</ul>
+
+<h2>확인 문제</h2>
+<p>아직 풀지 않은 문제입니다. 먼저 식이나 근거를 적어 보고 해설을 확인합니다.</p>
+<div id="quiz"></div>
+
+<section class="work" id="tools"></section>
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

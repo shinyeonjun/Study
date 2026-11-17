@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>확률 정책의 손잡이를 미분한다 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e8c'/%3E%3Cpath d='M8 22V10m8 12V14m8 8V6' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="RL10-1">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+
+<header class="chapter">
+<p class="chap-sub">강화학습 · RL10 정책을 직접 개선</p>
+<p class="chap-num">RL10·1</p>
+<h1>확률 정책의 손잡이를 미분한다</h1>
+<p class="lead">확인 버튼을 얼마만큼 자주 눌러야 점수가 높아질까요? 정책에 값을 하나 붙여, 그 값을 조금 움직이면 행동 확률과 기대 반환이 얼마나 달라지는지 계산합니다.</p>
+</header>
+
+<div class="goal">
+<h2>이 장을 읽고 나면</h2>
+<ul>
+<li>정책의 로짓, 행동 확률, 환경의 전이 확률을 구분한다.</li>
+<li>두 행동의 로그확률 기울기를 계산한다.</li>
+<li>기대 반환의 미분과 표본 정책경사의 관계를 설명한다.</li>
+</ul>
+</div>
+
+<h2>확률은 정책에서 나오고 결과는 환경에서 나온다</h2>
+<p>기존 확인대에서 시작 S의 직행은 보상 2로 끝납니다. 확인은 보상 0으로 C에 갑니다. 계산할 동안 C에서는 항상 직행해 6을 받고 끝난다고 고정합니다. 할인율이 0.5라면 S에서 확인을 골랐을 때 반환은 0+0.5×6=3입니다. S의 행에서만 확인 확률 p를 바꾸면 시작 기대 반환은 <code>J=3p+2(1−p)=2+p</code>입니다. C의 규칙이나 보상을 바꾸지 않아도 어떤 반환을 얼마나 자주 얻는지 바뀝니다.</p>
+<p><b class="key">확률 정책</b>은 상태에서 행동별 확률을 내놓습니다. S에서 확인의 확률이 3/4면 직행은 1/4입니다. 이 숫자는 확인을 골랐을 때 환경이 C에 도착하게 할 확률과 다른 것입니다. 여기에서는 확인 다음에 C로 갈 확률을 1로 두었습니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 172" role="img" aria-label="S에서 확인 확률은 3/4이고 할인 반환은 3이다. 직행 확률은 1/4이고 반환은 2이다.">
+<rect class="f-box" x="58" y="69" width="119" height="52" rx="3"/>
+<text class="f-cap" x="117.5" y="100" text-anchor="middle">시작 S</text>
+<line class="f-line" x1="177" y1="88" x2="344" y2="53" marker-end="url(#f-arrow)"/>
+<line class="f-ink" x1="177" y1="102" x2="344" y2="132" marker-end="url(#f-arrow)"/>
+<text class="f-s" x="261" y="58" text-anchor="middle">확인 · 3/4</text>
+<text class="f-s" x="260" y="139" text-anchor="middle">직행 · 1/4</text>
+<rect class="f-soft" x="352" y="31" width="320" height="46" rx="3"/>
+<text class="f-t" x="512" y="59" text-anchor="middle">다음 보상 6의 할인 반환 3</text>
+<rect class="f-box" x="352" y="110" width="320" height="46" rx="3"/>
+<text class="f-t" x="512" y="138" text-anchor="middle">즉시 종료 반환 2</text>
+</svg>
+<figcaption>행동 확률의 합은 1이다. 화살표에는 정책 확률을 표시했다.</figcaption>
+</figure>
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+<h2>매개변수를 바꿔도 확률의 범위를 지킨다</h2>
+<p>확률 p를 직접 더하거나 빼면 범위를 벗어날 수 있습니다. <b class="key">로짓</b> θ는 실수 전체를 움직일 수 있는 값입니다. 두 행동 중 하나를 기준 점수 0으로 놓으면 확인 확률을 <code>p=exp(θ)/(1+exp(θ))</code>로 만들 수 있습니다. 이것은 시그모이드입니다. θ=0이면 두 확률이 1/2이고 θ=ln 3이면 exp(θ)=3이어서 확인 확률이 3/4입니다. 세 행동 이상에서는 각 행동 점수의 exp를 더해 그 합으로 나누는 소프트맥스를 쓸 수 있습니다.</p>
+<p><a href="../../unit.html?u=CA02">미분</a>으로 θ를 아주 조금 바꿀 때 확률의 반응을 구할 수 있습니다. 몫을 미분하면 <code>dp/dθ = exp(θ)/(1+exp(θ))² = p(1−p)</code>입니다. 확인의 로그확률 ln p를 미분하면 <code>(1/p)·dp/dθ=1−p</code>가 됩니다. 직행의 로그확률 ln(1−p)는 같은 방식으로 <code>−p</code>가 됩니다. 해당 행동을 고른 다음에는 그 행동의 로그확률 기울기를 사용합니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 212" role="img" aria-label="확인 로그확률의 기울기는 0.25, 직행 로그확률의 기울기는 −0.75다. 가로축 중심 0에서 양쪽 길이 비가 1 대 3이다.">
+<line class="f-ink" x1="90" y1="165" x2="696" y2="165" marker-end="url(#f-arrow)"/>
+<line class="f-ink" x1="170" y1="160" x2="170" y2="170"/>
+<text class="f-s" x="170" y="190" text-anchor="middle">-0.75</text>
+<line class="f-ink" x1="270" y1="160" x2="270" y2="170"/>
+<text class="f-s" x="270" y="190" text-anchor="middle">-0.5</text>
+<line class="f-ink" x1="370" y1="160" x2="370" y2="170"/>
+<text class="f-s" x="370" y="190" text-anchor="middle">-0.25</text>
+<line class="f-ink" x1="470" y1="160" x2="470" y2="170"/>
+<text class="f-s" x="470" y="190" text-anchor="middle">0</text>
+<line class="f-ink" x1="570" y1="160" x2="570" y2="170"/>
+<text class="f-s" x="570" y="190" text-anchor="middle">0.25</text>
+<line class="f-ink" x1="670" y1="160" x2="670" y2="170"/>
+<text class="f-s" x="670" y="190" text-anchor="middle">0.5</text>
+<line class="f-dash" x1="470" y1="34" x2="470" y2="160"/>
+<line class="f-line" x1="470" y1="66" x2="570" y2="66" marker-end="url(#f-arrow)"/>
+<line class="f-line" x1="470" y1="112" x2="170" y2="112" marker-end="url(#f-arrow)"/>
+<text class="f-cap" x="620" y="72" text-anchor="middle">확인</text>
+<text class="f-cap" x="129" y="117" text-anchor="middle">직행</text>
+<text class="f-s" x="470" y="26" text-anchor="middle">로그확률 기울기</text>
+</svg>
+<figcaption>두 행동을 같은 방향으로 더 자주 고를 수는 없다. θ를 올리면 확인은 늘고 직행은 준다.</figcaption>
+</figure>
+<div class="check" data-q="q3"></div>
+<div class="check" data-q="q4"></div>
+<h2>한 번 선택한 행동의 계산을 반복하면 기대 기울기가 된다</h2>
+<p>이 예에서 dJ/dθ=dp/dθ=3/16입니다. 환경의 반환 3과 2를 이미 알기에 계산할 수 있었습니다. 실제로는 한 행동을 골라 그 반환만 받습니다. 이 경우에도 <code>dπ/dθ = π·d ln π/dθ</code>를 이용할 수 있습니다. 각 행동 반환에 그 행동 로그확률의 기울기를 곱하고 정책 확률로 평균하면 기대 반환의 미분과 같습니다.</p>
+<p>확인을 골랐다면 표본 방향은 3×(1/4)=3/4입니다. 직행을 골랐다면 2×(−3/4)=−3/2입니다. 두 가지를 확률로 평균하면 (3/4)(3/4)+(1/4)(−3/2)=3/16입니다. 표본 하나는 참 기울기와 크기가 다르며 부호가 반대일 수도 있습니다. 반복 표본을 모을 때 어떤 정책으로 뽑았는지가 이 식의 조건입니다.</p>
+<div class="check" data-q="q5"></div>
+<div class="check" data-q="q6"></div>
+<h2>직접 미분과 중앙 차분을 비교한다</h2>
+<pre data-example="python"><code>from math import exp, log
+
+def probability(theta):
+    return 1 / (1 + exp(-theta))
+
+def objective(theta):
+    return 2 + probability(theta)
+
+theta = log(3)
+p = probability(theta)
+scale = 1e-5
+finite_difference = (objective(theta + scale) - objective(theta - scale)) / (2 * scale)
+picked_then_weighted = p * 3 * (1 - p) + (1 - p) * 2 * (-p)
+print(f&quot;p={p:.4f}, J={objective(theta):.4f}&quot;)
+print(f&quot;direct={p * (1 - p):.4f}, score={picked_then_weighted:.4f}&quot;)
+print(f&quot;finite difference={finite_difference:.4f}&quot;)</code></pre>
+<pre data-output><code>p=0.7500, J=2.7500
+direct=0.1875, score=0.1875
+finite difference=0.1875</code></pre>
+<p>코드는 현재 정책에서 두 행동값을 모두 아는 작은 예를 검산합니다. 실제로 반환을 표본으로 얻는 정책경사에서는 기댓값을 그대로 출력하는 대신 그때 얻은 선택과 점수를 사용합니다.</p>
+
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table>
+<thead><tr><th scope="col">핵심어</th><th scope="col">기억할 기준</th></tr></thead>
+<tbody>
+<tr><td><b class="key">확률 정책</b></td><td>상태마다 행동을 뽑을 분포를 낸다.</td></tr>
+<tr><td><b class="key">로짓</b></td><td>시그모이드나 소프트맥스로 확률을 만들기 전의 실수 값이다.</td></tr>
+<tr><td><b class="key">정책경사</b></td><td>선택한 행동의 로그확률 기울기를 관측 반환으로 가중한다.</td></tr>
+</tbody></table></div>
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>정책의 확률을 조금 바꾸는 방법은 모델이 맡고, 그 방향이 얼마나 나을지는 관측한 반환으로 추정한다.</p></div>
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://mitpress.mit.edu/9780262039246/reinforcement-learning/">Sutton·Barto, Reinforcement Learning 2판 · 13.1–13.3절 정책경사</a></li>
+<li><a href="https://doi.org/10.1007/BF00992696">Williams (1992) · REINFORCE</a></li>
+</ul>
+
+<h2>확인 문제</h2>
+<p>아직 풀지 않은 문제입니다. 먼저 식이나 근거를 적어 보고 해설을 확인합니다.</p>
+<div id="quiz"></div>
+
+<section class="work" id="tools"></section>
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

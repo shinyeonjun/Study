@@ -47,7 +47,19 @@ window.BDA_SUBJECTS = [
     name: "3과목 · 빅데이터 모델링", short: "3과목 · 모델링", title: "빅데이터 모델링",
     desc: "분석 모형을 고르고 설계해서 데이터에 적용하는 법",
     plan: ["분석모형 설계", "분석기법 적용"],
-    notes: []
+    notes: [
+      { id: "3-01", title: "분석 목적에서 모형 종류와 기준선 정하기", href: "notes/3-modeling/01-모형-설계와-기준선.html", area: 0 },
+      { id: "3-02", title: "검증 자료를 나누고 비용에 맞춰 임계값 고르기", href: "notes/3-modeling/02-검증-분할과-판정-기준.html", area: 0 },
+      { id: "3-03", title: "선형회귀식 만들기와 잔차 읽기", href: "notes/3-modeling/03-선형회귀와-잔차.html", area: 1 },
+      { id: "3-04", title: "로지스틱 회귀와 여러 분류기 비교하기", href: "notes/3-modeling/04-로지스틱-회귀와-분류기.html", area: 1 },
+      { id: "3-05", title: "앙상블과 신경망이 예측을 만드는 방식", href: "notes/3-modeling/05-앙상블과-신경망.html", area: 1 },
+      { id: "3-06", title: "군집으로 묶고 주성분으로 요약하기", href: "notes/3-modeling/06-군집화와-주성분분석.html", area: 1 },
+      { id: "3-07", title: "거래에서 연관 규칙과 향상도 구하기", href: "notes/3-modeling/07-연관규칙과-향상도.html", area: 1 },
+      { id: "3-08", title: "시계열의 순서를 지켜 미래를 예측하기", href: "notes/3-modeling/08-시계열과-예측.html", area: 1 },
+      { id: "3-09", title: "문장을 특징으로, 관계를 그래프로 표현하기", href: "notes/3-modeling/09-텍스트와-그래프-분석.html", area: 1 },
+      { id: "3-10", title: "범주형 교차표와 순위·부호 검정", href: "notes/3-modeling/10-범주형-검정과-순위.html", area: 1 },
+      { id: "3-11", title: "베이지안 갱신과 다변량 분석 기법 고르기", href: "notes/3-modeling/11-베이지안과-다변량-기법.html", area: 1 }
+    ]
   },
   {
     name: "4과목 · 빅데이터 결과 해석", short: "4과목 · 결과 해석", title: "빅데이터 결과 해석",

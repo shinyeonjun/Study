@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>검증 자료를 나누고 비용에 맞춰 임계값 고르기 · 빅분기 노트</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="3-02">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">빅분기 노트</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">3과목 · 빅데이터 모델링</p>
+<p class="chap-num">02</p>
+<h1>검증 자료를 나누고 비용에 맞춰 임계값 고르기</h1>
+<p class="lead">같은 모델의 점수라도 언제 경보를 낼지에 따라 보이는 결과가 달라집니다. 좋은 판정 기준을 비교할 자료와 마지막에 성능을 확인할 자료를 분리합니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>시간과 관측 그룹에 맞춰 자료를 나눈다.</li><li>분류 점수와 판정 기준을 구별한다.</li><li>같은 검증 자료에서 오류 비용으로 임계값을 비교한다.</li></ul></div>
+
+<h2>분할 방법은 운영 환경을 닮게 만든다</h2>
+<p>내일의 대기 경보를 연습하면서 다음 주의 자료로 모형을 맞춘 뒤 지난주를 평가하면 실제로 사용할 순서와 다릅니다. 시간 순서의 훈련과 검증, 시험을 둡니다. 한 장비의 반복 기록이 서로 매우 비슷한데 처음 보는 장비에서 성능이 궁금하다면, 장비 단위로 분할을 나눕니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 203" role="img" aria-label="과거에서 미래 순으로 1~6일 훈련, 7~8일 검증, 9~10일 최종 시험이다.">
+<rect class="f-box" x="104" y="47" width="330" height="84" rx="3"/><text class="f-cap" x="269" y="78" text-anchor="middle">훈련</text><text class="f-s" x="269" y="107" text-anchor="middle">1~6일</text><rect class="f-soft" x="434" y="47" width="110" height="84" rx="3"/><text class="f-cap" x="489" y="78" text-anchor="middle">검증</text><text class="f-s" x="489" y="107" text-anchor="middle">7~8일</text><rect class="f-box" x="544" y="47" width="110" height="84" rx="3"/><text class="f-cap" x="599" y="78" text-anchor="middle">시험</text><text class="f-s" x="599" y="107" text-anchor="middle">9~10일</text><line class="f-line" x1="104" y1="159" x2="683" y2="159" marker-end="url(#f-arrow)"/><text class="f-s" x="692" y="184" text-anchor="middle">시간</text>
+</svg><figcaption>각 표본의 입력은 해당 예측 시점까지 아는 값만 쓴다. 훈련 라벨은 훈련 시점까지 확정된 것만 쓴다.</figcaption></figure>
+<p><b class="key">교차검증</b>은 개발 자료를 나누어 반복 학습·평가하는 방식입니다. 검증 회차마다 훈련에만 있는 자료로 중앙값·표준편차·특성 선택 같은 값들을 배웁니다. 시계열에서는 과거로 학습하고 이후로 검증하는 여러 구간을 구성할 수 있습니다. 지표로 설정을 정한 뒤 평가할 새 자료를 별도로 남깁니다.</p>
+<div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
+<h2>확률이나 점수에서 경보를 정한다</h2>
+<p>같은 검증 방문 여섯 건의 지연 점수를 봅니다. 점수가 임계값 이상이면 경보를 냅니다. 놓친 실제 지연 한 건당 4점, 불필요한 경보 한 건당 1점을 예시 손실로 둡니다. 이 값은 이 사례의 운영 가정입니다.</p>
+<div class="table-wrap"><table><thead><tr><th scope="col">검증 방문</th><th scope="col">1</th><th scope="col">2</th><th scope="col">3</th><th scope="col">4</th><th scope="col">5</th><th scope="col">6</th></tr></thead><tbody><tr><td>점수</td><td>0.92</td><td>0.82</td><td>0.74</td><td>0.52</td><td>0.46</td><td>0.10</td></tr><tr><td>지연 정답</td><td>1</td><td>0</td><td>1</td><td>0</td><td>1</td><td>0</td></tr></tbody></table></div>
+<p>임계값 0.50에서는 방문 1~4가 경보입니다. 놓친 지연은 5번 한 건이고 불필요한 경보는 2번과 4번입니다. 손실은 4×1+2=6입니다. 0.45에서는 5번도 새로 찾아내어 손실이 2입니다. 낮추면 새 경보 중 실제 지연이 아닐 수도 있으므로 자료에서 같이 셉니다.</p>
+<div class="check" data-q="q3"></div><div class="check" data-q="q4"></div>
+<pre data-example="python"><code>scores = [.92, .82, .74, .52, .46, .10]
+labels = [1, 0, 1, 0, 1, 0]
+for threshold in (.80, .50, .45):
+    predictions = [int(score &gt;= threshold) for score in scores]
+    missed = sum(y == 1 and p == 0 for y, p in zip(labels, predictions))
+    false_alerts = sum(y == 0 and p == 1 for y, p in zip(labels, predictions))
+    print(f&quot;{threshold:.2f}&quot;, missed, false_alerts, 4 * missed + false_alerts)</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>0.80 2 1 9
+0.50 1 2 6
+0.45 0 2 2</code></pre>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 227" role="img" aria-label="임계값 0.80의 손실 9, 0.50의 손실 6, 0.45의 손실 2.">
+<text class="f-t" x="131" y="77" text-anchor="end">0.80</text><rect class="f-box" x="151" y="55" width="423" height="30" rx="3"/><text class="f-t" x="592" y="76" text-anchor="middle">9</text><text class="f-t" x="131" y="132" text-anchor="end">0.50</text><rect class="f-box" x="151" y="110" width="282" height="30" rx="3"/><text class="f-t" x="451" y="131" text-anchor="middle">6</text><text class="f-t" x="131" y="187" text-anchor="end">0.45</text><rect class="f-soft" x="151" y="165" width="94" height="30" rx="3"/><text class="f-t" x="263" y="186" text-anchor="middle">2</text><text class="f-cap" x="122" y="32" text-anchor="middle">임계값</text><text class="f-cap" x="419" y="32" text-anchor="middle">검증 손실 점수</text>
+</svg><figcaption>이 검증 표와 비용 모형에서는 0.45의 손실이 가장 작다. 다른 평가 자료에서는 값이 달라질 수 있다.</figcaption></figure>
+<p>이 표에서는 0.45의 비용이 최소입니다. 기준을 검증에 맞추고 나면 다른 시험 자료에서 같은 임계값으로 놓친 수와 경보 수를 확인합니다. 예측 결과가 실제로 일으키는 조치가 다르면 비용과 가능한 경보 수 또한 달라집니다.</p>
+<div class="check" data-q="q5"></div><div class="check" data-q="q6"></div>
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table><thead><tr><th scope="col">핵심어</th><th scope="col">기억할 기준</th></tr></thead><tbody><tr><td><b class='key'>분할</b></td><td>운영에서 새롭게 맞힐 시간 또는 대상을 구별</td></tr><tr><td><b class='key'>파이프라인</b></td><td>변환과 모형 설정을 훈련 범위에서 학습</td></tr><tr><td><b class='key'>임계값</b></td><td>같은 검증에서 오류비용·제약을 비교하고 고정한 설정을 시험</td></tr></tbody></table></div>
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>검증에서 선택하고, 시험에서는 선택한 규칙의 성능을 확인한다.</p></div>
+<p><a href="../../../learn/unit.html?u=ML10">일반화와 모델 선택</a> · <a href="../../../learn/unit.html?u=ML03">오차와 평가</a></p>
+
+<h2>참고 자료</h2>
+<ul><li><a href="https://www.dataq.or.kr/www/dataq_brochure_2022.pdf">한국데이터산업진흥원 · 빅데이터분석기사 과목 안내</a></li><li><a href="https://scikit-learn.org/stable/modules/cross_validation.html">scikit-learn · 교차검증과 평가 분할</a></li><li><a href="https://scikit-learn.org/stable/modules/model_evaluation.html">scikit-learn · 모형 평가의 지표</a></li><li><a href="https://otexts.com/fpp3/tscv.html">Hyndman·Athanasopoulos · 시간 순서에 따른 교차검증</a></li></ul>
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"><a href="../../index.html">← 빅분기 홈</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

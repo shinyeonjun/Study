@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>autograd로 기울기를 계산하고 비우기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e8c'/%3E%3Cpath d='M8 22V10m8 12V14m8 8V6' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="DL02-2">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+
+<header class="chapter">
+<p class="chap-sub">딥러닝 · DL02 신경망의 학습 원리</p>
+<p class="chap-num">DL02·2</p>
+<h1>autograd로 기울기를 계산하고 비우기</h1>
+<p class="lead">자동 미분을 실행해 입력과 매개변수의 변화율을 읽습니다. 같은 미분을 두 번 계산했을 때 저장값이 왜 두 배가 되는지도 확인합니다.</p>
+</header>
+
+<div class="goal">
+<h2>이 장을 읽고 나면</h2>
+<ul>
+<li>autograd가 기록하는 연산과 .grad에 저장되는 값을 구분한다.</li>
+<li>새 순전파에서 기울기가 누적되는 동작과 초기화 이유를 확인한다.</li>
+<li>미분하는 입력과 실제 갱신하는 매개변수를 선택한다.</li>
+</ul>
+</div>
+
+<h2>미분할 값과 실제 움직일 값을 따로 정한다</h2>
+<p>PyTorch의 <b class="key">자동 미분</b>(autograd)은 순전파에서 행한 텐서 연산의 의존 관계를 기록하고, 역전파에서 필요한 미분을 계산합니다. 실수 텐서를 만들 때 <code>requires_grad=True</code>를 두면, 그 텐서에 대한 미분이 필요한 계산을 기록할 수 있습니다. <code>loss.backward()</code>를 부르면 스칼라 손실에 대한 역전파가 시작됩니다.</p>
+<p>w=0, x=2에서 L=(wx−4)²/2를 생각합니다. 예측은 0, 손실은 8입니다. ∂L/∂w=(wx−4)x=−8이고 ∂L/∂x=(wx−4)w=0입니다. 여기서는 입력 x의 미분도 확인하지만 경사하강에서 움직일 항목은 w 하나입니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 248" role="img" aria-label="w=0과 x=2에서 손실 8을 계산한다. w 쪽 미분은 -8이고 x 쪽 미분은 0이다.">
+<rect class="f-soft" x="51" y="56" width="188" height="52" rx="3"/>
+<text class="f-cap" x="145" y="80" text-anchor="middle">매개변수 w = 0</text>
+<text class="f-s" x="145" y="101" text-anchor="middle">∂L/∂w = −8</text>
+<rect class="f-box" x="51" y="149" width="188" height="52" rx="3"/>
+<text class="f-cap" x="145" y="173" text-anchor="middle">입력 x = 2</text>
+<text class="f-s" x="145" y="194" text-anchor="middle">∂L/∂x = 0</text>
+<rect class="f-box" x="412" y="96" width="277" height="62" rx="3"/>
+<text class="f-cap" x="551" y="121" text-anchor="middle">L = (wx−4)²/2</text>
+<text class="f-s" x="551" y="145" text-anchor="middle">현재 손실 8</text>
+<line class="f-line" x1="242" y1="82" x2="407" y2="112" marker-end="url(#f-arrow)"/>
+<line class="f-line" x1="242" y1="175" x2="407" y2="140" marker-end="url(#f-arrow)"/>
+<text class="f-s" x="381" y="229" text-anchor="middle">두 미분을 얻고 이 예에서는 w만 갱신한다.</text>
+</svg>
+<figcaption>기울기가 존재한다는 것과 그 텐서를 업데이트한다는 것은 서로 다른 결정이다.</figcaption>
+</figure>
+<p>위와 같이 사용자가 먼저 만들어 연산의 시작점으로 둔 텐서를 <b>리프 텐서</b>라고 합니다. 기본적으로 기울기는 미분을 요청한 리프의 <code>.grad</code>에 쌓입니다. 곱 wx나 손실처럼 연산 결과로 만들어진 중간 텐서의 기울기를 저장하고 싶다면 <code>retain_grad()</code> 같은 별도 동작이 필요합니다.</p>
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+
+<h2>새 계산을 역전파해도 기존 .grad에는 더해진다</h2>
+<p>새 손실을 계산해 역전파할 때 PyTorch는 그 결과를 기존 <code>.grad</code>에 더합니다. w를 바꾸지 않은 상태로 새 순전파와 역전파를 두 번 하면, 두 번 모두 새 기울기가 −8이어도 저장된 값은 −8에서 −16으로 바뀝니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 175" role="img" aria-label="처음 역전파에서 w.grad는 -8, 새 순전파 뒤 두 번째 역전파로 -16이다. grad를 None으로 비우고 새 순전파와 역전파를 하면 -8이다.">
+<rect class="f-box" x="17" y="61" width="163" height="66" rx="3"/>
+<text class="f-s" x="99" y="87" text-anchor="middle">첫 backward</text>
+<text class="f-t" x="99" y="111" text-anchor="middle">w.grad = −8</text>
+<line class="f-line" x1="183" y1="95" x2="201" y2="95" marker-end="url(#f-arrow)"/>
+<rect class="f-box" x="204" y="61" width="163" height="66" rx="3"/>
+<text class="f-s" x="286" y="87" text-anchor="middle">새 그래프에서 다시</text>
+<text class="f-t" x="286" y="111" text-anchor="middle">w.grad = −16</text>
+<line class="f-line" x1="370" y1="95" x2="388" y2="95" marker-end="url(#f-arrow)"/>
+<rect class="f-soft" x="391" y="61" width="163" height="66" rx="3"/>
+<text class="f-s" x="473" y="87" text-anchor="middle">grad = None</text>
+<text class="f-t" x="473" y="111" text-anchor="middle">이전 기울기 제거</text>
+<line class="f-line" x1="557" y1="95" x2="575" y2="95" marker-end="url(#f-arrow)"/>
+<rect class="f-box" x="578" y="61" width="163" height="66" rx="3"/>
+<text class="f-s" x="660" y="87" text-anchor="middle">새 그래프에서 다시</text>
+<text class="f-t" x="660" y="111" text-anchor="middle">w.grad = −8</text>
+
+<text class="f-s" x="380" y="155" text-anchor="middle">w를 바꾸기 전에는 새로 계산한 미분이 매번 −8이다.</text>
+</svg>
+<figcaption>그림의 모든 역전파는 각각 새 순전파로 만든 그래프를 쓴다.</figcaption>
+</figure>
+<p>이번 배치의 기울기만 사용하려면 이전 <code>.grad</code>를 비워야 합니다. 예는 <code>w.grad = None</code>을 사용합니다. 학습 루프에서는 최적화 도구에 등록한 파라미터를 <code>optimizer.zero_grad()</code>로 한 번에 초기화합니다. 보통 역전파가 끝난 그래프에서 계산 중간정보는 해제되므로, 다음 손실은 새 순전파에서 계산합니다.</p>
+<div class="check" data-q="q3"></div>
+<div class="check" data-q="q4"></div>
+
+<h2>갱신 자체를 새로 미분할 필요가 없는 경우</h2>
+<p>학습률을 0.125로 정하면 w는 0−0.125×(−8)=1입니다. x는 2 그대로입니다. 보통의 경사하강에서 이 값 수정 자체를 다음 역전파 그래프에 담지 않으므로, 파라미터를 직접 수정하는 예에서는 <code>torch.no_grad()</code> 범위를 사용합니다. 이 범위를 나오면 다시 기울기를 기록하는 연산을 할 수 있습니다.</p>
+<p>같은 입력에서 w가 1인 이제 예측은 2입니다. 손실은 2, 새 기울기는 ∂L/∂w=(2−4)×2=−4, ∂L/∂x=(2−4)×1=−2입니다. 텐서의 속성을 바꾸는 것과 실행 중 특정 범위의 기록을 끄는 것의 차이를 코드에서 비교합니다.</p>
+<div class="check" data-q="q5"></div>
+<div class="check" data-q="q6"></div>
+
+<h2>미분의 누적, 초기화, 갱신을 차례로 실행한다</h2>
+<pre data-example="python"><code>import torch
+
+w = torch.tensor(0., device=&quot;cpu&quot;, requires_grad=True)
+x = torch.tensor(2., device=&quot;cpu&quot;, requires_grad=True)
+
+def loss_at_current_values():
+    return (w * x - 4)**2 / 2
+
+loss_at_current_values().backward()
+print(&quot;first (dw, dx):&quot;, w.grad.item(), x.grad.item())
+
+loss_at_current_values().backward()
+print(&quot;accumulated dw:&quot;, w.grad.item())
+
+w.grad = None
+x.grad = None
+loss_at_current_values().backward()
+print(&quot;after reset, dw:&quot;, w.grad.item())
+
+with torch.no_grad():
+    w -= 0.125 * w.grad
+    test_prediction = w * x
+print(&quot;w, x:&quot;, w.item(), x.item())
+print(&quot;prediction recorded:&quot;, test_prediction.requires_grad)
+
+w.grad = None
+x.grad = None
+new_loss = loss_at_current_values()
+new_loss.backward()
+print(&quot;new loss, dw, dx:&quot;, new_loss.item(), w.grad.item(), x.grad.item())</code></pre>
+<pre data-output><code>first (dw, dx): -8.0 -0.0
+accumulated dw: -16.0
+after reset, dw: -8.0
+w, x: 1.0 2.0
+prediction recorded: False
+new loss, dw, dx: 2.0 -4.0 -2.0</code></pre>
+<p class="small">실행 확인 환경 · Python 3.14.6, PyTorch 2.14.1+cu130, CPU. w와 x는 직접 초기화했습니다. 출력의 −0.0은 부동소수점에서 표현되는 0입니다.</p>
+
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table>
+<thead><tr><th scope="col">표현</th><th scope="col">뜻</th></tr></thead>
+<tbody>
+<tr><td>requires_grad</td><td>이 텐서에 대한 계산 경로의 기울기가 필요한지 표시.</td></tr>
+<tr><td>backward / .grad</td><td>기록한 순전파를 거슬러 계산하고 리프에 기울기를 더한다.</td></tr>
+<tr><td>no_grad</td><td>그 범위의 연산은 역전파용으로 기록하지 않는다.</td></tr>
+</tbody>
+</table></div>
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://docs.pytorch.org/tutorials/beginner/basics/autogradqs_tutorial.html">PyTorch 공식 튜토리얼 · autograd, requires_grad와 backward</a></li>
+<li><a href="https://docs.pytorch.org/docs/stable/notes/autograd.html">PyTorch 공식 문서 · 리프, 기울기 모드와 연산 기록</a></li>
+</ul>
+
+
+<h2>확인 문제</h2>
+<p>아직 풀지 않은 문제입니다. 먼저 식이나 근거를 적어 보고 해설을 확인합니다.</p>
+<div id="quiz"></div>
+
+<section class="work" id="tools"></section>
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

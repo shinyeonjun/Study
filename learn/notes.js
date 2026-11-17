@@ -328,6 +328,11 @@ window.BDA_CHAPTERS = {
     {"id": "OP03-1", "title": "최솟값을 정의하고 한 변수에서 내려가기", "href": "notes/op/op03-1.html"},
     {"id": "OP03-2", "title": "두 매개변수에서 기울기를 계산하고 멈추기", "href": "notes/op/op03-2.html"}
   ],
+  OP07: [
+    {"id": "OP07-1", "title": "드문 결과의 자기정보량과 평균 부호 길이", "href": "notes/op/op07-1.html"},
+    {"id": "OP07-2", "title": "교차엔트로피와 KL, 실제와 다른 확률의 비용", "href": "notes/op/op07-2.html"},
+    {"id": "OP07-3", "title": "결합분포가 알려 주는 상호정보량", "href": "notes/op/op07-3.html"}
+  ],
   AI01: [
     {"id": "AI01-1", "title": "인공지능이 푸는 문제와 출력 읽기", "href": "notes/ai/ai01-1.html"},
     {"id": "AI01-2", "title": "규칙과 학습을 구분하고 AI 계열 연결하기", "href": "notes/ai/ai01-2.html"}
@@ -348,6 +353,10 @@ window.BDA_CHAPTERS = {
   ML04: [
     {"id": "ML04-1", "title": "잔차와 설계행렬로 선형 회귀 읽기", "href": "notes/ml/ml04-1.html"},
     {"id": "ML04-2", "title": "최소제곱 해를 푸는 방법과 해가 여럿인 경우", "href": "notes/ml/ml04-2.html"}
+  ],
+  ML05: [
+    {"id": "ML05-1", "title": "로짓과 시그모이드, 이진 분류의 안정적인 손실", "href": "notes/ml/ml05-1.html"},
+    {"id": "ML05-2", "title": "다항 softmax, 가장 큰 로짓과 교차엔트로피", "href": "notes/ml/ml05-2.html"}
   ],
   ML06: [
     {"id": "ML06-1", "title": "k-NN: 거리를 재고 가까운 답을 모으기", "href": "notes/ml/ml06-1.html"},
@@ -376,6 +385,25 @@ window.BDA_CHAPTERS = {
     {"id": "ML11-1", "title": "확률 보정과 개별 예측의 불확실성", "href": "notes/ml/ml11-1.html"},
     {"id": "ML11-2", "title": "분포 변화와 강건성을 운영에서 점검하기", "href": "notes/ml/ml11-2.html"},
     {"id": "ML11-3", "title": "집단별 오류와 특성 중요도를 조사해 읽기", "href": "notes/ml/ml11-3.html"}
+  ],
+  ML12: [
+    {"id": "ML12-1", "title": "생성 모형과 판별 모형, 나이브 베이즈 계산", "href": "notes/ml/ml12-1.html"},
+    {"id": "ML12-2", "title": "마진으로 분류하는 SVM과 커널의 내적", "href": "notes/ml/ml12-2.html"},
+    {"id": "ML12-3", "title": "가우시안 혼합 모형과 EM의 책임도", "href": "notes/ml/ml12-3.html"},
+    {"id": "ML12-4", "title": "관측 주변의 밀도를 더하는 커널 밀도 추정", "href": "notes/ml/ml12-4.html"}
+  ],
+  DL01: [
+    {"id": "DL01-1", "title": "텐서의 모양과 배치 축 읽기", "href": "notes/dl/dl01-1.html"},
+    {"id": "DL01-2", "title": "선형층과 활성함수로 작은 MLP 만들기", "href": "notes/dl/dl01-2.html"}
+  ],
+  DL02: [
+    {"id": "DL02-1", "title": "계산 그래프를 그려 역전파 손으로 하기", "href": "notes/dl/dl02-1.html"},
+    {"id": "DL02-2", "title": "autograd로 기울기를 계산하고 비우기", "href": "notes/dl/dl02-2.html"}
+  ],
+  DL03: [
+    {"id": "DL03-1", "title": "DataLoader로 배치를 만들고 손실 모으기", "href": "notes/dl/dl03-1.html"},
+    {"id": "DL03-2", "title": "학습 루프와 평가 루프 실행하기", "href": "notes/dl/dl03-2.html"},
+    {"id": "DL03-3", "title": "state_dict로 저장하고 같은 예측 되찾기", "href": "notes/dl/dl03-3.html"}
   ],
   RL01: [
     {"id": "RL01-1", "title": "에이전트와 환경: 무엇을 보고 무엇을 바꾸나", "href": "notes/rl/rl01-1.html"},
@@ -406,6 +434,27 @@ window.BDA_CHAPTERS = {
     {"id": "RL07-2", "title": "SARSA는 다음에 고른 행동으로 배운다", "href": "notes/rl/rl07-2.html"},
     {"id": "RL07-3", "title": "Q-learning은 최댓값을 목표로 배운다", "href": "notes/rl/rl07-3.html"}
   ],
+  RL08: [
+    {"id": "RL08-1", "title": "n-step 목표로 여러 전이의 보상을 잇는다", "href": "notes/rl/rl08-1.html"},
+    {"id": "RL08-2", "title": "λ-return과 자격 흔적으로 최근 상태를 함께 고친다", "href": "notes/rl/rl08-2.html"}
+  ],
+  RL09: [
+    {"id": "RL09-1", "title": "가치 표의 칸을 공통 함수로 바꾼다", "href": "notes/rl/rl09-1.html"},
+    {"id": "RL09-2", "title": "DQN의 재생 버퍼와 목표 신경망을 구별한다", "href": "notes/rl/rl09-2.html"}
+  ],
+  RL10: [
+    {"id": "RL10-1", "title": "확률 정책의 손잡이를 미분한다", "href": "notes/rl/rl10-1.html"},
+    {"id": "RL10-2", "title": "REINFORCE는 에피소드의 반환으로 정책을 고친다", "href": "notes/rl/rl10-2.html"}
+  ],
+  RL11: [
+    {"id": "RL11-1", "title": "Actor와 Critic이 선택과 평가를 나눈다", "href": "notes/rl/rl11-1.html"},
+    {"id": "RL11-2", "title": "PPO에서 새 정책과 수집 정책의 비율을 잰다", "href": "notes/rl/rl11-2.html"},
+    {"id": "RL11-3", "title": "연속 행동에서 TD3와 SAC의 목표를 비교한다", "href": "notes/rl/rl11-3.html"}
+  ],
+  RL12: [
+    {"id": "RL12-1", "title": "학습과 평가를 분리하고 상호작용을 센다", "href": "notes/rl/rl12-1.html"},
+    {"id": "RL12-2", "title": "독립 반복의 불확실성과 보상 실패를 함께 본다", "href": "notes/rl/rl12-2.html"}
+  ],
   RS01: [
     {"id": "RS01-1", "title": "질문에서 가설로: 조작적 정의와 측정", "href": "notes/rs/rs01-1.html"},
     {"id": "RS01-2", "title": "큰 질문을 작은 비교로: 가정과 반례", "href": "notes/rs/rs01-2.html"}
@@ -421,6 +470,10 @@ window.BDA_CHAPTERS = {
   BD02: [
     {"id": "BD02-1", "title": "데이터 탐색 실습에서 대기시간의 단위를 맞추고 요약하기", "href": "notes/bd/bd02-1.html"},
     {"id": "BD02-2", "title": "짝지은 자료의 변화와 검정 결론을 보고하기", "href": "notes/bd/bd02-2.html"}
+  ],
+  BD03: [
+    {"id": "BD03-1", "title": "주문 지연을 예측할 때 모형을 고르는 순서", "href": "notes/bd/bd03-1.html"},
+    {"id": "BD03-2", "title": "실제 CO₂ 자료로 기준선과 선형 예측 비교하기", "href": "notes/bd/bd03-2.html"}
   ]
 };
 

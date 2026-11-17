@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>범주형 교차표와 순위·부호 검정 · 빅분기 노트</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="3-10">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">빅분기 노트</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">3과목 · 빅데이터 모델링</p>
+<p class="chap-num">10</p>
+<h1>범주형 교차표와 순위·부호 검정</h1>
+<p class="lead">채널별 만족도처럼 결과가 범주일 수 있고, 개선 전후의 변화가 몇 명에게서 어느 방향으로 나타났는지 비교할 수도 있다. 자료의 구조에 따라 검정에서 셀 것부터 바꾼다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>교차표의 기대도수와 카이제곱 통계량을 구한다.</li><li>짝이 있는 자료와 독립 표본을 구분한다.</li><li>작은 표본의 부호 검정을 이항확률로 계산한다.</li></ul></div>
+
+<h2>범주형 변수 두 개를 교차표로 정리하기</h2>
+<p>채널 A와 B에서 각각 20명의 첫 문의를 표본으로 뽑았다. 응답자는 서로 독립이라고 가정한다. 만족 여부의 분포가 두 채널에서 같은지 알아보고자 한다.</p>
+<div class="table-wrap"><table><thead><tr><th scope="col">채널</th><th scope="col">만족</th><th scope="col">불만족</th><th scope="col">합계</th></tr></thead><tbody><tr><td>A</td><td>14</td><td>6</td><td>20</td></tr><tr><td>B</td><td>6</td><td>14</td><td>20</td></tr><tr><td>합계</td><td>20</td><td>20</td><td>40</td></tr></tbody></table></div>
+<p>귀무가설에서 만족 확률은 채널에 따라 달라지지 않는다. 합계로 추정한 공통 만족 비율은 20/40=0.5다. 따라서 A의 만족 기대도수는 20 × 20/40=10이고 다른 세 칸도 각각 10이다. 피어슨 통계량 χ²=Σ(O−E)²/E는 네 항이 모두 16/10이라 6.4다. 큰 값은 귀무가설의 기대와 더 큰 차이를 뜻한다.</p>
+<div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
+<p>이 2×2 표에서 자유도는 (2−1)(2−1)=1이다. 근사 분포는 독립 관측과 기대도수 조건을 확인한 뒤 사용한다. 기대도수가 너무 작은 2×2 표에는 피셔 정확검정을 검토한다. 카이제곱 값에는 연관의 방향이 없으므로 A의 만족률 0.70과 B의 0.30도 함께 제시한다.</p>
+<div class="check" data-q="q3"></div>
+<h2>짝이 있는 시간 측정은 차이부터 계산하기</h2>
+<p>이번에는 같은 사람의 작업 시간을 개선 전후로 측정했다. ‘개선 전 − 개선 후’가 [2,1,3,−1,2,0]분이다. 한 사람이 두 번 참여했으므로 각 관측을 서로 다른 사람처럼 처리하면 안 된다. 간단한 <strong>부호 검정</strong>에서는 0인 차이를 제외해 5명을 셀 수 있다. 양의 차이는 4명, 음의 차이는 1명이다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 160" role="img" aria-label="짝 자료에서 각 사람 하나의 변화 방향을 계산">
+<rect class="f-box" x="42" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="135" y="61" text-anchor="middle">관측 단위</text><text class="f-s" x="135" y="89" text-anchor="middle">사람마다 전·후</text><text class="f-s" x="135" y="110" text-anchor="middle">짝을 유지</text><line class="f-line" x1="235" y1="84" x2="278" y2="84" marker-end="url(#f-arrow)"/><rect class="f-soft" x="287" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="380" y="61" text-anchor="middle">계산</text><text class="f-s" x="380" y="89" text-anchor="middle">전 시간 − 후 시간</text><text class="f-s" x="380" y="110" text-anchor="middle">0 제외</text><line class="f-line" x1="480" y1="84" x2="523" y2="84" marker-end="url(#f-arrow)"/><rect class="f-box" x="532" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="625" y="61" text-anchor="middle">검정</text><text class="f-s" x="625" y="89" text-anchor="middle">양의 부호 개수</text><text class="f-s" x="625" y="110" text-anchor="middle">이항 꼬리 확률</text>
+</svg><figcaption>귀무가설에서 0이 아닌 차이의 두 부호가 같은 확률이라고 둔다.</figcaption></figure>
+<p>독립인 다섯 사람에서 귀무가설의 양의 부호 수는 이항분포(5,1/2)다. 양방향으로 관측보다 같거나 더 극단적인 수는 0, 1, 4, 5다. 그 확률을 더하면 (1+5+5+1)/32=0.375다. 유의수준 0.05에서 양·음 부호의 확률이 같다는 귀무가설을 기각할 근거가 부족하다.</p>
+<div class="check" data-q="q4"></div><div class="check" data-q="q5"></div>
+<pre data-example="python"><code>from fractions import Fraction as F
+from math import comb
+
+observed = [14, 6, 6, 14]
+statistic = sum(F((count-10)**2, 10) for count in observed)
+differences = [2, 1, 3, -1, 2, 0]
+positive = sum(value &gt; 0 for value in differences)
+n = sum(value != 0 for value in differences)
+tail = [k for k in range(n+1) if abs(2*k-n) &gt;= abs(2*positive-n)]
+p_value = F(sum(comb(n, k) for k in tail), 2**n)
+print(&quot;카이제곱:&quot;, float(statistic))
+print(&quot;부호 검정:&quot;, positive, n, float(p_value))</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>카이제곱: 6.4
+부호 검정: 4 5 0.375</code></pre>
+<h2>부호보다 많은 정보를 쓰려면</h2>
+<p>짝 자료에서 절대 차이의 순위도 쓰는 방법으로 윌콕슨 부호순위 검정이 있다. 차이 분포의 대칭과 동점·0 처리 규칙을 확인한다. 독립 두 집단을 비교할 때는 맨–휘트니 U 검정을 고려할 수 있다. 두 집단의 분포 모양이 다르면 결과를 중앙값 차이라고 곧바로 해석하기 어렵다. 비모수 방법에도 관측의 독립성과 표본 설계에 대한 가정이 있다.</p>
+<div class="check" data-q="q6"></div>
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>범주는 교차표, 반복 측정은 짝 차이를 먼저 만든다. 기대도수나 순위의 분포는 자료 구조를 지켜 계산한다.</p></div>
+
+<h2>참고 자료</h2>
+<ul><li><a href="https://www.dataq.or.kr/www/dataq_brochure_2022.pdf">한국데이터산업진흥원 · 빅데이터분석기사 과목 안내</a></li><li><a href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.chi2_contingency.html">SciPy · 교차표의 카이제곱 검정</a></li><li><a href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.wilcoxon.html">SciPy · 윌콕슨 부호순위 검정</a></li><li><a href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.mannwhitneyu.html">SciPy · 맨–휘트니 U 검정</a></li></ul>
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"><a href="../../index.html">← 빅분기 홈</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

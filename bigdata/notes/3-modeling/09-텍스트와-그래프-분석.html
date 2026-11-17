@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>문장을 특징으로, 관계를 그래프로 표현하기 · 빅분기 노트</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="3-09">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">빅분기 노트</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">3과목 · 빅데이터 모델링</p>
+<p class="chap-num">09</p>
+<h1>문장을 특징으로, 관계를 그래프로 표현하기</h1>
+<p class="lead">문장과 관계 기록을 모형에 넣으려면 분석 단위와 표현을 먼저 정한다. 세 문서의 TF–IDF와 작은 그래프의 연결 수를 계산한다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>문서-단어 행렬의 행과 열을 세운다.</li><li>한 가지 TF–IDF 정의에 따라 값을 계산한다.</li><li>방향 그래프에서 진입·진출 차수를 구한다.</li></ul></div>
+
+<h2>문장마다 어떤 단어가 얼마나 나오나</h2>
+<p>문의 D1은 ‘배송 배송 지연’, D2는 ‘배송 확인’, D3은 ‘주소 확인’이라고 하자. 이 예에서는 공백 단위로 토큰을 만들고 행은 문서, 열은 어휘로 둔다. ‘단어 주머니’(bag of words)는 각 어휘의 등장 수를 기록한다. 단어 순서는 사라지므로 ‘주소 확인’과 ‘확인 주소’의 빈도 벡터는 같다. 두 단어가 붙는 표현이 중요하면 순서가 있는 두 토큰 묶음(바이그램)을 특징으로 검토한다.</p>
+<div class="table-wrap"><table><thead><tr><th scope="col">문서</th><th scope="col">배송</th><th scope="col">지연</th><th scope="col">확인</th><th scope="col">주소</th></tr></thead><tbody><tr><td>D1</td><td>2</td><td>1</td><td>0</td><td>0</td></tr><tr><td>D2</td><td>1</td><td>0</td><td>1</td><td>0</td></tr><tr><td>D3</td><td>0</td><td>0</td><td>1</td><td>1</td></tr><tr><td>등장 문서 수</td><td>2</td><td>1</td><td>2</td><td>1</td></tr></tbody></table></div>
+<div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
+<h2>문서 안에서는 자주, 전체 문서에서는 드물게</h2>
+<p>이 장에서는 TF를 문서 안의 원시 등장 수, IDF를 ln (N/df)로 둔다. N은 학습 문서 수이고 df는 해당 단어가 등장한 문서 수다. 예를 들어 D1의 ‘배송’은 2ln (3/2) ≈ 0.8109이고 ‘지연’은 ln 3 ≈ 1.0986이다. 더 적게 등장한 ‘지연’이 전체에서는 희귀해 더 큰 값이 된다. 평활화, 정규화, TF 가중치 등 구현마다 변형이 있으므로 식을 확인한다. 이 장의 식에서 모든 학습 문서에 등장하는 단어의 IDF는 0이다.</p>
+<div class="check" data-q="q3"></div><div class="check" data-q="q4"></div>
+<pre data-example="python"><code>from collections import Counter
+from math import log
+
+docs = [s.split() for s in (&quot;배송 배송 지연&quot;, &quot;배송 확인&quot;, &quot;주소 확인&quot;)]
+terms = (&quot;배송&quot;, &quot;지연&quot;, &quot;확인&quot;, &quot;주소&quot;)
+df = Counter(term for doc in docs for term in set(doc))
+counts = Counter(docs[0])
+print(&quot;문서 빈도:&quot;, *(df[term] for term in terms))
+for term in (&quot;배송&quot;, &quot;지연&quot;):
+    weighted = counts[term] * log(len(docs) / df[term])
+    print(term, f&quot;{weighted:.4f}&quot;)</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>문서 빈도: 2 1 2 1
+배송 0.8109
+지연 1.0986</code></pre>
+<p>문의 분류에서 새 문서가 들어오면 기존의 어휘 열과 학습 IDF를 적용한다. 테스트 문서까지 넣어 어휘나 IDF를 다시 추정하면 평가 문서의 내용이 학습 과정에 반영된다. 훈련 어휘에 없는 단어는 이 표현에 대응하는 열이 없다.</p>
+<h2>누가 누구에게 전달했는가</h2>
+<p>같은 고객 문의의 팀 간 전달을 그래프로 표현한다. 정점은 팀, 방향 간선은 ‘보낸 팀 → 받은 팀’이다. 간선이 A→B, A→C, C→B라면 B의 진입 차수는 2, 진출 차수는 0이다. A의 진출 차수는 2다. 집계 기간 내 같은 전달을 여러 번 기록했다면 방향 간선 하나의 가중치로 셀지, 기록마다 별도 간선으로 둘지 먼저 정한다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 188" role="img" aria-label="팀 A에서 B와 C로, 팀 C에서 B로 향하는 간선 세 개">
+<line class="f-ink" x1="220" y1="70" x2="546" y2="70" marker-end="url(#f-arrow)"/><line class="f-line" x1="212" y1="83" x2="350" y2="138" marker-end="url(#f-arrow)"/><line class="f-line" x1="410" y1="138" x2="557" y2="83" marker-end="url(#f-arrow)"/><circle cx="185" cy="70" r="26" class="f-box"/><text class="f-t" x="185" y="76" text-anchor="middle">A</text><circle cx="580" cy="70" r="26" class="f-box"/><text class="f-t" x="580" y="76" text-anchor="middle">B</text><circle cx="380" cy="151" r="26" class="f-box"/><text class="f-t" x="380" y="157" text-anchor="middle">C</text><text class="f-t" x="185" y="27" text-anchor="middle">진출 2</text><text class="f-t" x="580" y="27" text-anchor="middle">진입 2</text>
+</svg><figcaption>이 방향 그래프에서 차수는 관계 수를 센다. 전달 건수나 업무에 미치는 영향은 다른 지표를 정의해야 한다.</figcaption></figure>
+<div class="check" data-q="q5"></div><div class="check" data-q="q6"></div>
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>문장에는 문서와 어휘의 관계를, 그래프에는 정점과 간선의 의미를 명시한 뒤 특징을 계산한다.</p></div>
+
+<h2>참고 자료</h2>
+<ul><li><a href="https://www.dataq.or.kr/www/dataq_brochure_2022.pdf">한국데이터산업진흥원 · 빅데이터분석기사 과목 안내</a></li><li><a href="https://scikit-learn.org/stable/modules/feature_extraction.html#text-feature-extraction">scikit-learn · 텍스트 특징 추출과 TF–IDF 변형</a></li><li><a href="https://networkx.org/documentation/stable/reference/classes/generated/networkx.DiGraph.in_degree.html">NetworkX · 방향 그래프의 진입 차수</a></li></ul>
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"><a href="../../index.html">← 빅분기 홈</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>베이지안 갱신과 다변량 분석 기법 고르기 · 빅분기 노트</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="3-11">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">빅분기 노트</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">3과목 · 빅데이터 모델링</p>
+<p class="chap-num">11</p>
+<h1>베이지안 갱신과 다변량 분석 기법 고르기</h1>
+<p class="lead">오류를 잘 찾는 경보라도 오류 자체가 드물면 경보 뒤의 실제 오류 확률은 낮을 수 있다. 갱신 계산을 해 보고, 변수가 여러 개일 때 목적별로 다른 분석을 고른다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>사전확률·우도·사후확률을 구분한다.</li><li>자연빈도와 베이즈 공식으로 사후확률을 계산한다.</li><li>PCA, 요인분석, 다변량 분산분석의 질문을 구분한다.</li></ul></div>
+
+<h2>경보가 울렸을 때 실제 오류일 확률</h2>
+<p>설명용으로 주문 1,000건에 오류가 20건 있다고 하자. 검사기는 오류 20건 중 16건에 경보하고 정상 980건 중 98건에도 경보한다. 오류를 E, 경보를 A라고 쓴다. 오류의 <strong>사전확률</strong>은 0.02다. 오류라고 둘 때 경보를 볼 확률, 즉 P(A | E)는 0.8이다. 정상이면 경보를 볼 확률 P(A | 정상)는 0.1이다.</p>
+<div class="table-wrap"><table><thead><tr><th scope="col">상태</th><th scope="col">경보</th><th scope="col">경보 없음</th><th scope="col">합계</th></tr></thead><tbody><tr><td>오류</td><td>16</td><td>4</td><td>20</td></tr><tr><td>정상</td><td>98</td><td>882</td><td>980</td></tr><tr><td>합계</td><td>114</td><td>886</td><td>1,000</td></tr></tbody></table></div>
+<div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
+<p>경보를 관측한 뒤에는 경보 114건만 분모에 넣는다. 16건이 실제 오류이므로 P(E | A)=16/114 ≈ 0.1404다. 베이즈 공식으로도 같은 값을 얻는다.</p>
+<p>P(E | A)=P(A | E)P(E) / [P(A | E)P(E) + P(A | 정상)P(정상)]=(0.8 × 0.02) / (0.8 × 0.02 + 0.1 × 0.98).</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 160" role="img" aria-label="오류 사전확률에서 경보를 조건으로 사후확률로 갱신">
+<rect class="f-box" x="42" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="135" y="61" text-anchor="middle">사전 정보</text><text class="f-s" x="135" y="89" text-anchor="middle">오류 20 / 1,000</text><text class="f-s" x="135" y="110" text-anchor="middle">사전확률 0.02</text><line class="f-line" x1="235" y1="84" x2="278" y2="84" marker-end="url(#f-arrow)"/><rect class="f-soft" x="287" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="380" y="61" text-anchor="middle">경보 관측</text><text class="f-s" x="380" y="89" text-anchor="middle">오류에서도 울림</text><text class="f-s" x="380" y="110" text-anchor="middle">정상에서도 울림</text><line class="f-line" x1="480" y1="84" x2="523" y2="84" marker-end="url(#f-arrow)"/><rect class="f-box" x="532" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="625" y="61" text-anchor="middle">갱신</text><text class="f-s" x="625" y="89" text-anchor="middle">경보 114건 중 오류 16건</text><text class="f-s" x="625" y="110" text-anchor="middle">사후확률 약 0.1404</text>
+</svg><figcaption>오류를 잘 찾는 확률 0.8과 경보 뒤 오류일 확률 약 0.14는 조건이 다르다.</figcaption></figure>
+<div class="check" data-q="q3"></div><div class="check" data-q="q4"></div>
+<pre data-example="python"><code>from fractions import Fraction as F
+
+prior = F(20, 1000)
+hit = F(16, 20)
+false_alarm = F(98, 980)
+evidence = hit*prior + false_alarm*(1-prior)
+posterior = hit*prior / evidence
+assert posterior == F(16, 114)
+print(&quot;경보율:&quot;, f&quot;{float(evidence):.3f}&quot;)
+print(&quot;사후확률:&quot;, f&quot;{float(posterior):.4f}&quot;)</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>경보율: 0.114
+사후확률: 0.1404</code></pre>
+<p>모수를 직접 관측하지 못할 때도 같은 원리를 확률분포에 적용한다. 모수의 사전분포와 관측 자료의 우도를 곱한 뒤 전체 확률이 1이 되도록 나누면 사후분포가 된다. 어떤 사전분포를 골랐는지 기록하고, 작은 표본에서는 사전을 바꿨을 때 결론이 어떻게 움직이는지도 살핀다.</p>
+<h2>변수가 여러 개라는 말로는 기법을 고를 수 없다</h2>
+<div class="table-wrap"><table><thead><tr><th scope="col">목적</th><th scope="col">기법</th><th scope="col">먼저 확인할 것</th></tr></thead><tbody><tr><td>출고량·대기시간·오류 건수를 변동이 큰 축으로 줄이기</td><td>PCA</td><td>중심화와 스케일의 영향</td></tr><tr><td>비슷하게 움직이는 설문 응답을 공통 잠재변수로 설명하기</td><td>요인분석</td><td>공통요인 수와 모형 가정</td></tr><tr><td>두 작업 방식에서 대기시간과 오류 건수의 평균 벡터가 다른지 검토하기</td><td>다변량 분산분석(MANOVA)</td><td>설계, 관측 독립성, 결과의 분포와 공분산 조건</td></tr><tr><td>대기시간 하나를 출고량과 담당 인원으로 예측하기</td><td>다중회귀</td><td>설명변수가 여러 개이고 이 예의 결과변수는 하나</td></tr></tbody></table></div>
+<p>예측이 목적이면 새 자료에서 예측을 평가한다. 잠재적인 구조를 해석하거나 여러 결과의 평균을 비교할 때는 설계와 가정, 결과를 요약하는 방법을 먼저 정한다.</p>
+<div class="check" data-q="q5"></div><div class="check" data-q="q6"></div>
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>베이지안 계산에서는 무엇을 알고 있는지 분모에 표시한다. 다변량 기법은 변수 개수에 더해 분석 목적을 보고 고른다.</p></div>
+
+<h2>참고 자료</h2>
+<ul><li><a href="https://www.dataq.or.kr/www/dataq_brochure_2022.pdf">한국데이터산업진흥원 · 빅데이터분석기사 과목 안내</a></li><li><a href="../../../learn/notes/pr/pr03-2.html">공부 교재 · 베이즈 정리</a></li><li><a href="https://www.itl.nist.gov/div898/handbook/pmc/section5/pmc55.htm">NIST · 주성분 분석</a></li><li><a href="https://scikit-learn.org/stable/modules/generated/sklearn.decomposition.FactorAnalysis.html">scikit-learn · 요인분석</a></li><li><a href="https://online.stat.psu.edu/stat505/Lesson08">Penn State · MANOVA</a></li></ul>
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"><a href="../../index.html">← 빅분기 홈</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

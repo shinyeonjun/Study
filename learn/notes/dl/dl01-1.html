@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>텐서의 모양과 배치 축 읽기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e8c'/%3E%3Cpath d='M8 22V10m8 12V14m8 8V6' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="DL01-1">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+
+<header class="chapter">
+<p class="chap-sub">딥러닝 · DL01 작은 신경망</p>
+<p class="chap-num">DL01·1</p>
+<h1>텐서의 모양과 배치 축 읽기</h1>
+<p class="lead">표 안에 든 숫자뿐 아니라 행과 열이 무엇을 뜻하는지도 살펴봅니다. 배치 안에서 합이나 평균을 구할 때 어떤 축이 남는지 계산합니다.</p>
+</header>
+
+<div class="goal">
+<h2>이 장을 읽고 나면</h2>
+<ul>
+<li>텐서의 축, 모양, 자료형을 따로 읽는다.</li>
+<li>배치 축과 특성 축을 구분하고 합과 평균이 어느 축을 줄이는지 계산한다.</li>
+<li>브로드캐스팅과 자료형을 네트워크 입력에서 점검한다.</li>
+</ul>
+</div>
+
+<h2>한 자료와 여러 자료를 같은 텐서에 놓는다</h2>
+<p>관측 한 건에 측정값이 3개씩 있다고 합시다. 한 관측의 측정값은 벡터로 나타낼 수 있고, 여러 관측을 행으로 이어 붙이면 표가 됩니다. <b class="key">텐서</b>는 수 하나부터 여러 축의 배열까지 담는 자료구조입니다. PyTorch의 텐서에는 값과 함께 <code>shape</code>, <code>dtype</code>, <code>device</code>가 있습니다.</p>
+<p>예제에는 관측 둘, 특성 셋이 있어 모양은 <code>(2, 3)</code>입니다. 첫 숫자 2는 행 개수이고 둘째 숫자 3은 열 개수입니다. 여러 관측을 한 번에 넣은 묶음을 <b class="key">배치</b>라고 합니다. 이 절은 <code>(배치, 특성)</code> 순서를 사용합니다. 사진 등 다른 입력에서는 채널이나 위치 축이 더 붙을 수 있으며 그 축의 배치는 사용하는 모델이 정합니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 225" role="img" aria-label="행은 샘플 번호 0과 1이고 열은 특성 번호 0, 1, 2이다. 두 행의 값은 1,2,3과 4,5,6이며 x[1,2]=6이다.">
+<text class="f-cap" x="145" y="44" text-anchor="middle">dim=0 · 샘플을 따라</text>
+<text class="f-cap" x="513" y="44" text-anchor="middle">dim=1 · 특성을 따라</text>
+<line class="f-line" x1="117" y1="102" x2="117" y2="193" marker-end="url(#f-arrow)"/>
+<line class="f-line" x1="337" y1="78" x2="630" y2="78" marker-end="url(#f-arrow)"/>
+<text class="f-s" x="205" y="133" text-anchor="end">샘플 0</text>
+<rect class="f-box" x="226" y="100" width="98" height="50" rx="3"/>
+<text class="f-cap" x="275" y="131" text-anchor="middle">1</text>
+<rect class="f-box" x="324" y="100" width="98" height="50" rx="3"/>
+<text class="f-cap" x="373" y="131" text-anchor="middle">2</text>
+<rect class="f-box" x="422" y="100" width="98" height="50" rx="3"/>
+<text class="f-cap" x="471" y="131" text-anchor="middle">3</text>
+<text class="f-s" x="205" y="183" text-anchor="end">샘플 1</text>
+<rect class="f-box" x="226" y="150" width="98" height="50" rx="3"/>
+<text class="f-cap" x="275" y="181" text-anchor="middle">4</text>
+<rect class="f-box" x="324" y="150" width="98" height="50" rx="3"/>
+<text class="f-cap" x="373" y="181" text-anchor="middle">5</text>
+<rect class="f-soft" x="422" y="150" width="98" height="50" rx="3"/>
+<text class="f-cap" x="471" y="181" text-anchor="middle">6</text>
+<text class="f-t" x="522" y="192" text-anchor="start">x[1,2]=6</text>
+</svg>
+<figcaption>PyTorch 인덱스는 0부터 시작한다. x[1,2]에서 1은 두 번째 관측, 2는 세 번째 특성을 지정한다.</figcaption>
+</figure>
+<p><code>x[1]</code>은 두 번째 관측의 특성 셋을 얻어 모양이 <code>(3,)</code>입니다. <code>x[1:2]</code>는 두 번째 관측을 한 건짜리 배치로 남겨 <code>(1,3)</code>입니다. <code>x[1,2]</code>는 축이 없는 수 하나이며 <code>shape</code>는 <code>()</code>입니다. 네트워크가 행 배치를 기대하면 모양의 첫 축을 유지해야 하는 경우가 있습니다.</p>
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+
+<h2>줄이는 축을 지정해서 평균과 합을 구한다</h2>
+<p>PyTorch에서 <code>dim=0</code>은 첫 축을 지정합니다. <code>x.mean(dim=0)</code>은 관측 행을 따라 평균을 내므로 특성별로 (1+4)/2=2.5, (2+5)/2=3.5, (3+6)/2=4.5입니다. 줄인 뒤 모양은 <code>(3,)</code>입니다.</p>
+<p><code>x.sum(dim=1)</code>은 한 행 안의 특성을 더합니다. 앞 행은 6, 다음 행은 15이며, 결과는 길이 2입니다. <code>keepdim=True</code>를 두면 크기 1인 축이 남아 이 결과의 모양은 <code>(2,1)</code>입니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 189" role="img" aria-label="같은 텐서에서 dim=0으로 평균을 내면 2.5,3.5,4.5이다. dim=1로 합하면 6,15이다.">
+<text class="f-cap" x="176" y="36" text-anchor="middle">열마다 평균 · dim=0</text>
+<text class="f-cap" x="564" y="36" text-anchor="middle">행마다 합 · dim=1</text>
+<rect class="f-soft" x="64" y="90" width="75" height="46" rx="3"/>
+<text class="f-t" x="101.5" y="119" text-anchor="middle">2.5</text>
+<rect class="f-soft" x="139" y="90" width="75" height="46" rx="3"/>
+<text class="f-t" x="176.5" y="119" text-anchor="middle">3.5</text>
+<rect class="f-soft" x="214" y="90" width="75" height="46" rx="3"/>
+<text class="f-t" x="251.5" y="119" text-anchor="middle">4.5</text>
+<rect class="f-soft" x="491" y="90" width="75" height="46" rx="3"/>
+<text class="f-t" x="528.5" y="119" text-anchor="middle">6</text>
+<rect class="f-soft" x="566" y="90" width="75" height="46" rx="3"/>
+<text class="f-t" x="603.5" y="119" text-anchor="middle">15</text>
+<text class="f-s" x="176" y="164" text-anchor="middle">남은 축 · 특성 3개</text>
+<text class="f-s" x="566" y="164" text-anchor="middle">남은 축 · 샘플 2개</text>
+</svg>
+<figcaption>줄이고 나서 가장 먼저 확인할 것은 어떤 항목이 한 값으로 모였는지다.</figcaption>
+</figure>
+<p>예로 특성마다 고정 값 <code>[10,20,30]</code>을 더하면 오른쪽부터 맞는 길이 3을 찾고 앞의 배치 축에 같은 값을 적용합니다. 첫 행은 [11,22,33], 둘째 행은 [14,25,36]입니다. <b>브로드캐스팅</b>의 기본 규칙은 오른쪽 축부터 길이가 같거나 한쪽 길이가 1이면 계산한다는 것입니다. 배치별 값을 행마다 더하려면 길이 2만 보지 말고, 어느 축에 놓일지도 정해야 합니다. 행별 값 두 개는 <code>(2,1)</code>로 놓습니다.</p>
+<div class="check" data-q="q3"></div>
+<div class="check" data-q="q4"></div>
+
+<h2>자료형과 장치는 모양과 별도로 확인한다</h2>
+<p><b class="key">dtype</b>은 원소가 컴퓨터에서 어떻게 표현되는지를 말합니다. 측정값이나 모델의 가중치에는 예로 <code>torch.float32</code>를 쓸 수 있습니다. 두 범주를 0과 1로 표시한 클래스 인덱스는 <code>torch.int64</code>로 저장할 수 있습니다. 둘 다 모양이 길이 2인 벡터일 수 있지만, 값의 뜻과 연산에 맞춰 자료형을 고릅니다. 뒤에서 분류 손실에 넣을 때도 어떤 형식의 정답을 요구하는지 확인합니다.</p>
+<p><code>device</code>는 텐서가 계산되는 장치입니다. 아래 예는 CPU 위에서 각각 명시한 자료형으로 계산합니다. 일반적으로 연산에 함께 넣는 텐서들의 장치와 필요한 자료형을 맞춥니다.</p>
+<div class="check" data-q="q5"></div>
+<div class="check" data-q="q6"></div>
+
+<h2>모양과 축에 따른 결과를 함께 출력한다</h2>
+<pre data-example="python"><code>import torch
+
+x = torch.tensor([[1, 2, 3], [4, 5, 6]], dtype=torch.float32, device=&quot;cpu&quot;)
+labels = torch.tensor([0, 1], dtype=torch.int64, device=&quot;cpu&quot;)
+offset = torch.tensor([10, 20, 30], dtype=x.dtype, device=&quot;cpu&quot;)
+
+print(&quot;x:&quot;, tuple(x.shape), x.dtype, x.device)
+print(&quot;labels:&quot;, tuple(labels.shape), labels.dtype)
+print(&quot;cell:&quot;, x[1, 2].item())
+print(&quot;dim=0 mean:&quot;, x.mean(dim=0).tolist())
+print(&quot;dim=1 sum:&quot;, x.sum(dim=1).tolist())
+print(&quot;keepdim:&quot;, tuple(x.sum(dim=1, keepdim=True).shape))
+print(&quot;broadcast:&quot;, (x + offset).tolist())</code></pre>
+<pre data-output><code>x: (2, 3) torch.float32 cpu
+labels: (2,) torch.int64
+cell: 6.0
+dim=0 mean: [2.5, 3.5, 4.5]
+dim=1 sum: [6.0, 15.0]
+keepdim: (2, 1)
+broadcast: [[11.0, 22.0, 33.0], [14.0, 25.0, 36.0]]</code></pre>
+<p class="small">실행 확인 환경 · Python 3.14.6, PyTorch 2.14.1+cu130, CPU. 이 예는 난수를 사용하지 않습니다.</p>
+
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table>
+<thead><tr><th scope="col">표시</th><th scope="col">질문</th></tr></thead>
+<tbody>
+<tr><td>shape</td><td>각 축의 길이와 순서는 어떻게 되어 있나?</td></tr>
+<tr><td>dim</td><td>어떤 축의 값들을 함께 처리하나?</td></tr>
+<tr><td>dtype·device</td><td>원소의 자료형과 계산 장치는 무엇인가?</td></tr>
+</tbody>
+</table></div>
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://docs.pytorch.org/tutorials/beginner/basics/tensorqs_tutorial.html">PyTorch 공식 튜토리얼 · 텐서와 속성</a></li>
+<li><a href="https://docs.pytorch.org/docs/stable/notes/broadcasting.html">PyTorch 공식 문서 · 브로드캐스팅 규칙</a></li>
+</ul>
+
+
+<h2>확인 문제</h2>
+<p>아직 풀지 않은 문제입니다. 먼저 식이나 근거를 적어 보고 해설을 확인합니다.</p>
+<div id="quiz"></div>
+
+<section class="work" id="tools"></section>
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Actor와 Critic이 선택과 평가를 나눈다 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e8c'/%3E%3Cpath d='M8 22V10m8 12V14m8 8V6' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="RL11-1">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+
+<header class="chapter">
+<p class="chap-sub">강화학습 · RL11 Actor–Critic</p>
+<p class="chap-num">RL11·1</p>
+<h1>Actor와 Critic이 선택과 평가를 나눈다</h1>
+<p class="lead">정책이 행동을 골라 시도하고, 가치 예측기가 그 행동이 평소 기대보다 어땠는지 알려 줍니다. 한 전이에서 여러 전이로 그 평가를 늘려 봅니다.</p>
+</header>
+
+<div class="goal">
+<h2>이 장을 읽고 나면</h2>
+<ul>
+<li>Actor, Critic, advantage의 역할을 구분한다.</li>
+<li>TD 오차와 GAE로 얻은 advantage 추정치를 계산한다.</li>
+<li>수집 구간의 경계에서 평가 항과 다음 오차의 연결을 각각 판단한다.</li>
+</ul>
+</div>
+
+<h2>같은 상태의 평균을 기준으로 행동을 평가한다</h2>
+<p>확인대 C에서 직행하면 6으로 끝납니다. 확인하면 절반은 3으로 끝나고 절반은 −1로 C에 남습니다. 할인율 γ=0.5이고, C의 정책은 각 행동에 확률 0.5를 줍니다. 이 정책을 계속 따를 때 확인의 행동 가치는 <code>Q(C,확인)=0.5×3+0.5×(−1+0.5V(C))=1+0.25V(C)</code>입니다. 정책에 따라 두 행동을 평균하면 <code>V(C)=0.5×6+0.5(1+0.25V(C))=3.5+0.125V(C)</code>가 되어 V(C)=4입니다. 확인의 행동 가치는 2, 직행의 가치는 6입니다.</p>
+<p><b class="key">advantage</b>(이점)는 그 상태의 정책 평균에 비해 특정 첫 행동이 얼마나 나은지를 나타냅니다. 식으로는 <code>Aπ(s,a)=Qπ(s,a)−Vπ(s)</code>입니다. C의 직행은 +2이고 확인은 −2입니다. 확인의 값도 2로 양수지만 평균 4보다 낮으므로 이점은 음수입니다. 어떤 정책을 기준으로 V와 Q를 계산하는지가 중요합니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 197" role="img" aria-label="C에서 확인의 Q는 2, 직행의 Q는 6이다. 두 행동을 반씩 고르는 정책의 V는 4이다. 기준으로부터 확인의 이점은 −2, 직행의 이점은 +2다.">
+<line class="f-ink" x1="83" y1="144" x2="684" y2="144" marker-end="url(#f-arrow)"/>
+<line class="f-ink" x1="106" y1="138" x2="106" y2="150"/>
+<text class="f-s" x="106" y="173" text-anchor="middle">0</text>
+<line class="f-ink" x1="181" y1="138" x2="181" y2="150"/>
+<text class="f-s" x="181" y="173" text-anchor="middle">1</text>
+<line class="f-ink" x1="256" y1="138" x2="256" y2="150"/>
+<text class="f-s" x="256" y="173" text-anchor="middle">2</text>
+<line class="f-ink" x1="331" y1="138" x2="331" y2="150"/>
+<text class="f-s" x="331" y="173" text-anchor="middle">3</text>
+<line class="f-ink" x1="406" y1="138" x2="406" y2="150"/>
+<text class="f-s" x="406" y="173" text-anchor="middle">4</text>
+<line class="f-ink" x1="481" y1="138" x2="481" y2="150"/>
+<text class="f-s" x="481" y="173" text-anchor="middle">5</text>
+<line class="f-ink" x1="556" y1="138" x2="556" y2="150"/>
+<text class="f-s" x="556" y="173" text-anchor="middle">6</text>
+<line class="f-ink" x1="631" y1="138" x2="631" y2="150"/>
+<text class="f-s" x="631" y="173" text-anchor="middle">7</text>
+<line class="f-dash" x1="406" y1="38" x2="406" y2="143"/>
+<text class="f-cap" x="406" y="30" text-anchor="middle">V(C)=4</text>
+<line class="f-line" x1="406" y1="60" x2="256" y2="60" marker-end="url(#f-arrow)"/>
+<line class="f-line" x1="406" y1="105" x2="556" y2="105" marker-end="url(#f-arrow)"/>
+<text class="f-s" x="247" y="49" text-anchor="middle">확인 −2</text>
+<text class="f-s" x="562" y="96" text-anchor="middle">직행 +2</text>
+</svg>
+<figcaption>정책을 바꾸면 같은 상태의 비교 기준도 달라질 수 있다.</figcaption>
+</figure>
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+<h2>배우는 정책과 가치 예측기의 일을 분리한다</h2>
+<p><b class="key">Actor</b>는 정책 πθ입니다. 상태를 받아 행동의 분포를 내고, 로그확률의 기울기로 행동 제안을 고칩니다. <b class="key">Critic</b>은 정책을 평가하는 모델입니다. 이 장의 Critic은 상태 가치 V̂φ 하나를 예측합니다. 실제로는 환경의 전이표를 모르는 경우가 많아 위처럼 Q와 V의 참값을 손으로 풀 수 없습니다. Critic으로 추정한 관측 한 전이의 평가 신호는 <code>δₜ=Rₜ₊₁+γV̂φ(Sₜ₊₁)−V̂φ(Sₜ)</code>입니다. 종료 뒤의 다음 가치는 0입니다.</p>
+<p>V̂가 현재 정책의 정확한 가치라면, 현재 상태와 첫 행동을 고정해서 이 δ의 기댓값을 취할 때 그 행동의 이점이 나옵니다. 보상과 다음 상태가 무작위라 δ 표본은 Q−V의 참값과 다를 수 있습니다. Actor는 예를 들어 δ에 선택 행동의 로그확률 기울기를 곱한 신호로 정책을 고칩니다. 시작 시점 할인 목적을 그대로 쓸 경우에는 RL10에서 본 γᵗ 같은 방문 가중도 고려해야 합니다. Critic은 별도로 TD 예측 오차를 줄이도록 학습할 수 있습니다. 정책을 고치는 항에서 이점 추정값은 고정된 값처럼 씁니다.</p>
+<div class="check" data-q="q3"></div>
+<div class="check" data-q="q4"></div>
+<h2>여러 TD 오차를 합쳐 이점을 추정한다</h2>
+<p><b class="key">GAE</b>(Generalized Advantage Estimation)는 현재 TD 오차에 뒤에서 나온 TD 오차를 감쇠해서 더하는 방식입니다. <code>Âₜ=δₜ+γλÂₜ₊₁</code>로 뒤에서부터 계산하면 <code>δₜ+(γλ)δₜ₊₁+(γλ)²δₜ₊₂+…</code>가 됩니다. 적용 동안 같은 가치 추정기를 사용합니다. λ=0은 한 단계 TD 오차를 씁니다. λ=1이고 과제가 실제로 끝날 때까지 보았다면 할인 항들이 상쇄되어 Gₜ−V̂(Sₜ)가 됩니다. 기록이 외부에서 잘리면 마지막 상태의 가치로 끝을 채운다는 조건이 추가됩니다.</p>
+<p>RL10과 같은 S→C→C→T 경로의 보상은 [0,−1,6]입니다. V̂(S)=2, V̂(C)=4이고 γ=λ=0.5라면 TD 오차는 [0,−3,2]입니다. 맨 끝의 Â₂는 2입니다. 앞의 Â₁=−3+0.25×2=−2.5이고 Â₀=0+0.25×(−2.5)=−0.625입니다. 첫 행동의 참 이점이 0이어도 이 궤적의 첫 추정치는 음수가 될 수 있습니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 196" role="img" aria-label="TD 오차 0, −3, 2를 뒤에서부터 읽으면 이점은 −5/8, −5/2, 2다. 앞 칸에 전달할 때마다 γλ=1/4를 곱한다.">
+<rect class="f-box" x="60" y="50" width="134" height="44" rx="3"/>
+<text class="f-t" x="127" y="77" text-anchor="middle">δ₀ = 0</text>
+<rect class="f-box" x="314" y="50" width="134" height="44" rx="3"/>
+<text class="f-t" x="381" y="77" text-anchor="middle">δ₁ = −3</text>
+<rect class="f-soft" x="568" y="50" width="134" height="44" rx="3"/>
+<text class="f-t" x="635" y="77" text-anchor="middle">δ₂ = 2</text>
+<line class="f-ink" x1="127" y1="97" x2="127" y2="118"/>
+<text class="f-cap" x="127" y="146" text-anchor="middle">Â₀ = −5/8</text>
+<line class="f-ink" x1="381" y1="97" x2="381" y2="118"/>
+<text class="f-cap" x="381" y="146" text-anchor="middle">Â₁ = −5/2</text>
+<line class="f-ink" x1="635" y1="97" x2="635" y2="118"/>
+<text class="f-cap" x="635" y="146" text-anchor="middle">Â₂ = 2</text>
+<line class="f-line" x1="310" y1="133" x2="200" y2="133" marker-end="url(#f-arrow)"/>
+<text class="f-s" x="255" y="122" text-anchor="middle">×1/4</text>
+<line class="f-line" x1="564" y1="133" x2="454" y2="133" marker-end="url(#f-arrow)"/>
+<text class="f-s" x="509" y="122" text-anchor="middle">×1/4</text>
+</svg>
+<figcaption>시점이 하나 멀어질 때마다 TD 오차에 1/4를 한 번 더 곱한다.</figcaption>
+</figure>
+<p>수집의 경계에서는 두 가지를 분리합니다. 과제 자체가 끝나면 δ에서 다음 가치가 0이고 다음 궤적의 오차도 더하지 않습니다. 수집만 잘렸다면 원래 과제를 평가할 때 마지막 δ에 최종 관측의 가치를 남깁니다. 아직 관측하지 않은 다음 오차를 더할 수 없으므로 이 구간의 GAE 재귀는 멈춥니다. 다음 줄이 리셋된 새 에피소드이면 해당 오차는 이전 줄에 섞지 않습니다.</p>
+<div class="check" data-q="q5"></div>
+<div class="check" data-q="q6"></div>
+<h2>종료와 수집 구간을 별도 표시로 계산한다</h2>
+<pre data-example="python"><code>from fractions import Fraction as F
+
+gamma = lam = F(1, 2)
+value = {&quot;S&quot;: F(2), &quot;C&quot;: F(4)}
+transitions = [
+    (&quot;S&quot;, 0, &quot;C&quot;, False, False),
+    (&quot;C&quot;, -1, &quot;C&quot;, False, False),
+    (&quot;C&quot;, 6, &quot;T&quot;, True, True),
+]
+
+def estimate(rows):
+    advantages = []
+    deltas = []
+    future = F(0)
+    for state, reward, next_state, terminated, segment_end in reversed(rows):
+        next_value = F(0) if terminated else value[next_state]
+        delta = reward + gamma * next_value - value[state]
+        future = delta + (0 if segment_end else gamma * lam * future)
+        deltas.append(delta)
+        advantages.append(future)
+    return deltas[::-1], advantages[::-1]
+
+deltas, advantages = estimate(transitions)
+print(&quot;TD errors:&quot;, *deltas)
+print(&quot;GAE:&quot;, *advantages)
+cut = [transitions[0], (&quot;C&quot;, -1, &quot;C&quot;, False, True)]
+print(&quot;truncated GAE:&quot;, *estimate(cut)[1])</code></pre>
+<pre data-output><code>TD errors: 0 -3 2
+GAE: -5/8 -5/2 2
+truncated GAE: -3/4 -3</code></pre>
+<p>각 줄의 마지막 표시는 이 계산에서 더 이상 뒤 오차를 잇지 않을 경계입니다. 종료는 그 경계 중 하나입니다. 잘려서 종료 표시가 거짓인 마지막 C에서도 다음 가치 4를 써서 δ를 구합니다. GAE를 작게 또는 크게 섞었을 때 정책이 좋아지는지는 Critic의 품질과 관측한 자료에 따라 달라집니다.</p>
+
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table>
+<thead><tr><th scope="col">핵심어</th><th scope="col">기억할 기준</th></tr></thead>
+<tbody>
+<tr><td><b class="key">Actor와 Critic</b></td><td>정책은 선택하고 Critic은 그 정책의 가치를 추정한다.</td></tr>
+<tr><td><b class="key">advantage</b></td><td>특정 행동의 가치에서 해당 상태의 정책 평균을 뺀다.</td></tr>
+<tr><td><b class="key">GAE</b></td><td>여러 TD 오차를 γλ로 감쇠해 더한다.</td></tr>
+</tbody></table></div>
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>GAE에서 가치 부트스트랩을 남길지와 다음 오차를 이어 붙일지를 별도로 결정한다.</p></div>
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://mitpress.mit.edu/9780262039246/reinforcement-learning/">Sutton·Barto, Reinforcement Learning 2판 · 13.5절 Actor–Critic</a></li>
+<li><a href="https://arxiv.org/abs/1506.02438">Schulman 외 (2016) · GAE</a></li>
+<li><a href="https://gymnasium.farama.org/tutorials/gymnasium_basics/handling_time_limits/">Gymnasium · 종료와 외부 시간 제한</a></li>
+</ul>
+
+<h2>확인 문제</h2>
+<p>아직 풀지 않은 문제입니다. 먼저 식이나 근거를 적어 보고 해설을 확인합니다.</p>
+<div id="quiz"></div>
+
+<section class="work" id="tools"></section>
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>
