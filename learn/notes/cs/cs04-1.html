@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>해시로 후보 위치를 찾고 충돌 처리하기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e8c'/%3E%3Cpath d='M8 22V10m8 12V14m8 8V6' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="CS04-1">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+
+<header class="chapter">
+<p class="chap-sub">자료구조·알고리즘 · CS04 해시와 검색</p>
+<p class="chap-num">CS04·1</p>
+<h1>해시로 후보 위치를 찾고 충돌 처리하기</h1>
+<p class="lead">키에서 찾아볼 번호를 계산합니다. 번호가 같은 다른 키를 구별하고, 바구니에 값이 고르게 들어가는지에 따라 필요한 비교 수를 계산합니다.</p>
+</header>
+
+<div class="goal">
+<h2>이 장을 읽고 나면</h2>
+<ul>
+<li>해시로 먼저 확인할 바구니를 정하고 나머지 예를 계산한다.</li>
+<li>서로 다른 두 키가 같은 곳에 들어갈 때 원래 키를 대조한다.</li>
+<li>고르게 분산된 모형의 평균 비용과 한 곳에 모인 최악 비용을 구분한다.</li>
+</ul>
+</div>
+
+<h2>정렬 대신 키에서 확인할 위치를 계산한다</h2>
+<p>서랍 다섯 개에 숫자 꼬리표가 있는 기록을 둡니다. 키가 정수라면 먼저 <code>key % 5</code>를 계산해 0~4의 번호를 고를 수 있습니다. 이 장에서는 이 번호를 내는 규칙을 <b class="key">해시 함수</b>, 각 저장 자리를 바구니라고 부르겠습니다. 실제 해시 테이블에서는 원래 키를 더 큰 해시값으로 바꾼 다음 저장소의 범위에 맞추어 위치를 정할 수도 있습니다.</p>
+<p>12,7,17을 각각 5로 나눈 나머지는 모두 2입니다. 9의 나머지는 4입니다. 서로 다른 키가 같은 곳을 가리키는 일이 <b class="key">충돌</b>입니다. 번호를 같게 얻어도 원래 키가 같은 것은 아닙니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 267" role="img" aria-label="다섯 바구니 중 2에는 차례로 12,7,17이, 4에는 9가 들어 있다.">
+<text class="f-cap" x="380" y="33" text-anchor="middle">바구니 번호 = 키를 5로 나눈 나머지</text>
+<rect class="f-box" x="224" y="57" width="73" height="32" rx="3"/>
+<text class="f-t" x="260" y="79" text-anchor="middle">0</text>
+<text class="f-s" x="355" y="80" text-anchor="start">비어 있음</text>
+<rect class="f-box" x="224" y="96" width="73" height="32" rx="3"/>
+<text class="f-t" x="260" y="118" text-anchor="middle">1</text>
+<text class="f-s" x="355" y="119" text-anchor="start">비어 있음</text>
+<rect class="f-soft" x="224" y="135" width="73" height="32" rx="3"/>
+<text class="f-t" x="260" y="157" text-anchor="middle">2</text>
+<rect class="f-soft" x="347" y="135" width="70" height="32" rx="3"/>
+<text class="f-t" x="382" y="157" text-anchor="middle">12</text>
+<line class="f-line" x1="299" y1="151" x2="343" y2="151" marker-end="url(#f-arrow)"/>
+<rect class="f-soft" x="429" y="135" width="70" height="32" rx="3"/>
+<text class="f-t" x="464" y="157" text-anchor="middle">7</text>
+
+<rect class="f-soft" x="511" y="135" width="70" height="32" rx="3"/>
+<text class="f-t" x="546" y="157" text-anchor="middle">17</text>
+
+<rect class="f-box" x="224" y="174" width="73" height="32" rx="3"/>
+<text class="f-t" x="260" y="196" text-anchor="middle">3</text>
+<text class="f-s" x="355" y="197" text-anchor="start">비어 있음</text>
+<rect class="f-box" x="224" y="213" width="73" height="32" rx="3"/>
+<text class="f-t" x="260" y="235" text-anchor="middle">4</text>
+<rect class="f-box" x="347" y="213" width="70" height="32" rx="3"/>
+<text class="f-t" x="382" y="235" text-anchor="middle">9</text>
+<line class="f-line" x1="299" y1="229" x2="343" y2="229" marker-end="url(#f-arrow)"/>
+<text class="f-s" x="194" y="50" text-anchor="middle">번호</text>
+<text class="f-s" x="594" y="157" text-anchor="start">같은 번호에 키 3개</text>
+</svg>
+<figcaption>저장소의 같은 위치에 여러 키가 가도, 그 키를 구별할 자료를 기록한다.</figcaption>
+</figure>
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+
+<h2>한 바구니에 여러 후보를 두면 마지막에 동등성을 확인한다</h2>
+<p>이 예의 충돌 처리에는 <b class="key">분리 연결</b>을 씁니다. 바구니마다 작은 목록을 두고 (원래 키, 값)을 저장합니다. 키 17을 찾을 때에는 먼저 바구니 2를 고르고, 저장된 12와 7을 건너 17을 확인합니다. 17에 연결한 값은 C이고, 동등성 비교는 세 번입니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 206" role="img" aria-label="17로 요청하면 2번 바구니의 12와 7을 비교해 불일치, 다음 17에서 일치한다.">
+<text class="f-cap" x="381" y="35" text-anchor="middle">17을 찾음 · 17 mod 5 = 2</text>
+<rect class="f-box" x="83" y="63" width="145" height="54" rx="3"/>
+<text class="f-cap" x="155" y="96" text-anchor="middle">12</text>
+<text class="f-s" x="155" y="145" text-anchor="middle">불일치</text>
+<line class="f-line" x1="231" y1="91" x2="313" y2="91" marker-end="url(#f-arrow)"/>
+<rect class="f-box" x="318" y="63" width="145" height="54" rx="3"/>
+<text class="f-cap" x="390" y="96" text-anchor="middle">7</text>
+<text class="f-s" x="390" y="145" text-anchor="middle">불일치</text>
+<line class="f-line" x1="466" y1="91" x2="548" y2="91" marker-end="url(#f-arrow)"/>
+<rect class="f-soft" x="553" y="63" width="145" height="54" rx="3"/>
+<text class="f-cap" x="625" y="96" text-anchor="middle">17</text>
+<text class="f-s" x="625" y="145" text-anchor="middle">일치</text>
+
+<text class="f-s" x="380" y="186" text-anchor="middle">같은 바구니의 키에 대해 실제 동등성을 세 번 확인한다.</text>
+</svg>
+<figcaption>같은 번호에 해당한다는 사실은 후보를 줄여 주지만, 원하는 키인지는 원래 값으로 판단한다.</figcaption>
+</figure>
+<p>키 22도 바구니 2에 갑니다. 저장된 세 후보와 모두 다르기 때문에 세 번 비교한 뒤 찾지 못합니다. 6은 빈 바구니 1을 고르면 키 비교 없이 끝납니다. 다른 충돌 처리에는 같은 자리에서 시작해 정해진 규칙으로 다른 자리를 확인하는 방식도 있습니다.</p>
+<div class="check" data-q="q3"></div>
+<div class="check" data-q="q4"></div>
+
+<h2>평균과 최악이 다른 이유를 바구니의 개수로 읽는다</h2>
+<p>키가 n개, 바구니가 m개일 때 평균 바구니 길이 n/m를 <b class="key">적재율</b>이라고 합니다. 이 예는 n=4, m=5라 평균 길이는 0.8이지만 몇 바구니는 비고 바구니 2에는 3개가 있습니다.</p>
+<p>각 키가 여러 바구니에 고르게 분포한다고 가정하고 해시 계산과 키 비교를 일정한 비용으로 보면, 분리 연결의 한 검색은 평균적으로 대략 1+n/m 크기의 비용을 기대할 수 있습니다. 첫 1은 위치를 계산해 확인하는 기본 동작을 포함합니다. n이 늘 때 바구니 수도 늘려 적재율을 상수 수준으로 유지한다면 평균 시간은 O(1)입니다.</p>
+<p>고르다는 가정이 어긋나 한 바구니에 키가 몰리면 최악에는 n개를 다 볼 수 있어 O(n)입니다. 간단한 <code>key % 5</code>에 모두 5의 배수를 넣으면 실제로 이 현상이 생깁니다. 길이가 긴 문자열 등에서 키 자체의 해시와 비교 비용이 커질 수 있다는 점도 고려합니다.</p>
+<div class="check" data-q="q5"></div>
+<div class="check" data-q="q6"></div>
+
+<h2>바구니와 찾기에 든 비교 횟수를 출력한다</h2>
+<pre data-example="python"><code>buckets = [[] for _ in range(5)]
+for key, value in [(12, &quot;A&quot;), (7, &quot;B&quot;), (17, &quot;C&quot;), (9, &quot;D&quot;)]:
+    buckets[key % len(buckets)].append((key, value))
+
+def lookup(key):
+    chain = buckets[key % len(buckets)]
+    comparisons = 0
+    for stored, value in chain:
+        comparisons += 1
+        if stored == key:
+            return value, comparisons
+    return None, comparisons
+
+print(&quot;bucket keys:&quot;, [[key for key, _ in chain] for chain in buckets])
+for key in (17, 22, 9, 6):
+    print(key, lookup(key))</code></pre>
+<pre data-output><code>bucket keys: [[], [], [12, 7, 17], [], [9]]
+17 ('C', 3)
+22 (None, 3)
+9 ('D', 1)
+6 (None, 0)</code></pre>
+<p>코드는 충돌을 설명하기 위해 만든 분리 연결 예입니다. Python의 딕셔너리에서 키가 실제로 같은 표 번호에 저장된다고 간주하지 않습니다. 해시 계산을 제외한 키 비교 횟수만 따로 출력합니다.</p>
+
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table>
+<thead><tr><th scope="col">단계</th><th scope="col">확인할 일</th></tr></thead>
+<tbody>
+<tr><td>해시</td><td>키를 어디서 먼저 찾을지 계산한다.</td></tr>
+<tr><td>충돌 처리</td><td>같은 위치의 서로 다른 키를 구분한다.</td></tr>
+<tr><td>평균과 최악</td><td>키 분포와 적재율이 좋으면 적게 확인한다. 한 곳에 몰리면 많이 본다.</td></tr>
+</tbody>
+</table></div>
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://algs4.cs.princeton.edu/34hash/">Sedgewick·Wayne, Algorithms · 분리 연결과 해시 비용</a></li>
+<li><a href="https://ocw.mit.edu/courses/6-006-introduction-to-algorithms-spring-2020/resources/lecture-notes/">MIT 6.006 · 해시 테이블</a></li>
+</ul>
+
+
+<h2>확인 문제</h2>
+<p>아직 풀지 않은 문제입니다. 먼저 식이나 근거를 적어 보고 해설을 확인합니다.</p>
+<div id="quiz"></div>
+
+<section class="work" id="tools"></section>
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

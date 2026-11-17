@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>INNER JOIN, LEFT JOIN과 비어 있는 짝 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="DB03-1">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">데이터베이스 · DB03 여러 표 연결</p>
+<p class="chap-num">DB03·1</p>
+<h1>INNER JOIN, LEFT JOIN과 비어 있는 짝</h1>
+<p class="lead">고객 표의 이름 옆에 주문 번호를 붙입니다. 주문이 두 건인 고객은 두 줄로 나타나고, 주문이 없는 고객이 남는지는 결합의 종류에 달려 있습니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul>
+<li>INNER JOIN과 LEFT JOIN의 결과 행을 손으로 적는다.</li>
+<li>일대다 결합에서 결과가 왜 늘어나는지 설명한다.</li>
+<li>LEFT JOIN에 붙이는 ON 조건과 WHERE 조건의 차이를 구별한다.</li>
+</ul></div>
+
+<h2>같은 키를 가진 행의 짝 만들기</h2>
+<p><code>customers AS c JOIN orders AS o ON c.customer_id = o.customer_id</code>는 고객 번호가 일치하는 고객 행과 주문 행의 짝을 만듭니다. <code>AS c</code>와 <code>AS o</code>는 각각 표의 별칭입니다. 두 표에 <code>customer_id</code>라는 열이 있으므로 어떤 표의 열인지 <code>c.customer_id</code>처럼 명시합니다.</p>
+<p><b class="key">INNER JOIN</b>에서는 <code>ON</code>의 조건이 참인 짝만 결과에 나타납니다. 고객 1에게 주문 101, 102가 있고 고객 2에 주문 103, 104가 있습니다. 고객 3은 주문과 짝이 없으므로 이 결합에는 나오지 않습니다. 결과에서 한 행의 입도는 고객 한 명에서 고객과 주문의 짝으로 바뀝니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 209" role="img" aria-label="고객 1,2는 두 결합에서 주문 두 건씩과 연결되고 고객 3은 왼쪽 결합에서만 NULL인 결과 행으로 남는다.">
+<text class="f-cap" x="380" y="29" text-anchor="middle">고객을 왼쪽에 두고 주문 연결</text>
+<rect class="f-soft" x="23" y="43" width="136" height="37"/>
+<text class="f-s" x="91" y="66.5" text-anchor="middle">customer_id</text>
+<rect class="f-soft" x="159" y="43" width="120" height="37"/>
+<text class="f-s" x="219" y="66.5" text-anchor="middle">name</text>
+<rect class="f-soft" x="279" y="43" width="234" height="37"/>
+<text class="f-s" x="396" y="66.5" text-anchor="middle">INNER JOIN의 주문</text>
+<rect class="f-soft" x="513" y="43" width="224" height="37"/>
+<text class="f-s" x="625" y="66.5" text-anchor="middle">LEFT JOIN의 주문</text>
+<rect class="f-box" x="23" y="80" width="136" height="37"/>
+<text class="f-t" x="91" y="103.5" text-anchor="middle">1</text>
+<rect class="f-box" x="159" y="80" width="120" height="37"/>
+<text class="f-t" x="219" y="103.5" text-anchor="middle">Mina</text>
+<rect class="f-box" x="279" y="80" width="234" height="37"/>
+<text class="f-t" x="396" y="103.5" text-anchor="middle">101, 102</text>
+<rect class="f-box" x="513" y="80" width="224" height="37"/>
+<text class="f-t" x="625" y="103.5" text-anchor="middle">101, 102</text>
+<rect class="f-box" x="23" y="117" width="136" height="37"/>
+<text class="f-t" x="91" y="140.5" text-anchor="middle">2</text>
+<rect class="f-box" x="159" y="117" width="120" height="37"/>
+<text class="f-t" x="219" y="140.5" text-anchor="middle">Jun</text>
+<rect class="f-box" x="279" y="117" width="234" height="37"/>
+<text class="f-t" x="396" y="140.5" text-anchor="middle">103, 104</text>
+<rect class="f-box" x="513" y="117" width="224" height="37"/>
+<text class="f-t" x="625" y="140.5" text-anchor="middle">103, 104</text>
+<rect class="f-box" x="23" y="154" width="136" height="37"/>
+<text class="f-t" x="91" y="177.5" text-anchor="middle">3</text>
+<rect class="f-box" x="159" y="154" width="120" height="37"/>
+<text class="f-t" x="219" y="177.5" text-anchor="middle">Sol</text>
+<rect class="f-box" x="279" y="154" width="234" height="37"/>
+<text class="f-t" x="396" y="177.5" text-anchor="middle">결과 행 없음</text>
+<rect class="f-box" x="513" y="154" width="224" height="37"/>
+<text class="f-t" x="625" y="177.5" text-anchor="middle">NULL인 행 1개</text>
+</svg>
+<figcaption>앞 두 고객은 각 두 줄로 펼쳐집니다. 마지막 고객 때문에 INNER JOIN은 4행, LEFT JOIN은 5행입니다.</figcaption>
+</figure>
+<div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
+
+<h2>왼쪽의 모든 고객을 보존하기</h2>
+<p><b class="key">LEFT JOIN</b>은 조건을 만족하는 짝을 모두 돌려주며, 짝이 없는 왼쪽 행에 한해 오른쪽 열이 모두 NULL로 채워진 결과 행을 한 줄 돌려줍니다. 정상 주문 원본에서 주문 번호는 NULL이 아니지만, 결과의 주문 번호는 손님 3에게 주문 짝이 없어서 NULL입니다. 예제 자료에서 주문에 연결됐지만 쿠폰액만 NULL인 경우도 있습니다. 이 두 경우를 구별하려면 오른쪽 주문의 기본 키가 NULL인지 확인합니다.</p>
+<p>LEFT JOIN으로 고객별 주문 건수를 세면 주문 없는 고객 3의 결과에도 한 행이 있습니다. 따라서 <code>COUNT(*)</code>는 1이고 <code>COUNT(o.order_id)</code>는 0입니다. 오른쪽 표의 존재할 때 필수인 열을 세면 주문 건수가 됩니다.</p>
+<div class="check" data-q="q3"></div><div class="check" data-q="q4"></div>
+
+<h2>먼저 짝의 기준을 좁힐까, 결과 행을 걸러낼까?</h2>
+<p><code>LEFT JOIN orders AS o ON c.customer_id=o.customer_id AND o.status='paid'</code>는 결제 완료 주문만 연결할 후보로 봅니다. 짝이 없는 고객 3의 NULL 행은 유지됩니다. 반대로 고객 번호만으로 연결한 뒤 <code>WHERE o.status='paid'</code>를 적용하면 고객 3에 대해 <code>NULL = 'paid'</code>가 참이 아니므로 행이 빠집니다. 결제한 주문을 가진 고객만 나와야 하는 비교라면 그 조건을 사용해도 됩니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 244" role="img" aria-label="paid를 ON에 넣은 왼쪽 결합이면 고객 3이 남고, 결합 뒤 WHERE에서 paid만 요구하면 고객 3이 제외된다.">
+<text class="f-cap" x="380" y="28" text-anchor="middle">결제 완료 조건을 어디에 놓는가?</text>
+<rect class="f-soft" x="61" y="58" width="300" height="47"/>
+<text class="f-t" x="211" y="86.5" text-anchor="middle">ON에 결제 완료 조건</text>
+<rect class="f-box" x="399" y="58" width="300" height="47"/>
+<text class="f-t" x="549" y="86.5" text-anchor="middle">WHERE에 결제 완료 조건</text>
+<text class="f-s" x="211" y="146" text-anchor="middle">고객 1 → 101, 102</text>
+<text class="f-s" x="211" y="174" text-anchor="middle">고객 2 → 104</text>
+<text class="f-s" x="211" y="202" text-anchor="middle">고객 3 → NULL</text>
+<text class="f-s" x="549" y="146" text-anchor="middle">고객 1 → 101, 102</text>
+<text class="f-s" x="549" y="174" text-anchor="middle">고객 2 → 104</text>
+<text class="f-s" x="549" y="202" text-anchor="middle">고객 3 → 제외</text>
+</svg>
+<figcaption>왼쪽 표의 고객을 모두 유지하면서 결제 완료 주문만 연결하려면 결합의 ON 조건에 넣습니다.</figcaption>
+</figure>
+<div class="why"><p class="box-k">왜 그럴까?</p><p>어떤 고객에게 미결제 주문만 한 건 있다면, 결제 완료 조건을 ON에 둔 LEFT JOIN에서는 어떻게 보일까?</p><details><summary>모범 답 보기</summary><p>결제 완료 주문과 짝을 만들 수 없으므로 고객 행은 남고 오른쪽 주문 열은 모두 NULL입니다. 해당 고객의 모든 주문이 없다는 뜻은 아닙니다.</p></details></div>
+<div class="check" data-q="q5"></div><div class="check" data-q="q6"></div>
+
+<h2>행 수와 주문 건수 같이 확인하기</h2>
+
+<p class="small">실행 예제</p>
+<pre data-example="python"><code>import sqlite3
+
+with sqlite3.connect(&quot;:memory:&quot;) as db:
+    db.execute(&quot;PRAGMA foreign_keys = ON&quot;)
+    db.executescript(&quot;&quot;&quot;
+    CREATE TABLE customers (
+        customer_id INTEGER PRIMARY KEY,
+        name TEXT NOT NULL
+    );
+    CREATE TABLE orders (
+        order_id INTEGER PRIMARY KEY,
+        customer_id INTEGER NOT NULL REFERENCES customers(customer_id),
+        order_date TEXT NOT NULL,
+        status TEXT NOT NULL CHECK (status IN ('paid', 'pending')),
+        total_won INTEGER NOT NULL CHECK (total_won &gt;= 0),
+        coupon_won INTEGER CHECK (coupon_won &gt;= 0)
+    );
+    &quot;&quot;&quot;)
+    db.executemany(&quot;INSERT INTO customers VALUES (?, ?)&quot;, [
+        (1, 'Mina'),
+        (2, 'Jun'),
+        (3, 'Sol'),
+    ])
+    db.executemany(&quot;INSERT INTO orders VALUES (?, ?, ?, ?, ?, ?)&quot;, [
+        (101, 1, '2025-01-02', 'paid', 10000, None),
+        (102, 1, '2025-01-03', 'paid', 15000, 1000),
+        (103, 2, '2025-01-04', 'pending', 12000, None),
+        (104, 2, '2025-01-05', 'paid', 15000, 0),
+    ])
+
+    for join in (&quot;INNER JOIN&quot;, &quot;LEFT JOIN&quot;):
+        # 두 SQL 구문은 프로그램에서 고정한 두 값입니다.
+        rows = db.execute(f&quot;&quot;&quot;
+            SELECT c.customer_id, o.order_id
+            FROM customers AS c {join} orders AS o
+              ON c.customer_id = o.customer_id
+            ORDER BY c.customer_id, o.order_id
+        &quot;&quot;&quot;).fetchall()
+        print(join, rows)
+
+    counts = db.execute(&quot;&quot;&quot;
+        SELECT c.customer_id, COUNT(*) AS rows_kept, COUNT(o.order_id) AS orders_found
+        FROM customers AS c LEFT JOIN orders AS o
+          ON c.customer_id = o.customer_id
+        GROUP BY c.customer_id
+        ORDER BY c.customer_id
+    &quot;&quot;&quot;).fetchall()
+    print(&quot;counts:&quot;, counts)
+
+    paid_in_on = db.execute(&quot;&quot;&quot;
+        SELECT c.customer_id, o.order_id
+        FROM customers AS c LEFT JOIN orders AS o
+          ON c.customer_id = o.customer_id AND o.status = ?
+        ORDER BY c.customer_id, o.order_id
+    &quot;&quot;&quot;, (&quot;paid&quot;,)).fetchall()
+    paid_in_where = db.execute(&quot;&quot;&quot;
+        SELECT c.customer_id, o.order_id
+        FROM customers AS c LEFT JOIN orders AS o
+          ON c.customer_id = o.customer_id
+        WHERE o.status = ?
+        ORDER BY c.customer_id, o.order_id
+    &quot;&quot;&quot;, (&quot;paid&quot;,)).fetchall()
+    print(&quot;ON paid:&quot;, paid_in_on)
+    print(&quot;WHERE paid:&quot;, paid_in_where)
+db.close()</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>INNER JOIN [(1, 101), (1, 102), (2, 103), (2, 104)]
+LEFT JOIN [(1, 101), (1, 102), (2, 103), (2, 104), (3, None)]
+counts: [(1, 2, 2), (2, 2, 2), (3, 1, 0)]
+ON paid: [(1, 101), (1, 102), (2, 104), (3, None)]
+WHERE paid: [(1, 101), (1, 102), (2, 104)]</code></pre>
+<p>예제의 결합 방식 두 문자열은 프로그램 안에서 정한 SQL 구문입니다. 질의에 비교할 사용자 입력값을 보내는 경우에는 앞 장처럼 자리표시자를 사용합니다.</p>
+<div class="check" data-q="q7"></div><div class="check" data-q="q8"></div>
+
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table><thead><tr><th scope="col">개념</th><th scope="col">확인할 것</th></tr></thead><tbody>
+<tr><th scope="row"><b class="key">결합의 입도</b></th><td>행 하나가 매칭된 짝 하나를 나타낼 수 있다.</td></tr>
+<tr><th scope="row"><b class="key">LEFT JOIN</b></th><td>오른쪽과 짝이 없어도 왼쪽 행을 결과에 유지한다.</td></tr>
+<tr><th scope="row"><b class="key">ON과 WHERE</b></th><td>결합 짝을 만드는 조건과 결합 결과에 적용하는 조건을 구분한다.</td></tr>
+</tbody></table></div><div class="box sum"><p class="box-k">다음 장으로</p><p><a href="db03-2.html">다음 장</a>에서는 주문에 달린 두 종류의 상세 표를 함께 연결할 때 행이 얼마나 많아지는지 셉니다.</p></div>
+
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://www.sqlite.org/lang_select.html">SQLite · SELECT의 단계와 결합</a></li>
+<li><a href="https://www.sqlite.org/lang_expr.html">SQLite · SQL 식, NULL, EXISTS와 서브쿼리</a></li>
+<li><a href="https://www.sqlite.org/lang_aggfunc.html">SQLite · 집계 함수</a></li>
+</ul>
+<h2>확인 문제</h2>
+<p>직접 계산하거나 설명을 먼저 적고 답을 확인해 보세요.</p>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

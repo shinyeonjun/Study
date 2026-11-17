@@ -1,0 +1,256 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>다대다 관계와 결합 전에 입도 맞추기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="DB03-2">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">데이터베이스 · DB03 여러 표 연결</p>
+<p class="chap-num">DB03·2</p>
+<h1>다대다 관계와 결합 전에 입도 맞추기</h1>
+<p class="lead">주문 하나에 두 항목과 두 태그가 달렸습니다. 상세 기록을 한꺼번에 연결했더니 주문액을 네 번 셌습니다. 결합에서 행이 얼마나 늘어나는지 먼저 예상해 봅니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul>
+<li>다대다 관계와 중간 표의 역할을 설명한다.</li>
+<li>상세 표를 두 개 결합할 때 주문 하나당 행 수를 계산한다.</li>
+<li>원본 집계나 사전 집계로 주문 입도를 유지한다.</li>
+</ul></div>
+
+<h2>여러 상품을 담는 주문, 여러 주문에 담기는 상품</h2>
+<p>한 주문은 여러 상품을 담고, 같은 상품은 여러 주문에 나올 수 있습니다. 이것이 <b class="key">다대다 관계</b>입니다. <code>order_items</code>는 주문 번호와 상품 번호를 함께 담아 이 관계를 표현합니다. 그 자체의 입도는 주문과 상품의 단순 조합이 아니라 주문의 항목 한 줄입니다. 같은 상품을 여러 줄로 둘 수 있게 하려면 상품 번호만으로 항목을 식별하지 않습니다.</p>
+<p>연결만 필요하다면 <code>(order_id, tag)</code>를 기본 키로 두어 주문에 태그 하나가 달렸다는 사실을 한 번만 기록할 수 있습니다. <code>order_tags</code>에서 주문 101은 gift와 pickup이고, 주문 102는 pickup입니다. 주문과 태그 모두 반대쪽과 여러 번 이어질 수 있습니다.</p>
+<div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
+
+<h2>같은 주문 아래에 항목과 태그가 여러 줄</h2>
+<p>서로 다른 두 상세를 <code>order_id</code>만으로 주문에 INNER JOIN합니다. 한 주문에 항목 <var>m</var>줄과 태그 <var>k</var>줄이 있다면, 항목 한 줄이 모든 태그와 짝을 이뤄 결과는 <var>m×k</var>줄입니다. 태그가 없으면 내부 결합에서는 주문의 항목이 있어도 결과 줄이 없습니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 246" role="img" aria-label="주문 101의 항목 1,2와 태그 gift,pickup을 주문 번호로 연결한다. 두 항목 각각이 두 태그와 짝을 이뤄 네 행이다.">
+<text class="f-cap" x="380" y="29" text-anchor="middle">주문 101의 두 항목이 두 태그 각각과 짝을 이룸</text>
+<rect class="f-soft" x="57.5" y="43" width="215" height="37"/>
+<text class="f-s" x="165" y="66.5" text-anchor="middle">품목 행</text>
+<rect class="f-soft" x="272.5" y="43" width="215" height="37"/>
+<text class="f-s" x="380" y="66.5" text-anchor="middle">태그 행</text>
+<rect class="f-soft" x="487.5" y="43" width="215" height="37"/>
+<text class="f-s" x="595" y="66.5" text-anchor="middle">주문 총액 열</text>
+<rect class="f-box" x="57.5" y="80" width="215" height="37"/>
+<text class="f-t" x="165" y="103.5" text-anchor="middle">항목 1</text>
+<rect class="f-box" x="272.5" y="80" width="215" height="37"/>
+<text class="f-t" x="380" y="103.5" text-anchor="middle">gift</text>
+<rect class="f-box" x="487.5" y="80" width="215" height="37"/>
+<text class="f-t" x="595" y="103.5" text-anchor="middle">10,000</text>
+<rect class="f-box" x="57.5" y="117" width="215" height="37"/>
+<text class="f-t" x="165" y="140.5" text-anchor="middle">항목 1</text>
+<rect class="f-box" x="272.5" y="117" width="215" height="37"/>
+<text class="f-t" x="380" y="140.5" text-anchor="middle">pickup</text>
+<rect class="f-box" x="487.5" y="117" width="215" height="37"/>
+<text class="f-t" x="595" y="140.5" text-anchor="middle">10,000</text>
+<rect class="f-box" x="57.5" y="154" width="215" height="37"/>
+<text class="f-t" x="165" y="177.5" text-anchor="middle">항목 2</text>
+<rect class="f-box" x="272.5" y="154" width="215" height="37"/>
+<text class="f-t" x="380" y="177.5" text-anchor="middle">gift</text>
+<rect class="f-box" x="487.5" y="154" width="215" height="37"/>
+<text class="f-t" x="595" y="177.5" text-anchor="middle">10,000</text>
+<rect class="f-box" x="57.5" y="191" width="215" height="37"/>
+<text class="f-t" x="165" y="214.5" text-anchor="middle">항목 2</text>
+<rect class="f-box" x="272.5" y="191" width="215" height="37"/>
+<text class="f-t" x="380" y="214.5" text-anchor="middle">pickup</text>
+<rect class="f-box" x="487.5" y="191" width="215" height="37"/>
+<text class="f-t" x="595" y="214.5" text-anchor="middle">10,000</text>
+</svg>
+<figcaption>결합 뒤의 네 행 각각에 주문 총액이 복제됩니다. 이 총액 열을 합하면 주문 한 건을 네 번 셉니다.</figcaption>
+</figure>
+<p>원래 주문 101의 할인 전 합계는 10,000원입니다. 이 상세 결합에서 <code>SUM(o.total_won)</code>을 계산하면 주문 101의 네 행에서 총 40,000원을 더하게 됩니다. 주문 102와 104의 15,000원까지 포함하여 태그 있는 세 주문의 실제 총액은 40,000원인데 잘못된 상세 결합의 합은 85,000원입니다. <code>SUM(DISTINCT o.total_won)</code>은 값이 같은 서로 다른 주문 102와 104를 하나처럼 취급하여 25,000원을 줍니다. 주문의 식별자를 확인해야 하는 문제입니다.</p>
+<div class="check" data-q="q3"></div><div class="check" data-q="q4"></div>
+
+<h2>상세별로 요약한 뒤 주문에 연결</h2>
+<p>주문 총액만 필요하면 주문 표에서 원하는 주문을 골라 바로 합할 수 있습니다. 항목 합과 태그 개수도 필요하면 항목 표에서 주문별 항목 수와 금액을 구하고, 태그 표에서 주문별 태그 수를 따로 구합니다. <code>GROUP BY order_id</code>로 요약하면 각 결과의 주문 번호는 유일합니다. 요약한 두 표를 주문에 LEFT JOIN하면 태그 없는 주문도 유지됩니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 246" role="img" aria-label="주문 101,102,103,104에 대해 항목 수와 금액은 차례로 2/10000, 2/15000, 1/12000, 1/15000이다. 태그 수는 2,1,0,1이다.">
+<text class="f-cap" x="380" y="29" text-anchor="middle">두 상세를 주문별로 먼저 요약</text>
+<rect class="f-soft" x="65.5" y="43" width="148" height="37"/>
+<text class="f-s" x="139.5" y="66.5" text-anchor="middle">주문</text>
+<rect class="f-soft" x="213.5" y="43" width="148" height="37"/>
+<text class="f-s" x="287.5" y="66.5" text-anchor="middle">항목 수</text>
+<rect class="f-soft" x="361.5" y="43" width="185" height="37"/>
+<text class="f-s" x="454" y="66.5" text-anchor="middle">항목합(원)</text>
+<rect class="f-soft" x="546.5" y="43" width="148" height="37"/>
+<text class="f-s" x="620.5" y="66.5" text-anchor="middle">태그 수</text>
+<rect class="f-box" x="65.5" y="80" width="148" height="37"/>
+<text class="f-t" x="139.5" y="103.5" text-anchor="middle">101</text>
+<rect class="f-box" x="213.5" y="80" width="148" height="37"/>
+<text class="f-t" x="287.5" y="103.5" text-anchor="middle">2</text>
+<rect class="f-box" x="361.5" y="80" width="185" height="37"/>
+<text class="f-t" x="454" y="103.5" text-anchor="middle">10,000</text>
+<rect class="f-box" x="546.5" y="80" width="148" height="37"/>
+<text class="f-t" x="620.5" y="103.5" text-anchor="middle">2</text>
+<rect class="f-box" x="65.5" y="117" width="148" height="37"/>
+<text class="f-t" x="139.5" y="140.5" text-anchor="middle">102</text>
+<rect class="f-box" x="213.5" y="117" width="148" height="37"/>
+<text class="f-t" x="287.5" y="140.5" text-anchor="middle">2</text>
+<rect class="f-box" x="361.5" y="117" width="185" height="37"/>
+<text class="f-t" x="454" y="140.5" text-anchor="middle">15,000</text>
+<rect class="f-box" x="546.5" y="117" width="148" height="37"/>
+<text class="f-t" x="620.5" y="140.5" text-anchor="middle">1</text>
+<rect class="f-box" x="65.5" y="154" width="148" height="37"/>
+<text class="f-t" x="139.5" y="177.5" text-anchor="middle">103</text>
+<rect class="f-box" x="213.5" y="154" width="148" height="37"/>
+<text class="f-t" x="287.5" y="177.5" text-anchor="middle">1</text>
+<rect class="f-box" x="361.5" y="154" width="185" height="37"/>
+<text class="f-t" x="454" y="177.5" text-anchor="middle">12,000</text>
+<rect class="f-box" x="546.5" y="154" width="148" height="37"/>
+<text class="f-t" x="620.5" y="177.5" text-anchor="middle">0</text>
+<rect class="f-box" x="65.5" y="191" width="148" height="37"/>
+<text class="f-t" x="139.5" y="214.5" text-anchor="middle">104</text>
+<rect class="f-box" x="213.5" y="191" width="148" height="37"/>
+<text class="f-t" x="287.5" y="214.5" text-anchor="middle">1</text>
+<rect class="f-box" x="361.5" y="191" width="185" height="37"/>
+<text class="f-t" x="454" y="214.5" text-anchor="middle">15,000</text>
+<rect class="f-box" x="546.5" y="191" width="148" height="37"/>
+<text class="f-t" x="620.5" y="214.5" text-anchor="middle">1</text>
+</svg>
+<figcaption>두 요약은 각각 주문 번호마다 한 행씩 나옵니다. 이 둘을 주문에 연결해도 주문 네 건의 입도를 유지합니다.</figcaption>
+</figure>
+<p>SQL의 <code>WITH ... AS (...)</code>는 이어지는 질의 안에서 이름 붙여 쓰는 중간 결과입니다. 아래의 <code>COALESCE(tags.tag_count, 0)</code>은 맨 앞의 NULL이 아닌 값을 택합니다. 태그 원본에 그 주문의 관계가 하나도 없다는 사실을 이 장의 자료 정의에서 알고 있으므로 태그 개수 0으로 해석합니다. 모르는 할인액에 같은 처리 규칙을 넣을 근거는 없습니다.</p>
+<div class="check" data-q="q5"></div><div class="check" data-q="q6"></div>
+
+<h2>잘못된 합과 주문별 요약 비교</h2>
+
+<p class="small">실행 예제</p>
+<pre data-example="python"><code>import sqlite3
+
+with sqlite3.connect(&quot;:memory:&quot;) as db:
+    db.execute(&quot;PRAGMA foreign_keys = ON&quot;)
+    db.executescript(&quot;&quot;&quot;
+    CREATE TABLE customers (
+        customer_id INTEGER PRIMARY KEY,
+        name TEXT NOT NULL
+    );
+    CREATE TABLE orders (
+        order_id INTEGER PRIMARY KEY,
+        customer_id INTEGER NOT NULL REFERENCES customers(customer_id),
+        order_date TEXT NOT NULL,
+        status TEXT NOT NULL CHECK (status IN ('paid', 'pending')),
+        total_won INTEGER NOT NULL CHECK (total_won &gt;= 0),
+        coupon_won INTEGER CHECK (coupon_won &gt;= 0)
+    );
+    CREATE TABLE products (
+        product_id INTEGER PRIMARY KEY,
+        name TEXT NOT NULL,
+        list_price_won INTEGER NOT NULL CHECK (list_price_won &gt;= 0)
+    );
+    CREATE TABLE order_items (
+        order_id INTEGER NOT NULL REFERENCES orders(order_id),
+        line_no INTEGER NOT NULL,
+        product_id INTEGER NOT NULL REFERENCES products(product_id),
+        qty INTEGER NOT NULL CHECK (qty &gt; 0),
+        unit_price_won INTEGER NOT NULL CHECK (unit_price_won &gt;= 0),
+        PRIMARY KEY (order_id, line_no)
+    );
+    CREATE TABLE order_tags (
+        order_id INTEGER NOT NULL REFERENCES orders(order_id),
+        tag TEXT NOT NULL,
+        PRIMARY KEY (order_id, tag)
+    );
+    &quot;&quot;&quot;)
+    db.executemany(&quot;INSERT INTO customers VALUES (?, ?)&quot;, [
+        (1, 'Mina'),
+        (2, 'Jun'),
+        (3, 'Sol'),
+    ])
+    db.executemany(&quot;INSERT INTO orders VALUES (?, ?, ?, ?, ?, ?)&quot;, [
+        (101, 1, '2025-01-02', 'paid', 10000, None),
+        (102, 1, '2025-01-03', 'paid', 15000, 1000),
+        (103, 2, '2025-01-04', 'pending', 12000, None),
+        (104, 2, '2025-01-05', 'paid', 15000, 0),
+    ])
+    db.executemany(&quot;INSERT INTO products VALUES (?, ?, ?)&quot;, [
+        (11, 'notebook', 6000),
+        (12, 'pen', 2000),
+        (13, 'pouch', 3000),
+    ])
+    db.executemany(&quot;INSERT INTO order_items VALUES (?, ?, ?, ?, ?)&quot;, [
+        (101, 1, 11, 1, 6000),
+        (101, 2, 12, 2, 2000),
+        (102, 1, 11, 2, 6000),
+        (102, 2, 13, 1, 3000),
+        (103, 1, 11, 2, 6000),
+        (104, 1, 13, 5, 3000),
+    ])
+    db.executemany(&quot;INSERT INTO order_tags VALUES (?, ?)&quot;, [
+        (101, 'gift'),
+        (101, 'pickup'),
+        (102, 'pickup'),
+        (104, 'repeat'),
+    ])
+
+    rows, inflated, distinct_amounts = db.execute(&quot;&quot;&quot;
+        SELECT COUNT(*), SUM(o.total_won), SUM(DISTINCT o.total_won)
+        FROM orders AS o
+        JOIN order_items AS i ON o.order_id = i.order_id
+        JOIN order_tags AS t ON o.order_id = t.order_id
+    &quot;&quot;&quot;).fetchone()
+    print(&quot;detail join:&quot;, rows, inflated, distinct_amounts)
+
+    summary = db.execute(&quot;&quot;&quot;
+        WITH items AS (
+            SELECT order_id, COUNT(*) AS item_count, SUM(qty * unit_price_won) AS amount
+            FROM order_items GROUP BY order_id
+        ), tags AS (
+            SELECT order_id, COUNT(*) AS tag_count
+            FROM order_tags GROUP BY order_id
+        )
+        SELECT o.order_id, items.item_count, items.amount, COALESCE(tags.tag_count, 0)
+        FROM orders AS o
+        LEFT JOIN items ON o.order_id = items.order_id
+        LEFT JOIN tags ON o.order_id = tags.order_id
+        ORDER BY o.order_id
+    &quot;&quot;&quot;).fetchall()
+    print(&quot;order summaries:&quot;, summary)
+db.close()</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>detail join: 7 85000 25000
+order summaries: [(101, 2, 10000, 2), (102, 2, 15000, 1), (103, 1, 12000, 0), (104, 1, 15000, 1)]</code></pre>
+<p>내부 결합의 7행은 주문 101의 4행, 102의 2행, 104의 1행으로 이루어집니다. 요약 결과는 원본의 모든 주문 번호가 하나씩 나타나 4행입니다.</p>
+<div class="check" data-q="q7"></div><div class="check" data-q="q8"></div>
+
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table><thead><tr><th scope="col">개념</th><th scope="col">확인할 것</th></tr></thead><tbody>
+<tr><th scope="row"><b class="key">다대다</b></th><td>연결 사실은 중간 표에 기록한다.</td></tr>
+<tr><th scope="row"><b class="key">행 수 예상</b></th><td>독립된 두 상세는 같은 키에서 가능한 모든 짝을 만든다.</td></tr>
+<tr><th scope="row"><b class="key">사전 집계</b></th><td>입도를 맞춘 요약끼리 연결한다.</td></tr>
+</tbody></table></div><div class="box sum"><p class="box-k">다음 장으로</p><p><a href="db03-3.html">다음 장</a>에서는 전체 평균과의 비교, 주문별 누적 합을 계산합니다.</p></div>
+
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://www.sqlite.org/lang_select.html">SQLite · SELECT의 단계와 결합</a></li>
+<li><a href="https://www.sqlite.org/lang_aggfunc.html">SQLite · 집계 함수</a></li>
+<li><a href="https://www.postgresql.org/docs/current/ddl-constraints.html">PostgreSQL · 열과 테이블의 제약</a></li>
+</ul>
+<h2>확인 문제</h2>
+<p>직접 계산하거나 설명을 먼저 적고 답을 확인해 보세요.</p>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

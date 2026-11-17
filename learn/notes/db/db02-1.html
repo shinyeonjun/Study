@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>행을 선택하고 조건값을 바인딩하기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="DB02-1">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">데이터베이스 · DB02 SQL 기초</p>
+<p class="chap-num">DB02·1</p>
+<h1>행을 선택하고 조건값을 바인딩하기</h1>
+<p class="lead">어떤 주문을 볼지, 어떤 열을 표시할지, 어떤 순서로 출력할지를 각각 적습니다. 사용자가 선택하는 조건값은 SQL과 함께 값으로 전달합니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul>
+<li>SELECT, FROM, WHERE, ORDER BY의 역할을 구별한다.</li>
+<li>NULL과 일반 비교의 차이를 설명하고 IS NULL을 쓴다.</li>
+<li>sqlite3에서 고정된 SQL의 자리표시자에 값을 전달한다.</li>
+</ul></div>
+
+<h2>필요한 행과 열을 고르기</h2>
+<p><code>SELECT order_id, total_won FROM orders</code>에서 <code>FROM</code>은 읽을 표, <code>SELECT</code>는 돌려줄 열을 정합니다. 결과에 <code>WHERE status = 'paid' AND total_won &gt;= 15000</code>을 붙이면 조건을 만족하는 행만 남깁니다. 단일 따옴표 안의 <code>'paid'</code>는 문자열 값입니다. 예제에서는 주문 총액이 할인 전 원 단위이며 <code>status</code>는 결제 여부입니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 246" role="img" aria-label="101은 금액 조건을, 103은 두 조건을 통과하지 못한다. 102와 104가 남는다.">
+<text class="f-cap" x="380" y="29" text-anchor="middle">상태는 paid이고 금액은 15,000원 이상</text>
+<rect class="f-soft" x="78.5" y="43" width="136" height="37"/>
+<text class="f-s" x="146.5" y="66.5" text-anchor="middle">order_id</text>
+<rect class="f-soft" x="214.5" y="43" width="150" height="37"/>
+<text class="f-s" x="289.5" y="66.5" text-anchor="middle">status</text>
+<rect class="f-soft" x="364.5" y="43" width="173" height="37"/>
+<text class="f-s" x="451" y="66.5" text-anchor="middle">total_won</text>
+<rect class="f-soft" x="537.5" y="43" width="144" height="37"/>
+<text class="f-s" x="609.5" y="66.5" text-anchor="middle">통과</text>
+<rect class="f-box" x="78.5" y="80" width="136" height="37"/>
+<text class="f-t" x="146.5" y="103.5" text-anchor="middle">101</text>
+<rect class="f-box" x="214.5" y="80" width="150" height="37"/>
+<text class="f-t" x="289.5" y="103.5" text-anchor="middle">paid</text>
+<rect class="f-box" x="364.5" y="80" width="173" height="37"/>
+<text class="f-t" x="451" y="103.5" text-anchor="middle">10,000</text>
+<rect class="f-box" x="537.5" y="80" width="144" height="37"/>
+<text class="f-t" x="609.5" y="103.5" text-anchor="middle">아니오</text>
+<rect class="f-box" x="78.5" y="117" width="136" height="37"/>
+<text class="f-t" x="146.5" y="140.5" text-anchor="middle">102</text>
+<rect class="f-box" x="214.5" y="117" width="150" height="37"/>
+<text class="f-t" x="289.5" y="140.5" text-anchor="middle">paid</text>
+<rect class="f-box" x="364.5" y="117" width="173" height="37"/>
+<text class="f-t" x="451" y="140.5" text-anchor="middle">15,000</text>
+<rect class="f-box" x="537.5" y="117" width="144" height="37"/>
+<text class="f-t" x="609.5" y="140.5" text-anchor="middle">예</text>
+<rect class="f-box" x="78.5" y="154" width="136" height="37"/>
+<text class="f-t" x="146.5" y="177.5" text-anchor="middle">103</text>
+<rect class="f-box" x="214.5" y="154" width="150" height="37"/>
+<text class="f-t" x="289.5" y="177.5" text-anchor="middle">pending</text>
+<rect class="f-box" x="364.5" y="154" width="173" height="37"/>
+<text class="f-t" x="451" y="177.5" text-anchor="middle">12,000</text>
+<rect class="f-box" x="537.5" y="154" width="144" height="37"/>
+<text class="f-t" x="609.5" y="177.5" text-anchor="middle">아니오</text>
+<rect class="f-box" x="78.5" y="191" width="136" height="37"/>
+<text class="f-t" x="146.5" y="214.5" text-anchor="middle">104</text>
+<rect class="f-box" x="214.5" y="191" width="150" height="37"/>
+<text class="f-t" x="289.5" y="214.5" text-anchor="middle">paid</text>
+<rect class="f-box" x="364.5" y="191" width="173" height="37"/>
+<text class="f-t" x="451" y="214.5" text-anchor="middle">15,000</text>
+<rect class="f-box" x="537.5" y="191" width="144" height="37"/>
+<text class="f-t" x="609.5" y="214.5" text-anchor="middle">예</text>
+</svg>
+<figcaption>AND는 두 조건이 모두 참인 행을 남깁니다.</figcaption>
+</figure>
+<p>두 행의 총액이 15,000원으로 같습니다. 큰 금액 우선, 금액이 같으면 주문 번호가 작은 순서로 표시하려면 <code>ORDER BY total_won DESC, order_id ASC</code>라고 씁니다. <code>DESC</code>는 내림차순, <code>ASC</code>는 오름차순입니다. 주문 번호가 유일해 두 번째 정렬까지 지정하면 이 예의 순서가 결정됩니다.</p>
+<div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
+
+<h2>값을 모를 때와 0을 확인했을 때</h2>
+<p><code>coupon_won</code>의 값이 0이면 쿠폰 할인액이 0으로 확인된 경우이고, <code>NULL</code>은 기록에서 할인액을 알 수 없는 경우입니다. NULL 값에 대해 <code>coupon_won = 0</code>을 평가하면 결과가 미지(UNKNOWN)가 됩니다. SQL의 <code>WHERE</code>에는 참만 남습니다. 따라서 이 조건으로 NULL 기록까지 찾을 수 없습니다.</p>
+<p>누락된 쿠폰 기록은 <code>coupon_won IS NULL</code>, 기록이 있는 경우는 <code>coupon_won IS NOT NULL</code>로 확인합니다. 모르는 값과의 <code>= NULL</code> 비교도 참이 되지 않으므로 NULL 여부를 확인할 때에는 <code>IS NULL</code>을 사용합니다.</p>
+<div class="check" data-q="q3"></div><div class="check" data-q="q4"></div>
+
+<h2>질의의 틀을 고정하고 값만 보내기</h2>
+<p>앱이 최소 주문액을 받아 질의를 한다면 SQL의 비교 위치에 <code>?</code>를 쓰고 <code>db.execute(질의, 값들의_튜플)</code>로 값을 전달합니다. 이 방식을 <b class="key">매개변수 바인딩</b>이라고 합니다. 자리표시자는 따옴표로 감싸지 않습니다. 매개변수가 두 개면 첫 값이 첫 자리, 다음 값이 두 번째 자리에 채워집니다. 사용자에게 입력받은 값은 정수 범위나 허용되는 상태인지 따로 검사할 수 있습니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 218" role="img" aria-label="고정된 SQL WHERE total_won &gt;= ?에 값 튜플 (15000,)을 전달해 금액 조건에 사용한다.">
+<text class="f-cap" x="380" y="29" text-anchor="middle">질의 틀과 입력값 전달</text>
+<rect class="f-box" x="64" y="58" width="347" height="46"/>
+<text class="f-t" x="237.5" y="86" text-anchor="middle">WHERE total_won &gt;= ?</text>
+<rect class="f-soft" x="492" y="58" width="202" height="46"/>
+<text class="f-t" x="593" y="86" text-anchor="middle">값 (15000,)</text>
+<line class="f-line" x1="487" y1="81" x2="418" y2="81" marker-end="url(#f-arrow)"/>
+<text class="f-t" x="380" y="145" text-anchor="middle">SQL 구조는 고정하고 자리표시자에 값만 지정합니다.</text>
+<text class="f-s" x="380" y="181" text-anchor="middle">한 값도 파이썬 튜플로 넘길 때는 쉼표를 씁니다.</text>
+</svg>
+<figcaption>자리표시자에는 비교값을 전달합니다. 열 이름과 정렬 방향은 질의 구조에서 정합니다.</figcaption>
+</figure>
+<p>자리표시자로 채우는 것은 값입니다. 선택할 열이나 정렬 방향을 화면에서 고르게 할 때는 애플리케이션이 미리 마련한 몇 개의 질의 중 하나를 고릅니다. 데이터베이스 드라이버에 따라 값의 자리표시자 문법은 다를 수 있으므로 여기서는 Python의 <code>sqlite3</code> 문법을 씁니다.</p>
+<div class="check" data-q="q5"></div><div class="check" data-q="q6"></div>
+
+<h2>조건과 값의 개수를 맞추기</h2>
+
+<p class="small">실행 예제</p>
+<pre data-example="python"><code>import sqlite3
+
+with sqlite3.connect(&quot;:memory:&quot;) as db:
+    db.execute(&quot;PRAGMA foreign_keys = ON&quot;)
+    db.executescript(&quot;&quot;&quot;
+    CREATE TABLE customers (
+        customer_id INTEGER PRIMARY KEY,
+        name TEXT NOT NULL
+    );
+    CREATE TABLE orders (
+        order_id INTEGER PRIMARY KEY,
+        customer_id INTEGER NOT NULL REFERENCES customers(customer_id),
+        order_date TEXT NOT NULL,
+        status TEXT NOT NULL CHECK (status IN ('paid', 'pending')),
+        total_won INTEGER NOT NULL CHECK (total_won &gt;= 0),
+        coupon_won INTEGER CHECK (coupon_won &gt;= 0)
+    );
+    &quot;&quot;&quot;)
+    db.executemany(&quot;INSERT INTO customers VALUES (?, ?)&quot;, [
+        (1, 'Mina'),
+        (2, 'Jun'),
+        (3, 'Sol'),
+    ])
+    db.executemany(&quot;INSERT INTO orders VALUES (?, ?, ?, ?, ?, ?)&quot;, [
+        (101, 1, '2025-01-02', 'paid', 10000, None),
+        (102, 1, '2025-01-03', 'paid', 15000, 1000),
+        (103, 2, '2025-01-04', 'pending', 12000, None),
+        (104, 2, '2025-01-05', 'paid', 15000, 0),
+    ])
+
+    query = &quot;&quot;&quot;
+        SELECT order_id, total_won
+        FROM orders
+        WHERE status = ? AND total_won &gt;= ?
+        ORDER BY total_won DESC, order_id ASC
+    &quot;&quot;&quot;
+    result = db.execute(query, (&quot;paid&quot;, 15_000)).fetchall()
+    unknown = db.execute(
+        &quot;SELECT order_id FROM orders WHERE coupon_won IS NULL ORDER BY order_id&quot;
+    ).fetchall()
+    zero = db.execute(
+        &quot;SELECT order_id FROM orders WHERE coupon_won = ? ORDER BY order_id&quot;,
+        (0,),
+    ).fetchall()
+    print(&quot;paid &gt;= 15000:&quot;, result)
+    print(&quot;coupon unknown:&quot;, [row[0] for row in unknown])
+    print(&quot;coupon zero:&quot;, [row[0] for row in zero])
+db.close()</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>paid &gt;= 15000: [(102, 15000), (104, 15000)]
+coupon unknown: [101, 103]
+coupon zero: [104]</code></pre>
+<div class="check" data-q="q7"></div><div class="check" data-q="q8"></div>
+
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table><thead><tr><th scope="col">개념</th><th scope="col">확인할 것</th></tr></thead><tbody>
+<tr><th scope="row"><b class="key">행 조건</b></th><td>WHERE는 참인 행을 선택한다.</td></tr>
+<tr><th scope="row"><b class="key">정렬</b></th><td>동점까지 정리하고 싶으면 추가 정렬키를 명시한다.</td></tr>
+<tr><th scope="row"><b class="key">매개변수</b></th><td>고정된 질의와 값을 분리해 드라이버에 전달한다.</td></tr>
+</tbody></table></div><div class="box sum"><p class="box-k">다음 장으로</p><p><a href="db02-2.html">다음 장</a>에서는 행을 목적에 맞는 그룹으로 요약합니다.</p></div>
+
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://www.sqlite.org/lang_select.html">SQLite · SELECT의 단계와 결합</a></li>
+<li><a href="https://www.sqlite.org/lang_expr.html">SQLite · SQL 식, NULL, EXISTS와 서브쿼리</a></li>
+<li><a href="https://docs.python.org/3/library/sqlite3.html#how-to-use-placeholders-to-bind-values-in-sql-queries">Python sqlite3 · 값 바인딩</a></li>
+</ul>
+<h2>확인 문제</h2>
+<p>직접 계산하거나 설명을 먼저 적고 답을 확인해 보세요.</p>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

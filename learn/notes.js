@@ -66,6 +66,11 @@ window.BDA_CHAPTERS = {
     {"id": "AL07-1", "title": "지수와 지수함수: 같은 양을 더할 때와 같은 배를 곱할 때", "href": "notes/al/al07-1.html"},
     {"id": "AL07-2", "title": "로그: 몇 번 곱했는지 거꾸로 찾기", "href": "notes/al/al07-2.html"}
   ],
+  AL08: [
+    {"id": "AL08-1", "title": "각을 라디안으로 바꾸고 단위원 위의 좌표 읽기", "href": "notes/al/al08-1.html"},
+    {"id": "AL08-2", "title": "사인 그래프의 진폭·주기·위상 읽기", "href": "notes/al/al08-2.html"},
+    {"id": "AL08-3", "title": "복소수의 곱셈을 크기와 회전으로 읽기", "href": "notes/al/al08-3.html"}
+  ],
   AL09: [
     {"id": "AL09-1", "title": "등차와 등비: 항의 번호와 변화 규칙", "href": "notes/al/al09-1.html"},
     {"id": "AL09-2", "title": "유한합과 유한곱, 조건을 세는 지시함수", "href": "notes/al/al09-2.html"}
@@ -120,6 +125,11 @@ window.BDA_CHAPTERS = {
     {"id": "PY11-2", "title": "pandas로 묶어 세고 키로 두 표 잇기", "href": "notes/py/py11-2.html"},
     {"id": "PY11-3", "title": "Matplotlib로 그래프 그리고 오차 막대 읽기", "href": "notes/py/py11-3.html"}
   ],
+  PY12: [
+    {"id": "PY12-1", "title": "클래스로 여러 기록의 상태와 동작을 묶기", "href": "notes/py/py12-1.html"},
+    {"id": "PY12-2", "title": "반복자와 생성기로 값이 필요할 때 하나씩 만들기", "href": "notes/py/py12-2.html"},
+    {"id": "PY12-3", "title": "계산과 출력 코드를 모듈로 나누고 타입 적기", "href": "notes/py/py12-3.html"}
+  ],
   DA01: [
     {"id": "DA01-1", "title": "관측과 변수, 행과 열", "href": "notes/da/da01-1.html"},
     {"id": "DA01-2", "title": "한 행의 단위와 수집 맥락", "href": "notes/da/da01-2.html"}
@@ -164,9 +174,49 @@ window.BDA_CHAPTERS = {
     {"id": "DM03-1", "title": "경우의 수를 세는 두 법칙과 순열", "href": "notes/dm/dm03-1.html"},
     {"id": "DM03-2", "title": "순서를 빼고 세기: 조합과 이항계수", "href": "notes/dm/dm03-2.html"}
   ],
+  DM04: [
+    {"id": "DM04-1", "title": "시작 사례와 귀납 단계로 합 공식 증명하기", "href": "notes/dm/dm04-1.html"},
+    {"id": "DM04-2", "title": "기저 조건과 점화식에서 재귀 함수 만들기", "href": "notes/dm/dm04-2.html"}
+  ],
   DM05: [
     {"id": "DM05-1", "title": "정점·간선·경로를 읽기", "href": "notes/dm/dm05-1.html"},
     {"id": "DM05-2", "title": "트리와 인접 리스트·행렬", "href": "notes/dm/dm05-2.html"}
+  ],
+  DM06: [
+    {"id": "DM06-1", "title": "입력이 커질 때 증가 속도와 큰 O 표기 읽기", "href": "notes/dm/dm06-1.html"},
+    {"id": "DM06-2", "title": "반복문 불변식으로 가장 큰 값의 위치 증명하기", "href": "notes/dm/dm06-2.html"}
+  ],
+  CS01: [
+    {"id": "CS01-1", "title": "입력·출력 계약과 처음 찾는 절차", "href": "notes/cs/cs01-1.html"},
+    {"id": "CS01-2", "title": "추적표로 반복문과 개수 세기 검증하기", "href": "notes/cs/cs01-2.html"}
+  ],
+  CS02: [
+    {"id": "CS02-1", "title": "입력 크기와 비교 횟수, 보조 공간 세기", "href": "notes/cs/cs02-1.html"},
+    {"id": "CS02-2", "title": "평균 비용, 미리 계산한 합과 실제 병목", "href": "notes/cs/cs02-2.html"}
+  ],
+  CS03: [
+    {"id": "CS03-1", "title": "배열의 위치를 계산하고 연결 리스트를 따라가기", "href": "notes/cs/cs03-1.html"},
+    {"id": "CS03-2", "title": "스택과 큐의 꺼내는 순서 비교하기", "href": "notes/cs/cs03-2.html"}
+  ],
+  CS04: [
+    {"id": "CS04-1", "title": "해시로 후보 위치를 찾고 충돌 처리하기", "href": "notes/cs/cs04-1.html"},
+    {"id": "CS04-2", "title": "딕셔너리로 세고 집합으로 첫 등장을 고르기", "href": "notes/cs/cs04-2.html"}
+  ],
+  SY01: [
+    {"id": "SY01-1", "title": "같은 비트를 어떤 정수로 읽을지 정한다", "href": "notes/sy/sy01-1.html"},
+    {"id": "SY01-2", "title": "문자·픽셀·소리를 바이트로 기록한다", "href": "notes/sy/sy01-2.html"}
+  ],
+  SY02: [
+    {"id": "SY02-1", "title": "CPU는 명령을 실행하고 메모리에서 데이터를 가져온다", "href": "notes/sy/sy02-1.html"},
+    {"id": "SY02-2", "title": "캐시는 가까운 주소와 최근 읽은 주소를 활용한다", "href": "notes/sy/sy02-2.html"}
+  ],
+  SY03: [
+    {"id": "SY03-1", "title": "소스는 실행 전에 명령으로 바뀐다", "href": "notes/sy/sy03-1.html"},
+    {"id": "SY03-2", "title": "같은 프로그램도 실행할 때마다 별도 상태를 가진다", "href": "notes/sy/sy03-2.html"}
+  ],
+  SY04: [
+    {"id": "SY04-1", "title": "운영체제는 실행할 스레드에 CPU 시간을 나눈다", "href": "notes/sy/sy04-1.html"},
+    {"id": "SY04-2", "title": "운영체제에 자원을 요청하고 실행 공간을 나눈다", "href": "notes/sy/sy04-2.html"}
   ],
   NW01: [
     {"id": "NW01-1", "title": "호스트가 어떻게 역할을 나눠 통신하는가", "href": "notes/nw/nw01-1.html"},
@@ -192,6 +242,24 @@ window.BDA_CHAPTERS = {
   NW06: [
     {"id": "NW06-1", "title": "TCP 바이트 스트림과 UDP 데이터그램", "href": "notes/nw/nw06-1.html"},
     {"id": "NW06-2", "title": "흐름 제어와 혼잡 제어의 두 윈도우", "href": "notes/nw/nw06-2.html"}
+  ],
+  DB01: [
+    {"id": "DB01-1", "title": "표, 스키마, 한 행의 의미", "href": "notes/db/db01-1.html"},
+    {"id": "DB01-2", "title": "기본 키, 외래 키와 복합 키", "href": "notes/db/db01-2.html"}
+  ],
+  DB02: [
+    {"id": "DB02-1", "title": "행을 선택하고 조건값을 바인딩하기", "href": "notes/db/db02-1.html"},
+    {"id": "DB02-2", "title": "GROUP BY와 집계의 분모", "href": "notes/db/db02-2.html"}
+  ],
+  DB03: [
+    {"id": "DB03-1", "title": "INNER JOIN, LEFT JOIN과 비어 있는 짝", "href": "notes/db/db03-1.html"},
+    {"id": "DB03-2", "title": "다대다 관계와 결합 전에 입도 맞추기", "href": "notes/db/db03-2.html"},
+    {"id": "DB03-3", "title": "서브쿼리, 윈도 함수와 누적 합", "href": "notes/db/db03-3.html"}
+  ],
+  DB04: [
+    {"id": "DB04-1", "title": "저장할 값과 관계에 제약조건 두기", "href": "notes/db/db04-1.html"},
+    {"id": "DB04-2", "title": "함수 종속과 갱신 이상을 줄이는 정규화", "href": "notes/db/db04-2.html"},
+    {"id": "DB04-3", "title": "트랜잭션과 ACID로 변경을 함께 확정하기", "href": "notes/db/db04-3.html"}
   ],
   LA01: [
     {"id": "LA01-1", "title": "벡터와 성분: 한 관측을 숫자 여러 개로 나타내기", "href": "notes/la/la01-1.html"},
@@ -250,6 +318,14 @@ window.BDA_CHAPTERS = {
   CA06: [
     {"id": "CA06-1", "title": "부분적분과 이상적분", "href": "notes/ca/ca06-1.html"},
     {"id": "CA06-2", "title": "이중적분과 좌표가 바꾸는 넓이", "href": "notes/ca/ca06-2.html"}
+  ],
+  CA07: [
+    {"id": "CA07-1", "title": "테일러 근사에서 접선·곡률·오차 읽기", "href": "notes/ca/ca07-1.html"},
+    {"id": "CA07-2", "title": "헤시안으로 방향마다 휘어지는 정도 비교하기", "href": "notes/ca/ca07-2.html"}
+  ],
+  CA08: [
+    {"id": "CA08-1", "title": "차분식으로 상태의 다음 값과 안정성 읽기", "href": "notes/ca/ca08-1.html"},
+    {"id": "CA08-2", "title": "미분방정식을 오일러 한 걸음으로 계산하기", "href": "notes/ca/ca08-2.html"}
   ],
   PR01: [
     {"id": "PR01-1", "title": "가능한 결과와 그중에 묻는 사건", "href": "notes/pr/pr01-1.html"}

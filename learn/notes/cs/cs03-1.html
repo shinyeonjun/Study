@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>배열의 위치를 계산하고 연결 리스트를 따라가기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e8c'/%3E%3Cpath d='M8 22V10m8 12V14m8 8V6' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="CS03-1">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+
+<header class="chapter">
+<p class="chap-sub">자료구조·알고리즘 · CS03 순서가 있는 자료구조</p>
+<p class="chap-num">CS03·1</p>
+<h1>배열의 위치를 계산하고 연결 리스트를 따라가기</h1>
+<p class="lead">나란히 놓인 배열의 자리를 계산해 보고, 연결 리스트에서는 어떤 노드로 이동하는지 확인합니다. 같은 값을 삽입할 때 왜 움직이는 것이 다른지 봅니다.</p>
+</header>
+
+<div class="goal">
+<h2>이 장을 읽고 나면</h2>
+<ul>
+<li>배열의 위치 번호에서 저장 자리를 계산한다.</li>
+<li>연결 리스트의 노드에서 값을 읽고 다음 노드로 이동한다.</li>
+<li>위치를 찾는 비용과 그 위치에 삽입하는 비용을 구분한다.</li>
+</ul>
+</div>
+
+<h2>위치 번호로 바로 찾아갈 수 있는 배열</h2>
+<p>같은 크기의 자리들이 연달아 있다고 합시다. 시작 주소가 1000, 한 자리가 8바이트라면, 0부터 센 자리 i의 주소는 1000+8i입니다. 위치 2는 1016입니다. 이 장에서 정한 기계 모형에서는 i가 범위 안일 때 자리로 직접 가는 <b class="key">임의 접근</b>이 Θ(1)입니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 212" role="img" aria-label="주소 1000,1008,1016,1024에 차례로 A,B,C와 빈자리가 있다. 0부터 센 위치 2의 주소는 1016이다.">
+<text class="f-cap" x="380" y="35" text-anchor="middle">각 슬롯이 8바이트인 모형</text>
+<rect class="f-box" x="153" y="78" width="111" height="54" rx="3"/>
+<text class="f-s" x="208" y="66" text-anchor="middle">0</text>
+<text class="f-t" x="208" y="112" text-anchor="middle">A</text>
+<text class="f-s" x="208" y="159" text-anchor="middle">1000</text>
+<rect class="f-box" x="268" y="78" width="111" height="54" rx="3"/>
+<text class="f-s" x="323" y="66" text-anchor="middle">1</text>
+<text class="f-t" x="323" y="112" text-anchor="middle">B</text>
+<text class="f-s" x="323" y="159" text-anchor="middle">1008</text>
+<rect class="f-soft" x="383" y="78" width="111" height="54" rx="3"/>
+<text class="f-s" x="438" y="66" text-anchor="middle">2</text>
+<text class="f-t" x="438" y="112" text-anchor="middle">C</text>
+<text class="f-s" x="438" y="159" text-anchor="middle">1016</text>
+<rect class="f-box" x="498" y="78" width="111" height="54" rx="3"/>
+<text class="f-s" x="553" y="66" text-anchor="middle">3</text>
+<text class="f-t" x="553" y="112" text-anchor="middle">빈자리</text>
+<text class="f-s" x="553" y="159" text-anchor="middle">1024</text>
+<text class="f-t" x="380" y="195" text-anchor="middle">위치 2의 주소 · 1000 + 2×8 = 1016</text>
+</svg>
+<figcaption>여기서 주소는 계산 원리를 그린 모형이다. 각 데이터의 크기와 실제 주소는 구현이 정한다.</figcaption>
+</figure>
+<p>고정 크기의 <b class="key">배열</b>에서는 확보한 자리 수를 넘겨 쓰면 안 됩니다. Python의 일반적인 리스트는 끝에 원소를 이어 붙일 수 있습니다. CPython은 원소를 가리키는 참조들의 크기 변경 가능한 배열로 리스트를 구현합니다. 자리가 부족할 때 더 넓은 배열로 옮기는 비용이 생길 수 있습니다. 여러 번의 끝 추가를 함께 셀 때에는 그런 드문 비용을 나누어 보는 <b>분할상환</b> 관점으로 보통 O(1)이라고 설명합니다. 한 번의 추가가 늘 같은 비용이라는 뜻은 아닙니다.</p>
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+
+<h2>중간에 끼우면 뒤쪽 자리를 이동한다</h2>
+<p>[A,B,C]의 B 앞에 X를 넣으려고 하며, 맨 뒤에 빈자리가 하나 있다고 합시다. 순서를 보존하려면 C를 위치 2에서 3으로, B를 위치 1에서 2로 옮기고 X를 위치 1에 씁니다. 오른쪽부터 옮겨야 기존 B나 C를 덮어쓰지 않습니다.</p>
+<p>배열의 중간 삽입에는 위치를 찾은 뒤에도 이동이 필요합니다. n개에서 i 앞에 추가하고 기존 순서를 유지하면, 자리가 충분한 경우 뒤에 있는 n−i개를 한 칸씩 옮깁니다. 반면 원래 원소 하나를 새 값으로 바꾸기만 하면 나머지 자리를 옮길 필요가 없습니다.</p>
+<div class="check" data-q="q3"></div>
+<div class="check" data-q="q4"></div>
+
+<h2>다음으로 가는 곳을 각 노드에 기록한다</h2>
+<p><b class="key">단일 연결 리스트</b>에서 각 <b>노드</b>에는 현재 값과 다음 노드를 가리키는 참조가 있습니다. 맨 처음 노드를 머리라고 합니다. 다음 노드가 없으면 끝입니다. 배열처럼 주소를 식으로 계산하지 않고, 앞에서부터 연결을 따라 위치에 갑니다. 머리에서 인덱스 2의 노드를 보려면 연결을 두 번 건넙니다. 임의의 위치를 찾는 데 가장 오래 걸리면 Θ(n)입니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 243" role="img" aria-label="A에서 B, C로 이어지던 단일 연결 리스트에서 A 다음의 X를 추가한다. A 다음은 X, X 다음은 B로 이어진다.">
+<text class="f-s" x="146" y="91" text-anchor="end">삽입 전</text>
+<rect class="f-box" x="165" y="63" width="101" height="43" rx="3"/>
+<text class="f-t" x="215" y="90" text-anchor="middle">A</text>
+<line class="f-line" x1="268" y1="84" x2="301" y2="84" marker-end="url(#f-arrow)"/>
+<rect class="f-box" x="304" y="63" width="101" height="43" rx="3"/>
+<text class="f-t" x="354" y="90" text-anchor="middle">B</text>
+<line class="f-line" x1="407" y1="84" x2="440" y2="84" marker-end="url(#f-arrow)"/>
+<rect class="f-box" x="443" y="63" width="101" height="43" rx="3"/>
+<text class="f-t" x="493" y="90" text-anchor="middle">C</text>
+<line class="f-line" x1="546" y1="84" x2="579" y2="84" marker-end="url(#f-arrow)"/>
+<rect class="f-box" x="582" y="63" width="101" height="43" rx="3"/>
+<text class="f-t" x="632" y="90" text-anchor="middle">끝</text>
+
+<text class="f-s" x="146" y="173" text-anchor="end">삽입 후</text>
+<rect class="f-box" x="165" y="145" width="101" height="43" rx="3"/>
+<text class="f-t" x="215" y="172" text-anchor="middle">A</text>
+<line class="f-line" x1="268" y1="166" x2="301" y2="166" marker-end="url(#f-arrow)"/>
+<rect class="f-soft" x="304" y="145" width="101" height="43" rx="3"/>
+<text class="f-t" x="354" y="172" text-anchor="middle">X</text>
+<line class="f-line" x1="407" y1="166" x2="440" y2="166" marker-end="url(#f-arrow)"/>
+<rect class="f-box" x="443" y="145" width="101" height="43" rx="3"/>
+<text class="f-t" x="493" y="172" text-anchor="middle">B</text>
+<line class="f-line" x1="546" y1="166" x2="579" y2="166" marker-end="url(#f-arrow)"/>
+<rect class="f-box" x="582" y="145" width="101" height="43" rx="3"/>
+<text class="f-t" x="632" y="172" text-anchor="middle">C</text>
+<line class="f-line" x1="685" y1="166" x2="717" y2="166" marker-end="url(#f-arrow)"/>
+<text class="f-s" x="735" y="171" text-anchor="middle">끝</text>
+
+<text class="f-s" x="380" y="224" text-anchor="middle">삽입 후 X는 전의 B를 가리키고, A는 이제 X를 가리킨다.</text>
+</svg>
+<figcaption>삽입할 앞 노드 A를 이미 가진 상태다. 위치를 찾는 비용과 두 연결을 정하는 비용을 나눈다.</figcaption>
+</figure>
+<p>A 뒤에 넣으려면 먼저 X가 가리킬 다음을 기존 A의 다음인 B로 둡니다. 그 뒤 A의 다음을 X로 바꿉니다. 이미 A를 찾았으면 이 연결 변경 자체는 Θ(1)입니다. 어느 값 뒤에 넣을지 찾아야 한다면 앞에서 찾아가는 시간이 더해집니다. 노드를 여러 곳에서 가리킬 수 있으니 입력을 변경할 때 어떤 참조를 바꾸는지도 확인합니다.</p>
+<div class="check" data-q="q5"></div>
+<div class="check" data-q="q6"></div>
+
+<h2>두 삽입에 들어가는 동작을 실행한다</h2>
+<pre data-example="python"><code>slots = [&quot;A&quot;, &quot;B&quot;, &quot;C&quot;, None]
+moves = 0
+for i in range(2, 0, -1):
+    slots[i + 1] = slots[i]
+    moves += 1
+slots[1] = &quot;X&quot;
+print(&quot;array:&quot;, slots, &quot;moves:&quot;, moves)
+
+# A node is stored as [value, next_node].
+head = [&quot;A&quot;, [&quot;B&quot;, [&quot;C&quot;, None]]]
+node = head
+for _ in range(2):
+    node = node[1]
+print(&quot;position 2 before insertion:&quot;, node[0])
+
+head[1] = [&quot;X&quot;, head[1]]
+values = []
+node = head
+while node is not None:
+    values.append(node[0])
+    node = node[1]
+assert slots == values
+print(&quot;linked:&quot;, values)</code></pre>
+<pre data-output><code>array: ['A', 'X', 'B', 'C'] moves: 2
+position 2 before insertion: C
+linked: ['A', 'X', 'B', 'C']</code></pre>
+<p>노드를 <code>[값, 다음 노드]</code>로 간단히 표현했습니다. 연결 리스트가 쓰는 실제 Python 자료구조를 바깥 목록의 인덱스로 바로 찾을 수 있다는 뜻은 아닙니다. 코드는 <code>node[1]</code>을 따라 이동합니다.</p>
+
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table>
+<thead><tr><th scope="col">연산</th><th scope="col">배열</th><th scope="col">단일 연결 리스트</th></tr></thead>
+<tbody>
+<tr><td>i번째 값 읽기</td><td>범위 안에서 위치로 직접 접근.</td><td>머리에서 다음 노드를 i번 따라감.</td></tr>
+<tr><td>중간 삽입</td><td>기존 순서를 유지하려면 뒤쪽 원소 이동.</td><td>바로 앞 노드를 이미 알고 있으면 연결만 바꿈.</td></tr>
+</tbody>
+</table></div>
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://ocw.mit.edu/courses/6-006-introduction-to-algorithms-spring-2020/79a07dc1cb47d76dae2ffedc701e3d2b_MIT6_006S20_lec2.pdf">MIT 6.006 · 연결 리스트와 동적 배열</a></li>
+<li><a href="https://docs.python.org/3/faq/design.html#how-are-lists-implemented-in-cpython">Python 공식 문서 · CPython 리스트 구현</a></li>
+<li><a href="../py/py06-2.html">학습 교재 PY06 · 참조와 복사</a></li>
+</ul>
+
+
+<h2>확인 문제</h2>
+<p>아직 풀지 않은 문제입니다. 먼저 식이나 근거를 적어 보고 해설을 확인합니다.</p>
+<div id="quiz"></div>
+
+<section class="work" id="tools"></section>
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

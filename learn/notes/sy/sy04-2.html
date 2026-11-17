@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>운영체제에 자원을 요청하고 실행 공간을 나눈다 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e8c'/%3E%3Cpath d='M8 22V10m8 12V14m8 8V6' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="SY04-2">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+
+<header class="chapter">
+<p class="chap-sub">시스템 · SY04 운영체제</p>
+<p class="chap-num">SY04·2</p>
+<h1>운영체제에 자원을 요청하고 실행 공간을 나눈다</h1>
+<p class="lead">코드가 파일을 열고 싶을 때는 운영체제에 요청합니다. 어디까지가 프로그램 안의 계산이고 언제부터 커널이 처리하는지, 자식이 부모와 어디까지 자료를 나눌 수 있는지 확인합니다.</p>
+</header>
+
+<div class="goal">
+<h2>이 장을 읽고 나면</h2>
+<ul>
+<li>사용자 코드의 일반 함수 호출과 시스템 호출을 구별한다.</li>
+<li>프로세스 주소 공간의 격리와 의도적인 자료 공유를 구별한다.</li>
+<li>로컬 자식에 전달한 파일 변화와 부모 내부 변수를 대조한다.</li>
+</ul>
+</div>
+
+<h2>파일과 장치에는 운영체제의 관리가 필요한 순간이 있다</h2>
+<p>프로그램이 리스트의 길이를 계산하는 일은 보통 자기 메모리에 있는 값으로 처리할 수 있습니다. 반면 운영체제에서 관리하는 파일을 읽거나 프로세스를 시작하려면 운영체제의 기능이 필요합니다. <b class="key">시스템 호출</b>(system call)은 사용자 프로그램이 커널의 서비스를 요청할 때 쓰는 인터페이스입니다. 커널은 요청의 대상과 권한을 확인한 뒤 결과나 오류를 프로그램에 돌려줄 수 있습니다.</p>
+<p>파일 읽기에서 Python의 <code>open()</code>이나 <code>read()</code>는 높은 수준의 함수입니다. 이 함수는 문자열을 해석하거나 한 번 읽은 값을 내부 버퍼에 보관할 수도 있습니다. 그래서 Python 함수 한 번이 시스템 호출 정확히 한 번과 대응한다고 볼 수 없습니다. Linux에는 <code>read</code>처럼 커널에 요청하는 시스템 호출이 있습니다. Windows 프로그램은 보통 <code>ReadFile</code> 같은 문서화된 API를 먼저 사용합니다. 운영체제마다 함수 이름·시스템 호출 입구·파일 규칙이 다를 수 있습니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 203" role="img" aria-label="사용자 프로그램이 파일 읽기를 요청하면 API나 라이브러리를 거쳐 커널에 들어갈 수 있다. 커널은 파일 접근 조건을 확인하고 바이트나 오류를 돌려준다.">
+<rect class="f-box" x="71" y="52" width="177" height="58" rx="3"/>
+<text class="f-cap" x="159.5" y="77" text-anchor="middle">사용자 코드</text>
+<text class="f-s" x="159.5" y="98" text-anchor="middle">Python read()</text>
+<rect class="f-box" x="289" y="52" width="182" height="58" rx="3"/>
+<text class="f-cap" x="380" y="77" text-anchor="middle">라이브러리·API</text>
+<text class="f-s" x="380" y="98" text-anchor="middle">버퍼를 둘 수 있음</text>
+<rect class="f-soft" x="512" y="52" width="177" height="58" rx="3"/>
+<text class="f-cap" x="600.5" y="77" text-anchor="middle">커널</text>
+<text class="f-s" x="600.5" y="98" text-anchor="middle">파일 접근을 관리</text>
+<line class="f-line" x1="251" y1="80" x2="285" y2="80" marker-end="url(#f-arrow)"/>
+<line class="f-line" x1="473" y1="80" x2="507" y2="80" marker-end="url(#f-arrow)"/>
+<line class="f-ink" x1="603" y1="136" x2="154" y2="136" marker-end="url(#f-arrow)"/>
+<text class="f-s" x="377" y="161" text-anchor="middle">읽은 바이트 또는 실패 이유</text>
+</svg>
+<figcaption>버퍼에 데이터가 남아 있으면 라이브러리에서 바로 돌려줄 수도 있다.</figcaption>
+</figure>
+<p>시스템 호출을 들어갈 때 CPU가 사용자 모드에서 커널 모드로 들어갈 수 있습니다. 이는 요청을 처리할 권한과 실행 위치의 변화입니다. 운영체제가 차례를 다른 스레드로 바꾸는 문맥 교환이 그때마다 반드시 일어나는 것은 아닙니다. 어느 쪽을 뜻하는지 구별하면 순서도를 더 정확하게 읽습니다.</p>
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+<h2>프로세스 내부 상태는 기본적으로 서로 분리한다</h2>
+<p>프로세스마다 고유한 <b class="key">가상 주소 공간</b>이 있다는 것은, 같은 주소 번호가 각 프로세스에서 같은 자료를 가리킨다고 가정할 수 없다는 뜻입니다. 일반 프로그램이 자기 메모리에 쓰는 동작으로 다른 프로세스의 변수를 바꾸지 않습니다. 운영체제와 하드웨어가 메모리 접근을 관리하고, 서로 다른 프로세스의 주소를 분리하는 데 도움을 줍니다. 이는 같은 프로세스 안에서 스레드들이 주소 공간을 함께 쓰는 모습과 다릅니다.</p>
+<p>격리가 어떤 정보도 공유할 수 없다는 뜻은 아닙니다. 프로세스는 운영체제가 제공하는 파이프나 메시지 통로, 공유 메모리를 사용하도록 구성할 수 있습니다. 서로 열 권한이 있는 같은 파일도 공유할 수 있습니다. 일반적인 파일 접근에서 경로를 안다는 사실과 계정이 읽거나 쓸 수 있다는 사실은 별개입니다. 여러 프로세스가 동시에 같은 파일을 바꾼다면 쓰는 순서나 충돌을 따로 관리해야 합니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 207" role="img" aria-label="부모에서 counter=3이고 자식에서 counter=9다. 두 숫자는 별개의 프로그램 상태다. 두 프로그램은 연습용 파일을 명시적으로 열어 공유할 수 있다.">
+<rect class="f-box" x="58" y="42" width="232" height="63" rx="3"/>
+<text class="f-cap" x="174" y="67" text-anchor="middle">부모 프로세스</text>
+<text class="f-s" x="174" y="90" text-anchor="middle">별도 counter = 3</text>
+<rect class="f-box" x="470" y="42" width="232" height="63" rx="3"/>
+<text class="f-cap" x="586" y="67" text-anchor="middle">자식 프로세스</text>
+<text class="f-s" x="586" y="90" text-anchor="middle">별도 counter = 9</text>
+<rect class="f-soft" x="296" y="137" width="168" height="41" rx="3"/>
+<text class="f-t" x="380" y="163" text-anchor="middle">공유 연습 파일</text>
+<line class="f-line" x1="174" y1="109" x2="290" y2="150" marker-end="url(#f-arrow)"/>
+<line class="f-line" x1="586" y1="109" x2="470" y2="151" marker-end="url(#f-arrow)"/>
+<text class="f-s" x="174" y="157" text-anchor="middle">경로를 넘김</text>
+<text class="f-s" x="586" y="157" text-anchor="middle">같은 파일에 씀</text>
+</svg>
+<figcaption>파일 이름은 두 실행이 공통으로 쓰는 위치다. Python 변수 이름은 이 연습에서 공유하지 않았다.</figcaption>
+</figure>
+<div class="check" data-q="q3"></div>
+<div class="check" data-q="q4"></div>
+<h2>파일을 전달하되 프로그램 내부 숫자는 따로 남긴다</h2>
+<p>아래 예에서는 부모가 임시 디렉터리를 만들고 자기 파일을 열어 ‘ready’를 적습니다. 자식에게 그 파일의 경로를 인자로 주고, 자식은 ‘ready’를 읽어 소문자 ‘done’을 씁니다. 자식이 종료한 다음 같은 파일을 읽으므로 동시에 수정하는 문제는 이 예에서 다루지 않습니다.</p>
+<pre data-example="python"><code>import subprocess
+import sys
+from pathlib import Path
+from tempfile import TemporaryDirectory
+
+counter = 3
+source = &quot;&quot;&quot;
+from pathlib import Path
+from sys import argv
+
+counter = 9
+path = Path(argv[1])
+print(&quot;child read:&quot;, path.read_text(encoding=&quot;utf-8&quot;))
+path.write_text(&quot;done&quot;, encoding=&quot;utf-8&quot;)
+print(&quot;child counter:&quot;, counter)
+&quot;&quot;&quot;
+with TemporaryDirectory() as folder:
+    path = Path(folder) / &quot;example.txt&quot;
+    path.write_text(&quot;ready&quot;, encoding=&quot;utf-8&quot;)
+    child = subprocess.run(
+        [sys.executable, &quot;-c&quot;, source, str(path)],
+        capture_output=True, text=True, encoding=&quot;utf-8&quot;, check=True,
+    )
+    print(child.stdout.strip())
+    print(&quot;parent counter:&quot;, counter)
+    print(&quot;parent read:&quot;, path.read_text(encoding=&quot;utf-8&quot;))</code></pre>
+<pre data-output><code>child read: ready
+child counter: 9
+parent counter: 3
+parent read: done</code></pre>
+<p>부모와 자식의 숫자는 따로 남고, 두 프로그램이 직접 지정한 파일에 쓴 변경만 이후 읽기에 보입니다. 출력 문자열을 받아 오는 데도 별도의 통로를 사용했습니다. 어느 Python 함수가 OS 내부에서 몇 번의 호출을 만들었는지는 이 출력만으로 세지 않았습니다.</p>
+<div class="check" data-q="q5"></div>
+<div class="check" data-q="q6"></div>
+
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table>
+<thead><tr><th scope="col">핵심어</th><th scope="col">기억할 기준</th></tr></thead>
+<tbody>
+<tr><td><b class="key">시스템 호출</b></td><td>커널에 접근 제어와 파일 읽기 같은 서비스를 요청한다.</td></tr>
+<tr><td><b class="key">주소 공간</b></td><td>일반적인 프로세스는 자신의 메모리를 별도로 보고 쓴다.</td></tr>
+<tr><td><b class="key">명시적 자원 공유</b></td><td>열 수 있는 파일이나 전달받은 통로로 의도한 자료를 주고받는다.</td></tr>
+</tbody></table></div>
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>프로그램 내부의 값과 운영체제를 거치는 공유 자원은 어디에서 경계가 생기는지 각각 확인한다.</p></div>
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://learn.microsoft.com/en-us/windows-hardware/drivers/gettingstarted/user-mode-and-kernel-mode">Microsoft · Windows 사용자 모드와 커널 모드</a></li>
+<li><a href="https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-readfile">Microsoft · Windows ReadFile API</a></li>
+<li><a href="https://man7.org/linux/man-pages/man2/syscalls.2.html">Linux man-pages · 시스템 호출 인터페이스</a></li>
+<li><a href="https://learn.microsoft.com/en-us/windows/win32/procthread/processes-and-threads">Microsoft · Windows 프로세스와 스레드</a></li>
+<li><a href="https://docs.python.org/3/library/subprocess.html#subprocess.run">Python 공식 문서 · subprocess와 자식 프로세스</a></li>
+</ul>
+
+<h2>확인 문제</h2>
+<p>아직 풀지 않은 문제입니다. 먼저 식이나 근거를 적어 보고 해설을 확인합니다.</p>
+<div id="quiz"></div>
+
+<section class="work" id="tools"></section>
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

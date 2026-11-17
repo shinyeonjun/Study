@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GROUP BY와 집계의 분모 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="DB02-2">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">데이터베이스 · DB02 SQL 기초</p>
+<p class="chap-num">DB02·2</p>
+<h1>GROUP BY와 집계의 분모</h1>
+<p class="lead">주문 네 건에서 결제 상태별 건수와 합계를 계산합니다. 같은 그룹에서도 전체 행 수와 값이 기록된 행 수는 다를 수 있습니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul>
+<li>GROUP BY의 입력 행과 출력 그룹의 단위를 구별한다.</li>
+<li>COUNT(*), COUNT(열), SUM, AVG에서 NULL 처리 방식을 설명한다.</li>
+<li>WHERE와 HAVING을 조합해 그룹에 조건을 건다.</li>
+</ul></div>
+
+<h2>그룹 하나를 결과 한 줄로</h2>
+<p><code>GROUP BY status</code>는 <code>WHERE</code>까지 적용되어 남은 주문을 상태값으로 묶습니다. 그룹마다 <code>COUNT(*)</code>나 <code>SUM(total_won)</code>을 계산하면 결과의 입도는 주문 한 건에서 상태 하나로 바뀝니다. 그룹을 정한 열과 그 그룹에서 계산한 집계를 결과에 적습니다. 그룹 안에 서로 다른 값이 있는 <code>order_date</code>를 아무 규칙 없이 선택하면 그 날짜가 그룹을 어떻게 대표하는지 모호합니다. SQLite가 허용하는 일부 비집계 열 동작에 기대지 않습니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 172" role="img" aria-label="paid는 주문 3건·쿠폰 기록 2건·금액 40,000원, pending은 1건·쿠폰 기록 0건·금액 12,000원.">
+<text class="f-cap" x="380" y="29" text-anchor="middle">같은 status인 행을 모아 요약</text>
+<rect class="f-soft" x="44" y="43" width="160" height="37"/>
+<text class="f-s" x="124" y="66.5" text-anchor="middle">status</text>
+<rect class="f-soft" x="204" y="43" width="142" height="37"/>
+<text class="f-s" x="275" y="66.5" text-anchor="middle">COUNT(*)</text>
+<rect class="f-soft" x="346" y="43" width="210" height="37"/>
+<text class="f-s" x="451" y="66.5" text-anchor="middle">COUNT(coupon_won)</text>
+<rect class="f-soft" x="556" y="43" width="160" height="37"/>
+<text class="f-s" x="636" y="66.5" text-anchor="middle">SUM(total_won)</text>
+<rect class="f-box" x="44" y="80" width="160" height="37"/>
+<text class="f-t" x="124" y="103.5" text-anchor="middle">paid</text>
+<rect class="f-box" x="204" y="80" width="142" height="37"/>
+<text class="f-t" x="275" y="103.5" text-anchor="middle">3</text>
+<rect class="f-box" x="346" y="80" width="210" height="37"/>
+<text class="f-t" x="451" y="103.5" text-anchor="middle">2</text>
+<rect class="f-box" x="556" y="80" width="160" height="37"/>
+<text class="f-t" x="636" y="103.5" text-anchor="middle">40,000</text>
+<rect class="f-box" x="44" y="117" width="160" height="37"/>
+<text class="f-t" x="124" y="140.5" text-anchor="middle">pending</text>
+<rect class="f-box" x="204" y="117" width="142" height="37"/>
+<text class="f-t" x="275" y="140.5" text-anchor="middle">1</text>
+<rect class="f-box" x="346" y="117" width="210" height="37"/>
+<text class="f-t" x="451" y="140.5" text-anchor="middle">0</text>
+<rect class="f-box" x="556" y="117" width="160" height="37"/>
+<text class="f-t" x="636" y="140.5" text-anchor="middle">12,000</text>
+</svg>
+<figcaption>쿠폰액 0도 값이 알려진 기록이므로 COUNT(coupon_won)에 들어갑니다.</figcaption>
+</figure>
+<div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
+
+<h2>NULL이 있어도 주문은 한 건</h2>
+<p>결제 완료 세 주문의 쿠폰 값은 <code>NULL</code>, <code>1000</code>, <code>0</code>입니다. <code>COUNT(*)</code>는 세 행을 모두 셉니다. <code>COUNT(coupon_won)</code>은 값이 NULL이 아닌 두 건을 세므로 <strong>쿠폰 할인이 있었던 건수</strong>와도 다릅니다. 양수 값을 비교해서 쿠폰액이 0보다 큰 행을 골라야 그 사례를 셉니다.</p>
+<p><code>SUM(coupon_won)</code>은 두 알려진 값의 합 1,000원을, <code>AVG(coupon_won)</code>은 그 두 건 평균 500원을 줍니다. 미결제 그룹에 알려진 쿠폰액이 한 건도 없어서 <code>SUM</code>과 <code>AVG</code>는 NULL입니다. NULL을 모두 0으로 처리하면 평균의 분모와 의미가 달라집니다. 모르는 값을 0으로 간주해도 되는지는 지표 정의가 결정합니다.</p>
+<div class="check" data-q="q3"></div><div class="check" data-q="q4"></div>
+
+<h2>행 조건과 그룹 조건을 함께 쓰기</h2>
+<p><b class="key">WHERE</b>는 합을 계산하기 전 개별 주문부터 골라 냅니다. 가령 <code>total_won &gt;= 12000</code>이면 102, 103, 104가 남습니다. 고객 번호 1은 주문 한 건, 번호 2는 주문 두 건을 갖습니다.</p>
+<p><b class="key">HAVING</b>은 그룹에서 계산한 값에 대해 조건을 묻습니다. <code>HAVING COUNT(*) &gt;= 2</code>를 쓰면 고객 2만 남습니다. '한 주문이 12,000원 이상'과 '그런 주문이 두 건 이상인 고객'은 서로 다른 수준의 질문입니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 227" role="img" aria-label="원래 주문 네 건에서 12000원 이상 행은 102,103,104이다. 고객별로 묶으면 고객 1은 한 건, 고객 2는 두 건이다. HAVING COUNT(*) &gt;= 2는 고객 2만 남긴다.">
+<text class="f-cap" x="380" y="28" text-anchor="middle">개별 주문을 거른 뒤 고객별 묶음을 거릅니다</text>
+<rect class="f-box" x="48" y="63" width="180" height="45"/>
+<text class="f-t" x="138" y="90.5" text-anchor="middle">WHERE 적용</text>
+<rect class="f-soft" x="285" y="63" width="190" height="45"/>
+<text class="f-t" x="380" y="90.5" text-anchor="middle">GROUP BY 고객</text>
+<rect class="f-box" x="532" y="63" width="180" height="45"/>
+<text class="f-t" x="622" y="90.5" text-anchor="middle">HAVING 적용</text>
+<line class="f-line" x1="232" y1="86" x2="281" y2="86" marker-end="url(#f-arrow)"/>
+<line class="f-line" x1="479" y1="86" x2="528" y2="86" marker-end="url(#f-arrow)"/>
+<text class="f-s" x="138" y="151" text-anchor="middle">주문 102, 103, 104</text>
+<text class="f-s" x="380" y="151" text-anchor="middle">고객 1 · 1건</text>
+<text class="f-s" x="380" y="179" text-anchor="middle">고객 2 · 2건</text>
+<text class="f-s" x="622" y="151" text-anchor="middle">고객 2 · 2건</text>
+</svg>
+<figcaption>주문액 12,000원 이상인 주문을 먼저 고른 뒤, 그 주문이 두 건 이상인 고객 그룹을 남깁니다.</figcaption>
+</figure>
+<div class="why"><p class="box-k">왜 그럴까?</p><p>결제 완료 주문 중 평균 금액이 1만 원을 넘는 고객을 찾으려면 어디에 조건을 쓸까?</p><details><summary>모범 답 보기</summary><p>결제 완료라는 조건은 WHERE에 쓰고, 고객별로 그룹화한 뒤 HAVING AVG(total_won) > 10000을 사용합니다.</p></details></div>
+<div class="check" data-q="q5"></div><div class="check" data-q="q6"></div>
+
+<h2>두 집계의 결과를 읽기</h2>
+
+<p class="small">실행 예제</p>
+<pre data-example="python"><code>import sqlite3
+
+with sqlite3.connect(&quot;:memory:&quot;) as db:
+    db.execute(&quot;PRAGMA foreign_keys = ON&quot;)
+    db.executescript(&quot;&quot;&quot;
+    CREATE TABLE customers (
+        customer_id INTEGER PRIMARY KEY,
+        name TEXT NOT NULL
+    );
+    CREATE TABLE orders (
+        order_id INTEGER PRIMARY KEY,
+        customer_id INTEGER NOT NULL REFERENCES customers(customer_id),
+        order_date TEXT NOT NULL,
+        status TEXT NOT NULL CHECK (status IN ('paid', 'pending')),
+        total_won INTEGER NOT NULL CHECK (total_won &gt;= 0),
+        coupon_won INTEGER CHECK (coupon_won &gt;= 0)
+    );
+    &quot;&quot;&quot;)
+    db.executemany(&quot;INSERT INTO customers VALUES (?, ?)&quot;, [
+        (1, 'Mina'),
+        (2, 'Jun'),
+        (3, 'Sol'),
+    ])
+    db.executemany(&quot;INSERT INTO orders VALUES (?, ?, ?, ?, ?, ?)&quot;, [
+        (101, 1, '2025-01-02', 'paid', 10000, None),
+        (102, 1, '2025-01-03', 'paid', 15000, 1000),
+        (103, 2, '2025-01-04', 'pending', 12000, None),
+        (104, 2, '2025-01-05', 'paid', 15000, 0),
+    ])
+
+    by_status = db.execute(&quot;&quot;&quot;
+        SELECT status, COUNT(*) AS order_count,
+               COUNT(coupon_won) AS known_coupon_count,
+               SUM(total_won) AS gross_won, SUM(coupon_won) AS coupon_sum,
+               AVG(coupon_won) AS known_coupon_mean
+        FROM orders
+        GROUP BY status
+        ORDER BY status
+    &quot;&quot;&quot;).fetchall()
+    for row in by_status:
+        print(row)
+
+    frequent = db.execute(&quot;&quot;&quot;
+        SELECT customer_id, COUNT(*) AS order_count, SUM(total_won) AS gross_won
+        FROM orders
+        WHERE total_won &gt;= ?
+        GROUP BY customer_id
+        HAVING COUNT(*) &gt;= ?
+        ORDER BY customer_id
+    &quot;&quot;&quot;, (12_000, 2)).fetchall()
+    print(&quot;qualifying customers:&quot;, frequent)
+db.close()</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>('paid', 3, 2, 40000, 1000, 500.0)
+('pending', 1, 0, 12000, None, None)
+qualifying customers: [(2, 2, 27000)]</code></pre>
+<p><code>AS</code>는 결과 열에 이름을 붙입니다. Python에서 보이는 <code>None</code>은 조회 결과의 SQL NULL입니다. 마지막 행은 고객 2에게 조건을 통과한 주문이 2건 있고 합계가 27,000원이라는 뜻입니다.</p>
+<div class="check" data-q="q7"></div><div class="check" data-q="q8"></div>
+
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table><thead><tr><th scope="col">개념</th><th scope="col">확인할 것</th></tr></thead><tbody>
+<tr><th scope="row"><b class="key">GROUP BY</b></th><td>결과 한 행이 그룹 하나를 나타낸다.</td></tr>
+<tr><th scope="row"><b class="key">COUNT</b></th><td>전체 행과 값이 알려진 행의 수를 구별한다.</td></tr>
+<tr><th scope="row"><b class="key">HAVING</b></th><td>집계 결과에 조건을 적용한다.</td></tr>
+</tbody></table></div><div class="box sum"><p class="box-k">다음 장으로</p><p><a href="db03-1.html">다음 장</a>에서는 고객이 적힌 표와 주문이 적힌 표를 실제로 이어 봅니다.</p></div>
+
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://www.sqlite.org/lang_select.html">SQLite · SELECT의 단계와 결합</a></li>
+<li><a href="https://www.sqlite.org/lang_aggfunc.html">SQLite · 집계 함수</a></li>
+<li><a href="https://docs.python.org/3/library/sqlite3.html#how-to-use-placeholders-to-bind-values-in-sql-queries">Python sqlite3 · 값 바인딩</a></li>
+</ul>
+<h2>확인 문제</h2>
+<p>직접 계산하거나 설명을 먼저 적고 답을 확인해 보세요.</p>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

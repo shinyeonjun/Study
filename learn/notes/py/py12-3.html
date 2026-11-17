@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>계산과 출력 코드를 모듈로 나누고 타입 적기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="PY12-3">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">Python</p>
+<p class="chap-num">PY12·3</p>
+<h1>계산과 출력 코드를 모듈로 나누고 타입 적기</h1>
+<p class="lead">분석 스크립트를 실행하면 결과가 나와야 하지만, 그 안의 계산 함수를 다른 분석에서 가져올 수도 있습니다. 파일을 두 개로 나눠 두 상황이 어떻게 동작하는지 확인합니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>모듈을 가져오는 코드와 프로그램으로 실행하는 코드를 구분한다.</li><li>입력과 반환 타입을 함수 표기에 남긴다.</li><li>계산과 입출력 사이에 검산할 지점을 만든다.</li></ul></div>
+
+<h2>읽는 사람에게 기대하는 입력과 결과를 알려 준다</h2>
+<p>함수가 대기 시간 목록의 평균에 보정값을 더한다고 합시다. 매개변수 <code>samples: list[float]</code>와 <code>offset: float</code>를 쓰고, 이름 오른쪽 <code>-&gt; float</code>에 반환할 값의 종류를 적을 수 있습니다. 이는 편집기나 타입 검사 도구가 읽는 표기이며, 호출 시 Python이 자동으로 모든 인수의 형식을 검사하는 기능은 아닙니다. 실제 입력이 유효한지는 프로그램에서 확인할 수 있습니다.</p>
+<div class="check" data-q="q1"></div>
+<p>평균을 내려면 값이 적어도 하나 있어야 합니다. 이 함수는 빈 목록을 받으면 <code>ValueError</code>로 알려 주기로 정합니다. 유효한 [3.0, 5.0]과 보정 0.5를 넣으면 평균 4.0에 0.5를 더해 4.5를 반환합니다.</p>
+<div class="check" data-q="q2"></div>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 160" role="img" aria-label="작은 Python 모듈과 실행용 파일의 역할">
+<rect class="f-box" x="42" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="135" y="61" text-anchor="middle">measurements.py</text><text class="f-s" x="135" y="89" text-anchor="middle">평균을 계산하는 함수</text><text class="f-s" x="135" y="110" text-anchor="middle">인수 → 반환값</text><line class="f-line" x1="235" y1="84" x2="278" y2="84" marker-end="url(#f-arrow)"/><rect class="f-soft" x="287" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="380" y="61" text-anchor="middle">report.py</text><text class="f-s" x="380" y="89" text-anchor="middle">계산 함수 가져오기</text><text class="f-s" x="380" y="110" text-anchor="middle">결과 한 줄 출력</text><line class="f-line" x1="480" y1="84" x2="523" y2="84" marker-end="url(#f-arrow)"/><rect class="f-box" x="532" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="625" y="61" text-anchor="middle">실행할 때</text><text class="f-s" x="625" y="89" text-anchor="middle">main에서 호출</text><text class="f-s" x="625" y="110" text-anchor="middle">import와 구분</text>
+</svg><figcaption>코드를 가져오는 분석은 평균 함수만 써도 됩니다. 명령으로 실행할 때 보고서를 출력합니다.</figcaption></figure>
+<h2>import는 정의를 읽되, 보고서 출력은 실행에 둔다</h2>
+<p>.py 파일로 분리한 모듈에는 함수·클래스·값을 둘 수 있습니다. 한 프로세스에서 모듈을 처음 가져올 때 최상위 코드는 실행됩니다. 그래서 화면 출력이나 파일 갱신을 곧바로 최상위에 두면, 함수를 이용하려고 가져온 경우에도 의도치 않게 그 일이 일어날 수 있습니다.</p>
+<p><code>if __name__ == "__main__":</code>은 해당 파일을 프로그램으로 직접 실행할 때 진입점을 부르는 관례입니다. 아래에서 <code>python report.py</code>는 main을 실행하지만 <code>import report</code>는 main을 정의하고 부르지는 않습니다.</p>
+<div class="check" data-q="q3"></div><div class="check" data-q="q4"></div>
+<pre data-example="python"><code>from pathlib import Path
+import subprocess
+import sys
+from tempfile import TemporaryDirectory
+
+calculations = &quot;&quot;&quot;from statistics import mean
+
+def shifted_mean(samples: list[float], offset: float = 0.0) -&gt; float:
+    if not samples:
+        raise ValueError(&quot;At least one sample required&quot;)
+    return float(mean(samples) + offset)
+&quot;&quot;&quot;
+report = &quot;&quot;&quot;from measurements import shifted_mean
+
+def main() -&gt; None:
+    print(f&quot;result={shifted_mean([3.0, 5.0], 0.5):.1f}&quot;)
+
+if __name__ == &quot;__main__&quot;:
+    main()
+&quot;&quot;&quot;
+
+with TemporaryDirectory() as folder:
+    work = Path(folder)
+    (work / &quot;measurements.py&quot;).write_text(calculations, encoding=&quot;utf-8&quot;)
+    (work / &quot;report.py&quot;).write_text(report, encoding=&quot;utf-8&quot;)
+
+    def run(*args):
+        return subprocess.run([sys.executable, &quot;-B&quot;, *args], cwd=work,
+                              check=True, capture_output=True, text=True).stdout.strip()
+
+    direct = run(&quot;report.py&quot;)
+    imported = run(&quot;-c&quot;, &quot;import report&quot;)
+    verified = run(&quot;-c&quot;, &quot;from measurements import shifted_mean; &quot;
+                        &quot;assert shifted_mean([10.0, 14.0], -2.0) == 10.0; &quot;
+                        &quot;print('ok')&quot;)
+    print(&quot;직접 실행:&quot;, direct)
+    print(&quot;import 시 출력 없음:&quot;, imported == &quot;&quot;)
+    print(&quot;계산만 검산:&quot;, verified)</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>직접 실행: result=4.5
+import 시 출력 없음: True
+계산만 검산: ok</code></pre>
+<div class="check" data-q="q5"></div>
+<h2>기능을 찾기 쉬운 이름을 두고 따로 검산한다</h2>
+<p>두 파일은 임시 폴더의 같은 위치에 있습니다. 직접 비슷한 프로젝트를 만들 때는 파일명을 Python 표준 모듈 이름과 충돌하지 않게 고릅니다. 예로 <code>statistics.py</code>라는 파일을 같은 곳에 두면 표준 <code>statistics</code> 앞에 그 파일이 import될 수 있습니다.</p>
+<p>이 예의 계산 함수는 인수로 받은 값을 직접 반환합니다. 같은 파일을 읽거나 화면을 준비하지 않아도, 작은 입력에서 결과를 독립적으로 대조할 수 있습니다. 모듈을 나누는 기준은 파일 줄 수보다 어떤 코드가 같은 책임을 지는지입니다.</p>
+<div class="check" data-q="q6"></div>
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>계산은 입력과 반환을 표기한 함수로 가져오고, 사람에게 결과를 내보내는 동작은 필요한 실행 진입점에 둡니다.</p></div>
+
+<h2>참고 자료</h2>
+<ul><li><a href="https://docs.python.org/3/tutorial/modules.html">Python · 모듈</a></li><li><a href="https://docs.python.org/3/library/typing.html">Python · typing 모듈</a></li><li><a href="py08-1.html">공부 교재 · 오류 확인</a></li></ul>
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

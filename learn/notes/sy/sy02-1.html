@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CPU는 명령을 실행하고 메모리에서 데이터를 가져온다 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e8c'/%3E%3Cpath d='M8 22V10m8 12V14m8 8V6' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="SY02-1">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+
+<header class="chapter">
+<p class="chap-sub">시스템 · SY02 계산하는 기계</p>
+<p class="chap-num">SY02·1</p>
+<h1>CPU는 명령을 실행하고 메모리에서 데이터를 가져온다</h1>
+<p class="lead">파일에 있는 두 수를 더한다고 할 때, CPU 앞에는 언제 어떤 수가 도착할까요? 지금 실행 중인 내용과 나중에 다시 열 내용이 각각 어느 장치에 놓이는지 봅니다.</p>
+</header>
+
+<div class="goal">
+<h2>이 장을 읽고 나면</h2>
+<ul>
+<li>CPU·주기억장치·저장장치의 역할을 구분한다.</li>
+<li>작은 명령열에서 레지스터, 메모리, 다음 명령 번호를 추적한다.</li>
+<li>데이터 크기와 전송률로 이상적 이동 시간을 구한다.</li>
+</ul>
+</div>
+
+<h2>파일을 보관하는 곳과 계산 재료가 놓인 곳</h2>
+<p>문서가 저장장치의 파일에 남아 있어도 전원이 꺼진 컴퓨터에서 계산이 이루어지지는 않습니다. SSD 같은 <b class="key">저장장치</b>는 전원이 꺼져도 보통 파일을 유지합니다. 프로그램이 실행되면 운영체제는 CPU가 사용할 코드와 데이터를 <b class="key">주기억장치</b>(메인 메모리)에서 접근할 수 있도록 준비합니다. 파일 전체를 처음에 무조건 한꺼번에 옮기는 것은 아닙니다. 실제 환경에서는 필요할 때 파일 일부를 가져오거나 이미 읽었던 부분을 기억해 둘 수 있습니다.</p>
+<p><b class="key">CPU</b>는 프로그램의 기계 명령을 실행하는 장치입니다. CPU 안에도 아주 작은 저장 공간인 <b class="key">레지스터</b>가 있습니다. 예를 들어 두 레지스터의 수를 더해 다른 레지스터에 적습니다. 메모리에서 읽은 자료를 레지스터에 넣는 동작과 레지스터의 결과를 메모리에 쓰는 동작은 구분할 수 있습니다. 메모리에 쓴 값이 자동으로 새 파일이 되는 것도 아닙니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 204" role="img" aria-label="CPU는 레지스터에서 값을 다룬다. 메인 메모리의 코드와 실행 자료에 접근하고, 파일을 오랫동안 보관하는 곳은 저장장치다. 운영체제가 파일과 실행 자료를 다룬다.">
+<rect class="f-soft" x="48" y="55" width="182" height="75" rx="3"/>
+<text class="f-cap" x="139" y="85" text-anchor="middle">CPU</text>
+<text class="f-s" x="139" y="113" text-anchor="middle">레지스터와 명령 실행</text>
+<rect class="f-box" x="289" y="55" width="182" height="75" rx="3"/>
+<text class="f-cap" x="380" y="85" text-anchor="middle">메인 메모리</text>
+<text class="f-s" x="380" y="113" text-anchor="middle">접근 가능한 코드·데이터</text>
+<rect class="f-box" x="530" y="55" width="182" height="75" rx="3"/>
+<text class="f-cap" x="621" y="85" text-anchor="middle">저장장치</text>
+<text class="f-s" x="621" y="113" text-anchor="middle">프로그램·문서 파일</text>
+<line class="f-line" x1="233" y1="81" x2="286" y2="81" marker-end="url(#f-arrow)"/>
+<line class="f-ink" x1="286" y1="108" x2="233" y2="108" marker-end="url(#f-arrow)"/>
+<line class="f-line" x1="474" y1="81" x2="527" y2="81" marker-end="url(#f-arrow)"/>
+<line class="f-ink" x1="527" y1="108" x2="474" y2="108" marker-end="url(#f-arrow)"/>
+<text class="f-s" x="259" y="154" text-anchor="middle">실행에 필요한 읽기·쓰기</text>
+<text class="f-s" x="504" y="174" text-anchor="middle">파일 읽기·쓰기</text>
+</svg>
+<figcaption>동작의 관계를 단순화했다. 운영체제와 장치의 제어 과정, CPU 캐시는 다음 예에서 따로 본다.</figcaption>
+</figure>
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+<h2>명령이 바뀔 때 어디의 값이 바뀌는지 기록한다</h2>
+<p>실제 CPU가 이해하는 <b>명령 집합</b>은 CPU 계열마다 다를 수 있습니다. 여기서는 계산에 필요한 동작을 분리하기 위해 가상의 명령 네 개를 씁니다. LOAD는 메모리 값을 레지스터로 읽어 옵니다. ADD는 두 레지스터의 값을 더합니다. STORE는 결과를 레지스터에서 메모리로 옮깁니다. 메모리 칸에는 주소가 있고, 프로그램 카운터(PC)는 이 모형에서 다음에 실행할 명령 번호입니다.</p>
+<div class="table-wrap"><table>
+<thead><tr><th scope="col">실행한 명령 번호</th><th scope="col">실행한 명령</th><th scope="col">R1</th><th scope="col">R2</th><th scope="col">메모리 2번 칸</th></tr></thead>
+<tbody>
+<tr><td>0</td><td>LOAD R1, [0]</td><td>7</td><td>0</td><td>0</td></tr>
+<tr><td>1</td><td>LOAD R2, [1]</td><td>7</td><td>5</td><td>0</td></tr>
+<tr><td>2</td><td>ADD R1, R2</td><td>12</td><td>5</td><td>0</td></tr>
+<tr><td>3</td><td>STORE [2], R1</td><td>12</td><td>5</td><td>12</td></tr>
+</tbody></table></div>
+<p>표의 수는 각 명령을 실행한 <em>뒤</em>의 상태입니다. 예를 들어 ADD 직후 R1은 12가 되었지만, 메모리 2번 칸은 아직 0입니다. STORE가 실행되어야 12가 적힙니다. 이 순서에서는 명령 번호가 1씩 늘지만, 실제 프로그램에서는 조건이 맞을 때 다른 명령 위치로 분기할 수도 있습니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 198" role="img" aria-label="메모리 0의 7과 메모리 1의 5를 레지스터 R1과 R2에 읽는다. 더한 12를 R1에 적은 뒤 메모리 2에 저장한다.">
+<rect class="f-box" x="40" y="51" width="120" height="42" rx="3"/>
+<text class="f-t" x="100" y="78" text-anchor="middle">[0] · 7</text>
+<rect class="f-box" x="225" y="51" width="120" height="42" rx="3"/>
+<text class="f-t" x="285" y="78" text-anchor="middle">[1] · 5</text>
+<rect class="f-box" x="595" y="51" width="120" height="42" rx="3"/>
+<text class="f-t" x="655" y="78" text-anchor="middle">[2] · 12</text>
+<text class="f-cap" x="385" y="36" text-anchor="middle">메모리 칸</text>
+<rect class="f-soft" x="40" y="127" width="120" height="40" rx="3"/>
+<text class="f-t" x="100" y="151" text-anchor="middle">R1 · 7</text>
+<rect class="f-soft" x="225" y="127" width="120" height="40" rx="3"/>
+<text class="f-t" x="285" y="151" text-anchor="middle">R2 · 5</text>
+<rect class="f-soft" x="410" y="127" width="120" height="40" rx="3"/>
+<text class="f-t" x="470" y="151" text-anchor="middle">R1 · 12</text>
+<line class="f-line" x1="100" y1="97" x2="100" y2="123" marker-end="url(#f-arrow)"/>
+<line class="f-line" x1="285" y1="97" x2="285" y2="123" marker-end="url(#f-arrow)"/>
+<line class="f-ink" x1="159" y1="153" x2="191" y2="182"/>
+<line class="f-ink" x1="191" y1="182" x2="470" y2="182"/>
+<line class="f-ink" x1="470" y1="182" x2="470" y2="170" marker-end="url(#f-arrow)"/>
+<line class="f-line" x1="349" y1="147" x2="406" y2="147" marker-end="url(#f-arrow)"/>
+<text class="f-s" x="377" y="132" text-anchor="middle">ADD</text>
+<line class="f-line" x1="532" y1="140" x2="619" y2="95" marker-end="url(#f-arrow)"/>
+<text class="f-s" x="579" y="143" text-anchor="middle">STORE</text>
+</svg>
+<figcaption>LOAD는 위에서 아래로 읽는다. 마지막 화살표는 결과를 메모리에 쓰는 STORE다.</figcaption>
+</figure>
+<div class="check" data-q="q3"></div>
+<div class="check" data-q="q4"></div>
+<h2>데이터를 어디에서 가져오는지가 실행에 영향을 준다</h2>
+<p>같은 계산이라도 필요한 값이 CPU 근처에 있는지, 메인 메모리나 파일에서 와야 하는지에 따라 걸리는 시간이 달라질 수 있습니다. <b>대역폭</b>은 한 초에 옮길 수 있는 데이터 양입니다. 순수하게 1MiB를 100MiB/s로 전송하면 전송률이 일정하다는 가정에서 0.01초입니다. 실제 작업에는 전송을 시작하기까지의 대기, 명령 실행, 경합 등의 시간이 추가될 수 있습니다.</p>
+<p>지연 시간은 요청 하나를 시작해 원하는 결과를 받기까지의 시간입니다. 대역폭이 큰 통로도 첫 번째 데이터가 도착하기까지 시간이 걸릴 수 있습니다. 작은 값을 여기저기 요청하는 작업과 큰 덩어리 하나를 전송하는 작업의 차이를 이 두 개념으로 볼 수 있습니다.</p>
+<div class="check" data-q="q5"></div>
+<div class="check" data-q="q6"></div>
+<h2>가상 CPU의 명령을 재생한다</h2>
+<pre data-example="python"><code>memory = [7, 5, 0]
+registers = {&quot;R1&quot;: 0, &quot;R2&quot;: 0}
+program = [(&quot;LOAD&quot;, &quot;R1&quot;, 0), (&quot;LOAD&quot;, &quot;R2&quot;, 1),
+           (&quot;ADD&quot;, &quot;R1&quot;, &quot;R2&quot;), (&quot;STORE&quot;, &quot;R1&quot;, 2)]
+for pc, (op, reg, operand) in enumerate(program):
+    if op == &quot;LOAD&quot;:
+        registers[reg] = memory[operand]
+    elif op == &quot;ADD&quot;:
+        registers[reg] += registers[operand]
+    else:  # STORE in this example
+        memory[operand] = registers[reg]
+    print(pc + 1, registers[&quot;R1&quot;], registers[&quot;R2&quot;], memory[2])
+
+print(f&quot;transfer: {1 / 100:.2f} seconds&quot;)</code></pre>
+<pre data-output><code>1 7 0 0
+2 7 5 0
+3 12 5 0
+4 12 5 12
+transfer: 0.01 seconds</code></pre>
+<p>출력 첫 열은 실행을 끝낸 명령 뒤에 다음으로 가리킬 번호입니다. 4에 도착하면 이 작은 프로그램에는 더 실행할 명령이 없습니다. 앞 표의 번호는 실행할 명령을, 코드의 번호는 실행한 뒤 다음 위치를 가리킵니다.</p>
+
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table>
+<thead><tr><th scope="col">핵심어</th><th scope="col">기억할 기준</th></tr></thead>
+<tbody>
+<tr><td><b class="key">CPU와 레지스터</b></td><td>명령을 실행해 CPU 가까이 있는 값을 읽거나 수정한다.</td></tr>
+<tr><td><b class="key">메인 메모리와 저장장치</b></td><td>실행에 쓰이는 자료와 오랫동안 보존되는 파일의 위치를 구분한다.</td></tr>
+<tr><td><b class="key">데이터 이동</b></td><td>자료가 있는 곳, 지연 시간과 전송률이 실행 시간에 영향을 준다.</td></tr>
+</tbody></table></div>
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>명령마다 읽고 쓴 위치를 구별하고, 그 위치까지 값을 가져오는 시간도 생각한다.</p></div>
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://docs.riscv.org/reference/isa/v20260120/unpriv/rv32.html">RISC-V 명령 집합 명세 · 레지스터와 load/store</a></li>
+<li><a href="https://www.intel.com/content/www/us/en/developer/articles/technical/intel-sdm.html">Intel 아키텍처 매뉴얼 · 메모리와 캐시</a></li>
+<li><a href="https://pages.cs.wisc.edu/~remzi/OSTEP/">OSTEP 원 저자 교재 · 스케줄링과 프로세스</a></li>
+</ul>
+
+<h2>확인 문제</h2>
+<p>아직 풀지 않은 문제입니다. 먼저 식이나 근거를 적어 보고 해설을 확인합니다.</p>
+<div id="quiz"></div>
+
+<section class="work" id="tools"></section>
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

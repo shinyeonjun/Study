@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>클래스로 여러 기록의 상태와 동작을 묶기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="PY12-1">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">Python</p>
+<p class="chap-num">PY12·1</p>
+<h1>클래스로 여러 기록의 상태와 동작을 묶기</h1>
+<p class="lead">같은 계산을 여러 시설에서 반복하더라도 기록이 서로 섞이면 안 됩니다. 각 기록에 검증과 평균 계산을 붙이고, 두 객체가 어떤 값을 따로 보관하는지 확인합니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>클래스와 클래스에서 만든 객체를 구분한다.</li><li>self와 인스턴스 속성이 무엇을 가리키는지 설명한다.</li><li>유효성 검사와 독립 상태를 작은 실행으로 확인한다.</li></ul></div>
+
+<h2>함수와 값 사이의 관계를 정한다</h2>
+<p>지점마다 대기시간을 모아 평균을 내려고 합니다. 목록 두 개와 함수들을 따로 넘겨도 됩니다. 한 가지 방식은 목록을 어느 지점의 것인지와 함께 보관하고, 기록 추가와 평균을 그 객체의 동작으로 묶는 것입니다. <strong>클래스</strong>는 그 규칙을 적은 정의이고 <strong>인스턴스</strong>는 정의로 만든 구체적인 객체입니다.</p>
+<p><code>WaitLog("동쪽")</code>을 만들 때 <code>__init__</code>에서 이름을 저장하고 빈 목록을 만듭니다. 이때 self는 지금 초기화하는 객체입니다. <code>east.add(3)</code>을 부르면 같은 객체가 add의 self로 전달됩니다. 서쪽 객체로 같은 메서드를 부르면 self가 서쪽을 가리킵니다.</p>
+<div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 230" role="img" aria-label="클래스 하나에서 서로 독립적인 동쪽과 서쪽 객체를 각각 만듦">
+<line class="f-line" x1="273" y1="115" x2="456" y2="64" marker-end="url(#f-arrow)"/><line class="f-line" x1="273" y1="115" x2="456" y2="166" marker-end="url(#f-arrow)"/><rect class="f-box" x="82" y="73" width="185" height="87" rx="3"/><rect class="f-soft" x="468" y="24" width="185" height="80" rx="3"/><rect class="f-soft" x="468" y="126" width="185" height="80" rx="3"/><text class="f-t f-b" x="174" y="110" text-anchor="middle">클래스 WaitLog</text><text class="f-s" x="174" y="139" text-anchor="middle">추가 · 평균</text><text class="f-t f-b" x="560" y="54" text-anchor="middle">동쪽 객체</text><text class="f-s" x="560" y="81" text-anchor="middle">기록 3, 9, 평균 6분</text><text class="f-t f-b" x="560" y="156" text-anchor="middle">서쪽 객체</text><text class="f-s" x="560" y="184" text-anchor="middle">아직 기록 없음</text>
+</svg><figcaption>클래스의 메서드 코드는 같고, 실행 때 self가 가리키는 객체마다 기록 목록이 다릅니다.</figcaption></figure>
+<h2>객체에 들어갈 값을 확인한다</h2>
+<p>대기시간에는 0 이상의 유한한 수만 기록하도록 정합니다. 이 조건을 add에서 확인하므로, 검사를 통과한 값만 목록에 추가됩니다. 평균은 자료가 없으면 <code>None</code>을 반환합니다. 0분이라는 측정 결과와 아직 측정한 적 없음을 서로 다른 상태로 표현합니다.</p>
+<div class="check" data-q="q3"></div>
+<pre data-example="python"><code>from math import isfinite
+from statistics import mean
+
+class WaitLog:
+    def __init__(self, name: str) -&gt; None:
+        self.name = name
+        self._minutes: list[float] = []
+
+    def add(self, minutes: float) -&gt; None:
+        if not isfinite(minutes) or minutes &lt; 0:
+            raise ValueError(&quot;대기는 유한한 0 이상이어야 합니다.&quot;)
+        self._minutes.append(minutes)
+
+    def average(self) -&gt; float | None:
+        if not self._minutes:
+            return None
+        return mean(self._minutes)
+
+east, west = WaitLog(&quot;동쪽&quot;), WaitLog(&quot;서쪽&quot;)
+east.add(3.0)
+east.add(9.0)
+print(east.name, east.average())
+print(west.name, west.average())
+try:
+    east.add(-1.0)
+except ValueError:
+    print(&quot;잘못된 기록은 추가되지 않습니다.&quot;)
+assert east.average() == 6.0 and west.average() is None</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>동쪽 6.0
+서쪽 None
+잘못된 기록은 추가되지 않습니다.</code></pre>
+<div class="check" data-q="q4"></div><div class="check" data-q="q5"></div>
+<h2>함께 쓸 값과 각자 보관할 값을 구분한다</h2>
+<p>만약 클래스 몸체에 <code>minutes = []</code>를 두고 모든 객체에서 거기에 값을 추가하면, 각 객체가 같은 목록에 접근하는 상황이 생깁니다. 각 기록이 따로 있어야 하므로 이 예는 <code>__init__</code> 안에서 <code>self._minutes = []</code>를 실행해 객체마다 새 목록을 만듭니다. 앞에 밑줄을 붙인 이름은 내부 동작에 쓰려는 관례이며, Python이 접근을 물리적으로 차단한다는 뜻은 아닙니다.</p>
+<div class="check" data-q="q6"></div>
+<div class="table-wrap"><table><thead><tr><th scope="col">구성</th><th scope="col">이 장의 예</th><th scope="col">뜻</th></tr></thead><tbody><tr><td>클래스</td><td>WaitLog</td><td>상태와 동작의 정의</td></tr><tr><td>인스턴스</td><td>east, west</td><td>정의로 만든 서로 다른 객체</td></tr><tr><td>인스턴스 속성</td><td>self.name, self._minutes</td><td>각 객체에 저장된 값</td></tr><tr><td>메서드</td><td>add, average</td><td>self에 해당하는 객체로 동작</td></tr></tbody></table></div>
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>메서드가 어떤 객체를 다루는지와, 어떤 값이 객체마다 독립적으로 있어야 하는지 먼저 정합니다.</p></div>
+
+<h2>참고 자료</h2>
+<ul><li><a href="https://docs.python.org/3/tutorial/classes.html">Python · 클래스</a></li><li><a href="py05-2.html">공부 교재 · 함수</a></li></ul>
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>미분방정식을 오일러 한 걸음으로 계산하기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="CA08-2">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">미적분</p>
+<p class="chap-num">CA08·2</p>
+<h1>미분방정식을 오일러 한 걸음으로 계산하기</h1>
+<p class="lead">연속적인 변화율만 알 때, 현재 기울기를 짧은 구간의 변화로 바꾸어 다음 상태를 근사합니다. 보폭이 정확도와 안정성에 어떤 영향을 주는지 봅니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>초기값 문제와 차분 업데이트를 구분한다.</li><li>전진 오일러법으로 감쇠 모형의 상태를 계산한다.</li><li>참 해의 안정성과 수치 근사의 안정성을 비교한다.</li></ul></div>
+
+<h2>연속 시간에서 상태값과 변화율을 연결한다</h2>
+<p>시간 t에서 상태 y(t)의 변화율이 y′(t)=−y(t)라고 합시다. 현재 상태가 양수인 경우, 값이 클수록 더 빠르게 줄어듭니다. 이런 식을 상태와 그 도함수를 연결한 미분방정식이라고 합니다. 초기조건 y(0)=1을 함께 준 경우 참 해는 y(t)=exp(−t)입니다. t=0에서 1이고 미분하면 −exp(−t)가 되어 두 조건을 만족합니다.</p>
+<div class="check" data-q="q1"></div>
+<h2>짧은 구간의 변화를 현재 기울기로 근사한다</h2>
+<p>시간 간격 h&gt;0를 정합니다. 현재 시간과 상태를 tₖ, yₖ로 적으면, 전진 오일러법은 시간 tₖ₊₁=tₖ+h와 상태 yₖ₊₁=yₖ+h·f(tₖ,yₖ)를 사용합니다. f는 미분방정식의 오른쪽입니다. 이 예에서는 f(t,y)=−y이므로 yₖ₊₁=(1−h)yₖ입니다.</p>
+<p>h=0.5일 때 첫 상태 1은 0.5가 되고, 그 상태의 기울기 −0.5를 써 다시 0.25가 됩니다. 두 걸음 뒤 t=1이고, 참값 exp(−1)≈0.367879와 비교하면 절대오차는 약 0.117879입니다.</p>
+<div class="check" data-q="q2"></div><div class="check" data-q="q3"></div>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 246" role="img" aria-label="참 해는 시간 1에서 약 0.3679, 보폭 0.5의 오일러 근사는 t=0, 0.5, 1에서 1, 0.5, 0.25">
+<line class="f-line" x1="118" y1="195" x2="660" y2="195"/><line class="f-line" x1="130" y1="195" x2="130" y2="38"/><line class="f-dash" x1="130" y1="195" x2="643" y2="195"/><text class="f-s" x="110" y="199" text-anchor="end">0</text><line class="f-dash" x1="130" y1="125" x2="643" y2="125"/><text class="f-s" x="110" y="129" text-anchor="end">0.5</text><line class="f-dash" x1="130" y1="55" x2="643" y2="55"/><text class="f-s" x="110" y="59" text-anchor="end">1</text><path class="f-ink" d="M130.00 55.00 L138.42 57.31 L146.83 59.59 L155.25 61.83 L163.67 64.03 L172.08 66.19 L180.50 68.32 L188.92 70.42 L197.33 72.48 L205.75 74.50 L214.17 76.49 L222.58 78.45 L231.00 80.38 L239.42 82.27 L247.83 84.14 L256.25 85.97 L264.67 87.77 L273.08 89.54 L281.50 91.29 L289.92 93.00 L298.33 94.69 L306.75 96.34 L315.17 97.97 L323.58 99.58 L332.00 101.16 L340.42 102.71 L348.83 104.23 L357.25 105.73 L365.67 107.21 L374.08 108.66 L382.50 110.09 L390.92 111.49 L399.33 112.87 L407.75 114.23 L416.17 115.56 L424.58 116.88 L433.00 118.17 L441.42 119.44 L449.83 120.69 L458.25 121.91 L466.67 123.12 L475.08 124.31 L483.50 125.48 L491.92 126.63 L500.33 127.76 L508.75 128.87 L517.17 129.96 L525.58 131.04 L534.00 132.09 L542.42 133.13 L550.83 134.16 L559.25 135.16 L567.67 136.15 L576.08 137.12 L584.50 138.08 L592.92 139.02 L601.33 139.95 L609.75 140.86 L618.17 141.75 L626.58 142.63 L635.00 143.50"/><circle cx="130" cy="55" r="4" class="f-fill"/><line class="f-line" x1="130" y1="55" x2="382.5" y2="125"/><circle cx="382.5" cy="125" r="4" class="f-fill"/><line class="f-line" x1="382.5" y1="125" x2="635" y2="160"/><circle cx="635" cy="160" r="4" class="f-fill"/><text class="f-s" x="670" y="137.49687823599808" text-anchor="middle">참 해</text><text class="f-s" x="673" y="166" text-anchor="middle">오일러</text><text class="f-s" x="130" y="214" text-anchor="middle">0</text><text class="f-s" x="382.5" y="214" text-anchor="middle">0.5</text><text class="f-s" x="635" y="214" text-anchor="middle">1</text><text class="f-s" x="657" y="233" text-anchor="middle">시간</text><text class="f-s" x="129" y="27" text-anchor="middle">상태</text>
+</svg><figcaption>오일러는 매 단계의 시작 상태로 기울기를 계산합니다. 곡선은 연속 시간의 참 해입니다.</figcaption></figure>
+<h2>같은 시각에서 간격을 바꾸어 비교한다</h2>
+<div class="table-wrap"><table><thead><tr><th scope="col">보폭 h</th><th scope="col">t=1까지 걸음 수</th><th scope="col">오일러 값</th><th scope="col">절대오차</th></tr></thead><tbody><tr><td>0.5</td><td>2</td><td>0.250000</td><td>0.117879</td></tr><tr><td>0.25</td><td>4</td><td>0.316406</td><td>0.051473</td></tr><tr><td>0.125</td><td>8</td><td>0.343609</td><td>0.024271</td></tr></tbody></table></div>
+<p>같은 끝 시각에서 간격을 줄이면 더 많은 기울기를 계산합니다. 이 매끄러운 모형에서는 오차도 작아집니다. 한 걸음의 근사 오차가 여러 걸음 뒤에 누적되므로, 보폭을 바꾸었을 때 결과가 얼마나 달라지는지도 검산합니다.</p>
+<div class="check" data-q="q4"></div>
+<pre data-example="python"><code>from math import exp
+
+def euler_decay(step, count):
+    state = 1.0
+    for _ in range(count):
+        state += step*(-state)
+    return state
+
+for step, count in ((0.5, 2), (0.25, 4), (0.125, 8)):
+    approximation = euler_decay(step, count)
+    print(step, count, f&quot;{approximation:.6f}&quot;, f&quot;{abs(exp(-1)-approximation):.6f}&quot;)
+print(&quot;보폭 3, 두 걸음:&quot;, euler_decay(3, 2))</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>0.5 2 0.250000 0.117879
+0.25 4 0.316406 0.051473
+0.125 8 0.343609 0.024271
+보폭 3, 두 걸음: 4.0</code></pre>
+<h2>감쇠해야 할 값이 프로그램에서는 커질 수 있다</h2>
+<p>연속 해 exp(−t)는 시간이 늘면 0으로 갑니다. 수치 규칙은 (1−h)를 매번 곱합니다. |1−h|&lt;1, 즉 0&lt;h&lt;2이면 수치 단계도 0으로 접근합니다. h=3이면 1, −2, 4, −8로 부호가 바뀌면서 크기가 커집니다. 이는 모형의 해가 발산한 것이 아니라, 너무 큰 보폭의 수치 규칙이 바뀐 결과입니다. 안정한 h라도 한 번의 예측이 충분히 정확하려면 오차를 별도로 확인합니다.</p>
+<div class="check" data-q="q5"></div><div class="check" data-q="q6"></div>
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>연속 변화율에 시간 간격을 곱해 다음 상태를 근사하고, 보폭에 따라 근사의 오차와 안정성을 확인합니다.</p></div>
+
+<h2>참고 자료</h2>
+<ul><li><a href="https://openstax.org/books/calculus-volume-2/pages/4-2-direction-fields-and-numerical-methods">OpenStax · 방향장과 오일러 수치해</a></li><li><a href="ca08-1.html">공부 교재 · 차분과 고정점</a></li></ul>
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>캐시는 가까운 주소와 최근 읽은 주소를 활용한다 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e8c'/%3E%3Cpath d='M8 22V10m8 12V14m8 8V6' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="SY02-2">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+
+<header class="chapter">
+<p class="chap-sub">시스템 · SY02 계산하는 기계</p>
+<p class="chap-num">SY02·2</p>
+<h1>캐시는 가까운 주소와 최근 읽은 주소를 활용한다</h1>
+<p class="lead">복도 끝 창고에 가서 상자 하나를 열 때마다 시간이 걸립니다. 같은 상자 안에 다음 재료도 있으면 한 번 가져와 여러 번 쓸 수 있습니다. 캐시도 주소를 묶어 가져옵니다.</p>
+</header>
+
+<div class="goal">
+<h2>이 장을 읽고 나면</h2>
+<ul>
+<li>캐시의 블록과 적중·실패의 뜻을 설명한다.</li>
+<li>두 칸짜리 직접 매핑 캐시의 저장 상태를 추적한다.</li>
+<li>연속 접근과 충돌 접근의 비용을 주어진 규칙으로 비교한다.</li>
+</ul>
+</div>
+
+<h2>한 주소만 바뀌어도 같은 블록을 다시 사용할 수 있다</h2>
+<p>CPU가 메인 메모리에 접근할 때, 이미 가져온 일부 값을 더 가까운 작은 저장 공간에 두는 것을 <b class="key">캐시</b>라고 합니다. 이 장은 CPU와 메인 메모리 사이의 읽기 캐시만 생각합니다. 원하는 데이터 블록이 있으면 <b class="key">적중</b>(hit), 없으면 <b class="key">실패</b>(miss)입니다. 실패일 때는 더 먼 곳에서 필요한 블록을 가져옵니다. 캐시 실패 자체는 프로그램 오류를 뜻하지 않습니다.</p>
+<p>실제 하드웨어에서는 메모리 주소 여러 개가 한 캐시 라인에 묶입니다. 교육용 모형에서는 메모리 주소 하나가 1바이트이고 주소 네 개를 한 블록으로 둡니다. 블록 0은 주소 0~3, 블록 1은 4~7, 블록 2는 8~11입니다. 이 모형의 블록 번호는 <code>주소 // 4</code>입니다. 바로 앞에서 읽은 주소 0과 다음 주소 1은 서로 다른 값이지만 같은 블록의 일부입니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 188" role="img" aria-label="주소 0부터 11까지를 네 칸씩 묶으면 블록 0,1,2다. 각 블록 안 오프셋은 0부터 3이다.">
+<text class="f-cap" x="151" y="43" text-anchor="middle">블록 0</text>
+<rect class="f-soft" x="51" y="62" width="50" height="42" rx="0"/>
+<text class="f-t" x="76" y="89" text-anchor="middle">0</text>
+<rect class="f-soft" x="101" y="62" width="50" height="42" rx="0"/>
+<text class="f-t" x="126" y="89" text-anchor="middle">1</text>
+<rect class="f-soft" x="151" y="62" width="50" height="42" rx="0"/>
+<text class="f-t" x="176" y="89" text-anchor="middle">2</text>
+<rect class="f-soft" x="201" y="62" width="50" height="42" rx="0"/>
+<text class="f-t" x="226" y="89" text-anchor="middle">3</text>
+<line class="f-ink" x1="51" y1="126" x2="251" y2="126"/>
+<text class="f-s" x="151" y="149" text-anchor="middle">블록 안 오프셋 0–3</text>
+<text class="f-cap" x="380" y="43" text-anchor="middle">블록 1</text>
+<rect class="f-box" x="280" y="62" width="50" height="42" rx="0"/>
+<text class="f-t" x="305" y="89" text-anchor="middle">4</text>
+<rect class="f-box" x="330" y="62" width="50" height="42" rx="0"/>
+<text class="f-t" x="355" y="89" text-anchor="middle">5</text>
+<rect class="f-box" x="380" y="62" width="50" height="42" rx="0"/>
+<text class="f-t" x="405" y="89" text-anchor="middle">6</text>
+<rect class="f-box" x="430" y="62" width="50" height="42" rx="0"/>
+<text class="f-t" x="455" y="89" text-anchor="middle">7</text>
+<line class="f-ink" x1="280" y1="126" x2="480" y2="126"/>
+<text class="f-s" x="380" y="149" text-anchor="middle">블록 안 오프셋 0–3</text>
+<text class="f-cap" x="609" y="43" text-anchor="middle">블록 2</text>
+<rect class="f-soft" x="509" y="62" width="50" height="42" rx="0"/>
+<text class="f-t" x="534" y="89" text-anchor="middle">8</text>
+<rect class="f-soft" x="559" y="62" width="50" height="42" rx="0"/>
+<text class="f-t" x="584" y="89" text-anchor="middle">9</text>
+<rect class="f-soft" x="609" y="62" width="50" height="42" rx="0"/>
+<text class="f-t" x="634" y="89" text-anchor="middle">10</text>
+<rect class="f-soft" x="659" y="62" width="50" height="42" rx="0"/>
+<text class="f-t" x="684" y="89" text-anchor="middle">11</text>
+<line class="f-ink" x1="509" y1="126" x2="709" y2="126"/>
+<text class="f-s" x="609" y="149" text-anchor="middle">블록 안 오프셋 0–3</text>
+</svg>
+<figcaption>상자 한 묶음이 네 바이트다. 번호가 이어진 주소라도 블록 경계를 건너면 다른 블록이다.</figcaption>
+</figure>
+<p>곧 다시 같은 자료를 참조하는 경향을 <b>시간 지역성</b>이라고 합니다. 방금 읽은 주소 근처를 바로 읽는 경향은 <b>공간 지역성</b>입니다. 캐시는 두 경향 덕분에 작아도 자주 쓰는 값이나 이어서 읽을 값을 가까이 둘 수 있습니다.</p>
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+<h2>같은 캐시 칸을 차지하는 두 블록은 서로를 밀어낸다</h2>
+<p>이 예의 캐시는 비어 있는 칸이 둘이고, 각 칸은 블록 하나를 담습니다. 블록 번호를 2로 나눈 나머지가 쓸 칸입니다. 이처럼 각 블록이 들어갈 위치를 하나로 고정하는 방식이 <b class="key">직접 매핑</b>입니다. 블록 0과 2는 둘 다 칸 0을 사용하고, 블록 1은 칸 1을 사용합니다. 칸 0에 무언가 있다는 사실만으로 적중이 되지 않습니다. 캐시는 찾는 블록과 같은 블록인지도 확인합니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 204" role="img" aria-label="블록 0과 2의 화살표는 캐시 칸 0으로 향한다. 블록 1의 화살표는 캐시 칸 1로 향한다.">
+<rect class="f-box" x="69" y="40" width="158" height="41" rx="3"/>
+<text class="f-t" x="148" y="66" text-anchor="middle">블록 0</text>
+<rect class="f-box" x="301" y="40" width="158" height="41" rx="3"/>
+<text class="f-t" x="380" y="66" text-anchor="middle">블록 1</text>
+<rect class="f-box" x="533" y="40" width="158" height="41" rx="3"/>
+<text class="f-t" x="612" y="66" text-anchor="middle">블록 2</text>
+<rect class="f-soft" x="180" y="131" width="181" height="44" rx="3"/>
+<text class="f-t" x="270.5" y="158" text-anchor="middle">캐시 칸 0</text>
+<rect class="f-box" x="441" y="131" width="181" height="44" rx="3"/>
+<text class="f-t" x="531.5" y="158" text-anchor="middle">캐시 칸 1</text>
+<line class="f-line" x1="148" y1="85" x2="240" y2="128" marker-end="url(#f-arrow)"/>
+<line class="f-ink" x1="380" y1="85" x2="517" y2="128" marker-end="url(#f-arrow)"/>
+<line class="f-line" x1="612" y1="86" x2="302" y2="128" marker-end="url(#f-arrow)"/>
+<text class="f-s" x="130" y="117" text-anchor="middle">0 ÷ 2 → 나머지 0</text>
+<text class="f-s" x="517" y="108" text-anchor="middle">1 → 1</text>
+<text class="f-s" x="666" y="114" text-anchor="middle">2 → 0</text>
+</svg>
+<figcaption>캐시 칸 0에는 두 블록 가운데 나중에 넣은 하나만 남는다.</figcaption>
+</figure>
+<p>주소를 [0,1,2,8,0,4,5,8] 순서로 읽습니다. 처음 0은 블록을 가져와야 하므로 실패입니다. 1과 2는 같은 블록 0이 남아 있어 적중합니다. 8은 블록 2라 실패한 뒤 칸 0의 블록 0을 밀어냅니다. 그래서 그 다음 0도 다시 실패합니다.</p>
+<div class="table-wrap"><table>
+<thead><tr><th scope="col">접근 주소</th><th scope="col">0</th><th scope="col">1</th><th scope="col">2</th><th scope="col">8</th><th scope="col">0</th><th scope="col">4</th><th scope="col">5</th><th scope="col">8</th></tr></thead>
+<tbody>
+<tr><td>블록 번호</td><td>0</td><td>0</td><td>0</td><td>2</td><td>0</td><td>1</td><td>1</td><td>2</td></tr>
+<tr><td>적중 여부</td><td>실패</td><td>적중</td><td>적중</td><td>실패</td><td>실패</td><td>실패</td><td>적중</td><td>실패</td></tr>
+</tbody></table></div>
+<div class="check" data-q="q3"></div>
+<div class="check" data-q="q4"></div>
+<h2>복잡한 기계를 측정하는 값과 모형 비용을 구별한다</h2>
+<p>가상으로 적중 한 번의 전체 비용을 1, 실패 한 번의 전체 비용을 20이라 둡니다. 위 접근의 비용은 적중 3회와 실패 5회로 3×1+5×20=103입니다. 연속 주소 0~7은 블록 0과 1을 한 번씩 가져온 뒤 각 블록 안에서 세 번 적중합니다. 적중 6회와 실패 2회이므로 6+40=46입니다. 이 숫자는 실제 기계의 시간 측정값이 아닙니다.</p>
+<p>실제 CPU에는 여러 캐시 층과 다양한 매핑이 있습니다. 미리 데이터를 가져오거나 한 번에 여러 요청을 처리할 수도 있습니다. 배열의 순서대로 접근하는 코드가 더 유리할 수 있는 이유는 보이지만, 정확한 속도 비교는 실제 환경에서 실행해 확인해야 합니다.</p>
+<div class="check" data-q="q5"></div>
+<div class="check" data-q="q6"></div>
+<h2>주소를 블록·칸으로 바꿔서 적중을 센다</h2>
+<pre data-example="python"><code>def run(addresses):
+    cache = [None, None]
+    flags = []
+    for address in addresses:
+        block = address // 4
+        slot = block % len(cache)
+        hit = cache[slot] == block
+        flags.append(&quot;H&quot; if hit else &quot;M&quot;)
+        cache[slot] = block
+    hits = flags.count(&quot;H&quot;)
+    misses = flags.count(&quot;M&quot;)
+    return &quot; &quot;.join(flags), hits, misses, hits + 20 * misses
+
+for name, addresses in (
+    (&quot;mixed&quot;, [0, 1, 2, 8, 0, 4, 5, 8]),
+    (&quot;ordered&quot;, range(8)),
+):
+    print(name, *run(addresses))</code></pre>
+<pre data-output><code>mixed M H H M M M H M 3 5 103
+ordered M H H H M H H H 6 2 46</code></pre>
+<p>각 비교의 처음에는 캐시가 비어 있습니다. 두 번째 비교에 첫 기록의 캐시가 남아 있으면 첫 접근의 결과가 달라질 수 있습니다.</p>
+
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table>
+<thead><tr><th scope="col">핵심어</th><th scope="col">기억할 기준</th></tr></thead>
+<tbody>
+<tr><td><b class="key">적중과 실패</b></td><td>원하는 블록이 이미 저장되어 있는지 구분한다.</td></tr>
+<tr><td><b class="key">공간·시간 지역성</b></td><td>가까운 주소와 최근 참조한 주소를 다시 쓸 가능성이다.</td></tr>
+<tr><td><b class="key">직접 매핑</b></td><td>한 칸을 공유하는 서로 다른 블록은 서로를 밀어낼 수 있다.</td></tr>
+</tbody></table></div>
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>주소를 찍어 보는 대신 같은 블록에 속하는지와 그 블록이 캐시에 남아 있는지를 계산한다.</p></div>
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://www.intel.com/content/www/us/en/developer/articles/technical/intel-sdm.html">Intel 아키텍처 매뉴얼 · 메모리와 캐시</a></li>
+<li><a href="https://pages.cs.wisc.edu/~remzi/OSTEP/">OSTEP 원 저자 교재 · 스케줄링과 프로세스</a></li>
+</ul>
+
+<h2>확인 문제</h2>
+<p>아직 풀지 않은 문제입니다. 먼저 식이나 근거를 적어 보고 해설을 확인합니다.</p>
+<div id="quiz"></div>
+
+<section class="work" id="tools"></section>
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

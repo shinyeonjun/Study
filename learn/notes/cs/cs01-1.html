@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>입력·출력 계약과 처음 찾는 절차 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e8c'/%3E%3Cpath d='M8 22V10m8 12V14m8 8V6' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="CS01-1">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+
+<header class="chapter">
+<p class="chap-sub">자료구조·알고리즘 · CS01 알고리즘의 표현</p>
+<p class="chap-num">CS01·1</p>
+<h1>입력·출력 계약과 처음 찾는 절차</h1>
+<p class="lead">목록에서 처음 기준 이상이 되는 위치를 찾습니다. 값을 반환할지 위치를 반환할지부터 정하고, 그 약속을 의사코드와 함수로 옮깁니다.</p>
+</header>
+
+<div class="goal">
+<h2>이 장을 읽고 나면</h2>
+<ul>
+<li>문제의 입력 조건과 반환값을 계약으로 적는다.</li>
+<li>처리 순서와 분기를 의사코드로 표현한다.</li>
+<li>작은 입력에서 반환 위치를 확인하고, 찾지 못한 경우를 처리한다.</li>
+</ul>
+</div>
+
+<h2>코드를 쓰기 전에 무엇을 만들지 약속한다</h2>
+<p>센서가 보낸 숫자 기록에서 처음으로 기준에 도달한 위치를 찾습니다. 기준이 7이고 목록이 [3,1,7,7,2]라면 답의 값은 7이고, 위치는 2입니다. 값과 위치 중 어떤 것을 돌려줄지 먼저 정해야 호출하는 코드가 결과를 사용할 수 있습니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 176" role="img" aria-label="정수 목록과 기준값을 받아 한 칸씩 비교한다. 가장 이른 위치나 -1이 출력이다.">
+<rect class="f-box" x="42" y="53" width="186" height="73" rx="3"/>
+<text class="f-cap" x="135" y="80" text-anchor="middle">입력</text>
+<text class="f-s" x="135" y="106" text-anchor="middle">정수 목록과 기준값</text>
+<line class="f-line" x1="231" y1="90" x2="280" y2="90" marker-end="url(#f-arrow)"/>
+<rect class="f-box" x="287" y="53" width="186" height="73" rx="3"/>
+<text class="f-cap" x="380" y="80" text-anchor="middle">절차</text>
+<text class="f-s" x="380" y="106" text-anchor="middle">앞에서부터 한 칸씩 비교</text>
+<line class="f-line" x1="476" y1="90" x2="525" y2="90" marker-end="url(#f-arrow)"/>
+<rect class="f-soft" x="532" y="53" width="186" height="73" rx="3"/>
+<text class="f-cap" x="625" y="80" text-anchor="middle">출력</text>
+<text class="f-s" x="625" y="106" text-anchor="middle">가장 이른 위치 또는 −1</text>
+
+<text class="f-s" x="380" y="157" text-anchor="middle">위치 번호는 0부터 센다.</text>
+</svg>
+<figcaption>입력과 출력을 먼저 적으면 같은 문제를 다른 언어로 구현해도 반환값을 대조할 수 있다.</figcaption>
+</figure>
+<p><b class="key">계약</b>의 입력 조건은 비교할 정수의 유한한 목록과 정수 기준값입니다. 빈 목록도 허용합니다. 출력 조건은 기준 이상인 값이 있으면 그중 가장 작은 0부터 센 위치, 없으면 −1입니다. 목록의 앞뒤 순서는 입력으로 주어집니다. 정렬된 목록만 받는다는 조건은 두지 않습니다. 실행에서 목록도 바꾸지 않기로 합니다.</p>
+<p>이렇게 필요한 입력을 적은 것을 <b>전제조건</b>, 올바른 출력과 입력 보존 등 실행 후 약속을 <b>후조건</b>이라고 부를 수 있습니다. 이 예의 코드가 전제에 맞지 않는 모든 문자열이나 결측값을 어떻게 다루는지까지 약속한 것은 아닙니다.</p>
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+
+<h2>의사코드로 비교하는 순서를 드러낸다</h2>
+<p><b class="key">알고리즘</b>은 입력을 받아 결과를 얻는 정해진 절차입니다. 언어의 구체 문법보다 조건과 반복의 순서를 보여 주려고 적는 글이 <b class="key">의사코드</b>입니다. 다음 줄에서 들여쓰기는 바깥 절차 안에서 언제 실행하는지를 드러냅니다.</p>
+<pre><code>목록의 각 위치 i를 0부터 왼쪽에서 오른쪽으로 확인한다.
+    목록[i]가 기준 이상이면 i를 반환하고 끝낸다.
+모든 확인을 마쳤는데 반환하지 않았으면 −1을 반환한다.</code></pre>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 212" role="img" aria-label="목록 [3,1,7,7,2]에서 기준값 7을 찾는다. 인덱스 0과 1을 지나 처음 7인 인덱스 2에서 반환한다.">
+<text class="f-cap" x="380" y="31" text-anchor="middle">기준값 7 · 왼쪽부터 비교한다.</text>
+<text class="f-s" x="161" y="69" text-anchor="middle">0</text>
+<rect class="f-box" x="116" y="82" width="90" height="56" rx="3"/>
+<text class="f-cap" x="161" y="117" text-anchor="middle">3</text>
+<text class="f-s" x="161" y="166" text-anchor="middle">넘어감</text>
+<text class="f-s" x="264" y="69" text-anchor="middle">1</text>
+<rect class="f-box" x="219" y="82" width="90" height="56" rx="3"/>
+<text class="f-cap" x="264" y="117" text-anchor="middle">1</text>
+<text class="f-s" x="264" y="166" text-anchor="middle">넘어감</text>
+<text class="f-s" x="367" y="69" text-anchor="middle">2</text>
+<rect class="f-soft" x="322" y="82" width="90" height="56" rx="3"/>
+<text class="f-cap" x="367" y="117" text-anchor="middle">7</text>
+<text class="f-s" x="367" y="166" text-anchor="middle">위치 2 반환</text>
+<text class="f-s" x="470" y="69" text-anchor="middle">3</text>
+<rect class="f-box" x="425" y="82" width="90" height="56" rx="3"/>
+<text class="f-cap" x="470" y="117" text-anchor="middle">7</text>
+<text class="f-s" x="470" y="166" text-anchor="middle">비교하지 않음</text>
+<text class="f-s" x="573" y="69" text-anchor="middle">4</text>
+<rect class="f-box" x="528" y="82" width="90" height="56" rx="3"/>
+<text class="f-cap" x="573" y="117" text-anchor="middle">2</text>
+<text class="f-s" x="573" y="166" text-anchor="middle">비교하지 않음</text>
+<line class="f-line" x1="116" y1="190" x2="369" y2="190" marker-end="url(#f-arrow)"/>
+</svg>
+<figcaption>위치 3에도 7이 있지만 먼저 반환하면 거기까지 비교할 필요가 없다.</figcaption>
+</figure>
+<p>앞에서부터 비교하므로 2에서 반환하는 순간에는 더 이른 두 칸이 이미 조건을 만족하지 않았습니다. 빈 목록이면 반복문을 한 번도 실행하지 않고 −1을 얻습니다. 마지막에 조건이 맞는 경우엔 마지막 칸에서도 정상적으로 위치를 반환해야 합니다.</p>
+<div class="check" data-q="q3"></div>
+<div class="check" data-q="q4"></div>
+
+<h2>반환값을 다음 절차에서 다시 확인한다</h2>
+<p>결과가 −1이라고 해서 곧바로 <code>values[-1]</code>이라고 쓰면 안 됩니다. Python에서는 음수 인덱스 −1이 마지막 원소를 읽는 표현이기 때문입니다. 호출하는 곳에서는 결과가 −1인지 먼저 검사해야, 찾지 못한 일을 마지막 원소를 찾은 것과 구분할 수 있습니다. 이처럼 특별한 값은 사용처까지 포함해 의미를 문서로 정합니다.</p>
+<p>조건을 <code>&gt;</code>로 쓰면 기준값과 같은 7을 지나갑니다. 맨 앞, 찾지 못함, 빈 목록, 기준과 같은 값이 반복됨을 각각 검사하면 예시에만 우연히 맞는 실수를 줄입니다.</p>
+<div class="check" data-q="q5"></div>
+<div class="check" data-q="q6"></div>
+
+<h2>의사코드를 함수에 옮겨 네 경우를 확인한다</h2>
+<pre data-example="python"><code>def first_at_least(values, threshold):
+    for index, value in enumerate(values):
+        if value &gt;= threshold:
+            return index
+    return -1
+
+cases = [
+    ([3, 1, 7, 7, 2], 7, 2),
+    ([9, 1], 7, 0),
+    ([1, 2], 7, -1),
+    ([], 7, -1),
+]
+for values, threshold, expected in cases:
+    result = first_at_least(values, threshold)
+    assert result == expected
+    print(values, &quot;-&gt;&quot;, result)</code></pre>
+<pre data-output><code>[3, 1, 7, 7, 2] -&gt; 2
+[9, 1] -&gt; 0
+[1, 2] -&gt; -1
+[] -&gt; -1</code></pre>
+<p><code>enumerate</code>는 위치 번호와 값을 함께 줍니다. <code>return</code>은 함수를 끝내고 호출한 쪽에 값을 주며, 출력 명령은 그 값을 이 예에서 확인하는 용도입니다.</p>
+
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table>
+<thead><tr><th scope="col">구성</th><th scope="col">남길 정보</th></tr></thead>
+<tbody>
+<tr><td>입력 전제</td><td>어떤 값과 순서가 허용되는지.</td></tr>
+<tr><td>출력 약속</td><td>무엇을 반환하며 여러 개거나 없을 때는 어떻게 하는지.</td></tr>
+<tr><td>절차</td><td>값을 어떤 순서와 조건으로 검사하고 언제 끝내는지.</td></tr>
+</tbody>
+</table></div>
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://ocw.mit.edu/courses/6-006-introduction-to-algorithms-spring-2020/resources/lecture-notes/">MIT 6.006 · 계산 문제, 알고리즘과 정확성</a></li>
+<li><a href="../py/py05-1.html">학습 교재 PY05 · 함수의 입력과 반환</a></li>
+</ul>
+
+
+<h2>확인 문제</h2>
+<p>아직 풀지 않은 문제입니다. 먼저 식이나 근거를 적어 보고 해설을 확인합니다.</p>
+<div id="quiz"></div>
+
+<section class="work" id="tools"></section>
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

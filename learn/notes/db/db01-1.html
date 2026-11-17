@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>표, 스키마, 한 행의 의미 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="DB01-1">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">데이터베이스 · DB01 관계형 데이터</p>
+<p class="chap-num">DB01·1</p>
+<h1>표, 스키마, 한 행의 의미</h1>
+<p class="lead">주문이 네 줄이라는 말과 상품이 네 개 팔렸다는 말은 서로 다른 정보를 줍니다. 관계형 데이터베이스에서는 행 하나가 세는 대상부터 정합니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul>
+<li>표와 행·열, 데이터와 스키마를 구별한다.</li>
+<li>행 하나가 나타내는 관측 단위를 정의한다.</li>
+<li>주문 수, 항목 줄 수, 판매 수량을 각각 계산한다.</li>
+</ul></div>
+
+<h2>행 하나를 무엇으로 세는가?</h2>
+<p>여러 날에 걸쳐 문구를 주문하는 합성 가게 자료를 사용합니다. 같은 사람이 여러 건 주문할 수 있고, 주문에는 상품이 여러 종류 들어갈 수 있습니다. 관계형 데이터베이스에서는 고객, 주문, 주문항목처럼 단위가 같은 기록을 표로 모읍니다. <code>customers</code>에는 고객 번호 <code>customer_id</code>와 이름 <code>name</code>이 들어 있습니다.</p>
+<p><b class="key">열</b>에는 모든 고객에게 공통인 한 가지 속성이 들어 있고, <b class="key">행</b>에는 고객 한 명에게 해당하는 값이 들어갑니다. 한 줄이 항목인지 주문인지 고객인지를 나타내는 단위를 <b class="key">입도</b>라고 합니다. '고객 수'를 구할 때 고객 표와 주문 표의 줄 수를 바꾸어 쓸 수 없는 이유입니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 209" role="img" aria-label="고객 1 Mina, 2 Jun, 3 Sol의 이름과 식별자">
+<text class="f-cap" x="380" y="29" text-anchor="middle">customers의 행과 열</text>
+<rect class="f-soft" x="145" y="43" width="235" height="37"/>
+<text class="f-s" x="262.5" y="66.5" text-anchor="middle">customer_id · 정수</text>
+<rect class="f-soft" x="380" y="43" width="235" height="37"/>
+<text class="f-s" x="497.5" y="66.5" text-anchor="middle">name · 텍스트</text>
+<rect class="f-box" x="145" y="80" width="235" height="37"/>
+<text class="f-t" x="262.5" y="103.5" text-anchor="middle">1</text>
+<rect class="f-box" x="380" y="80" width="235" height="37"/>
+<text class="f-t" x="497.5" y="103.5" text-anchor="middle">Mina</text>
+<rect class="f-box" x="145" y="117" width="235" height="37"/>
+<text class="f-t" x="262.5" y="140.5" text-anchor="middle">2</text>
+<rect class="f-box" x="380" y="117" width="235" height="37"/>
+<text class="f-t" x="497.5" y="140.5" text-anchor="middle">Jun</text>
+<rect class="f-box" x="145" y="154" width="235" height="37"/>
+<text class="f-t" x="262.5" y="177.5" text-anchor="middle">3</text>
+<rect class="f-box" x="380" y="154" width="235" height="37"/>
+<text class="f-t" x="497.5" y="177.5" text-anchor="middle">Sol</text>
+</svg>
+<figcaption>한 행은 고객 한 명이며 한 열은 같은 종류의 값을 담습니다.</figcaption>
+</figure>
+<div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
+
+<h2>표의 정의와 그날의 내용</h2>
+<p><b class="key">스키마</b>는 표의 이름, 열 이름과 유형, 키, 값의 제약 등 데이터를 기록하는 구조입니다. <code>customer_id INTEGER PRIMARY KEY</code>는 이 표의 정수 고객 식별자를 정합니다. <code>name TEXT NOT NULL</code>은 표시 이름의 데이터 유형과 누락 금지를 정합니다. Mina를 고객으로 추가하는 일은 그 정의에 맞는 값을 입력하는 일입니다. 고객의 이메일을 저장할 열 자체를 새로 만들면 표의 구조가 달라집니다.</p>
+<p>결과에 순서가 필요하다면 <code>ORDER BY</code>로 정합니다. 행이 파일에 들어간 순서로 결과가 나온다고 가정할 수 없습니다. 관계 모델을 바탕으로 한 데이터베이스라도 SQL 질의 결과에는 같은 값의 행을 여러 개 담을 수 있습니다. 이름이 같은 두 고객에게서 이름만 조회하면 같은 문자열이 두 번 나옵니다. 두 이름을 하나로 묶는 일과 두 고객을 같은 사람으로 보는 일은 구분합니다.</p>
+<div class="check" data-q="q3"></div><div class="check" data-q="q4"></div>
+
+<h2>질문에 맞는 표를 고르기</h2>
+<p>주문 101에 공책 한 개와 펜 두 개가 있다면 주문은 한 건, 상품 항목은 두 줄, 수량은 세 개입니다. 다음 날 같은 사람이 다시 주문하면 주문 수는 늘고 고객 수는 유지됩니다. 월 주문 건수는 해당 월의 주문을 세고, 펜 판매 수량은 펜에 해당하는 상품 항목들의 수량을 더합니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 209" role="img" aria-label="고객, 주문, 주문항목은 행이 나타내는 대상이 각각 다르다.">
+<text class="f-cap" x="380" y="29" text-anchor="middle">행의 단위 읽기</text>
+<rect class="f-soft" x="53" y="43" width="167" height="37"/>
+<text class="f-s" x="136.5" y="66.5" text-anchor="middle">표 이름</text>
+<rect class="f-soft" x="220" y="43" width="252" height="37"/>
+<text class="f-s" x="346" y="66.5" text-anchor="middle">행 하나의 의미</text>
+<rect class="f-soft" x="472" y="43" width="235" height="37"/>
+<text class="f-s" x="589.5" y="66.5" text-anchor="middle">식별자</text>
+<rect class="f-box" x="53" y="80" width="167" height="37"/>
+<text class="f-t" x="136.5" y="103.5" text-anchor="middle">customers</text>
+<rect class="f-box" x="220" y="80" width="252" height="37"/>
+<text class="f-t" x="346" y="103.5" text-anchor="middle">고객 한 명</text>
+<rect class="f-box" x="472" y="80" width="235" height="37"/>
+<text class="f-t" x="589.5" y="103.5" text-anchor="middle">customer_id</text>
+<rect class="f-box" x="53" y="117" width="167" height="37"/>
+<text class="f-t" x="136.5" y="140.5" text-anchor="middle">orders</text>
+<rect class="f-box" x="220" y="117" width="252" height="37"/>
+<text class="f-t" x="346" y="140.5" text-anchor="middle">주문 한 건</text>
+<rect class="f-box" x="472" y="117" width="235" height="37"/>
+<text class="f-t" x="589.5" y="140.5" text-anchor="middle">order_id</text>
+<rect class="f-box" x="53" y="154" width="167" height="37"/>
+<text class="f-t" x="136.5" y="177.5" text-anchor="middle">order_items</text>
+<rect class="f-box" x="220" y="154" width="252" height="37"/>
+<text class="f-t" x="346" y="177.5" text-anchor="middle">주문의 항목 한 줄</text>
+<rect class="f-box" x="472" y="154" width="235" height="37"/>
+<text class="f-t" x="589.5" y="177.5" text-anchor="middle">order_id + line_no</text>
+</svg>
+<figcaption>한 주문에 공책 한 개와 펜 두 개가 있으면 주문은 한 건, 항목은 두 줄, 수량은 세 개입니다.</figcaption>
+</figure>
+<div class="why"><p class="box-k">왜 그럴까?</p><p>주문 행 수와 실제 주문한 고객 수가 다른 이유는?</p><details><summary>모범 답 보기</summary><p>고객 번호는 주문 표에 여러 번 나타날 수 있습니다. 주문한 고객 수가 필요하면 해당 기간의 주문에서 고객 번호가 몇 종류인지 셉니다.</p></details></div>
+<div class="check" data-q="q5"></div><div class="check" data-q="q6"></div>
+
+<h2>두 표를 열어 직접 읽기</h2>
+<p><code>:memory:</code>는 연결을 유지하는 동안 메모리에 예제용 데이터베이스를 만듭니다. <code>CREATE TABLE</code>로 구조를 정하고 <code>INSERT</code>로 자료를 넣은 뒤 <code>SELECT</code>로 값을 읽습니다. <code>fetchall()</code>이 돌려준 리스트 안에서 튜플 하나가 결과의 행 하나입니다.</p>
+<p class="small">실행 예제</p>
+<pre data-example="python"><code>import sqlite3
+
+with sqlite3.connect(&quot;:memory:&quot;) as db:
+    db.execute(&quot;PRAGMA foreign_keys = ON&quot;)
+    db.executescript(&quot;&quot;&quot;
+    CREATE TABLE customers (
+        customer_id INTEGER PRIMARY KEY,
+        name TEXT NOT NULL
+    );
+    CREATE TABLE orders (
+        order_id INTEGER PRIMARY KEY,
+        customer_id INTEGER NOT NULL REFERENCES customers(customer_id),
+        order_date TEXT NOT NULL,
+        status TEXT NOT NULL CHECK (status IN ('paid', 'pending')),
+        total_won INTEGER NOT NULL CHECK (total_won &gt;= 0),
+        coupon_won INTEGER CHECK (coupon_won &gt;= 0)
+    );
+    &quot;&quot;&quot;)
+    db.executemany(&quot;INSERT INTO customers VALUES (?, ?)&quot;, [
+        (1, 'Mina'),
+        (2, 'Jun'),
+        (3, 'Sol'),
+    ])
+    db.executemany(&quot;INSERT INTO orders VALUES (?, ?, ?, ?, ?, ?)&quot;, [
+        (101, 1, '2025-01-02', 'paid', 10000, None),
+        (102, 1, '2025-01-03', 'paid', 15000, 1000),
+        (103, 2, '2025-01-04', 'pending', 12000, None),
+        (104, 2, '2025-01-05', 'paid', 15000, 0),
+    ])
+
+    names = db.execute(
+        &quot;SELECT customer_id, name FROM customers ORDER BY customer_id&quot;
+    ).fetchall()
+    orders = db.execute(
+        &quot;SELECT order_id, customer_id FROM orders ORDER BY order_id&quot;
+    ).fetchall()
+    print(&quot;customers:&quot;, names)
+    print(&quot;order -&gt; customer:&quot;, orders)
+    print(&quot;customer rows:&quot;, len(names), &quot;order rows:&quot;, len(orders))
+db.close()</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>customers: [(1, 'Mina'), (2, 'Jun'), (3, 'Sol')]
+order -&gt; customer: [(101, 1), (102, 1), (103, 2), (104, 2)]
+customer rows: 3 order rows: 4</code></pre>
+<p>고객 번호 3은 고객 표에 있지만 주문 표에는 나오지 않습니다. 이번 예의 규칙에서는 아직 주문한 적이 없어도 고객으로 등록할 수 있습니다.</p>
+<div class="check" data-q="q7"></div><div class="check" data-q="q8"></div>
+
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table><thead><tr><th scope="col">개념</th><th scope="col">확인할 것</th></tr></thead><tbody>
+<tr><th scope="row"><b class="key">스키마</b></th><td>값을 담는 구조와 규칙을 뜻한다.</td></tr>
+<tr><th scope="row"><b class="key">입도</b></th><td>행 한 줄이 나타내는 대상을 정한다.</td></tr>
+<tr><th scope="row"><b class="key">행 순서</b></th><td>SELECT 결과에 순서가 필요하면 ORDER BY를 명시한다.</td></tr>
+</tbody></table></div><div class="box sum"><p class="box-k">다음 장으로</p><p><a href="db01-2.html">다음 장</a>에서는 고객과 주문, 주문과 상품을 키로 연결합니다.</p></div>
+
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://www.sqlite.org/lang_createtable.html">SQLite · CREATE TABLE와 열 제약</a></li>
+<li><a href="https://www.sqlite.org/lang_select.html">SQLite · SELECT의 단계와 결합</a></li>
+<li><a href="https://doi.org/10.1145/362384.362685">Codd(1970) · 관계형 데이터 모델 원 논문</a></li>
+</ul>
+<h2>확인 문제</h2>
+<p>직접 계산하거나 설명을 먼저 적고 답을 확인해 보세요.</p>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

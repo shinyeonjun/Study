@@ -1,0 +1,249 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>함수 종속과 갱신 이상을 줄이는 정규화 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="DB04-2">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">데이터베이스 · DB04 일관된 데이터</p>
+<p class="chap-num">DB04·2</p>
+<h1>함수 종속과 갱신 이상을 줄이는 정규화</h1>
+<p class="lead">주문 항목 옆에 고객 이름과 상품명을 직접 넣으면 읽기 쉬워 보입니다. 같은 이름의 사본을 여러 번 갱신해야 할 때 어떤 문제가 생기는지 살펴보고, 사실의 단위대로 나눕니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul>
+<li>업무의 함수 종속을 열의 실제 값과 구별한다.</li>
+<li>삽입·갱신·삭제 이상을 설명하고 1~3정규형의 목표를 구별한다.</li>
+<li>현재 가격과 주문 당시 단가를 각각 적절한 표에 보존한다.</li>
+</ul></div>
+
+<h2>같은 사실을 여러 곳에 기록하면</h2>
+<p>손으로 보기 좋은 보고서에는 고객 이름과 상품 이름이 각 항목 줄에 나올 수 있습니다. 하지만 고객과 상품의 <em>현재 표시 이름</em>을 이런 항목 줄만으로 관리하면 같은 사실이 여러 곳에 반복됩니다. 고객 1의 이름은 주문 101과 102의 네 줄에 나타납니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 246" role="img" aria-label="주문 101과 102의 네 항목에 Mina가 네 번 기록되고 상품 11의 notebook은 두 번 기록된다.">
+<text class="f-cap" x="380" y="29" text-anchor="middle">한 평면 표에 주문과 상품 이름까지 저장했을 때</text>
+<rect class="f-soft" x="56" y="43" width="136" height="37"/>
+<text class="f-s" x="124" y="66.5" text-anchor="middle">주문·항목</text>
+<rect class="f-soft" x="192" y="43" width="122" height="37"/>
+<text class="f-s" x="253" y="66.5" text-anchor="middle">고객 번호</text>
+<rect class="f-soft" x="314" y="43" width="125" height="37"/>
+<text class="f-s" x="376.5" y="66.5" text-anchor="middle">고객 이름</text>
+<rect class="f-soft" x="439" y="43" width="125" height="37"/>
+<text class="f-s" x="501.5" y="66.5" text-anchor="middle">상품 번호</text>
+<rect class="f-soft" x="564" y="43" width="140" height="37"/>
+<text class="f-s" x="634" y="66.5" text-anchor="middle">상품 이름</text>
+<rect class="f-box" x="56" y="80" width="136" height="37"/>
+<text class="f-t" x="124" y="103.5" text-anchor="middle">101·1</text>
+<rect class="f-box" x="192" y="80" width="122" height="37"/>
+<text class="f-t" x="253" y="103.5" text-anchor="middle">1</text>
+<rect class="f-box" x="314" y="80" width="125" height="37"/>
+<text class="f-t" x="376.5" y="103.5" text-anchor="middle">Mina</text>
+<rect class="f-box" x="439" y="80" width="125" height="37"/>
+<text class="f-t" x="501.5" y="103.5" text-anchor="middle">11</text>
+<rect class="f-box" x="564" y="80" width="140" height="37"/>
+<text class="f-t" x="634" y="103.5" text-anchor="middle">notebook</text>
+<rect class="f-box" x="56" y="117" width="136" height="37"/>
+<text class="f-t" x="124" y="140.5" text-anchor="middle">101·2</text>
+<rect class="f-box" x="192" y="117" width="122" height="37"/>
+<text class="f-t" x="253" y="140.5" text-anchor="middle">1</text>
+<rect class="f-box" x="314" y="117" width="125" height="37"/>
+<text class="f-t" x="376.5" y="140.5" text-anchor="middle">Mina</text>
+<rect class="f-box" x="439" y="117" width="125" height="37"/>
+<text class="f-t" x="501.5" y="140.5" text-anchor="middle">12</text>
+<rect class="f-box" x="564" y="117" width="140" height="37"/>
+<text class="f-t" x="634" y="140.5" text-anchor="middle">pen</text>
+<rect class="f-box" x="56" y="154" width="136" height="37"/>
+<text class="f-t" x="124" y="177.5" text-anchor="middle">102·1</text>
+<rect class="f-box" x="192" y="154" width="122" height="37"/>
+<text class="f-t" x="253" y="177.5" text-anchor="middle">1</text>
+<rect class="f-box" x="314" y="154" width="125" height="37"/>
+<text class="f-t" x="376.5" y="177.5" text-anchor="middle">Mina</text>
+<rect class="f-box" x="439" y="154" width="125" height="37"/>
+<text class="f-t" x="501.5" y="177.5" text-anchor="middle">11</text>
+<rect class="f-box" x="564" y="154" width="140" height="37"/>
+<text class="f-t" x="634" y="177.5" text-anchor="middle">notebook</text>
+<rect class="f-box" x="56" y="191" width="136" height="37"/>
+<text class="f-t" x="124" y="214.5" text-anchor="middle">102·2</text>
+<rect class="f-box" x="192" y="191" width="122" height="37"/>
+<text class="f-t" x="253" y="214.5" text-anchor="middle">1</text>
+<rect class="f-box" x="314" y="191" width="125" height="37"/>
+<text class="f-t" x="376.5" y="214.5" text-anchor="middle">Mina</text>
+<rect class="f-box" x="439" y="191" width="125" height="37"/>
+<text class="f-t" x="501.5" y="214.5" text-anchor="middle">13</text>
+<rect class="f-box" x="564" y="191" width="140" height="37"/>
+<text class="f-t" x="634" y="214.5" text-anchor="middle">pouch</text>
+</svg>
+<figcaption>동일한 현재 고객 이름 Mina를 수정하려면 보이는 네 행을 모두 찾아 바꿔야 합니다.</figcaption>
+</figure>
+<p>고객 이름의 네 사본 중 하나만 바꾸면 어느 값이 최신인지 애매해지는 <strong>갱신 이상</strong>이 생깁니다. 주문 항목이 있어야 고객을 추가할 수 있으면 <strong>삽입 이상</strong>이고, 마지막 주문 항목을 지울 때 고객 정보도 사라지면 <strong>삭제 이상</strong>입니다. 별개의 사실을 한 행의 생애에 같이 묶었기 때문에 생기는 문제입니다.</p>
+<div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
+
+<h2>어느 값이 무엇을 결정하는가?</h2>
+<p><b class="key">함수 종속</b> <code>X → Y</code>는 업무상 올바른 모든 자료에서 X가 같은 두 행의 Y도 같아야 한다는 규칙입니다. 하나의 고객 번호에 현재 이름을 하나만 둔다면 <code>customer_id → customer_name</code>입니다. 이름이 같을 수 있으므로 반대 방향은 자동으로 성립하지 않습니다. 오늘의 자료에서 우연히 한 사람씩 나왔다는 것과 업무에서 항상 성립해야 한다는 것을 구별합니다.</p>
+<p>하나로 합친 항목 표의 유일한 후보 키를 <code>(order_id,line_no)</code>라 둡니다. 주문이 같으면 고객 번호와 주문일도 같아서 <code>order_id → customer_id, order_date</code>입니다. 항목별 수량은 같은 주문에서도 다를 수 있어 주문 번호와 항목 번호 모두 필요합니다. 상품 번호는 현재 이름과 정가를 정하지만, 할인·가격 변경이 있다면 과거 거래 단가까지 결정하지 않습니다.</p>
+<div class="check" data-q="q3"></div><div class="check" data-q="q4"></div>
+
+<h2>세 단계가 확인하는 규칙</h2>
+<p><b class="key">정규화</b>는 이런 종속에 따라 표를 다듬어 같은 사실의 반복과 갱신 이상을 줄입니다. <b class="key">1정규형</b>에서는 모델에서 속성으로 쓰는 값의 단위를 일정하게 둡니다. 예를 들어 주문 한 셀에 상품 번호 여러 개를 쉼표로 합치거나 <code>product1, product2, product3</code>처럼 반복 열을 두는 대신, 주문항목에 상품 한 줄을 따로 둡니다.</p>
+<p><b class="key">2정규형</b>에서는 어떤 후보 키에도 들어 있지 않은 비키 속성이 후보 키의 진부분집합에 함수 종속되지 않아야 합니다. 예시에서 고객 번호와 주문일이 복합 키 중 <code>order_id</code>만으로 정해지므로 그 값은 주문 표로 이동합니다. <b class="key">3정규형</b>의 대표 문제는 키가 다른 비키 속성을 거쳐 나머지 비키 속성을 결정하는 경우입니다. 주문 표에 <code>customer_id</code>와 <code>customer_name</code>을 함께 두면 <code>order_id → customer_id → customer_name</code>이므로 고객이 여러 번 주문할 수 있으므로 고객 번호 하나로는 주문의 행을 식별할 수 없습니다. 현재 고객 이름은 고객 표에서 읽습니다. 상품 이름 역시 상품 표에 따로 둡니다. 일반 기준은 비자명한 함수 종속 X → A 각각에서 X가 표의 행을 유일하게 식별하거나 A가 어떤 후보 키에 포함되어야 한다는 것입니다. A가 X에 이미 포함된 종속은 비자명한 종속에서 제외합니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 246" role="img" aria-label="고객, 주문, 상품, 항목이 각각 다른 단위의 사실을 저장한다.">
+<text class="f-cap" x="380" y="29" text-anchor="middle">번호가 결정하는 사실을 해당 표에 둠</text>
+<rect class="f-soft" x="42" y="43" width="170" height="37"/>
+<text class="f-s" x="127" y="66.5" text-anchor="middle">표</text>
+<rect class="f-soft" x="212" y="43" width="236" height="37"/>
+<text class="f-s" x="330" y="66.5" text-anchor="middle">키</text>
+<rect class="f-soft" x="448" y="43" width="270" height="37"/>
+<text class="f-s" x="583" y="66.5" text-anchor="middle">그 키가 정하는 값의 예</text>
+<rect class="f-box" x="42" y="80" width="170" height="37"/>
+<text class="f-t" x="127" y="103.5" text-anchor="middle">customers</text>
+<rect class="f-box" x="212" y="80" width="236" height="37"/>
+<text class="f-t" x="330" y="103.5" text-anchor="middle">customer_id</text>
+<rect class="f-box" x="448" y="80" width="270" height="37"/>
+<text class="f-t" x="583" y="103.5" text-anchor="middle">현재 표시 이름</text>
+<rect class="f-box" x="42" y="117" width="170" height="37"/>
+<text class="f-t" x="127" y="140.5" text-anchor="middle">orders</text>
+<rect class="f-box" x="212" y="117" width="236" height="37"/>
+<text class="f-t" x="330" y="140.5" text-anchor="middle">order_id</text>
+<rect class="f-box" x="448" y="117" width="270" height="37"/>
+<text class="f-t" x="583" y="140.5" text-anchor="middle">고객 번호, 주문일</text>
+<rect class="f-box" x="42" y="154" width="170" height="37"/>
+<text class="f-t" x="127" y="177.5" text-anchor="middle">products</text>
+<rect class="f-box" x="212" y="154" width="236" height="37"/>
+<text class="f-t" x="330" y="177.5" text-anchor="middle">product_id</text>
+<rect class="f-box" x="448" y="154" width="270" height="37"/>
+<text class="f-t" x="583" y="177.5" text-anchor="middle">현재 상품 이름과 정가</text>
+<rect class="f-box" x="42" y="191" width="170" height="37"/>
+<text class="f-t" x="127" y="214.5" text-anchor="middle">order_items</text>
+<rect class="f-box" x="212" y="191" width="236" height="37"/>
+<text class="f-t" x="330" y="214.5" text-anchor="middle">order_id + line_no</text>
+<rect class="f-box" x="448" y="191" width="270" height="37"/>
+<text class="f-t" x="583" y="214.5" text-anchor="middle">상품 번호, 수량과 거래 단가</text>
+</svg>
+<figcaption>거래 단가에는 판매 당시 금액을 남깁니다. 현재 상품 정가가 달라져도 독립적으로 보존할 기록입니다.</figcaption>
+</figure>
+<p>표를 나눌 때는 원래 질문에 필요한 정보를 기본 키와 외래 키로 다시 연결할 수 있어야 합니다. 이 예의 항목에서 참조하는 상품은 정확히 하나이고, 주문도 정확히 하나입니다. 주문, 고객, 상품의 속성을 읽어도 원본 항목 한 줄에 필요한 짝은 표마다 하나씩입니다.</p>
+<div class="check" data-q="q5"></div><div class="check" data-q="q6"></div>
+
+<h2>현재 정가와 실제 거래 가격을 함께 읽기</h2>
+<p>상품 11의 현재 정가를 6,000원에서 6,500원으로 수정합니다. 주문에서 기록한 <code>unit_price_won</code>은 주문 시점에 적용한 거래 단가입니다. 주문항목의 과거 값을 수정하지 않아 그 당시 총액을 다시 계산할 수 있습니다.</p>
+<p class="small">실행 예제</p>
+<pre data-example="python"><code>import sqlite3
+
+with sqlite3.connect(&quot;:memory:&quot;) as db:
+    db.execute(&quot;PRAGMA foreign_keys = ON&quot;)
+    db.executescript(&quot;&quot;&quot;
+    CREATE TABLE customers (
+        customer_id INTEGER PRIMARY KEY,
+        name TEXT NOT NULL
+    );
+    CREATE TABLE orders (
+        order_id INTEGER PRIMARY KEY,
+        customer_id INTEGER NOT NULL REFERENCES customers(customer_id),
+        order_date TEXT NOT NULL,
+        status TEXT NOT NULL CHECK (status IN ('paid', 'pending')),
+        total_won INTEGER NOT NULL CHECK (total_won &gt;= 0),
+        coupon_won INTEGER CHECK (coupon_won &gt;= 0)
+    );
+    CREATE TABLE products (
+        product_id INTEGER PRIMARY KEY,
+        name TEXT NOT NULL,
+        list_price_won INTEGER NOT NULL CHECK (list_price_won &gt;= 0)
+    );
+    CREATE TABLE order_items (
+        order_id INTEGER NOT NULL REFERENCES orders(order_id),
+        line_no INTEGER NOT NULL,
+        product_id INTEGER NOT NULL REFERENCES products(product_id),
+        qty INTEGER NOT NULL CHECK (qty &gt; 0),
+        unit_price_won INTEGER NOT NULL CHECK (unit_price_won &gt;= 0),
+        PRIMARY KEY (order_id, line_no)
+    );
+    &quot;&quot;&quot;)
+    db.executemany(&quot;INSERT INTO customers VALUES (?, ?)&quot;, [
+        (1, 'Mina'),
+        (2, 'Jun'),
+        (3, 'Sol'),
+    ])
+    db.executemany(&quot;INSERT INTO orders VALUES (?, ?, ?, ?, ?, ?)&quot;, [
+        (101, 1, '2025-01-02', 'paid', 10000, None),
+        (102, 1, '2025-01-03', 'paid', 15000, 1000),
+        (103, 2, '2025-01-04', 'pending', 12000, None),
+        (104, 2, '2025-01-05', 'paid', 15000, 0),
+    ])
+    db.executemany(&quot;INSERT INTO products VALUES (?, ?, ?)&quot;, [
+        (11, 'notebook', 6000),
+        (12, 'pen', 2000),
+        (13, 'pouch', 3000),
+    ])
+    db.executemany(&quot;INSERT INTO order_items VALUES (?, ?, ?, ?, ?)&quot;, [
+        (101, 1, 11, 1, 6000),
+        (101, 2, 12, 2, 2000),
+        (102, 1, 11, 2, 6000),
+        (102, 2, 13, 1, 3000),
+        (103, 1, 11, 2, 6000),
+        (104, 1, 13, 5, 3000),
+    ])
+
+    db.execute(
+        &quot;UPDATE products SET list_price_won = ? WHERE product_id = ?&quot;,
+        (6500, 11),
+    )
+    prices = db.execute(&quot;&quot;&quot;
+        SELECT i.order_id, p.list_price_won, i.unit_price_won
+        FROM order_items AS i JOIN products AS p ON i.product_id = p.product_id
+        WHERE p.product_id = ?
+        ORDER BY i.order_id, i.line_no
+    &quot;&quot;&quot;, (11,)).fetchall()
+    totals = db.execute(&quot;&quot;&quot;
+        SELECT order_id, SUM(qty * unit_price_won)
+        FROM order_items GROUP BY order_id ORDER BY order_id
+    &quot;&quot;&quot;).fetchall()
+    print(&quot;order, current, at sale:&quot;, prices)
+    print(&quot;order totals:&quot;, totals)
+db.close()</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>order, current, at sale: [(101, 6500, 6000), (102, 6500, 6000), (103, 6500, 6000)]
+order totals: [(101, 10000), (102, 15000), (103, 12000), (104, 15000)]</code></pre>
+<p>이 교재의 <code>orders.total_won</code>은 할인 전 항목 합도 함께 기록한 예입니다. 계산 가능한 합을 보관하면 읽기 편할 수 있지만 항목의 금액이 수정될 때 두 값이 엇갈릴 수 있습니다. 합이 항상 항목에서 결정된다면 필요할 때 계산하는 편이 단순합니다. 별도로 저장한다면 두 값이 계속 일치하도록 쓰는 경로에 규칙이 필요합니다.</p>
+<div class="check" data-q="q7"></div><div class="check" data-q="q8"></div>
+
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table><thead><tr><th scope="col">개념</th><th scope="col">확인할 것</th></tr></thead><tbody>
+<tr><th scope="row"><b class="key">종속</b></th><td>어떤 열의 값이 같은지로 다른 값도 정해지는지 확인한다.</td></tr>
+<tr><th scope="row"><b class="key">정규화</b></th><td>사실의 단위에 맞춰 표를 나누고 관계를 복구할 키를 둔다.</td></tr>
+<tr><th scope="row"><b class="key">시점</b></th><td>현재 상태와 과거 거래에 기록한 값의 뜻을 구분한다.</td></tr>
+</tbody></table></div><div class="box sum"><p class="box-k">다음 장으로</p><p><a href="db04-3.html">다음 장</a>에서는 주문 상태와 재고를 함께 바꿔, 도중에 문제가 생기면 둘 다 되돌립니다.</p></div>
+
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://doi.org/10.1145/362384.362685">Codd(1970) · 관계형 데이터 모델 원 논문</a></li>
+<li><a href="https://www.ibm.com/docs/en/informix-servers/12.10.0?topic=SSGU8G_12.1.0%2Fcom.ibm.ddi.doc%2Fids_ddi_191.htm">IBM Informix · 정규형과 함수 종속</a></li>
+<li><a href="https://www.sqlite.org/foreignkeys.html">SQLite · 외래 키와 연결별 활성화</a></li>
+</ul>
+<h2>확인 문제</h2>
+<p>직접 계산하거나 설명을 먼저 적고 답을 확인해 보세요.</p>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

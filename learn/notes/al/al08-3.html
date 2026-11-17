@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>복소수의 곱셈을 크기와 회전으로 읽기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="AL08-3">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">대수·함수</p>
+<p class="chap-num">AL08·3</p>
+<h1>복소수의 곱셈을 크기와 회전으로 읽기</h1>
+<p class="lead">a+bi를 평면의 한 점으로 보면, i를 곱할 때 생기는 부호 변화가 실제로 어느 방향의 회전인지 볼 수 있습니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>실수부·허수부·절댓값과 켤레를 구한다.</li><li>i의 곱을 90° 회전으로 해석한다.</li><li>극형식에서 곱의 크기와 각을 계산한다.</li></ul></div>
+
+<h2>점 하나를 두 수로 적는다</h2>
+<p>i는 i²=−1로 정의한 허수 단위입니다. 복소수 z=a+bi에서 실수부는 a, 허수부는 b입니다. 복소평면에서는 가로좌표 a, 세로좌표 b에 점을 놓습니다. 예로 z=3+4i는 (3,4)이고 원점까지의 거리인 절댓값은 |z|=√(3²+4²)=5입니다.</p>
+<p>켤레는 실수부를 그대로 두고 허수부의 부호를 바꾼 3−4i입니다. 평면에서 실수축에 대하여 대칭입니다. 둘을 곱하면 중간항이 상쇄되어 (3+4i)(3−4i)=3²+4²=25입니다. 일반적으로 z와 켤레의 곱은 |z|²입니다.</p>
+<div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
+<h2>i를 곱하면 좌표가 (−b,a)가 된다</h2>
+<p>i(a+bi)=ai+b·i²=−b+ai입니다. (a,b)가 (−b,a)로 바뀌는 것은 원점을 중심으로 반시계 방향 90° 회전과 같습니다. z=3+4i에서는 iz=−4+3i입니다. i를 두 번 곱하면 −z로 180° 회전합니다. i 자체의 절댓값은 1이므로 거리 5는 변하지 않습니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 259" role="img" aria-label="복소평면에서 (3,4)를 i로 곱해 (−4,3)으로 반시계 90도 회전">
+<line class="f-line" x1="169" y1="190" x2="590" y2="190" marker-end="url(#f-arrow)"/><line class="f-line" x1="376" y1="240" x2="376" y2="25" marker-end="url(#f-arrow)"/><line class="f-ink" x1="376" y1="190" x2="463" y2="74" marker-end="url(#f-arrow)"/><line class="f-ink" x1="376" y1="190" x2="260" y2="103" marker-end="url(#f-arrow)"/><line class="f-dash" x1="463" y1="74" x2="463" y2="190"/><line class="f-dash" x1="260" y1="103" x2="260" y2="190"/><text class="f-t" x="505" y="66" text-anchor="middle">3+4i</text><text class="f-t" x="223" y="95" text-anchor="middle">−4+3i</text><text class="f-t" x="629" y="195" text-anchor="middle">실수부</text><text class="f-t" x="404" y="26" text-anchor="middle">허수부</text><text class="f-s" x="260" y="214" text-anchor="middle">−4</text><text class="f-s" x="463" y="214" text-anchor="middle">3</text>
+</svg><figcaption>두 점과 원점을 잇는 선은 길이가 같고 서로 직각입니다.</figcaption></figure>
+<div class="check" data-q="q3"></div><div class="check" data-q="q4"></div>
+<h2>절댓값과 각으로 곱셈을 계산한다</h2>
+<p>0이 아닌 복소수는 z=r(cos θ+i sin θ)로 적을 수 있습니다. r=|z|이고 θ는 양의 실수축에서의 각입니다. 각은 2π의 정수배만큼 달라도 같은 점을 가리킵니다. z=0이면 각을 정할 고유한 방향이 없습니다.</p>
+<p>곱셈에서 사인과 코사인의 각 덧셈 공식을 적용하면 크기는 곱하고 각은 더합니다. 예로 크기 2·각 π/3인 점과 크기 3·각 π/6인 점을 곱하면 크기 6·각 π/2입니다. 코사인 0, 사인 1이므로 결과는 6i입니다. 이 표현에서 크기 1인 인수는 거리 유지와 각 변화만 만듭니다.</p>
+<div class="check" data-q="q5"></div>
+<pre data-example="python"><code>from cmath import rect
+from math import isclose, pi
+
+z = 3 + 4j
+print(&quot;거리:&quot;, abs(z))
+print(&quot;켤레와 곱:&quot;, z*z.conjugate())
+print(&quot;90도 회전:&quot;, 1j*z)
+left = rect(2, pi/3)
+right = rect(3, pi/6)
+product = left*right
+assert isclose(product.real, 0, abs_tol=1e-12)
+assert isclose(product.imag, 6)
+print(&quot;극형식 곱의 허수부:&quot;, f&quot;{product.imag:.1f}&quot;)</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>거리: 5.0
+켤레와 곱: (25+0j)
+90도 회전: (-4+3j)
+극형식 곱의 허수부: 6.0</code></pre>
+<p>Python은 허수 단위를 <code>j</code>로 씁니다. 예를 들어 <code>3+4j</code>가 z입니다. 실수부와 허수부를 근삿값으로 저장하므로 각을 곱한 결과의 좌표도 오차 범위를 두어 비교합니다.</p>
+<div class="check" data-q="q6"></div>
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>복소수의 곱은 좌표로 전개할 수 있고, 극형식에서는 크기와 방향의 변화로 계산할 수 있습니다.</p></div>
+
+<h2>참고 자료</h2>
+<ul><li><a href="https://openstax.org/books/precalculus-2e/pages/8-5-polar-form-of-complex-numbers">OpenStax · 복소수의 극형식</a></li><li><a href="https://docs.python.org/3/library/cmath.html#cmath.rect">Python · cmath.rect</a></li></ul>
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>반복자와 생성기로 값이 필요할 때 하나씩 만들기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="PY12-2">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">Python</p>
+<p class="chap-num">PY12·2</p>
+<h1>반복자와 생성기로 값이 필요할 때 하나씩 만들기</h1>
+<p class="lead">목록을 한꺼번에 만들지 않고, 다음 값이 필요할 때 계산을 이어 갑니다. 끝까지 쓴 반복자가 왜 두 번째 순회에서 비어 있는지도 직접 확인합니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>반복할 수 있는 객체와 진행 위치를 가진 반복자를 구별한다.</li><li>next와 StopIteration이 for와 어떻게 연결되는지 설명한다.</li><li>yield를 사용해 누적 평균을 하나씩 계산한다.</li></ul></div>
+
+<h2>자료가 있어도 어느 값을 읽었는지는 따로 있다</h2>
+<p>목록 [2,4,8]은 여러 번 훑을 수 있는 <strong>반복 가능 객체</strong>입니다. <code>iter</code>로 받은 <strong>반복자</strong>는 어디까지 진행했는지 기억합니다. 처음 두 번 <code>next</code>로 읽으면 2, 4가 나옵니다. 같은 반복자의 남은 값을 <code>list</code>로 읽으면 [8]만 나옵니다. 처음 목록으로 <code>iter</code>를 다시 호출하면 처음부터 읽는 다른 반복자가 생깁니다.</p>
+<div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
+<p>반복자가 더 주는 값이 없으면 <code>next</code>는 기본적으로 <code>StopIteration</code>을 냅니다. <code>for</code>는 반복자를 요청하고 다음 값을 받다가 이 예외를 만나면 순회를 마칩니다. 마지막 값이 0이나 None인지 보고 끝을 판단하지 않습니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 160" role="img" aria-label="자료에서 반복자를 만들고 값을 하나씩 소비하는 과정">
+<rect class="f-box" x="42" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="135" y="61" text-anchor="middle">반복 가능 객체</text><text class="f-s" x="135" y="89" text-anchor="middle">예: 목록 [2,4,8]</text><text class="f-s" x="135" y="110" text-anchor="middle">iter(자료)</text><line class="f-line" x1="235" y1="84" x2="278" y2="84" marker-end="url(#f-arrow)"/><rect class="f-soft" x="287" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="380" y="61" text-anchor="middle">반복자</text><text class="f-s" x="380" y="89" text-anchor="middle">next로 위치 이동</text><text class="f-s" x="380" y="110" text-anchor="middle">2 → 4 → 8</text><line class="f-line" x1="480" y1="84" x2="523" y2="84" marker-end="url(#f-arrow)"/><rect class="f-box" x="532" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="625" y="61" text-anchor="middle">끝</text><text class="f-s" x="625" y="89" text-anchor="middle">다음 값 없음</text><text class="f-s" x="625" y="110" text-anchor="middle">StopIteration</text>
+</svg><figcaption>같은 반복자는 두 번째 순회에서 처음으로 돌아가지 않습니다.</figcaption></figure>
+<h2>다음 평균이 필요할 때까지 기다린다</h2>
+<p>예로 [2,4,8]의 접두 평균을 순서대로 계산합니다. 첫 값까지 평균 2, 앞 두 값의 평균 3, 세 값의 평균 14/3입니다. 누적 합과 개수만 저장하면 이전 모든 원소를 다시 더하지 않고 다음 결과를 만들 수 있습니다.</p>
+<div class="table-wrap"><table><thead><tr><th scope="col">읽은 값</th><th scope="col">누적 합</th><th scope="col">개수</th><th scope="col">yield 결과</th></tr></thead><tbody><tr><td>2</td><td>2</td><td>1</td><td>2</td></tr><tr><td>4</td><td>6</td><td>2</td><td>3</td></tr><tr><td>8</td><td>14</td><td>3</td><td>14/3</td></tr></tbody></table></div>
+<p><code>yield</code>가 포함된 함수를 호출하면 생성기 객체를 얻습니다. 첫 <code>next</code>로 실행을 시작하고, 첫 yield에서 값을 건넨 뒤 위치와 지역 변수를 보관합니다. 다음 요청에서 멈춘 지점 뒤로 실행을 이어 갑니다.</p>
+<div class="check" data-q="q3"></div><div class="check" data-q="q4"></div>
+<pre data-example="python"><code>def running_means(values):
+    total = 0
+    for count, value in enumerate(values, start=1):
+        total += value
+        yield total / count
+
+values = [2, 4, 8]
+cursor = iter(values)
+print(&quot;앞 두 값:&quot;, next(cursor), next(cursor))
+print(&quot;남은 값:&quot;, list(cursor))
+print(&quot;처음부터 다시:&quot;, list(iter(values)))
+
+means = running_means(values)
+print(&quot;첫 평균:&quot;, f&quot;{next(means):.3f}&quot;)
+print(&quot;이후 평균:&quot;, [f&quot;{x:.3f}&quot; for x in means])
+print(&quot;같은 생성기를 다시 읽기:&quot;, list(means))</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>앞 두 값: 2 4
+남은 값: [8]
+처음부터 다시: [2, 4, 8]
+첫 평균: 2.000
+이후 평균: ['3.000', '4.667']
+같은 생성기를 다시 읽기: []</code></pre>
+<div class="check" data-q="q5"></div>
+<h2>작은 입력과 큰 입력에서 저장할 것을 정한다</h2>
+<p>생성기는 아직 요청하지 않은 출력 목록을 만들지 않습니다. 이 예에서 새 평균을 만드는 데는 누적 합과 개수만 필요합니다. 다만 순회하는 <code>values</code> 자체가 이미 큰 목록이면 그 입력 목록의 메모리는 계속 필요하고, 출력 전체를 <code>list</code>로 바꾸면 출력 메모리도 생깁니다. 파이프라인 전체에서 어느 단계가 목록을 만드는지 봅니다.</p>
+<div class="check" data-q="q6"></div>
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>반복자는 한 번씩 진행하는 위치를 담고, 생성기는 필요한 값에서 멈췄다가 다음 요청을 받을 때 이어서 계산합니다.</p></div>
+
+<h2>참고 자료</h2>
+<ul><li><a href="https://docs.python.org/3/tutorial/classes.html#iterators">Python · 반복자와 생성기</a></li><li><a href="py06-1.html">공부 교재 · 목록</a></li></ul>
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

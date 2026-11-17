@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>기저 조건과 점화식에서 재귀 함수 만들기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="DM04-2">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">이산수학</p>
+<p class="chap-num">DM04·2</p>
+<h1>기저 조건과 점화식에서 재귀 함수 만들기</h1>
+<p class="lead">다음 값의 답이 앞의 작은 답들로 결정되는 경우를 만납니다. 수열의 정의를 구현하고, 호출이 끝나는 이유와 같은 계산을 왜 반복하게 되는지 살핍니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>기저값과 점화식을 계산 순서로 옮긴다.</li><li>더 작은 입력을 사용하는 재귀가 끝나는 이유를 설명한다.</li><li>정의가 정한 값을 구하는 여러 구현의 차이를 확인한다.</li></ul></div>
+
+<h2>제일 작은 답을 쓰고 더 큰 답으로 잇는다</h2>
+<p>수열 F의 첫 두 값을 F(0)=0, F(1)=1로 정합니다. n≥2의 규칙은 F(n)=F(n−1)+F(n−2)입니다. 이처럼 값의 관계를 적은 식을 <strong>점화식</strong>이라 하고, 더 작은 값에 의존하지 않는 두 항을 기저값이라 부릅니다. 입력은 0 이상인 정수입니다.</p>
+<div class="table-wrap"><table><thead><tr><th scope="col">n</th><th scope="col">작은 값으로 계산</th><th scope="col">F(n)</th></tr></thead><tbody><tr><td>0</td><td>기저값</td><td>0</td></tr><tr><td>1</td><td>기저값</td><td>1</td></tr><tr><td>2</td><td>F(1)+F(0)</td><td>1</td></tr><tr><td>3</td><td>F(2)+F(1)</td><td>2</td></tr><tr><td>4</td><td>F(3)+F(2)</td><td>3</td></tr><tr><td>5</td><td>F(4)+F(3)</td><td>5</td></tr></tbody></table></div>
+<div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
+<p>F(4)를 정의대로 계산하면 F(3)과 F(2)를 요청합니다. F(3) 역시 F(2)를 요청하므로 같은 식이 여러 갈래에 나타납니다. 재귀 구현에서는 호출이 실제로 그 갈래를 따라갑니다. 그래도 모든 호출의 n이 0이나 1에 가까워지므로 종료합니다. n이 2일 때 F(0)에도 도달하므로 F(1)만 적어 두면 부족합니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 203" role="img" aria-label="F(4)에서 F(3)과 F(2), F(3)에서 다시 F(2)와 F(1)이 필요함">
+<line class="f-line" x1="380" y1="54" x2="245" y2="81" marker-end="url(#f-arrow)"/><line class="f-line" x1="380" y1="54" x2="516" y2="81" marker-end="url(#f-arrow)"/><line class="f-line" x1="245" y1="107" x2="170" y2="142" marker-end="url(#f-arrow)"/><line class="f-line" x1="245" y1="107" x2="325" y2="142" marker-end="url(#f-arrow)"/><rect class="f-box" x="345" y="29" width="70" height="30" rx="3"/><text class="f-t" x="380" y="49" text-anchor="middle">F(4)</text><rect class="f-box" x="210" y="82" width="70" height="30" rx="3"/><text class="f-t" x="245" y="102" text-anchor="middle">F(3)</text><rect class="f-soft" x="481" y="82" width="70" height="30" rx="3"/><text class="f-t" x="516" y="102" text-anchor="middle">F(2)</text><rect class="f-soft" x="135" y="143" width="70" height="30" rx="3"/><text class="f-t" x="170" y="163" text-anchor="middle">F(2)</text><rect class="f-box" x="290" y="143" width="70" height="30" rx="3"/><text class="f-t" x="325" y="163" text-anchor="middle">F(1)</text><text class="f-s" x="485" y="164" text-anchor="middle">같은 작은 문제가 두 곳에 있음</text>
+</svg><figcaption>호출의 위쪽 일부입니다. F(2)는 더 작은 두 기저값으로 계산합니다.</figcaption></figure>
+<div class="check" data-q="q3"></div>
+<h2>재귀로 계산하고 반복문으로도 대조한다</h2>
+<p>다음 코드는 재귀 함수가 계산한 값과 자기 자신을 포함한 총 호출 수를 함께 반환합니다. 반복문에서도 연속한 값 두 개를 기억하면 같은 점화식을 계산할 수 있습니다. 반복문의 각 단계에서는 첫 변수에 F(k), 다음 변수에 F(k+1)이 있습니다. 한 번의 대입으로 이 둘을 F(k+1), F(k)+F(k+1)로 바꿉니다.</p>
+<pre data-example="python"><code>def recursive(n):
+    if n &lt; 0:
+        raise ValueError(&quot;0 이상의 정수가 필요합니다.&quot;)
+    if n &lt; 2:
+        return n, 1
+    first, count_first = recursive(n - 1)
+    second, count_second = recursive(n - 2)
+    return first + second, 1 + count_first + count_second
+
+def iterative(n):
+    if n &lt; 0:
+        raise ValueError(&quot;0 이상의 정수가 필요합니다.&quot;)
+    current, following = 0, 1
+    for _ in range(n):
+        current, following = following, current + following
+    return current
+
+for n in range(7):
+    value, count = recursive(n)
+    assert value == iterative(n)
+    print(n, value, count)</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>0 0 1
+1 1 1
+2 1 3
+3 2 5
+4 3 9
+5 5 15
+6 8 25</code></pre>
+<div class="check" data-q="q4"></div><div class="check" data-q="q5"></div>
+<h2>재귀는 값을 정하는 방식이면서 구현 전략이다</h2>
+<p>코드가 F를 정확히 구함을 보이려면 기저에서 함수가 0, 1을 직접 돌려주는지 확인합니다. 그보다 큰 n에서는 두 작은 결과가 맞다는 가정에서 두 값을 더하면 점화식이 요구하는 F(n)이 나옵니다. 작은 결과 두 개를 모두 쓰므로 강한 귀납으로 표현하기 쉽습니다.</p>
+<p>이 재귀 구현은 동일한 입력을 이전에 계산했어도 다시 호출합니다. 계산 결과를 저장했다가 재사용하는 메모이제이션이나, 작은 항부터 한 번씩 계산하는 반복문을 쓰면 중복 작업을 줄일 수 있습니다. 재귀가 끝난다고 해도 큰 입력에서는 언어의 호출 깊이 제한이 있으므로, 실제로 허용할 크기도 확인합니다.</p>
+<div class="check" data-q="q6"></div>
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>기저값과 더 작은 문제로 가는 규칙을 구분하고, 정의를 만족하는지와 얼마나 일을 반복하는지를 따로 확인합니다.</p></div>
+
+<h2>참고 자료</h2>
+<ul><li><a href="https://ocw.mit.edu/courses/6-042j-mathematics-for-computer-science-fall-2010/e5079d6e1b0dc66d426df26e05dee250_MIT6_042JF10_chap03.pdf">MIT · 수학적 귀납법</a></li><li><a href="dm04-1.html">공부 교재 · 수학적 귀납법</a></li></ul>
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

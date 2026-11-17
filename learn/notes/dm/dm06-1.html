@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>입력이 커질 때 증가 속도와 큰 O 표기 읽기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="DM06-1">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">이산수학</p>
+<p class="chap-num">DM06·1</p>
+<h1>입력이 커질 때 증가 속도와 큰 O 표기 읽기</h1>
+<p class="lead">같은 입력에서 빠른 코드와 입력이 커져도 비용이 천천히 늘어나는 코드는 다를 수 있습니다. 비용을 직접 세고, 어느 구간부터 한 가지 성장률이 상한을 주는지 확인합니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>로그·다항·지수의 성장 차이를 작은 표에서 비교한다.</li><li>큰 O의 상수와 시작 지점을 실제 식으로 찾는다.</li><li>O와 Θ, 수학적 비용과 실제 실행 시간을 구분한다.</li></ul></div>
+
+<h2>입력 크기를 두 배로 하면 비교 횟수도 두 배가 될까</h2>
+<p>목록 길이를 n이라고 합시다. 한 값을 보는 횟수, 모든 항목을 한 번씩 보는 횟수, 순서를 구분해 가능한 모든 쌍을 보는 횟수는 각각 1, n, n²입니다. 매번 후보를 반으로 줄여 하나가 될 때까지 반복하면 n이 2의 거듭제곱일 때 log₂ n번 줄입니다. 모든 부분집합을 출력하려면 원소마다 포함과 제외 두 가지를 고르므로 출력 수만 2ⁿ입니다.</p>
+<div class="table-wrap"><table><thead><tr><th scope="col">n</th><th scope="col">log₂ n</th><th scope="col">n</th><th scope="col">n log₂ n</th><th scope="col">n²</th><th scope="col">2ⁿ</th></tr></thead><tbody><tr><td>4</td><td>2</td><td>4</td><td>8</td><td>16</td><td>16</td></tr><tr><td>8</td><td>3</td><td>8</td><td>24</td><td>64</td><td>256</td></tr><tr><td>16</td><td>4</td><td>16</td><td>64</td><td>256</td><td>65,536</td></tr></tbody></table></div>
+<p>n이 8에서 16으로 두 배가 되면 선형 함수값은 두 배, 제곱은 네 배, log₂ n은 1 늘어납니다. 2ⁿ은 n을 두 배로 하면 이전 값의 제곱입니다. 두 값이 한 입력에서 같아도 성장률이 서로 다를 수 있습니다.</p>
+<div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
+<h2>큰 O에 필요한 상수와 시작점</h2>
+<p>음이 아닌 비용 T(n)에 대해 T(n)=O(g(n))은 양의 상수 c와 시작 크기 n₀를 골라 모든 n≥n₀에 대해 T(n)≤c·g(n)을 만족시킬 수 있다는 뜻입니다. c와 n₀는 입력에 따라 바꾸지 않습니다. T(n)=3n²+2n+7에서 n≥1이면 n≤n²이고 1≤n²입니다. 따라서 T(n)≤(3+2+7)n²=12n²이고 c=12, n₀=1을 쓸 수 있습니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 250" role="img" aria-label="입력 1부터 4의 비용 12, 23, 40, 63과 상한 12, 48, 108, 192">
+<line class="f-line" x1="88" y1="183" x2="657" y2="183"/><line class="f-line" x1="88" y1="183" x2="88" y2="32"/><line class="f-dash" x1="88" y1="183" x2="650" y2="183"/><text class="f-s" x="73" y="187" text-anchor="end">0</text><line class="f-dash" x1="88" y1="136.92000000000002" x2="650" y2="136.92000000000002"/><text class="f-s" x="73" y="140.92000000000002" text-anchor="end">64</text><line class="f-dash" x1="88" y1="90.84" x2="650" y2="90.84"/><text class="f-s" x="73" y="94.84" text-anchor="end">128</text><line class="f-dash" x1="88" y1="44.75999999999999" x2="650" y2="44.75999999999999"/><text class="f-s" x="73" y="48.75999999999999" text-anchor="end">192</text><rect class="f-soft" x="122" y="174.36" width="40" height="8.64" rx="3"/><rect class="f-box" x="168" y="174.36" width="40" height="8.64" rx="3"/><text class="f-t" x="165" y="205" text-anchor="middle">1</text><rect class="f-soft" x="262" y="166.44" width="40" height="16.56" rx="3"/><rect class="f-box" x="308" y="148.44" width="40" height="34.56" rx="3"/><text class="f-t" x="305" y="205" text-anchor="middle">2</text><rect class="f-soft" x="402" y="154.2" width="40" height="28.799999999999997" rx="3"/><rect class="f-box" x="448" y="105.24000000000001" width="40" height="77.75999999999999" rx="3"/><text class="f-t" x="445" y="205" text-anchor="middle">3</text><rect class="f-soft" x="542" y="137.64" width="40" height="45.36" rx="3"/><rect class="f-box" x="588" y="44.75999999999999" width="40" height="138.24" rx="3"/><text class="f-t" x="585" y="205" text-anchor="middle">4</text><text class="f-t" x="89" y="22" text-anchor="middle">비용</text><text class="f-t" x="680" y="184" text-anchor="middle">입력 크기 n</text><text class="f-s" x="374" y="231" text-anchor="middle">왼쪽 T(n) · 오른쪽 12n²</text>
+</svg><figcaption>그림은 입력 네 개의 예이고, 부등식은 모든 n≥1에 적용됩니다.</figcaption></figure>
+<div class="check" data-q="q3"></div>
+<p>n≥1에서 3n²≤T(n)도 성립합니다. 한 함수의 상수배로 위와 아래를 둘 다 제한하면 Θ로 적습니다. 따라서 이 비용은 Θ(n²)입니다. O는 위쪽만 제한하므로 O(n³)이라는 말 역시 참입니다. 어느 함수와 같은 증가율인지 밝힐 때는 Θ가 더 정확합니다.</p>
+<div class="check" data-q="q4"></div>
+<pre data-example="python"><code>from math import log2
+
+for n in (4, 8, 16):
+    log_steps = int(log2(n))
+    print(n, log_steps, n*log_steps, n*n, 2**n)
+for n in range(1, 101):
+    cost = 3*n*n + 2*n + 7
+    assert 3*n*n &lt;= cost &lt;= 12*n*n
+print(&quot;1~100의 경계 확인&quot;)</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>4 2 8 16 16
+8 3 24 64 256
+16 4 64 256 65536
+1~100의 경계 확인</code></pre>
+<h2>무엇을 세느냐에 따라 결론이 달라진다</h2>
+<p>프로그램 시간은 언어와 자료구조, 메모리, 파일 접근의 영향을 받습니다. 증가율을 계산할 때는 먼저 n이 무엇이고 어떤 연산을 세는지 정합니다. 예를 들어 목록 원소가 지나치게 큰 정수라면 두 수를 비교하는 비용도 자리 수에 따라 달라질 수 있습니다. 실제로 짧게 재 보는 일과 충분히 큰 입력의 함수를 제한하는 일은 각각 다른 정보를 줍니다.</p>
+<div class="check" data-q="q5"></div><div class="check" data-q="q6"></div>
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>입력 크기와 셀 연산을 정한 뒤, 정해 둔 상수배가 어느 크기부터 계속 상한인지 확인합니다.</p></div>
+
+<h2>참고 자료</h2>
+<ul><li><a href="https://ocw.mit.edu/courses/6-1200j-mathematics-for-computer-science-spring-2024/resources/mit6_1200j_s24_lec06_pdf/">MIT · 점근적 증가율</a></li><li><a href="../al/al07-1.html">공부 교재 · 지수와 로그</a></li></ul>
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>
