@@ -165,7 +165,7 @@
             y.b.disabled = true;
             var right = y.i === q.answer;
             y.b.classList.add(right ? "right" : (y === x ? "wrong" : "dim"));
-            if (y.o.why) y.b.appendChild(el("span", "why-line", (right ? "정답. " : (y === x ? "내가 고른 답. " : "")) + y.o.why));
+            if (y.o.why) y.b.appendChild(el("span", "why-line", (right ? (/^정답/.test(y.o.why) ? "" : "정답. ") : (y === x ? "내가 고른 답. " : "")) + y.o.why)); // 해설이 이미 "정답"으로 시작하면 두 번 붙이지 않는다
           });
           finish(x.i === q.answer, x.o.t);
         };

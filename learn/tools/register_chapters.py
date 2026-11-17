@@ -7,6 +7,7 @@
   본문 .check의 data-q가 문제 파일에 있음, 객관식 정답 번호가 보기 안에 있고 모든 보기에 why,
   필요한 스크립트·자리(#quiz, #tools, .toc)가 있음, 문을 닫지 않은 HTML이 없음.
 검사에 실패한 장은 등록하지 않고 이유를 출력한다.
+- tools/reviewed.txt에 적힌(검토를 통과한) 장만 등록한다. 나머지는 "검토 대기"로 출력만 한다.
 """
 import io, os, re, json, subprocess, sys
 
@@ -26,7 +27,8 @@ def quiz_info(qpath, cid):
     if out.returncode: return None, out.stderr.strip().splitlines()[-1] if out.stderr else "node error"
     return json.loads(out.stdout or "null"), None
 
-found, problems = {}, []
+REVIEWED = set(l.strip() for l in io.open(os.path.join(HERE, "reviewed.txt"), encoding="utf-8") if l.strip() and not l.startswith("#"))
+found, problems, waiting = {}, [], []
 for dirpath, _, files in os.walk(os.path.join(ROOT, "notes")):
     for f in sorted(files):
         if not f.endswith(".html"): continue
@@ -63,6 +65,8 @@ for dirpath, _, files in os.walk(os.path.join(ROOT, "notes")):
                     if d not in ids: errs.append("본문 check %s가 문제 파일에 없음" % d)
         if errs:
             problems.append((rel, errs)); continue
+        if cid not in REVIEWED:
+            waiting.append(cid); continue
         n = int(cid.rsplit("-", 1)[1])
         found.setdefault(uid, []).append((n, {"id": cid, "title": title, "href": rel}))
 
@@ -88,6 +92,7 @@ total = sum(len(v) for v in found.values())
 sys.stdout.reconfigure(encoding="utf-8")
 print("등록: 단원 %d개, 장 %d개" % (len(units), total))
 for uid in units: print("  %s: %s" % (uid, ", ".join(c["id"] for _, c in sorted(found[uid], key=lambda x: x[0]))))
+if waiting: print("검토 대기(등록 안 함): %s" % ", ".join(sorted(waiting)))
 if problems:
     print("문제 있음:")
     for rel, errs in problems: print("  %s: %s" % (rel, "; ".join(errs)))
