@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>SQL① 조회 · 정처기 코드 노트</title>
+<script>try{var t=localStorage.getItem("jcg-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="../css/base.css">
+<link rel="stylesheet" href="../css/content.css">
+<link rel="stylesheet" href="../css/widgets.css">
+</head>
+<body>
+<header class="topbar"><div class="topbar-in">
+<a class="brand" href="../index.html">정처기 <em>코드</em><span> 노트</span></a>
+<nav class="chapnav" aria-label="장 이동"><ul><li><a href="../index.html">홈</a></li><li><a href="method.html">0 추적법</a></li><li><a href="c-memory.html">C① 메모리·포인터</a></li><li><a href="c-struct.html">C② 구조체·자료구조</a></li><li><a href="java-oop.html">Java① 객체·상속</a></li><li><a href="java-api.html">Java② 문자열·예외·컬렉션</a></li><li><a href="python-data.html">Python① 자료형·슬라이싱</a></li><li><a href="python-func.html">Python② 함수·클래스</a></li><li><a href="sql-query.html">SQL① 조회</a></li><li><a href="sql-ddl.html">SQL② 정의·관리·이론</a></li><li><a href="practice.html">연습 문제</a></li><li><a href="mock-2026-3.html">3회 모의고사 ①</a></li><li><a href="mock-2026-3b.html">3회 모의고사 ②</a></li></ul></nav>
+<button class="theme-btn" type="button">어둡게</button>
+</div></header>
+<main class="wrap">
+<div class="page-head">
+<p class="eyebrow">SQL · 1 / 2 · 기출 35문항</p>
+<h1>SQL① <em>조회</em></h1>
+<p class="lead">SQL은 앞의 세 언어와 결이 다릅니다. 변수를 따라가는 대신 표를 단계별로 걸러 냅니다. 실행 순서를 먼저 잡고, 결과 행 수 규칙, NULL, 조건, 서브쿼리, 조인 순서로 봅니다.</p>
+<ul class="toc"><li><a href="#s-1"><span class="t-id">S-1</span>실행 순서 하나로 문법이 설명된다</a></li><li><a href="#s-2"><span class="t-id">S-2</span>결과 행 수 계산</a></li><li><a href="#s-3"><span class="t-id">S-3</span>NULL의 세 가지 규칙<span class="t-add" title="필수 보강"></span></a></li><li><a href="#s-4"><span class="t-id">S-4</span>WHERE 조건</a></li><li><a href="#s-5"><span class="t-id">S-5</span>서브쿼리</a></li><li><a href="#s-6"><span class="t-id">S-6</span>JOIN</a></li><li><a href="#s-7"><span class="t-id">S-7</span>집합 연산</a></li></ul><p class="legend"><span><span class="badge hot">기출 빈출</span> 실제로 여러 번 나온 개념</span><span><span class="badge add">필수 보강</span> 기출에 적게 나왔지만 모르면 위험한 개념</span></p>
+</div>
+<div class="sheet"><section class="lesson" id="s-1" data-kind="hot" data-title="실행 순서 하나로 문법이 설명된다"><h2><span class="l-id">S-1</span>실행 순서 하나로 문법이 설명된다<span class="badge hot">기출 빈출</span></h2>
+<p>SQL은 위에서 아래로 한 줄씩 실행되지 않습니다. 표 전체를 단계별로 걸러 내는 파이프라인입니다. 쓰는 순서는 SELECT가 맨 앞이지만, 실행은 FROM부터입니다. 단계 버튼을 차례로 눌러 보세요.</p>
+<div class="widget" data-widget="pipeline"></div>
+<div class="rule"><ul><li>WHERE는 묶기 전에 실행되니 집계 함수(COUNT, AVG...)를 못 씁니다. 그룹 조건은 HAVING.</li><li>SELECT에서 붙인 별칭은 그 뒤인 ORDER BY에서만 쓸 수 있습니다. WHERE, GROUP BY, HAVING에서는 못 씀.</li><li>GROUP BY를 쓰면 SELECT에는 묶은 열과 집계 함수만 올 수 있습니다.</li></ul></div>
+<p>이 장의 나머지 예제와 연습 문제는 모두 아래 두 표로 실행했습니다.</p>
+<div class="duo"><div><p class="muted" style="margin-bottom:4px">학생</p><div class="tablewrap"><table class="data"><thead><tr><th>학번</th><th>이름</th><th>학과</th><th>학년</th><th>점수</th></tr></thead><tbody><tr><td>1</td><td>김철수</td><td>컴퓨터</td><td>3</td><td>90</td></tr><tr><td>2</td><td>이영희</td><td>컴퓨터</td><td>4</td><td><i>NULL</i></td></tr><tr><td>3</td><td>박민수</td><td>전자</td><td>3</td><td>75</td></tr><tr><td>4</td><td>이수진</td><td>전자</td><td>2</td><td>88</td></tr><tr><td>5</td><td>최지훈</td><td>기계</td><td>4</td><td>60</td></tr><tr><td>6</td><td>이도윤</td><td>컴퓨터</td><td>2</td><td>95</td></tr></tbody></table></div></div><div><p class="muted" style="margin-bottom:4px">학과</p><div class="tablewrap"><table class="data"><thead><tr><th>학과명</th><th>건물</th></tr></thead><tbody><tr><td>컴퓨터</td><td>공학관</td></tr><tr><td>전자</td><td>IT관</td></tr><tr><td>화학</td><td>과학관</td></tr></tbody></table></div></div></div>
+<p class="gichul"><span class="g-tag">기출</span><span>2020-3 8번·2023-1 16번 (HAVING AVG, 같은 문제 두 번), 2020-4 16번 (GROUP BY와 COUNT, AS)</span></p></section><section class="lesson" id="s-2" data-kind="hot" data-title="결과 행 수 계산"><h2><span class="l-id">S-2</span>결과 행 수 계산<span class="badge hot">기출 빈출</span></h2>
+<p>최근 기출은 SQL을 직접 쓰게 하기보다 "결과가 몇 행인지, 값이 얼마인지"를 많이 묻습니다. 아래 규칙만 정확하면 됩니다.</p>
+<div class="rule"><ul><li>집계 함수만 있고 GROUP BY가 없으면 결과는 항상 <b>1행</b>.</li><li><code>COUNT(*)</code>는 행 수, <code>COUNT(컬럼)</code>은 NULL 제외, <code>COUNT(DISTINCT 컬럼)</code>은 중복도 제외.</li><li><code>DISTINCT</code>는 결과 행에서 중복을 지웁니다.</li><li><code>AND</code>가 <code>OR</code>보다 먼저 묶입니다.</li><li>조건 없는 조인(CROSS JOIN, <code>FROM A, B</code>)은 행 수를 곱합니다.</li></ul></div>
+<div class="codewrap"><pre class="code"><code data-lang="sql">SELECT COUNT(*), COUNT(점수), COUNT(DISTINCT 학과) FROM 학생;
+-- 6 | 5 | 3
+
+SELECT COUNT(*) FROM 학생 WHERE 학년 = 4 OR 학과 = &#x27;전자&#x27; AND 점수 &gt;= 80;
+-- 3   ← 학년 = 4 OR (학과 = &#x27;전자&#x27; AND 점수 &gt;= 80)
+
+SELECT COUNT(*) FROM 학생 WHERE (학년 = 4 OR 학과 = &#x27;전자&#x27;) AND 점수 &gt;= 80;
+-- 1   ← 괄호를 쳐야 이렇게 됨</code></pre></div>
+<p>두 번째 쿼리는 학년 4인 이영희·최지훈 두 명에, 전자과면서 80점 이상인 이수진을 더해 3입니다. 왼쪽부터 차례로 읽으면 1이 나와서 틀립니다.</p>
+<div class="trap"><p class="trap-h">함정</p><ul><li>"결과 행 수"를 묻는지 "결과 값"을 묻는지 확인하세요. <code>SELECT COUNT(DISTINCT 학과) FROM 학생 WHERE 학과=&#x27;컴퓨터&#x27;</code>는 행 수 1, 값 1입니다. 3으로 쓰면 틀립니다.</li></ul></div>
+<p class="gichul"><span class="g-tag">기출</span><span>2020-1 6번·2022-3 12번·2026-1 9번 (DISTINCT 행 수, 같은 유형 세 번), 2021-1 6번·2024-1 18번 (AND와 OR), 2021-3 13번 (CROSS JOIN), 2022-2 4번·2025-3 20번 (COUNT(col2)와 OR)</span></p></section><section class="lesson" id="s-3" data-kind="add" data-title="NULL의 세 가지 규칙"><h2><span class="l-id">S-3</span>NULL의 세 가지 규칙<span class="badge add">필수 보강</span></h2>
+<p>NULL은 "값이 없음"이라 0도 빈 문자열도 아닙니다. 비교, 집계, 조건에서 각각 다르게 동작합니다.</p>
+<div class="codewrap"><pre class="code"><code data-lang="sql">SELECT COUNT(*) FROM 학생 WHERE 점수 = NULL;          -- 0
+SELECT COUNT(*) FROM 학생 WHERE 점수 IS NULL;         -- 1
+SELECT COUNT(*) FROM 학생 WHERE 점수 &gt;= 70;           -- 4
+SELECT COUNT(*) FROM 학생 WHERE NOT (점수 &gt;= 70);     -- 1   (4 + 1 ≠ 6)
+SELECT AVG(점수), SUM(점수) FROM 학생;                 -- 81.6 | 408</code></pre></div>
+<div class="tablewrap"><table class="ref"><thead><tr><th>규칙</th><th>결과</th></tr></thead><tbody><tr><td>NULL과의 비교 (<code>= &lt; &gt;</code> 등)</td><td>참도 거짓도 아닌 '알 수 없음'이라 WHERE에서 걸러짐. NULL 찾기는 <code>IS NULL</code>, <code>IS NOT NULL</code></td></tr><tr><td>집계 함수</td><td>NULL을 빼고 계산. AVG는 408 / <b>5</b> = 81.6 (6으로 나누지 않음). <code>COUNT(*)</code>만 NULL 행도 셈</td></tr><tr><td>NOT, 반대 조건</td><td>NULL 행은 조건에서도, 그 반대 조건에서도 빠짐. 이영희는 70 이상도 아니고 미만도 아님</td></tr></tbody></table></div></section><section class="lesson" id="s-4" data-kind="hot" data-title="WHERE 조건"><h2><span class="l-id">S-4</span>WHERE 조건<span class="badge hot">기출 빈출</span></h2>
+<div class="codewrap"><pre class="code"><code data-lang="sql">SELECT 이름 FROM 학생 WHERE 이름 LIKE &#x27;이%&#x27; ORDER BY 학번 DESC;
+-- 이도윤, 이수진, 이영희
+
+SELECT 이름 FROM 학생 WHERE 점수 BETWEEN 75 AND 90;
+-- 김철수, 박민수, 이수진   (75와 90 포함)
+
+SELECT 이름 FROM 학생 ORDER BY 학년 DESC, 이름 ASC;
+-- 이영희, 최지훈, 김철수, 박민수, 이도윤, 이수진</code></pre></div>
+<div class="tablewrap"><table class="ref"><thead><tr><th>쓰는 법</th><th>뜻</th></tr></thead><tbody><tr><td><code>LIKE &#x27;이%&#x27;</code></td><td>이로 시작 (% = 0글자 이상)</td></tr><tr><td><code>LIKE &#x27;%이%&#x27;</code></td><td>이를 포함</td></tr><tr><td><code>LIKE &#x27;이_&#x27;</code></td><td>이 + 정확히 한 글자 (_ = 한 글자)</td></tr><tr><td><code>IN (3, 4)</code></td><td>3 또는 4</td></tr><tr><td><code>BETWEEN 75 AND 90</code></td><td>75 이상 90 이하 (양 끝 포함)</td></tr><tr><td><code>ORDER BY 학번 DESC</code></td><td>내림차순 (안 쓰면 ASC 오름차순)</td></tr><tr><td><code>ORDER BY 학년 DESC, 이름</code></td><td>학년이 같으면 이름순</td></tr></tbody></table></div>
+<p class="gichul"><span class="g-tag">기출</span><span>2021-2 10번·2026-2 12번 (LIKE와 DESC 빈칸, 같은 유형 두 번), 2020-2 6번 (IN 사용 조건), 2022-1 4번 (ORDER BY 빈칸)</span></p></section><section class="lesson" id="s-5" data-kind="hot" data-title="서브쿼리"><h2><span class="l-id">S-5</span>서브쿼리<span class="badge hot">기출 빈출</span></h2>
+<p>서브쿼리는 안쪽부터 풀어서 값이나 목록으로 바꿔 놓고 바깥을 읽으세요.</p>
+<div class="codewrap"><pre class="code"><code data-lang="sql">SELECT 이름 FROM 학생 WHERE 점수 &gt; (SELECT AVG(점수) FROM 학생);
+-- 김철수, 이수진, 이도윤   (안쪽 = 81.6)
+
+SELECT COUNT(*) FROM 학생
+WHERE 학과 IN (SELECT 학과 FROM 학생 GROUP BY 학과 HAVING AVG(점수) &gt;= 80);
+-- 5   (안쪽 = 컴퓨터, 전자)
+
+SELECT 학과명 FROM 학과 d
+WHERE EXISTS (SELECT * FROM 학생 s WHERE s.학과 = d.학과명 AND s.학년 = 4);
+-- 컴퓨터   (4학년이 있는 학과)</code></pre></div>
+<div class="tablewrap"><table class="ref"><thead><tr><th>쓰는 법</th><th>뜻</th></tr></thead><tbody><tr><td><code>= (서브쿼리)</code></td><td>서브쿼리 결과가 한 값일 때</td></tr><tr><td><code>IN (서브쿼리)</code></td><td>결과 목록 중 하나와 같으면</td></tr><tr><td><code>&gt; ALL (서브쿼리)</code></td><td>결과 <b>전부</b>보다 큼 = 최댓값보다 큼</td></tr><tr><td><code>&gt; ANY (서브쿼리)</code></td><td>하나라도보다 큼 = 최솟값보다 큼</td></tr><tr><td><code>EXISTS (서브쿼리)</code></td><td>결과가 한 행이라도 있으면 참. 바깥 행마다 다시 실행됨</td></tr></tbody></table></div>
+<p class="gichul"><span class="g-tag">기출</span><span>2022-2 3번 (ALL), 2024-1 13번 (IN 서브쿼리), 2026-1 18번 (AVG 서브쿼리), 2024-3 3번 (중첩 서브쿼리)</span></p></section><section class="lesson" id="s-6" data-kind="hot" data-title="JOIN"><h2><span class="l-id">S-6</span>JOIN<span class="badge hot">기출 빈출</span></h2>
+<p>두 표를 조건으로 이어 붙입니다. 종류마다 "짝이 없는 행을 남기느냐"만 다릅니다. 버튼을 눌러 결과를 비교해 보세요.</p>
+<div class="widget" data-widget="join"></div>
+<div class="codewrap"><pre class="code"><code data-lang="sql">-- 같은 INNER JOIN을 WHERE로 쓰는 방식 (기출에 자주 나옴)
+SELECT s.이름, d.건물
+FROM 학생 s, 학과 d
+WHERE s.학과 = d.학과명 AND s.학년 &gt;= 3;
+-- 김철수 공학관 / 이영희 공학관 / 박민수 IT관</code></pre></div>
+<div class="rule"><ul><li>별칭 <code>학생 s</code>를 붙이면 <code>s.이름</code>처럼 줄여 씁니다.</li><li>LEFT JOIN은 왼쪽 표 행이 전부 남고, 짝이 없으면 오른쪽 열이 NULL.</li><li>조인 결과 위에 GROUP BY나 COUNT를 하면, 조인으로 늘어난 행 수 기준으로 셉니다.</li></ul></div>
+<p class="gichul"><span class="g-tag">기출</span><span>2021-2 6번 (JOIN ON 빈칸), 2025-1 7번 (WHERE 조인), 2026-1 18번, 2024-3 3번</span></p></section><section class="lesson" id="s-7" data-kind="hot" data-title="집합 연산"><h2><span class="l-id">S-7</span>집합 연산<span class="badge hot">기출 빈출</span></h2>
+<div class="codewrap"><pre class="code"><code data-lang="sql">-- T1(A): 1, 2, 3, 3    T2(A): 3, 4
+SELECT A FROM T1 UNION SELECT A FROM T2;       -- 1, 2, 3, 4
+SELECT A FROM T1 UNION ALL SELECT A FROM T2;   -- 1, 2, 3, 3, 3, 4
+SELECT A FROM T1 INTERSECT SELECT A FROM T2;   -- 3
+SELECT A FROM T1 EXCEPT SELECT A FROM T2;      -- 1, 2   (오라클은 MINUS)</code></pre></div>
+<div class="rule"><ul><li><code>UNION</code>은 합치고 중복 제거, <code>UNION ALL</code>은 그대로</li><li><code>INTERSECT</code>는 양쪽에 다 있는 것, <code>EXCEPT</code>/<code>MINUS</code>는 왼쪽에만 있는 것</li><li>두 SELECT의 열 개수와 타입이 같아야 합니다</li><li>UNION은 T1 안의 중복(3, 3)도 지웁니다</li></ul></div>
+<p class="gichul"><span class="g-tag">기출</span><span>2023-3 6번 (UNION 후 ORDER BY DESC)</span></p></section></div>
+<nav class="pager" aria-label="이전 다음 장"><a class="prev" href="python-func.html"><small>← 이전</small><b>Python② 함수·클래스</b></a><a class="next" href="sql-ddl.html"><small>다음 →</small><b>SQL② 정의·관리·이론</b></a></nav>
+</main>
+<script src="../js/highlight.js"></script>
+<script src="../js/site.js"></script>
+<script src="../js/widgets.js"></script>
+</body>
+</html>

@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>2026년 3회 실기 모의고사 · 정처기 코드 노트</title>
+<script>try{var t=localStorage.getItem("jcg-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="../css/base.css">
+<link rel="stylesheet" href="../css/content.css">
+<link rel="stylesheet" href="../css/widgets.css">
+</head>
+<body>
+<header class="topbar"><div class="topbar-in">
+<a class="brand" href="../index.html">정처기 <em>코드</em><span> 노트</span></a>
+<nav class="chapnav" aria-label="장 이동"><ul><li><a href="../index.html">홈</a></li><li><a href="method.html">0 추적법</a></li><li><a href="c-memory.html">C① 메모리·포인터</a></li><li><a href="c-struct.html">C② 구조체·자료구조</a></li><li><a href="java-oop.html">Java① 객체·상속</a></li><li><a href="java-api.html">Java② 문자열·예외·컬렉션</a></li><li><a href="python-data.html">Python① 자료형·슬라이싱</a></li><li><a href="python-func.html">Python② 함수·클래스</a></li><li><a href="sql-query.html">SQL① 조회</a></li><li><a href="sql-ddl.html">SQL② 정의·관리·이론</a></li><li><a href="practice.html">연습 문제</a></li><li><a href="mock-2026-3.html">3회 모의고사 ①</a></li><li><a href="mock-2026-3b.html">3회 모의고사 ②</a></li></ul></nav>
+<button class="theme-btn" type="button">어둡게</button>
+</div></header>
+<main class="wrap">
+<div class="page-head">
+<p class="eyebrow">MOCK EXAM · 2026년 3회 대비</p>
+<h1>3회 실기 <em>예상</em> 모의고사</h1>
+<p class="lead">2020년부터 2026년 2회까지 기출의 출제 영역, 반복 주제, 문제 형식을 분석해 출제위원 입장에서 만든 20문항입니다. 실제처럼 150분 타이머를 켜고 풀어 보세요. 제출하면 채점과 해설, 약한 영역, 다시 볼 노트 페이지가 나옵니다.</p>
+
+</div>
+
+<div class="sheet exam-info">
+<div class="duo">
+<div>
+<h2 style="margin:0 0 10px;font-size:18px">시험 안내</h2>
+<table class="data"><tbody>
+<tr><th>시험 일정</th><td>2026년 3회 실기 10월 24일 ~ 11월 13일 (기사 필답형은 이틀 분산 시행)</td></tr>
+<tr><th>시간</th><td>150분 (2시간 30분)</td></tr>
+<tr><th>구성</th><td>20문항, 문항당 5점, 100점 만점</td></tr>
+<tr><th>합격</th><td>60점 이상</td></tr>
+<tr><th>최근 실기 합격률</th><td>약 20% (2022 20.8%, 2023 20.7%, 2024 22.0%, 2025 1회 15.1%)</td></tr>
+</tbody></table>
+</div>
+<div>
+<h2 style="margin:0 0 10px;font-size:18px">이 시험지의 구성</h2>
+<p class="muted" style="margin:0 0 8px">보안 2 · C 4 · 네트워크 1 · Java 3 · SQL 3 · Python 2 · SW공학 3 · DB 1 · 운영체제 1</p>
+<ul class="check">
+<li>2025~2026년 실제 구성처럼 코드·SQL 12문항, 이론 8문항</li>
+<li>C는 포인터·연결리스트·구조체·비트, Java는 바인딩·생성자·예외</li>
+<li>이론은 보기에서 고르는 형식 위주 (최근 경향)</li>
+<li>코드·SQL 정답은 전부 실제로 실행해서 확인</li>
+</ul>
+</div>
+</div>
+<div class="exam-bar">
+<button class="btn primary" data-a="start">시험 시작</button>
+<span class="timer" aria-live="polite">150:00</span>
+<button class="btn" data-a="pause" hidden>일시 정지</button>
+<span style="flex:1"></span>
+<span class="muted saved"></span>
+</div>
+</div>
+<div class="sheet"><div class="exam-list" data-key="jcg-mock-2026-3"></div>
+<div class="exam-submit"><button class="btn primary" data-a="submit">답안 제출하고 채점</button><button class="btn" data-a="reset">처음부터 다시</button></div>
+</div>
+<div class="sheet result" hidden></div>
+<p class="foot">부분 점수는 이 시험지 기준(빈칸 수만큼 나눠 줌)이며 실제 시험의 채점 기준과 다를 수 있습니다. 용어 답은 띄어쓰기와 대소문자를 무시하고 채점하고, 출력값 답은 공백과 줄바꿈까지 그대로 비교합니다.</p>
+<nav class="pager" aria-label="이전 다음 장"><a class="prev" href="practice.html"><small>← 이전</small><b>연습 문제</b></a><a class="next" href="mock-2026-3b.html"><small>다음 →</small><b>3회 모의고사 ②</b></a></nav>
+</main>
+<script src="../js/highlight.js"></script>
+<script src="../js/site.js"></script>
+<script src="../js/data/mock.js"></script>
+<script src="../js/mock.js"></script>
+</body>
+</html>

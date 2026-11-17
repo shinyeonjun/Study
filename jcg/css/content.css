@@ -1,0 +1,128 @@
+/* 정처기 실기 코드 노트 — 본문 요소 (레슨, 코드, 표, 규칙·함정 상자, 그림) */
+
+.lesson { padding-top: 26px; margin-top: 26px; border-top: 1px solid var(--rule) }
+.lesson:first-child { border-top: none; margin-top: 0; padding-top: 0 }
+.lesson > h2 {
+  font-size: 21px; margin: 0 0 14px; display: flex; gap: 10px; align-items: baseline; flex-wrap: wrap;
+}
+.l-id { font-family: var(--f-mono); font-size: 13px; font-weight: 600; color: var(--accent); letter-spacing: .04em }
+.badge {
+  font-family: var(--f-body); font-size: 11.5px; font-weight: 600; padding: 1px 8px; border-radius: 3px;
+  letter-spacing: .02em; align-self: center;
+}
+.badge.hot { color: var(--accent); background: var(--accent-soft) }
+.badge.add { color: var(--warn); background: var(--warn-soft) }
+.lesson h3 { font-size: 16.5px; margin: 22px 0 10px }
+.lesson > p, .lesson > ul, .lesson > ol, .prose p { max-width: 68ch }
+.muted { color: var(--muted); font-size: 14px }
+.bridge { background: var(--accent-soft); padding: 12px 16px; border-radius: 4px; font-size: 14.5px; max-width: 72ch }
+.steps { margin: 0 0 16px; padding-left: 1.4em; display: grid; gap: 6px; max-width: 68ch }
+.steps li::marker { font-family: var(--f-mono); color: var(--accent); font-weight: 600 }
+
+/* 인라인 코드와 코드 블록 */
+code { font-family: var(--f-mono); font-size: .88em; background: var(--code); padding: .08em .35em; border-radius: 3px; overflow-wrap: anywhere }
+.codewrap { margin: 12px 0 14px; overflow-x: auto; border: 1px solid var(--rule); border-radius: 5px; background: var(--code) }
+pre.code { margin: 0; padding: 14px 16px; font-size: 13.2px; line-height: 1.6 }
+pre.code code { background: none; padding: 0; font-size: inherit; color: var(--ink); white-space: pre; overflow-wrap: normal }
+.tk-k { color: var(--hl-k); font-weight: 600 }
+.tk-t { color: var(--hl-t) }
+.tk-s { color: var(--hl-s) }
+.tk-n { color: var(--hl-n) }
+.tk-c { color: var(--hl-c); font-style: italic }
+.tk-p { color: var(--hl-c) }
+
+.out {
+  display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 12px; align-items: start;
+  margin: -4px 0 16px; padding: 10px 14px; border: 1px dashed var(--rule); border-radius: 5px;
+}
+.out-l {
+  font-family: var(--f-mono); font-size: 11px; letter-spacing: .08em; color: var(--ok); background: var(--ok-soft);
+  padding: 2px 7px; border-radius: 3px; margin-top: 3px;
+}
+.out pre { margin: 0; font-family: var(--f-mono); font-size: 14px; font-weight: 600; white-space: pre-wrap; overflow-wrap: anywhere }
+
+/* 규칙, 함정, 기출 표시 */
+.rule { background: var(--accent-soft); border-radius: 5px; padding: 14px 18px; margin: 14px 0 16px }
+.rule-h { font-weight: 600; margin-bottom: 6px }
+.rule ul, .trap ul { margin: 0; padding-left: 1.2em; display: grid; gap: 5px }
+.trap { border: 1.5px dashed var(--red); background: var(--red-soft); border-radius: 5px; padding: 12px 18px; margin: 14px 0 16px }
+.trap-h { color: var(--red); font-weight: 700; margin-bottom: 6px; font-size: 14px; letter-spacing: .04em }
+.trap li::marker { color: var(--red) }
+.gichul { display: flex; gap: 10px; align-items: baseline; font-size: 13px; color: var(--muted); margin: 12px 0 0 }
+.g-tag {
+  font-family: var(--f-mono); font-size: 11px; font-weight: 600; color: var(--sheet); background: var(--muted);
+  padding: 1px 7px; border-radius: 3px; flex: none;
+}
+.g-tag.add { background: var(--warn) }
+
+/* 표 */
+.tablewrap { overflow-x: auto; margin: 12px 0 16px }
+table { border-collapse: collapse; font-size: 14px; min-width: 100% }
+th, td { border: 1px solid var(--rule); padding: 7px 11px; text-align: left; vertical-align: top }
+th { background: var(--code); font-weight: 600; font-size: 13px; white-space: nowrap }
+table.trace td, table.ruler td, table.data td { font-family: var(--f-mono); font-size: 13.5px; font-variant-numeric: tabular-nums }
+table.trace td:first-child { white-space: nowrap }
+table.ruler, table.data { min-width: 0; width: auto }
+table.ruler th, table.ruler td { text-align: center; padding: 5px 8px }
+table.ruler tr:first-child td { color: var(--accent) }
+table.ruler tr:last-child td { color: var(--muted) }
+table.data i { color: var(--muted) }
+td.hit { background: var(--accent-soft) }
+
+/* 막대 */
+.bars { display: grid; gap: 6px }
+.bars-h { font-family: var(--f-mono); font-size: 11.5px; letter-spacing: .05em; color: var(--muted); margin-bottom: 8px }
+.bar-row { display: grid; grid-template-columns: minmax(0, 9.5em) 1fr 2.2em; gap: 10px; align-items: center; font-size: 13px }
+.bar-l { white-space: nowrap; overflow: hidden; text-overflow: ellipsis }
+.bar-t { height: 9px; background: var(--grid); border-radius: 2px; overflow: hidden }
+.bar-f { display: block; height: 100%; background: var(--accent) }
+.bar-v { font-family: var(--f-mono); font-variant-numeric: tabular-nums; text-align: right; color: var(--muted) }
+
+/* 두 칸 배치 */
+.duo { display: grid; grid-template-columns: 1.15fr 1fr; gap: 26px }
+.duo > * { min-width: 0 }
+.note { font-size: 14px; color: var(--muted); border-top: 1px dashed var(--rule); padding-top: 10px }
+
+/* SVG 그림 */
+.fig { margin: 16px 0 18px; overflow-x: auto }
+.fig svg { width: 100%; min-width: 480px; max-width: 680px; height: auto; display: block; font-family: var(--f-body) }
+.fig figcaption { font-size: 13px; color: var(--muted); margin-top: 6px; max-width: 70ch }
+.sv-box { fill: var(--sheet); stroke: var(--ink); stroke-width: 1.4 }
+.sv-hi { fill: var(--accent-soft); stroke: var(--accent) }
+.sv-frame { fill: none; stroke: var(--muted); stroke-width: 1; stroke-dasharray: 4 4 }
+.sv-tag { fill: var(--accent-soft); stroke: var(--accent); stroke-width: 1.4 }
+.sv-node { fill: var(--sheet); stroke: var(--ink); stroke-width: 1.4 }
+.sv-line { stroke: var(--ink); stroke-width: 1.4 }
+.sv-v { fill: var(--ink); font-family: var(--f-mono) }
+.sv-t { fill: var(--ink); font-weight: 600 }
+.sv-m { fill: var(--muted) }
+.sv-a { fill: var(--accent) }
+.sv-r { fill: var(--red); font-weight: 700 }
+.sv-arrow { fill: none; stroke: var(--accent); stroke-width: 1.6 }
+.sv-arrowhead { fill: var(--accent) }
+
+/* 홈 */
+.home-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin-top: 22px }
+.card {
+  display: grid; gap: 6px; align-content: start; background: var(--sheet); border: 1px solid var(--rule);
+  border-radius: 6px; padding: 18px 20px; text-decoration: none; color: var(--ink); box-shadow: var(--shadow);
+}
+a.card:hover { border-color: var(--accent) }
+.card-k { font-family: var(--f-disp); font-size: 30px; line-height: 1; color: var(--accent) }
+.card h3 { margin: 4px 0 0; font-size: 17px }
+.card p { margin: 0; color: var(--muted); font-size: 14px }
+.card .pg { font-family: var(--f-mono); font-size: 12px; color: var(--muted) }
+.card .pg b { color: var(--ok) }
+.big { font-family: var(--f-disp); font-size: 42px; line-height: 1; margin: 0 0 4px }
+.big small { font-family: var(--f-body); font-size: 14px; color: var(--muted); margin-left: 6px }
+.check { margin: 0; padding-left: 1.3em; display: grid; gap: 8px; max-width: 74ch }
+.check li::marker { content: "□  "; color: var(--accent) }
+.legend { display: flex; flex-wrap: wrap; gap: 14px; font-size: 13px; color: var(--muted) }
+.legend span { display: inline-flex; gap: 6px; align-items: center }
+
+@media (max-width: 760px) {
+  .duo, .home-grid { grid-template-columns: 1fr }
+  .bar-row { grid-template-columns: minmax(0, 8.5em) 1fr 2em }
+}
+.card.wide { grid-column: 1 / -1; border-color: var(--accent); background: var(--accent-soft) }
+.card.mockc { border-color: var(--accent); background: var(--accent-soft) }

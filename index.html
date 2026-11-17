@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>공부 노트</title>
+<style>
+  /* 루트 홈 전용. 과목별 스타일은 각 폴더가 따로 가진다. */
+  :root { --bg:#f7f7f5; --surface:#fff; --text:#1f2328; --muted:#5b6470; --line:#e2e2dc; --accent:#2f5f8f; }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg:#14171a; --surface:#1c2024; --text:#e6e8eb; --muted:#9aa4b0; --line:#2d3339; --accent:#8ab8e6; }
+  }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--text); font-family:"Pretendard","Malgun Gothic","Apple SD Gothic Neo",system-ui,sans-serif; line-height:1.7; word-break:keep-all; }
+  main { max-width:720px; margin:0 auto; padding:48px 16px 80px; }
+  h1 { font-size:1.6rem; margin:0 0 6px; }
+  .lead { color:var(--muted); margin:0 0 28px; }
+  .list { display:grid; gap:14px; }
+  a.item { display:block; background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:18px 20px; color:inherit; text-decoration:none; }
+  a.item:hover, a.item:focus-visible { border-color:var(--accent); }
+  .item b { display:block; font-size:1.1rem; color:var(--accent); }
+  .item span { color:var(--muted); font-size:0.95rem; }
+</style>
+</head>
+<body>
+<main>
+<h1>공부 노트</h1>
+<p class="lead">자격증별로 정리한 공부 페이지 모음입니다.</p>
+<div class="list">
+  <a class="item" href="bigdata/index.html"><b>빅데이터분석기사</b><span>필기 · 개념부터 차근차근 (진행 중)</span></a>
+  <a class="item" href="jcg/index.html"><b>정보처리기사 실기</b><span>C · Java · Python · SQL 코드 노트, 연습 문제, 모의고사</span></a>
+</div>
+</main>
+</body>
+</html>

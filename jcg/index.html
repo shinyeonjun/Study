@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>정처기 실기 코드 노트</title>
+<script>try{var t=localStorage.getItem("jcg-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/content.css">
+<link rel="stylesheet" href="css/widgets.css">
+</head>
+<body>
+<header class="topbar"><div class="topbar-in">
+<a class="brand" href="index.html">정처기 <em>코드</em><span> 노트</span></a>
+<nav class="chapnav" aria-label="장 이동"><ul><li><a href="index.html">홈</a></li><li><a href="pages/method.html">0 추적법</a></li><li><a href="pages/c-memory.html">C① 메모리·포인터</a></li><li><a href="pages/c-struct.html">C② 구조체·자료구조</a></li><li><a href="pages/java-oop.html">Java① 객체·상속</a></li><li><a href="pages/java-api.html">Java② 문자열·예외·컬렉션</a></li><li><a href="pages/python-data.html">Python① 자료형·슬라이싱</a></li><li><a href="pages/python-func.html">Python② 함수·클래스</a></li><li><a href="pages/sql-query.html">SQL① 조회</a></li><li><a href="pages/sql-ddl.html">SQL② 정의·관리·이론</a></li><li><a href="pages/practice.html">연습 문제</a></li><li><a href="pages/mock-2026-3.html">3회 모의고사 ①</a></li><li><a href="pages/mock-2026-3b.html">3회 모의고사 ②</a></li></ul></nav>
+<button class="theme-btn" type="button">어둡게</button>
+</div></header>
+<main class="wrap">
+<div class="page-head">
+<p class="eyebrow">정보처리기사 실기 · 프로그래밍과 SQL</p>
+<h1>정처기 실기 <em>코드</em> 노트</h1>
+<p class="lead">기출 23회차의 C, Java, Python, SQL 문제를 개념별로 묶고, 기출에 덜 나왔지만 꼭 알아야 하는 개념까지 보탰습니다. 문법을 외우기 전에 코드가 메모리에서 어떻게 움직이는지부터 눈으로 확인하면서 공부할 수 있게 만들었습니다.</p>
+
+</div>
+
+<div class="duo">
+<div class="sheet" style="margin-top:0">
+<h2 style="margin:0 0 10px;font-size:18px">이렇게 쓰세요</h2>
+<ol class="steps">
+<li>장마다 <b>원리 → 한 줄씩 따라가기 → 함정 → 기출 표시</b> 순서입니다. 위에서부터 읽으면 앞 내용이 다음 내용의 바탕이 됩니다.</li>
+<li>파란 <span class="badge hot">기출 빈출</span>은 실제로 여러 번 나온 개념, 노란 <span class="badge add">필수 보강</span>은 기출에 적게 나왔지만 모르면 바로 틀리는 개념입니다.</li>
+<li><b>한 줄씩</b> 상자는 다음 ▶을 누르며 변수와 메모리가 바뀌는 걸 보는 곳입니다. 키보드 ← → 로도 움직입니다.</li>
+<li><b>눌러 보기</b>·<b>직접 입력</b> 상자는 값을 바꿔 가며 규칙을 확인하는 곳입니다.</li>
+<li>연습 문제는 답을 입력하면 채점되고, 맞힌 문제는 이 컴퓨터 브라우저에 기록됩니다.</li>
+</ol>
+</div>
+<div class="sheet" style="margin-top:0">
+<h2 style="margin:0 0 10px;font-size:18px">기출 코드·SQL 문항 수</h2>
+<p class="big">175<small>문항 · 2020년 1회 ~ 2026년 2회, 23회차</small></p>
+<div class="bars"><div class="bar-row"><span class="bar-l">C</span><span class="bar-t"><span class="bar-f" style="width:100.0%"></span></span><span class="bar-v">60</span></div><div class="bar-row"><span class="bar-l">Java</span><span class="bar-t"><span class="bar-f" style="width:93.3%"></span></span><span class="bar-v">56</span></div><div class="bar-row"><span class="bar-l">SQL</span><span class="bar-t"><span class="bar-f" style="width:58.3%"></span></span><span class="bar-v">35</span></div><div class="bar-row"><span class="bar-l">Python</span><span class="bar-t"><span class="bar-f" style="width:40.0%"></span></span><span class="bar-v">24</span></div></div>
+<p class="note" style="margin-top:12px">회차당 평균 7~8문항이 코드나 SQL입니다. C는 2025년부터 구조체·연결리스트 비중이 커졌고, SQL은 2026년부터 회차당 3~4문항으로 늘었습니다.</p>
+</div>
+</div>
+
+<div class="sheet">
+<h2 style="margin:0 0 6px;font-size:18px">왜 이 순서인가</h2>
+
+<figure class="fig"><svg viewBox="0 0 760 196" role="img" aria-label="C의 주소, Java의 참조, Python의 이름표가 같은 생각이고 SQL은 표를 거르는 파이프라인이라는 개념 지도">
+<rect class="sv-box sv-hi" x="8" y="30" width="168" height="70" rx="6"/>
+<text class="sv-t" x="92" y="58" text-anchor="middle" font-size="14">C</text><text class="sv-m" x="92" y="82" text-anchor="middle" font-size="12">변수 = 상자, 포인터 = 주소</text>
+<rect class="sv-box" x="248" y="30" width="168" height="70" rx="6"/>
+<text class="sv-t" x="332" y="58" text-anchor="middle" font-size="14">Java</text><text class="sv-m" x="332" y="82" text-anchor="middle" font-size="12">객체 변수 = 화살표</text>
+<rect class="sv-box" x="488" y="30" width="168" height="70" rx="6"/>
+<text class="sv-t" x="572" y="58" text-anchor="middle" font-size="14">Python</text><text class="sv-m" x="572" y="82" text-anchor="middle" font-size="12">모든 변수 = 이름표</text>
+<path class="sv-arrow" d="M176 65 L240 65"/><polygon class="sv-arrowhead" points="238,59 248,65 238,71"/>
+<path class="sv-arrow" d="M416 65 L480 65"/><polygon class="sv-arrowhead" points="478,59 488,65 478,71"/>
+<text class="sv-a" x="212" y="22" text-anchor="middle" font-size="11">* 와 &amp; 를 숨김</text>
+<text class="sv-a" x="452" y="22" text-anchor="middle" font-size="11">숫자까지 전부</text>
+<rect class="sv-frame" x="8" y="122" width="648" height="60" rx="6"/>
+<text class="sv-v" x="332" y="148" text-anchor="middle" font-size="12.5">"안을 고치면 원본이 바뀌고, 변수 자체를 다시 대입하면 원본은 그대로"</text>
+<text class="sv-m" x="332" y="169" text-anchor="middle" font-size="11.5">swap 문제, 참조 전달, 얕은 복사가 모두 이 한 문장입니다</text>
+<rect class="sv-box" x="676" y="30" width="78" height="152" rx="6"/>
+<text class="sv-t" x="715" y="98" text-anchor="middle" font-size="14">SQL</text><text class="sv-m" x="715" y="120" text-anchor="middle" font-size="11">표 거르기</text>
+</svg>
+<figcaption>네 언어를 이 순서로 보는 이유입니다. 앞에서 잡은 그림이 다음 언어에서 그대로 다시 쓰입니다. SQL은 결이 달라서 마지막에 따로 봅니다.</figcaption></figure>
+</div>
+
+<div class="home-grid"><a class="card" href="pages/method.html"><span class="card-k">0</span><h3>코드 추적법</h3><p>네 언어 공통. 그리고, 표 만들고, 형식 확인하기. 공통 함정과 언어별 차이 표.</p></a><a class="card" href="pages/c-memory.html"><span class="card-k">C①</span><h3>메모리와 포인터</h3><p>상자와 주소, 배열·문자열·함수 인자, 서식 출력, 매크로, 반복 로직과 정렬.</p><span class="pg" data-progress="c"></span></a><a class="card" href="pages/c-struct.html"><span class="card-k">C②</span><h3>구조체와 자료구조</h3><p>구조체, 연결리스트, 스택·큐, 트리 순회, 2차원 배열, static·재귀·비트·switch.</p><span class="pg" data-progress="c"></span></a><a class="card" href="pages/java-oop.html"><span class="card-k">J①</span><h3>객체와 상속</h3><p>참조, 상속 네 가지 규칙, 생성자 순서, 오버로딩, static, 접근 제어, 추상·인터페이스.</p><span class="pg" data-progress="java"></span></a><a class="card" href="pages/java-api.html"><span class="card-k">J②</span><h3>문자열·예외·컬렉션</h3><p>==와 equals, 오토박싱, String 메서드, 연산 함정, 예외, ArrayList·HashMap, 람다, enum.</p><span class="pg" data-progress="java"></span></a><a class="card" href="pages/python-data.html"><span class="card-k">Py①</span><h3>자료형과 슬라이싱</h3><p>이름표와 복사, 슬라이싱, 문자열 메서드, 리스트·딕셔너리·셋·튜플.</p><span class="pg" data-progress="python"></span></a><a class="card" href="pages/python-func.html"><span class="card-k">Py②</span><h3>함수와 클래스</h3><p>출력 형식, 연산자, 함수와 기본 인자, 컴프리헨션·lambda, 클래스와 상속, type().</p><span class="pg" data-progress="python"></span></a><a class="card" href="pages/sql-query.html"><span class="card-k">S①</span><h3>조회</h3><p>실행 순서, 결과 행 수, NULL, 조건, 서브쿼리, JOIN, 집합 연산.</p><span class="pg" data-progress="sql"></span></a><a class="card" href="pages/sql-ddl.html"><span class="card-k">S②</span><h3>정의·관리·이론</h3><p>DDL·DML·DCL·TCL, 제약조건, 키와 무결성, 관계대수.</p><span class="pg" data-progress="sql"></span></a><a class="card" href="pages/practice.html"><span class="card-k">✎</span><h3>연습 문제</h3><p>기출 유형으로 새로 만든 45문제. 답을 입력하면 바로 채점됩니다.</p><span class="pg" data-progress="all"></span></a><a class="card mockc" href="pages/mock-2026-3.html"><span class="card-k">①</span><h3>2026년 3회 예상 모의고사 ①</h3><p>이론 8 + 코드·SQL 12, 실전처럼 150분 타이머로 풀고 채점·해설·약점 분석까지.</p></a><a class="card mockc" href="pages/mock-2026-3b.html"><span class="card-k">②</span><h3>2026년 3회 예상 모의고사 ② · 고난도</h3><p>26년 1·2회 경향 반영, 개념 2~3개를 겹친 20문항. 실제 시험보다 조금 어렵게.</p></a></div>
+
+<div class="sheet" id="checklist">
+<h2 style="margin:0 0 12px;font-size:18px">시험장 체크리스트</h2>
+<ul class="check">
+<li>출력 형식: 공백, 줄바꿈, 대괄호, 따옴표, 대소문자, 소수점 자리까지 코드대로인가</li>
+<li>정수 나눗셈과 나머지: C·Java는 0쪽으로 버림, Python <code>//</code>는 아래로 내림</li>
+<li>C 포인터: 괄호 위치(<code>*p+2</code>와 <code>*(p+2)</code>), 기준점이 움직였는지, 매크로는 괄호 없이 글자 그대로 바뀌는지</li>
+<li>C 구조체·연결리스트: 초기화 값으로 직접 그렸는가, head 삽입이면 순서가 뒤집혔는가</li>
+<li>Java 상속: 메서드는 실제 객체, 필드·static·오버로딩 선택은 선언 타입</li>
+<li>Java 생성자: 부모 먼저, 자식 필드는 부모 생성자가 끝난 뒤 초기화</li>
+<li>Java 비교: 문자열·Integer(128 이상)·배열의 <code>==</code>는 주소 비교</li>
+<li>Python: 얕은 복사로 공유되는 안쪽 리스트, 슬라이싱 끝 미포함, 음수 간격의 시작점, 기본값 리스트 공유</li>
+<li>SQL: 실행 순서, NULL은 집계와 비교에서 빠짐, AND가 OR보다 먼저, 행 수인지 값인지</li>
+<li>재귀: 종료 조건에 음수가 걸리는지, 작은 값부터 표로 채웠는지</li>
+</ul>
+</div>
+
+<p class="foot">분석 대상: Life-Journey 블로그(chobopark.tistory.com)의 정보처리기사 실기 복원 문제 2020년 1회 ~ 2026년 2회. 문항 수와 개념 횟수는 복원 문제 기준이라 몇 문항 정도 차이가 날 수 있고, 표가 이미지로만 남은 SQL 몇 문항은 정답만 확인했습니다. 이 사이트의 예제와 연습 문제는 기출 유형을 바탕으로 새로 만든 것이며, 모두 직접 컴파일·실행해서 결과를 확인했습니다.</p>
+
+<nav class="pager" aria-label="이전 다음 장"><a class="next" href="pages/method.html"><small>다음 →</small><b>0 추적법</b></a></nav>
+</main>
+<script src="js/highlight.js"></script>
+<script src="js/site.js"></script>
+<script src="js/data/practice.js"></script>
+<script src="js/practice.js"></script>
+</body>
+</html>

@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Python① 자료형과 슬라이싱 · 정처기 코드 노트</title>
+<script>try{var t=localStorage.getItem("jcg-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="../css/base.css">
+<link rel="stylesheet" href="../css/content.css">
+<link rel="stylesheet" href="../css/widgets.css">
+</head>
+<body>
+<header class="topbar"><div class="topbar-in">
+<a class="brand" href="../index.html">정처기 <em>코드</em><span> 노트</span></a>
+<nav class="chapnav" aria-label="장 이동"><ul><li><a href="../index.html">홈</a></li><li><a href="method.html">0 추적법</a></li><li><a href="c-memory.html">C① 메모리·포인터</a></li><li><a href="c-struct.html">C② 구조체·자료구조</a></li><li><a href="java-oop.html">Java① 객체·상속</a></li><li><a href="java-api.html">Java② 문자열·예외·컬렉션</a></li><li><a href="python-data.html">Python① 자료형·슬라이싱</a></li><li><a href="python-func.html">Python② 함수·클래스</a></li><li><a href="sql-query.html">SQL① 조회</a></li><li><a href="sql-ddl.html">SQL② 정의·관리·이론</a></li><li><a href="practice.html">연습 문제</a></li><li><a href="mock-2026-3.html">3회 모의고사 ①</a></li><li><a href="mock-2026-3b.html">3회 모의고사 ②</a></li></ul></nav>
+<button class="theme-btn" type="button">어둡게</button>
+</div></header>
+<main class="wrap">
+<div class="page-head">
+<p class="eyebrow">PYTHON · 1 / 2 · 기출 24문항</p>
+<h1>Python① <em>자료형</em>과 슬라이싱</h1>
+<p class="lead">C에서 본 주소와 Java에서 본 화살표가 Python에서는 이름표가 됩니다. 이 구조를 먼저 잡고 나면 얕은 복사 문제는 그림 한 장이고, 나머지는 슬라이싱 규칙과 자료형별 메서드를 정확히 아느냐의 싸움입니다.</p>
+<ul class="toc"><li><a href="#p-1"><span class="t-id">P-1</span>변수는 이름표, 복사는 세 종류</a></li><li><a href="#p-2"><span class="t-id">P-2</span>인덱싱과 슬라이싱</a></li><li><a href="#p-3"><span class="t-id">P-3</span>문자열 메서드<span class="t-add" title="필수 보강"></span></a></li><li><a href="#p-4"><span class="t-id">P-4</span>리스트</a></li><li><a href="#p-5"><span class="t-id">P-5</span>튜플과 언패킹<span class="t-add" title="필수 보강"></span></a></li><li><a href="#p-6"><span class="t-id">P-6</span>딕셔너리</a></li><li><a href="#p-7"><span class="t-id">P-7</span>셋</a></li><li><a href="#p-8"><span class="t-id">P-8</span>range와 자료형 변환<span class="t-add" title="필수 보강"></span></a></li></ul><p class="legend"><span><span class="badge hot">기출 빈출</span> 실제로 여러 번 나온 개념</span><span><span class="badge add">필수 보강</span> 기출에 적게 나왔지만 모르면 위험한 개념</span></p>
+</div>
+<div class="sheet"><section class="lesson" id="p-1" data-kind="hot" data-title="변수는 이름표, 복사는 세 종류"><h2><span class="l-id">P-1</span>변수는 이름표, 복사는 세 종류<span class="badge hot">기출 빈출</span></h2>
+<p>Python의 변수는 전부 이름표입니다. <code>a = [1, 2]</code>는 리스트 객체를 만들고 a라는 이름표를 붙이는 것입니다. Java 객체 변수와 같은 구조인데, 숫자와 문자열까지 모두 그렇습니다. 그래서 객체가 바뀔 수 있는지(list, dict, set) 없는지(int, str, tuple)가 결과를 가릅니다.</p>
+<div class="widget stepper" data-steps="py-names"></div>
+<div class="tablewrap"><table class="ref"><thead><tr><th></th><th>바깥 리스트</th><th>안쪽 리스트</th></tr></thead><tbody><tr><td>대입 <code>b = a</code></td><td>공유</td><td>공유</td></tr><tr><td>얕은 복사 <code>a[:]</code>, <code>a.copy()</code>, <code>list(a)</code>, <code>copy.copy(a)</code></td><td>새로</td><td>공유</td></tr><tr><td>깊은 복사 <code>copy.deepcopy(a)</code></td><td>새로</td><td>새로</td></tr></tbody></table></div>
+<div class="codewrap"><pre class="code"><code data-lang="python">arr = [[0] * 3] * 3
+arr[0][0] = 1
+print(arr)
+x = [1, 2]; y = x; y += [3]; print(x)
+t = (1, 2); u = t; u += (3,); print(t, u)
+p = [1]; q = [1]; r = p
+print(p == q, p is q, r is p)</code></pre></div>
+<div class="out"><span class="out-l">출력</span><pre>[[1, 0, 0], [1, 0, 0], [1, 0, 0]]
+[1, 2, 3]
+(1, 2) (1, 2, 3)
+True False True</pre></div>
+<div class="trap"><p class="trap-h">함정</p><ul><li><code>[[0] * 3] * 3</code>은 같은 안쪽 리스트를 세 번 가리킵니다. 따로 만들려면 <code>[[0] * 3 for _ in range(3)]</code>.</li><li>리스트의 <code>+=</code>는 제자리에서 늘립니다(같은 객체). 튜플과 문자열은 바꿀 수 없어서 <code>+=</code>가 새 객체를 만듭니다.</li><li><code>==</code>는 내용 비교, <code>is</code>는 같은 객체인지 비교. Java의 equals와 ==가 반대 이름으로 붙어 있다고 생각하면 됩니다.</li></ul></div>
+<p class="gichul"><span class="g-tag">기출</span><span>2026-1 14번 (<code>m[:]</code> 뒤 <code>b[i+1] += b[i]</code>)</span></p></section><section class="lesson" id="p-2" data-kind="hot" data-title="인덱싱과 슬라이싱"><h2><span class="l-id">P-2</span>인덱싱과 슬라이싱<span class="badge hot">기출 빈출</span></h2>
+<p>규칙은 <code>s[시작:끝:간격]</code>, 그리고 <b>끝은 포함하지 않는다</b>. 이 두 가지가 전부입니다. 음수 인덱스는 뒤에서부터 셉니다. 아래 시뮬레이터에 값을 넣어 보세요. 빨간 숫자가 뽑히는 순서입니다.</p>
+<div class="widget" data-widget="slice"></div>
+<div class="tablewrap"><table class="ref"><thead><tr><th>코드</th><th>결과</th><th>포인트</th></tr></thead><tbody><tr><td><code>s[2:5]</code></td><td><code>FOR</code></td><td>2, 3, 4 (5는 미포함)</td></tr><tr><td><code>s[:3]</code></td><td><code>INF</code></td><td>시작 생략은 처음부터</td></tr><tr><td><code>s[-3:]</code></td><td><code>ION</code></td><td>뒤에서 세 개</td></tr><tr><td><code>s[::2]</code></td><td><code>IFRAIN</code></td><td>0, 2, 4, 6, 8, 10</td></tr><tr><td><code>s[::-1]</code></td><td><code>NOITAMROFNI</code></td><td>뒤집기</td></tr><tr><td><code>s[5:1:-1]</code></td><td><code>MROF</code></td><td>5, 4, 3, 2 (역방향도 끝 미포함)</td></tr><tr><td><code>s[1:5:-1]</code></td><td><code>&#x27;&#x27;</code> (빈 문자열)</td><td>방향과 범위가 반대</td></tr></tbody></table></div>
+<div class="trap"><p class="trap-h">함정</p><ul><li><code>lst[::-2]</code>처럼 시작을 생략하고 간격이 음수면 마지막 원소부터 시작합니다.</li><li>공백과 밑줄도 한 칸입니다. 긴 문자열은 번호를 직접 적어 두고 자르세요.</li><li>슬라이싱은 범위를 넘어가도 오류 없이 있는 데까지만 잘라 줍니다. 인덱싱 <code>s[20]</code>은 IndexError.</li></ul></div>
+<p class="gichul"><span class="g-tag">기출</span><span>2023-2 19번, 2024-3 2번 (<code>[::2]</code>와 <code>[1::2]</code>), 2026-1 8번·13번, 2026-2 6번, 2022-2 13번, 2024-1 12번, 2021-1 5번</span></p></section><section class="lesson" id="p-3" data-kind="add" data-title="문자열 메서드"><h2><span class="l-id">P-3</span>문자열 메서드<span class="badge add">필수 보강</span></h2>
+<div class="codewrap"><pre class="code"><code data-lang="python">s = &quot;  Hello, Python  &quot;
+print(repr(s.strip()), s.split(), &quot;a,b,,c&quot;.split(&quot;,&quot;))
+print(&quot;hello world&quot;.capitalize(), &quot;hello world&quot;.title(), &quot;Hello&quot;.upper(), &quot;Hello&quot;.lower())
+print(&quot;banana&quot;.count(&quot;a&quot;), &quot;banana&quot;.find(&quot;n&quot;), &quot;banana&quot;.find(&quot;z&quot;), &quot;banana&quot;.replace(&quot;a&quot;, &quot;o&quot;, 2))
+print(&quot;-&quot;.join([&quot;a&quot;, &quot;b&quot;, &quot;c&quot;]), &quot;ab&quot; * 3, &quot;py&quot; in &quot;python&quot;, ord(&#x27;A&#x27;), chr(97))</code></pre></div>
+<div class="out"><span class="out-l">출력</span><pre>&#x27;Hello, Python&#x27; [&#x27;Hello,&#x27;, &#x27;Python&#x27;] [&#x27;a&#x27;, &#x27;b&#x27;, &#x27;&#x27;, &#x27;c&#x27;]
+Hello world Hello World HELLO hello
+3 2 -1 bonona
+a-b-c ababab True 65 a</pre></div>
+<div class="tablewrap"><table class="ref"><thead><tr><th>메서드</th><th>하는 일</th><th>주의</th></tr></thead><tbody><tr><td><code>split()</code></td><td>공백 기준으로 나눠 리스트로</td><td>인자 없으면 연속 공백도 하나로 취급</td></tr><tr><td><code>split(&#x27;,&#x27;)</code></td><td>쉼표 기준</td><td>구분자가 연달아 있으면 빈 문자열 ''이 생김</td></tr><tr><td><code>&#x27;구분자&#x27;.join(리스트)</code></td><td>리스트를 이어 붙여 문자열로</td><td>원소가 전부 문자열이어야 함</td></tr><tr><td><code>strip()</code></td><td>양 끝 공백 제거</td><td>가운데 공백은 그대로</td></tr><tr><td><code>find(x)</code> / <code>index(x)</code></td><td>처음 나오는 위치</td><td>없으면 find는 -1, index는 ValueError</td></tr><tr><td><code>replace(a, b, n)</code></td><td>a를 b로 (n개까지)</td><td>새 문자열을 돌려줌. 원본은 그대로</td></tr><tr><td><code>capitalize()</code> / <code>title()</code></td><td>첫 글자만 대문자 / 단어마다 대문자</td><td>capitalize는 나머지를 소문자로</td></tr><tr><td><code>count(x)</code></td><td>x가 몇 번 나오는지</td><td>대소문자 구분</td></tr></tbody></table></div>
+<p class="gichul"><span class="g-tag">기출</span><span>2023-3 14번 (split), 2024-2 6번 (부분 문자열 세기), 2026-1 8번 (join), 언어별 모음 문제 (capitalize, find가 -1)</span></p></section><section class="lesson" id="p-4" data-kind="hot" data-title="리스트"><h2><span class="l-id">P-4</span>리스트<span class="badge hot">기출 빈출</span></h2>
+<div class="codewrap"><pre class="code"><code data-lang="python">lst = [3, 1, 2]; lst.append([4, 5]); print(lst, len(lst))
+l2 = [3, 1, 2]; l2.extend([4, 5]); print(l2)
+print(l2.pop(), l2.pop(0), l2)
+l2.insert(1, 9); l2.remove(9); print(l2, l2.index(4), l2.count(1))
+r = l2.sort(); print(r, l2, sorted([3, 1, 2], reverse=True))
+print([1, 2] + [3], [0] * 3, 2 in [1, 2])</code></pre></div>
+<div class="out"><span class="out-l">출력</span><pre>[3, 1, 2, [4, 5]] 4
+[3, 1, 2, 4, 5]
+5 3 [1, 2, 4]
+[1, 2, 4] 2 1
+None [1, 2, 4] [3, 2, 1]
+[1, 2, 3] [0, 0, 0] True</pre></div>
+<div class="tablewrap"><table class="ref"><thead><tr><th>메서드</th><th>하는 일</th></tr></thead><tbody><tr><td><code>append(x)</code></td><td>x를 통째로 하나 추가 (리스트를 넣으면 리스트 하나가 원소로)</td></tr><tr><td><code>extend(xs)</code></td><td>xs를 펼쳐서 여러 개 추가</td></tr><tr><td><code>insert(i, x)</code></td><td>i번 자리에 끼움</td></tr><tr><td><code>pop()</code> / <code>pop(i)</code></td><td>맨 끝 / i번을 꺼내서 <b>반환</b></td></tr><tr><td><code>remove(x)</code></td><td>값 x를 처음 하나 삭제, 반환 없음</td></tr><tr><td><code>lst.sort()</code></td><td>원본을 정렬하고 <b>None</b>을 반환</td></tr><tr><td><code>sorted(lst)</code></td><td>정렬된 <b>새</b> 리스트를 반환, 원본 그대로</td></tr><tr><td><code>reverse()</code></td><td>원본을 뒤집음</td></tr></tbody></table></div>
+<p class="gichul"><span class="g-tag">기출</span><span>2022-1 7번 (extend, pop, reverse 이름 쓰기), 2024-3 2번 (리스트 뒤집기), 2020-4 9번 (중첩 리스트 인덱싱)</span></p></section><section class="lesson" id="p-5" data-kind="add" data-title="튜플과 언패킹"><h2><span class="l-id">P-5</span>튜플과 언패킹<span class="badge add">필수 보강</span></h2>
+<div class="codewrap"><pre class="code"><code data-lang="python">a, b = 1, 2
+a, b = b, a                 # 맞바꾸기
+x, *rest = [1, 2, 3, 4]
+t = (1,)                    # 원소 하나짜리 튜플은 쉼표 필수
+print(a, b, x, rest, type(t).__name__, type((1)).__name__)</code></pre></div>
+<div class="out"><span class="out-l">출력</span><pre>2 1 1 [2, 3, 4] tuple int</pre></div>
+<p>튜플은 고칠 수 없는 리스트입니다. <code>t[0] = 5</code>는 TypeError. 함수가 <code>return a, b</code>로 여러 값을 돌려주면 사실 튜플 하나를 돌려주는 것입니다.</p></section><section class="lesson" id="p-6" data-kind="hot" data-title="딕셔너리"><h2><span class="l-id">P-6</span>딕셔너리<span class="badge hot">기출 빈출</span></h2>
+<div class="codewrap"><pre class="code"><code data-lang="python">d = {&#x27;a&#x27;: 1, &#x27;b&#x27;: 2}
+d[&#x27;c&#x27;] = 3
+d[&#x27;a&#x27;] = 10
+print(d, d.get(&#x27;z&#x27;, 0), list(d.keys()), list(d.values()))
+for k, v in d.items():
+    print(k + str(v), end=&#x27; &#x27;)</code></pre></div>
+<div class="out"><span class="out-l">출력</span><pre>{&#x27;a&#x27;: 10, &#x27;b&#x27;: 2, &#x27;c&#x27;: 3} 0 [&#x27;a&#x27;, &#x27;b&#x27;, &#x27;c&#x27;] [10, 2, 3]
+a10 b2 c3</pre></div>
+<div class="rule"><ul><li>넣은 순서를 유지합니다 (3.7부터).</li><li>같은 키에 대입하면 덮어쓰기. 키는 중복될 수 없습니다.</li><li><code>d[&#x27;z&#x27;]</code>처럼 없는 키를 읽으면 KeyError, <code>d.get(&#x27;z&#x27;, 기본값)</code>은 기본값.</li><li><code>for k in d</code>는 키만, <code>.items()</code>는 (키, 값) 쌍.</li></ul></div>
+<p class="gichul"><span class="g-tag">기출</span><span>2026-2 5번 (<code>key[-1] + value[0]</code>), 2025-3 9번 (값으로 튜플 저장), 2025-2 17번 (딕셔너리 컴프리헨션과 set)</span></p></section><section class="lesson" id="p-7" data-kind="hot" data-title="셋"><h2><span class="l-id">P-7</span>셋<span class="badge hot">기출 빈출</span></h2>
+<div class="codewrap"><pre class="code"><code data-lang="python">st = {1, 2, 3}
+st.add(2)                # 이미 있음, 무시
+st.update([3, 4, 5])     # 여러 개 추가
+st.remove(1)
+print(st, st &amp; {4, 5, 6}, st | {9}, st - {2}, st ^ {2, 7})</code></pre></div>
+<div class="out"><span class="out-l">출력</span><pre>{2, 3, 4, 5} {4, 5} {2, 3, 4, 5, 9} {3, 4, 5} {3, 4, 5, 7}</pre></div>
+<div class="rule"><ul><li>중복 무시, 순서 없음. 출력 순서는 신경 쓰지 않아도 되고 원소만 맞으면 됩니다.</li><li><code>add</code>는 하나, <code>update</code>는 여러 개를 펼쳐서 추가</li><li><code>&amp;</code> 교집합, <code>|</code> 합집합, <code>-</code> 차집합, <code>^</code> 대칭차(한쪽에만 있는 것)</li><li>빈 셋은 <code>set()</code>. <code>{}</code>는 빈 딕셔너리</li></ul></div>
+<p class="gichul"><span class="g-tag">기출</span><span>2020-2 2번·2023-1 15번 (add와 update, 같은 문제 두 번), 2025-2 17번 (교집합 크기)</span></p></section><section class="lesson" id="p-8" data-kind="add" data-title="range와 자료형 변환"><h2><span class="l-id">P-8</span>range와 자료형 변환<span class="badge add">필수 보강</span></h2>
+<div class="codewrap"><pre class="code"><code data-lang="python">print(list(range(5)), list(range(2, 10, 3)), list(range(5, 0, -2)))
+print(type(3), type(3.0), type(&quot;3&quot;), type([3]), type((3,)), type({3}), type({}))
+print(int(&quot;12&quot;) + 1, str(12) + &quot;1&quot;, float(&quot;1.5&quot;) * 2, int(3.99), int(-3.99))
+print(bool(&quot;&quot;), bool(&quot;0&quot;), bool([]), bool(0.0))</code></pre></div>
+<div class="out"><span class="out-l">출력</span><pre>[0, 1, 2, 3, 4] [2, 5, 8] [5, 3, 1]
+&lt;class &#x27;int&#x27;&gt; &lt;class &#x27;float&#x27;&gt; &lt;class &#x27;str&#x27;&gt; &lt;class &#x27;list&#x27;&gt; &lt;class &#x27;tuple&#x27;&gt; &lt;class &#x27;set&#x27;&gt; &lt;class &#x27;dict&#x27;&gt;
+13 121 3.0 3 -3
+False True False False</pre></div>
+<div class="rule"><ul><li><code>range(시작, 끝, 간격)</code>도 끝은 포함하지 않습니다. 슬라이싱과 같은 규칙</li><li><code>int()</code>는 소수점 아래를 버립니다(0 쪽으로). <code>//</code>는 아래로 내림이라 음수에서 다름</li><li>빈 것("", [], {}, 0, None)은 거짓, 나머지는 참. 문자열 "0"은 비어 있지 않아서 참</li><li>문자열 + 숫자는 TypeError. <code>str()</code>로 바꿔서 이어 붙입니다.</li></ul></div>
+<p class="gichul"><span class="g-tag">기출</span><span>2024-3 10번 (type()으로 분기)</span></p></section></div>
+<nav class="pager" aria-label="이전 다음 장"><a class="prev" href="java-api.html"><small>← 이전</small><b>Java② 문자열·예외·컬렉션</b></a><a class="next" href="python-func.html"><small>다음 →</small><b>Python② 함수·클래스</b></a></nav>
+</main>
+<script src="../js/highlight.js"></script>
+<script src="../js/site.js"></script>
+<script src="../js/data/steps.js"></script>
+<script src="../js/stepper.js"></script>
+<script src="../js/widgets.js"></script>
+</body>
+</html>

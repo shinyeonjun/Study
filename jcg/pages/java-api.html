@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Java② 문자열·예외·컬렉션 · 정처기 코드 노트</title>
+<script>try{var t=localStorage.getItem("jcg-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="../css/base.css">
+<link rel="stylesheet" href="../css/content.css">
+<link rel="stylesheet" href="../css/widgets.css">
+</head>
+<body>
+<header class="topbar"><div class="topbar-in">
+<a class="brand" href="../index.html">정처기 <em>코드</em><span> 노트</span></a>
+<nav class="chapnav" aria-label="장 이동"><ul><li><a href="../index.html">홈</a></li><li><a href="method.html">0 추적법</a></li><li><a href="c-memory.html">C① 메모리·포인터</a></li><li><a href="c-struct.html">C② 구조체·자료구조</a></li><li><a href="java-oop.html">Java① 객체·상속</a></li><li><a href="java-api.html">Java② 문자열·예외·컬렉션</a></li><li><a href="python-data.html">Python① 자료형·슬라이싱</a></li><li><a href="python-func.html">Python② 함수·클래스</a></li><li><a href="sql-query.html">SQL① 조회</a></li><li><a href="sql-ddl.html">SQL② 정의·관리·이론</a></li><li><a href="practice.html">연습 문제</a></li><li><a href="mock-2026-3.html">3회 모의고사 ①</a></li><li><a href="mock-2026-3b.html">3회 모의고사 ②</a></li></ul></nav>
+<button class="theme-btn" type="button">어둡게</button>
+</div></header>
+<main class="wrap">
+<div class="page-head">
+<p class="eyebrow">JAVA · 2 / 2</p>
+<h1>Java② <em>문자열</em>·예외·컬렉션</h1>
+<p class="lead">상속 다음으로 많이 나오는 것은 비교(== 와 equals)와 예외 흐름입니다. 여기에 기출 코드에 설명 없이 등장하는 String 메서드, 컬렉션, 람다, enum을 함께 정리합니다.</p>
+<ul class="toc"><li><a href="#j-9"><span class="t-id">J-9</span>==는 주소, equals는 내용</a></li><li><a href="#j-10"><span class="t-id">J-10</span>String 메서드와 StringBuilder<span class="t-add" title="필수 보강"></span></a></li><li><a href="#j-11"><span class="t-id">J-11</span>연산 함정: 나눗셈, 형변환, 증감<span class="t-add" title="필수 보강"></span></a></li><li><a href="#j-12"><span class="t-id">J-12</span>예외 처리</a></li><li><a href="#j-13"><span class="t-id">J-13</span>컬렉션<span class="t-add" title="필수 보강"></span></a></li><li><a href="#j-14"><span class="t-id">J-14</span>람다와 함수형 인터페이스</a></li><li><a href="#j-15"><span class="t-id">J-15</span>enum, 제네릭, 배열</a></li><li><a href="#j-16"><span class="t-id">J-16</span>빈칸 단골 키워드</a></li></ul><p class="legend"><span><span class="badge hot">기출 빈출</span> 실제로 여러 번 나온 개념</span><span><span class="badge add">필수 보강</span> 기출에 적게 나왔지만 모르면 위험한 개념</span></p>
+</div>
+<div class="sheet"><section class="lesson" id="j-9" data-kind="hot" data-title="==는 주소, equals는 내용"><h2><span class="l-id">J-9</span>==는 주소, equals는 내용<span class="badge hot">기출 빈출</span></h2>
+<div class="codewrap"><pre class="code"><code data-lang="java">String a = &quot;java&quot;, b = &quot;java&quot;, c = new String(&quot;java&quot;);
+System.out.println(a == b);
+System.out.println(a == c);
+System.out.println(a.equals(c));
+System.out.println(1 + 2 + &quot;3&quot; + 4 + 5);
+System.out.println(&quot;x&quot; + 1 + 2);</code></pre></div>
+<div class="out"><span class="out-l">출력</span><pre>true
+false
+true
+3345
+x12</pre></div>
+<div class="rule"><ul><li>따옴표로 쓴 같은 문자열은 상수 풀에 하나만 만들어 공유합니다. 그래서 <code>a == b</code>가 true.</li><li><code>new String</code>은 새 객체라 <code>==</code>가 false. <code>equals</code>는 글자를 비교해서 true.</li><li>배열도 <code>==</code>는 주소 비교입니다. 내용이 같아도 false. 내용 비교는 <code>Arrays.equals</code></li><li><code>+</code>는 왼쪽부터 계산합니다. 문자열을 만나기 전까지는 숫자 덧셈(1 + 2 = 3), 그다음부터 전부 이어 붙이기.</li></ul></div>
+<h3>Integer도 128부터는 다른 객체</h3>
+<div class="codewrap"><pre class="code"><code data-lang="java">Integer i1 = 127, i2 = 127, i3 = 128, i4 = 128;
+int i5 = 128;
+System.out.print((i1 == i2) + &quot; &quot; + (i3 == i4) + &quot; &quot; + i3.equals(i4) + &quot; &quot; + (i3 == i5));</code></pre></div>
+<div class="out"><span class="out-l">출력</span><pre>true false true true</pre></div>
+<p>Integer는 -128~127을 미리 만들어 두고 재사용합니다(캐시). 그 밖의 값은 매번 새 객체라 <code>==</code>가 false입니다. 한쪽이 기본형 int면 Integer가 숫자로 풀려서(언박싱) 값 비교가 됩니다.</p>
+<p class="gichul"><span class="g-tag">기출</span><span>2023-2 14번, 2024-3 1번, 2024-2 1번 (배열 ==), 2026-1 17번 (<code>x1 + x2 + &quot;2&quot; + x3</code>)</span></p></section><section class="lesson" id="j-10" data-kind="add" data-title="String 메서드와 StringBuilder"><h2><span class="l-id">J-10</span>String 메서드와 StringBuilder<span class="badge add">필수 보강</span></h2>
+<div class="codewrap"><pre class="code"><code data-lang="java">String s = &quot;Hello,Java,World&quot;;
+System.out.println(s.length() + &quot; &quot; + s.charAt(6) + &quot; &quot; + s.indexOf(&quot;Java&quot;) + &quot; &quot;
+    + s.substring(6, 10) + &quot; &quot; + s.substring(11) + &quot; &quot; + s.split(&quot;,&quot;).length);
+System.out.println(s.replace(&quot;l&quot;, &quot;L&quot;) + &quot; &quot; + s.contains(&quot;Java&quot;) + &quot; &quot; + s.indexOf(&quot;z&quot;));
+s.toUpperCase();
+System.out.println(s);
+StringBuilder sb = new StringBuilder(&quot;abc&quot;);
+sb.append(&quot;de&quot;).reverse();
+System.out.println(sb);</code></pre></div>
+<div class="out"><span class="out-l">출력</span><pre>16 J 6 Java World 3
+HeLLo,Java,WorLd true -1
+Hello,Java,World
+edcba</pre></div>
+<div class="tablewrap"><table class="ref"><thead><tr><th>메서드</th><th>결과</th><th>주의</th></tr></thead><tbody><tr><td><code>charAt(i)</code></td><td>i번째 글자 (char)</td><td>0부터</td></tr><tr><td><code>indexOf(x)</code></td><td>처음 나오는 위치</td><td>없으면 -1</td></tr><tr><td><code>substring(a, b)</code></td><td>a부터 b-1까지</td><td>끝 미포함 (Python 슬라이싱과 같음)</td></tr><tr><td><code>substring(a)</code></td><td>a부터 끝까지</td><td></td></tr><tr><td><code>split(&quot;,&quot;)</code></td><td>나눈 문자열 배열</td><td>구분자는 결과에서 사라짐</td></tr><tr><td><code>replace(a, b)</code></td><td>전부 바꾼 <b>새</b> 문자열</td><td>원본은 그대로</td></tr><tr><td><code>toUpperCase()</code></td><td>대문자로 바꾼 새 문자열</td><td>결과를 대입하지 않으면 아무 일도 없음</td></tr><tr><td><code>StringBuilder</code></td><td>고칠 수 있는 문자열</td><td><code>append insert reverse</code>가 자기 자신을 바꿈</td></tr></tbody></table></div>
+<div class="trap"><p class="trap-h">함정</p><ul><li>String은 불변입니다. <code>s.toUpperCase();</code>만 쓰고 <code>s = </code>로 받지 않으면 s는 그대로입니다.</li><li><code>&quot;ITISTESTSTRING&quot;.split(&quot;T&quot;)</code>는 [I, IS, ES, S, RING]. T가 연달아 있으면 빈 문자열이 생깁니다 (2024-2 20번).</li></ul></div></section><section class="lesson" id="j-11" data-kind="add" data-title="연산 함정: 나눗셈, 형변환, 증감"><h2><span class="l-id">J-11</span>연산 함정: 나눗셈, 형변환, 증감<span class="badge add">필수 보강</span></h2>
+<div class="codewrap"><pre class="code"><code data-lang="java">int a = 7, b = 2;
+System.out.println(a / b + &quot; &quot; + a % b + &quot; &quot; + (double) a / b + &quot; &quot; + (double) (a / b));
+System.out.println((&#x27;A&#x27; + 1) + &quot; &quot; + (char) (&#x27;A&#x27; + 1) + &quot; &quot; + (-7 / 2) + &quot; &quot; + (-7 % 2));
+int i = 1;  int r = i++ + ++i;   System.out.println(r + &quot; &quot; + i);
+int x = 1;  x += 3.7;            System.out.println(x);
+int k = 0;
+if (false &amp;&amp; ++k &gt; 0) {}
+if (true || ++k &gt; 0) {}
+System.out.print(k + &quot; &quot;);
+if (false &amp; ++k &gt; 0) {}
+System.out.println(k);</code></pre></div>
+<div class="out"><span class="out-l">출력</span><pre>3 1 3.5 3.0
+66 B -3 -1
+4 3
+4
+0 1</pre></div>
+<div class="tablewrap"><table class="ref"><thead><tr><th>코드</th><th>결과</th><th>왜</th></tr></thead><tbody><tr><td><code>(double) a / b</code></td><td>3.5</td><td>a를 먼저 실수로 바꾼 뒤 나눔</td></tr><tr><td><code>(double) (a / b)</code></td><td>3.0</td><td>정수 나눗셈 3을 나중에 실수로</td></tr><tr><td><code>&#x27;A&#x27; + 1</code></td><td>66</td><td>char + int는 int</td></tr><tr><td><code>i++ + ++i</code></td><td>1 + 3 = 4</td><td>Java는 왼쪽부터 값을 확정 (C에서는 정의되지 않은 동작)</td></tr><tr><td><code>x += 3.7</code></td><td>4</td><td>복합 대입은 자동으로 int로 잘라 넣음. <code>x = x + 3.7</code>은 컴파일 오류</td></tr><tr><td><code>&amp;&amp; ||</code></td><td>단락 평가</td><td>결과가 정해지면 뒤는 실행 안 함. <code>&amp; |</code>는 양쪽 다 실행</td></tr></tbody></table></div>
+<p class="gichul"><span class="g-tag">기출</span><span>2021-3 11번 (연산자 우선순위), 2023-2 2번 (/ %로 화폐 단위), 모음 문제 (<code>b *= a /= 4</code>, <code>c | c &lt;&lt; 3</code>)</span></p></section><section class="lesson" id="j-12" data-kind="hot" data-title="예외 처리"><h2><span class="l-id">J-12</span>예외 처리<span class="badge hot">기출 빈출</span></h2>
+<div class="codewrap"><pre class="code"><code data-lang="java">try {
+    int[] arr = new int[3];
+    arr[3] = 1;
+    System.out.print(&quot;A&quot;);
+} catch (ArithmeticException e) { System.out.print(&quot;B&quot;);
+} catch (ArrayIndexOutOfBoundsException e) { System.out.print(&quot;C&quot;);
+} catch (Exception e) { System.out.print(&quot;D&quot;);
+} finally { System.out.print(&quot;E&quot;); }
+System.out.print(&quot;F&quot;);</code></pre></div>
+<div class="out"><span class="out-l">출력</span><pre>CEF</pre></div>
+<div class="rule"><ul><li>try에서 예외가 난 줄 이후는 건너뜁니다 (A 안 찍힘).</li><li>위에서부터 처음 맞는 catch <b>하나만</b> 실행합니다 (D는 안 찍힘).</li><li>finally는 예외가 있든 없든, return이 있든 실행합니다.</li><li>예외를 처리했으면 그 뒤 코드는 정상으로 이어집니다.</li></ul></div>
+<h3>finally와 return</h3>
+<div class="codewrap"><pre class="code"><code data-lang="java">static int f() {
+    int r = 1;
+    try { return r; }
+    finally { r = 100; System.out.print(&quot;F&quot;); }
+}
+System.out.print(f());</code></pre></div>
+<div class="out"><span class="out-l">출력</span><pre>F1</pre></div>
+<p>return을 만나면 돌려줄 값 1이 먼저 정해지고, 나가기 직전에 finally가 실행됩니다. finally에서 r을 바꿔도 이미 정해진 반환값은 그대로입니다.</p>
+<div class="tablewrap"><table class="ref"><thead><tr><th>예외</th><th>언제</th></tr></thead><tbody><tr><td><code>ArithmeticException</code></td><td>정수를 0으로 나눔</td></tr><tr><td><code>ArrayIndexOutOfBoundsException</code></td><td>배열 범위 밖</td></tr><tr><td><code>NullPointerException</code></td><td>null인 변수로 메서드·필드 접근</td></tr><tr><td><code>ClassCastException</code></td><td>잘못된 다운캐스팅</td></tr><tr><td><code>NumberFormatException</code></td><td><code>Integer.parseInt(&quot;abc&quot;)</code></td></tr></tbody></table></div>
+<p><code>throw new 예외()</code>는 직접 예외를 던지는 것, 메서드 선언 끝의 <code>throws 예외</code>는 "이 메서드는 예외를 밖으로 넘길 수 있다"는 표시입니다.</p>
+<p class="gichul"><span class="g-tag">기출</span><span>2025-1 5번, 2024-3 18번, 2025-2 9번 (람다 안에서 던진 예외)</span></p></section><section class="lesson" id="j-13" data-kind="add" data-title="컬렉션: ArrayList, HashSet, HashMap"><h2><span class="l-id">J-13</span>컬렉션: ArrayList, HashSet, HashMap<span class="badge add">필수 보강</span></h2>
+<div class="codewrap"><pre class="code"><code data-lang="java">ArrayList&lt;Integer&gt; list = new ArrayList&lt;&gt;();
+list.add(3); list.add(1); list.add(0, 9);     // [9, 3, 1]
+list.remove(1);                                // 1번 자리 → [9, 1]
+list.remove(Integer.valueOf(9));               // 값 9 → [1]
+System.out.println(list + &quot; &quot; + list.size());
+
+HashSet&lt;Integer&gt; set = new HashSet&lt;&gt;();
+set.add(3); set.add(1); set.add(3);
+System.out.println(set.size() + &quot; &quot; + set.contains(1));
+
+HashMap&lt;String, Integer&gt; m = new HashMap&lt;&gt;();
+m.put(&quot;a&quot;, 1); m.put(&quot;b&quot;, 2); m.put(&quot;a&quot;, 3);
+System.out.println(m.get(&quot;a&quot;) + &quot; &quot; + m.getOrDefault(&quot;z&quot;, 0) + &quot; &quot; + m.size());</code></pre></div>
+<div class="out"><span class="out-l">출력</span><pre>[1] 1
+2 true
+3 0 2</pre></div>
+<div class="trap"><p class="trap-h">함정</p><ul><li><code>remove(1)</code>은 1번 <b>자리</b>를 지웁니다. 값 1을 지우려면 <code>remove(Integer.valueOf(1))</code>.</li><li>리스트를 그대로 찍으면 <code>[9, 1]</code>처럼 쉼표 뒤 공백이 붙습니다.</li><li>Set은 중복을 무시하고, Map은 같은 키에 넣으면 덮어씁니다.</li></ul></div>
+<p class="gichul"><span class="g-tag add">시험 팁</span><span>HashSet 크기 문제가 언어별 모음 문제에 있습니다. Python의 set, dict와 같은 개념이라 함께 보세요.</span></p></section><section class="lesson" id="j-14" data-kind="hot" data-title="람다와 함수형 인터페이스"><h2><span class="l-id">J-14</span>람다와 함수형 인터페이스<span class="badge hot">기출 빈출</span></h2>
+<p>메서드가 하나뿐인 인터페이스는 <code>(매개변수) -&gt; 식</code> 모양의 람다로 바로 구현할 수 있습니다. 2025년 2회에 처음 나왔습니다.</p>
+<div class="codewrap"><pre class="code"><code data-lang="java">interface Calc { int run(int a, int b); }
+
+Calc add = (a, b) -&gt; a + b;
+Calc mul = (a, b) -&gt; a * b;
+System.out.print(add.run(2, 3) + mul.run(2, 3));</code></pre></div>
+<div class="out"><span class="out-l">출력</span><pre>11</pre></div>
+<p><code>(a, b) -&gt; a + b</code>는 "a와 b를 받아 a + b를 돌려주는 run 메서드"를 짧게 쓴 것입니다. 결과가 int 두 개라서 5 + 6 = 11이지 "56"이 아닙니다.</p>
+<p class="gichul"><span class="g-tag">기출</span><span>2025-2 9번 (람다 안에서 예외를 던지고 catch에서 값 반환)</span></p></section><section class="lesson" id="j-15" data-kind="hot" data-title="enum, 제네릭, 배열"><h2><span class="l-id">J-15</span>enum, 제네릭, 배열<span class="badge hot">기출 빈출</span></h2>
+<div class="codewrap"><pre class="code"><code data-lang="java">enum Color { RED, GREEN, BLUE }
+enum Tri { A(&quot;x&quot;), B(&quot;y&quot;); final String c; Tri(String c) { this.c = c; } }
+
+System.out.println(Color.GREEN.ordinal() + &quot; &quot; + Color.GREEN.name() + &quot; &quot; + Color.values().length
+    + &quot; &quot; + Color.valueOf(&quot;BLUE&quot;) + &quot; &quot; + Tri.values()[1].c);
+
+int[][] jag = new int[3][];
+jag[0] = new int[2]; jag[1] = new int[4];
+System.out.println(jag.length + &quot; &quot; + jag[1].length + &quot; &quot; + jag[0][1] + &quot; &quot; + jag[2]);
+boolean[] bb = new boolean[2]; String[] ss = new String[2]; double[] dd = new double[1];
+System.out.println(bb[0] + &quot; &quot; + ss[0] + &quot; &quot; + dd[0]);</code></pre></div>
+<div class="out"><span class="out-l">출력</span><pre>1 GREEN 3 BLUE y
+3 4 0 null
+false null 0.0</pre></div>
+<div class="rule"><ul><li><code>ordinal()</code>은 선언 순서(0부터), <code>name()</code>은 상수 이름 문자열, <code>values()</code>는 전체 배열</li><li>Java 배열은 행마다 길이가 다를 수 있습니다. <code>arr.length</code>는 행 수, <code>arr[i].length</code>는 그 행의 길이</li><li>배열 기본값: 숫자 0, boolean false, 객체 null</li><li>제네릭 <code>class Box&lt;T&gt;</code>의 T는 쓸 때 정하는 타입. <code>Box&lt;String&gt;</code>이면 T가 String</li></ul></div>
+<p class="gichul"><span class="g-tag">기출</span><span>2025-3 17번 (enum), 2021-1 7번 (가변 배열 length), 2020-4 6번 (2차원 배열 크기 빈칸), 2024-3 19번 (제네릭)</span></p></section><section class="lesson" id="j-16" data-kind="hot" data-title="빈칸 단골 키워드"><h2><span class="l-id">J-16</span>빈칸 단골 키워드<span class="badge hot">기출 빈출</span></h2><div class="tablewrap"><table class="ref"><thead><tr><th>상황</th><th>키워드</th></tr></thead><tbody><tr><td>클래스가 클래스를 상속</td><td><code>extends</code></td></tr><tr><td>클래스가 인터페이스를 구현</td><td><code>implements</code></td></tr><tr><td>인터페이스가 인터페이스를 상속</td><td><code>extends</code></td></tr><tr><td>부모 생성자·메서드 호출</td><td><code>super(...)</code>, <code>super.메서드()</code></td></tr><tr><td>같은 클래스의 다른 생성자</td><td><code>this(...)</code></td></tr><tr><td>객체 없이 부르는 멤버</td><td><code>static</code></td></tr><tr><td>상속 금지, 재정의 금지, 상수</td><td><code>final</code></td></tr><tr><td>몸체 없는 메서드, 객체를 못 만드는 클래스</td><td><code>abstract</code></td></tr><tr><td>객체 생성</td><td><code>new</code></td></tr><tr><td>예외를 직접 던짐 / 밖으로 넘긴다고 선언</td><td><code>throw</code> / <code>throws</code></td></tr><tr><td>스레드 시작</td><td><code>start()</code> (<code>run()</code>을 직접 부르면 그냥 메서드 호출)</td></tr><tr><td>Runnable 구현 클래스로 스레드 만들기</td><td><code>new Thread(new 구현클래스())</code></td></tr><tr><td>배열 길이 / 문자열 길이 / 리스트 크기</td><td><code>arr.length</code> / <code>str.length()</code> / <code>list.size()</code></td></tr></tbody></table></div><p class="gichul"><span class="g-tag">기출</span><span>2022-1 11번 (Runnable 구현 클래스 이름), 2025-3 8번 (implements), 2025-3 12번 (super), 2020-2 5번 (new), 2021-2 17번 (static)</span></p></section></div>
+<nav class="pager" aria-label="이전 다음 장"><a class="prev" href="java-oop.html"><small>← 이전</small><b>Java① 객체·상속</b></a><a class="next" href="python-data.html"><small>다음 →</small><b>Python① 자료형·슬라이싱</b></a></nav>
+</main>
+<script src="../js/highlight.js"></script>
+<script src="../js/site.js"></script>
+</body>
+</html>

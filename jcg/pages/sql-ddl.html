@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>SQL② 정의·관리·이론 · 정처기 코드 노트</title>
+<script>try{var t=localStorage.getItem("jcg-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="../css/base.css">
+<link rel="stylesheet" href="../css/content.css">
+<link rel="stylesheet" href="../css/widgets.css">
+</head>
+<body>
+<header class="topbar"><div class="topbar-in">
+<a class="brand" href="../index.html">정처기 <em>코드</em><span> 노트</span></a>
+<nav class="chapnav" aria-label="장 이동"><ul><li><a href="../index.html">홈</a></li><li><a href="method.html">0 추적법</a></li><li><a href="c-memory.html">C① 메모리·포인터</a></li><li><a href="c-struct.html">C② 구조체·자료구조</a></li><li><a href="java-oop.html">Java① 객체·상속</a></li><li><a href="java-api.html">Java② 문자열·예외·컬렉션</a></li><li><a href="python-data.html">Python① 자료형·슬라이싱</a></li><li><a href="python-func.html">Python② 함수·클래스</a></li><li><a href="sql-query.html">SQL① 조회</a></li><li><a href="sql-ddl.html">SQL② 정의·관리·이론</a></li><li><a href="practice.html">연습 문제</a></li><li><a href="mock-2026-3.html">3회 모의고사 ①</a></li><li><a href="mock-2026-3b.html">3회 모의고사 ②</a></li></ul></nav>
+<button class="theme-btn" type="button">어둡게</button>
+</div></header>
+<main class="wrap">
+<div class="page-head">
+<p class="eyebrow">SQL · 2 / 2</p>
+<h1>SQL② <em>정의</em>·관리·이론</h1>
+<p class="lead">작성형과 빈칸형은 문법을 정확히 외웠는지 봅니다. CREATE·ALTER·DROP, 제약조건, INSERT·UPDATE·DELETE, 권한과 트랜잭션, 키와 관계대수까지 손으로 써 볼 형태로 정리했습니다.</p>
+<ul class="toc"><li><a href="#s-8"><span class="t-id">S-8</span>명령어 분류<span class="t-add" title="필수 보강"></span></a></li><li><a href="#s-9"><span class="t-id">S-9</span>DDL: 테이블 만들고 고치기</a></li><li><a href="#s-10"><span class="t-id">S-10</span>제약조건</a></li><li><a href="#s-11"><span class="t-id">S-11</span>DML: 행 넣고 고치고 지우기</a></li><li><a href="#s-12"><span class="t-id">S-12</span>DCL과 TCL<span class="t-add" title="필수 보강"></span></a></li><li><a href="#s-13"><span class="t-id">S-13</span>키와 무결성<span class="t-add" title="필수 보강"></span></a></li><li><a href="#s-14"><span class="t-id">S-14</span>관계대수</a></li></ul><p class="legend"><span><span class="badge hot">기출 빈출</span> 실제로 여러 번 나온 개념</span><span><span class="badge add">필수 보강</span> 기출에 적게 나왔지만 모르면 위험한 개념</span></p>
+</div>
+<div class="sheet"><section class="lesson" id="s-8" data-kind="add" data-title="명령어 분류"><h2><span class="l-id">S-8</span>명령어 분류<span class="badge add">필수 보강</span></h2><div class="tablewrap"><table class="ref"><thead><tr><th>분류</th><th>뜻</th><th>명령어</th></tr></thead><tbody><tr><td>DDL (정의어)</td><td>구조를 만들고 바꾸고 없앰</td><td><code>CREATE ALTER DROP TRUNCATE RENAME</code></td></tr><tr><td>DML (조작어)</td><td>행을 다룸</td><td><code>SELECT INSERT UPDATE DELETE</code></td></tr><tr><td>DCL (제어어)</td><td>권한을 줌·뺏음</td><td><code>GRANT REVOKE</code></td></tr><tr><td>TCL (트랜잭션 제어)</td><td>작업 묶음을 확정·취소</td><td><code>COMMIT ROLLBACK SAVEPOINT</code></td></tr></tbody></table></div><p>필기에서도 나오는 분류지만, 실기에서는 "다음 중 DDL에 해당하는 것을 고르시오"나 빈칸형으로 나옵니다. TCL은 DCL에 포함해서 설명하는 교재도 있습니다.</p></section><section class="lesson" id="s-9" data-kind="hot" data-title="DDL: 테이블 만들고 고치기"><h2><span class="l-id">S-9</span>DDL: 테이블 만들고 고치기<span class="badge hot">기출 빈출</span></h2>
+<div class="codewrap"><pre class="code"><code data-lang="sql">CREATE TABLE 수강 (
+    학번  INT,
+    과목  VARCHAR(20) DEFAULT &#x27;미정&#x27;,
+    성적  CHAR(1) CHECK (성적 IN (&#x27;A&#x27;, &#x27;B&#x27;, &#x27;C&#x27;)),
+    PRIMARY KEY (학번, 과목),
+    FOREIGN KEY (학번) REFERENCES 학생(학번) ON DELETE CASCADE
+);
+ALTER TABLE 학생 ADD 주소 VARCHAR(20);
+ALTER TABLE 학생 MODIFY 주소 VARCHAR(50);     -- 오라클·MySQL (표준은 ALTER COLUMN)
+ALTER TABLE 학생 DROP COLUMN 주소;
+CREATE INDEX IDX_이름 ON 학생(이름);
+CREATE VIEW 컴공 AS SELECT * FROM 학생 WHERE 학과 = &#x27;컴퓨터&#x27;;
+DROP VIEW 컴공 CASCADE;</code></pre></div>
+<div class="tablewrap"><table class="ref"><thead><tr><th></th><th>DELETE</th><th>TRUNCATE</th><th>DROP</th></tr></thead><tbody><tr><td>분류</td><td>DML</td><td>DDL</td><td>DDL</td></tr><tr><td>지우는 것</td><td>조건에 맞는 행</td><td>모든 행 (구조는 남김)</td><td>테이블 자체</td></tr><tr><td>WHERE</td><td>가능</td><td>불가</td><td>불가</td></tr><tr><td>ROLLBACK</td><td>가능</td><td>불가 (대부분 DBMS)</td><td>불가</td></tr></tbody></table></div>
+<div class="rule"><ul><li><code>CASCADE</code>: 딸린 것(이 뷰를 참조하는 뷰, 외래키로 연결된 행)까지 함께 처리</li><li><code>RESTRICT</code>: 딸린 게 있으면 거부</li><li>뷰는 실제 데이터가 아니라 저장된 SELECT문입니다. 뷰 위에 인덱스를 만들 수 없고, ALTER로 바꿀 수 없어 지우고 다시 만듭니다.</li></ul></div>
+<p class="gichul"><span class="g-tag">기출</span><span>2020-2 12번 (CREATE INDEX), 2020-3 20번 (ALTER ADD), 2023-2 17번 (DROP VIEW CASCADE)</span></p></section><section class="lesson" id="s-10" data-kind="hot" data-title="제약조건"><h2><span class="l-id">S-10</span>제약조건<span class="badge hot">기출 빈출</span></h2><div class="tablewrap"><table class="ref"><thead><tr><th>제약</th><th>뜻</th><th>쓰는 법</th></tr></thead><tbody><tr><td><code>PRIMARY KEY</code></td><td>기본키. 중복 불가 + NULL 불가</td><td><code>PRIMARY KEY (학번)</code></td></tr><tr><td><code>FOREIGN KEY</code></td><td>외래키. 다른 표의 기본키 값만 허용</td><td><code>FOREIGN KEY (학번) REFERENCES 학생(학번)</code></td></tr><tr><td><code>UNIQUE</code></td><td>중복 불가 (NULL은 허용)</td><td><code>이메일 VARCHAR(50) UNIQUE</code></td></tr><tr><td><code>NOT NULL</code></td><td>NULL 불가</td><td><code>이름 VARCHAR(10) NOT NULL</code></td></tr><tr><td><code>CHECK</code></td><td>허용 값 조건</td><td><code>CHECK (계절 IN (&#x27;봄&#x27;, &#x27;여름&#x27;, &#x27;가을&#x27;, &#x27;겨울&#x27;))</code></td></tr><tr><td><code>DEFAULT</code></td><td>값을 안 넣었을 때의 기본값</td><td><code>DEFAULT &#x27;미정&#x27;</code></td></tr><tr><td><code>CONSTRAINT 이름</code></td><td>제약에 이름 붙이기</td><td><code>CONSTRAINT FK_TEAM FOREIGN KEY (...) REFERENCES ...</code></td></tr></tbody></table></div><div class="trap"><p class="trap-h">함정</p><ul><li>REFERENCES의 S를 빼먹는 실수가 잦습니다.</li><li>외래키 빈칸은 '참조하는 쪽 열'과 '참조되는 쪽 표(열)' 자리를 바꿔 쓰기 쉽습니다. FOREIGN KEY 뒤가 내 열, REFERENCES 뒤가 남의 표.</li></ul></div><p class="gichul"><span class="g-tag">기출</span><span>2026-1 10번 (CONSTRAINT ... FOREIGN KEY ... REFERENCES 빈칸 다섯 개), 2026-2 19번 (CHECK)</span></p></section><section class="lesson" id="s-11" data-kind="hot" data-title="DML: 행 넣고 고치고 지우기"><h2><span class="l-id">S-11</span>DML: 행 넣고 고치고 지우기<span class="badge hot">기출 빈출</span></h2>
+<div class="codewrap"><pre class="code"><code data-lang="sql">INSERT INTO 학생 (학번, 이름, 학과) VALUES (7, &#x27;정하늘&#x27;, &#x27;전자&#x27;);
+INSERT INTO 학생 VALUES (8, &#x27;한별&#x27;, &#x27;기계&#x27;, 1, 70);      -- 열 생략 시 모든 열을 순서대로
+UPDATE 학생 SET 점수 = 점수 + 5, 학년 = 학년 WHERE 학과 = &#x27;전자&#x27;;
+DELETE FROM 학생 WHERE 이름 = &#x27;최지훈&#x27;;</code></pre></div>
+<div class="trap"><p class="trap-h">함정</p><ul><li><code>DELETE FROM</code>입니다. <code>DELETE * FROM</code>은 틀립니다.</li><li>UPDATE에는 반드시 <code>SET</code>. 여러 열은 쉼표로. 구조를 바꾸는 <code>ALTER</code>와 헷갈리지 마세요.</li><li>문자열과 날짜는 작은따옴표. 전화번호 <code>&#x27;010-1234-5678&#x27;</code>도 문자열입니다.</li><li>WHERE를 빼먹으면 모든 행이 바뀌거나 지워집니다.</li><li>문제 조건("IN을 사용", "WHERE 금지", "별칭은 AS로")을 반드시 그대로 지키세요. 결과가 같아도 감점됩니다.</li></ul></div>
+<p class="gichul"><span class="g-tag">기출</span><span>2020-3 9번·2023-1 13번 (DELETE, 같은 문제 두 번), 2023-2 4번 (INSERT), 2021-2 5번·2024-2 3번 (UPDATE SET)</span></p></section><section class="lesson" id="s-12" data-kind="add" data-title="DCL과 TCL"><h2><span class="l-id">S-12</span>DCL과 TCL<span class="badge add">필수 보강</span></h2>
+<div class="codewrap"><pre class="code"><code data-lang="sql">GRANT SELECT, INSERT ON 학생 TO user1;
+GRANT SELECT ON 학생 TO user2 WITH GRANT OPTION;   -- user2가 남에게도 줄 수 있음
+REVOKE SELECT ON 학생 FROM user2 CASCADE;          -- user2가 나눠 준 권한까지 회수
+
+UPDATE 학생 SET 점수 = 0 WHERE 학번 = 1;
+SAVEPOINT A;
+DELETE FROM 학생 WHERE 학번 = 2;
+ROLLBACK TO A;      -- DELETE만 취소, UPDATE는 살아 있음
+COMMIT;             -- 지금까지의 변경을 확정</code></pre></div>
+<div class="rule"><ul><li>GRANT는 <code>TO</code>, REVOKE는 <code>FROM</code></li><li><code>COMMIT</code> 후에는 ROLLBACK으로 되돌릴 수 없음</li><li>트랜잭션 성질 ACID: 원자성(전부 아니면 전무), 일관성, 격리성, 지속성</li></ul></div></section><section class="lesson" id="s-13" data-kind="add" data-title="키와 무결성"><h2><span class="l-id">S-13</span>키와 무결성<span class="badge add">필수 보강</span></h2><div class="tablewrap"><table class="ref"><thead><tr><th>키</th><th>조건</th><th>예 (학번, 주민번호, 이름이 있는 학생 표)</th></tr></thead><tbody><tr><td>슈퍼키</td><td>유일성 (행을 구별할 수 있음)</td><td>{학번}, {학번, 이름}, {주민번호, 이름} ...</td></tr><tr><td>후보키</td><td>유일성 + 최소성 (하나라도 빼면 구별 못 함)</td><td>{학번}, {주민번호}</td></tr><tr><td>기본키</td><td>후보키 중 대표로 고른 것. NULL 불가</td><td>{학번}</td></tr><tr><td>대체키</td><td>기본키가 되지 못한 후보키</td><td>{주민번호}</td></tr><tr><td>외래키</td><td>다른 표의 기본키를 참조하는 열</td><td>수강.학번 → 학생.학번</td></tr></tbody></table></div><div class="tablewrap"><table class="ref"><thead><tr><th>무결성</th><th>규칙</th></tr></thead><tbody><tr><td>개체 무결성</td><td>기본키는 NULL이나 중복 값을 가질 수 없음</td></tr><tr><td>참조 무결성</td><td>외래키 값은 참조하는 표의 기본키에 있는 값이거나 NULL</td></tr><tr><td>도메인 무결성</td><td>열의 값은 정해진 범위(타입, CHECK) 안에 있어야 함</td></tr></tbody></table></div><p class="gichul"><span class="g-tag add">시험 팁</span><span>키 종류는 서술형·단답형으로도 나옵니다. 외래키 문법은 2026-1 10번.</span></p></section><section class="lesson" id="s-14" data-kind="hot" data-title="관계대수"><h2><span class="l-id">S-14</span>관계대수<span class="badge hot">기출 빈출</span></h2>
+<p>SQL을 기호로 쓴 것입니다. 2025년에 투영(π)과 디비전(÷)이 연달아 나왔습니다.</p>
+<div class="tablewrap"><table class="ref"><thead><tr><th>기호</th><th>이름</th><th>SQL로 치면</th></tr></thead><tbody><tr><td>σ</td><td>셀렉트</td><td>WHERE (행 고르기)</td></tr><tr><td>π</td><td>프로젝트</td><td>SELECT DISTINCT 열 (열 고르기, 중복 제거)</td></tr><tr><td>⋈</td><td>조인</td><td>JOIN</td></tr><tr><td>÷</td><td>디비전</td><td>'모두' 가진 것만 (아래 예)</td></tr><tr><td>∪ ∩ −</td><td>합·교·차집합</td><td>UNION, INTERSECT, EXCEPT</td></tr><tr><td>×</td><td>카티션 곱</td><td>CROSS JOIN</td></tr></tbody></table></div>
+<h3>디비전 ÷ : "모두 들은 학생"</h3>
+<div class="duo">
+<div><div class="tablewrap"><table class="data"><thead><tr><th>학생</th><th>과목</th></tr></thead><tbody><tr><td>철수</td><td>DB</td></tr><tr><td>철수</td><td>OS</td></tr><tr><td>영희</td><td>DB</td></tr><tr><td>민수</td><td>DB</td></tr><tr><td>민수</td><td>OS</td></tr><tr><td>민수</td><td>NW</td></tr></tbody></table></div><p class="muted">수강</p></div>
+<div><div class="tablewrap"><table class="data"><thead><tr><th>과목</th></tr></thead><tbody><tr><td>DB</td></tr><tr><td>OS</td></tr></tbody></table></div><p class="muted">필수</p>
+<div class="tablewrap"><table class="data"><thead><tr><th>학생</th></tr></thead><tbody><tr><td>철수</td></tr><tr><td>민수</td></tr></tbody></table></div><p class="muted">수강 ÷ 필수</p></div>
+</div>
+<p>필수 과목 DB와 OS를 <b>둘 다</b> 들은 학생만 남깁니다. 영희는 OS가 없어서 빠집니다. 결과에서는 나누는 쪽 열(과목)이 사라지고 학생만 남습니다.</p>
+<div class="rule"><ul><li>π는 결과에서 중복을 지웁니다. <code>π학과(학생)</code>은 컴퓨터, 전자, 기계 3행</li><li>σ조건(표), π열(표) 처럼 기호 아래에 조건이나 열 이름을 씁니다</li></ul></div>
+<p class="gichul"><span class="g-tag">기출</span><span>2025-2 20번 (π 결과), 2025-3 14번 (R ÷ S 결과)</span></p></section></div>
+<nav class="pager" aria-label="이전 다음 장"><a class="prev" href="sql-query.html"><small>← 이전</small><b>SQL① 조회</b></a><a class="next" href="practice.html"><small>다음 →</small><b>연습 문제</b></a></nav>
+</main>
+<script src="../js/highlight.js"></script>
+<script src="../js/site.js"></script>
+</body>
+</html>

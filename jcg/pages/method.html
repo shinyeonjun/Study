@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>코드 추적법 · 정처기 코드 노트</title>
+<script>try{var t=localStorage.getItem("jcg-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="../css/base.css">
+<link rel="stylesheet" href="../css/content.css">
+<link rel="stylesheet" href="../css/widgets.css">
+</head>
+<body>
+<header class="topbar"><div class="topbar-in">
+<a class="brand" href="../index.html">정처기 <em>코드</em><span> 노트</span></a>
+<nav class="chapnav" aria-label="장 이동"><ul><li><a href="../index.html">홈</a></li><li><a href="method.html">0 추적법</a></li><li><a href="c-memory.html">C① 메모리·포인터</a></li><li><a href="c-struct.html">C② 구조체·자료구조</a></li><li><a href="java-oop.html">Java① 객체·상속</a></li><li><a href="java-api.html">Java② 문자열·예외·컬렉션</a></li><li><a href="python-data.html">Python① 자료형·슬라이싱</a></li><li><a href="python-func.html">Python② 함수·클래스</a></li><li><a href="sql-query.html">SQL① 조회</a></li><li><a href="sql-ddl.html">SQL② 정의·관리·이론</a></li><li><a href="practice.html">연습 문제</a></li><li><a href="mock-2026-3.html">3회 모의고사 ①</a></li><li><a href="mock-2026-3b.html">3회 모의고사 ②</a></li></ul></nav>
+<button class="theme-btn" type="button">어둡게</button>
+</div></header>
+<main class="wrap">
+<div class="page-head">
+<p class="eyebrow">CHAPTER 0 · 네 언어 공통</p>
+<h1>코드 <em>추적법</em></h1>
+<p class="lead">어떤 언어든 출력값 문제는 같은 방법으로 풉니다. 이 장의 표 세 개는 시험 직전에 다시 볼 만한 요약이기도 합니다.</p>
+<ul class="toc"><li><a href="#m-1"><span class="t-id">M-1</span>추적의 네 단계</a></li><li><a href="#m-2"><span class="t-id">M-2</span>한 줄씩 따라가 보기</a></li><li><a href="#m-3"><span class="t-id">M-3</span>공통 함정</a></li><li><a href="#m-4"><span class="t-id">M-4</span>언어별 차이 한눈에<span class="t-add" title="필수 보강"></span></a></li><li><a href="#m-5"><span class="t-id">M-5</span>연산자 우선순위<span class="t-add" title="필수 보강"></span></a></li></ul><p class="legend"><span><span class="badge hot">기출 빈출</span> 실제로 여러 번 나온 개념</span><span><span class="badge add">필수 보강</span> 기출에 적게 나왔지만 모르면 위험한 개념</span></p>
+</div>
+<div class="sheet"><section class="lesson" id="m-1" data-kind="base" data-title="추적의 네 단계"><h2><span class="l-id">M-1</span>추적의 네 단계</h2>
+<p>실기 코드 문제는 대부분 "이 코드가 출력하는 값"을 묻습니다. 머리로만 따라가면 꼭 한 군데서 미끄러집니다. 문제를 볼 때마다 아래 순서대로 손을 움직이세요.</p>
+<ol class="steps">
+<li><b>데이터를 그린다.</b> 배열은 칸, 구조체는 상자, 포인터와 참조는 화살표, 트리는 그림으로.</li>
+<li><b>흐름을 한 문장으로 요약한다.</b> "후위 순회하면서 세 번째 노드 값을 저장한다" 같은 식으로.</li>
+<li><b>변수표를 만든다.</b> 변수마다 열 하나, 실행한 줄마다 행 하나. 값이 바뀔 때만 적어도 됩니다.</li>
+<li><b>출력 형식을 확인한다.</b> 공백, 줄바꿈, 대괄호, 따옴표, 대소문자, 소수점 자리.</li>
+</ol></section><section class="lesson" id="m-2" data-kind="base" data-title="한 줄씩 따라가 보기"><h2><span class="l-id">M-2</span>한 줄씩 따라가 보기</h2>
+<p>3단계 변수표를 화면으로 옮긴 것이 아래 상자입니다. <b>다음 ▶</b>을 눌러 보세요. <code>continue</code>는 아래 줄을 건너뛰고 바로 조건 검사로 돌아갑니다.</p>
+<div class="widget stepper" data-steps="loop-continue"></div>
+<p><code>i++</code>가 검사보다 먼저 있어서 i가 7일 때도 한 번 더 더해집니다. 종이에 변수표를 그리면 이런 경계가 저절로 보입니다. 시험장에서는 이 상자 대신 종이에 같은 표를 그리면 됩니다.</p></section><section class="lesson" id="m-3" data-kind="hot" data-title="네 언어 공통 함정"><h2><span class="l-id">M-3</span>네 언어 공통 함정<span class="badge hot">기출 빈출</span></h2><div class="tablewrap"><table class="ref"><thead><tr><th>함정</th><th>예</th><th>결과</th></tr></thead><tbody><tr><td>정수 나눗셈</td><td><code>7 / 2</code> (C, Java)</td><td>3. Python은 <code>7 / 2</code>가 3.5, <code>7 // 2</code>가 3</td></tr><tr><td>음수 나눗셈</td><td><code>-7 / 2</code></td><td>C·Java는 -3 (0쪽으로 버림), Python <code>-7 // 2</code>는 -4 (아래로 내림)</td></tr><tr><td>음수 나머지</td><td><code>-7 % 3</code></td><td>C·Java는 -1 (부호가 왼쪽을 따름), Python은 2 (부호가 오른쪽을 따름)</td></tr><tr><td>후위·전위 증감</td><td><code>x = i++</code> / <code>x = ++i</code></td><td>후위는 쓰고 나서 증가, 전위는 증가하고 나서 씀. Python에는 ++가 없음</td></tr><tr><td>switch에 break 없음</td><td><code>case 8:</code>부터 실행</td><td>break를 만날 때까지 아래 case와 default까지 전부 실행</td></tr><tr><td>반복 경계</td><td><code>i &lt; 10</code> / <code>i &lt;= 10</code></td><td>마지막 값이 포함되는지, 증가가 검사 앞인지 뒤인지</td></tr><tr><td>단락 평가</td><td><code>a != 0 &amp;&amp; b / a &gt; 1</code></td><td>앞이 거짓이면 뒤는 아예 실행 안 함. 뒤에 ++가 있으면 증가도 안 일어남</td></tr><tr><td>출력 형식</td><td><code>print(1, 2)</code>, <code>print([1, 2])</code></td><td><code>1 2</code>, <code>[1, 2]</code> (쉼표 뒤 공백까지 그대로)</td></tr></tbody></table></div><p class="gichul"><span class="g-tag">기출</span><span>switch 함정은 2020-1 14번, 2022-2 7번, 2023-2 5번, 2024-2 18번에서 반복됐습니다. 정수 나눗셈은 거의 모든 회차의 C·Java 문제에 섞여 나옵니다.</span></p></section><section class="lesson" id="m-4" data-kind="add" data-title="언어별 차이 한눈에"><h2><span class="l-id">M-4</span>언어별 차이 한눈에<span class="badge add">필수 보강</span></h2><div class="tablewrap"><table class="ref"><thead><tr><th></th><th>C</th><th>Java</th><th>Python</th></tr></thead><tbody><tr><td>참·거짓</td><td>0이면 거짓, 나머지 참</td><td><code>true</code> / <code>false</code></td><td><code>True</code> / <code>False</code> (대문자)</td></tr><tr><td>논리 연산</td><td><code>&amp;&amp; || !</code></td><td><code>&amp;&amp; || !</code></td><td><code>and or not</code> (값 자체를 돌려줌)</td></tr><tr><td>문자열 비교</td><td><code>strcmp(a, b) == 0</code></td><td><code>a.equals(b)</code> (<code>==</code>는 주소)</td><td><code>a == b</code> (<code>is</code>가 주소)</td></tr><tr><td>길이</td><td><code>strlen(s)</code>, 배열은 <code>sizeof</code></td><td><code>arr.length</code>, <code>s.length()</code></td><td><code>len(x)</code></td></tr><tr><td>출력</td><td><code>printf(&quot;%d\n&quot;, x)</code></td><td><code>System.out.println(x)</code> / <code>print</code></td><td><code>print(x)</code> (끝에 줄바꿈)</td></tr><tr><td>문자와 숫자</td><td><code>&#x27;A&#x27; + 1</code> = 66, <code>%c</code>로 찍으면 B</td><td><code>&#x27;A&#x27; + 1</code> = 66, <code>(char)</code>로 B</td><td><code>ord(&#x27;A&#x27;)</code> = 65, <code>chr(66)</code> = 'B'</td></tr><tr><td>증감</td><td><code>i++ ++i</code></td><td><code>i++ ++i</code></td><td>없음. <code>i += 1</code></td></tr><tr><td>나눗셈</td><td>정수끼리면 정수</td><td>정수끼리면 정수</td><td><code>/</code>는 항상 실수, <code>//</code>가 정수</td></tr><tr><td>객체·배열 넘기기</td><td>배열은 주소, 구조체·int는 복사</td><td>기본형은 복사, 객체는 화살표 복사</td><td>전부 이름표(화살표) 복사</td></tr></tbody></table></div></section><section class="lesson" id="m-5" data-kind="add" data-title="연산자 우선순위 (C·Java)"><h2><span class="l-id">M-5</span>연산자 우선순위 (C·Java)<span class="badge add">필수 보강</span></h2>
+<p>위에 있을수록 먼저 묶입니다. 모두 외울 필요는 없고, 시험에 나온 다섯 줄만 확실히 하면 됩니다.</p>
+<div class="tablewrap"><table class="ref"><thead><tr><th>순위</th><th>연산자</th><th>기억할 점</th></tr></thead><tbody><tr><td>1</td><td><code>() [] -&gt; .</code> 후위 <code>++ --</code></td><td><code>p-&gt;num</code>과 <code>a[i]</code>가 가장 먼저 붙음</td></tr><tr><td>2</td><td>단항 <code>! ~ ++ -- * &amp; (형변환)</code></td><td><code>*p++</code>는 <code>*(p++)</code>, <code>*p-&gt;n</code>은 <code>*(p-&gt;n)</code></td></tr><tr><td>3</td><td><code>* / %</code></td><td></td></tr><tr><td>4</td><td><code>+ -</code></td><td><code>*p + 2</code>는 <code>(*p) + 2</code></td></tr><tr><td>5</td><td><code>&lt;&lt; &gt;&gt;</code></td><td><code>1 + 2 &lt;&lt; 1</code>은 <code>(1 + 2) &lt;&lt; 1</code> = 6</td></tr><tr><td>6</td><td><code>&lt; &lt;= &gt; &gt;=</code></td><td></td></tr><tr><td>7</td><td><code>== !=</code></td><td></td></tr><tr><td>8~10</td><td><code>&amp;</code> → <code>^</code> → <code>|</code></td><td>비교보다 <b>나중</b>. <code>a &amp; b == 0</code>은 <code>a &amp; (b == 0)</code></td></tr><tr><td>11~12</td><td><code>&amp;&amp;</code> → <code>||</code></td><td>AND가 OR보다 먼저 (SQL도 같음)</td></tr><tr><td>13</td><td><code>? :</code></td><td>거의 마지막. <code>a &gt; b ? a : b + 1</code>은 <code>b + 1</code>이 한 덩어리</td></tr><tr><td>14</td><td><code>= += -= ...</code></td><td>오른쪽부터 묶임: <code>a = b = 3</code></td></tr></tbody></table></div>
+<div class="trap"><p class="trap-h">함정</p><ul><li>시프트가 <code>&amp;</code>보다 먼저입니다. <code>z &amp; z &gt;&gt; 1</code>은 <code>z &amp; (z &gt;&gt; 1)</code> (2025-3 15번).</li><li>비교 <code>==</code>가 비트 연산 <code>^</code>보다 먼저입니다. <code>a == b ^ c != d</code>는 <code>(a == b) ^ (c != d)</code> (2021-3 11번).</li></ul></div></section></div>
+<nav class="pager" aria-label="이전 다음 장"><a class="prev" href="../index.html"><small>← 이전</small><b>홈</b></a><a class="next" href="c-memory.html"><small>다음 →</small><b>C① 메모리·포인터</b></a></nav>
+</main>
+<script src="../js/highlight.js"></script>
+<script src="../js/site.js"></script>
+<script src="../js/data/steps.js"></script>
+<script src="../js/stepper.js"></script>
+</body>
+</html>

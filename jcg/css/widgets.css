@@ -1,0 +1,298 @@
+/* 정처기 실기 코드 노트 — 직접 눌러 보는 시각 자료 */
+
+.widget {
+  border: 1px solid var(--rule); border-radius: 6px; margin: 16px 0 20px; background: var(--sheet);
+  overflow: hidden;
+}
+.w-head {
+  display: flex; gap: 10px; align-items: center; flex-wrap: wrap; padding: 9px 14px;
+  border-bottom: 1px solid var(--rule); background: var(--code);
+}
+.w-tag {
+  font-family: var(--f-mono); font-size: 11px; font-weight: 600; letter-spacing: .06em; color: var(--sheet);
+  background: var(--accent); padding: 1px 7px; border-radius: 3px;
+}
+.w-title { font-weight: 600; font-size: 14px }
+.w-body { padding: 14px }
+.w-hint { font-size: 13px; color: var(--muted); margin: 0 0 10px }
+
+.btn {
+  font: inherit; font-size: 13.5px; color: var(--ink); background: var(--sheet); border: 1px solid var(--rule);
+  border-radius: 4px; padding: 5px 12px; cursor: pointer; line-height: 1.4;
+}
+.btn:hover:not(:disabled) { border-color: var(--accent); color: var(--accent) }
+.btn:disabled { opacity: .45; cursor: default }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--sheet) }
+.btn.primary:hover:not(:disabled) { color: var(--sheet); filter: brightness(1.08) }
+.btn[aria-pressed="true"] { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); font-weight: 600 }
+.btnrow { display: flex; gap: 6px; flex-wrap: wrap; align-items: center }
+
+.field { display: inline-flex; gap: 6px; align-items: center; font-size: 13.5px }
+.field input {
+  font: inherit; font-family: var(--f-mono); font-size: 14px; color: var(--ink); background: var(--sheet);
+  border: 1px solid var(--rule); border-radius: 4px; padding: 4px 8px; width: 5.5em;
+}
+.field input.wide { width: 14em }
+.field input:focus { border-color: var(--accent); outline: none }
+
+/* ── 스테퍼 ───────────────────────────────── */
+.stp-grid { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr) }
+.stp-code { border-right: 1px solid var(--rule); background: var(--code); overflow-x: auto; padding: 10px 0 }
+.stp-line {
+  display: grid; grid-template-columns: 2.6em 1fr; font-family: var(--f-mono); font-size: 13px; line-height: 1.75;
+  white-space: pre; padding-right: 14px; border-left: 3px solid transparent;
+}
+.stp-ln { color: var(--hl-c); text-align: right; padding-right: 12px; user-select: none }
+.stp-line.cur { background: var(--accent-soft); border-left-color: var(--accent) }
+.stp-line.cur .stp-ln { color: var(--accent); font-weight: 600 }
+.stp-line.prev { background: color-mix(in srgb, var(--accent-soft) 40%, transparent) }
+.stp-side { padding: 12px 14px; display: grid; gap: 12px; align-content: start; min-width: 0 }
+.stp-note {
+  font-size: 14px; line-height: 1.65; background: var(--warn-soft); border-radius: 4px; padding: 9px 12px; min-height: 3.2em;
+}
+.stp-sec-h { font-family: var(--f-mono); font-size: 11px; letter-spacing: .07em; color: var(--muted); margin: 0 0 6px }
+.stp-ctrl {
+  display: flex; gap: 6px; align-items: center; flex-wrap: wrap; padding: 9px 14px; border-top: 1px solid var(--rule);
+}
+.stp-count { font-family: var(--f-mono); font-size: 12.5px; color: var(--muted); margin-left: auto; font-variant-numeric: tabular-nums }
+.stp-bar { height: 3px; background: var(--grid) }
+.stp-bar span { display: block; height: 100%; background: var(--accent); transition: width .2s }
+.console {
+  font-family: var(--f-mono); font-size: 13.5px; background: var(--term-bg); color: var(--term-fg); border-radius: 4px;
+  padding: 8px 12px; white-space: pre-wrap; min-height: 2.2em; overflow-wrap: anywhere;
+}
+.console:empty::before { content: "(아직 출력 없음)"; opacity: .5; font-size: 12px }
+
+/* 변수와 메모리 칸 */
+.vars { display: flex; flex-wrap: wrap; gap: 6px }
+.var {
+  display: grid; min-width: 58px; border: 1.5px solid var(--ink); border-radius: 3px; background: var(--sheet);
+  font-family: var(--f-mono); text-align: center; transition: background .25s, border-color .25s;
+}
+.var .vn { font-size: 11px; color: var(--muted); border-bottom: 1px solid var(--rule); padding: 1px 6px }
+.var .vv { font-size: 14.5px; font-weight: 600; padding: 3px 8px }
+.var .va { font-size: 10px; color: var(--muted); padding: 0 6px 2px }
+.var.hl { border-color: var(--accent); background: var(--accent-soft) }
+.var.ptr .vv { color: var(--accent) }
+.var.target { box-shadow: 0 0 0 3px var(--accent-soft) }
+
+.arr { display: grid; gap: 2px; margin-bottom: 4px }
+.arr-name { font-family: var(--f-mono); font-size: 12px; color: var(--muted) }
+.arr-cells { display: flex; gap: 0; overflow-x: auto; padding-bottom: 2px }
+.cell { display: grid; min-width: 46px; text-align: center; font-family: var(--f-mono) }
+.cell .ci { font-size: 10.5px; color: var(--muted) }
+.cell .cv {
+  font-size: 15px; font-weight: 600; border: 1.5px solid var(--ink); margin-left: -1.5px; padding: 6px 4px;
+  background: var(--sheet); transition: background .25s;
+}
+.cell:first-child .cv { margin-left: 0 }
+.cell.hl .cv { background: var(--accent-soft); color: var(--accent) }
+.cell.cmp .cv { background: var(--warn-soft) }
+.cell.dim .cv { color: var(--muted); font-weight: 400 }
+.cell .cp { font-size: 11.5px; color: var(--accent); font-weight: 600; min-height: 1.5em; line-height: 1.2 }
+
+.lst { display: grid; gap: 8px }
+.lst-row { display: flex; align-items: center; gap: 0; flex-wrap: wrap; row-gap: 8px }
+.lst-ptr { font-family: var(--f-mono); font-size: 12px; color: var(--accent); font-weight: 600; margin-right: 6px }
+.node { display: inline-grid; grid-template-columns: auto auto; border: 1.5px solid var(--ink); border-radius: 3px; font-family: var(--f-mono) }
+.node .nv { padding: 4px 10px; font-weight: 600; background: var(--sheet) }
+.node .nn { padding: 4px 6px; border-left: 1px solid var(--ink); font-size: 11px; color: var(--muted); background: var(--code) }
+.node.hl { border-color: var(--accent) }
+.node.hl .nv { background: var(--accent-soft); color: var(--accent) }
+.lst-arrow { color: var(--accent); padding: 0 6px; font-family: var(--f-mono) }
+.lst-null { font-family: var(--f-mono); font-size: 12px; color: var(--muted) }
+.lst-ref { font-family: var(--f-mono); font-size: 12px; color: var(--muted); border: 1px dashed var(--rule); padding: 2px 6px; border-radius: 3px }
+
+.frames { display: grid; gap: 4px }
+.frame { border: 1.5px solid var(--rule); border-radius: 4px; padding: 5px 9px; font-family: var(--f-mono); font-size: 12.5px; background: var(--sheet) }
+.frame.top { border-color: var(--accent); background: var(--accent-soft) }
+.frame-n { font-weight: 600; margin-right: 8px }
+.frame-v { color: var(--muted) }
+.frame-v b { color: var(--ink); font-weight: 600 }
+.heap { display: flex; flex-wrap: wrap; gap: 6px }
+.obj { border: 1.5px solid var(--ink); border-radius: 4px; font-family: var(--f-mono); font-size: 12.5px; background: var(--sheet); transition: background .25s }
+.obj-h { font-size: 11px; color: var(--muted); padding: 1px 8px; border-bottom: 1px solid var(--rule) }
+.obj-v { padding: 3px 8px; font-weight: 600 }
+.obj.hl { border-color: var(--accent); background: var(--accent-soft) }
+.obj.gone { opacity: .45; border-style: dashed }
+.ref { color: var(--accent); font-weight: 600 }
+
+/* ── 트리 순회 ───────────────────────────── */
+.tree-svg { width: 100%; max-width: 420px; height: auto; display: block; margin: 0 auto }
+.tree-svg line { stroke: var(--ink); stroke-width: 1.4 }
+.tree-svg circle { fill: var(--sheet); stroke: var(--ink); stroke-width: 1.5; transition: fill .25s }
+.tree-svg text.tv { fill: var(--ink); font-family: var(--f-mono); font-size: 17px; font-weight: 600; text-anchor: middle; dominant-baseline: central }
+.tree-svg text.to { fill: var(--accent); font-family: var(--f-mono); font-size: 12px; font-weight: 700; text-anchor: middle }
+.tree-svg g.on circle { fill: var(--accent-soft); stroke: var(--accent) }
+.tree-svg g.now circle { fill: var(--accent); stroke: var(--accent) }
+.tree-svg g.now text.tv { fill: var(--sheet) }
+.seq { display: flex; flex-wrap: wrap; gap: 6px; min-height: 34px; align-items: center }
+.seq span { font-family: var(--f-mono); font-weight: 600; border: 1.5px solid var(--accent); color: var(--accent); border-radius: 4px; padding: 2px 10px }
+.seq span.third { background: var(--red-soft); border-color: var(--red); color: var(--red) }
+.tree-rule { font-size: 14px; margin: 8px 0 0 }
+
+/* ── 비트 ─────────────────────────────── */
+.bits { display: grid; gap: 4px; overflow-x: auto }
+.bit-row { display: grid; grid-template-columns: 7.5em auto 1fr; gap: 12px; align-items: center; font-family: var(--f-mono); font-size: 13.5px }
+.bit-row.res { border-top: 1px solid var(--rule); padding-top: 4px }
+.bit-op { color: var(--muted); white-space: nowrap }
+.bit-cells { display: flex; gap: 2px }
+.bit-cells span { width: 22px; text-align: center; border: 1px solid var(--rule); border-radius: 2px; padding: 1px 0 }
+.bit-cells span.one { background: var(--accent); color: var(--sheet); border-color: var(--accent) }
+.bit-cells span.lead { color: var(--rule) }
+.bit-cells span.gap { margin-left: 6px }
+.bit-dec { white-space: nowrap }
+.bit-dec small { color: var(--muted) }
+
+/* ── 슬라이싱 ─────────────────────────── */
+.sl-cells { display: flex; overflow-x: auto; padding: 4px 0 6px }
+.sl-cell { display: grid; min-width: 36px; text-align: center; font-family: var(--f-mono) }
+.sl-cell .sp { font-size: 11px; color: var(--accent) }
+.sl-cell .sn { font-size: 11px; color: var(--muted) }
+.sl-cell .sc { border: 1.5px solid var(--ink); margin-left: -1.5px; padding: 6px 2px; font-weight: 600; font-size: 15px; background: var(--sheet); white-space: pre }
+.sl-cell:first-child .sc { margin-left: 0 }
+.sl-cell.pick .sc { background: var(--accent); color: var(--sheet); border-color: var(--accent) }
+.sl-cell .so { font-size: 11px; font-weight: 700; color: var(--red); min-height: 1.4em }
+.sl-res { font-family: var(--f-mono); font-size: 15px; display: flex; gap: 10px; flex-wrap: wrap; align-items: baseline; margin-top: 6px }
+.sl-res b { background: var(--ok-soft); color: var(--ok); padding: 2px 8px; border-radius: 3px; white-space: pre }
+.sl-why { font-size: 13.5px; color: var(--muted); margin-top: 6px }
+
+/* ── Java 바인딩 ───────────────────────── */
+.bind { display: grid; grid-template-columns: auto auto 1fr; gap: 10px; align-items: center }
+.bind-var { border: 1.5px solid var(--ink); border-radius: 4px; padding: 6px 12px; font-family: var(--f-mono); font-size: 13px; text-align: center }
+.bind-var small { display: block; color: var(--muted); font-size: 11px }
+.bind-arrow { color: var(--accent); font-size: 20px }
+.bind-obj { border: 1px dashed var(--muted); border-radius: 6px; padding: 8px; display: grid; gap: 6px }
+.bind-obj-h { font-size: 12px; color: var(--muted) }
+.bind-part { border: 1.5px solid var(--ink); border-radius: 4px; padding: 6px 10px; display: flex; gap: 8px; flex-wrap: wrap; align-items: center }
+.bind-part-n { font-weight: 600; font-size: 13px; min-width: 4.2em }
+.mem { font-family: var(--f-mono); font-size: 12.5px; border: 1px solid var(--rule); border-radius: 3px; padding: 2px 8px; background: var(--sheet); transition: all .25s }
+.mem.on { background: var(--accent); color: var(--sheet); border-color: var(--accent) }
+.mem.off { opacity: .4; text-decoration: line-through }
+.bind-res { margin-top: 12px; font-size: 14px; background: var(--code); border-radius: 4px; padding: 10px 14px }
+.bind-res b.r { font-family: var(--f-mono); color: var(--ok) }
+
+/* ── SQL 파이프라인과 JOIN ───────────────── */
+.pipe-stages { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 10px; align-items: center }
+.pipe-stages .btn { font-family: var(--f-mono); font-size: 12.5px }
+.pipe-stages .arrow { color: var(--muted); font-size: 12px }
+.pipe-sql { font-family: var(--f-mono); font-size: 13px; background: var(--code); border-radius: 4px; padding: 8px 12px; margin-bottom: 10px; white-space: pre-wrap }
+.pipe-sql mark { background: var(--accent-soft); color: var(--accent); font-weight: 700; border-radius: 2px; padding: 0 2px }
+.pipe-note { font-size: 14px; margin: 8px 0 0; max-width: 72ch }
+tr.cut td { color: var(--muted); text-decoration: line-through; opacity: .55 }
+tr.g0 td:first-child { box-shadow: inset 4px 0 var(--accent) }
+tr.g1 td:first-child { box-shadow: inset 4px 0 var(--ok) }
+tr.g2 td:first-child { box-shadow: inset 4px 0 var(--warn) }
+td.null { color: var(--muted); font-style: italic }
+.join-wrap { display: grid; grid-template-columns: auto auto 1fr; gap: 14px; align-items: start }
+.join-wrap > * { min-width: 0 }
+.venn { width: 120px; height: 78px }
+.venn circle { stroke: var(--ink); stroke-width: 1.4; fill: transparent }
+.venn .fill { fill: var(--accent); opacity: .35; stroke: none }
+.venn text { fill: var(--muted) }
+
+/* ── 2차원 배열 ────────────────────────── */
+.g2-wrap { display: grid; grid-template-columns: auto 1fr; gap: 22px; align-items: start }
+.g2-wrap > * { min-width: 0 }
+.g2-grid { display: grid; grid-template-columns: auto repeat(4, 40px); gap: 0 }
+.g2-grid .rh { font-family: var(--f-mono); font-size: 11px; color: var(--muted); padding-right: 6px; display: grid; align-items: center }
+.g2-grid .ch { font-family: var(--f-mono); font-size: 11px; color: var(--muted); text-align: center }
+.g2-c {
+  font: inherit; font-family: var(--f-mono); font-weight: 600; font-size: 14px; color: var(--ink); background: var(--sheet);
+  border: 1.5px solid var(--ink); margin: -0.75px; padding: 8px 0; cursor: pointer;
+}
+.g2-c.row { background: var(--accent-soft) }
+.g2-c.on { background: var(--accent); color: var(--sheet) }
+.g2-line { display: flex; overflow-x: auto; margin-top: 10px }
+.g2-line .cell .cv { padding: 5px 2px }
+.g2-expr { font-family: var(--f-mono); font-size: 13.5px; display: grid; gap: 4px; margin-top: 10px }
+.g2-expr span b { color: var(--accent) }
+
+/* ── 연습 문제 ─────────────────────────── */
+.ptabs { display: flex; gap: 6px; flex-wrap: wrap; margin: 6px 0 4px }
+.ptabs .btn small { font-family: var(--f-mono); color: var(--muted); margin-left: 4px }
+.q { padding: 20px 0; border-bottom: 1px solid var(--rule) }
+.q:last-child { border-bottom: none }
+.q-head { display: flex; gap: 10px; align-items: baseline; flex-wrap: wrap }
+.q-n { font-family: var(--f-mono); font-size: 12.5px; font-weight: 600; color: var(--accent) }
+.q-p { font-weight: 500 }
+.q-src { font-size: 12px; color: var(--muted); border: 1px solid var(--rule); border-radius: 3px; padding: 0 6px }
+.q-ans { display: flex; gap: 6px; flex-wrap: wrap; align-items: flex-start; margin-top: 8px }
+.q-ans textarea {
+  font: inherit; font-family: var(--f-mono); font-size: 14px; color: var(--ink); background: var(--sheet);
+  border: 1px solid var(--rule); border-radius: 4px; padding: 6px 10px; flex: 1 1 260px; min-width: 0; resize: vertical; min-height: 38px;
+}
+.q-ans textarea:focus { border-color: var(--accent); outline: none }
+.q-msg { font-size: 14px; font-weight: 600; margin-top: 6px; min-height: 1.2em }
+.q-msg.ok { color: var(--ok) }
+.q-msg.no { color: var(--red) }
+.q-reveal { margin-top: 10px; padding: 12px 16px; background: var(--ok-soft); border-radius: 5px }
+.q-reveal .ans-v { font-weight: 700; font-size: 15.5px; margin-bottom: 6px; white-space: pre-wrap }
+.q-reveal .ans-v code { background: var(--sheet) }
+.q-reveal p:last-child { margin-bottom: 0 }
+.q.solved .q-n::after { content: " ✓ 맞힘"; color: var(--ok) }
+
+@media (max-width: 760px) {
+  .stp-grid { grid-template-columns: 1fr }
+  .stp-code { border-right: none; border-bottom: 1px solid var(--rule) }
+  .g2-wrap, .join-wrap { grid-template-columns: 1fr }
+  .bind { grid-template-columns: 1fr; justify-items: start }
+  .bind-arrow { transform: rotate(90deg) }
+  .bit-row { grid-template-columns: 6.5em auto; }
+  .bit-dec { grid-column: 2 }
+}
+
+/* ── 모의고사 ─────────────────────────── */
+.exam-bar { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--rule) }
+.timer { font-family: var(--f-mono); font-size: 26px; font-weight: 600; font-variant-numeric: tabular-nums; letter-spacing: .02em }
+.timer.low { color: var(--red) }
+.exam-info th { white-space: nowrap; width: 1%; }
+.ex-q { padding: 24px 0; border-bottom: 1px solid var(--rule); scroll-margin-top: 70px }
+.ex-q:first-child { padding-top: 0 }
+.ex-head { display: flex; gap: 10px; align-items: center; margin-bottom: 8px }
+.ex-n { font-family: var(--f-disp); font-size: 26px; line-height: 1; color: var(--accent); min-width: 34px }
+.ex-area { font-size: 12px; font-weight: 600; color: var(--muted); border: 1px solid var(--rule); border-radius: 3px; padding: 0 7px }
+.ex-pt { margin-left: auto; font-family: var(--f-mono); font-size: 12.5px; color: var(--muted) }
+.ex-text { font-weight: 500; max-width: 72ch }
+.qlist { margin: 0 0 12px; padding-left: 0; list-style: none; counter-reset: ql; display: grid; gap: 6px; max-width: 74ch }
+.qlist li { counter-increment: ql; position: relative; padding-left: 1.8em; font-size: 14.5px }
+.qlist li::before { content: counter(ql, decimal); position: absolute; left: 0; top: 0; font-family: var(--f-mono); font-weight: 600; color: var(--accent) }
+.qlist li:nth-child(1)::before { content: "①" } .qlist li:nth-child(2)::before { content: "②" } .qlist li:nth-child(3)::before { content: "③" } .qlist li:nth-child(4)::before { content: "④" } .qlist li:nth-child(5)::before { content: "⑤" }
+.qcond { margin: 0 0 12px; font-size: 14.5px }
+.boki { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; border: 1px solid var(--ink); border-radius: 4px; padding: 10px 12px; margin: 4px 0 14px }
+.boki-h { font-weight: 700; margin-right: 4px }
+.boki span:not(.boki-h) { font-size: 13.5px; background: var(--code); border-radius: 3px; padding: 1px 8px }
+.refseq { font-family: var(--f-mono); font-size: 15px }
+.ex-answers { display: grid; gap: 8px; margin-top: 10px; max-width: 640px }
+.ex-blank { display: grid; grid-template-columns: 3.2em 1fr 1.6em; gap: 8px; align-items: start }
+.ex-bl { font-family: var(--f-mono); font-size: 13px; font-weight: 600; color: var(--muted); padding-top: 8px }
+.ex-blank input, .ex-blank textarea {
+  font: inherit; font-family: var(--f-mono); font-size: 14.5px; color: var(--ink); background: var(--sheet);
+  border: 1px solid var(--rule); border-bottom: 2px solid var(--ink); border-radius: 3px; padding: 6px 10px; min-width: 0; width: 100%; resize: vertical;
+}
+.ex-blank input:focus, .ex-blank textarea:focus { outline: none; border-bottom-color: var(--accent); background: var(--accent-soft) }
+.ex-mark { font-size: 20px; font-weight: 700; padding-top: 4px }
+.ex-mark.ok { color: var(--ok) } .ex-mark.no { color: var(--red) }
+.ex-sol { margin-top: 14px; padding: 14px 18px; background: var(--ok-soft); border-radius: 5px }
+.ex-q.wrong .ex-sol { background: var(--red-soft) }
+.ex-q.part .ex-sol { background: var(--warn-soft) }
+.ex-sol-a { font-size: 15.5px }
+.ex-sol p:last-child { margin-bottom: 0 }
+.ex-why { font-size: 13.5px; color: var(--muted); border-top: 1px dashed var(--rule); padding-top: 8px }
+.ex-q.right .ex-pt { color: var(--ok); font-weight: 600 } .ex-q.wrong .ex-pt { color: var(--red); font-weight: 600 } .ex-q.part .ex-pt { color: var(--warn); font-weight: 600 }
+.exam-submit { display: flex; gap: 8px; flex-wrap: wrap; padding-top: 22px }
+.res-top { display: grid; grid-template-columns: auto 1fr; gap: 32px; align-items: center }
+.res-score { font-family: var(--f-disp); font-size: 64px; line-height: 1; margin: 4px 0 }
+.res-score small { font-family: var(--f-body); font-size: 16px; color: var(--muted); margin-left: 6px }
+.res-score.pass { color: var(--ok) } .res-score.fail { color: var(--red) }
+.res-areas { display: grid; gap: 6px; min-width: 0 }
+.res-grid { display: grid; grid-template-columns: repeat(10, minmax(0, 1fr)); gap: 4px; margin-top: 20px }
+.res-cell { display: grid; text-align: center; text-decoration: none; color: var(--ink); border-radius: 4px; padding: 6px 2px; font-size: 11px; line-height: 1.35 }
+.res-cell b { font-size: 15px }
+.res-cell.right { background: var(--ok-soft) } .res-cell.part { background: var(--warn-soft) } .res-cell.wrong { background: var(--red-soft) }
+.res-tip { margin: 16px 0 0 }
+@media (max-width: 760px) {
+  .res-top { grid-template-columns: 1fr; gap: 14px }
+  .res-grid { grid-template-columns: repeat(5, minmax(0, 1fr)) }
+  .ex-blank { grid-template-columns: 2.6em 1fr 1.4em }
+}

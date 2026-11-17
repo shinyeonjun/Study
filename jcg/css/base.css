@@ -1,0 +1,166 @@
+/* 정처기 실기 코드 노트 — 기본 토큰과 레이아웃
+   레이아웃: 모눈종이 배경 위에 흰 시트, 상단 고정 바, 본문 폭 약 68자 */
+
+:root {
+  --paper: #f3f5f8;
+  --sheet: #ffffff;
+  --ink: #1a2030;
+  --muted: #5a6376;
+  --rule: #dce1e9;
+  --grid: #e6eaf1;
+  --accent: #2a47c4;
+  --accent-soft: #eaeefc;
+  --red: #c33a2c;
+  --red-soft: #fcefed;
+  --ok: #1d7a52;
+  --ok-soft: #e4f3ec;
+  --warn: #9a6400;
+  --warn-soft: #fbf2df;
+  --code: #f1f3f8;
+  --hl-k: #2a47c4;
+  --hl-s: #9c4a07;
+  --hl-n: #1d7a52;
+  --hl-c: #8790a3;
+  --hl-t: #7b33b0;
+  --shadow: 0 1px 2px rgba(20, 30, 60, .06);
+  --term-bg: #1a2030;
+  --term-fg: #eef1f6;
+
+  --f-body: "IBM Plex Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
+  --f-disp: "Black Han Sans", "IBM Plex Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  --f-mono: "JetBrains Mono", "D2Coding", ui-monospace, Consolas, "Malgun Gothic", monospace;
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #0f1218; --sheet: #161a22; --ink: #e4e8f0; --muted: #98a1b4; --rule: #2a303c; --grid: #1a1f29;
+    --accent: #91a5ff; --accent-soft: #1d2440; --red: #ff8070; --red-soft: #33201d; --ok: #62d29e; --ok-soft: #142e25;
+    --warn: #f0b85a; --warn-soft: #30260f; --code: #1b202b;
+    --hl-k: #9fb1ff; --hl-s: #f0aa6a; --hl-n: #6fd9a8; --hl-c: #6e778d; --hl-t: #d4a6ff;
+    --shadow: none; --term-bg: #07090d; --term-fg: #d8dde8; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #0f1218; --sheet: #161a22; --ink: #e4e8f0; --muted: #98a1b4; --rule: #2a303c; --grid: #1a1f29;
+  --accent: #91a5ff; --accent-soft: #1d2440; --red: #ff8070; --red-soft: #33201d; --ok: #62d29e; --ok-soft: #142e25;
+  --warn: #f0b85a; --warn-soft: #30260f; --code: #1b202b;
+  --hl-k: #9fb1ff; --hl-s: #f0aa6a; --hl-n: #6fd9a8; --hl-c: #6e778d; --hl-t: #d4a6ff;
+  --shadow: none; --term-bg: #07090d; --term-fg: #d8dde8; color-scheme: dark;
+}
+
+*, *::before, *::after { box-sizing: border-box }
+html { scroll-behavior: smooth; scroll-padding-top: 72px; -webkit-text-size-adjust: 100% }
+body {
+  margin: 0;
+  background-color: var(--paper);
+  background-image:
+    linear-gradient(var(--grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size: 24px 24px;
+  color: var(--ink);
+  font-family: var(--f-body);
+  font-size: 15.5px;
+  line-height: 1.75;
+}
+img, svg { max-width: 100% }
+a { color: var(--accent) }
+b, strong { font-weight: 600 }
+h1, h2, h3, h4 { text-wrap: balance; line-height: 1.3 }
+p { margin: 0 0 14px }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 2px }
+[hidden] { display: none !important }
+
+/* 상단 바 */
+.topbar {
+  position: sticky; top: 0; z-index: 20;
+  background: color-mix(in srgb, var(--sheet) 92%, transparent);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--rule);
+}
+.topbar-in {
+  max-width: 1040px; margin: 0 auto;
+  padding: 8px max(16px, env(safe-area-inset-right, 0px)) 8px max(16px, env(safe-area-inset-left, 0px));
+  display: flex; gap: 14px; align-items: center;
+}
+.brand {
+  font-family: var(--f-disp); font-size: 19px; text-decoration: none; color: var(--ink);
+  white-space: nowrap; flex: none;
+}
+.brand em { font-style: normal; color: var(--accent) }
+.chapnav { flex: 1; min-width: 0 }
+.chapnav ul {
+  list-style: none; margin: 0; padding: 2px 0; display: flex; gap: 4px;
+  overflow-x: auto; scrollbar-width: none;
+}
+.chapnav ul::-webkit-scrollbar { display: none }
+.chapnav a {
+  display: block; white-space: nowrap; text-decoration: none; color: var(--muted);
+  font-size: 13.5px; padding: 4px 10px; border-radius: 999px; border: 1px solid transparent;
+}
+.chapnav a:hover { color: var(--ink); border-color: var(--rule) }
+.chapnav a[aria-current="page"] { color: var(--sheet); background: var(--accent); }
+.theme-btn {
+  flex: none; font: inherit; font-size: 13px; color: var(--muted); background: var(--sheet);
+  border: 1px solid var(--rule); border-radius: 999px; padding: 4px 11px; cursor: pointer;
+}
+.theme-btn:hover { color: var(--ink); border-color: var(--accent) }
+
+/* 본문 */
+.wrap {
+  max-width: 1040px; margin: 0 auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 0 72px;
+}
+.page-head { padding-block: 40px 22px; display: grid; gap: 14px }
+.eyebrow {
+  font-family: var(--f-mono); font-size: 12px; letter-spacing: .08em; text-transform: uppercase;
+  color: var(--muted); margin: 0;
+}
+.page-head h1 {
+  font-family: var(--f-disp); font-weight: 400; margin: 0;
+  font-size: clamp(32px, 6vw, 50px); letter-spacing: -.01em;
+}
+.page-head h1 em { font-style: normal; color: var(--accent) }
+.lead { font-size: 17px; max-width: 64ch; margin: 0 }
+
+.toc { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; padding: 0; list-style: none }
+.toc a {
+  display: inline-flex; gap: 7px; align-items: baseline; text-decoration: none; color: var(--ink);
+  font-size: 13.5px; padding: 4px 11px; border: 1px solid var(--rule); border-radius: 999px; background: var(--sheet);
+}
+.toc a:hover { border-color: var(--accent) }
+.toc .t-id { font-family: var(--f-mono); font-size: 11.5px; color: var(--accent) }
+.toc .t-add { width: 7px; height: 7px; border-radius: 50%; background: var(--warn); align-self: center }
+
+.sheet {
+  background: var(--sheet); border: 1px solid var(--rule); border-radius: 6px;
+  padding: 28px clamp(16px, 4.5vw, 44px) 32px; margin-top: 22px; box-shadow: var(--shadow);
+}
+
+.pager {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 28px;
+}
+.pager a {
+  display: grid; gap: 2px; text-decoration: none; color: var(--ink); background: var(--sheet);
+  border: 1px solid var(--rule); border-radius: 6px; padding: 14px 18px;
+}
+.pager a:hover { border-color: var(--accent) }
+.pager small { font-family: var(--f-mono); font-size: 11.5px; color: var(--muted); letter-spacing: .05em }
+.pager b { font-size: 16px }
+.pager .next { text-align: right; grid-column: 2 }
+
+.foot { margin-top: 34px; font-size: 13px; color: var(--muted); max-width: 72ch }
+
+@media (max-width: 720px) {
+  body { font-size: 15px }
+  .brand { font-size: 17px }
+  .brand span { display: none }
+  .pager { grid-template-columns: 1fr }
+  .pager .next { grid-column: 1 }
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto }
+  *, *::before, *::after { transition: none !important; animation: none !important }
+}

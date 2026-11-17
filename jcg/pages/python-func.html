@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Python② 함수와 클래스 · 정처기 코드 노트</title>
+<script>try{var t=localStorage.getItem("jcg-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="../css/base.css">
+<link rel="stylesheet" href="../css/content.css">
+<link rel="stylesheet" href="../css/widgets.css">
+</head>
+<body>
+<header class="topbar"><div class="topbar-in">
+<a class="brand" href="../index.html">정처기 <em>코드</em><span> 노트</span></a>
+<nav class="chapnav" aria-label="장 이동"><ul><li><a href="../index.html">홈</a></li><li><a href="method.html">0 추적법</a></li><li><a href="c-memory.html">C① 메모리·포인터</a></li><li><a href="c-struct.html">C② 구조체·자료구조</a></li><li><a href="java-oop.html">Java① 객체·상속</a></li><li><a href="java-api.html">Java② 문자열·예외·컬렉션</a></li><li><a href="python-data.html">Python① 자료형·슬라이싱</a></li><li><a href="python-func.html">Python② 함수·클래스</a></li><li><a href="sql-query.html">SQL① 조회</a></li><li><a href="sql-ddl.html">SQL② 정의·관리·이론</a></li><li><a href="practice.html">연습 문제</a></li><li><a href="mock-2026-3.html">3회 모의고사 ①</a></li><li><a href="mock-2026-3b.html">3회 모의고사 ②</a></li></ul></nav>
+<button class="theme-btn" type="button">어둡게</button>
+</div></header>
+<main class="wrap">
+<div class="page-head">
+<p class="eyebrow">PYTHON · 2 / 2</p>
+<h1>Python② <em>함수</em>와 클래스</h1>
+<p class="lead">출력 형식, and·or가 돌려주는 값, 기본 인자, 컴프리헨션, 클래스까지. 짧은 코드에서 형식과 규칙 하나로 점수가 갈리는 부분을 모았습니다.</p>
+<ul class="toc"><li><a href="#p-9"><span class="t-id">P-9</span>출력 형식이 점수를 가른다</a></li><li><a href="#p-10"><span class="t-id">P-10</span>연산자와 and·or<span class="t-add" title="필수 보강"></span></a></li><li><a href="#p-11"><span class="t-id">P-11</span>함수</a></li><li><a href="#p-12"><span class="t-id">P-12</span>컴프리헨션, lambda, map, filter</a></li><li><a href="#p-13"><span class="t-id">P-13</span>정렬과 key<span class="t-add" title="필수 보강"></span></a></li><li><a href="#p-14"><span class="t-id">P-14</span>클래스</a></li></ul><p class="legend"><span><span class="badge hot">기출 빈출</span> 실제로 여러 번 나온 개념</span><span><span class="badge add">필수 보강</span> 기출에 적게 나왔지만 모르면 위험한 개념</span></p>
+</div>
+<div class="sheet"><section class="lesson" id="p-9" data-kind="hot" data-title="출력 형식이 점수를 가른다"><h2><span class="l-id">P-9</span>출력 형식이 점수를 가른다<span class="badge hot">기출 빈출</span></h2>
+<p>Python 문제는 코드가 짧은 대신 출력 형식에서 틀리게 만듭니다. 계산을 맞혀 놓고 공백 하나로 틀리지 않게 규칙을 정확히 알아 두세요.</p>
+<div class="codewrap"><pre class="code"><code data-lang="python">print(1, 2, 3, sep=&#x27;-&#x27;, end=&#x27;!\n&#x27;)
+print([1, &#x27;a&#x27;, True], (1,), {&#x27;k&#x27;: 1})
+print(&quot;%5.2f|%-4d|%s&quot; % (3.14159, 7, &#x27;ok&#x27;))
+print(f&quot;{7/2:.1f} {7//2:3d}|{&#x27;ab&#x27;:&gt;4}|&quot;)
+print(&quot;a=&quot;, 20, &quot;b=&quot;, 2)</code></pre></div>
+<div class="out"><span class="out-l">출력</span><pre>1-2-3!
+[1, &#x27;a&#x27;, True] (1,) {&#x27;k&#x27;: 1}
+ 3.14|7   |ok
+3.5   3|  ab|
+a= 20 b= 2</pre></div>
+<div class="rule"><ul><li><code>print(a, b)</code>는 사이에 공백 한 칸, 끝에 줄바꿈. <code>sep</code>과 <code>end</code>로 바꿀 수 있음. <code>end</code>는 마지막 값 뒤에도 붙습니다.</li><li>리스트를 그대로 찍으면 쉼표 뒤 공백, 문자열 작은따옴표까지 나옵니다.</li><li><code>True</code>, <code>False</code>, <code>None</code>은 첫 글자가 대문자입니다.</li><li><code>%5.2f</code>는 전체 폭 5칸에 소수 둘째 자리, 오른쪽 정렬. <code>%-4d</code>는 왼쪽 정렬. f-string은 <code>{값:형식}</code></li></ul></div>
+<p class="gichul"><span class="g-tag">기출</span><span>2020-4 9번, 2021-3 14번 (False), 2022-1 6번 (<code>&quot;a=&quot;, 20</code>), 2022-3 9번 (리스트 출력), 2024-2 6번 (f-string), 2026-1 13번 (<code>end=&#x27;A&#x27;</code>), 2022-2 13번 (% 포맷)</span></p></section><section class="lesson" id="p-10" data-kind="add" data-title="연산자와 and·or"><h2><span class="l-id">P-10</span>연산자와 and·or<span class="badge add">필수 보강</span></h2>
+<div class="codewrap"><pre class="code"><code data-lang="python">print(2 ** 10, 7 // 2, -7 // 2, 7 % 3, -7 % 3)
+print(1 &lt; 2 &lt; 3, 3 &gt; 2 &gt; 2, True + True)
+print(0 or 5, 3 and 0, not 0, [] or &quot;x&quot;, 2 and 5)
+print(100 &gt;&gt; 2, 5 &amp; 3, 5 | 3, 5 ^ 3, ~5)</code></pre></div>
+<div class="out"><span class="out-l">출력</span><pre>1024 3 -4 1 2
+True False 2
+5 0 True x 5
+25 1 7 6 -6</pre></div>
+<div class="rule"><ul><li><code>**</code>는 거듭제곱, <code>//</code>는 아래로 내림 나눗셈, <code>%</code>의 부호는 오른쪽 수를 따름</li><li><code>a &lt; b &lt; c</code>는 <code>a &lt; b and b &lt; c</code></li><li><code>or</code>는 처음으로 참인 값, <code>and</code>는 처음으로 거짓인 값을 <b>그대로</b> 돌려줍니다. 끝까지 가면 마지막 값</li><li>True는 1, False는 0으로 계산됩니다</li><li>Python에는 <code>++</code>, <code>--</code>가 없습니다. <code>i += 1</code></li></ul></div>
+<p class="gichul"><span class="g-tag">기출</span><span>2021-2 7번 (<code>a &gt;&gt; i</code>), 2021-3 14번 (비교 결과 False)</span></p></section><section class="lesson" id="p-11" data-kind="hot" data-title="함수"><h2><span class="l-id">P-11</span>함수<span class="badge hot">기출 빈출</span></h2>
+<div class="codewrap"><pre class="code"><code data-lang="python">def f(a, b=10, *args):
+    return a + b + sum(args)
+print(f(1), f(1, 2), f(1, 2, 3, 4), f(b=5, a=1))
+
+x = 10
+def g(): x = 20          # 지역 변수 x를 새로 만듦
+def h():
+    global x
+    x = 30               # 전역 x를 바꿈
+g(); print(x); h(); print(x)</code></pre></div>
+<div class="out"><span class="out-l">출력</span><pre>11 3 10 6
+10
+30</pre></div>
+<h3>기본값 리스트는 한 번만 만들어진다</h3>
+<div class="widget stepper" data-steps="py-default"></div>
+<div class="rule"><ul><li>기본 인자는 안 넘기면 기본값, <code>*args</code>는 남은 위치 인자를 튜플로, <code>**kw</code>는 이름 붙은 인자를 딕셔너리로</li><li>함수 안에서 대입하면 지역 변수가 됩니다. 전역을 바꾸려면 <code>global</code></li><li>return이 없으면 None을 돌려줍니다</li><li>기본값은 def 할 때 한 번 만들어져 계속 재사용됩니다. 리스트·딕셔너리를 기본값으로 쓰면 호출끼리 공유됩니다</li></ul></div>
+<p class="gichul"><span class="g-tag">기출</span><span>2022-1 6번 (기본 인자). 가변 기본 인자는 기출에 아직 없지만 Python 출력 문제의 대표 함정입니다.</span></p></section><section class="lesson" id="p-12" data-kind="hot" data-title="컴프리헨션, lambda, map, filter"><h2><span class="l-id">P-12</span>컴프리헨션, lambda, map, filter<span class="badge hot">기출 빈출</span></h2>
+<div class="codewrap"><pre class="code"><code data-lang="python">print(list(map(lambda x: x * 2, [1, 2, 3])))
+print(list(filter(lambda x: x % 2, range(6))))
+print([x ** 2 for x in range(1, 6) if x % 2])
+print({k: len(k) for k in [&#x27;ab&#x27;, &#x27;c&#x27;]}, {x % 3 for x in range(6)})
+for i, (k, v) in enumerate(zip(&#x27;ab&#x27;, [1, 2]), 1):
+    print(i, k, v)
+print(any(x &gt; 4 for x in [1, 5]), all(x &gt; 4 for x in [1, 5]), sum(x for x in range(4)))</code></pre></div>
+<div class="out"><span class="out-l">출력</span><pre>[2, 4, 6]
+[1, 3, 5]
+[1, 9, 25]
+{&#x27;ab&#x27;: 2, &#x27;c&#x27;: 1} {0, 1, 2}
+1 a 1
+2 b 2
+True False 6</pre></div>
+<div class="rule"><ul><li><code>lambda 매개변수: 식</code>은 이름 없는 한 줄 함수</li><li><code>map(함수, 리스트)</code>는 각 원소에 함수를 적용, <code>filter(함수, 리스트)</code>는 함수가 참인 것만. 그대로 찍으면 객체 주소가 나오니 <code>list()</code>로 감쌉니다</li><li><code>[식 for x in 반복 if 조건]</code>: 조건을 통과한 x만 식으로 바꿔 모음. 중괄호면 셋이나 딕셔너리</li><li><code>enumerate(xs, 1)</code>은 번호를 1부터, <code>zip</code>은 짧은 쪽 길이에 맞춰 짝을 지음</li></ul></div>
+<p class="gichul"><span class="g-tag">기출</span><span>2022-3 9번 (map과 lambda), 2026-1 8번 (join과 제너레이터식), 2025-2 17번 (딕셔너리 컴프리헨션), 2025-3 9번 (enumerate), 2025-1 17번 (sum 제너레이터식)</span></p></section><section class="lesson" id="p-13" data-kind="add" data-title="정렬과 key"><h2><span class="l-id">P-13</span>정렬과 key<span class="badge add">필수 보강</span></h2>
+<div class="codewrap"><pre class="code"><code data-lang="python">words = [&quot;banana&quot;, &quot;kiwi&quot;, &quot;apple&quot;, &quot;fig&quot;]
+print(sorted(words))
+print(sorted(words, key=len))
+print(sorted(words, key=lambda w: w[-1]))
+print(sorted(words, key=lambda w: (-len(w), w)))
+print(max(words, key=len), min([3, -5, 2], key=abs))</code></pre></div>
+<div class="out"><span class="out-l">출력</span><pre>[&#x27;apple&#x27;, &#x27;banana&#x27;, &#x27;fig&#x27;, &#x27;kiwi&#x27;]
+[&#x27;fig&#x27;, &#x27;kiwi&#x27;, &#x27;apple&#x27;, &#x27;banana&#x27;]
+[&#x27;banana&#x27;, &#x27;apple&#x27;, &#x27;fig&#x27;, &#x27;kiwi&#x27;]
+[&#x27;banana&#x27;, &#x27;apple&#x27;, &#x27;kiwi&#x27;, &#x27;fig&#x27;]
+banana 2</pre></div>
+<p><code>key</code>는 "이 값으로 비교하라"는 함수입니다. 튜플을 돌려주면 첫 값으로 먼저, 같으면 다음 값으로 비교합니다. 음수를 붙이면 그 기준만 내림차순이 됩니다.</p></section><section class="lesson" id="p-14" data-kind="hot" data-title="클래스"><h2><span class="l-id">P-14</span>클래스<span class="badge hot">기출 빈출</span></h2>
+<div class="codewrap"><pre class="code"><code data-lang="python">class Animal:
+    count = 0                          # 클래스 변수 (Java의 static)
+    def __init__(self, name):
+        self.name = name               # 인스턴스 변수
+        Animal.count += 1
+    def speak(self): return &quot;...&quot;
+    def intro(self): return self.name + &quot;:&quot; + self.speak()
+    def __str__(self): return &quot;Animal(&quot; + self.name + &quot;)&quot;
+
+class Dog(Animal):
+    def __init__(self, name, age):
+        super().__init__(name)
+        self.age = age
+    def speak(self): return &quot;멍&quot;
+
+d = Dog(&quot;바둑&quot;, 3)
+print(d.intro(), d.age, d, Animal.count)</code></pre></div>
+<div class="out"><span class="out-l">출력</span><pre>바둑:멍 3 Animal(바둑) 1</pre></div>
+<div class="rule"><ul><li><code>self</code>는 Java의 this. 메서드의 첫 매개변수로 직접 적어야 합니다</li><li>부모 메서드 안의 <code>self.speak()</code>도 실제 객체(Dog)의 것이 불립니다. Java의 동적 바인딩과 같습니다</li><li>자식이 <code>__init__</code>을 만들면 부모 것은 자동으로 안 불립니다. <code>super().__init__()</code>을 직접 불러야 합니다</li><li><code>print(객체)</code>는 <code>__str__</code>이 돌려준 문자열을 찍습니다</li></ul></div>
+<h3>클래스 변수를 객체로 바꾸면</h3>
+<div class="codewrap"><pre class="code"><code data-lang="python">class K:
+    cnt = 0
+a = K(); b = K()
+a.cnt = 5        # a에만 인스턴스 변수가 새로 생김
+K.cnt += 1
+print(a.cnt, b.cnt, K.cnt)</code></pre></div>
+<div class="out"><span class="out-l">출력</span><pre>5 1 1</pre></div>
+<p class="gichul"><span class="g-tag">기출</span><span>2025-1 17번 (클래스로 트리를 만들고 재귀로 합 구하기)</span></p></section></div>
+<nav class="pager" aria-label="이전 다음 장"><a class="prev" href="python-data.html"><small>← 이전</small><b>Python① 자료형·슬라이싱</b></a><a class="next" href="sql-query.html"><small>다음 →</small><b>SQL① 조회</b></a></nav>
+</main>
+<script src="../js/highlight.js"></script>
+<script src="../js/site.js"></script>
+<script src="../js/data/steps.js"></script>
+<script src="../js/stepper.js"></script>
+</body>
+</html>
