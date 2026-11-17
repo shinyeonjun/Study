@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PCA로 많이 퍼진 방향에 자료 사영하기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="ML09-3">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">머신러닝 · ML09 비지도 학습</p>
+<p class="chap-num">ML09·3</p>
+<h1>PCA로 많이 퍼진 방향에 자료 사영하기</h1>
+<p class="lead">서로 관련 있는 두 수치 열이 있습니다. 두 값을 하나의 축으로 요약할 때 어떤 방향을 남기면 원자료의 퍼짐을 많이 보존할까요? 평균을 빼고 새 축을 찾은 뒤, 버린 축에 어떤 정보가 있었는지도 계산합니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul>
+<li>주성분 축과 사영한 점수를 구별한다.</li>
+<li>SVD의 특잇값으로 설명분산과 설명분산비를 계산한다.</li>
+<li>PCA의 척도·시각화·일반화 한계를 설명한다.</li>
+</ul></div>
+
+<h2>열의 평균을 빼고 좌표를 새로 정한다</h2>
+<p>같은 단위의 합성 센서 값 네 쌍을 <code>(12,22),(8,18),(11,19),(9,21)</code>로 둡니다. 평균은 <code>(10,20)</code>이므로 <b class="key">중심화</b> 뒤의 네 점은 <code>(2,2),(−2,−2),(1,−1),(−1,1)</code>입니다. <b class="key">주성분분석(PCA)</b>은 이 점들을 어떤 방향에 수직으로 내렸을 때 얻는 새 좌표의 분산이 큰 방향을 먼저 고릅니다. 여러 축을 쓰면 앞서 고른 축과 직각인 방향 가운데 같은 일을 합니다.</p>
+<p>단위 길이로 만든 첫 축 <code>v₁=(1,1)/√2</code>에 점을 사영한 좌표는 내적 <code>(x₁+x₂)/√2</code>입니다. 네 좌표는 <code>2√2,−2√2,0,0</code>입니다. 두 번째 축 <code>v₂=(1,−1)/√2</code>에는 <code>0,0,√2,−√2</code>가 남습니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 323" role="img" aria-label="중심을 뺀 네 점 (2,2), (−2,−2), (1,−1), (−1,1)이 있다. 첫 주성분은 y=x 방향이다. 앞 두 점은 그 직선에 그대로 있고, 나머지 두 점은 원점으로 사영된다.">
+<line class="f-ink" x1="255" y1="152" x2="529.7" y2="152"/>
+<line class="f-ink" x1="378" y1="275" x2="378" y2="22.85"/>
+<line class="f-ink" x1="296" y1="152" x2="296" y2="158"/>
+<text class="f-s" x="296" y="180" text-anchor="middle">-2</text>
+<line class="f-ink" x1="372" y1="234" x2="378" y2="234"/>
+<text class="f-s" x="366" y="239" text-anchor="end">-2</text>
+<line class="f-ink" x1="337" y1="152" x2="337" y2="158"/>
+<text class="f-s" x="337" y="180" text-anchor="middle">-1</text>
+<line class="f-ink" x1="372" y1="193" x2="378" y2="193"/>
+<text class="f-s" x="366" y="198" text-anchor="end">-1</text>
+<line class="f-ink" x1="419" y1="152" x2="419" y2="158"/>
+<text class="f-s" x="419" y="180" text-anchor="middle">1</text>
+<line class="f-ink" x1="372" y1="111" x2="378" y2="111"/>
+<text class="f-s" x="366" y="116" text-anchor="end">1</text>
+<line class="f-ink" x1="460" y1="152" x2="460" y2="158"/>
+<text class="f-s" x="460" y="180" text-anchor="middle">2</text>
+<line class="f-ink" x1="372" y1="70" x2="378" y2="70"/>
+<text class="f-s" x="366" y="75" text-anchor="end">2</text>
+<line class="f-line" x1="269.35" y1="260.65" x2="486.65" y2="43.35"/>
+<circle class="f-fill" cx="460" cy="70" r="6"/>
+<circle class="f-fill" cx="296" cy="234" r="6"/>
+<line class="f-dash" x1="419" y1="193" x2="378" y2="152"/>
+<circle class="f-box" cx="419" cy="193" r="6"/>
+<line class="f-dash" x1="337" y1="111" x2="378" y2="152"/>
+<circle class="f-box" cx="337" cy="111" r="6"/>
+<circle class="f-soft" cx="378" cy="152" r="5"/>
+<text class="f-cap" x="496.9" y="43.35" text-anchor="start">PC1 방향</text>
+<text class="f-s" x="278" y="244" text-anchor="end">(−2,−2)</text>
+<text class="f-s" x="473" y="63" text-anchor="start">(2,2)</text>
+<text class="f-s" x="323" y="103" text-anchor="end">(−1,1)</text>
+<text class="f-s" x="432" y="197" text-anchor="start">(1,−1)</text>
+<text class="f-s" x="584" y="177" text-anchor="start">특성 1</text>
+<text class="f-s" x="387" y="24" text-anchor="start">특성 2</text>
+</svg>
+<figcaption>두 축의 척도는 같다. 첫 방향에서 멀리 있는 점 두 개는 원점에 겹쳐 정보를 잃는다.</figcaption>
+</figure>
+<p>첫 축의 점수만 보존하면 뒤 두 점의 점수가 둘 다 0입니다. 첫 방향 위의 모습을 복원할 때는 그 방향에 점수를 곱한 뒤 원래 평균을 더합니다. 점수 0인 두 행은 모두 <code>(10,20)</code>으로 복원됩니다.</p>
+<div class="check" data-q="q1"></div><div class="check" data-q="q2"></div><div class="check" data-q="q3"></div>
+
+<h2>특잇값의 제곱이 방향별 분산으로 이어진다</h2>
+<p>중심화 행렬을 <code>Xc</code>라 놓습니다. 행이 관측, 열이 특성입니다. <a href="../../unit.html?u=LA08">특잇값 분해</a>를 쓰면 <code>Xc=UΣVᵀ</code>입니다. <code>Vᵀ</code>의 행은 특성 공간의 주성분 방향이고, <code>Xc @ V</code>가 주성분 좌표입니다. 실제 출력의 부호는 구현에 따라 뒤집힐 수 있습니다. 축과 점수의 부호를 같이 뒤집으면 복원 결과는 같습니다.</p>
+<p><code>XcᵀXc/(n−1)</code>는 표본 공분산행렬입니다. 그 행렬에서 각 주성분 방향으로의 분산은 <b class="key">설명분산</b>이며, 특잇값 <code>σⱼ</code>로 <code>σⱼ²/(n−1)</code>입니다. 이 자료의 특잇값이 4와 2이므로 각각 <code>16/3,4/3</code>입니다. 각 분산을 전체 분산 <code>20/3</code>으로 나눈 <b class="key">설명분산비</b>는 <code>0.8,0.2</code>입니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 229" role="img" aria-label="특잇값이 4와 2이므로 제곱은 16과 4이다. 전체 제곱합 20으로 나눈 설명분산비는 0.8과 0.2이다.">
+<text class="f-cap" x="198" y="35" text-anchor="middle">방향과 특잇값</text>
+<text class="f-cap" x="479" y="35" text-anchor="middle">전체 분산 가운데 차지하는 비율</text>
+<text class="f-s" x="221" y="90" text-anchor="end">PC1 · σ=4</text>
+<rect class="f-box" x="244" y="67" width="428" height="34"/>
+<rect class="f-soft" x="244" y="67" width="342.4" height="34"/>
+<text class="f-s" x="575.4" y="89" text-anchor="end">80%</text>
+<text class="f-s" x="221" y="148" text-anchor="end">PC2 · σ=2</text>
+<rect class="f-box" x="244" y="125" width="428" height="34"/>
+<rect class="f-soft" x="244" y="125" width="85.6" height="34"/>
+<text class="f-s" x="318.6" y="147" text-anchor="end">20%</text>
+<text class="f-s" x="457" y="198" text-anchor="middle">막대 전체 폭 = 100%</text>
+</svg>
+<figcaption>축이 차지하는 분산의 비율을 보여 준다. 정답 예측의 정확도는 이 계산에 들어가지 않는다.</figcaption>
+</figure>
+<p class="small">실행 예제</p>
+<pre data-example="python"><code>import numpy as np
+
+x = np.array([[12,22],[8,18],[11,19],[9,21]], dtype=float)
+center = x.mean(axis=0)
+xc = x - center
+_, singular, vt = np.linalg.svd(xc, full_matrices=False)
+v = vt[0]
+if v[0] &lt; 0:
+    v = -v
+score = xc @ v
+variance = singular**2 / (len(x) - 1)
+print(&quot;mean:&quot;, center.tolist())
+print(&quot;singular values:&quot;, singular.round(3).tolist())
+print(&quot;PC1 score:&quot;, [round(float(t), 3) if abs(t) &gt; 1e-10 else 0.0 for t in score])
+print(&quot;variance ratio:&quot;, (variance / variance.sum()).round(3).tolist())
+restored = np.outer(score, v) + center
+print(f&quot;one component reconstruction SSE: {((x - restored)**2).sum():.1f}&quot;)</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>mean: [10.0, 20.0]
+singular values: [4.0, 2.0]
+PC1 score: [2.828, -2.828, 0.0, 0.0]
+variance ratio: [0.8, 0.2]
+one component reconstruction SSE: 4.0</code></pre>
+<div class="check" data-q="q4"></div><div class="check" data-q="q5"></div><div class="check" data-q="q6"></div>
+
+<h2>퍼짐을 많이 남긴다는 말의 한계를 본다</h2>
+<p>설명분산비 80%는 이 자료에서 첫 방향에 원래 총분산의 80%가 놓였다는 말입니다. 군집이 몇 개인지나 분류 성능이 얼마인지는 이 비율과 별도의 질문입니다. 작은 분산의 축에만 드문 이상치나 중요한 정답 신호가 들어 있을 수도 있습니다.</p>
+<p>PCA는 평균을 빼지만, 다른 단위의 열을 자동으로 같은 표준편차로 만들지는 않습니다. 척도가 큰 센서가 전체 방향에 큰 영향을 줄 수 있으므로 문제에 맞춰 표준화 여부를 정합니다. 예측용 전처리라면 중심과 축을 훈련에서 구하고 검증과 새 입력에 그대로 적용합니다. 모든 값이 같아 전체 분산이 0이면 분산비를 정의할 수 없습니다.</p>
+<div class="why"><p class="box-k">왜 그럴까?</p><p>한 축을 보존했는데 뒤 두 점을 구별하려면 무엇이 필요할까요?</p><details><summary>모범 답 보기</summary><p>첫 축에서는 두 점이 같은 좌표입니다. 두 번째 축의 정보를 남기거나 원자료를 다시 봐야 보존하지 않은 차이를 확인할 수 있습니다.</p></details></div>
+<div class="check" data-q="q7"></div>
+
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table><thead><tr><th scope="col">개념</th><th scope="col">확인할 것</th></tr></thead><tbody>
+<tr><th scope="row"><b class="key">PCA</b></th><td>중심화한 점의 분산이 큰 직교 방향부터 찾음</td></tr>
+<tr><th scope="row"><b class="key">설명분산</b></th><td>특잇값 제곱을 n−1로 나눈 값</td></tr>
+<tr><th scope="row">설명분산비</th><td>축의 분산이 전체 분산에서 차지하는 비율</td></tr>
+</tbody></table></div><div class="box sum"><p class="box-k">다음 장으로</p><p><a href="../../unit.html?u=ML10">다음 장</a>에서는 학습한 모형이 새 자료에서도 얼마나 잘 맞는지 살펴봅니다.</p></div>
+
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://scikit-learn.org/stable/modules/generated/sklearn.decomposition.PCA.html">scikit-learn · PCA, 설명분산과 척도</a></li>
+<li><a href="https://numpy.org/doc/stable/reference/generated/numpy.linalg.svd.html">NumPy · 특잇값 분해</a></li>
+</ul>
+<h2>확인 문제</h2>
+<p>직접 계산하거나 설명을 먼저 적고 답을 확인해 보세요.</p>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

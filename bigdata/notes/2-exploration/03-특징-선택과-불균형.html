@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>특성을 선택·추출하고 불균형을 다루기 · 빅분기 노트</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="2-03">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">빅분기 노트</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">2과목 · 빅데이터 탐색</p>
+<p class="chap-num">03</p>
+<h1>특성을 선택·추출하고 불균형을 다루기</h1>
+<p class="lead">지연을 예측할 때 어떤 열을 넣어야 하고, 정상 기록이 대부분인 자료에서는 무엇을 결과로 확인해야 할까요? 특성을 만드는 방법과 훈련 자료를 다루는 방법을 구별합니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>특성 선택과 특성 추출의 결과물 차이를 설명한다.</li><li>예측 시점에 없는 특성을 찾아낸다.</li><li>불균형에서 표본 조절의 방법과 적용 위치를 구별한다.</li></ul></div>
+
+<h2>예측 순간에 쓸 수 있는 열부터 정한다</h2>
+<p>이용자가 접수하는 순간 대기가 길어질지 예측합니다. 접수 직전의 대기 인원, 예약 수, 시간대는 후보입니다. 오늘의 최종 대기시간은 예측하고 싶은 목표에 가까운 값입니다. 실제 접수 순간에는 그 값이 아직 없으므로 입력에 포함하면 자료 누출이 됩니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 160" role="img" aria-label="원래 값 가운데 일부를 골라 사용하는 것이 선택이다. 추출은 여러 값의 조합으로 새 변수를 만든다.">
+<rect class="f-box" x="42" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="135" y="61" text-anchor="middle">원래 변수</text><text class="f-s" x="135" y="89" text-anchor="middle">거리, 무게, 시간대</text><text class="f-s" x="135" y="110" text-anchor="middle">대상은 방문 한 건</text><line class="f-line" x1="235" y1="84" x2="278" y2="84" marker-end="url(#f-arrow)"/><rect class="f-soft" x="287" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="380" y="61" text-anchor="middle">선택</text><text class="f-s" x="380" y="89" text-anchor="middle">원래 열 중 일부를 남김</text><text class="f-s" x="380" y="110" text-anchor="middle">예: 거리와 시간대</text><path class="f-line" d="M135 133 V148 H625 V135" marker-end="url(#f-arrow)"/><rect class="f-box" x="532" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="625" y="61" text-anchor="middle">추출</text><text class="f-s" x="625" y="89" text-anchor="middle">여러 값으로 새 열을 만듦</text><text class="f-s" x="625" y="110" text-anchor="middle">예: 상호작용·주성분</text>
+</svg><figcaption>두 방법 모두 입력에 넣는 열을 바꾸지만, 선택은 남긴 열이 원래 변수라는 점이 다르다.</figcaption></figure>
+<p><b class="key">특성 선택</b>에서는 원래 입력 열의 일부를 남깁니다. 누락률과 관련성으로 후보를 고르거나, 여러 열 묶음을 검증에서 비교하거나, 모형 학습 과정이 제공하는 선택을 사용할 수 있습니다. <b>특성 추출</b>은 예를 들어 거리와 무게를 곱해 새 열을 만드는 경우처럼 입력을 다른 표현으로 바꾸는 일입니다. PCA는 중심을 맞춘 자료의 큰 변동 방향을 새 변수로 쓰는 예입니다. 그 방향에 정답과 관련된 모든 정보가 남는다는 보장은 없습니다.</p>
+<div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
+<h2>많은 쪽만 맞혀도 정확도가 높아질 수 있다</h2>
+<p>가상 평가 자료 100건 가운데 정상 90건과 지연 10건이 있습니다. ‘모두 정상’이라고 답하는 모형의 정확도는 90%입니다. 실제 지연을 하나도 찾지 못해 지연 재현율은 0입니다. 목표가 드문 지연을 찾는 것이라면 혼동행렬과 맞춘 지연 수를 함께 봅니다.</p>
+<div class="table-wrap"><table><thead><tr><th scope="col">훈련에 사용하는 방법</th><th scope="col">뜻과 확인할 점</th></tr></thead><tbody><tr><td>과소 표집</td><td>다수 범주의 일부를 줄인다. 유용한 다수 범주의 정보도 사라질 수 있다.</td></tr><tr><td>과대 표집</td><td>소수 범주의 예를 반복하거나 새 훈련 예를 합성한다. 같은 예를 반복하면 새 관측 근거가 생기지는 않는다.</td></tr><tr><td>가중치</td><td>잘못 분류한 소수 범주의 손실에 더 많은 값을 주는 등 오류 비용을 조정한다.</td></tr><tr><td>임계값 조정</td><td>새 자료에서 양성으로 판정하는 기준을 바꾼다. 재현율과 오경보를 함께 비교한다.</td></tr></tbody></table></div>
+<p>훈련 자료만 늘리거나 줄이고, 검증·시험 자료는 실제 사용을 대표하는 구성을 보존합니다. 특히 표집을 전체 표에 적용한 뒤 나누면 원본과 복사본, 또는 가까운 보간점이 다른 분할에 섞일 수 있습니다.</p>
+<div class="check" data-q="q3"></div><div class="check" data-q="q4"></div>
+<h2>합성점은 무엇을 만든 값인가</h2>
+<p><b class="key">SMOTE</b>는 수치형 입력에서 소수 범주의 가까운 두 예 사이에 합성점을 놓는 방법으로 시작했습니다. 한 예 A에서 이웃 B 쪽으로 거리의 λ만큼 가면 <code>A+λ(B−A)</code>입니다. A=(1,2), B=(5,6), λ=0.25이면 (2,3)입니다. 큰 범주의 값을 끌어오는 계산은 아닙니다. 원래 관측의 의미나 허용 범위를 해치지 않는지도 확인합니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 266" role="img" aria-label="두 소수 클래스 점 A=(1,2), B=(5,6) 사이에 길이의 사분의 일을 이동한 X=(2,3)이 있다.">
+<line class="f-ink" x1="132" y1="212" x2="675" y2="212" marker-end="url(#f-arrow)"/><line class="f-ink" x1="132" y1="211" x2="132" y2="36" marker-end="url(#f-arrow)"/><line class="f-ink" x1="214" y1="208" x2="214" y2="219"/><text class="f-s" x="214" y="240" text-anchor="middle">1</text><line class="f-ink" x1="296" y1="208" x2="296" y2="219"/><text class="f-s" x="296" y="240" text-anchor="middle">2</text><line class="f-ink" x1="378" y1="208" x2="378" y2="219"/><text class="f-s" x="378" y="240" text-anchor="middle">3</text><line class="f-ink" x1="460" y1="208" x2="460" y2="219"/><text class="f-s" x="460" y="240" text-anchor="middle">4</text><line class="f-ink" x1="542" y1="208" x2="542" y2="219"/><text class="f-s" x="542" y="240" text-anchor="middle">5</text><line class="f-ink" x1="127" y1="164" x2="137" y2="164"/><text class="f-s" x="117" y="168" text-anchor="end">2</text><line class="f-ink" x1="127" y1="140" x2="137" y2="140"/><text class="f-s" x="117" y="144" text-anchor="end">3</text><line class="f-ink" x1="127" y1="116" x2="137" y2="116"/><text class="f-s" x="117" y="120" text-anchor="end">4</text><line class="f-ink" x1="127" y1="92" x2="137" y2="92"/><text class="f-s" x="117" y="96" text-anchor="end">5</text><line class="f-ink" x1="127" y1="68" x2="137" y2="68"/><text class="f-s" x="117" y="72" text-anchor="end">6</text><line class="f-dash" x1="214" y1="164" x2="542" y2="68"/><circle class="f-fill" cx="214" cy="164" r="5"/><text class="f-t" x="199" y="151" text-anchor="middle">A (1, 2)</text><circle class="f-soft" cx="296" cy="140" r="5"/><text class="f-t" x="323" y="161" text-anchor="middle">합성 (2, 3)</text><circle class="f-fill" cx="542" cy="68" r="5"/><text class="f-t" x="580" y="69" text-anchor="middle">B (5, 6)</text><text class="f-s" x="662" y="240" text-anchor="middle">입력 x₁</text><text class="f-s" x="138" y="25" text-anchor="middle">입력 x₂</text>
+</svg><figcaption>수치형 변수로 그린 보간 예다. 실제 신규 관측이 발생했다는 뜻은 아니다.</figcaption></figure>
+<pre data-example="python"><code>positive, negative = 10, 90
+accuracy = negative / (positive + negative)
+recall = 0 / positive
+print(f&quot;majority accuracy={accuracy:.2f}, recall={recall:.2f}&quot;)
+a, b = [1, 2], [5, 6]
+ratio = 0.25
+point = tuple(x + ratio * (y - x) for x, y in zip(a, b))
+print(&quot;synthetic&quot;, point)</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>majority accuracy=0.90, recall=0.00
+synthetic (2.0, 3.0)</code></pre>
+<p>위 코드는 보간 계산 하나를 보여 줍니다. 실제 구현에서는 소수 범주의 이웃을 고르는 기준과 수, 처리 순서가 더 있습니다. 명목 범주를 숫자로 바꿔 단순 보간하면 존재하지 않는 범주가 생길 수 있으므로 범주형 변수의 표현과 알고리즘을 확인합니다.</p>
+<div class="check" data-q="q5"></div><div class="check" data-q="q6"></div>
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table><thead><tr><th scope="col">핵심어</th><th scope="col">기억할 기준</th></tr></thead><tbody><tr><td><b class='key'>특성 선택</b></td><td>원래 변수 중 일부 사용</td></tr><tr><td><b class='key'>특성 추출</b></td><td>여러 값을 조합해 새 변수 생성</td></tr><tr><td><b class='key'>불균형</b></td><td>정확도만 읽지 않고 양성 탐지와 오경보를 함께 확인</td></tr></tbody></table></div>
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>특성 설정과 재표집은 훈련 안에서 이루어지고, 결과는 실제 사용 조건을 닮은 자료에서 평가한다.</p></div>
+<p><a href="../../../learn/unit.html?u=ML03">오차와 평가</a> · <a href="../../../learn/unit.html?u=ML09">비지도 학습의 PCA</a></p>
+
+<h2>참고 자료</h2>
+<ul><li><a href="https://www.dataq.or.kr/www/dataq_brochure_2022.pdf">한국데이터산업진흥원 · 빅데이터분석기사 과목 안내</a></li><li><a href="https://scikit-learn.org/stable/common_pitfalls.html">scikit-learn · 평가 자료 누출 방지</a></li><li><a href="https://doi.org/10.1613/jair.953">Chawla 외 · SMOTE 원 논문</a></li></ul>
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"><a href="../../index.html">← 빅분기 홈</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

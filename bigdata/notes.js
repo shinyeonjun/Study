@@ -32,7 +32,16 @@ window.BDA_SUBJECTS = [
     name: "2과목 · 빅데이터 탐색", short: "2과목 · 탐색", title: "빅데이터 탐색",
     desc: "데이터를 다듬고, 살펴보고, 통계로 요약하는 법",
     plan: ["데이터 전처리", "데이터 탐색", "통계기법 이해"],
-    notes: []
+    notes: [
+      { id: "2-01", title: "결측·중복·형식 오류를 구별해 정제하기", href: "notes/2-exploration/01-누락·중복·형식-문제-점검.html", area: 0 },
+      { id: "2-02", title: "이상치 후보를 찾아 확인하고 입력을 변환하기", href: "notes/2-exploration/02-이상치와-값의-변환.html", area: 0 },
+      { id: "2-03", title: "특성을 선택·추출하고 불균형을 다루기", href: "notes/2-exploration/03-특징-선택과-불균형.html", area: 0 },
+      { id: "2-04", title: "평균·중앙값·분산과 분포 그림을 함께 읽기", href: "notes/2-exploration/04-기술통계와-분포-그림.html", area: 1 },
+      { id: "2-05", title: "집단 구성까지 살피는 탐색적 데이터 분석", href: "notes/2-exploration/05-집단별-탐색과-시각화.html", area: 1 },
+      { id: "2-06", title: "이항·포아송·정규분포를 고르고 평균의 산포 읽기", href: "notes/2-exploration/06-확률분포와-표본평균.html", area: 2 },
+      { id: "2-07", title: "신뢰구간과 p값이 답하는 질문 구별하기", href: "notes/2-exploration/07-추정과-가설검정.html", area: 2 },
+      { id: "2-08", title: "관측의 종류와 짝을 보고 검정 고르기", href: "notes/2-exploration/08-검정-선택과-분할표.html", area: 2 }
+    ]
   },
   {
     name: "3과목 · 빅데이터 모델링", short: "3과목 · 모델링", title: "빅데이터 모델링",

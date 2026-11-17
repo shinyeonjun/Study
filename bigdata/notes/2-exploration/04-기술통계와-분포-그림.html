@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>평균·중앙값·분산과 분포 그림을 함께 읽기 · 빅분기 노트</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="2-04">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">빅분기 노트</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">2과목 · 빅데이터 탐색</p>
+<p class="chap-num">04</p>
+<h1>평균·중앙값·분산과 분포 그림을 함께 읽기</h1>
+<p class="lead">같은 여덟 대기시간을 평균 하나로만 표현하면 긴 대기나 값이 모인 구간이 사라집니다. 대표값과 산포 수치를 직접 계산하고, 수치 하나가 생략한 정보를 그림에서 찾습니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>평균·중앙값·최빈값을 같은 자료에서 구한다.</li><li>분모 n과 n−1을 쓰는 분산과 표준편차를 구분한다.</li><li>히스토그램과 상자그림을 보고 관측 범위를 설명한다.</li></ul></div>
+
+<h2>어떤 대표값을 묻는지 본다</h2>
+<p>정제한 대기시간 8개는 <code>2, 3, 4, 4, 5, 6, 8, 16</code>분입니다. 전체 합은 48이므로 <b class="key">평균</b>은 48÷8=6분입니다. 정렬한 자료에서 가운데 둘 4분과 5분을 평균 내면 <b>중앙값</b>은 4.5분입니다. 가장 자주 나온 값인 <b>최빈값</b>은 4분입니다. 같은 빈도의 값이 여럿이고 모두 최대라면 최빈값을 여러 개로 보고할 수도 있습니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 203" role="img" aria-label="관측이 2,3,4,4,5,6,8,16분일 때 평균은 6분이고 중앙값은 4.5분이다.">
+<line class="f-ink" x1="134" y1="154" x2="638" y2="154" marker-end="url(#f-arrow)"/><line class="f-ink" x1="134" y1="151" x2="134" y2="159"/><text class="f-s" x="134" y="178" text-anchor="middle">0</text><line class="f-ink" x1="182" y1="151" x2="182" y2="159"/><text class="f-s" x="182" y="178" text-anchor="middle">2</text><line class="f-ink" x1="230" y1="151" x2="230" y2="159"/><text class="f-s" x="230" y="178" text-anchor="middle">4</text><line class="f-ink" x1="278" y1="151" x2="278" y2="159"/><text class="f-s" x="278" y="178" text-anchor="middle">6</text><line class="f-ink" x1="326" y1="151" x2="326" y2="159"/><text class="f-s" x="326" y="178" text-anchor="middle">8</text><line class="f-ink" x1="374" y1="151" x2="374" y2="159"/><text class="f-s" x="374" y="178" text-anchor="middle">10</text><line class="f-ink" x1="422" y1="151" x2="422" y2="159"/><text class="f-s" x="422" y="178" text-anchor="middle">12</text><line class="f-ink" x1="470" y1="151" x2="470" y2="159"/><text class="f-s" x="470" y="178" text-anchor="middle">14</text><line class="f-ink" x1="518" y1="151" x2="518" y2="159"/><text class="f-s" x="518" y="178" text-anchor="middle">16</text><line class="f-ink" x1="566" y1="151" x2="566" y2="159"/><text class="f-s" x="566" y="178" text-anchor="middle">18</text><line class="f-ink" x1="614" y1="151" x2="614" y2="159"/><text class="f-s" x="614" y="178" text-anchor="middle">20</text><circle class="f-fill" cx="182" cy="124" r="4"/><circle class="f-fill" cx="206" cy="124" r="4"/><circle class="f-fill" cx="230" cy="124" r="4"/><circle class="f-fill" cx="230" cy="108" r="4"/><circle class="f-fill" cx="254" cy="124" r="4"/><circle class="f-fill" cx="278" cy="124" r="4"/><circle class="f-fill" cx="326" cy="124" r="4"/><circle class="f-fill" cx="518" cy="124" r="4"/><line class="f-dash" x1="242" y1="147" x2="242" y2="65"/><text class="f-s" x="232" y="52" text-anchor="end">중앙값 4.5분</text><line class="f-line" x1="278" y1="145" x2="278" y2="82"/><text class="f-s" x="290" y="74" text-anchor="start">평균 6분</text>
+</svg><figcaption>같이 4분인 두 방문은 점을 세로로 쌓았다. 평균은 관측이 16분으로 긴 쪽 영향을 받는다.</figcaption></figure>
+<p>평균은 모든 값을 더하므로 16분이 더 커지면 변합니다. 16분이 24분으로 바뀌면 평균은 1분 올라가지만, 이 자료의 정렬 가운데 값 4와 5는 같습니다. 어떤 수치가 적절한지는 설명하려는 일에 달려 있습니다. 평균 대기시간을 기준으로 업무를 비교한다면 평균도 보고하고, 보통 어느 정도 기다리는지와 긴 꼬리도 함께 읽습니다.</p>
+<div class="check" data-q="q1"></div><div class="check" data-q="q2"></div><div class="check" data-q="q3"></div>
+<h2>가운데에서 얼마나 멀리 있는지 잰다</h2>
+<p>평균 6분에서 각 관측이 벗어난 양을 그대로 더하면 양수와 음수가 지워집니다. 제곱해서 더하면 <code>16+9+4+4+1+0+4+100=138</code>분²입니다. 이 8개를 대상 전체로 묘사하는 분산은 138÷8=17.25분²입니다. 독립·동일한 모집단에서 뽑은 표본으로 모집단 분산을 추정할 때 흔히 쓰는 <b class="key">표본분산</b>은 분모가 7이라 약 19.714분²입니다. 모집단 분산 추정 상황에서 n−1로 나누는 이유는 <a href="../../../learn/unit.html?u=ST02">추정</a>에서 이어집니다.</p>
+<p>분산에 제곱근을 씌운 <b>표준편차</b>는 분 단위입니다. 분산이 다른 두 자료의 산포를 비교할 때는 같은 단위와 같은 정의로 계산했는지를 봅니다. 큰 값의 영향을 덜 받는 산포가 필요하면 2-02장에서 구한 IQR 3.5분도 함께 적습니다.</p>
+<pre data-example="python"><code>from statistics import mean, median, mode, pvariance, variance
+
+wait = [2, 3, 4, 4, 5, 6, 8, 16]
+print(&quot;center&quot;, mean(wait), median(wait), mode(wait))
+print(f&quot;population variance={pvariance(wait):.3f}&quot;)
+print(f&quot;sample variance={variance(wait):.3f}&quot;)
+
+edges = range(0, 21, 4)
+print(&quot;counts&quot;, [sum(lo &lt;= x &lt; hi for x in wait)
+                 for lo, hi in zip(edges, list(edges)[1:])])</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>center 6 4.5 4
+population variance=17.250
+sample variance=19.714
+counts [2, 4, 1, 0, 1]</code></pre>
+<div class="check" data-q="q4"></div><div class="check" data-q="q5"></div>
+<h2>구간별 도수를 살펴본다</h2>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 279" role="img" aria-label="대기시간 [0,4) 2건, [4,8) 4건, [8,12) 1건, [12,16) 0건, [16,20) 1건.">
+<line class="f-ink" x1="134" y1="206" x2="638" y2="206" marker-end="url(#f-arrow)"/><line class="f-ink" x1="134" y1="206" x2="134" y2="49" marker-end="url(#f-arrow)"/><line class="f-ink" x1="129" y1="206" x2="134" y2="206"/><text class="f-s" x="120" y="211" text-anchor="end">0</text><line class="f-ink" x1="129" y1="172" x2="134" y2="172"/><text class="f-s" x="120" y="177" text-anchor="end">1</text><line class="f-ink" x1="129" y1="138" x2="134" y2="138"/><text class="f-s" x="120" y="143" text-anchor="end">2</text><line class="f-ink" x1="129" y1="104" x2="134" y2="104"/><text class="f-s" x="120" y="109" text-anchor="end">3</text><line class="f-ink" x1="129" y1="70" x2="134" y2="70"/><text class="f-s" x="120" y="75" text-anchor="end">4</text><rect class="f-soft" x="134" y="138" width="96" height="68"/><rect class="f-soft" x="230" y="70" width="96" height="136"/><rect class="f-soft" x="326" y="172" width="96" height="34"/><rect class="f-soft" x="518" y="172" width="96" height="34"/><line class="f-ink" x1="134" y1="206" x2="134" y2="213"/><text class="f-s" x="134" y="233" text-anchor="middle">0</text><line class="f-ink" x1="230" y1="206" x2="230" y2="213"/><text class="f-s" x="230" y="233" text-anchor="middle">4</text><line class="f-ink" x1="326" y1="206" x2="326" y2="213"/><text class="f-s" x="326" y="233" text-anchor="middle">8</text><line class="f-ink" x1="422" y1="206" x2="422" y2="213"/><text class="f-s" x="422" y="233" text-anchor="middle">12</text><line class="f-ink" x1="518" y1="206" x2="518" y2="213"/><text class="f-s" x="518" y="233" text-anchor="middle">16</text><line class="f-ink" x1="614" y1="206" x2="614" y2="213"/><text class="f-s" x="614" y="233" text-anchor="middle">20</text><text class="f-cap" x="114" y="40" text-anchor="middle">건수</text><text class="f-cap" x="610" y="260" text-anchor="middle">대기시간 (분)</text>
+</svg><figcaption>같은 폭 4분을 쓴 히스토그램이다. 구간의 왼쪽 끝은 포함하고 오른쪽 끝은 제외한다.</figcaption></figure>
+<p><b class="key">히스토그램</b>은 연속적인 숫자 범위를 구간으로 나눈 그림입니다. 위처럼 폭이 모두 같으면 높이를 구간 건수로 그려 비교할 수 있습니다. 폭이 다른 구간은 넓이가 건수 또는 비율을 나타내도록 높이를 폭으로 나누는 경우가 있습니다. 상자그림은 중앙값과 사분위수를 모아서 보여 주고, 이 자료의 16분처럼 경계 바깥의 값은 점으로 나타낼 수 있습니다. 어느 규칙으로 상자와 수염을 그렸는지도 함께 확인합니다.</p>
+<div class="check" data-q="q6"></div>
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table><thead><tr><th scope="col">핵심어</th><th scope="col">기억할 기준</th></tr></thead><tbody><tr><td><b class='key'>대표값</b></td><td>평균은 합÷개수, 중앙값은 정렬 가운데, 최빈값은 최다 빈도</td></tr><tr><td><b class='key'>분산·표준편차</b></td><td>평균에서 벗어난 제곱의 합을 분모로 나눈 뒤, 표준편차는 제곱근</td></tr><tr><td><b class='key'>히스토그램</b></td><td>수치 범위를 구간으로 묶어 분포의 모양을 표시</td></tr></tbody></table></div>
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>대표값의 계산과 함께 분포 그림, 산포의 단위와 분모를 확인한다.</p></div>
+
+<h2>참고 자료</h2>
+<ul><li><a href="https://www.dataq.or.kr/www/dataq_brochure_2022.pdf">한국데이터산업진흥원 · 빅데이터분석기사 과목 안내</a></li><li><a href="https://www.itl.nist.gov/div898/handbook/eda/section3/boxplot.htm">NIST · 상자그림과 IQR 경계</a></li><li><a href="https://www.itl.nist.gov/div898/handbook/eda/section3/eda33.htm">NIST · 탐색적 데이터 분석의 그래프</a></li></ul>
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"><a href="../../index.html">← 빅분기 홈</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

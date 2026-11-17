@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>과소·과대적합, 편향과 분산, 정규화 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="ML10-1">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">머신러닝 · ML10 일반화와 모델 선택</p>
+<p class="chap-num">ML10·1</p>
+<h1>과소·과대적합, 편향과 분산, 정규화</h1>
+<p class="lead">훈련에 잘 맞는 규칙이 새 자료에서 항상 좋은 것은 아닙니다. 같은 입력을 놓고 다시 훈련했을 때 답이 얼마나 흔들리는지와, 평균적으로 목표에서 얼마나 치우치는지를 따로 계산합니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul>
+<li>과소적합과 과대적합의 징후를 구별한다.</li>
+<li>고정된 입력에서 제곱오차의 편향·분산·관측 잡음 항을 계산한다.</li>
+<li>정규화 강도를 바꿀 때 계수와 평가의 관계를 설명한다.</li>
+</ul></div>
+
+<h2>훈련에서 누락한 규칙과 외워 버린 흔들림을 나눈다</h2>
+<p>운행 시간의 패턴을 잘 반영하지 못해 학습에 쓴 주문에서도 오차가 높을 수 있습니다. 이를 <b class="key">과소적합</b>이라 부릅니다. 반대로 많은 세부 규칙으로 훈련의 예외까지 맞혔지만 새 자료의 오차가 높을 때는 <b class="key">과대적합</b>을 의심합니다. 같은 사용자 기록의 중복이나 미래 시점의 변화로도 평가 차이가 생길 수 있으므로 분할이 비교에 맞는지 함께 확인합니다.</p>
+<p>모델이 내는 평균 예측과 실제 평균의 차이를 <b>편향</b>, 학습 자료에 따라 예측이 변하는 정도를 <b>분산</b>으로 볼 수 있습니다. 이 뜻에서의 편향은 특정 입력에서의 통계적 차이입니다.</p>
+<div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
+
+<h2>고정된 입력에서 기대 제곱오차를 나눈다</h2>
+<p>입력 x가 같고 실제 조건 평균이 <code>f(x)=12</code>라고 둡니다. 새 정답은 평균 12를 중심으로 <code>11,13</code>이 각각 절반 확률로 나옵니다. 같은 방식으로 훈련 표본을 새로 얻을 때 학습 알고리즘의 예측 <code>F(x)</code>는 8이나 12가 각각 절반 확률입니다. 새 정답의 우연한 변동은 훈련 표본과 독립이라고 둡니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 250" role="img" aria-label="고정된 입력에서 학습한 모델이 8 또는 12를 예측하고 독립인 새 정답은 11 또는 13이다. 네 조합의 제곱오차는 9,25,1,1이다.">
+<rect class="f-box" x="96" y="36" width="205" height="40"/>
+<text class="f-s" x="198.5" y="61" text-anchor="middle">제곱오차</text>
+<rect class="f-box" x="301" y="36" width="172" height="40"/>
+<text class="f-s" x="387" y="61" text-anchor="middle">새 정답 11</text>
+<rect class="f-box" x="473" y="36" width="172" height="40"/>
+<text class="f-s" x="559" y="61" text-anchor="middle">새 정답 13</text>
+<rect class="f-box" x="96" y="76" width="205" height="40"/>
+<text class="f-s" x="198.5" y="101" text-anchor="middle">학습한 예측 8</text>
+<rect class="f-box" x="301" y="76" width="172" height="40"/>
+<text class="f-s" x="387" y="101" text-anchor="middle">9</text>
+<rect class="f-over" x="473" y="76" width="172" height="40"/>
+<text class="f-s" x="559" y="101" text-anchor="middle">25</text>
+<rect class="f-box" x="96" y="116" width="205" height="40"/>
+<text class="f-s" x="198.5" y="141" text-anchor="middle">학습한 예측 12</text>
+<rect class="f-box" x="301" y="116" width="172" height="40"/>
+<text class="f-s" x="387" y="141" text-anchor="middle">1</text>
+<rect class="f-box" x="473" y="116" width="172" height="40"/>
+<text class="f-s" x="559" y="141" text-anchor="middle">1</text>
+<text class="f-cap" x="386" y="194" text-anchor="middle">네 경우 각각 확률 1/4 · 평균 제곱오차 9</text>
+</svg>
+<figcaption>가로 방향은 새 관측의 변동, 세로 방향은 다시 훈련할 때의 예측 변동이다.</figcaption>
+</figure>
+<p>고정한 x에서 관측 잡음의 평균이 0이며 훈련과 새 잡음이 독립이면 <code>E[(Y−F)²] = (E[F]−f(x))² + Var(F) + Var(Y|x)</code>입니다. 각 양이 유한한 제곱오차의 분해입니다. 예측 평균 <code>10</code>이 실제 조건 평균 12보다 2 낮아 편향 제곱은 4입니다. 새로 학습할 때 8 또는 12로 바뀌는 분산은 4입니다. 새 정답은 ±1을 더한 값이므로 잡음 분산은 1입니다. 합은 9입니다.</p>
+<p>이 분해는 훈련자료와 새 정답을 반복해서 상상한 기대값입니다. 한 번의 훈련 오차만 보고 세 항을 알아낼 수는 없습니다. 입력이 달라지면 조건 평균과 잡음, 예측 분산도 달라질 수 있습니다.</p>
+<div class="why"><p class="box-k">왜 그럴까?</p><p>훈련을 다시 해도 예측을 항상 10으로 고정하면 어느 항이 줄까요?</p><details><summary>모범 답 보기</summary><p>훈련에 따른 변동이 없어져 분산이 0이 됩니다. 예측 평균은 10이어서 12와의 차이 제곱 4는 남고, 새 측정 잡음 1도 남습니다.</p></details></div>
+<div class="check" data-q="q3"></div><div class="check" data-q="q4"></div>
+
+<h2>일부 예측 규칙을 제한해 새 자료의 성능을 비교한다</h2>
+<p><b class="key">정규화</b>는 계수나 모형 복잡도에 제약 또는 벌점을 주는 방법입니다. 입력 <code>x=[−1,1]</code>, 정답 <code>y=[−2,2]</code>에서 절편 없는 모형 <code>ŷ=wx</code>를 적합합니다. 예에서는 훈련 목적을 <code>SSE+λw²=2(2−w)²+λw²</code>로 정의합니다. L2 벌점으로 계수 제곱을 더하는 리지(Ridge)의 예입니다.</p>
+<p>미분해 0을 놓으면 <code>2(2+λ)w−8=0</code>이므로 <code>w=4/(2+λ)</code>입니다. λ가 0, 2, 6이면 w는 각각 2, 1, 0.5입니다. L1 벌점 <code>λ|w|</code>을 쓰는 라쏘(Lasso)는 어떤 계수가 0이 되는 해를 만들기도 합니다. 라이브러리의 손실 평균·벌점 배율은 구현마다 확인합니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 267" role="img" aria-label="같은 훈련 두 점 (−1,−2)와 (1,2)에서 절편 없는 회귀의 기울기는 λ=0일 때 2, λ=2일 때 1, λ=6일 때 0.5이다.">
+<line class="f-ink" x1="140" y1="129" x2="590" y2="129"/>
+<line class="f-ink" x1="365" y1="219" x2="365" y2="39"/>
+<line class="f-line" x1="215" y1="201" x2="515" y2="57"/>
+<text class="f-s" x="544" y="62" text-anchor="start">λ=0 · w=2</text>
+<line class="f-ink" x1="215" y1="165" x2="515" y2="93"/>
+<text class="f-s" x="544" y="98" text-anchor="start">λ=2 · w=1</text>
+<line class="f-dash" x1="215" y1="147" x2="515" y2="111"/>
+<text class="f-s" x="544" y="116" text-anchor="start">λ=6 · w=0.5</text>
+<circle class="f-fill" cx="215" cy="201" r="5"/>
+<text class="f-s" x="215" y="152" text-anchor="middle">-1</text>
+<circle class="f-fill" cx="515" cy="57" r="5"/>
+<text class="f-s" x="515" y="152" text-anchor="middle">1</text>
+<line class="f-ink" x1="360" y1="201" x2="370" y2="201"/>
+<text class="f-s" x="350" y="206" text-anchor="end">-2</text>
+<line class="f-ink" x1="360" y1="57" x2="370" y2="57"/>
+<text class="f-s" x="350" y="62" text-anchor="end">2</text>
+<text class="f-s" x="589" y="150" text-anchor="start">x</text>
+<text class="f-s" x="376" y="39" text-anchor="start">y</text>
+<text class="f-s" x="370" y="244" text-anchor="middle">훈련 점을 고정하고 계수 벌점의 강도를 바꾼다.</text>
+</svg>
+<figcaption>λ가 커지면 기울기가 작아진다. 큰 계수에 드는 비용이 예측 오차와 함께 계산되기 때문이다.</figcaption>
+</figure>
+<p class="small">실행 예제</p>
+<pre data-example="python"><code>from itertools import product
+from statistics import mean, pvariance
+
+prediction = [8, 12]
+observed = [11, 13]
+mse = mean((y - p)**2 for p, y in product(prediction, observed))
+bias2 = (mean(prediction) - mean(observed))**2
+print(f&quot;MSE={mse}, bias^2={bias2}, variance={pvariance(prediction)}, noise={pvariance(observed)}&quot;)
+for penalty in (0, 2, 6):
+    w = 4 / (2 + penalty)
+    print(f&quot;lambda={penalty}: w={w:.1f}, training SSE={2*(2-w)**2:.1f}&quot;)</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>MSE=9, bias^2=4, variance=4, noise=1
+lambda=0: w=2.0, training SSE=0.0
+lambda=2: w=1.0, training SSE=2.0
+lambda=6: w=0.5, training SSE=4.5</code></pre>
+<p>정규화를 세게 하면 우연한 변동에 덜 맞출 수 있지만 실제 신호도 줄일 수 있습니다. 전처리 척도가 다르면 같은 λ가 계수에 미치는 영향도 달라집니다. 이 작은 학습 자료에서는 어떤 λ가 새 주문에 제일 좋은지 알 수 없으므로 검증에서 고릅니다.</p>
+<div class="check" data-q="q5"></div><div class="check" data-q="q6"></div><div class="check" data-q="q7"></div>
+
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table><thead><tr><th scope="col">개념</th><th scope="col">확인할 것</th></tr></thead><tbody>
+<tr><th scope="row"><b class="key">과소적합</b></th><td>중요한 규칙을 못 배워 훈련·검증 오차가 높을 수 있음</td></tr>
+<tr><th scope="row"><b class="key">과대적합</b></th><td>훈련에 세밀하게 맞췄지만 새 자료에서는 오차가 큼</td></tr>
+<tr><th scope="row">편향·분산</th><td>평균적 오차 방향과 반복 훈련에 따른 예측 변동</td></tr>
+<tr><th scope="row"><b class="key">정규화</b></th><td>복잡도에 제약 또는 벌점을 주어 검증으로 비교</td></tr>
+</tbody></table></div><div class="box sum"><p class="box-k">다음 장으로</p><p><a href="ml10-2.html">다음 장</a>에서는 평가 자료를 지키면서 모델을 고르고 학습곡선을 읽습니다.</p></div>
+
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://scikit-learn.org/stable/modules/linear_model.html">scikit-learn · 최소제곱과 Ridge·Lasso</a></li>
+<li><a href="https://scikit-learn.org/stable/modules/learning_curve.html">scikit-learn · 학습곡선과 검증곡선</a></li>
+</ul>
+<h2>확인 문제</h2>
+<p>직접 계산하거나 설명을 먼저 적고 답을 확인해 보세요.</p>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

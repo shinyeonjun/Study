@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>이항·포아송·정규분포를 고르고 평균의 산포 읽기 · 빅분기 노트</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="2-06">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">빅분기 노트</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">2과목 · 빅데이터 탐색</p>
+<p class="chap-num">06</p>
+<h1>이항·포아송·정규분포를 고르고 평균의 산포 읽기</h1>
+<p class="lead">장애가 일어난 방문 수, 한 시간 안에 도착한 요청 수, 연속적으로 측정한 대기시간은 가능한 값의 모습부터 다릅니다. 어떤 질문에서 각 확률모형을 사용하는지 계산으로 연결합니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>이항·포아송·정규 모형을 상황과 가정으로 구별한다.</li><li>적어도 한 건이 발생할 확률과 정규 구간 확률을 계산한다.</li><li>개별 관측의 표준편차와 평균의 표준오차를 구분한다.</li></ul></div>
+
+<h2>몇 번 시도했는지와 시간 창을 구별한다</h2>
+<p>같은 장치가 독립적으로 네 번 기록한다고 가정합니다. 각 기록에서 장애가 날 확률은 동일하게 0.1입니다. 장애 횟수 X는 0,1,2,3,4 중 하나의 값을 가집니다. 이렇게 <b class="key">횟수를 먼저 정한 독립 시행</b>에서 성공 수를 세는 모형이 이항분포입니다. 여기서 ‘성공’은 세는 사건의 이름으로, 장애를 세더라도 수학적으로 성공이라고 부를 수 있습니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 266" role="img" aria-label="독립적으로 네 번 기록할 때 장애 확률이 0.1이면, 장애 횟수 0~4의 확률은 0.6561, 0.2916, 0.0486, 0.0036, 0.0001이다.">
+<line class="f-ink" x1="106" y1="224" x2="658" y2="224" marker-end="url(#f-arrow)"/><line class="f-ink" x1="106" y1="224" x2="106" y2="32" marker-end="url(#f-arrow)"/><line class="f-ink" x1="99" y1="224" x2="106" y2="224"/><text class="f-s" x="88" y="228" text-anchor="end">0</text><line class="f-ink" x1="99" y1="174.4" x2="106" y2="174.4"/><text class="f-s" x="88" y="178.4" text-anchor="end">0.2</text><line class="f-ink" x1="99" y1="124.8" x2="106" y2="124.8"/><text class="f-s" x="88" y="128.8" text-anchor="end">0.4</text><line class="f-ink" x1="99" y1="75.20000000000002" x2="106" y2="75.20000000000002"/><text class="f-s" x="88" y="79.20000000000002" text-anchor="end">0.6</text><rect class="f-soft" x="131" y="61.287199999999984" width="48" height="162.71280000000002" rx="3"/><text class="f-s" x="155" y="50.287199999999984" text-anchor="middle">0.6561</text><text class="f-s" x="155" y="243" text-anchor="middle">0</text><rect class="f-soft" x="235" y="151.6832" width="48" height="72.3168" rx="3"/><text class="f-s" x="259" y="140.6832" text-anchor="middle">0.2916</text><text class="f-s" x="259" y="243" text-anchor="middle">1</text><rect class="f-soft" x="339" y="211.9472" width="48" height="12.0528" rx="3"/><text class="f-s" x="363" y="200.9472" text-anchor="middle">0.0486</text><text class="f-s" x="363" y="243" text-anchor="middle">2</text><rect class="f-soft" x="443" y="223.1072" width="48" height="0.8927999999999999" rx="3"/><text class="f-s" x="467" y="212.1072" text-anchor="middle">0.0036</text><text class="f-s" x="467" y="243" text-anchor="middle">3</text><rect class="f-soft" x="547" y="223.9752" width="48" height="0.024800000000000003" rx="3"/><text class="f-s" x="571" y="212.9752" text-anchor="middle">0.0001</text><text class="f-s" x="571" y="243" text-anchor="middle">4</text><text class="f-s" x="96" y="24" text-anchor="middle">확률</text><text class="f-s" x="659" y="243" text-anchor="middle">장애 횟수</text>
+</svg><figcaption>가능한 횟수는 0부터 4까지의 정수다. 왼쪽부터 확률을 모두 더하면 1이다.</figcaption></figure>
+<p>‘한 번 이상 장애가 날 확률’은 장애 없는 사건을 빼면 구하기 쉽습니다. <code>P(X≥1)=1−0.9⁴=0.3439</code>입니다. 만약 첫 장애가 둘째 기록의 장애 가능성을 바꾸면, 0.9를 네 번 곱할 독립 가정부터 검토해야 합니다.</p>
+<div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
+<p>반대로 한 시간에 도착하는 요청 수를 세고, 동질 포아송 과정으로 가정합니다. 일정한 도착률, 겹치지 않는 구간의 독립적 건수, 그리고 아주 짧은 구간에 두 건 이상 도착하는 확률이 구간 길이에 비해 무시할 정도로 작다는 조건을 사용합니다. 시간당 평균 요청 수가 2라면 한 시간 건수를 <b>포아송분포</b> 평균 2로 계산합니다. 그 한 시간에 요청이 없을 확률은 <code>e⁻²</code>, 약 0.1353입니다. 시간대나 행사에 따라 도착률이 달라질 수 있으므로 실제 데이터에서는 가정을 따로 확인합니다.</p>
+<div class="check" data-q="q3"></div>
+<h2>측정된 길이와 시간을 구간 확률로 읽는다</h2>
+<p>연속적인 값을 근사하는 대표 모형이 <b class="key">정규분포</b>입니다. 이 예에서는 개별 시간을 μ=6, σ=2인 정규모형으로 계산한다고 가정합니다. 설명 편의를 위한 예로, 정규분포는 음수에까지 꼬리가 있어 실제 대기시간에 알맞은지는 별도 검토해야 합니다. 이 모형에서 한 점의 확률은 0이고, 구간의 확률은 그 범위 아래의 밀도 면적입니다. 4~8분은 표준화하면 −1~1이고, 표준정규 누적확률의 차로 약 0.6827입니다.</p>
+<p>같은 모형에서 독립적으로 16개의 관측을 뽑아 평균을 구하면, 평균의 중심은 여전히 6이고 표준오차는 <code>2/√16=0.5</code>분입니다. 정규 모집단에서 독립적으로 뽑은 평균의 분포는 정확히 정규입니다. 일반적인 독립·동일분포 자료에서는 유한분산 등 조건으로 중심극한정리의 정규 근사를 설명할 수 있습니다. 원래 자료가 모두 정규 모양으로 바뀌는 것은 아닙니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 285" role="img" aria-label="개별 대기시간의 정규 모형은 중심 6, 표준편차 2. 독립 16개의 평균은 같은 중심 6이고 표준편차는 0.5여서 밀도가 중심에 더 모인다.">
+<line class="f-ink" x1="102" y1="229" x2="706" y2="229" marker-end="url(#f-arrow)"/><line class="f-ink" x1="102" y1="229" x2="102" y2="44" marker-end="url(#f-arrow)"/><line class="f-ink" x1="160" y1="227" x2="160" y2="237"/><text class="f-s" x="160" y="254" text-anchor="middle">2</text><line class="f-ink" x1="276" y1="227" x2="276" y2="237"/><text class="f-s" x="276" y="254" text-anchor="middle">4</text><line class="f-ink" x1="392" y1="227" x2="392" y2="237"/><text class="f-s" x="392" y="254" text-anchor="middle">6</text><line class="f-ink" x1="508" y1="227" x2="508" y2="237"/><text class="f-s" x="508" y="254" text-anchor="middle">8</text><line class="f-ink" x1="624" y1="227" x2="624" y2="237"/><text class="f-s" x="624" y="254" text-anchor="middle">10</text><polyline class="f-line" points="102.0,229.00 107.8,229.00 113.6,229.00 119.4,229.00 125.2,229.00 131.0,229.00 136.8,229.00 142.6,229.00 148.4,229.00 154.2,229.00 160.0,229.00 165.8,229.00 171.6,229.00 177.4,229.00 183.2,229.00 189.0,229.00 194.8,229.00 200.6,229.00 206.4,229.00 212.2,229.00 218.0,229.00 223.8,229.00 229.6,229.00 235.4,229.00 241.2,229.00 247.0,229.00 252.8,229.00 258.6,229.00 264.4,228.99 270.2,228.98 276.0,228.95 281.8,228.89 287.6,228.78 293.4,228.56 299.2,228.14 305.0,227.40 310.8,226.15 316.6,224.11 322.4,220.94 328.2,216.23 334.0,209.56 339.8,200.58 345.6,189.07 351.4,175.10 357.2,159.09 363.0,141.89 368.8,124.71 374.6,109.04 380.4,96.42 386.2,88.22 392.0,85.38 397.8,88.22 403.6,96.42 409.4,109.04 415.2,124.71 421.0,141.89 426.8,159.09 432.6,175.10 438.4,189.07 444.2,200.58 450.0,209.56 455.8,216.23 461.6,220.94 467.4,224.11 473.2,226.15 479.0,227.40 484.8,228.14 490.6,228.56 496.4,228.78 502.2,228.89 508.0,228.95 513.8,228.98 519.6,228.99 525.4,229.00 531.2,229.00 537.0,229.00 542.8,229.00 548.6,229.00 554.4,229.00 560.2,229.00 566.0,229.00 571.8,229.00 577.6,229.00 583.4,229.00 589.2,229.00 595.0,229.00 600.8,229.00 606.6,229.00 612.4,229.00 618.2,229.00 624.0,229.00 629.8,229.00 635.6,229.00 641.4,229.00 647.2,229.00 653.0,229.00 658.8,229.00 664.6,229.00 670.4,229.00 676.2,229.00 682.0,229.00"/><polyline class="f-dash" points="102.0,227.42 107.8,227.21 113.6,226.98 119.4,226.73 125.2,226.45 131.0,226.14 136.8,225.81 142.6,225.44 148.4,225.04 154.2,224.61 160.0,224.14 165.8,223.64 171.6,223.09 177.4,222.51 183.2,221.89 189.0,221.24 194.8,220.54 200.6,219.80 206.4,219.02 212.2,218.20 218.0,217.34 223.8,216.45 229.6,215.52 235.4,214.57 241.2,213.58 247.0,212.56 252.8,211.52 258.6,210.47 264.4,209.39 270.2,208.31 276.0,207.22 281.8,206.13 287.6,205.05 293.4,203.98 299.2,202.93 305.0,201.90 310.8,200.90 316.6,199.93 322.4,199.01 328.2,198.14 334.0,197.31 339.8,196.55 345.6,195.86 351.4,195.23 357.2,194.68 363.0,194.20 368.8,193.81 374.6,193.50 380.4,193.27 386.2,193.14 392.0,193.10 397.8,193.14 403.6,193.27 409.4,193.50 415.2,193.81 421.0,194.20 426.8,194.68 432.6,195.23 438.4,195.86 444.2,196.55 450.0,197.31 455.8,198.14 461.6,199.01 467.4,199.93 473.2,200.90 479.0,201.90 484.8,202.93 490.6,203.98 496.4,205.05 502.2,206.13 508.0,207.22 513.8,208.31 519.6,209.39 525.4,210.47 531.2,211.52 537.0,212.56 542.8,213.58 548.6,214.57 554.4,215.52 560.2,216.45 566.0,217.34 571.8,218.20 577.6,219.02 583.4,219.80 589.2,220.54 595.0,221.24 600.8,221.89 606.6,222.51 612.4,223.09 618.2,223.64 624.0,224.14 629.8,224.61 635.6,225.04 641.4,225.44 647.2,225.81 653.0,226.14 658.8,226.45 664.6,226.73 670.4,226.98 676.2,227.21 682.0,227.42"/><line class="f-line" x1="490" y1="52" x2="526" y2="52"/><text class="f-s" x="538" y="56" text-anchor="start">표본평균 · SD 0.5</text><line class="f-dash" x1="490" y1="77" x2="526" y2="77"/><text class="f-s" x="538" y="81" text-anchor="start">개별 기록 · SD 2</text><text class="f-cap" x="99" y="30" text-anchor="middle">밀도</text><text class="f-s" x="653" y="277" text-anchor="middle">대기시간 (분)</text>
+</svg><figcaption>원자료 자체의 산포와 표본평균의 표준오차는 서로 다른 양이다. 정규 곡선의 전체 면적은 각각 1이다.</figcaption></figure>
+<pre data-example="python"><code>from math import exp, sqrt
+from statistics import NormalDist
+
+print(f&quot;one or more in four trials: {1-.9**4:.4f}&quot;)
+print(f&quot;poisson zero: {exp(-2):.4f}&quot;)
+model = NormalDist(mu=6, sigma=2)
+print(f&quot;one observation between 4 and 8: {model.cdf(8)-model.cdf(4):.4f}&quot;)
+print(f&quot;standard error n=16: {2/sqrt(16):.2f}&quot;)</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>one or more in four trials: 0.3439
+poisson zero: 0.1353
+one observation between 4 and 8: 0.6827
+standard error n=16: 0.50</code></pre>
+<div class="check" data-q="q4"></div><div class="check" data-q="q5"></div><div class="check" data-q="q6"></div>
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table><thead><tr><th scope="col">모형·대상</th><th scope="col">질문과 조건</th></tr></thead><tbody><tr><td><b class='key'>이항</b></td><td>시행 수를 먼저 정하고 같은 확률의 독립 시행에서 사건 횟수를 셈</td></tr><tr><td><b class='key'>포아송</b></td><td>주어진 시간·공간 구간의 사건 수를 사건 발생률 등으로 설명</td></tr><tr><td><b class='key'>정규</b></td><td>연속형 모형에서 평균·표준편차로 표준화해 구간 확률을 계산</td></tr><tr><td><b class='key'>평균의 표준오차</b></td><td>독립·동일분포 표본에서 모집단 표준편차÷√표본 크기</td></tr></tbody></table></div>
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>시행 수와 시각 구간을 구별하고, 관측값의 분포와 평균의 표집분포를 따로 읽는다.</p></div>
+<p>모형 계산은 <a href="../../../learn/unit.html?u=PR05">이산 확률 모형</a>, <a href="../../../learn/unit.html?u=PR06">연속분포</a>, <a href="../../../learn/unit.html?u=PR08">반복 시행과 극한</a>과 이어집니다.</p>
+
+<h2>참고 자료</h2>
+<ul><li><a href="https://www.dataq.or.kr/www/dataq_brochure_2022.pdf">한국데이터산업진흥원 · 빅데이터분석기사 과목 안내</a></li><li><a href="https://ocw.mit.edu/courses/6-041-probabilistic-systems-analysis-and-applied-probability-fall-2010/pages/lecture-notes/">MIT OpenCourseWare · 이산·연속분포와 중심극한정리</a></li><li><a href="https://docs.python.org/3/library/statistics.html#statistics.NormalDist">Python · NormalDist</a></li></ul>
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"><a href="../../index.html">← 빅분기 홈</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>저랭크 근사와 PCA의 두 좌표 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e8c'/%3E%3Cpath d='M8 22V10m8 12V14m8 8V6' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="LA08-3">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+
+<header class="chapter">
+<p class="chap-sub">선형대수 · LA08 행렬분해와 근사</p>
+<p class="chap-num">LA08·3</p>
+<h1>저랭크 근사와 PCA의 두 좌표</h1>
+<p class="lead">행렬을 이루는 큰 성분을 남기고 얼마나 잃었는지 계산합니다. 중심화한 네 점을 새 축에 투영하면서 PCA의 방향, 관측 좌표, 설명분산을 연결합니다.</p>
+</header>
+
+<div class="goal">
+<h2>이 장을 읽고 나면</h2>
+<ul>
+<li>특잇값이 큰 항부터 남겨 저랭크 행렬을 만들고 근사 오차를 계산한다.</li>
+<li>중심화한 자료의 SVD에서 주성분 축과 관측별 점수를 구별한다.</li>
+<li>특잇값을 표본분산으로 바꾸고 한 축으로 압축한 자료를 원래 단위로 복원한다.</li>
+</ul>
+</div>
+
+<h2>큰 성분만 남기면 행렬을 적은 수로 표현한다</h2>
+<p>행렬 A=UΣVᵀ를 각 축의 기여를 더한 식 A=Σ<sub>i</sub> σ<sub>i</sub>u<sub>i</sub>v<sub>i</sub>ᵀ로 적을 수 있습니다. 열 u와 행 vᵀ를 곱한 행렬은 열들이 모두 u의 배수이므로 랭크가 최대 1입니다. 특잇값을 큰 순서대로 놓고 처음 k개 항을 남기면 랭크가 최대 k인 A<sub>k</sub>를 얻습니다.</p>
+<p class="calc">A<sub>k</sub> = Σ<sub>i=1</sub><sup>k</sup> σ<sub>i</sub> u<sub>i</sub>v<sub>i</sub>ᵀ.</p>
+<p><b class="key">프로베니우스 노름</b> ∥B∥<sub>F</sub>는 행렬 B의 원소를 모두 제곱해 합한 뒤 제곱근을 취한 값입니다. 랭크가 k 이하인 행렬 중에서 이 방식으로 만든 A<sub>k</sub>가 ∥A−A<sub>k</sub>∥<sub>F</sub>를 최소화합니다. 이를 에카르트–영 정리라고 부릅니다. 남긴 항과 버린 항은 서로 직교인 방향의 기여이므로 오차 제곱은 버린 특잇값들의 제곱합입니다. 같은 크기의 특잇값이 경계에 걸리면 최적 표현이 여러 개일 수 있습니다.</p>
+<p>1000×500 행렬에는 원소가 500,000개입니다. k=20인 근사를 행렬 두 개와 특잇값 목록으로 보관하면 1000×20+500×20+20=30,020개의 수가 필요합니다. 원소 저장 개수만 비교한 결과입니다. 특잇값이 천천히 줄어드는 자료라면 같은 k로 버리는 오차가 클 수 있습니다.</p>
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+
+<h2>중심화 자료에서 입력 축과 관측 좌표를 나눈다</h2>
+<p>주성분 분석(PCA)에서는 관측이 n행, 수치 특성이 d열인 자료에서 각 열의 평균을 뺍니다. 원자료 네 관측이 (12,7), (8,3), (11,4), (9,6)이라면 평균은 (10,5)이고 중심화한 행렬 X의 행은 (2,2), (−2,−2), (1,−1), (−1,1)입니다. 이 예에서는 두 열의 단위와 규모를 그대로 쓰기로 했습니다. 단위가 다른 열을 표준화할지는 분석 목적에 따라 정합니다.</p>
+<p>간소 SVD X=UΣVᵀ에서 오른쪽 특이벡터 v<sub>i</sub>는 <b class="key">특성 공간의 축</b>입니다. 점 하나를 그 축에 투영한 수를 점수라고 합니다. 전체 관측을 각 축에 투영하면 점수 행렬 XV=UΣ입니다. V의 처음 두 열 v₁,v₂는 두 축의 방향입니다. j번째 관측의 새 좌표는 점수 행렬의 j번째 행에서 읽는 (U<sub>j1</sub>σ₁, U<sub>j2</sub>σ₂)입니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 333" role="img" aria-label="중심화한 네 점은 (2,2),(-2,-2),(1,-1),(-1,1)이다. 대각선 v1=(1,1)/√2 위에 두 점, v2=(1,-1)/√2 위에 두 점이 있다. v2 위의 점들은 v1에 사영하면 원점이다.">
+<line class="f-ink" x1="84" y1="167" x2="514" y2="167" marker-end="url(#f-arrow)"/>
+<line class="f-ink" x1="267" y1="286" x2="267" y2="27" marker-end="url(#f-arrow)"/>
+<line class="f-line" x1="145" y1="289" x2="407" y2="27" marker-end="url(#f-arrow)"/>
+<line class="f-dash" x1="146" y1="46" x2="412" y2="312" marker-end="url(#f-arrow)"/>
+<text class="f-s" x="520" y="172" text-anchor="start">중심화 x₁</text>
+<text class="f-s" x="282" y="24" text-anchor="start">중심화 x₂</text>
+<text class="f-t" x="422" y="58" text-anchor="start">v₁=(1,1)/√2</text>
+<text class="f-t" x="424" y="307" text-anchor="start">v₂=(1,−1)/√2</text>
+<circle class="f-fill" cx="367" cy="67" r="5"/>
+<circle class="f-fill" cx="167" cy="267" r="5"/>
+<circle class="f-fill" cx="317" cy="217" r="5"/>
+<circle class="f-fill" cx="217" cy="117" r="5"/>
+<circle class="f-box" cx="267" cy="167" r="5"/>
+<text class="f-s" x="477" y="224" text-anchor="start">v₁로 사영하면</text>
+<text class="f-s" x="477" y="249" text-anchor="start">v₂ 위의 두 점은 원점으로 간다.</text>
+<line class="f-dash" x1="462" y1="224" x2="326" y2="217"/>
+</svg>
+<figcaption>좌표 원점은 뺀 열 평균에 해당한다. 각 점의 사영 좌표는 그 방향과의 내적으로 구한다.</figcaption>
+</figure>
+<p>예를 들어 (2,2)는 v₁=(1,1)/√2에서 2√2, v₂=(1,−1)/√2에서 0입니다. (1,−1)은 v₁에서 0, v₂에서 √2입니다. v₁의 부호가 바뀌면 점수도 함께 반대가 되고, 같은 축 위에서 복원한 점은 그대로입니다.</p>
+<div class="check" data-q="q3"></div>
+<div class="check" data-q="q4"></div>
+
+<h2>특잇값으로 축의 분산과 근사 오차를 계산한다</h2>
+<p>n&gt;1에서 표본 공분산은 XᵀX/(n−1)입니다. X=UΣVᵀ를 넣으면 V[ΣᵀΣ/(n−1)]Vᵀ입니다. 여기서 간소 분해에서는 UᵀU=I이고 Σ는 간소 대각 행렬입니다. v<sub>i</sub> 방향의 점수 열은 평균이 0이고 제곱합이 σ<sub>i</sub>²이므로 표본분산은 <b>σ<sub>i</sub>²/(n−1)</b>입니다.</p>
+<p>위의 XᵀX는 [[10,6],[6,10]]입니다. 방향 v₁의 고유값은 16, v₂의 고유값은 4이므로 특잇값은 4와 2입니다. 표본분산은 16/3과 4/3이고, 첫 축의 설명분산 비율은 (16/3)/(20/3)=4/5=0.8입니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 282" role="img" aria-label="첫 축의 표본분산이 16/3으로 전체의 80%이고 둘째 축은 4/3으로 20%다.">
+<text class="f-cap" x="169" y="32" text-anchor="middle">표본분산</text>
+<line class="f-ink" x1="117" y1="233" x2="659" y2="233" marker-end="url(#f-arrow)"/>
+<line class="f-ink" x1="133" y1="245" x2="133" y2="50" marker-end="url(#f-arrow)"/>
+<rect class="f-soft" x="235" y="73" width="101" height="160" rx="3"/>
+<rect class="f-box" x="466" y="193" width="101" height="40" rx="3"/>
+<text class="f-t" x="286" y="62" text-anchor="middle">16/3</text>
+<text class="f-t" x="517" y="182" text-anchor="middle">4/3</text>
+<text class="f-s" x="286" y="263" text-anchor="middle">첫 주성분 · 80%</text>
+<text class="f-s" x="517" y="263" text-anchor="middle">둘째 주성분 · 20%</text>
+</svg>
+<figcaption>표본분산 축척은 두 막대에서 같다. 첫 번째 막대 높이는 두 번째의 네 배다.</figcaption>
+</figure>
+<p>첫 축만 보관하면 X₁=(Xv₁)v₁ᵀ입니다. 원래 공간으로 복원하려면 각 지점에 열 평균 (10,5)을 다시 더합니다. v₂ 위에 있던 (1,−1), (−1,1)은 사영이 0이라 두 복원점이 모두 (10,5)입니다. 버린 특잇값이 2 하나라 ∥X−X₁∥<sub>F</sub>=2입니다. 전체 제곱합 20 중 16을 남겨, 재구성 제곱오차는 4입니다. 작은 분산의 방향에도 예측 목표에 필요한 신호가 있을 수 있습니다.</p>
+<div class="check" data-q="q5"></div>
+<div class="check" data-q="q6"></div>
+
+<h2>축의 분산과 복원값을 계산한다</h2>
+<pre data-example="python"><code>import numpy as np
+
+raw = np.array([[12, 7], [8, 3], [11, 4], [9, 6]])
+mean = raw.mean(axis=0)
+X = raw - mean
+U, s, Vt = np.linalg.svd(X, full_matrices=False)
+scores = X @ Vt.T
+assert np.allclose(scores, U * s)
+
+variance = s**2 / (len(X) - 1)
+covariance = X.T @ X / (len(X) - 1)
+assert np.allclose(covariance @ Vt.T, Vt.T * variance)
+
+X1 = scores[:, :1] @ Vt[:1]
+print(&quot;mean:&quot;, mean.tolist())
+print(&quot;singular values:&quot;, s.round(4).tolist())
+print(&quot;explained fraction:&quot;, np.round(variance / variance.sum(), 2).tolist())
+print(&quot;rank-1 error:&quot;, round(float(np.linalg.norm(X - X1)), 4))
+print(&quot;reconstruction:&quot;, (X1 + mean).round(4).tolist())</code></pre>
+<pre data-output><code>mean: [10.0, 5.0]
+singular values: [4.0, 2.0]
+explained fraction: [0.8, 0.2]
+rank-1 error: 2.0
+reconstruction: [[12.0, 7.0], [8.0, 3.0], [10.0, 5.0], [10.0, 5.0]]</code></pre>
+<p><code>scores[:, :1]</code>에는 첫 주성분에서 각 관측의 좌표 하나씩이 들어 있습니다. 여기에 <code>Vt[:1]</code>을 곱하면 그 좌표를 원래 두 특성 쪽으로 펼칩니다. 지도학습에서 평가 자료로 같은 변환을 할 때는 훈련 자료로 정한 평균과 축을 사용합니다.</p>
+
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table>
+<thead><tr><th scope="col">표현</th><th scope="col">계산과 읽는 뜻</th></tr></thead>
+<tbody>
+<tr><td>저랭크 근사</td><td>특잇값이 큰 항부터 남긴다. 오차 제곱은 버린 특잇값 제곱합.</td></tr>
+<tr><td>PCA의 두 공간</td><td>V는 특성의 방향, XV=UΣ는 관측의 투영 점수.</td></tr>
+<tr><td>분산과 복원</td><td>축 분산은 σ²/(n−1). 점수를 축으로 펼쳐 평균을 다시 더한다.</td></tr>
+</tbody>
+</table></div>
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://ocw.mit.edu/courses/18-06sc-linear-algebra-fall-2011/pages/positive-definite-matrices-and-applications/singular-value-decomposition/">MIT 18.06SC · SVD와 낮은 랭크의 합</a></li>
+<li><a href="https://ocw.mit.edu/courses/18-065-matrix-methods-in-data-analysis-signal-processing-and-machine-learning-spring-2018/">MIT 18.065 · 저랭크 근사, 특잇값, 주성분 분석</a></li>
+<li><a href="https://scikit-learn.org/stable/modules/generated/sklearn.decomposition.PCA.html">scikit-learn · PCA의 중심화, 표본분산과 설명분산 비율</a></li>
+</ul>
+
+
+<h2>확인 문제</h2>
+<p>아직 풀지 않은 문제입니다. 먼저 식이나 근거를 적어 보고 해설을 확인합니다.</p>
+<div id="quiz"></div>
+
+<section class="work" id="tools"></section>
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

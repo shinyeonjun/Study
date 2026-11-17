@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>결측·중복·형식 오류를 구별해 정제하기 · 빅분기 노트</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="2-01">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">빅분기 노트</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">2과목 · 빅데이터 탐색</p>
+<p class="chap-num">01</p>
+<h1>결측·중복·형식 오류를 구별해 정제하기</h1>
+<p class="lead">대기시간 표에 빈칸과 반복 행, 음수가 섞여 있습니다. 무엇을 지울지부터 정하기 전에 값이 무엇을 뜻하는지와 한 관측의 기준을 확인합니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>관측 단위와 데이터 유형으로 품질 검사 방법을 정한다.</li><li>결측, 재전송, 유효성 오류, 실제 극단값을 구별한다.</li><li>입력과 사용할 자료의 수를 나누어 기록한다.</li></ul></div>
+
+<h2>이 표에서 한 행은 무엇인가</h2>
+<p>두 도서관 지점이 방문 한 건마다 대기시간을 남겼다고 합니다. <b class="key">ID</b>는 이 파일에서 방문 건을 구별하고, 지점은 종류를 구별하며, 대기시간은 분 단위로 잽니다. 열마다 할 수 있는 연산이 다릅니다. 지점의 이름을 센 뒤 평균을 내기는 어렵고, 대기시간은 단위가 같을 때 합과 평균을 계산할 수 있습니다.</p>
+<div class="table-wrap"><table><thead><tr><th scope="col">입력 ID</th><th scope="col">지점</th><th scope="col">대기시간 (분)</th><th scope="col">판단에 쓸 정보</th></tr></thead><tbody><tr><td>A01</td><td>동쪽</td><td>2</td><td>—</td></tr><tr><td>A02</td><td>동쪽</td><td>3</td><td>—</td></tr><tr><td>A02</td><td>동쪽</td><td>3</td><td>같은 ID·값의 재전송</td></tr><tr><td>A03</td><td>동쪽</td><td>기록 없음</td><td>—</td></tr><tr><td>A04</td><td>동쪽</td><td>-1</td><td>—</td></tr><tr><td>A05</td><td>동쪽</td><td>4</td><td>—</td></tr><tr><td>A06</td><td>동쪽</td><td>16</td><td>업무 기록으로 16분 확인</td></tr><tr><td>B01</td><td>서쪽</td><td>4</td><td>—</td></tr><tr><td>B02</td><td>서쪽</td><td>5</td><td>—</td></tr><tr><td>B03</td><td>서쪽</td><td>6</td><td>—</td></tr><tr><td>B04</td><td>서쪽</td><td>8</td><td>—</td></tr></tbody></table></div>
+<p>한 번 방문해 0분 기다렸다면 0입니다. 기록 시스템이 대기시간을 보내지 않았을 때는 빈값입니다. 접수 확인과 종료 확인이 모두 있어야 대기시간을 얻을 수도 있습니다. 값 없이 들어온 이유를 알려면 데이터 항목의 뜻과 원천을 먼저 확인합니다.</p>
+<div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
+<h2>중복·결측·오류를 따로 센다</h2>
+<p>A02 두 행의 ID와 나머지 값이 같습니다. 이 예에서는 원천이 재전송이라고 확인했으므로 한 방문으로 셉니다. 서로 다른 ID의 대기시간이 둘 다 4분일 때는 관측이 두 건입니다. 동일 ID로 다른 내용이 도착하면 정정인지 충돌인지 원인을 먼저 확인합니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 199" role="img" aria-label="A03은 대기시간을 알 수 없고 A04의 마이너스 1분은 범위 위반이다. A06의 16분은 업무 기록으로 확인한 긴 대기다.">
+<rect class="f-over" x="45" y="42" width="196" height="122" rx="3"/><text class="f-t f-b" x="143" y="74" text-anchor="middle">A03</text><text class="f-cap" x="143" y="108" text-anchor="middle">값 없음</text><text class="f-s" x="143" y="138" text-anchor="middle">미확인</text><rect class="f-over" x="282" y="42" width="196" height="122" rx="3"/><text class="f-t f-b" x="380" y="74" text-anchor="middle">A04</text><text class="f-cap" x="380" y="108" text-anchor="middle">−1분</text><text class="f-s" x="380" y="138" text-anchor="middle">범위 위반</text><rect class="f-soft" x="519" y="42" width="196" height="122" rx="3"/><text class="f-t f-b" x="617" y="74" text-anchor="middle">A06</text><text class="f-cap" x="617" y="108" text-anchor="middle">16분</text><text class="f-s" x="617" y="138" text-anchor="middle">확인된 긴 대기</text>
+</svg><figcaption>큰 값이라는 이유와 기록의 의미가 틀렸다는 이유는 서로 다르다.</figcaption></figure>
+<p>이 표의 대상은 음이 아닌 대기시간이므로 −1분을 그대로 평균에 넣으면 유효성 조건을 어깁니다. 16분은 예상보다 길지만 업무 기록과 맞으므로 우선 조사 대상으로 표시하고 이 예에서는 보존합니다. 빈값을 없애거나 대체해도 그 값을 실제로 관측한 셈은 아니므로 처리 방법을 기록합니다.</p>
+<div class="check" data-q="q3"></div><div class="check" data-q="q4"></div>
+<h2>건수의 흐름을 코드로 확인한다</h2>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 160" role="img" aria-label="원시 11행에서 정확한 재전송 1행을 제거하면 10개 ID. 미확인과 범위 위반 각 1개를 구분하면 유효 대기값 8개.">
+<rect class="f-box" x="42" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="135" y="61" text-anchor="middle">수신</text><text class="f-s" x="135" y="89" text-anchor="middle">원시 기록 11행</text><text class="f-s" x="135" y="110" text-anchor="middle">원본은 그대로 보관</text><line class="f-line" x1="235" y1="84" x2="278" y2="84" marker-end="url(#f-arrow)"/><rect class="f-soft" x="287" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="380" y="61" text-anchor="middle">키 기준 통합</text><text class="f-s" x="380" y="89" text-anchor="middle">고유 ID 10개</text><text class="f-s" x="380" y="110" text-anchor="middle">재전송 1행을 따로 기록</text><line class="f-line" x1="480" y1="84" x2="523" y2="84" marker-end="url(#f-arrow)"/><rect class="f-box" x="532" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="625" y="61" text-anchor="middle">유효값 확인</text><text class="f-s" x="625" y="89" text-anchor="middle">계산에 쓸 대기시간 8개</text><text class="f-s" x="625" y="110" text-anchor="middle">미확인 1개 · 범위 위반 1개</text>
+</svg><figcaption>분모가 바뀐다. 행에 대한 수신 건수와 관측 단위에 대한 값의 유효성을 각각 보고한다.</figcaption></figure>
+<pre data-example="python"><code>raw = [
+    (&quot;A01&quot;, &quot;동쪽&quot;, 2), (&quot;A02&quot;, &quot;동쪽&quot;, 3), (&quot;A02&quot;, &quot;동쪽&quot;, 3),
+    (&quot;A03&quot;, &quot;동쪽&quot;, None), (&quot;A04&quot;, &quot;동쪽&quot;, -1), (&quot;A05&quot;, &quot;동쪽&quot;, 4),
+    (&quot;A06&quot;, &quot;동쪽&quot;, 16), (&quot;B01&quot;, &quot;서쪽&quot;, 4), (&quot;B02&quot;, &quot;서쪽&quot;, 5),
+    (&quot;B03&quot;, &quot;서쪽&quot;, 6), (&quot;B04&quot;, &quot;서쪽&quot;, 8),
+]
+by_id = {}
+for visit, site, wait in raw:
+    previous = by_id.get(visit, (site, wait))
+    if previous != (site, wait):
+        raise ValueError(f&quot;conflicting records: {visit}&quot;)
+    by_id[visit] = (site, wait)
+
+values = [wait for site, wait in by_id.values()
+          if wait is not None and wait &gt;= 0]
+missing = sum(wait is None for site, wait in by_id.values())
+invalid = sum(wait is not None and wait &lt; 0
+              for site, wait in by_id.values())
+print(&quot;raw&quot;, len(raw), &quot;visits&quot;, len(by_id))
+print(&quot;missing&quot;, missing, &quot;invalid&quot;, invalid, &quot;usable&quot;, len(values))
+print(sorted(values))</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>raw 11 visits 10
+missing 1 invalid 1 usable 8
+[2, 3, 4, 4, 5, 6, 8, 16]</code></pre>
+<p>이 예는 방문별 대기시간의 기술통계를 구할 때 확인된 값만 쓰는 처리입니다. 빈값이 오래 기다린 경우에 더 자주 생긴다면, 확인된 자료만으로 계산한 평균은 낮게 보일 수 있습니다. 빈값의 개수와 발생 조건을 함께 조사해야 합니다.</p>
+<div class="check" data-q="q5"></div><div class="check" data-q="q6"></div>
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table><thead><tr><th scope="col">핵심어</th><th scope="col">기억할 기준</th></tr></thead><tbody><tr><td><b class='key'>결측</b></td><td>측정되지 않았거나 확인되지 않은 값. 0과 구별</td></tr><tr><td><b class='key'>중복</b></td><td>같은 관측을 의미하는 키와 저장 과정으로 확인</td></tr><tr><td><b class='key'>유효성</b></td><td>허용된 형식·범위를 지키는지 검사</td></tr><tr><td><b class='key'>극단값</b></td><td>자료에서 드물거나 크고 작은 값. 원천을 확인한 뒤 처리</td></tr></tbody></table></div>
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>어느 행을 제외했는지보다 왜 제외했고 원시 기록과 어떻게 연결되는지가 중요하다.</p></div>
+<p>품질 기준과 역할은 <a href="../1-planning/08-데이터-품질과-거버넌스.html">1과목의 품질·거버넌스</a>에서 이어집니다.</p>
+
+<h2>참고 자료</h2>
+<ul><li><a href="https://www.dataq.or.kr/www/dataq_brochure_2022.pdf">한국데이터산업진흥원 · 빅데이터분석기사 과목 안내</a></li><li><a href="https://www.gov.uk/government/publications/the-government-data-quality-framework/the-government-data-quality-framework-guidance">영국 정부 · 데이터 품질 관리 지침</a></li></ul>
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"><a href="../../index.html">← 빅분기 홈</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>평균 비교의 설계: 독립 표본과 짝지은 표본 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e8c'/%3E%3Cpath d='M8 22V10m8 12V14m8 8V6' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="ST05-1">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+
+<header class="chapter">
+<p class="chap-sub">통계 · ST05 기본 검정 선택</p>
+<p class="chap-num">ST05·1</p>
+<h1>평균 비교의 설계: 독립 표본과 짝지은 표본</h1>
+<p class="lead">처리시간을 비교하려 합니다. 두 팀이 각각 다른 업무를 처리했는지, 각 업무에 두 방식을 모두 적용했는지에 따라 평균 차이의 불확실성을 계산하는 방법이 달라집니다.</p>
+</header>
+
+<div class="goal">
+<h2>이 장을 읽고 나면</h2>
+<ul>
+<li>독립·짝지은 설계를 데이터의 한 행 기준으로 구분한다.</li>
+<li>Welch와 짝지은 t검정에서 평균차와 표준오차의 역할을 해석한다.</li>
+<li>가정, 효과의 단위, 신뢰구간을 함께 읽는다.</li>
+</ul>
+</div>
+
+<h2>가장 먼저 어느 관측들이 서로 연결되는지 본다</h2>
+<p>측정값은 분 단위의 작업 시간입니다. 서로 다른 업무 건이 A나 B 중 한 팀에 속하면, A를 관측한 업무가 B의 어느 행인지 지정할 이유가 없습니다. 두 집단과 각 집단 내의 관측이 독립이라면 <b class="key">독립 두 표본</b> 설계입니다. 같은 업무 건을 두 방식으로 직접 재거나 사전에 조건이 유사한 두 단위를 대응시켰다면 <b class="key">짝지은 표본</b>입니다. 두 설계는 숫자 표의 모양이 같아 보여도 평균 차이의 표준오차가 다릅니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 241" role="img" aria-label="독립 자료는 A그룹 네 건과 B그룹 다섯 건의 사람이나 단위가 겹치지 않는다. 짝지은 자료는 같은 사람의 전과 후를 선으로 연결하고 후−전의 차이를 구한다.">
+<text class="f-cap" x="180" y="40" text-anchor="middle">서로 다른 업무 건</text>
+<text class="f-cap" x="566" y="40" text-anchor="middle">같은 업무 건에서 두 측정</text>
+<rect class="f-soft" x="69" y="65" width="108" height="62" rx="4"/><text class="f-cap" x="123" y="89" text-anchor="middle">A</text><text class="f-s" x="123" y="110" text-anchor="middle">4건</text>
+<rect class="f-box" x="190" y="65" width="108" height="62" rx="4"/><text class="f-cap" x="244" y="89" text-anchor="middle">B</text><text class="f-s" x="244" y="110" text-anchor="middle">5건</text>
+<text class="f-s" x="184" y="161" text-anchor="middle">어느 A와 어느 B를</text>
+<text class="f-s" x="184" y="185" text-anchor="middle">임의로 짝짓지 않는다.</text>
+<circle class="f-fill" cx="454" cy="83" r="5"/>
+<circle class="f-fill" cx="649" cy="83" r="5"/>
+<line class="f-line" x1="460" y1="83" x2="644" y2="83"/>
+<text class="f-s" x="551" y="78" text-anchor="middle">같은 단위 1</text>
+<circle class="f-fill" cx="454" cy="125" r="5"/>
+<circle class="f-fill" cx="649" cy="125" r="5"/>
+<line class="f-line" x1="460" y1="125" x2="644" y2="125"/>
+<text class="f-s" x="551" y="120" text-anchor="middle">같은 단위 2</text>
+<circle class="f-fill" cx="454" cy="167" r="5"/>
+<circle class="f-fill" cx="649" cy="167" r="5"/>
+<line class="f-line" x1="460" y1="167" x2="644" y2="167"/>
+<text class="f-s" x="551" y="162" text-anchor="middle">같은 단위 3</text>
+<text class="f-cap" x="454" y="207" text-anchor="middle">전</text>
+<text class="f-cap" x="649" y="207" text-anchor="middle">후</text>
+</svg>
+<figcaption>두 열의 길이가 같다고 짝이 생기지 않는다. 같은 대상 또는 사전에 정한 대응 관계가 있어야 한다.</figcaption>
+</figure>
+<div class="check" data-q="q1"></div>
+<h2>독립 표본에서는 각 집단의 표준오차가 합쳐진다</h2>
+<p>A의 관측은 6, 8, 10, 12이고 B는 8, 9, 10, 11, 12입니다. 평균은 각각 9분과 10분입니다. 관심 있는 모집단 평균 차이를 A−B로 정하면, 귀무가설 H₀는 그 차이가 0이라는 것입니다. 대립가설로는 양쪽 방향을 보겠다고 분석 전에 정합니다.</p>
+<div class="box ex"><p class="box-k">Welch t검정</p><p>표본분산을 s², 크기를 n으로 적으면 차이의 표준오차는 <code>√(s_A²/n_A + s_B²/n_B)</code>입니다. 표본분산은 A가 20/3, B가 2.5이므로 표준오차는 √(13/6)≈1.472분입니다. 관찰한 평균차 −1분을 이 값으로 나누면 검정통계량은 약 −0.6794입니다.</p></div>
+<p><b class="key">Welch</b>는 두 모집단 분산이 같다는 조건을 요구하지 않습니다. 대신 t분포와 비교할 때 두 표본의 분산과 크기로 구한 Welch–Satterthwaite 자유도 근사를 씁니다. 예에서는 약 4.7494이며 정수가 아니어도 됩니다. 모집단의 공통 분산 가정에 근거가 있다면 두 표본분산을 합쳐 쓰는 독립 <b>등분산 t검정</b>도 있습니다. 두 방식 모두 독립을 요구합니다. 작은 표본에서는 각 집단의 모집단 분포가 정규에 가까운지 살피고, 강한 비대칭이나 이상치를 확인합니다. 표본을 뽑은 방식과 군집·반복관측 여부도 중요합니다.</p>
+<div class="check" data-q="q2"></div>
+<div class="check" data-q="q3"></div>
+<h2>짝지은 비교에서는 한 쌍에서 차이 하나를 얻는다</h2>
+<p>이번에는 같은 업무 건 다섯 개에 대한 전후 측정입니다. 짝마다 ‘후−전’을 취해서 음수는 시간이 줄었다는 뜻으로 고정합니다. 귀무가설은 차이 <em>모집단</em> 평균이 0이라는 것입니다. 검정은 이 차이를 대상으로 한 <b class="key">일표본 t검정</b>과 같습니다.</p>
+<div class="table-wrap"><table>
+<tr><th scope="col">업무 건</th><th scope="col">전 (분)</th><th scope="col">후 (분)</th><th scope="col">후−전 (분)</th></tr>
+<tr><td>1</td><td>9</td><td>8</td><td>−1</td></tr>
+<tr><td>2</td><td>13</td><td>11</td><td>−2</td></tr>
+<tr><td>3</td><td>11</td><td>8</td><td>−3</td></tr>
+<tr><td>4</td><td>15</td><td>13</td><td>−2</td></tr>
+<tr><td>5</td><td>10</td><td>8</td><td>−2</td></tr>
+</table></div>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 221" role="img" aria-label="동일 업무 건 다섯 개의 후−전 차이는 −1,−2,−3,−2,−2분이다. −2 위에 점이 세 개이며 표본 평균은 −2분이다.">
+<line class="f-ink" x1="91" y1="151" x2="673" y2="151" marker-end="url(#f-arrow)"/>
+<line class="f-ink" x1="126" y1="151" x2="126" y2="158"/><text class="f-s" x="126" y="177" text-anchor="middle">-4</text>
+<line class="f-ink" x1="249" y1="151" x2="249" y2="158"/><text class="f-s" x="249" y="177" text-anchor="middle">-3</text>
+<line class="f-ink" x1="372" y1="151" x2="372" y2="158"/><text class="f-s" x="372" y="177" text-anchor="middle">-2</text>
+<line class="f-ink" x1="495" y1="151" x2="495" y2="158"/><text class="f-s" x="495" y="177" text-anchor="middle">-1</text>
+<line class="f-ink" x1="618" y1="151" x2="618" y2="158"/><text class="f-s" x="618" y="177" text-anchor="middle">0</text>
+<circle class="f-fill" cx="249" cy="136" r="5"/>
+<circle class="f-fill" cx="372" cy="136" r="5"/>
+<circle class="f-fill" cx="372" cy="116" r="5"/>
+<circle class="f-fill" cx="372" cy="96" r="5"/>
+<circle class="f-fill" cx="495" cy="136" r="5"/>
+<line class="f-line" x1="372" y1="65" x2="372" y2="87" marker-end="url(#f-arrow)"/>
+<text class="f-cap" x="372" y="49" text-anchor="middle">차이의 평균 −2분</text>
+<text class="f-s" x="665" y="185" text-anchor="middle">후−전 (분)</text>
+</svg>
+<figcaption>짝지은 검정에서는 원래 두 열을 따로 비교하지 않고 이 차이의 표본으로 평균을 계산한다.</figcaption>
+</figure>
+<p>차이의 평균은 −2, 표본분산은 (1+0+1+0+0)/(5−1)=0.5입니다. 표준오차는 √(0.5/5)≈0.316분, t통계량은 −2/0.316≈−6.3246이며 자유도는 5−1=4입니다. 쌍 <em>사이</em>의 독립과 작은 표본에서 차이 분포의 정규성을 살핍니다. 두 열의 분포가 각각 정규인지가 이 계산의 중심 가정은 아닙니다. 한 대상에서 여러 전후 기록이 생기면 짝 자체가 서로 독립인지도 확인합니다.</p>
+<div class="check" data-q="q4"></div>
+<div class="check" data-q="q5"></div>
+<h2>검정 결과를 분 단위의 효과와 함께 보고한다</h2>
+<p>독립 예제의 Welch 양측 p값은 약 0.5286, 평균차의 95% 신뢰구간은 약 [−4.84, 2.84]분입니다. 0과 실무상 큰 차이가 모두 들어갈 수 있으므로, 평균이 같다고 결론 내릴 근거가 아닙니다. 짝 예제의 양측 p값은 약 0.0032, 차이의 추정값은 −2분이고 같은 수준의 구간은 [−2.88, −1.12]분입니다. 두 예는 다른 자료와 설계입니다. 전후 차이에 계절이나 업무 구성 변화가 섞일 수 있어, 통계적 결과만으로 처리 방식의 인과 효과를 확정할 수는 없습니다.</p>
+<div class="check" data-q="q6"></div>
+<pre data-example="python"><code>from scipy import stats
+
+a, b = [6, 8, 10, 12], [8, 9, 10, 11, 12]
+before, after = [9, 13, 11, 15, 10], [8, 11, 8, 13, 8]
+difference = [new - old for new, old in zip(after, before)]
+welch = stats.ttest_ind(a, b, equal_var=False)
+paired = stats.ttest_rel(after, before)
+assert abs(paired.statistic - stats.ttest_1samp(difference, 0).statistic) &lt; 1e-12
+for label, result in [("Welch", welch), ("paired", paired)]:
+    interval = result.confidence_interval(confidence_level=0.95)
+    print(f"{label}: t={result.statistic:.4f}, df={result.df:.4f}, p={result.pvalue:.4f}")
+    print(f"95% CI: [{interval.low:.4f}, {interval.high:.4f}] min")</code></pre>
+<pre data-output><code>Welch: t=-0.6794, df=4.7494, p=0.5286
+95% CI: [-4.8446, 2.8446] min
+paired: t=-6.3246, df=4.0000, p=0.0032
+95% CI: [-2.8780, -1.1220] min</code></pre>
+<p>실제 분석에서 행을 짝지을 때는 대상 키와 순서를 확인합니다. 짝이 없는 측정값을 단순히 다음 행과 붙이면 차이의 의미가 바뀝니다. 누락으로 어떤 짝이 빠지는지 또한 기록합니다.</p>
+<h2>참고 자료</h2>
+<ul><li><a href="https://itl.nist.gov/div898/handbook/eda/section3/eda353.htm">NIST · 독립 두 표본 t검정과 Welch 자유도</a></li>
+<li><a href="https://itl.nist.gov/div898/software/dataplot/refman1/auxillar/t_test.htm">NIST Dataplot · 짝지은 비교</a></li>
+<li><a href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.ttest_ind.html">SciPy · ttest_ind</a></li>
+<li><a href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.ttest_rel.html">SciPy · ttest_rel</a></li></ul>
+
+<h2>확인 문제</h2>
+<p>본문에서 푼 것 말고 남은 문제입니다. 먼저 답을 정한 뒤 해설을 확인합니다.</p>
+<div id="quiz"></div>
+
+<section class="work" id="tools"></section>
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

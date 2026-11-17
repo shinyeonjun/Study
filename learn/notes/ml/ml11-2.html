@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>분포 변화와 강건성을 운영에서 점검하기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="ML11-2">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">머신러닝 · ML11 신뢰성과 실패 분석</p>
+<p class="chap-num">ML11·2</p>
+<h1>분포 변화와 강건성을 운영에서 점검하기</h1>
+<p class="lead">같은 지연 모형이 마른 날에는 안정적이지만 젖은 날에는 자주 틀립니다. 두 조건에서 각각 성능이 그대로여도, 어떤 조건이 얼마나 자주 들어오는지에 따라 운영에서 보는 점수는 달라질 수 있습니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul>
+<li>입력·라벨·조건부 관계의 변화가 무엇인지 구별한다.</li>
+<li>조건별 오류율과 구성 비율을 가중해 전체를 계산한다.</li>
+<li>강건성 시험에서 어떤 변화에 대한 결과인지 기록한다.</li>
+</ul></div>
+
+<h2>자료의 어느 분포가 달라졌는지 적는다</h2>
+<p>개발 때 보던 자료와 새 입력의 분포 또는 예측과 정답의 관계가 달라지는 일을 <b class="key">분포 변화</b>라고 합니다. 원인을 나누면 어떤 정보를 더 수집할지 계획할 수 있습니다.</p>
+<div class="table-wrap"><table><thead><tr><th scope="col">변화</th><th scope="col">무엇이 달라졌나</th></tr></thead><tbody>
+<tr><th scope="row">입력 분포 변화</th><td>가령 젖은 노면을 나타내는 X의 비율이 달라진다. 순수 공변량 이동은 P(X)가 변하고 P(Y|X)가 같다고 둔다.</td></tr>
+<tr><th scope="row">라벨 이동</th><td>P(Y)가 변하고 라벨 안의 입력 분포 P(X|Y)는 유지된다고 두는 경우다.</td></tr>
+<tr><th scope="row">개념 변화</th><td>같은 입력 조건에서도 목표의 분포 P(Y|X)가 달라진다. 예를 들어 동일 입력에서 운영 규칙 변경으로 지연 확률이 달라진다.</td></tr>
+</tbody></table></div>
+<p>실제 변화는 섞여 나타날 수 있습니다. 양성 비율이 달라졌다는 사실만으로 라벨 이동의 조건까지 맞는 것은 아닙니다. 입력만 빨리 수집되는 환경에서는 실제 라벨을 얻어 조건부 성능도 점검합니다.</p>
+<div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
+
+<h2>조건별 성능이 그대로여도 전체는 변할 수 있다</h2>
+<p>합성 예에서 마른 날 오류율은 0.10, 젖은 날 오류율은 0.30으로 평가와 운영에서 같다고 둡니다. 평가 운행은 마른 날 90%, 젖은 날 10%입니다. 전체 오류율은 <code>0.9×0.10+0.1×0.30=0.12</code>입니다. 운영에 각 날이 절반씩 나오면 <code>0.5×0.10+0.5×0.30=0.20</code>입니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 268" role="img" aria-label="평가에는 마른 날 90%, 젖은 날 10%로 섞였다. 운영에는 각각 50%다. 날씨별 오차율을 10%와 30%로 고정하면 전체 오차율은 12%에서 20%로 변한다.">
+<text class="f-cap" x="445" y="28" text-anchor="middle">운행의 구성 비율</text>
+<text class="f-cap" x="228" y="87" text-anchor="end">평가</text>
+<rect class="f-box" x="248" y="60" width="364.5" height="43"/>
+<rect class="f-soft" x="612.5" y="60" width="40.5" height="43"/>
+<text class="f-s" x="430.25" y="87" text-anchor="middle">90%</text>
+<text class="f-s" x="632.75" y="87" text-anchor="middle">10%</text>
+<text class="f-s" x="673" y="87" text-anchor="start">오차 12%</text>
+<text class="f-cap" x="228" y="153" text-anchor="end">운영</text>
+<rect class="f-box" x="248" y="126" width="202.5" height="43"/>
+<rect class="f-soft" x="450.5" y="126" width="202.5" height="43"/>
+<text class="f-s" x="349.25" y="153" text-anchor="middle">50%</text>
+<text class="f-s" x="551.75" y="153" text-anchor="middle">50%</text>
+<text class="f-s" x="673" y="153" text-anchor="start">오차 20%</text>
+<rect class="f-box" x="262" y="197" width="23" height="18"/>
+<text class="f-s" x="297" y="212" text-anchor="start">마른 날 · 오차 10%</text>
+<rect class="f-soft" x="474" y="197" width="23" height="18"/>
+<text class="f-s" x="509" y="212" text-anchor="start">젖은 날 · 오차 30%</text>
+</svg>
+<figcaption>두 조건의 오류율은 고정했다. 더 어려운 조건이 평가보다 자주 들어오면 평균은 올라갈 수 있다.</figcaption>
+</figure>
+<p>실제 상황이라면 날씨별 오류율도 변했는지 확인해야 합니다. 어느 날이 늘었는지와 어느 날에서 더 많이 틀리는지가 함께 들어갑니다. 다른 집계 지표에서는 그 지표의 분모에 맞춰 가중합니다.</p>
+<div class="check" data-q="q3"></div><div class="check" data-q="q4"></div><div class="check" data-q="q5"></div>
+
+<h2>작은 입력 변화에 계산이 얼마나 달라지는지 시험한다</h2>
+<p><b class="key">강건성</b>은 어떤 변화에도 모두 맞는다는 뜻보다, 지정한 변화 조건에서도 성능과 동작을 유지하는지를 보는 것입니다. 예를 들어 센서 값이 50초 이상이면 경보한다고 둡니다. 원래 값 <code>[40,48,52,60]</code>의 라벨을 <code>[0,0,1,1]</code>로 정하면 네 건을 모두 맞힙니다. 센서가 과대 측정하는 상황을 흉내 내 4초를 추가하고 실제 라벨은 유지합니다. 48초 값만 새로 기준을 넘어 거짓 경보가 한 건 생깁니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 239" role="img" aria-label="50초 이상에서 경보하는 모형의 원래 수치는 40,48,52,60이다. 센서가 모두 4초 크게 표시하면 44,52,56,64가 되어 48의 예측만 바뀐다.">
+<line class="f-ink" x1="123" y1="185" x2="618" y2="185"/>
+<line class="f-dash" x1="348" y1="37" x2="348" y2="184"/>
+<text class="f-cap" x="348" y="30" text-anchor="middle">경보 기준 50초</text>
+<text class="f-s" x="112" y="79" text-anchor="end">원래</text>
+<line class="f-ink" x1="123" y1="75" x2="618" y2="75"/>
+<circle class="f-box" cx="198" cy="75" r="6"/>
+<text class="f-s" x="198" y="63" text-anchor="middle">40</text>
+<circle class="f-box" cx="318" cy="75" r="6"/>
+<text class="f-s" x="318" y="63" text-anchor="middle">48</text>
+<circle class="f-fill" cx="378" cy="75" r="6"/>
+<text class="f-s" x="378" y="63" text-anchor="middle">52</text>
+<circle class="f-fill" cx="498" cy="75" r="6"/>
+<text class="f-s" x="498" y="63" text-anchor="middle">60</text>
+<text class="f-s" x="112" y="139" text-anchor="end">4초 추가</text>
+<line class="f-ink" x1="123" y1="135" x2="618" y2="135"/>
+<circle class="f-box" cx="258" cy="135" r="6"/>
+<text class="f-s" x="258" y="123" text-anchor="middle">44</text>
+<circle class="f-over" cx="378" cy="135" r="6"/>
+<text class="f-s" x="378" y="123" text-anchor="middle">52</text>
+<circle class="f-fill" cx="438" cy="135" r="6"/>
+<text class="f-s" x="438" y="123" text-anchor="middle">56</text>
+<circle class="f-fill" cx="558" cy="135" r="6"/>
+<text class="f-s" x="558" y="123" text-anchor="middle">64</text>
+<text class="f-s" x="618" y="213" text-anchor="end">센서 값 (초)</text>
+</svg>
+<figcaption>이 모의 시험에서는 실제 라벨을 유지하고 센서 입력의 오차만 바꿨다.</figcaption>
+</figure>
+<p class="small">실행 예제</p>
+<pre data-example="python"><code>from statistics import mean
+
+errors = [0.10, 0.30]
+for name, weights in [(&quot;evaluation&quot;, [0.9,0.1]), (&quot;operation&quot;, [0.5,0.5])]:
+    print(f&quot;{name}: overall error={sum(w*p for w,p in zip(weights,errors,strict=True)):.2f}&quot;)
+levels = [40,48,52,60]
+truth = [0,0,1,1]
+for offset in [0,4]:
+    pred = [int(x + offset &gt;= 50) for x in levels]
+    score = mean(p == y for p,y in zip(pred,truth,strict=True))
+    print(f&quot;offset={offset}: {pred}, accuracy={score:.2f}&quot;)</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>evaluation: overall error=0.12
+operation: overall error=0.20
+offset=0: [0, 0, 1, 1], accuracy=1.00
+offset=4: [0, 1, 1, 1], accuracy=0.75</code></pre>
+<div class="why"><p class="box-k">왜 그럴까?</p><p>센서에 +4초를 더한 시험에서 버텼다면 새 장비로 바로 옮겨도 될까요?</p><details><summary>모범 답 보기</summary><p>시험으로 확인한 것은 특정 오프셋과 이 관측들의 결과입니다. 새 장비에서는 누락·단위·오차 형태가 다른지도 확인하며, 운영 범위를 대표하는 자료에서 평가합니다.</p></details></div>
+<p>배치 뒤에는 입력의 범위와 누락, 조건별 경보 건수, 라벨 확인이 끝난 뒤의 오류와 영향 등을 기록합니다. 새 기간에서 실패가 발견되면 배치 이전에 정한 기준으로 경보·보류·재평가를 판단합니다.</p>
+<div class="check" data-q="q6"></div><div class="check" data-q="q7"></div>
+
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table><thead><tr><th scope="col">개념</th><th scope="col">확인할 것</th></tr></thead><tbody>
+<tr><th scope="row"><b class="key">분포 변화</b></th><td>어느 부분이 바뀌었는지 가정을 구체적으로 기록</td></tr>
+<tr><th scope="row">구성 비율</th><td>조건별 성능을 고정해도 전체 지표를 바꿀 수 있음</td></tr>
+<tr><th scope="row"><b class="key">강건성</b></th><td>지정한 변동 조건과 결과를 따로 시험</td></tr>
+</tbody></table></div><div class="box sum"><p class="box-k">다음 장으로</p><p><a href="ml11-3.html">다음 장</a>에서는 누구에게 오류가 모이는지와 모델이 사용하는 특성을 확인합니다.</p></div>
+
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://proceedings.mlr.press/v80/lipton18a.html">Lipton 외(2018) · 레이블 분포 이동</a></li>
+<li><a href="https://www.nist.gov/itl/ai-risk-management-framework">NIST · AI 위험 관리 프레임워크</a></li>
+</ul>
+<h2>확인 문제</h2>
+<p>직접 계산하거나 설명을 먼저 적고 답을 확인해 보세요.</p>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

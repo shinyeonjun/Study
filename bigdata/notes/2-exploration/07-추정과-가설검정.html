@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>신뢰구간과 p값이 답하는 질문 구별하기 · 빅분기 노트</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="2-07">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">빅분기 노트</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">2과목 · 빅데이터 탐색</p>
+<p class="chap-num">07</p>
+<h1>신뢰구간과 p값이 답하는 질문 구별하기</h1>
+<p class="lead">대기시간 표본을 평균 내면 한 숫자가 나옵니다. 그 평균이 다른 표본에서는 얼마나 달라질지, 기준 4분이라는 설명과 관측이 얼마나 어긋나는지는 각각 다른 계산으로 확인합니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>점추정과 신뢰구간을 구별한다.</li><li>가설·유의수준·p값·결론을 순서대로 설명한다.</li><li>유의성 및 구간을 현장의 의미와 함께 해석한다.</li></ul></div>
+
+<h2>모집단 평균을 표본평균으로 추정한다</h2>
+<p>독립적으로 뽑은 다섯 대기시간이 3, 5, 7, 5, 5분이라고 합시다. 평균 5분은 이 표본에서 얻은 <b class="key">점추정값</b>입니다. 다른 다섯 명이면 평균이 다를 수 있습니다. 그 불확실성을 설명하려고 같은 표집 절차로 얻는 평균의 표준오차를 계산합니다.</p>
+<p>표본분산은 <code>(4+0+4+0+0)/(5−1)=2</code>분²입니다. 모집단 표준편차를 모르는 상황에서 표본표준편차 √2를 √5로 나눈 추정 표준오차는 약 0.632분입니다. 동일한 정규모집단에서 독립으로 얻었다고 가정하면, 자유도 4인 t분포의 95% 양측 임계값 2.776을 써서 약 <code>5±2.776×0.632</code>를 구합니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 202" role="img" aria-label="표본평균 5를 가운데로 95% 구간 약 3.244~6.756이 그려져 있다. 귀무가설의 평균 4는 구간 안에 있다.">
+<line class="f-ink" x1="120" y1="124" x2="652" y2="124" marker-end="url(#f-arrow)"/><line class="f-ink" x1="120" y1="120" x2="120" y2="132"/><text class="f-s" x="120" y="154" text-anchor="middle">3</text><line class="f-ink" x1="235" y1="120" x2="235" y2="132"/><text class="f-s" x="235" y="154" text-anchor="middle">4</text><line class="f-ink" x1="350" y1="120" x2="350" y2="132"/><text class="f-s" x="350" y="154" text-anchor="middle">5</text><line class="f-ink" x1="465" y1="120" x2="465" y2="132"/><text class="f-s" x="465" y="154" text-anchor="middle">6</text><line class="f-ink" x1="580" y1="120" x2="580" y2="132"/><text class="f-s" x="580" y="154" text-anchor="middle">7</text><line class="f-line" x1="148.06000000000003" y1="87" x2="551.94" y2="87"/><line class="f-line" x1="148.06000000000003" y1="74" x2="148.06000000000003" y2="99"/><line class="f-line" x1="551.94" y1="74" x2="551.94" y2="99"/><line class="f-dash" x1="235" y1="48" x2="235" y2="124"/><text class="f-s" x="235" y="39" text-anchor="middle">비교하는 평균 4</text><circle class="f-fill" cx="350" cy="87" r="5"/><text class="f-t" x="350" y="67" text-anchor="middle">평균 5</text><text class="f-s" x="148.06000000000003" y="64" text-anchor="middle">3.244</text><text class="f-s" x="551.94" y="64" text-anchor="middle">6.756</text><text class="f-cap" x="628" y="176" text-anchor="middle">대기시간 (분)</text>
+</svg><figcaption>구간의 끝은 반올림한 값이다. 점과 구간은 관측한 표본에서 계산한 결과다.</figcaption></figure>
+<p>구간은 약 [3.244,6.756]분입니다. <b class="key">95% 신뢰수준</b>은 같은 모형에서 표본을 뽑고 구간을 만드는 절차를 반복할 때, 그 구간이 고정한 참평균을 포함하는 장기 비율을 설명합니다. 방문 다섯 명 중 95%가 구간 안에 있다는 뜻으로 읽지 않습니다.</p>
+<div class="check" data-q="q1"></div><div class="check" data-q="q2"></div><div class="check" data-q="q3"></div>
+<h2>기준 평균 4분과 자료를 비교한다</h2>
+<p>평균이 4분과 다른지 묻는다면 <b class="key">귀무가설</b> H₀: μ=4, <b>대립가설</b> H₁: μ≠4입니다. 자료를 보기 전에 양측 검정과 유의수준 0.05를 정했다고 합시다. 이 표본의 t값은 <code>(5−4)/0.632…≈1.581</code>입니다. 양측 <b>p값</b>은 귀무모형 아래 이보다 절댓값이 크거나 같은 t통계량을 얻을 확률입니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 184" role="img" aria-label="왼쪽은 구간추정으로 3.244에서 6.756분을 계산. 오른쪽은 평균이 4라는 가설 아래 t 통계량과 p값을 계산.">
+<rect class="f-soft" x="52" y="36" width="308" height="124" rx="3"/><rect class="f-box" x="400" y="36" width="308" height="124" rx="3"/><text class="f-t f-b" x="206" y="71" text-anchor="middle">구간추정</text><text class="f-s" x="206" y="106" text-anchor="middle">같은 절차 반복 시 포괄률</text><text class="f-s" x="206" y="135" text-anchor="middle">95% t 구간 [3.244, 6.756]</text><text class="f-t f-b" x="554" y="71" text-anchor="middle">가설검정</text><text class="f-s" x="554" y="106" text-anchor="middle">귀무 모형에서 값의 극단성</text><text class="f-s" x="554" y="135" text-anchor="middle">μ=4에 대한 양측 p값 0.1890</text>
+</svg><figcaption>같은 자료와 모형에서 두 결과를 구할 수 있다. 어떤 질문에 답했는지 함께 적는다.</figcaption></figure>
+<p>아래 예제는 Python의 SciPy가 설치된 환경에서 실행합니다.</p>
+<pre data-example="python"><code>from math import sqrt
+from statistics import mean, stdev
+from scipy.stats import t, ttest_1samp
+
+wait = [3, 5, 7, 5, 5]
+n = len(wait)
+avg = mean(wait)
+se = stdev(wait) / sqrt(n)
+half_width = t.ppf(.975, n - 1) * se
+result = ttest_1samp(wait, 4)
+print(f&quot;mean={avg:.3f}, se={se:.3f}&quot;)
+print(f&quot;ci=[{avg-half_width:.3f}, {avg+half_width:.3f}]&quot;)
+print(f&quot;t={result.statistic:.3f}, p={result.pvalue:.4f}&quot;)</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>mean=5.000, se=0.632
+ci=[3.244, 6.756]
+t=1.581, p=0.1890</code></pre>
+<p>p값 0.1890은 0.05보다 크므로 이 검정에서는 귀무가설을 기각하지 못합니다. ‘평균이 정확히 4분임을 증명했다’는 결론과 다릅니다. 이 예에서 양측 검정과 같은 모형의 95% 구간은 일관되게 4분을 배제하지 않습니다.</p>
+<div class="check" data-q="q4"></div><div class="check" data-q="q5"></div>
+<h2>가정과 차이의 크기를 함께 본다</h2>
+<p>이 표본이 같은 정규모집단에서 독립적으로 얻어졌다고 가정하면, 평균과 기준의 차이를 추정 표준오차로 나눈 통계량의 귀무분포가 t분포가 됩니다. 연속 기록이 강하게 상관되거나 대기시간의 꼬리가 크게 치우쳤을 때에는 다섯 기록만으로 동일한 해석을 하기 어렵습니다. 또 p값이 작아도 차이가 사람이 느끼는 시간이나 주간 운영에서 중요할 정도인지 확인합니다. 차이의 단위, 추정값과 구간, 어떤 자료를 썼는지를 보고합니다.</p>
+<div class="check" data-q="q6"></div>
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table><thead><tr><th scope="col">계산</th><th scope="col">답하는 질문</th></tr></thead><tbody><tr><td><b class='key'>점추정</b></td><td>한 표본에서 대상 값의 대표 추정치는 무엇인가</td></tr><tr><td><b class='key'>신뢰구간</b></td><td>포괄률을 갖도록 정한 절차의 구간은 어디인가</td></tr><tr><td><b class='key'>p값</b></td><td>귀무가설에서 관측값만큼 극단적인 결과는 얼마나 드문가</td></tr></tbody></table></div>
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>p값을 귀무가설이 참일 확률로 읽지 않고, 효과의 실제 크기와 불확실성을 함께 적는다.</p></div>
+<p><a href="../../../learn/unit.html?u=ST03">신뢰구간</a> · <a href="../../../learn/unit.html?u=ST04">가설검정</a></p>
+
+<h2>참고 자료</h2>
+<ul><li><a href="https://www.dataq.or.kr/www/dataq_brochure_2022.pdf">한국데이터산업진흥원 · 빅데이터분석기사 과목 안내</a></li><li><a href="https://www.itl.nist.gov/div898/handbook/eda/section3/eda352.htm">NIST · 모집단 평균의 신뢰구간</a></li><li><a href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.ttest_1samp.html">SciPy · ttest_1samp</a></li></ul>
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"><a href="../../index.html">← 빅분기 홈</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

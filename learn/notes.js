@@ -217,6 +217,16 @@ window.BDA_CHAPTERS = {
     {"id": "LA06-2", "title": "열공간과 영공간으로 선형계의 해 읽기", "href": "notes/la/la06-2.html"},
     {"id": "LA06-3", "title": "직교정규기저와 QR로 가장 가까운 해 찾기", "href": "notes/la/la06-3.html"}
   ],
+  LA07: [
+    {"id": "LA07-1", "title": "선형변환의 넓이와 방향을 재는 행렬식", "href": "notes/la/la07-1.html"},
+    {"id": "LA07-2", "title": "고유한 방향을 찾고 행렬을 대각화하기", "href": "notes/la/la07-2.html"},
+    {"id": "LA07-3", "title": "대칭행렬과 양의 준정부호", "href": "notes/la/la07-3.html"}
+  ],
+  LA08: [
+    {"id": "LA08-1", "title": "특이값 분해로 입력과 출력의 축을 나누기", "href": "notes/la/la08-1.html"},
+    {"id": "LA08-2", "title": "유사역행렬로 가장 가깝고 짧은 해 구하기", "href": "notes/la/la08-2.html"},
+    {"id": "LA08-3", "title": "저랭크 근사와 PCA의 두 좌표", "href": "notes/la/la08-3.html"}
+  ],
   CA01: [
     {"id": "CA01-1", "title": "항을 크게 보낼 때와 두 점을 좁힐 때", "href": "notes/ca/ca01-1.html"},
     {"id": "CA01-2", "title": "함수의 극한과 연속: 그 점과 그 주변", "href": "notes/ca/ca01-2.html"}
@@ -300,6 +310,20 @@ window.BDA_CHAPTERS = {
     {"id": "ST04-1", "title": "귀무가설, 검정통계량, p값", "href": "notes/st/st04-1.html"},
     {"id": "ST04-2", "title": "틀릴 확률과 검정력, 표본 수를 정하는 법", "href": "notes/st/st04-2.html"}
   ],
+  ST05: [
+    {"id": "ST05-1", "title": "평균 비교의 설계: 독립 표본과 짝지은 표본", "href": "notes/st/st05-1.html"},
+    {"id": "ST05-2", "title": "비율과 분할표: 정확이항 검정과 카이제곱 검정", "href": "notes/st/st05-2.html"},
+    {"id": "ST05-3", "title": "일원 분산분석: 여러 평균을 한 번에 검정하기", "href": "notes/st/st05-3.html"}
+  ],
+  ST06: [
+    {"id": "ST06-1", "title": "검정을 여럿 할 때: 가족 단위 오류와 Bonferroni 보정", "href": "notes/st/st06-1.html"},
+    {"id": "ST06-2", "title": "BH와 FDR: 발견을 보고하는 규칙과 탐색 이후의 검증", "href": "notes/st/st06-2.html"}
+  ],
+  ST07: [
+    {"id": "ST07-1", "title": "단순 선형회귀: 직선 계수와 잔차부터 계산하기", "href": "notes/st/st07-1.html"},
+    {"id": "ST07-2", "title": "다중회귀와 상호작용: 같은 조건에서 무엇이 달라지나", "href": "notes/st/st07-2.html"},
+    {"id": "ST07-3", "title": "잔차 진단과 예측의 불확실성: 관측 범위 안에서 말하기", "href": "notes/st/st07-3.html"}
+  ],
   OP03: [
     {"id": "OP03-1", "title": "최솟값을 정의하고 한 변수에서 내려가기", "href": "notes/op/op03-1.html"},
     {"id": "OP03-2", "title": "두 매개변수에서 기울기를 계산하고 멈추기", "href": "notes/op/op03-2.html"}
@@ -330,10 +354,28 @@ window.BDA_CHAPTERS = {
     {"id": "ML06-2", "title": "결정나무의 질문과 Gini 불순도", "href": "notes/ml/ml06-2.html"},
     {"id": "ML06-3", "title": "나무의 깊이를 제한하고 가지를 치기", "href": "notes/ml/ml06-3.html"}
   ],
+  ML07: [
+    {"id": "ML07-1", "title": "배깅과 랜덤 포레스트의 표본과 투표", "href": "notes/ml/ml07-1.html"},
+    {"id": "ML07-2", "title": "부스팅에서 이전 예측을 순서대로 보완하기", "href": "notes/ml/ml07-2.html"}
+  ],
   ML08: [
     {"id": "ML08-1", "title": "빈 값과 이름을 모델이 쓸 수 있는 입력으로 바꾸기", "href": "notes/ml/ml08-1.html"},
     {"id": "ML08-2", "title": "숫자의 척도, 로그, 특성의 상호작용", "href": "notes/ml/ml08-2.html"},
     {"id": "ML08-3", "title": "전처리 순서와 교차검증에서의 파이프라인", "href": "notes/ml/ml08-3.html"}
+  ],
+  ML09: [
+    {"id": "ML09-1", "title": "k-means의 중심과 계층 군집의 나뭇가지", "href": "notes/ml/ml09-1.html"},
+    {"id": "ML09-2", "title": "밀도로 군집을 만들고 이상치를 따로 본다", "href": "notes/ml/ml09-2.html"},
+    {"id": "ML09-3", "title": "PCA로 많이 퍼진 방향에 자료 사영하기", "href": "notes/ml/ml09-3.html"}
+  ],
+  ML10: [
+    {"id": "ML10-1", "title": "과소·과대적합, 편향과 분산, 정규화", "href": "notes/ml/ml10-1.html"},
+    {"id": "ML10-2", "title": "튜닝을 분리하고 학습곡선으로 다음 실험 읽기", "href": "notes/ml/ml10-2.html"}
+  ],
+  ML11: [
+    {"id": "ML11-1", "title": "확률 보정과 개별 예측의 불확실성", "href": "notes/ml/ml11-1.html"},
+    {"id": "ML11-2", "title": "분포 변화와 강건성을 운영에서 점검하기", "href": "notes/ml/ml11-2.html"},
+    {"id": "ML11-3", "title": "집단별 오류와 특성 중요도를 조사해 읽기", "href": "notes/ml/ml11-3.html"}
   ],
   RL01: [
     {"id": "RL01-1", "title": "에이전트와 환경: 무엇을 보고 무엇을 바꾸나", "href": "notes/rl/rl01-1.html"},
@@ -359,6 +401,11 @@ window.BDA_CHAPTERS = {
     {"id": "RL06-1", "title": "몬테카를로 예측: 에피소드의 끝에서 가치 추정하기", "href": "notes/rl/rl06-1.html"},
     {"id": "RL06-2", "title": "온폴리시 몬테카를로 제어: 탐험하면서 행동 규칙 바꾸기", "href": "notes/rl/rl06-2.html"}
   ],
+  RL07: [
+    {"id": "RL07-1", "title": "시간차 오차와 부트스트랩", "href": "notes/rl/rl07-1.html"},
+    {"id": "RL07-2", "title": "SARSA는 다음에 고른 행동으로 배운다", "href": "notes/rl/rl07-2.html"},
+    {"id": "RL07-3", "title": "Q-learning은 최댓값을 목표로 배운다", "href": "notes/rl/rl07-3.html"}
+  ],
   RS01: [
     {"id": "RS01-1", "title": "질문에서 가설로: 조작적 정의와 측정", "href": "notes/rs/rs01-1.html"},
     {"id": "RS01-2", "title": "큰 질문을 작은 비교로: 가정과 반례", "href": "notes/rs/rs01-2.html"}
@@ -370,6 +417,10 @@ window.BDA_CHAPTERS = {
   BD01: [
     {"id": "BD01-1", "title": "분석 기획 실습에서 업무 결정과 평가 기준 맞추기", "href": "notes/bd/bd01-1.html"},
     {"id": "BD01-2", "title": "계획한 데이터의 품질과 집계 근거를 검증하기", "href": "notes/bd/bd01-2.html"}
+  ],
+  BD02: [
+    {"id": "BD02-1", "title": "데이터 탐색 실습에서 대기시간의 단위를 맞추고 요약하기", "href": "notes/bd/bd02-1.html"},
+    {"id": "BD02-2", "title": "짝지은 자료의 변화와 검정 결론을 보고하기", "href": "notes/bd/bd02-2.html"}
   ]
 };
 

@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>집단 구성까지 살피는 탐색적 데이터 분석 · 빅분기 노트</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="2-05">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">빅분기 노트</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">2과목 · 빅데이터 탐색</p>
+<p class="chap-num">05</p>
+<h1>집단 구성까지 살피는 탐색적 데이터 분석</h1>
+<p class="lead">전체 비율을 보고 잘 운영되는 지점을 골랐는데, 한산한 때와 혼잡한 때를 따로 보면 결론이 달라질 수 있습니다. 탐색에서는 변수형과 분모, 그래프에 보이지 않는 조건을 확인합니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>질문과 변수의 종류에 맞는 그림을 고른다.</li><li>집단 안의 비율과 전체 비율을 계산해 비교한다.</li><li>상관과 시각적 패턴을 원인 주장과 구별한다.</li></ul></div>
+
+<h2>표의 유형에서 어떤 그림을 그릴지 고른다</h2>
+<p><b class="key">탐색적 데이터 분석(EDA)</b>에서는 숫자를 계산하고 그림을 그려 자료의 모양과 의심할 점을 찾습니다. 지점별 건수와 요일 같은 범주에는 막대그래프를 사용할 수 있습니다. 날짜 순서에 따른 급변은 선그래프, 대기 인원과 대기시간처럼 짝을 이룬 수치는 산점도로 살필 수 있습니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 215" role="img" aria-label="정리할 질문에 맞춰 자료 유형을 확인한다. 요일별 건수는 막대, 순서 있는 날짜는 시간선, 두 수치 사이 관계는 산점도.">
+<rect class="f-box" x="43" y="27" width="187" height="163" rx="3"/><text class="f-t f-b" x="136.5" y="50" text-anchor="middle">막대그래프</text><line class="f-ink" x1="87" y1="144" x2="202" y2="144"/><line class="f-ink" x1="87" y1="144" x2="87" y2="65"/><rect class="f-soft" x="97" y="116" width="16" height="28" rx="3"/><rect class="f-soft" x="126" y="96" width="16" height="48" rx="3"/><rect class="f-soft" x="155" y="107" width="16" height="37" rx="3"/><text class="f-s" x="136.5" y="172" text-anchor="middle">범주별 건수</text><rect class="f-box" x="286" y="27" width="187" height="163" rx="3"/><text class="f-t f-b" x="379.5" y="50" text-anchor="middle">시간을 따른 선</text><line class="f-ink" x1="330" y1="144" x2="445" y2="144"/><line class="f-ink" x1="330" y1="144" x2="330" y2="65"/><polyline class="f-line" points="333,126 356,113 382,121 403,94 437,88"/><text class="f-s" x="379.5" y="172" text-anchor="middle">날짜 순서와 추세</text><rect class="f-box" x="529" y="27" width="187" height="163" rx="3"/><text class="f-t f-b" x="622.5" y="50" text-anchor="middle">산점도</text><line class="f-ink" x1="573" y1="144" x2="688" y2="144"/><line class="f-ink" x1="573" y1="144" x2="573" y2="65"/><circle class="f-fill" cx="587" cy="132" r="3"/><circle class="f-fill" cx="604" cy="111" r="3"/><circle class="f-fill" cx="613" cy="116" r="3"/><circle class="f-fill" cx="641" cy="98" r="3"/><circle class="f-fill" cx="658" cy="109" r="3"/><circle class="f-fill" cx="681" cy="76" r="3"/><text class="f-s" x="622.5" y="172" text-anchor="middle">두 수치의 관계</text>
+</svg><figcaption>축에 무엇을 놓는지부터 고른다. 위 도식은 그래프 형태를 구분하기 위한 것이다.</figcaption></figure>
+<p>처리량이 증가한 것처럼 보이면 세로축 범위와 시간 간격을 먼저 확인합니다. 두 팀이 1시간마다 집계한 수와 하루 전체 집계를 한 눈금에 넣으면 비교가 어렵습니다. 범주별 건수를 수치 범위의 히스토그램과 혼동하지 말고, 비율을 보고할 때는 분모를 표시합니다.</p>
+<div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
+<h2>전체 수치가 집단별 비교와 다른 경우</h2>
+<div class="table-wrap"><table><thead><tr><th scope="col">방문 조건</th><th scope="col">A의 정시 처리</th><th scope="col">B의 정시 처리</th></tr></thead><tbody><tr><td>한산</td><td>9건 / 10건 = 90%</td><td>80건 / 100건 = 80%</td></tr><tr><td>혼잡</td><td>20건 / 100건 = 20%</td><td>1건 / 10건 = 10%</td></tr><tr><td>전체</td><td>29건 / 110건 ≈ 26.4%</td><td>81건 / 110건 ≈ 73.6%</td></tr></tbody></table></div>
+<p>두 조건 모두 A의 비율이 높지만, A는 어려운 혼잡 기록의 비중이 큽니다. B는 한산한 기록의 비중이 큽니다. 합쳐서 보면 B의 비율이 훨씬 높습니다. 조건별 비교와 전체 비교의 방향이 뒤집히는 경우를 <b class="key">심프슨 역설</b>이라고 합니다. 서로 다른 질문에 답한 값이므로 어느 쪽의 분모를 사용했는지 분명히 적습니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 309" role="img" aria-label="한산한 때는 A 90%, B 80%, 혼잡한 때는 A 20%, B 10%. 전체는 A 26.4%, B 73.6%다.">
+<text class="f-cap" x="132" y="75" text-anchor="end">한산</text><text class="f-s" x="165" y="58" text-anchor="middle">A</text><text class="f-s" x="165" y="87" text-anchor="middle">B</text><rect class="f-soft" x="192" y="44" width="396" height="21" rx="3"/><rect class="f-box" x="192" y="72" width="352" height="21" rx="3"/><text class="f-s" x="599" y="59" text-anchor="start">90%</text><text class="f-s" x="555" y="87" text-anchor="start">80%</text><text class="f-cap" x="132" y="149" text-anchor="end">혼잡</text><text class="f-s" x="165" y="132" text-anchor="middle">A</text><text class="f-s" x="165" y="161" text-anchor="middle">B</text><rect class="f-soft" x="192" y="118" width="88" height="21" rx="3"/><rect class="f-box" x="192" y="146" width="44" height="21" rx="3"/><text class="f-s" x="291" y="133" text-anchor="start">20%</text><text class="f-s" x="247" y="161" text-anchor="start">10%</text><text class="f-cap" x="132" y="223" text-anchor="end">전체</text><text class="f-s" x="165" y="206" text-anchor="middle">A</text><text class="f-s" x="165" y="235" text-anchor="middle">B</text><rect class="f-soft" x="192" y="192" width="115.99999999999999" height="21" rx="3"/><rect class="f-box" x="192" y="220" width="324" height="21" rx="3"/><text class="f-s" x="319" y="207" text-anchor="start">26.4%</text><text class="f-s" x="527" y="235" text-anchor="start">73.6%</text><line class="f-ink" x1="192" y1="264" x2="638" y2="264" marker-end="url(#f-arrow)"/><line class="f-ink" x1="192" y1="263" x2="192" y2="270"/><text class="f-s" x="192" y="288" text-anchor="middle">0%</text><line class="f-ink" x1="412" y1="263" x2="412" y2="270"/><text class="f-s" x="412" y="288" text-anchor="middle">50%</text><line class="f-ink" x1="632" y1="263" x2="632" y2="270"/><text class="f-s" x="632" y="288" text-anchor="middle">100%</text>
+</svg><figcaption>막대는 정시 처리 비율이다. 그림에서 빠진 분모를 반드시 표와 함께 읽는다.</figcaption></figure>
+<pre data-example="python"><code>a = [(9, 10), (20, 100)]
+b = [(80, 100), (1, 10)]
+
+def pooled(rows):
+    return sum(done for done, total in rows) / sum(total for done, total in rows)
+
+for name, rows in ((&quot;A&quot;, a), (&quot;B&quot;, b)):
+    group_rates = [f&quot;{done/total:.1%}&quot; for done, total in rows]
+    print(name, *group_rates, f&quot;{pooled(rows):.1%}&quot;)</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>A 90.0% 20.0% 26.4%
+B 80.0% 10.0% 73.6%</code></pre>
+<div class="check" data-q="q3"></div><div class="check" data-q="q4"></div><div class="check" data-q="q5"></div>
+<h2>값이 함께 움직여도 이유는 더 확인한다</h2>
+<p>정시 처리 비율이 낮은 지점이 더 큰 업무를 처리했을 수 있습니다. 행사, 당일 인력, 고객 유형 등 다른 조건이 두 수치 모두와 관계될 수도 있습니다. 산점도가 함께 증가하는 모양을 보여도 그것만으로 한 값이 다른 값을 변화시켰다고 말할 수는 없습니다. <a href="../../../learn/unit.html?u=PR07">공분산과 상관</a>에서 곡선 관계와 이상값의 예를 다룹니다.</p>
+<p>탐색에서 뒤늦게 발견한 흥미로운 패턴은 다음 분석 질문으로 기록합니다. 여러 조합을 본 뒤 가장 눈에 띈 하나만 보고한다면 우연히 큰 차이를 골랐을 수 있습니다. 새 자료에서 같은 정의로 검증하거나, 적어도 언제 발견한 결과인지 구분합니다.</p>
+<div class="check" data-q="q6"></div>
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table><thead><tr><th scope="col">핵심어</th><th scope="col">기억할 기준</th></tr></thead><tbody><tr><td><b class='key'>EDA</b></td><td>분포와 관계를 보며 누락·집단 구성·가정을 확인</td></tr><tr><td><b class='key'>조건별 비율</b></td><td>같은 조건 안에서 해당 행의 건수와 분모로 계산</td></tr><tr><td><b class='key'>전체 비율</b></td><td>건수와 분모를 각각 더해 계산. 조건별 비율의 단순 평균과 다를 수 있음</td></tr></tbody></table></div>
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>그래프의 방향을 읽기 전에 각 점과 막대의 분모, 단위, 관측 조건을 확인한다.</p></div>
+
+<h2>참고 자료</h2>
+<ul><li><a href="https://www.dataq.or.kr/www/dataq_brochure_2022.pdf">한국데이터산업진흥원 · 빅데이터분석기사 과목 안내</a></li><li><a href="https://www.itl.nist.gov/div898/handbook/eda/section3/eda33.htm">NIST · EDA 그래프 기법</a></li></ul>
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"><a href="../../index.html">← 빅분기 홈</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

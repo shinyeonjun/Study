@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>시간차 오차와 부트스트랩 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e8c'/%3E%3Cpath d='M8 22V10m8 12V14m8 8V6' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="RL07-1">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+
+<header class="chapter">
+<p class="chap-sub">강화학습 · RL07 한 단계씩 배우기</p>
+<p class="chap-num">RL07·1</p>
+<h1>시간차 오차와 부트스트랩</h1>
+<p class="lead">에피소드 끝까지 기다리는 대신 한 전이마다 예측을 고칩니다. 실제로 받은 보상과 다음 상태의 현재 추정값이 각각 목표에 어떻게 들어가는지 확인합니다.</p>
+</header>
+
+<div class="goal">
+<h2>이 장을 읽고 나면</h2>
+<ul>
+<li>한 전이 직후 TD 목표, TD 오차, 새 가치를 계산한다.</li>
+<li>동적 계획법과 몬테카를로와 TD가 목표를 만드는 방법을 비교한다.</li>
+<li>과제 자체의 종료와 외부 시간 제한에서 목표를 다르게 계산한다.</li>
+</ul>
+</div>
+
+<h2>다음 상태에 도착한 순간 현재 상태의 값을 다시 계산한다</h2>
+<p>앞의 확인대 모형을 그대로 사용합니다. S에서 확인하면 보상 0으로 C에 갑니다. C에서 확인하면 절반의 확률로 보상 3을 받고 T에서 끝나며, 나머지 절반은 보상 −1을 받고 C로 돌아옵니다. 이 장에서 평가할 정책은 S와 C에서 항상 확인입니다. 할인율 γ는 1/2입니다.</p>
+<p>몬테카를로 예측은 기록이 끝나야 그때까지 받은 실제 반환값을 계산했습니다. <b class="key">시간차 학습</b>(TD)의 한 단계 버전은 실제로 본 보상과, 도착한 상태의 현재 추정 가치를 합쳐 목표를 만듭니다. 아직 보지 못한 미래를 현재 추정값으로 채우는 것을 <b class="key">부트스트랩</b>이라고 합니다. 확률표 전체를 아는 것은 필요하지 않습니다.</p>
+<p class="calc">TD 목표 Y = r + γV(s′). &nbsp; TD 오차 δ = Y − V(s).<br>V(s) ← V(s) + αδ.</p>
+<p>r은 s에서 행동하고 s′에 도착하면서 얻은 보상입니다. α는 학습률입니다. 이 예의 α=1/2에서는 과거 값과 목표의 중간까지 움직입니다. 다음 상태가 C이고 현재 상태도 C인 전이라면 갱신 전 C 값으로 목표와 오차를 먼저 계산합니다.</p>
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+
+<h2>한 에피소드 안에서도 값이 달라진다</h2>
+<p>초기 V(S)=V(C)=0인 상태로 S→C→C→T를 관측했습니다. 보상은 0, −1, 3 순서입니다. 첫 전이의 목표는 0+½×0=0이라 V(S)는 0에 남습니다. C→C에서는 목표가 −1이라 V(C)가 −1/2입니다. C→T는 과제 자체의 종료이므로 다음 항이 없고 목표는 3입니다. 오차는 3−(−1/2)=7/2, 새 V(C)는 −1/2+(1/2)(7/2)=5/4입니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 213" role="img" aria-label="S에서 C로 보상 0, C에서 C로 -1, C에서 T로 3을 받는다. 처음 값이 0이면 각 전이의 TD 목표는 0,-1,3이다. S의 실제 반환은 1/4이다.">
+<rect class="f-box" x="39" y="55" width="114" height="56" rx="3"/>
+<text class="f-cap" x="96" y="78" text-anchor="middle">S</text>
+<text class="f-s" x="96" y="100" text-anchor="middle">시작</text>
+<line class="f-line" x1="157" y1="86" x2="225" y2="86" marker-end="url(#f-arrow)"/>
+<text class="f-t" x="191" y="71" text-anchor="middle">0</text>
+<rect class="f-box" x="228" y="55" width="114" height="56" rx="3"/>
+<text class="f-cap" x="285" y="78" text-anchor="middle">C</text>
+<text class="f-s" x="285" y="100" text-anchor="middle">확인대</text>
+<line class="f-line" x1="346" y1="86" x2="414" y2="86" marker-end="url(#f-arrow)"/>
+<text class="f-t" x="380" y="71" text-anchor="middle">−1</text>
+<rect class="f-box" x="417" y="55" width="114" height="56" rx="3"/>
+<text class="f-cap" x="474" y="78" text-anchor="middle">C</text>
+<text class="f-s" x="474" y="100" text-anchor="middle">다시 확인대</text>
+<line class="f-line" x1="535" y1="86" x2="603" y2="86" marker-end="url(#f-arrow)"/>
+<text class="f-t" x="569" y="71" text-anchor="middle">3</text>
+<rect class="f-soft" x="606" y="55" width="114" height="56" rx="3"/>
+<text class="f-cap" x="663" y="78" text-anchor="middle">T</text>
+<text class="f-s" x="663" y="100" text-anchor="middle">완료</text>
+
+
+<text class="f-s" x="195" y="146" text-anchor="middle">TD 목표 0</text>
+<text class="f-s" x="383" y="146" text-anchor="middle">TD 목표 −1</text>
+<text class="f-s" x="571" y="146" text-anchor="middle">TD 목표 3</text>
+<line class="f-dash" x1="96" y1="163" x2="663" y2="163"/>
+<text class="f-s" x="380" y="191" text-anchor="middle">마지막까지 읽으면 S의 실제 반환은 0 + ½(−1) + ¼(3) = ¼</text>
+</svg>
+<figcaption>이 에피소드가 끝난 후 다시 S→C를 경험하면, 이제 V(C)=5/4이므로 S의 목표는 5/8이 된다.</figcaption>
+</figure>
+<p>같은 기록을 몬테카를로로 읽으면 첫 S의 관측 반환은 0+½(−1)+¼(3)=1/4입니다. 몬테카를로는 아직 못 받은 보상을 현재 V로 대신하지 않습니다. 동적 계획법의 정책 평가는 전이 확률표가 있을 때 모든 다음 결과의 평균을 냅니다. 이 모형의 C에서는 그 평균 목표가 (3/2)+(−1+γV(C))/2=1+V(C)/4입니다. TD는 여기서 실제로 뽑힌 결과 하나를 이용합니다.</p>
+<div class="check" data-q="q3"></div>
+<div class="check" data-q="q4"></div>
+
+<h2>과제의 종료와 기록의 중단을 구분한다</h2>
+<p>과제의 정의상 끝인 T에 도착했다면 보상 이외의 미래 항은 0입니다. 반면 원래 계속할 수 있는 과제를 실행기나 실험 설정이 시간 제한으로 잘랐다면, 그 전이에서 관측한 마지막 상태는 아직 과제 안의 상태입니다. 이런 <b class="key">잘림</b>에서 원래 과제의 값을 학습한다면 마지막 상태에서 부트스트랩합니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 186" role="img" aria-label="과제 자체의 종료는 보상 2를 바로 목표로 한다. 수집만 잘린 비종료 상태 C의 가치가 2라면, 보상 0과 할인율 1/2의 TD 목표는 1이다.">
+<text class="f-cap" x="190" y="32" text-anchor="middle">과제 자체가 끝난 경우</text>
+<text class="f-cap" x="556" y="32" text-anchor="middle">수집만 멈춘 경우</text>
+<rect class="f-box" x="60" y="62" width="260" height="41" rx="3"/>
+<rect class="f-soft" x="426" y="62" width="260" height="41" rx="3"/>
+<text class="f-t" x="190" y="88" text-anchor="middle">S → T · 보상 2</text>
+<text class="f-t" x="556" y="88" text-anchor="middle">S → C · 보상 0</text>
+<text class="f-t" x="190" y="137" text-anchor="middle">TD 목표 = 2</text>
+<text class="f-t" x="556" y="137" text-anchor="middle">TD 목표 = 0 + ½×2 = 1</text>
+<text class="f-s" x="190" y="166" text-anchor="middle">T 뒤에 이 과제의 보상이 없다.</text>
+<text class="f-s" x="556" y="166" text-anchor="middle">마지막 C에서 이어질 가치가 있다.</text>
+</svg>
+<figcaption>초기화 이후의 새 S가 아니라, 바로 그 전이가 도달한 마지막 상태 C를 사용한다.</figcaption>
+</figure>
+<p>제한 시간이 과제 목표의 일부라면 끝에서 실제로 종료합니다. 그런 유한 시간 과제에서는 남은 시간도 상태에 반영해야 같은 위치에서 앞으로 가능한 반환을 구별할 수 있습니다. API가 <code>terminated</code>와 <code>truncated</code>를 분리하면, 리셋할 상황과 미래 항을 없앨 상황을 따로 판단할 수 있습니다.</p>
+<div class="check" data-q="q5"></div>
+<div class="check" data-q="q6"></div>
+
+<h2>같은 전이 기록과 종료 조건을 분수로 계산한다</h2>
+<pre data-example="python"><code>from fractions import Fraction as F
+
+alpha = gamma = F(1, 2)
+
+def target(reward, next_state, terminated, value):
+    return F(reward) if terminated else F(reward) + gamma * value[next_state]
+
+value = {&quot;S&quot;: F(0), &quot;C&quot;: F(0)}
+transitions = [(&quot;S&quot;, 0, &quot;C&quot;, False), (&quot;C&quot;, -1, &quot;C&quot;, False),
+               (&quot;C&quot;, 3, &quot;T&quot;, True), (&quot;S&quot;, 0, &quot;C&quot;, False)]
+for state, reward, next_state, terminated in transitions:
+    estimate = target(reward, next_state, terminated, value)
+    delta = estimate - value[state]
+    value[state] += alpha * delta
+    print(f&quot;{state}-&gt;{next_state}: target={estimate}, delta={delta}, V={value[state]}&quot;)
+
+print(&quot;terminal:&quot;, target(2, &quot;T&quot;, True, {&quot;C&quot;: F(2)}))
+print(&quot;cutoff:&quot;, target(0, &quot;C&quot;, False, {&quot;C&quot;: F(2)}))</code></pre>
+<pre data-output><code>S-&gt;C: target=0, delta=0, V=0
+C-&gt;C: target=-1, delta=-1, V=-1/2
+C-&gt;T: target=3, delta=7/2, V=5/4
+S-&gt;C: target=5/8, delta=5/8, V=5/16
+terminal: 2
+cutoff: 1</code></pre>
+<p>실제 종료와 실험의 중단 둘 다 기록을 끝낼 수 있습니다. 코드의 목표 계산은 원래 과제에서 종료했는지에만 따릅니다. 일정한 α로 기록 몇 개를 학습한 값은 정책의 참값과 다를 수 있습니다.</p>
+
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table>
+<thead><tr><th scope="col">목표를 만드는 방식</th><th scope="col">다음 항</th></tr></thead>
+<tbody>
+<tr><td>동적 계획법</td><td>알려진 전이 확률로 가능한 보상과 다음 가치의 평균을 구한다.</td></tr>
+<tr><td>몬테카를로</td><td>에피소드에서 받은 실제 보상을 끝까지 할인해 더한다.</td></tr>
+<tr><td>TD(0)</td><td>보상 하나와 다음 가치 추정값을 쓴다. 과제 자체의 종료에서는 다음 항을 0으로 둔다.</td></tr>
+</tbody>
+</table></div>
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://web.stanford.edu/class/psych209/Readings/SuttonBartoIPRLBook2ndEd.pdf">Sutton·Barto, Reinforcement Learning 2판 · 6장 TD 예측</a></li>
+<li><a href="https://gymnasium.farama.org/tutorials/gymnasium_basics/handling_time_limits/">Gymnasium 공식 문서 · 시간 제한과 부트스트랩</a></li>
+</ul>
+
+
+<h2>확인 문제</h2>
+<p>아직 풀지 않은 문제입니다. 먼저 식이나 근거를 적어 보고 해설을 확인합니다.</p>
+<div id="quiz"></div>
+
+<section class="work" id="tools"></section>
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>대칭행렬과 양의 준정부호 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e8c'/%3E%3Cpath d='M8 22V10m8 12V14m8 8V6' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="LA07-3">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+
+<header class="chapter">
+<p class="chap-sub">선형대수 · LA07 변환의 고유한 방향</p>
+<p class="chap-num">LA07·3</p>
+<h1>대칭행렬과 양의 준정부호</h1>
+<p class="lead">수직인 고유방향에서 대칭행렬의 작용을 봅니다. 방향을 어떤 쪽으로 골라도 이차형식이 음이 아닌 조건을 고유값과 연결합니다.</p>
+</header>
+
+<div class="goal">
+<h2>이 장을 읽고 나면</h2>
+<ul>
+<li>대칭행렬의 고유벡터를 직교정규기저로 골라 대각화한다.</li>
+<li>xᵀAx와 고유값의 부호로 양의 정부호와 양의 준정부호를 확인한다.</li>
+<li>MᵀM과 공분산 행렬에 음의 고유값이 없다는 이유를 설명한다.</li>
+</ul>
+</div>
+
+<h2>대칭이면 수직인 고유방향을 고를 수 있다</h2>
+<p>실수 정사각행렬 A에서 Aᵀ=A이면 <b class="key">대칭행렬</b>입니다. 실대칭행렬은 실수 고유값을 갖고, 길이가 1이며 서로 수직인 고유벡터들로 기저를 고를 수 있습니다. 이를 <b>스펙트럼 정리</b>라고 부릅니다. 고유값이 같은 여러 방향에서도 직교정규기저를 고를 수 있습니다.</p>
+<p>서로 다른 고유값 λ, μ의 벡터를 u, v라고 하면 대칭 때문에 (Au)ᵀv=uᵀAv입니다. 이 식은 λ(uᵀv)=μ(uᵀv)가 되므로 uᵀv=0입니다. 고유벡터를 모은 행렬 Q는 열끼리 직교하고 길이가 1이라 QᵀQ=I입니다. 따라서 Q⁻¹=Qᵀ이고 A=QΛQᵀ입니다.</p>
+<p>A=[[2,1],[1,2]]는 q₁=(1,1)/√2 방향을 3배, q₂=(1,−1)/√2 방향을 1배로 보냅니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 246" role="img" aria-label="입력 원의 직교 방향 q1과 q2를 행렬 A가 각각 3배와 1배로 보낸다. 출력 타원의 두 축은 q1과 q2 방향이다.">
+<text class="f-cap" x="202" y="32" text-anchor="middle">입력 · 단위 원</text>
+<line class="f-ink" x1="81" y1="143" x2="323" y2="143"/>
+<line class="f-ink" x1="202" y1="239" x2="202" y2="55"/>
+<ellipse class="f-soft" cx="202" cy="143" rx="34" ry="34" transform="rotate(-45 202 143)"/>
+<line class="f-line" x1="202" y1="143" x2="226.04" y2="118.96" marker-end="url(#f-arrow)"/>
+<line class="f-line" x1="202" y1="143" x2="226.04" y2="167.04" marker-end="url(#f-arrow)"/>
+<text class="f-s" x="235" y="113" text-anchor="start">q₁</text>
+<text class="f-s" x="234" y="181" text-anchor="start">q₂</text>
+<text class="f-cap" x="553" y="32" text-anchor="middle">출력 · 고유방향을 축으로 하는 타원</text>
+<line class="f-ink" x1="432" y1="143" x2="674" y2="143"/>
+<line class="f-ink" x1="553" y1="239" x2="553" y2="55"/>
+<ellipse class="f-soft" cx="553" cy="143" rx="102" ry="34" transform="rotate(-45 553 143)"/>
+<line class="f-line" x1="553" y1="143" x2="625.12" y2="70.88" marker-end="url(#f-arrow)"/>
+<line class="f-line" x1="553" y1="143" x2="577.04" y2="167.04" marker-end="url(#f-arrow)"/>
+<text class="f-s" x="634" y="65" text-anchor="start">3q₁</text>
+<text class="f-s" x="585" y="181" text-anchor="start">q₂</text>
+<line class="f-line" x1="333" y1="143" x2="408" y2="143" marker-end="url(#f-arrow)"/>
+<text class="f-t" x="371" y="120" text-anchor="middle">A</text>
+</svg>
+<figcaption>회전한 축에서 성분마다 따로 늘어난다. q₁은 첫 번째 길이 3, q₂는 두 번째 길이 1의 방향이다.</figcaption>
+</figure>
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+
+<h2>벡터가 어떤 방향에 있든 제곱식이 음이 아닌가</h2>
+<p>xᵀAx는 벡터 하나에 대해 얻는 숫자이며 <b class="key">이차형식</b>이라고 합니다. x=Qz로 적으면 z=Qᵀx는 직교정규 고유기저의 좌표입니다. 따라서 xᵀAx=zᵀΛz=Σ<sub>i</sub> λ<sub>i</sub>z<sub>i</sub>²입니다. 모든 x에서 이 값이 음이 아닌 실대칭행렬을 <b class="key">양의 준정부호</b>(PSD)라고 합니다. 모든 x≠0에서 값이 양수이면 <b>양의 정부호</b>(PD)입니다.</p>
+<p>고유값에 음수가 하나라도 있으면 그 단위 고유벡터를 x로 놓아 음수를 얻습니다. 그래서 PSD는 모든 고유값 ≥0, PD는 모든 고유값 &gt;0인 조건과 각각 동치입니다. 예를 들어 B=[[1,1],[1,1]]에서 xᵀBx=(x₁+x₂)²입니다. B는 고유값 2와 0을 가져 PSD이며, x=(1,−1)처럼 0이 아닌 벡터에 대해서도 값이 0입니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 229" role="img" aria-label="B의 단위 고유벡터 q1, q2에서 이차형식 값은 2,0이다. D의 e1, e2에서는 1과 -1이다.">
+<text class="f-cap" x="199" y="34" text-anchor="middle">B의 직교 고유방향</text>
+<text class="f-cap" x="564" y="34" text-anchor="middle">D의 직교 고유방향</text>
+<line class="f-ink" x1="96" y1="140" x2="316" y2="140"/>
+<line class="f-ink" x1="449" y1="140" x2="675" y2="140"/>
+<rect class="f-soft" x="129" y="68" width="55" height="72" rx="3"/>
+<circle class="f-fill" cx="263" cy="140" r="4"/>
+<rect class="f-soft" x="482" y="104" width="55" height="36" rx="3"/>
+<rect class="f-over" x="595" y="140" width="55" height="36" rx="3"/>
+<text class="f-t" x="156" y="57" text-anchor="middle">2</text>
+<text class="f-t" x="263" y="127" text-anchor="middle">0</text>
+<text class="f-t" x="509" y="93" text-anchor="middle">1</text>
+<text class="f-t" x="622" y="197" text-anchor="middle">−1</text>
+<text class="f-s" x="156" y="214" text-anchor="middle">q₁의 값</text>
+<text class="f-s" x="263" y="214" text-anchor="middle">q₂의 값</text>
+<text class="f-s" x="509" y="214" text-anchor="middle">e₁의 값</text>
+<text class="f-s" x="622" y="214" text-anchor="middle">e₂의 값</text>
+</svg>
+<figcaption>D=diag(1,−1)는 방향에 따라 양수와 음수를 모두 내는 부정부호 행렬이다.</figcaption>
+</figure>
+<p>대칭이더라도 D처럼 음의 고유값이 있을 수 있습니다. B처럼 준정부호일 때 고유값 0이 허용되므로 역행렬이 없을 수도 있습니다.</p>
+<div class="check" data-q="q3"></div>
+<div class="check" data-q="q4"></div>
+
+<h2>길이 제곱으로 쓰이는 행렬은 준정부호다</h2>
+<p>M이 직사각행렬이어도 MᵀM은 정사각 대칭행렬입니다. xᵀ(MᵀM)x=(Mx)ᵀ(Mx)=∥Mx∥²≥0이므로 PSD입니다. 이 형태를 <b>그람 행렬</b>이라고 합니다. M의 열이 독립이면 x≠0에서 Mx가 0이 아니기 때문에 PD입니다. 서로 종속된 열이 있으면 0 방향도 생깁니다.</p>
+<p>중심화한 자료 X의 각 행이 관측 하나이고 각 열이 특성 하나라면, n&gt;1에서 표본 공분산 행렬은 XᵀX/(n−1)입니다. 같은 이유로 PSD입니다. 어떤 단위방향 x로 자료를 사영했을 때 표본분산이 xᵀ[XᵀX/(n−1)]x입니다. 이 성질은 뒤의 주성분 분석으로 이어집니다.</p>
+<div class="check" data-q="q5"></div>
+<div class="check" data-q="q6"></div>
+
+<h2>고유값과 그람 행렬의 제곱을 실행해 확인한다</h2>
+<pre data-example="python"><code>import numpy as np
+
+matrices = {
+    &quot;A&quot;: np.array([[2, 1], [1, 2]]),
+    &quot;B&quot;: np.ones((2, 2)),
+    &quot;D&quot;: np.diag([1, -1]),
+}
+for name, matrix in matrices.items():
+    eig = np.linalg.eigvalsh(matrix)
+    print(name, &quot; &quot;.join(f&quot;{value:.1f}&quot; for value in eig))
+
+M = np.array([[1, 1], [2, 2], [0, 0]])
+x = np.array([2, -1])
+gram_result = x @ (M.T @ M) @ x
+length_squared = (M @ x) @ (M @ x)
+assert gram_result == length_squared
+print(&quot;Gram:&quot;, gram_result, length_squared)</code></pre>
+<pre data-output><code>A 1.0 3.0
+B 0.0 2.0
+D -1.0 1.0
+Gram: 5 5</code></pre>
+<p><code>eigvalsh</code>에는 실대칭행렬을 넣었습니다. 출력의 고유값은 작은 값부터입니다. 마지막 줄은 xᵀ(MᵀM)x와 ∥Mx∥²를 따로 계산한 값입니다.</p>
+
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table>
+<thead><tr><th scope="col">전제</th><th scope="col">확인할 결과</th></tr></thead>
+<tbody>
+<tr><td>실대칭 A</td><td>실수 고유값과 직교정규 고유기저, A=QΛQᵀ.</td></tr>
+<tr><td>PSD / PD</td><td>모든 고유값이 각각 0 이상 / 0보다 큼.</td></tr>
+<tr><td>그람 행렬 MᵀM</td><td>이차형식이 ∥Mx∥²이므로 PSD.</td></tr>
+</tbody>
+</table></div>
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://ocw.mit.edu/courses/18-06sc-linear-algebra-fall-2011/pages/positive-definite-matrices-and-applications/">MIT 18.06SC · 대칭행렬과 양의 정부호</a></li>
+<li><a href="https://numpy.org/doc/stable/reference/generated/numpy.linalg.eigvalsh.html">NumPy 공식 문서 · 실대칭행렬의 고유값</a></li>
+</ul>
+
+
+<h2>확인 문제</h2>
+<p>아직 풀지 않은 문제입니다. 먼저 식이나 근거를 적어 보고 해설을 확인합니다.</p>
+<div id="quiz"></div>
+
+<section class="work" id="tools"></section>
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>고유한 방향을 찾고 행렬을 대각화하기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e8c'/%3E%3Cpath d='M8 22V10m8 12V14m8 8V6' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="LA07-2">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+
+<header class="chapter">
+<p class="chap-sub">선형대수 · LA07 변환의 고유한 방향</p>
+<p class="chap-num">LA07·2</p>
+<h1>고유한 방향을 찾고 행렬을 대각화하기</h1>
+<p class="lead">변환해도 한 직선 위에 남는 방향을 계산합니다. 그 방향들로 기저를 만들 수 있다면, 행렬을 반복해서 곱하는 일이 성분별 곱셈으로 바뀝니다.</p>
+</header>
+
+<div class="goal">
+<h2>이 장을 읽고 나면</h2>
+<ul>
+<li>Av=λv를 만족하는 0이 아닌 벡터와 그 배율을 읽는다.</li>
+<li>작은 행렬에서 고유값과 고유벡터를 계산한다.</li>
+<li>독립인 고유벡터를 모아 대각화하고 거듭제곱을 계산한다.</li>
+</ul>
+</div>
+
+<h2>방향 하나 위에서 배율만 바뀌는 경우를 찾는다</h2>
+<p>정사각행렬 A를 곱하면 벡터가 대개 다른 방향으로 움직입니다. 어떤 0이 아닌 v에서 A를 적용한 결과가 같은 직선 위의 λv라면, 그 v를 <b class="key">고유벡터</b>, 배율 λ를 <b class="key">고유값</b>이라고 합니다. λ가 음수이면 방향이 반대로 바뀝니다. λ=0이면 그 방향이 0으로 눌립니다. v는 0일 수 없습니다. 0벡터는 어떤 λ를 써도 식이 같아 특정 방향을 알려 주지 않습니다.</p>
+<p class="calc">Av=λv &nbsp; ⇔ &nbsp; (A−λI)v=0.</p>
+<p>0이 아닌 해가 있으려면 A−λI가 가역이면 안 됩니다. 따라서 <b>특성 방정식</b> det(A−λI)=0을 풀고, 나온 λ마다 위의 선형식을 풀어 v를 찾습니다. 이 장은 실수 고유값과 벡터의 예를 다룹니다. 실수 행렬도 복소수 고유값을 가질 수 있습니다.</p>
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+
+<h2>두 고유벡터를 손으로 구한다</h2>
+<p>A=[[3,1],[0,2]]는 상삼각행렬이라 det(A−λI)=(3−λ)(2−λ)입니다. 따라서 λ=3 또는 2입니다. λ=3이면 둘째 좌표가 0이어서 v₁=(1,0)을 고를 수 있습니다. λ=2이면 첫째 좌표와 둘째 좌표의 합이 0이므로 v₂=(−1,1)을 고릅니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 234" role="img" aria-label="왼쪽에서 고유벡터 v1은 (1,0), v2는 (-1,1)이다. 오른쪽에서는 같은 직선 위에서 각각 (3,0), (-2,2)가 된다.">
+<text class="f-cap" x="202" y="30" text-anchor="middle">입력의 두 방향</text>
+<line class="f-ink" x1="70" y1="181" x2="359" y2="181" marker-end="url(#f-arrow)"/>
+<line class="f-ink" x1="202" y1="202" x2="202" y2="46" marker-end="url(#f-arrow)"/>
+<line class="f-line" x1="202" y1="181" x2="239" y2="181" marker-end="url(#f-arrow)"/>
+<line class="f-line" x1="202" y1="181" x2="165" y2="144" marker-end="url(#f-arrow)"/>
+<text class="f-s" x="239" y="210" text-anchor="middle">v₁</text>
+<text class="f-s" x="152" y="138" text-anchor="end">v₂</text>
+<text class="f-cap" x="538" y="30" text-anchor="middle">행렬을 한 번 적용</text>
+<line class="f-ink" x1="406" y1="181" x2="695" y2="181" marker-end="url(#f-arrow)"/>
+<line class="f-ink" x1="538" y1="202" x2="538" y2="46" marker-end="url(#f-arrow)"/>
+<line class="f-line" x1="538" y1="181" x2="649" y2="181" marker-end="url(#f-arrow)"/>
+<line class="f-line" x1="538" y1="181" x2="464" y2="107" marker-end="url(#f-arrow)"/>
+<text class="f-s" x="649" y="210" text-anchor="middle">3v₁</text>
+<text class="f-s" x="451" y="101" text-anchor="end">2v₂</text>
+</svg>
+<figcaption>두 고유벡터는 수직이지 않아도 된다. 여기에서는 서로의 배수가 아니어서 평면의 기저가 된다.</figcaption>
+</figure>
+<p>A(1,0)=(3,0)이고 A(−1,1)=(−2,2)입니다. 입력 (0,1)은 (1,2)가 되므로 고유벡터가 아닙니다. 고유벡터의 임의의 0이 아닌 배수는 같은 고유값을 갖습니다.</p>
+<div class="check" data-q="q3"></div>
+<div class="check" data-q="q4"></div>
+
+<h2>고유기저에서 행렬은 성분마다 배율만 곱한다</h2>
+<p>고유벡터를 P의 열에 놓으면 AP의 각 열은 λ<sub>i</sub>v<sub>i</sub>입니다. 같은 순서로 고유값을 대각에 놓은 D를 쓰면 AP=PD입니다. P의 열이 기저일 때 P를 뒤집을 수 있어서 A=PDP<sup>−1</sup>입니다. 이를 <b class="key">대각화</b>라고 합니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 174" role="img" aria-label="벡터 (0,2)는 고유기저 좌표 (2,2)다. 대각원소의 세제곱 27과 8을 곱해 (54,16)으로 만든 뒤 표준 좌표로 돌아오면 (38,16)이다.">
+<rect class="f-box" x="16" y="67" width="165" height="73" rx="3"/>
+<text class="f-s" x="98" y="94" text-anchor="middle">표준 좌표 x</text>
+<text class="f-cap" x="98" y="123" text-anchor="middle">(0, 2)</text>
+<line class="f-line" x1="182" y1="103" x2="201" y2="103" marker-end="url(#f-arrow)"/>
+<rect class="f-box" x="204" y="67" width="165" height="73" rx="3"/>
+<text class="f-s" x="286" y="94" text-anchor="middle">고유기저 좌표</text>
+<text class="f-cap" x="286" y="123" text-anchor="middle">(2, 2)</text>
+<line class="f-line" x1="370" y1="103" x2="389" y2="103" marker-end="url(#f-arrow)"/>
+<rect class="f-soft" x="392" y="67" width="165" height="73" rx="3"/>
+<text class="f-s" x="474" y="94" text-anchor="middle">세 번의 배율 적용</text>
+<text class="f-cap" x="474" y="123" text-anchor="middle">(54, 16)</text>
+<line class="f-line" x1="558" y1="103" x2="577" y2="103" marker-end="url(#f-arrow)"/>
+<rect class="f-box" x="580" y="67" width="165" height="73" rx="3"/>
+<text class="f-s" x="662" y="94" text-anchor="middle">표준 좌표 A³x</text>
+<text class="f-cap" x="662" y="123" text-anchor="middle">(38, 16)</text>
+
+<text class="f-t" x="188" y="45" text-anchor="middle">P⁻¹</text>
+<text class="f-t" x="378" y="45" text-anchor="middle">D³</text>
+<text class="f-t" x="565" y="45" text-anchor="middle">P</text>
+</svg>
+<figcaption>P⁻¹로 고유기저의 좌표를 읽고, D를 반복 적용한 뒤 P로 표준 좌표로 돌아온다.</figcaption>
+</figure>
+<p>x=(0,2)는 2v₁+2v₂입니다. A를 세 번 적용하면 2×3³=54가 v₁의 새 성분, 2×2³=16이 v₂의 새 성분입니다. 결과는 54(1,0)+16(−1,1)=(38,16)입니다.</p>
+<p>고유값이 두 번 나와도 고유방향이 두 개 존재하는지는 따로 확인합니다. J=[[1,1],[0,1]]의 경우 det(J−λI)=(1−λ)²이고 λ=1입니다. (J−I)v=0에서 둘째 좌표가 0이므로 독립인 고유벡터를 하나만 고를 수 있어 이 행렬은 대각화되지 않습니다.</p>
+<div class="check" data-q="q5"></div>
+<div class="check" data-q="q6"></div>
+
+<h2>좌표를 바꾸는 계산과 행렬 세 번 곱하기를 비교한다</h2>
+<pre data-example="python"><code>import numpy as np
+
+A = np.array([[3, 1], [0, 2]])
+P = np.array([[1, -1], [0, 1]])
+D = np.diag([3, 2])
+x = np.array([0, 2])
+
+assert np.array_equal(A @ P, P @ D)
+coords = np.linalg.solve(P, x)
+after = np.linalg.matrix_power(D, 3) @ coords
+result = P @ after
+assert np.allclose(result, np.linalg.matrix_power(A, 3) @ x)
+
+print(&quot;coordinates:&quot;, coords.tolist())
+print(&quot;scaled:&quot;, after.tolist())
+print(&quot;A^3 x:&quot;, result.tolist())</code></pre>
+<pre data-output><code>coordinates: [2.0, 2.0]
+scaled: [54.0, 16.0]
+A^3 x: [38.0, 16.0]</code></pre>
+<p><code>solve(P, x)</code>로 P에 그 좌표를 곱하면 x가 되는 값을 구합니다. P와 D의 원소 순서는 고유벡터와 고유값이 같은 열에 대응해야 합니다.</p>
+
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table>
+<thead><tr><th scope="col">할 일</th><th scope="col">판단 기준</th></tr></thead>
+<tbody>
+<tr><td>고유값 찾기</td><td>det(A−λI)=0.</td></tr>
+<tr><td>고유벡터 찾기</td><td>(A−λI)v=0의 0이 아닌 해.</td></tr>
+<tr><td>대각화</td><td>n개의 독립인 고유벡터를 기저로 골라 A=PDP⁻¹로 쓴다.</td></tr>
+</tbody>
+</table></div>
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://ocw.mit.edu/courses/18-06sc-linear-algebra-fall-2011/pages/least-squares-determinants-and-eigenvalues/eigenvalues-and-eigenvectors/">MIT 18.06SC · 고유값과 고유벡터</a></li>
+<li><a href="https://ocw.mit.edu/courses/18-06sc-linear-algebra-fall-2011/pages/least-squares-determinants-and-eigenvalues/">MIT 18.06SC · 대각화와 거듭제곱</a></li>
+</ul>
+
+
+<h2>확인 문제</h2>
+<p>아직 풀지 않은 문제입니다. 먼저 식이나 근거를 적어 보고 해설을 확인합니다.</p>
+<div id="quiz"></div>
+
+<section class="work" id="tools"></section>
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

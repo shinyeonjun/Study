@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>짝지은 자료의 변화와 검정 결론을 보고하기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="BD02-2">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">빅데이터분석기사 연결</p>
+<p class="chap-num">BD02·2</p>
+<h1>짝지은 자료의 변화와 검정 결론을 보고하기</h1>
+<p class="lead">같은 이용자들의 방문을 전후로 재면 사람마다 두 값이 생깁니다. 두 열을 따로 분석하는 대신 짝별 변화를 만들고, 계산한 평균·구간·p값이 각각 어떤 판단을 돕는지 정리합니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>같은 이용자의 측정 두 개를 짝으로 묶는다.</li><li>관측 변화와 대응표본 t절차의 결과를 대조한다.</li><li>검정 결론과 운영 판단에 필요한 내용을 분리한다.</li></ul></div>
+
+<h2>관측 대상부터 확인하여 어느 검정을 쓸지 고른다</h2>
+<p>도서관이 예약 절차를 바꾸었습니다. 연습으로 같은 이용자 다섯 명에서 바꾸기 전후의 대기시간을 한 번씩 확인했다고 합시다. 이용자가 다르다면 독립 비교를 고려할 수 있지만, 이 사례는 한 사람의 두 값을 묶습니다. 사람별로 <code>후−전</code>을 구하며 음수는 변경 후 시간이 줄었다는 뜻입니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 259" role="img" aria-label="다섯 이용자의 전후 대기시간이 각각 (5,4), (8,6), (4,5), (9,5), (7,6). 짝별 빼기는 −1,−2,1,−4,−1.">
+<text class="f-cap" x="237" y="33" text-anchor="middle">변경 전</text><text class="f-cap" x="425" y="33" text-anchor="middle">변경 후</text><text class="f-cap" x="610" y="33" text-anchor="middle">후 − 전</text><text class="f-s" x="104" y="71" text-anchor="middle">1</text><rect class="f-box" x="211" y="52" width="52" height="27" rx="3"/><rect class="f-soft" x="399" y="52" width="52" height="27" rx="3"/><line class="f-ink" x1="269" y1="66" x2="392" y2="66" marker-end="url(#f-arrow)"/><text class="f-t" x="237" y="70" text-anchor="middle">5</text><text class="f-t" x="425" y="70" text-anchor="middle">4</text><text class="f-t" x="610" y="70" text-anchor="middle">-1</text><text class="f-s" x="104" y="108" text-anchor="middle">2</text><rect class="f-box" x="211" y="89" width="52" height="27" rx="3"/><rect class="f-soft" x="399" y="89" width="52" height="27" rx="3"/><line class="f-ink" x1="269" y1="103" x2="392" y2="103" marker-end="url(#f-arrow)"/><text class="f-t" x="237" y="107" text-anchor="middle">8</text><text class="f-t" x="425" y="107" text-anchor="middle">6</text><text class="f-t" x="610" y="107" text-anchor="middle">-2</text><text class="f-s" x="104" y="145" text-anchor="middle">3</text><rect class="f-box" x="211" y="126" width="52" height="27" rx="3"/><rect class="f-soft" x="399" y="126" width="52" height="27" rx="3"/><line class="f-ink" x1="269" y1="140" x2="392" y2="140" marker-end="url(#f-arrow)"/><text class="f-t" x="237" y="144" text-anchor="middle">4</text><text class="f-t" x="425" y="144" text-anchor="middle">5</text><text class="f-t" x="610" y="144" text-anchor="middle">+1</text><text class="f-s" x="104" y="182" text-anchor="middle">4</text><rect class="f-box" x="211" y="163" width="52" height="27" rx="3"/><rect class="f-soft" x="399" y="163" width="52" height="27" rx="3"/><line class="f-ink" x1="269" y1="177" x2="392" y2="177" marker-end="url(#f-arrow)"/><text class="f-t" x="237" y="181" text-anchor="middle">9</text><text class="f-t" x="425" y="181" text-anchor="middle">5</text><text class="f-t" x="610" y="181" text-anchor="middle">-4</text><text class="f-s" x="104" y="219" text-anchor="middle">5</text><rect class="f-box" x="211" y="200" width="52" height="27" rx="3"/><rect class="f-soft" x="399" y="200" width="52" height="27" rx="3"/><line class="f-ink" x1="269" y1="214" x2="392" y2="214" marker-end="url(#f-arrow)"/><text class="f-t" x="237" y="218" text-anchor="middle">7</text><text class="f-t" x="425" y="218" text-anchor="middle">6</text><text class="f-t" x="610" y="218" text-anchor="middle">-1</text>
+</svg><figcaption>같은 이용자 내에서 뺀 결과가 비교 자료다. 변경 전후 열을 따로 정렬하면 짝을 잃는다.</figcaption></figure>
+<p>이 예에서 짝의 차이는 <code>−1,−2,+1,−4,−1</code>분입니다. 합이 −7분이므로 표본평균은 −1.4분입니다. 짝짓기가 고려하는 것은 한 사람의 두 값이 지닌 관계입니다. 평일 전과 주말 후처럼 다른 조건이 함께 변했다면 평균 변화의 원인이 절차 때문인지 확인하려면 별도의 설계가 필요합니다.</p>
+<div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
+<h2>변화량을 하나의 표본으로 추정한다</h2>
+<p>이용자마다 얻은 변화량이 서로 독립이고 같은 정규분포를 따른다고 가정하는 계산 연습입니다. 표본이 다섯 명이라 실제 자료에 이 가정이 맞는지 별도로 확인해야 합니다. 평균 변화가 0인지를 양측으로 검정합니다. 차이의 표준오차 약 0.812분으로 평균 −1.4분을 나누면 <code>t≈−1.723</code>입니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 209" role="img" aria-label="짝별 변경 후 빼기 전 변화의 평균은 −1.4분, 95% 구간은 −3.656에서 0.856분. 구간 안에 0이 있다.">
+<line class="f-ink" x1="86" y1="133" x2="694" y2="133" marker-end="url(#f-arrow)"/><line class="f-ink" x1="120" y1="130" x2="120" y2="142"/><text class="f-s" x="120" y="161" text-anchor="middle">-4</text><line class="f-ink" x1="224" y1="130" x2="224" y2="142"/><text class="f-s" x="224" y="161" text-anchor="middle">-3</text><line class="f-ink" x1="328" y1="130" x2="328" y2="142"/><text class="f-s" x="328" y="161" text-anchor="middle">-2</text><line class="f-ink" x1="432" y1="130" x2="432" y2="142"/><text class="f-s" x="432" y="161" text-anchor="middle">-1</text><line class="f-ink" x1="536" y1="130" x2="536" y2="142"/><text class="f-s" x="536" y="161" text-anchor="middle">0</text><line class="f-ink" x1="640" y1="130" x2="640" y2="142"/><text class="f-s" x="640" y="161" text-anchor="middle">1</text><line class="f-line" x1="155.776" y1="99" x2="625.024" y2="99"/><line class="f-line" x1="155.776" y1="87" x2="155.776" y2="114"/><line class="f-line" x1="625.024" y1="87" x2="625.024" y2="114"/><line class="f-dash" x1="536" y1="52" x2="536" y2="129"/><circle cx="390.40000000000003" cy="99" r="5" class="f-fill"/><text class="f-t" x="390.40000000000003" y="75" text-anchor="middle">평균 변화 −1.400</text><text class="f-s" x="155.776" y="77" text-anchor="middle">−3.656</text><text class="f-s" x="625.024" y="77" text-anchor="middle">0.856</text><text class="f-s" x="536" y="39" text-anchor="middle">차이 없음</text><text class="f-cap" x="672" y="187" text-anchor="middle">변화 (분)</text>
+</svg><figcaption>음수는 대기시간이 줄었다는 뜻이다. 양끝은 데이터와 모형으로 구한 평균 변화의 구간이다.</figcaption></figure>
+<p>코드에서는 SciPy로 t 통계량과 양측 p값을 구합니다.</p>
+<pre data-example="python"><code>from math import sqrt
+from statistics import mean, stdev
+from scipy import stats
+
+before = [5, 8, 4, 9, 7]
+after = [4, 6, 5, 5, 6]
+delta = [new - old for old, new in zip(before, after, strict=True)]
+se = stdev(delta) / sqrt(len(delta))
+t_limit = stats.t.ppf(.975, len(delta) - 1)
+fit = stats.ttest_rel(after, before)
+change = mean(delta)
+print(delta)
+print(f&quot;change={change:.3f}, se={se:.3f}&quot;)
+print(f&quot;95% CI=[{change-t_limit*se:.3f}, {change+t_limit*se:.3f}]&quot;)
+print(f&quot;t={fit.statistic:.3f}, p={fit.pvalue:.4f}&quot;)</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>[-1, -2, 1, -4, -1]
+change=-1.400, se=0.812
+95% CI=[-3.656, 0.856]
+t=-1.723, p=0.1599</code></pre>
+<div class="check" data-q="q3"></div><div class="check" data-q="q4"></div>
+<h2>현장 보고에 넣을 한 문장을 정한다</h2>
+<p>‘이용자 다섯 명의 평균 대기시간 변화는 −1.4분이다. 대응표본 95% 신뢰구간은 −3.656~0.856분이며 양측 p값은 0.1599다.’라고 보고합니다. 미리 정한 0.05 수준에서는 평균 차이 0을 기각하지 못합니다. 이 구간은 0을 포함하면서 양쪽에 값이 있어, 평균이 감소하는 경우도 증가하는 경우도 배제하기 어렵습니다.</p>
+<p>‘1분 이상 줄어드는 변화가 운영에서 중요하다’는 기준이 있다면 그 크기와 구간을 함께 확인합니다. 이 자료만으로 모든 도서관의 평균을 설명할 수 있는지도 별도 질문입니다. 더 많은 이용자, 같은 방문 조건, 비교 대상의 운영 조건을 확인할 때 결론에 필요한 근거를 얻을 수 있습니다.</p>
+<div class="check" data-q="q5"></div><div class="check" data-q="q6"></div>
+<p>교재에 나온 용어와 이어 읽습니다. <a href="../../../bigdata/notes/2-exploration/07-추정과-가설검정.html">신뢰구간과 p값</a> · <a href="../../../bigdata/notes/2-exploration/08-검정-선택과-분할표.html">검정 선택</a> · <a href="../../unit.html?u=ST05">기본 검정 선택의 손계산</a></p>
+<h2>한눈에 정리</h2>
+<ul><li>같은 이용자의 두 값은 짝을 유지한 채 차이로 바꾼다.</li><li>평균 변화, 구간과 p값을 각각의 단위와 의미에 맞게 보고한다.</li><li>가설에 대한 결론과 관측 차이의 현장 중요성은 각각 설명한다.</li></ul>
+
+<h2>참고 자료</h2>
+<ul><li><a href="https://www.dataq.or.kr/www/dataq_brochure_2022.pdf">한국데이터산업진흥원 · 빅데이터분석기사 과목 안내</a></li><li><a href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.ttest_rel.html">SciPy · 같은 대상의 두 표본을 비교하는 ttest_rel</a></li></ul>
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BH와 FDR: 발견을 보고하는 규칙과 탐색 이후의 검증 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e8c'/%3E%3Cpath d='M8 22V10m8 12V14m8 8V6' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="ST06-2">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+
+<header class="chapter">
+<p class="chap-sub">통계 · ST06 여러 번 비교하기</p>
+<p class="chap-num">ST06·2</p>
+<h1>BH와 FDR: 발견을 보고하는 규칙과 탐색 이후의 검증</h1>
+<p class="lead">발견 후보가 많은 곳에서는 하나라도 틀릴 확률보다 발표한 발견 가운데 잘못된 발견의 비율이 궁금할 수 있습니다. BH의 계산을 손으로 하고, 자료를 들여다본 뒤 고른 가설은 어떻게 검증할지 따로 봅니다.</p>
+</header>
+
+<div class="goal">
+<h2>이 장을 읽고 나면</h2>
+<ul>
+<li>FDR이 다루는 분자와 분모, 반복 실험의 의미를 설명한다.</li>
+<li>BH에서 정렬과 최대 통과 순위를 찾아 보정 결정을 내린다.</li>
+<li>사후 선택과 확증을 구분하고 효과의 크기와 구간을 함께 보고한다.</li>
+</ul>
+</div>
+
+<h2>발견 중의 잘못된 몫을 반복해 평균한다</h2>
+<p>한 번의 분석에서 기각한 전체 가설 수를 R, 그중 실제로 참이어서 잘못 기각한 수를 V라고 씁니다. 잘못된 몫은 <code>V/max(R,1)</code>입니다. 하나도 기각하지 않았으면 이 비율을 0으로 둡니다. <b class="key">거짓발견율</b>(FDR)은 같은 분석을 계속 반복한다는 모형 아래 이 비율의 기댓값입니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 221" role="img" aria-label="가상의 세 연구에서 기각 개수와 잘못 기각한 수가 (4,1), (0,0), (2,1)이다. 연구별 잘못 기각 비율은 1/4, 0, 1/2이고 세 비율 평균은 1/4이다.">
+<text class="f-cap" x="200" y="33" text-anchor="middle">반복한 연구</text>
+<text class="f-cap" x="398" y="33" text-anchor="middle">기각한 가설 하나당 한 칸</text>
+<text class="f-cap" x="597" y="33" text-anchor="middle">V / max(R, 1)</text>
+<text class="f-t" x="200" y="76" text-anchor="middle">연구 1</text>
+<rect class="f-over" x="330" y="57" width="25" height="26" rx="4"/><text class="f-s" x="342.5" y="75" text-anchor="middle">×</text>
+<rect class="f-soft" x="363" y="57" width="25" height="26" rx="4"/><text class="f-s" x="375.5" y="75" text-anchor="middle">✓</text>
+<rect class="f-soft" x="396" y="57" width="25" height="26" rx="4"/><text class="f-s" x="408.5" y="75" text-anchor="middle">✓</text>
+<rect class="f-soft" x="429" y="57" width="25" height="26" rx="4"/><text class="f-s" x="441.5" y="75" text-anchor="middle">✓</text>
+<text class="f-t" x="597" y="77" text-anchor="middle">1/4</text>
+<text class="f-t" x="200" y="124" text-anchor="middle">연구 2</text>
+<text class="f-s" x="330" y="125" text-anchor="start">기각 없음</text>
+<text class="f-t" x="597" y="125" text-anchor="middle">0</text>
+<text class="f-t" x="200" y="172" text-anchor="middle">연구 3</text>
+<rect class="f-over" x="330" y="153" width="25" height="26" rx="4"/><text class="f-s" x="342.5" y="171" text-anchor="middle">×</text>
+<rect class="f-soft" x="363" y="153" width="25" height="26" rx="4"/><text class="f-s" x="375.5" y="171" text-anchor="middle">✓</text>
+<text class="f-t" x="597" y="173" text-anchor="middle">1/2</text>
+<text class="f-s" x="397" y="209" text-anchor="middle">× · 잘못 기각    ✓ · 올바르게 기각</text>
+</svg>
+<figcaption>모의 반복에서 실제 정답을 안다는 가상 예다. FDR은 각 연구의 비율을 평균하는 개념이다.</figcaption>
+</figure>
+<p>세 가상 연구의 비율 평균은 (1/4+0+1/2)/3=1/4입니다. 분자와 분모를 모두 합쳐 2/6을 얻는 계산과 질문이 다릅니다. FDR 0.05는 반복 분석의 평균 비율을 제한하는 목표입니다. 이번 결과의 잘못된 몫은 5%를 넘을 수도 있으며, 발견 하나를 찍어 그것이 옳을 확률을 95%로 해석할 수 없습니다. 실제 관측 한 묶음에서는 어느 귀무가설이 참인지 보통 알지 못합니다. 모두 참이면 기각이 하나라도 있는 경우 그 비율은 1이므로 그 특수한 경우 FDR은 FWER와 같습니다.</p>
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+<h2>p값을 정렬해 가장 먼 통과 줄을 찾는다</h2>
+<p><b class="key">Benjamini–Hochberg</b>(BH)는 가족 전체 m개의 p값을 작은 순서로 정렬합니다. 목표 FDR 수준을 q라 두고, j번째 값 p<sub>(j)</sub>를 <code>j×q/m</code>과 비교합니다. 조건을 만족하는 <b>가장 큰 순위</b> k까지 모두 기각합니다. 그런 순위가 하나도 없으면 기각하지 않습니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 283" role="img" aria-label="p값을 작은 순서대로 정렬한 다섯 행은 0.012,0.017,0.040,0.065,0.200이다. BH 기준은 0.01,0.02,0.03,0.04,0.05이며 기준을 만족하는 최대 순위는 2다. 순위 1과 2 모두 기각한다.">
+<text class="f-cap" x="176" y="31" text-anchor="middle">순위 j</text>
+<text class="f-cap" x="319" y="31" text-anchor="middle">작은 순서의 p값</text>
+<text class="f-cap" x="459" y="31" text-anchor="middle">기준 j×0.05/5</text>
+<text class="f-cap" x="621" y="31" text-anchor="middle">최종 결정</text>
+<rect class="f-soft" x="120" y="47" width="569" height="36" rx="4"/>
+<text class="f-t" x="176" y="70" text-anchor="middle">1</text>
+<text class="f-t" x="319" y="70" text-anchor="middle">0.012</text>
+<text class="f-t" x="459" y="70" text-anchor="middle">0.010</text>
+<text class="f-s" x="621" y="70" text-anchor="middle">기각</text>
+<rect class="f-soft" x="120" y="90" width="569" height="36" rx="4"/>
+<text class="f-t" x="176" y="113" text-anchor="middle">2</text>
+<text class="f-t" x="319" y="113" text-anchor="middle">0.017</text>
+<text class="f-t" x="459" y="113" text-anchor="middle">0.020</text>
+<text class="f-s" x="621" y="113" text-anchor="middle">기각</text>
+<rect class="f-box" x="120" y="133" width="569" height="36" rx="4"/>
+<text class="f-t" x="176" y="156" text-anchor="middle">3</text>
+<text class="f-t" x="319" y="156" text-anchor="middle">0.040</text>
+<text class="f-t" x="459" y="156" text-anchor="middle">0.030</text>
+<text class="f-s" x="621" y="156" text-anchor="middle">기각하지 않음</text>
+<rect class="f-box" x="120" y="176" width="569" height="36" rx="4"/>
+<text class="f-t" x="176" y="199" text-anchor="middle">4</text>
+<text class="f-t" x="319" y="199" text-anchor="middle">0.065</text>
+<text class="f-t" x="459" y="199" text-anchor="middle">0.040</text>
+<text class="f-s" x="621" y="199" text-anchor="middle">기각하지 않음</text>
+<rect class="f-box" x="120" y="219" width="569" height="36" rx="4"/>
+<text class="f-t" x="176" y="242" text-anchor="middle">5</text>
+<text class="f-t" x="319" y="242" text-anchor="middle">0.200</text>
+<text class="f-t" x="459" y="242" text-anchor="middle">0.050</text>
+<text class="f-s" x="621" y="242" text-anchor="middle">기각하지 않음</text>
+<text class="f-s" x="398" y="272" text-anchor="middle">마지막 통과 지점 j=2에서 앞쪽까지 결정한다.</text>
+</svg>
+<figcaption>순위 1은 자기 줄의 기준을 넘지만 순위 2까지 함께 기각한다. BH는 행별로 따로 검사하는 규칙과 다르다.</figcaption>
+</figure>
+<p>예제에서는 m=5, q=0.05입니다. 두 번째 0.017≤0.02가 마지막 통과입니다. 따라서 첫째와 둘째를 기각합니다. 첫째 값 0.012는 자기 순위 기준 0.01을 넘지만, 둘째까지 포함된다는 점을 주의합니다. 정렬 뒤 처음 실패한 줄에서 멈추는 방식은 이 계산과 다릅니다.</p>
+<p>보정 p값도 계산할 수 있습니다. 정렬 순위 j의 원래 p값에 m/j를 곱하는 것만으로는 순서가 뒤집히는 경우가 있습니다. 순위 i의 보정값은 i에서 끝까지의 <code>m×p₍ⱼ₎/j</code> 중 최소를 취하고 1을 넘지 않게 합니다. 예제에서는 0.0425, 0.0425, 약 0.0667, 0.08125, 0.2입니다. 보고에는 각 가설의 원래 이름으로 보정값을 되돌려 놓습니다.</p>
+<div class="check" data-q="q3"></div>
+<div class="check" data-q="q4"></div>
+<div class="check" data-q="q5"></div>
+<h2>가정이 바뀌면 같은 보정에도 같은 보장이 없다</h2>
+<p>BH의 기본적인 보장은 유효한 p값과 독립성을 갖는 검정에서 성립합니다. 참인 귀무가설에 관한 일부 구조화된 양의 의존성(PRDS)에서도 성립하지만, 상관계수 몇 개가 양수라는 사실만으로 그 조건을 확인한 것은 아닙니다. 임의의 의존성에서 FDR을 제어하도록 설계된 별도 방법으로 Benjamini–Yekutieli(BY)가 있습니다. 검정 수와 목적에 따라 더 엄격해져 발견 수가 줄 수 있습니다. 가족 단위로 단 한 번의 잘못된 기각까지 억제해야 한다면 FWER를 기준으로 삼는 방식도 여전히 필요합니다.</p>
+<div class="check" data-q="q6"></div>
+<h2>탐색에서 얻은 질문은 별도로 검증한다</h2>
+<p>지점·연령대·시간 창을 여러 조합으로 자른 뒤 가장 작은 p값이 나온 조합만 남기면, 그 가설을 자료 보기 전에 정했다고 가정한 p값 해석을 그대로 붙이기 어렵습니다. 같은 값으로 가설을 고르고 검정했기 때문입니다. 보이는 패턴을 바탕으로 질문을 만드는 <b class="key">사후 가설</b>은 탐색 결과로 남기되, 조합을 고른 과정과 시도한 범위를 기록합니다. 별도로 모은 자료나 탐색에서 쓰지 않은 검증 표본으로 가설을 고정하고 다시 평가할 수 있습니다. 이미 유리한 부분만 선택한 다음, 그 부분에만 BH를 적용한다고 앞단의 선택 문제가 사라지지는 않습니다.</p>
+<p>운영 측면에서 최소 개선을 1분으로 정했다고 합시다. 추정 개선 0.05분에 95% 구간 [0.02,0.08]분이면 0과 차이가 있을 근거가 있어도 1분에 비하면 작습니다. 원래의 추정값과 실무 기준을 함께 읽어야 하는 이유입니다. 이 예의 구간은 개별 가설에 대한 구간입니다. 보정 p값을 적는다고 통상 구간에도 자동으로 동시 포함 보장이 생기지는 않습니다.</p>
+<pre data-example="python"><code>from scipy.stats import false_discovery_control
+
+raw = [0.012, 0.017, 0.040, 0.065, 0.200]
+m, q = len(raw), 0.05
+ordered = sorted(raw)
+passed = [j for j, p in enumerate(ordered, 1) if p &lt;= j * q / m]
+k = max(passed, default=0)
+adjusted = false_discovery_control(raw, method="bh")
+assert sum(p &lt;= q for p in adjusted) == k
+print("최대 통과 순위:", k)
+print("기각 p값:", [f"{p:.3f}" for p in ordered[:k]])
+print("보정 p값:", [f"{p:.4f}" for p in adjusted])</code></pre>
+<pre data-output><code>최대 통과 순위: 2
+기각 p값: ['0.012', '0.017']
+보정 p값: ['0.0425', '0.0425', '0.0667', '0.0813', '0.2000']</code></pre>
+<h2>참고 자료</h2>
+<ul><li><a href="https://doi.org/10.1111/j.2517-6161.1995.tb02031.x">Benjamini·Hochberg (1995) · FDR과 BH</a></li>
+<li><a href="https://doi.org/10.1214/aos/1013699998">Benjamini·Yekutieli (2001) · 의존성 조건</a></li>
+<li><a href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.false_discovery_control.html">SciPy · false_discovery_control</a></li></ul>
+
+<h2>확인 문제</h2>
+<p>본문에서 푼 것 말고 남은 문제입니다. 먼저 답을 정한 뒤 해설을 확인합니다.</p>
+<div id="quiz"></div>
+
+<section class="work" id="tools"></section>
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>
