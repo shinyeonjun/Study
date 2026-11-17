@@ -1,0 +1,506 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>분위수와 상자 그림, 분포의 모양 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e8c'/%3E%3Cpath d='M8 22V10m8 12V14m8 8V6' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="DA04-2">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+
+<header class="chapter">
+<p class="chap-sub">데이터 읽기와 탐색 · DA04 중심과 분포</p>
+<p class="chap-num">DA04·2</p>
+<h1>분위수와 상자 그림, 분포의 모양</h1>
+<p class="lead">편의점이 11일 동안 우산을 하루 2, 4, 5, 7, 8, 9, 11, 12, 14, 18, 30개 팔았습니다. 중앙값 9는 "가운데 날"을 알려 주지만, 많이 판 날과 적게 판 날이 얼마나 벌어져 있는지, 30개는 특별한 날인지는 알려 주지 않습니다. 이 장에서는 중앙값을 넓힌 분위수와 사분위수, 이를 그림으로 그린 상자 그림, 그리고 분포의 치우침(왜도)이 평균과 중앙값에 주는 영향을 다룹니다.</p>
+</header>
+
+<div class="goal">
+<h2>이 장을 읽고 나면</h2>
+<ul>
+<li>정렬된 작은 자료에서 사분위수 Q1, Q2, Q3과 IQR을 손으로 계산할 수 있다. 개수가 짝수·홀수인 경우 모두.</li>
+<li>프로그램마다 사분위수 값이 조금 다른 이유를 설명할 수 있다.</li>
+<li>1.5 × IQR 규칙으로 이상값 후보를 찾고, 상자 그림을 그리고 읽을 수 있다.</li>
+<li>왜도의 방향을 히스토그램에서 읽고, 평균·중앙값의 위치 관계로 설명할 수 있다.</li>
+<li>중심(평균·중앙값)이 같은데 전혀 다른 자료의 예를 들 수 있다.</li>
+</ul>
+</div>
+
+<h2>분위수: 중앙값을 넓히기 <span class="tag memo">외우기</span></h2>
+
+<p>중앙값은 정렬된 자료를 반(50%)으로 가르는 값입니다. 같은 생각을 다른 비율로 넓힌 것이 분위수입니다.</p>
+
+<div class="box">
+<p class="box-k">정의</p>
+<p><b class="key">분위수</b>(quantile)는 정렬된 자료를 주어진 비율 p(0 &lt; p &lt; 1)에서 가르는 값입니다. 대략 값의 p 비율이 그 값 이하, 나머지가 그 이상에 놓입니다. p를 백분율로 쓰면 <b class="key">백분위수</b>(percentile)라 부릅니다. "90번째 백분위수"는 값의 약 90%가 그 이하인 값입니다.</p>
+<p><b class="key">사분위수</b>(quartile)는 자료를 네 등분하는 세 분위수입니다. Q1(제1사분위수, 25%), Q2(제2사분위수, 50% = 중앙값), Q3(제3사분위수, 75%).</p>
+</div>
+
+<p>"약", "대략"이라는 말이 붙는 이유는 자료가 유한 개라 정확히 25%에서 가를 수 없는 경우가 많기 때문입니다. 11개 값의 25%는 2.75개입니다. 그래서 분위수를 정하는 구체적인 규칙이 여러 가지 있고, 아래에서 그 차이를 봅니다.</p>
+
+<p>DA03·1의 누적상대도수와 같은 정보를 다른 방향에서 읽는 것이기도 합니다. 통학 시간 표에서 "30분 미만이 0.65"였습니다. 누적상대도수는 "값 → 비율"을, 분위수는 "비율 → 값"을 답합니다. 30분은 대략 65번째 백분위수 근처입니다.</p>
+
+<div class="check" data-q="q1"></div>
+
+<h2>사분위수 계산하기</h2>
+
+<p>이 교재에서는 손으로 계산하기 쉽고 교과서에서 흔히 쓰는 방법을 씁니다.</p>
+
+<div class="box">
+<p class="box-k">계산 순서 (이 교재의 방법)</p>
+<p>① 값을 작은 것부터 정렬한다.<br>
+② 중앙값 Q2를 구한다(DA04·1).<br>
+③ 중앙값을 기준으로 아래 절반과 위 절반으로 나눈다. <b>n이 홀수이면 중앙값 자신은 어느 절반에도 넣지 않는다.</b><br>
+④ 아래 절반의 중앙값이 Q1, 위 절반의 중앙값이 Q3이다.</p>
+</div>
+
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 250" role="img" aria-label="11일 동안의 우산 판매 개수를 작은 것부터 칸에 적었다: 2, 4, 5, 7, 8, 9, 11, 12, 14, 18, 30. 6번째 9가 중앙값 Q2. 그 왼쪽 다섯 개 2, 4, 5, 7, 8이 아래 절반이고 그 가운데 5가 Q1. 오른쪽 다섯 개 11, 12, 14, 18, 30이 위 절반이고 그 가운데 14가 Q3.">
+<rect class="f-box" x="32" y="70" width="56" height="36" rx="3"/>
+<text class="f-t" x="60" y="94" text-anchor="middle">2</text>
+<text class="f-s" x="60" y="62" text-anchor="middle">1</text>
+<rect class="f-box" x="96" y="70" width="56" height="36" rx="3"/>
+<text class="f-t" x="124" y="94" text-anchor="middle">4</text>
+<text class="f-s" x="124" y="62" text-anchor="middle">2</text>
+<rect class="f-soft" x="160" y="70" width="56" height="36" rx="3"/>
+<text class="f-t f-b" x="188" y="94" text-anchor="middle">5</text>
+<text class="f-s" x="188" y="62" text-anchor="middle">3</text>
+<rect class="f-box" x="224" y="70" width="56" height="36" rx="3"/>
+<text class="f-t" x="252" y="94" text-anchor="middle">7</text>
+<text class="f-s" x="252" y="62" text-anchor="middle">4</text>
+<rect class="f-box" x="288" y="70" width="56" height="36" rx="3"/>
+<text class="f-t" x="316" y="94" text-anchor="middle">8</text>
+<text class="f-s" x="316" y="62" text-anchor="middle">5</text>
+<rect class="f-soft" x="352" y="70" width="56" height="36" rx="3"/>
+<text class="f-t f-b" x="380" y="94" text-anchor="middle">9</text>
+<text class="f-s" x="380" y="62" text-anchor="middle">6</text>
+<rect class="f-box" x="416" y="70" width="56" height="36" rx="3"/>
+<text class="f-t" x="444" y="94" text-anchor="middle">11</text>
+<text class="f-s" x="444" y="62" text-anchor="middle">7</text>
+<rect class="f-box" x="480" y="70" width="56" height="36" rx="3"/>
+<text class="f-t" x="508" y="94" text-anchor="middle">12</text>
+<text class="f-s" x="508" y="62" text-anchor="middle">8</text>
+<rect class="f-soft" x="544" y="70" width="56" height="36" rx="3"/>
+<text class="f-t f-b" x="572" y="94" text-anchor="middle">14</text>
+<text class="f-s" x="572" y="62" text-anchor="middle">9</text>
+<rect class="f-box" x="608" y="70" width="56" height="36" rx="3"/>
+<text class="f-t" x="636" y="94" text-anchor="middle">18</text>
+<text class="f-s" x="636" y="62" text-anchor="middle">10</text>
+<rect class="f-box" x="672" y="70" width="56" height="36" rx="3"/>
+<text class="f-t" x="700" y="94" text-anchor="middle">30</text>
+<text class="f-s" x="700" y="62" text-anchor="middle">11</text>
+<line class="f-ink" x1="188" y1="30" x2="188" y2="46" marker-end="url(#f-arrow)"/>
+<text class="f-s f-ink-t f-b" x="188" y="24" text-anchor="middle">Q1 = 5</text>
+<line class="f-ink" x1="380" y1="30" x2="380" y2="46" marker-end="url(#f-arrow)"/>
+<text class="f-s f-ink-t f-b" x="380" y="24" text-anchor="middle">Q2 = 9 (중앙값)</text>
+<line class="f-ink" x1="572" y1="30" x2="572" y2="46" marker-end="url(#f-arrow)"/>
+<text class="f-s f-ink-t f-b" x="572" y="24" text-anchor="middle">Q3 = 14</text>
+<path class="f-line" d="M32.0 116 v10 h312.0 v-10"/>
+<text class="f-s f-ink-t" x="188" y="148" text-anchor="middle">아래 절반 5개 → 가운데 = Q1</text>
+<path class="f-line" d="M416.0 116 v10 h312.0 v-10"/>
+<text class="f-s f-ink-t" x="572" y="148" text-anchor="middle">위 절반 5개 → 가운데 = Q3</text>
+<text class="f-s" x="380" y="148" text-anchor="middle">제외</text>
+<line class="f-dash" x1="380" y1="112" x2="380" y2="132"/>
+<text class="f-t f-b" x="380" y="200" text-anchor="middle">IQR = Q3 − Q1 = 14 − 5 = 9</text>
+<text class="f-s f-ink-t" x="380" y="228" text-anchor="middle">아래 울타리 5 − 1.5 × 9 = −8.5,  위 울타리 14 + 1.5 × 9 = 27.5</text>
+</svg>
+<figcaption>n이 홀수이면 중앙값 칸은 어느 절반에도 넣지 않는다. 이 교재의 방법이며, 프로그램마다 방법이 조금씩 다르다.</figcaption>
+</figure>
+
+<div class="box ex">
+<p class="box-k">풀이 예제 · n = 11 (홀수)</p>
+<p>기록된 순서: 9, 2, 14, 7, 30, 11, 4, 18, 8, 12, 5</p>
+<p class="calc">① 정렬: 2, 4, 5, 7, 8, 9, 11, 12, 14, 18, 30<br>
+② Q2: (11 + 1) ÷ 2 = 6번째 = 9<br>
+③ 아래 절반(1~5번째): 2, 4, 5, 7, 8 / 위 절반(7~11번째): 11, 12, 14, 18, 30<br>
+④ Q1 = 아래 절반의 3번째 = 5, Q3 = 위 절반의 3번째 = 14</p>
+</div>
+
+<div class="box ex">
+<p class="box-k">풀이 예제 · n = 8 (짝수)</p>
+<p>정렬된 값: 3, 5, 6, 8, 10, 11, 13, 20</p>
+<p class="calc">① Q2: 4번째와 5번째의 평균 = (8 + 10) ÷ 2 = 9<br>
+② n이 짝수이므로 그대로 반씩: 아래 3, 5, 6, 8 / 위 10, 11, 13, 20<br>
+③ Q1 = (5 + 6) ÷ 2 = 5.5, Q3 = (11 + 13) ÷ 2 = 12</p>
+</div>
+
+<div class="check" data-q="q2"></div>
+<div class="check" data-q="q3"></div>
+
+<h3>프로그램마다 값이 조금 다르다 <span class="tag grasp">이해하기</span></h3>
+
+<p>같은 우산 자료를 Python으로 계산해 보면 다른 값이 나옵니다. 아래는 Python 3.14.6, NumPy로 실제로 실행한 결과입니다.</p>
+
+<pre><code>import numpy as np
+import statistics
+
+u = [2, 4, 5, 7, 8, 9, 11, 12, 14, 18, 30]
+print(np.percentile(u, [25, 50, 75]))
+print(statistics.quantiles(u, n=4))</code></pre>
+
+<pre><code>[ 6.  9. 13.]
+[5.0, 9.0, 14.0]</code></pre>
+
+<p>중앙값 9는 같지만 NumPy는 Q1 = 6, Q3 = 13을 냅니다. NumPy의 기본 방법(선형 보간)은 정렬된 값에 0부터 n − 1까지 자리 번호를 매기고, p 분위수의 자리를 (n − 1) × p로 정합니다. Q1의 자리는 10 × 0.25 = 2.5, 곧 자리 2의 값 5와 자리 3의 값 7의 한가운데이므로 (5 + 7) ÷ 2 = 6입니다. Q3의 자리는 10 × 0.75 = 7.5로 12와 14의 가운데 13입니다. 표준 라이브러리 <code>statistics.quantiles</code>의 기본 방법은 다른 규칙을 쓰는데, 이 자료에서는 우연히 이 교재의 방법과 같은 5, 14가 나왔습니다.</p>
+
+<p>어느 것도 틀린 것이 아닙니다. "25%에서 가른다"는 생각은 같고, 유한 개의 값 사이를 메우는 규칙이 다를 뿐입니다. 자료가 많아질수록 방법 사이의 차이는 작아집니다. 실무에서는 어떤 도구의 어떤 방법을 썼는지 적어 두고, 시험에서는 그 시험이 쓰는 계산 방식을 따릅니다(빅분기 등 시험의 기준은 공식 교재·공지로 확인합니다).</p>
+
+<div class="check" data-q="q11"></div>
+
+<h2>IQR과 이상값 울타리 <span class="tag memo">외우기</span></h2>
+
+<div class="box">
+<p class="box-k">정의</p>
+<p><b class="key">사분위범위</b>(IQR, interquartile range) = Q3 − Q1. 가운데 약 50% 값이 차지하는 폭입니다.</p>
+<p><b>울타리</b>(fence): 아래 울타리 = Q1 − 1.5 × IQR, 위 울타리 = Q3 + 1.5 × IQR. 울타리 밖의 값을 <b>이상값 후보</b>로 표시합니다.</p>
+</div>
+
+<div class="box ex">
+<p class="box-k">풀이 예제 · 우산 자료의 울타리</p>
+<p class="calc">① IQR = Q3 − Q1 = 14 − 5 = 9<br>
+② 1.5 × IQR = 13.5<br>
+③ 아래 울타리 = 5 − 13.5 = −8.5 → 이보다 작은 값 없음<br>
+④ 위 울타리 = 14 + 13.5 = 27.5 → 30이 울타리 밖 → 이상값 후보</p>
+</div>
+
+<p>IQR은 중앙값처럼 양 끝 값에 휘둘리지 않습니다. 30이 300이 되어도 Q1, Q3은 그대로이므로 IQR도 9입니다. 그래서 "이상값을 찾는 기준"을 이상값의 영향을 받지 않는 값으로 만들 수 있습니다. 1.5라는 배수는 통계학자 튜키(John Tukey)가 상자 그림과 함께 제안해 널리 쓰이게 된 관례이며, 수학적으로 유일한 값은 아닙니다. 흩어진 정도를 재는 다른 방법(분산, 표준편차)은 DA05에서 다룹니다.</p>
+
+<div class="box trap">
+<p class="box-k">흔한 실수</p>
+<p><b>울타리 밖이면 지운다.</b> 30개를 판 날은 하루 종일 비가 온 날이었습니다. 실제로 일어난 일이고, 우산 재고를 정할 때 가장 중요한 날일 수 있습니다. 1.5 × IQR 규칙은 "확인해 볼 값"을 골라 줄 뿐입니다. 입력 실수(예: 3을 30으로 잘못 침)인지, 진짜 특별한 날인지는 기록과 맥락(DA01·2)으로 판단합니다.</p>
+</div>
+
+<div class="check" data-q="q4"></div>
+<div class="check" data-q="q5"></div>
+
+<h2>상자 그림</h2>
+
+<div class="box">
+<p class="box-k">정의</p>
+<p><b class="key">상자 그림</b>(box plot, 상자 수염 그림)은 Q1부터 Q3까지를 상자로, 중앙값을 상자 안의 선으로, 울타리 안의 가장 작은 값·가장 큰 값까지를 수염으로 그리고, 울타리 밖의 값은 점으로 따로 찍는 그림입니다.</p>
+</div>
+
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 250" role="img" aria-label="위 줄: 11개 값을 수직선 위 점으로 찍었다. 아래 줄: 같은 자료의 상자 그림. 상자는 Q1 5부터 Q3 14까지, 상자 안 세로선은 중앙값 9. 왼쪽 수염은 최솟값 2까지, 오른쪽 수염은 울타리 27.5 안의 가장 큰 값 18까지. 27.5에 점선 울타리가 있고, 그 밖의 30은 따로 동그라미로 찍혀 이상값으로 표시된다.">
+<line class="f-ink" x1="50" y1="196" x2="710" y2="196"/>
+<line class="f-ink" x1="60" y1="196" x2="60" y2="202"/>
+<text class="f-s" x="60" y="218" text-anchor="middle">0</text>
+<line class="f-ink" x1="80" y1="196" x2="80" y2="202"/>
+<line class="f-ink" x1="100" y1="196" x2="100" y2="202"/>
+<line class="f-ink" x1="120" y1="196" x2="120" y2="202"/>
+<line class="f-ink" x1="140" y1="196" x2="140" y2="202"/>
+<line class="f-ink" x1="160" y1="196" x2="160" y2="202"/>
+<text class="f-s" x="160" y="218" text-anchor="middle">5</text>
+<line class="f-ink" x1="180" y1="196" x2="180" y2="202"/>
+<line class="f-ink" x1="200" y1="196" x2="200" y2="202"/>
+<line class="f-ink" x1="220" y1="196" x2="220" y2="202"/>
+<line class="f-ink" x1="240" y1="196" x2="240" y2="202"/>
+<line class="f-ink" x1="260" y1="196" x2="260" y2="202"/>
+<text class="f-s" x="260" y="218" text-anchor="middle">10</text>
+<line class="f-ink" x1="280" y1="196" x2="280" y2="202"/>
+<line class="f-ink" x1="300" y1="196" x2="300" y2="202"/>
+<line class="f-ink" x1="320" y1="196" x2="320" y2="202"/>
+<line class="f-ink" x1="340" y1="196" x2="340" y2="202"/>
+<line class="f-ink" x1="360" y1="196" x2="360" y2="202"/>
+<text class="f-s" x="360" y="218" text-anchor="middle">15</text>
+<line class="f-ink" x1="380" y1="196" x2="380" y2="202"/>
+<line class="f-ink" x1="400" y1="196" x2="400" y2="202"/>
+<line class="f-ink" x1="420" y1="196" x2="420" y2="202"/>
+<line class="f-ink" x1="440" y1="196" x2="440" y2="202"/>
+<line class="f-ink" x1="460" y1="196" x2="460" y2="202"/>
+<text class="f-s" x="460" y="218" text-anchor="middle">20</text>
+<line class="f-ink" x1="480" y1="196" x2="480" y2="202"/>
+<line class="f-ink" x1="500" y1="196" x2="500" y2="202"/>
+<line class="f-ink" x1="520" y1="196" x2="520" y2="202"/>
+<line class="f-ink" x1="540" y1="196" x2="540" y2="202"/>
+<line class="f-ink" x1="560" y1="196" x2="560" y2="202"/>
+<text class="f-s" x="560" y="218" text-anchor="middle">25</text>
+<line class="f-ink" x1="580" y1="196" x2="580" y2="202"/>
+<line class="f-ink" x1="600" y1="196" x2="600" y2="202"/>
+<line class="f-ink" x1="620" y1="196" x2="620" y2="202"/>
+<line class="f-ink" x1="640" y1="196" x2="640" y2="202"/>
+<line class="f-ink" x1="660" y1="196" x2="660" y2="202"/>
+<text class="f-s" x="660" y="218" text-anchor="middle">30</text>
+<line class="f-ink" x1="680" y1="196" x2="680" y2="202"/>
+<line class="f-ink" x1="700" y1="196" x2="700" y2="202"/>
+<text class="f-s" x="714" y="218" text-anchor="start">개</text>
+<text class="f-s" x="20" y="46" text-anchor="start">원자료</text>
+<circle class="f-fill" cx="100" cy="42" r="5"/>
+<circle class="f-fill" cx="140" cy="42" r="5"/>
+<circle class="f-fill" cx="160" cy="42" r="5"/>
+<circle class="f-fill" cx="200" cy="42" r="5"/>
+<circle class="f-fill" cx="220" cy="42" r="5"/>
+<circle class="f-fill" cx="240" cy="42" r="5"/>
+<circle class="f-fill" cx="280" cy="42" r="5"/>
+<circle class="f-fill" cx="300" cy="42" r="5"/>
+<circle class="f-fill" cx="340" cy="42" r="5"/>
+<circle class="f-fill" cx="420" cy="42" r="5"/>
+<circle class="f-fill" cx="660" cy="42" r="5"/>
+<text class="f-s" x="20" y="134" text-anchor="start">상자 그림</text>
+<line class="f-ink" x1="100" y1="130" x2="160" y2="130"/>
+<line class="f-ink" x1="340" y1="130" x2="420" y2="130"/>
+<line class="f-ink" x1="100" y1="120" x2="100" y2="140"/>
+<line class="f-ink" x1="420" y1="120" x2="420" y2="140"/>
+<rect class="f-soft" x="160" y="110" width="180" height="40"/>
+<line class="f-line" x1="240" y1="110" x2="240" y2="150"/>
+<circle class="f-box" cx="660" cy="130" r="6"/>
+<line class="f-dash" x1="610" y1="70" x2="610" y2="190"/>
+<text class="f-s f-ink-t" x="160" y="100" text-anchor="middle">Q1 5</text>
+<text class="f-s f-ink-t" x="240" y="100" text-anchor="middle">중앙값 9</text>
+<text class="f-s f-ink-t" x="340" y="100" text-anchor="middle">Q3 14</text>
+<text class="f-s f-ink-t" x="610" y="64" text-anchor="middle">울타리 27.5</text>
+<text class="f-s f-ink-t" x="100" y="168" text-anchor="middle">최솟값 2</text>
+<text class="f-s f-ink-t" x="420" y="168" text-anchor="middle">수염 끝 18</text>
+<text class="f-s f-ink-t" x="660" y="168" text-anchor="middle">이상값 30</text>
+</svg>
+<figcaption>상자 안에 가운데 절반(약 50%)의 값이 들어 있다. 수염은 울타리까지가 아니라 울타리 안의 마지막 실제 값까지 간다.</figcaption>
+</figure>
+
+<p>그리는 순서는 계산 순서와 같습니다. ① 수직선 위에 Q1 = 5부터 Q3 = 14까지 상자. ② 중앙값 9에 선. ③ 울타리(−8.5, 27.5)를 계산. ④ 왼쪽 수염은 울타리 안의 가장 작은 값 2까지, 오른쪽 수염은 울타리 안의 가장 큰 값 18까지. ⑤ 울타리 밖의 30은 점으로. 울타리 자체는 보통 그리지 않습니다(그림 2에는 설명을 위해 점선으로 그렸습니다).</p>
+
+<p>상자 그림 하나에서 읽을 수 있는 것은 다음과 같습니다.</p>
+
+<ul>
+<li><b>가운데</b>: 중앙값의 위치(9).</li>
+<li><b>퍼짐</b>: 상자 길이 = IQR(9). 상자가 길수록 가운데 절반의 값들이 넓게 퍼져 있습니다.</li>
+<li><b>치우침</b>: 중앙값 선이 상자 안에서 왼쪽으로 쏠려 있고(5~9는 4, 9~14는 5), 오른쪽 수염(14→18)이 왼쪽 수염(2→5)보다 깁니다. 큰 값 쪽으로 늘어진 자료입니다.</li>
+<li><b>이상값 후보</b>: 따로 찍힌 점(30).</li>
+</ul>
+
+<p>상자 그림은 히스토그램보다 정보가 적지만 작아서 여러 무리를 나란히 놓고 비교하기 좋습니다. 예를 들어 지점 다섯 곳의 일별 판매량을 상자 다섯 개로 나란히 그리면 가운데·퍼짐·이상값을 한 번에 비교할 수 있습니다. 반대로 봉우리가 두 개인 분포처럼 상자 그림으로는 보이지 않는 모양도 있습니다(마지막 절).</p>
+
+<div class="box trap">
+<p class="box-k">흔한 실수</p>
+<p><b>수염을 울타리까지 그리기, 또는 최댓값까지 그리기.</b> 수염은 울타리 위치(27.5)가 아니라 울타리 안에 있는 <b>실제 값</b>(18)에서 끝납니다. 이상값이 있으면 최댓값(30)까지 그리지도 않습니다. 이상값이 없을 때만 수염 끝이 최솟값·최댓값과 같아집니다.</p>
+</div>
+
+<div class="check" data-q="q6"></div>
+
+<h2>분포의 모양: 왜도 <span class="tag grasp">이해하기</span></h2>
+
+<p>DA03·1의 통학 시간 히스토그램은 20~30분에 봉우리가 있고 오른쪽(긴 시간)으로 꼬리가 길었습니다. 그 자료의 평균은 548 ÷ 20 = 27.4분, 중앙값은 10번째·11번째 값 25와 27의 평균 26분으로, 평균이 중앙값보다 컸습니다. 이것은 우연이 아닙니다.</p>
+
+<div class="box">
+<p class="box-k">정의</p>
+<p><b class="key">왜도</b>(skewness)는 분포가 좌우 대칭에서 벗어나 한쪽으로 꼬리를 늘어뜨린 정도와 방향입니다. 꼬리가 오른쪽(큰 값 쪽)으로 길면 <b class="key">양의 왜도</b>(오른쪽 꼬리), 왼쪽으로 길면 <b class="key">음의 왜도</b>(왼쪽 꼬리)라고 합니다.</p>
+</div>
+
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 250" role="img" aria-label="세 개의 히스토그램. (가) 왼쪽 꼬리: 값이 7, 8 쪽에 몰리고 왼쪽으로 길게 늘어진다. 평균 6.64가 중앙값 7보다 왼쪽. (나) 대칭: 5를 중심으로 좌우가 같다. 평균과 중앙값이 모두 5. (다) 오른쪽 꼬리: 값이 2, 3 쪽에 몰리고 오른쪽으로 길게 늘어진다. 평균 3.36이 중앙값 3보다 오른쪽.">
+<line class="f-ink" x1="12" y1="190" x2="236" y2="190"/>
+<rect class="f-soft" x="208" y="136" width="24" height="54"/>
+<rect class="f-soft" x="184" y="82" width="24" height="108"/>
+<rect class="f-soft" x="160" y="100" width="24" height="90"/>
+<rect class="f-soft" x="136" y="136" width="24" height="54"/>
+<rect class="f-soft" x="112" y="154" width="24" height="36"/>
+<rect class="f-soft" x="88" y="172" width="24" height="18"/>
+<rect class="f-soft" x="64" y="172" width="24" height="18"/>
+<rect class="f-soft" x="16" y="172" width="24" height="18"/>
+<text class="f-s" x="28" y="208" text-anchor="middle">1</text>
+<text class="f-s" x="52" y="208" text-anchor="middle">2</text>
+<text class="f-s" x="76" y="208" text-anchor="middle">3</text>
+<text class="f-s" x="100" y="208" text-anchor="middle">4</text>
+<text class="f-s" x="124" y="208" text-anchor="middle">5</text>
+<text class="f-s" x="148" y="208" text-anchor="middle">6</text>
+<text class="f-s" x="172" y="208" text-anchor="middle">7</text>
+<text class="f-s" x="196" y="208" text-anchor="middle">8</text>
+<text class="f-s" x="220" y="208" text-anchor="middle">9</text>
+<line class="f-dash" x1="172" y1="66" x2="172" y2="190"/>
+<line class="f-line" x1="163.36" y1="40" x2="163.36" y2="190"/>
+<text class="f-s f-ink-t f-b" x="163.36" y="34" text-anchor="middle">평균 6.64</text>
+<text class="f-s f-ink-t" x="186" y="62" text-anchor="start">중앙값 7</text>
+<text class="f-cap" x="124" y="238" text-anchor="middle">(가) 왼쪽 꼬리</text>
+<line class="f-ink" x1="268" y1="190" x2="492" y2="190"/>
+<rect class="f-soft" x="296" y="172" width="24" height="18"/>
+<rect class="f-soft" x="320" y="154" width="24" height="36"/>
+<rect class="f-soft" x="344" y="118" width="24" height="72"/>
+<rect class="f-soft" x="368" y="82" width="24" height="108"/>
+<rect class="f-soft" x="392" y="118" width="24" height="72"/>
+<rect class="f-soft" x="416" y="154" width="24" height="36"/>
+<rect class="f-soft" x="440" y="172" width="24" height="18"/>
+<text class="f-s" x="284" y="208" text-anchor="middle">1</text>
+<text class="f-s" x="308" y="208" text-anchor="middle">2</text>
+<text class="f-s" x="332" y="208" text-anchor="middle">3</text>
+<text class="f-s" x="356" y="208" text-anchor="middle">4</text>
+<text class="f-s" x="380" y="208" text-anchor="middle">5</text>
+<text class="f-s" x="404" y="208" text-anchor="middle">6</text>
+<text class="f-s" x="428" y="208" text-anchor="middle">7</text>
+<text class="f-s" x="452" y="208" text-anchor="middle">8</text>
+<text class="f-s" x="476" y="208" text-anchor="middle">9</text>
+<line class="f-dash" x1="380" y1="66" x2="380" y2="190"/>
+<line class="f-line" x1="380" y1="40" x2="380" y2="190"/>
+<text class="f-s f-ink-t f-b" x="380" y="34" text-anchor="middle">평균 5</text>
+<text class="f-s f-ink-t" x="366" y="62" text-anchor="end">중앙값 5</text>
+<text class="f-cap" x="380" y="238" text-anchor="middle">(나) 대칭</text>
+<line class="f-ink" x1="524" y1="190" x2="748" y2="190"/>
+<rect class="f-soft" x="528" y="136" width="24" height="54"/>
+<rect class="f-soft" x="552" y="82" width="24" height="108"/>
+<rect class="f-soft" x="576" y="100" width="24" height="90"/>
+<rect class="f-soft" x="600" y="136" width="24" height="54"/>
+<rect class="f-soft" x="624" y="154" width="24" height="36"/>
+<rect class="f-soft" x="648" y="172" width="24" height="18"/>
+<rect class="f-soft" x="672" y="172" width="24" height="18"/>
+<rect class="f-soft" x="720" y="172" width="24" height="18"/>
+<text class="f-s" x="540" y="208" text-anchor="middle">1</text>
+<text class="f-s" x="564" y="208" text-anchor="middle">2</text>
+<text class="f-s" x="588" y="208" text-anchor="middle">3</text>
+<text class="f-s" x="612" y="208" text-anchor="middle">4</text>
+<text class="f-s" x="636" y="208" text-anchor="middle">5</text>
+<text class="f-s" x="660" y="208" text-anchor="middle">6</text>
+<text class="f-s" x="684" y="208" text-anchor="middle">7</text>
+<text class="f-s" x="708" y="208" text-anchor="middle">8</text>
+<text class="f-s" x="732" y="208" text-anchor="middle">9</text>
+<line class="f-dash" x1="588" y1="66" x2="588" y2="190"/>
+<line class="f-line" x1="596.64" y1="40" x2="596.64" y2="190"/>
+<text class="f-s f-ink-t f-b" x="596.64" y="34" text-anchor="middle">평균 3.36</text>
+<text class="f-s f-ink-t" x="574" y="62" text-anchor="end">중앙값 3</text>
+<text class="f-cap" x="636" y="238" text-anchor="middle">(다) 오른쪽 꼬리</text>
+</svg>
+<figcaption>실선은 평균, 점선은 중앙값. 평균은 늘 꼬리 쪽으로 끌려간다.</figcaption>
+</figure>
+
+<div class="box ex">
+<p class="box-k">풀이 예제 · 오른쪽 꼬리 분포 (그림 3 (다))</p>
+<p>값 1~9의 도수: 1이 3개, 2가 6개, 3이 5개, 4가 3개, 5가 2개, 6·7이 1개씩, 8이 0개, 9가 1개. n = 3 + 6 + 5 + 3 + 2 + 1 + 1 + 0 + 1 = 22.</p>
+<p class="calc">① 최빈값: 도수가 가장 큰 6개 → 2<br>
+② 중앙값: 22 ÷ 2 = 11번째와 12번째. 누적도수 3(값 1까지), 9(값 2까지), 14(값 3까지) → 10~14번째가 모두 3 → (3 + 3) ÷ 2 = 3<br>
+③ 평균: 합 = 1×3 + 2×6 + 3×5 + 4×3 + 5×2 + 6 + 7 + 9 = 3 + 12 + 15 + 12 + 10 + 6 + 7 + 9 = 74, 74 ÷ 22 ≈ 3.36<br>
+④ 최빈값 2 &lt; 중앙값 3 &lt; 평균 3.36</p>
+<p>(가)는 (다)를 좌우로 뒤집은 자료라(값 v를 10 − v로) 평균 10 − 3.36 = 6.64, 중앙값 10 − 3 = 7, 최빈값 10 − 2 = 8로 순서가 반대입니다. (나)는 대칭이라 셋이 모두 5입니다.</p>
+</div>
+
+<p>이유는 DA04·1의 받침점 그대로입니다. 꼬리에 있는 몇 개의 먼 값이 평균을 그쪽으로 끌어당기지만, 중앙값은 순서만 보므로 덜 움직입니다. 그래서 <b>평균은 꼬리 쪽에 놓입니다.</b> 거꾸로 평균과 중앙값을 비교하면 꼬리 방향을 짐작할 수 있습니다. 소득·집값·대기 시간처럼 0 아래로는 내려갈 수 없고 위로는 아주 클 수 있는 양은 대개 오른쪽 꼬리입니다. 쉬운 시험의 점수처럼 만점 근처에 몰리고 낮은 점수가 드문 자료는 왼쪽 꼬리입니다.</p>
+
+<div class="box trap">
+<p class="box-k">시험 함정</p>
+<p><b>"오른쪽으로 치우쳤다"는 말의 방향.</b> 봉우리가 왼쪽에 있고 꼬리가 오른쪽으로 긴 분포를 두고 "왼쪽으로 치우쳤다"(값이 왼쪽에 몰림)고 하는 책도, "오른쪽으로 치우쳤다"(꼬리가 오른쪽)고 하는 책도 있어 헷갈립니다. 혼동을 피하려면 <b>꼬리 기준</b>으로 말합니다. 오른쪽 꼬리 = 양의 왜도 = 대개 평균 &gt; 중앙값 &gt; 최빈값.</p>
+<p><b>"평균 &gt; 중앙값이면 반드시 양의 왜도"는 아니다.</b> 대부분의 자료에서 맞는 경험칙이지만 예외가 있습니다. 특히 봉우리가 여럿이거나 이산 값이 적은 자료에서 어긋날 수 있습니다. 왜도의 방향은 그림으로 함께 확인합니다.</p>
+</div>
+
+<div class="more">
+<p class="box-k">더 알아보기 · 왜도를 숫자 하나로</p>
+<p>왜도를 숫자로 나타내는 대표적인 방법은 각 편차를 표준편차로 나눈 값(표준화, DA05)을 세제곱해서 평균 내는 것입니다. 세제곱은 부호를 남기고 먼 값을 크게 키우므로, 오른쪽에 먼 값이 많으면 양수, 왼쪽에 많으면 음수가 됩니다. 대칭이면 0입니다. 표준편차를 배운 뒤 DA05에서 다시 볼 수 있습니다.</p>
+</div>
+
+<div class="check" data-q="q7"></div>
+
+<h2>중심 하나만 보면 놓치는 것</h2>
+
+<p>다음 세 자료는 모두 평균이 50이고 중앙값도 50입니다.</p>
+
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 300" role="img" aria-label="수직선 0부터 100 위에 세 자료를 점으로 찍었다. (가) 46, 48, 50, 52, 54: 50 근처에 모여 있다. (나) 10, 30, 50, 70, 90: 넓게 퍼져 있다. (다) 20, 22, 25, 75, 78, 80: 두 무리로 갈라져 있고 50 근처에는 값이 없다. 세 자료 모두 평균과 중앙값이 50이다.">
+<line class="f-ink" x1="154" y1="50" x2="706" y2="50"/>
+<circle class="f-fill" cx="408.4" cy="50" r="5"/>
+<circle class="f-fill" cx="419.2" cy="50" r="5"/>
+<circle class="f-fill" cx="430" cy="50" r="5"/>
+<circle class="f-fill" cx="440.8" cy="50" r="5"/>
+<circle class="f-fill" cx="451.6" cy="50" r="5"/>
+<text class="f-s f-ink-t" x="20" y="55" text-anchor="start">(가) 모여 있음</text>
+<line class="f-ink" x1="154" y1="120" x2="706" y2="120"/>
+<circle class="f-fill" cx="214" cy="120" r="5"/>
+<circle class="f-fill" cx="322" cy="120" r="5"/>
+<circle class="f-fill" cx="430" cy="120" r="5"/>
+<circle class="f-fill" cx="538" cy="120" r="5"/>
+<circle class="f-fill" cx="646" cy="120" r="5"/>
+<text class="f-s f-ink-t" x="20" y="125" text-anchor="start">(나) 넓게 퍼짐</text>
+<line class="f-ink" x1="154" y1="190" x2="706" y2="190"/>
+<circle class="f-fill" cx="268" cy="190" r="5"/>
+<circle class="f-fill" cx="278.8" cy="190" r="5"/>
+<circle class="f-fill" cx="295" cy="190" r="5"/>
+<circle class="f-fill" cx="565" cy="190" r="5"/>
+<circle class="f-fill" cx="581.2" cy="190" r="5"/>
+<circle class="f-fill" cx="592" cy="190" r="5"/>
+<text class="f-s f-ink-t" x="20" y="195" text-anchor="start">(다) 두 무리</text>
+<line class="f-dash" x1="430" y1="26" x2="430" y2="220"/>
+<text class="f-s f-ink-t f-b" x="430" y="20" text-anchor="middle">평균 = 중앙값 = 50</text>
+<line class="f-ink" x1="150" y1="240" x2="710" y2="240"/>
+<line class="f-ink" x1="160" y1="240" x2="160" y2="246"/>
+<text class="f-s" x="160" y="262" text-anchor="middle">0</text>
+<line class="f-ink" x1="214" y1="240" x2="214" y2="246"/>
+<line class="f-ink" x1="268" y1="240" x2="268" y2="246"/>
+<text class="f-s" x="268" y="262" text-anchor="middle">20</text>
+<line class="f-ink" x1="322" y1="240" x2="322" y2="246"/>
+<line class="f-ink" x1="376" y1="240" x2="376" y2="246"/>
+<text class="f-s" x="376" y="262" text-anchor="middle">40</text>
+<line class="f-ink" x1="430" y1="240" x2="430" y2="246"/>
+<line class="f-ink" x1="484" y1="240" x2="484" y2="246"/>
+<text class="f-s" x="484" y="262" text-anchor="middle">60</text>
+<line class="f-ink" x1="538" y1="240" x2="538" y2="246"/>
+<line class="f-ink" x1="592" y1="240" x2="592" y2="246"/>
+<text class="f-s" x="592" y="262" text-anchor="middle">80</text>
+<line class="f-ink" x1="646" y1="240" x2="646" y2="246"/>
+<line class="f-ink" x1="700" y1="240" x2="700" y2="246"/>
+<text class="f-s" x="700" y="262" text-anchor="middle">100</text>
+</svg>
+<figcaption>세 자료 모두 평균 50, 중앙값 50. 점선(50)은 같지만 자료의 모습은 전혀 다르다.</figcaption>
+</figure>
+
+<div class="box ex">
+<p class="box-k">풀이 예제 · 세 자료의 대표값</p>
+<p class="calc">(가) 46, 48, 50, 52, 54 → 평균 250 ÷ 5 = 50, 중앙값 3번째 = 50, Q1 = (46 + 48) ÷ 2 = 47, Q3 = (52 + 54) ÷ 2 = 53, IQR = 53 − 47 = 6<br>
+(나) 10, 30, 50, 70, 90 → 평균 250 ÷ 5 = 50, 중앙값 50, IQR = 80 − 20 = 60<br>
+(다) 20, 22, 25, 75, 78, 80 → 평균 300 ÷ 6 = 50, 중앙값 (25 + 75) ÷ 2 = 50, Q1 = 22, Q3 = 78, IQR = 56</p>
+</div>
+
+<p>"평균 50"이라는 한 문장은 세 자료를 구별하지 못합니다.</p>
+
+<ul>
+<li>(가)와 (나)는 <b>퍼짐</b>이 다릅니다. (가)에서 "50쯤"이라는 예측은 거의 맞지만, (나)에서는 40 넘게 틀릴 수 있습니다. 퍼짐을 재는 IQR이 6과 60으로 이 차이를 잡아냅니다.</li>
+<li>(다)는 <b>모양</b>이 다릅니다. 값이 두 무리로 갈라져 있어 평균·중앙값 50 근처에는 값이 하나도 없습니다. 이렇게 봉우리가 둘인 분포를 <b>쌍봉 분포</b>(bimodal)라고 합니다. 대개 성질이 다른 두 집단이 섞였다는 신호입니다(예: 기초반과 심화반의 점수를 합친 자료). 이때는 대표값 하나보다 집단을 나눠 보는 것이 먼저입니다.</li>
+</ul>
+
+<p>그래서 자료를 요약할 때는 최소한 <b>중심 + 퍼짐</b>을 함께 적고, <b>그림</b>(히스토그램, 상자 그림, 점 그림)으로 모양을 확인합니다. (다)는 IQR 56으로 (나)와 비슷한 숫자가 나오지만 모양은 전혀 다릅니다. 숫자 요약을 모두 붙여도 그림을 대신하지 못하는 경우가 있습니다. 퍼짐을 재는 표준적인 방법인 분산과 표준편차가 다음 단원 DA05의 주제입니다.</p>
+
+<div class="why">
+<p class="box-k">왜 그럴까?</p>
+<p>어느 회사가 "고객 평균 대기 시간 5분"이라고 발표했습니다. 대기 시간 분포가 오른쪽 꼬리를 가진다면, 이 5분과 비교해 "대부분의 고객이 실제로 겪는 대기 시간"은 어떨 가능성이 클까요? 그리고 어떤 숫자를 함께 요구해야 할까요?</p>
+<details><summary>모범 답 보기</summary><p>오른쪽 꼬리 분포에서는 소수의 아주 긴 대기가 평균을 끌어올리므로, 평균 5분보다 짧게 기다린 고객이 절반보다 많을 가능성이 큽니다(중앙값 &lt; 평균). 동시에 일부 고객은 5분보다 훨씬 오래 기다립니다. 그래서 중앙값(보통의 경험)과 높은 분위수(예: 90번째 백분위수, "10명 중 1명은 이보다 오래 기다림")를 함께 요구해야 실제 경험을 알 수 있습니다. 웹 서비스의 응답 시간을 평균이 아니라 p50, p90, p99 같은 백분위수로 관리하는 것도 같은 이유입니다.</p></details>
+</div>
+
+<div class="check" data-q="q12"></div>
+
+<h2>한눈에 정리</h2>
+
+<div class="table-wrap">
+<table>
+<tr><th>낱말</th><th>뜻 / 계산</th><th>우산 자료</th></tr>
+<tr><td><b class="key">분위수</b> · 백분위수</td><td>값의 약 p 비율이 그 이하인 값</td><td></td></tr>
+<tr><td><b class="key">사분위수</b></td><td>정렬 → 중앙값 → 두 절반의 중앙값 (홀수면 중앙값 제외). 도구마다 규칙이 다를 수 있다</td><td>Q1 5, Q2 9, Q3 14</td></tr>
+<tr><td><b class="key">IQR</b></td><td>Q3 − Q1. 가운데 50%의 폭</td><td>9</td></tr>
+<tr><td>울타리</td><td>Q1 − <b class="key">1.5 × IQR</b>, Q3 + 1.5 × IQR. 밖은 이상값 후보 (지우는 기준이 아님)</td><td>−8.5, 27.5 → 30</td></tr>
+<tr><td><b class="key">상자 그림</b></td><td>상자 Q1~Q3, 선 = 중앙값, 수염 = 울타리 안 마지막 실제 값, 밖은 점</td><td>수염 2~18, 점 30</td></tr>
+<tr><td><b class="key">왜도</b></td><td>꼬리 방향. 오른쪽 꼬리(양) → 대개 평균 &gt; 중앙값 &gt; 최빈값</td><td>중앙값이 상자 왼쪽, 오른쪽 수염이 김</td></tr>
+<tr><td>중심 하나의 한계</td><td>중심이 같아도 퍼짐·모양(쌍봉)이 다를 수 있다. 중심 + 퍼짐 + 그림</td><td></td></tr>
+</table>
+</div>
+
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>사분위수와 상자 그림으로 가운데·퍼짐·치우침·이상값 후보를 함께 보고, 평균은 꼬리 쪽으로 끌려간다는 것을 기억한다.</p></div>
+
+<h2>확인 문제</h2>
+<p>본문 중간에서 푼 문제 말고 남은 문제입니다. 보기를 누르면 바로 정답과 해설이 나옵니다.</p>
+<div id="quiz"></div>
+
+<section class="work" id="tools"></section>
+
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

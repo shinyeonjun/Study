@@ -50,7 +50,21 @@
     s.days = s.days || {}; // 공부한 날
     return s;
   };
-  B.save = function (s) { try { localStorage.setItem(KEY, JSON.stringify(s)); } catch (e) {} };
+  B.save = function (s) {
+    try { localStorage.setItem(KEY, JSON.stringify(s)); return true; }
+    catch (e) { return false; }
+  };
+
+  B.validBackup = function (data) {
+    function isRecord(value) { return !!value && typeof value === "object" && !Array.isArray(value); }
+    return isRecord(data) && isRecord(data.q) &&
+      Object.values(data.q).every(function (st) {
+        return isRecord(st) && Number.isInteger(st.stage) && st.stage >= 0 && st.stage <= GAPS.length &&
+          Number.isInteger(st.last) && Number.isInteger(st.due);
+      }) &&
+      ["why", "days", "memo"].every(function (key) { return data[key] === undefined || isRecord(data[key]); }) &&
+      (data.exam === undefined || typeof data.exam === "string" && /^\d{4}-\d{2}-\d{2}$/.test(data.exam));
+  };
 
   // ---- 노트·문제 찾기 ----
   B.allNotes = function () {
@@ -85,6 +99,8 @@
     if (correct) {
       if (st.open) {
         st.open = false; // 오늘 틀린 것을 다시 맞힘. 단계는 그대로 두고 내일 다시 나온다
+        st.due = t + 1;
+        if (st.wrong && t > st.wrong.day) delete st.wrong;
       } else if (dueNow) {
         st.stage = Math.min(st.stage + 1, GAPS.length);
         st.due = t + GAPS[st.stage - 1];

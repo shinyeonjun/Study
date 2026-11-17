@@ -1,0 +1,431 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>도수와 비율, 막대그래프와 히스토그램 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e8c'/%3E%3Cpath d='M8 22V10m8 12V14m8 8V6' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="DA03-1">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+
+<header class="chapter">
+<p class="chap-sub">데이터 읽기와 탐색 · DA03 표와 그림 읽기</p>
+<p class="chap-num">DA03·1</p>
+<h1>도수와 비율, 막대그래프와 히스토그램</h1>
+<p class="lead">한 반 학생 20명에게 통학 수단과 통학 시간을 물었습니다. 20행짜리 표를 위에서 아래로 읽어도 "버스가 제일 많은가?", "보통 몇 분 걸리나?"는 잘 보이지 않습니다. 이 장에서는 값을 세어서 정리하는 도수와 상대도수, 그리고 범주형에 쓰는 막대그래프와 수치형에 쓰는 히스토그램을 그리는 법과 읽는 법을 다룹니다.</p>
+</header>
+
+<div class="goal">
+<h2>이 장을 읽고 나면</h2>
+<ul>
+<li>원자료에서 도수, 상대도수, 누적도수를 계산할 수 있다.</li>
+<li>수치형 자료를 "이상·미만" 계급으로 나눠 도수분포표를 만들 수 있다. 경계값도 정확히 넣는다.</li>
+<li>막대그래프와 히스토그램의 차이(축, 틈, 순서, 폭)를 설명하고, 변수 종류에 맞게 고를 수 있다.</li>
+<li>계급 폭에 따라 히스토그램 모양이 달라진다는 것을 예로 보일 수 있다.</li>
+</ul>
+</div>
+
+<h2>원자료</h2>
+
+<p>조사한 그대로의 자료를 <b>원자료</b>(raw data)라고 합니다. 한 행이 학생 한 명인 표입니다. 지면을 아끼려고 둘로 나눠 나란히 놓았습니다.</p>
+
+<div class="table-wrap">
+<table>
+<tr><th>번호</th><th>통학 수단</th><th>통학 시간(분)</th><th>번호</th><th>통학 수단</th><th>통학 시간(분)</th></tr>
+<tr><td>1</td><td>버스</td><td>25</td><td>11</td><td>버스</td><td>22</td></tr>
+<tr><td>2</td><td>도보</td><td>8</td><td>12</td><td>도보</td><td>5</td></tr>
+<tr><td>3</td><td>지하철</td><td>44</td><td>13</td><td>지하철</td><td>28</td></tr>
+<tr><td>4</td><td>버스</td><td>20</td><td>14</td><td>버스</td><td>41</td></tr>
+<tr><td>5</td><td>자전거</td><td>14</td><td>15</td><td>자전거</td><td>18</td></tr>
+<tr><td>6</td><td>지하철</td><td>35</td><td>16</td><td>버스</td><td>27</td></tr>
+<tr><td>7</td><td>버스</td><td>29</td><td>17</td><td>지하철</td><td>52</td></tr>
+<tr><td>8</td><td>도보</td><td>12</td><td>18</td><td>도보</td><td>15</td></tr>
+<tr><td>9</td><td>버스</td><td>33</td><td>19</td><td>버스</td><td>24</td></tr>
+<tr><td>10</td><td>지하철</td><td>58</td><td>20</td><td>지하철</td><td>38</td></tr>
+</table>
+</div>
+
+<p>통학 수단은 명목형 범주, 통학 시간은 연속형 수치입니다(DA02·1). 종류가 다르니 정리하는 법도, 그리는 그림도 다릅니다. 범주형부터 봅니다.</p>
+
+<h2>세어서 정리하기: 도수와 상대도수 <span class="tag memo">외우기</span></h2>
+
+<p>통학 수단 열을 위에서 아래로 읽으며 수단마다 몇 명인지 셉니다. 버스는 1, 4, 7, 9, 11, 14, 16, 19번으로 8명입니다. 같은 식으로 지하철 6명, 도보 4명, 자전거 2명입니다. 확인: 8 + 6 + 4 + 2 = 20명, 전체와 같습니다.</p>
+
+<div class="box">
+<p class="box-k">정의</p>
+<p><b class="key">도수</b>(frequency)는 어떤 범주(또는 구간)에 속하는 관측의 <b>개수</b>입니다.<br>
+<b class="key">상대도수</b>(relative frequency)는 도수를 <b>전체 관측 수로 나눈 값</b>입니다. 전체에서 그 범주가 차지하는 비율이고, 100을 곱하면 백분율(AR07)이 됩니다.</p>
+<p>상대도수 = 그 범주의 도수 ÷ 전체 도수</p>
+</div>
+
+<div class="table-wrap">
+<table>
+<tr><th>통학 수단</th><th>도수(명)</th><th>상대도수</th><th>백분율</th></tr>
+<tr><td>버스</td><td>8</td><td>8 ÷ 20 = 0.40</td><td>40%</td></tr>
+<tr><td>지하철</td><td>6</td><td>6 ÷ 20 = 0.30</td><td>30%</td></tr>
+<tr><td>도보</td><td>4</td><td>4 ÷ 20 = 0.20</td><td>20%</td></tr>
+<tr><td>자전거</td><td>2</td><td>2 ÷ 20 = 0.10</td><td>10%</td></tr>
+<tr><td>합계</td><td>20</td><td>1.00</td><td>100%</td></tr>
+</table>
+</div>
+
+<p>이렇게 범주(또는 구간)마다 도수를 적은 표를 <b class="key">도수분포표</b>라고 합니다. 상대도수의 합은 언제나 1(100%)입니다. 모든 관측이 범주 하나에 꼭 하나씩 들어가기 때문입니다. 합이 1이 안 되면 어딘가에서 세다가 빠뜨렸거나 두 번 센 것이니, 검산에 씁니다.</p>
+
+<p>DA01에서 "합계 행을 표 안에 두지 말라"고 했는데 위 표에는 합계 행이 있습니다. 위 표는 원자료가 아니라 <b>요약한 결과</b>를 보여 주는 표라서 괜찮습니다. 원자료 표(관측 = 행)와 결과 표(읽는 사람을 위한 표)는 쓰임이 다릅니다.</p>
+
+<h3>왜 상대도수가 필요할까</h3>
+
+<p>옆 반은 30명 중 버스가 12명입니다. 12명 &gt; 8명이니 옆 반이 버스를 더 많이 탈까요? 인원이 다르니 도수끼리는 바로 비교할 수 없습니다. 상대도수로 바꿉니다. 옆 반 12 ÷ 30 = 0.40, 우리 반 8 ÷ 20 = 0.40. 비율은 똑같습니다. <b>전체 수가 다른 두 무리를 비교할 때는 상대도수</b>로 바꿔서 비교합니다. 이 "무엇으로 나누었나(분모)"는 DA03·2에서 더 자세히 봅니다.</p>
+
+<div class="check" data-q="q2"></div>
+<div class="check" data-q="q3"></div>
+
+<h2>막대그래프</h2>
+
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 300" role="img" aria-label="학생 20명의 통학 수단 막대그래프. 버스 8명(40%), 지하철 6명(30%), 도보 4명(20%), 자전거 2명(10%). 왼쪽 축은 도수(명) 0부터 10, 오른쪽 축은 상대도수 0부터 0.5. 막대 사이에 틈이 있다.">
+<line class="f-ink" x1="110" y1="34" x2="110" y2="250"/>
+<line class="f-ink" x1="105" y1="250" x2="110" y2="250"/>
+<text class="f-s" x="101" y="254" text-anchor="end">0</text>
+<line class="f-ink" x1="105" y1="208" x2="110" y2="208"/>
+<text class="f-s" x="101" y="212" text-anchor="end">2</text>
+<line class="f-ink" x1="105" y1="166" x2="110" y2="166"/>
+<text class="f-s" x="101" y="170" text-anchor="end">4</text>
+<line class="f-ink" x1="105" y1="124" x2="110" y2="124"/>
+<text class="f-s" x="101" y="128" text-anchor="end">6</text>
+<line class="f-ink" x1="105" y1="82" x2="110" y2="82"/>
+<text class="f-s" x="101" y="86" text-anchor="end">8</text>
+<line class="f-ink" x1="105" y1="40" x2="110" y2="40"/>
+<text class="f-s" x="101" y="44" text-anchor="end">10</text>
+<text class="f-s" x="101" y="26" text-anchor="end">명</text>
+<line class="f-ink" x1="630" y1="34" x2="630" y2="250"/>
+<line class="f-ink" x1="630" y1="250" x2="635" y2="250"/>
+<text class="f-s" x="639" y="254" text-anchor="start">0</text>
+<line class="f-ink" x1="630" y1="208" x2="635" y2="208"/>
+<text class="f-s" x="639" y="212" text-anchor="start">0.1</text>
+<line class="f-ink" x1="630" y1="166" x2="635" y2="166"/>
+<text class="f-s" x="639" y="170" text-anchor="start">0.2</text>
+<line class="f-ink" x1="630" y1="124" x2="635" y2="124"/>
+<text class="f-s" x="639" y="128" text-anchor="start">0.3</text>
+<line class="f-ink" x1="630" y1="82" x2="635" y2="82"/>
+<text class="f-s" x="639" y="86" text-anchor="start">0.4</text>
+<line class="f-ink" x1="630" y1="40" x2="635" y2="40"/>
+<text class="f-s" x="639" y="44" text-anchor="start">0.5</text>
+<text class="f-s" x="639" y="26" text-anchor="start">상대도수</text>
+<line class="f-ink" x1="110" y1="250" x2="630" y2="250"/>
+<rect class="f-soft" x="140" y="82" width="70" height="168"/>
+<text class="f-s f-ink-t" x="175" y="74" text-anchor="middle">8 (40%)</text>
+<text class="f-s f-ink-t" x="175" y="270" text-anchor="middle">버스</text>
+<rect class="f-soft" x="270" y="124" width="70" height="126"/>
+<text class="f-s f-ink-t" x="305" y="116" text-anchor="middle">6 (30%)</text>
+<text class="f-s f-ink-t" x="305" y="270" text-anchor="middle">지하철</text>
+<rect class="f-soft" x="400" y="166" width="70" height="84"/>
+<text class="f-s f-ink-t" x="435" y="158" text-anchor="middle">4 (20%)</text>
+<text class="f-s f-ink-t" x="435" y="270" text-anchor="middle">도보</text>
+<rect class="f-soft" x="530" y="208" width="70" height="42"/>
+<text class="f-s f-ink-t" x="565" y="200" text-anchor="middle">2 (10%)</text>
+<text class="f-s f-ink-t" x="565" y="270" text-anchor="middle">자전거</text>
+<line class="f-ink" x1="240" y1="187" x2="240" y2="132.4"/>
+<text class="f-s" x="240" y="124.4" text-anchor="middle">틈</text>
+<text class="f-s" x="370" y="290" text-anchor="middle">통학 수단 (명목형: 막대 순서를 바꿔도 된다)</text>
+</svg>
+<figcaption>왼쪽 축(도수)과 오른쪽 축(상대도수)은 같은 막대를 두 가지로 읽는 눈금이다. 전체 20명이라 10명 = 0.5.</figcaption>
+</figure>
+
+<div class="box">
+<p class="box-k">정의</p>
+<p><b class="key">막대그래프</b>(bar chart)는 범주마다 막대 하나를 세우고, 막대의 <b>길이</b>로 도수(또는 상대도수)를 나타내는 그림입니다. 범주형 변수에 씁니다.</p>
+</div>
+
+<p>막대그래프를 읽을 때 알아 둘 약속입니다.</p>
+
+<ul>
+<li><b>길이만 정보입니다.</b> 막대의 폭은 아무 뜻이 없고, 모든 막대의 폭을 같게 그립니다. 그래서 길이를 재는 출발점, 곧 세로축이 <b>0에서 시작</b>해야 길이의 비가 값의 비와 같아집니다. 버스 막대가 자전거 막대의 4배 길이인 것은 8 ÷ 2 = 4이기 때문입니다.</li>
+<li><b>막대 사이에 틈을 둡니다.</b> 범주는 서로 떨어진 것(버스와 지하철 사이에 "중간 값"은 없음)이라는 표시입니다.</li>
+<li><b>명목형이면 막대 순서는 자유입니다.</b> 보통 큰 것부터 늘어놓아 읽기 쉽게 합니다. 순서형(만족도 등)이면 범주의 순서대로 놓습니다.</li>
+<li>세로축을 도수로 하든 상대도수로 하든 모양은 같습니다. 그림 1은 두 눈금을 왼쪽·오른쪽에 함께 달았습니다.</li>
+</ul>
+
+<div class="check" data-q="q4"></div>
+
+<h2>수치형은 구간으로 묶는다</h2>
+
+<p>통학 시간을 같은 식으로 세면 어떻게 될까요? 5분 1명, 8분 1명, 12분 1명, … 값이 거의 다 달라서 모든 값의 도수가 1입니다. 아무것도 요약되지 않습니다. 연속형은 값이 하나하나 다른 것이 보통이므로, <b>구간으로 묶어서</b> 셉니다.</p>
+
+<div class="box">
+<p class="box-k">정의</p>
+<p>수치를 나누는 구간을 <b class="key">계급</b>(class, 구간 또는 bin), 구간의 너비를 <b class="key">계급 폭</b>이라고 합니다. 계급은 보통 "10 이상 20 미만"처럼 <b>왼쪽 끝은 포함, 오른쪽 끝은 빼고</b> 정합니다. 그래야 경계값이 정확히 한 계급에만 들어갑니다.</p>
+</div>
+
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 190" role="img" aria-label="수직선 0부터 40분. 10 이상 20 미만 계급은 10에 채운 점, 20에 빈 점. 20 이상 30 미만 계급은 20에 채운 점, 30에 빈 점. 값 20은 20~30 계급에 들어간다.">
+<line class="f-ink" x1="60" y1="130" x2="710" y2="130"/>
+<line class="f-ink" x1="80" y1="130" x2="80" y2="136"/>
+<text class="f-s" x="80" y="154" text-anchor="middle">0</text>
+<line class="f-ink" x1="230" y1="130" x2="230" y2="136"/>
+<text class="f-s" x="230" y="154" text-anchor="middle">10</text>
+<line class="f-ink" x1="380" y1="130" x2="380" y2="136"/>
+<text class="f-s" x="380" y="154" text-anchor="middle">20</text>
+<line class="f-ink" x1="530" y1="130" x2="530" y2="136"/>
+<text class="f-s" x="530" y="154" text-anchor="middle">30</text>
+<line class="f-ink" x1="680" y1="130" x2="680" y2="136"/>
+<text class="f-s" x="680" y="154" text-anchor="middle">40</text>
+<text class="f-s" x="714" y="154" text-anchor="start">분</text>
+<line class="f-line" x1="380" y1="62" x2="530" y2="62"/>
+<circle class="f-fill" cx="380" cy="62" r="5"/>
+<circle class="f-box" cx="530" cy="62" r="5"/>
+<text class="f-s f-ink-t" x="546" y="66" text-anchor="start">20 이상 30 미만</text>
+<line class="f-line" x1="230" y1="92" x2="380" y2="92"/>
+<circle class="f-fill" cx="230" cy="92" r="5"/>
+<circle class="f-box" cx="380" cy="92" r="5"/>
+<text class="f-s f-ink-t" x="396" y="96" text-anchor="start">10 이상 20 미만</text>
+<line class="f-ink" x1="380" y1="26" x2="380" y2="54" marker-end="url(#f-arrow)"/>
+<text class="f-s f-ink-t f-b" x="380" y="20" text-anchor="middle">값 20 → 20 이상 30 미만</text>
+</svg>
+<figcaption>채운 점은 '포함(이상)', 빈 점은 '포함 안 함(미만)'. AR01의 이상·미만과 같은 약속이다.</figcaption>
+</figure>
+
+<p>값 20은 "10 이상 20 미만"에는 들지 않고(20은 20 미만이 아님), "20 이상 30 미만"에 듭니다. 이 약속을 지키지 않고 "10~20, 20~30"이라고만 적으면 20을 두 번 세거나 어디에도 안 넣는 실수가 생깁니다.</p>
+
+<div class="box ex">
+<p class="box-k">풀이 예제 · 통학 시간 도수분포표</p>
+<p>먼저 20개 값을 작은 것부터 늘어놓으면 세기 쉽습니다.</p>
+<p class="calc">5, 8 | 12, 14, 15, 18 | 20, 22, 24, 25, 27, 28, 29 | 33, 35, 38 | 41, 44 | 52, 58</p>
+<p>세로줄(|)은 10분마다 끊은 자리입니다. 20은 셋째 묶음의 맨 앞에 있습니다.</p>
+<div class="table-wrap">
+<table>
+<tr><th>계급(분)</th><th>도수</th><th>상대도수</th><th>누적도수</th><th>누적상대도수</th></tr>
+<tr><td>0 이상 10 미만</td><td>2</td><td>0.10</td><td>2</td><td>0.10</td></tr>
+<tr><td>10 이상 20 미만</td><td>4</td><td>0.20</td><td>2 + 4 = 6</td><td>0.30</td></tr>
+<tr><td>20 이상 30 미만</td><td>7</td><td>0.35</td><td>6 + 7 = 13</td><td>0.65</td></tr>
+<tr><td>30 이상 40 미만</td><td>3</td><td>0.15</td><td>13 + 3 = 16</td><td>0.80</td></tr>
+<tr><td>40 이상 50 미만</td><td>2</td><td>0.10</td><td>16 + 2 = 18</td><td>0.90</td></tr>
+<tr><td>50 이상 60 미만</td><td>2</td><td>0.10</td><td>18 + 2 = 20</td><td>1.00</td></tr>
+<tr><td>합계</td><td>20</td><td>1.00</td><td colspan="2"></td></tr>
+</table>
+</div>
+<p>검산: 2 + 4 + 7 + 3 + 2 + 2 = 20, 상대도수의 합 0.10 + 0.20 + 0.35 + 0.15 + 0.10 + 0.10 = 1.00.</p>
+</div>
+
+<div class="side"><b>용어</b> <b>누적</b>은 "차곡차곡 쌓음"이라는 뜻입니다. 누적도수는 첫 계급부터 그 계급까지의 도수를 모두 더한 값입니다.</div>
+
+<p>표의 오른쪽 두 열이 <b class="key">누적도수</b>입니다. "30 이상 40 미만" 줄의 누적도수 16은 "40분 미만인 학생이 16명"이라는 뜻입니다. 누적상대도수 0.80은 "40분 미만이 80%"입니다. "몇 분 안에 오는 학생이 몇 %인가" 같은 질문에 바로 답할 수 있습니다. 이 생각은 DA04의 분위수로 이어집니다.</p>
+
+<div class="check" data-q="q5"></div>
+<div class="check" data-q="q6"></div>
+
+<h2>히스토그램</h2>
+
+<p>도수분포표를 그림으로 그린 것이 히스토그램입니다.</p>
+
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 300" role="img" aria-label="학생 20명의 통학 시간 히스토그램. 계급 0~10분 2명, 10~20분 4명, 20~30분 7명, 30~40분 3명, 40~50분 2명, 50~60분 2명. 가로축은 0부터 60분까지 눈금이 10분 간격인 수직선이고, 막대 사이에 틈이 없다.">
+<line class="f-ink" x1="110" y1="34" x2="110" y2="250"/>
+<line class="f-ink" x1="105" y1="250" x2="110" y2="250"/>
+<text class="f-s" x="101" y="254" text-anchor="end">0</text>
+<line class="f-ink" x1="105" y1="197.5" x2="110" y2="197.5"/>
+<text class="f-s" x="101" y="201.5" text-anchor="end">2</text>
+<line class="f-ink" x1="105" y1="145" x2="110" y2="145"/>
+<text class="f-s" x="101" y="149" text-anchor="end">4</text>
+<line class="f-ink" x1="105" y1="92.5" x2="110" y2="92.5"/>
+<text class="f-s" x="101" y="96.5" text-anchor="end">6</text>
+<line class="f-ink" x1="105" y1="40" x2="110" y2="40"/>
+<text class="f-s" x="101" y="44" text-anchor="end">8</text>
+<text class="f-s" x="101" y="26" text-anchor="end">명</text>
+<line class="f-ink" x1="110" y1="250" x2="586" y2="250"/>
+<rect class="f-soft" x="110" y="197.5" width="76" height="52.5"/>
+<text class="f-s f-ink-t" x="148" y="189.5" text-anchor="middle">2</text>
+<rect class="f-soft" x="186" y="145" width="76" height="105"/>
+<text class="f-s f-ink-t" x="224" y="137" text-anchor="middle">4</text>
+<rect class="f-soft" x="262" y="66.25" width="76" height="183.75"/>
+<text class="f-s f-ink-t" x="300" y="58.25" text-anchor="middle">7</text>
+<rect class="f-soft" x="338" y="171.25" width="76" height="78.75"/>
+<text class="f-s f-ink-t" x="376" y="163.25" text-anchor="middle">3</text>
+<rect class="f-soft" x="414" y="197.5" width="76" height="52.5"/>
+<text class="f-s f-ink-t" x="452" y="189.5" text-anchor="middle">2</text>
+<rect class="f-soft" x="490" y="197.5" width="76" height="52.5"/>
+<text class="f-s f-ink-t" x="528" y="189.5" text-anchor="middle">2</text>
+<line class="f-ink" x1="110" y1="250" x2="110" y2="256"/>
+<text class="f-s" x="110" y="272" text-anchor="middle">0</text>
+<line class="f-ink" x1="186" y1="250" x2="186" y2="256"/>
+<text class="f-s" x="186" y="272" text-anchor="middle">10</text>
+<line class="f-ink" x1="262" y1="250" x2="262" y2="256"/>
+<text class="f-s" x="262" y="272" text-anchor="middle">20</text>
+<line class="f-ink" x1="338" y1="250" x2="338" y2="256"/>
+<text class="f-s" x="338" y="272" text-anchor="middle">30</text>
+<line class="f-ink" x1="414" y1="250" x2="414" y2="256"/>
+<text class="f-s" x="414" y="272" text-anchor="middle">40</text>
+<line class="f-ink" x1="490" y1="250" x2="490" y2="256"/>
+<text class="f-s" x="490" y="272" text-anchor="middle">50</text>
+<line class="f-ink" x1="566" y1="250" x2="566" y2="256"/>
+<text class="f-s" x="566" y="272" text-anchor="middle">60</text>
+<text class="f-s" x="590" y="272" text-anchor="start">분</text>
+<line class="f-ink" x1="262" y1="36.25" x2="262" y2="139.75" marker-end="url(#f-arrow)"/>
+<text class="f-s" x="256" y="32.25" text-anchor="start">틈 없음: 20분에서 바로 이어짐</text>
+<text class="f-s" x="338" y="290" text-anchor="middle">통학 시간 (연속형: 순서를 바꿀 수 없다)</text>
+</svg>
+<figcaption>막대의 폭은 계급의 폭(10분), 높이는 그 계급의 도수. 가장 높은 막대는 20~30분.</figcaption>
+</figure>
+
+<div class="box">
+<p class="box-k">정의</p>
+<p><b class="key">히스토그램</b>(histogram)은 가로축을 <b>수직선</b>으로 놓고, 계급마다 그 폭만큼의 막대를 세워 높이로 도수를 나타내는 그림입니다. 수치형 변수의 <b>분포</b>, 곧 값들이 어디에 많이 몰려 있고 어디에 드문지를 보여 줍니다.</p>
+</div>
+
+<p>그림 3에서 바로 읽히는 것이 있습니다. 20~30분 계급이 가장 높습니다. 왼쪽(짧은 시간)으로는 금방 줄어드는데, 오른쪽(긴 시간)으로는 50분대까지 길게 이어집니다. 이렇게 한쪽으로 길게 늘어진 부분을 <b>꼬리</b>라고 부릅니다. 이 모양이 평균과 중앙값에 어떤 영향을 주는지는 DA04에서 계산해 봅니다.</p>
+
+<h3>막대그래프와 히스토그램은 다르다 <span class="tag memo">외우기</span></h3>
+
+<div class="table-wrap">
+<table>
+<tr><th></th><th>막대그래프</th><th>히스토그램</th></tr>
+<tr><td>쓰는 변수</td><td>범주형</td><td>수치형 (특히 연속형)</td></tr>
+<tr><td>가로축</td><td>범주 이름</td><td>수직선 (눈금이 있는 수)</td></tr>
+<tr><td>막대 사이</td><td><b class="key">틈</b>이 있다</td><td><b class="key">틈이 없다</b> (계급이 이어져 있음)</td></tr>
+<tr><td>막대 순서</td><td>명목형이면 바꿔도 된다</td><td>바꿀 수 없다 (수의 순서)</td></tr>
+<tr><td>막대 폭</td><td>뜻 없음</td><td>계급 폭</td></tr>
+</table>
+</div>
+
+<div class="why">
+<p class="box-k">왜 그럴까?</p>
+<p>히스토그램에서 어떤 두 막대 사이에 틈이 보인다면, 그 틈은 무엇을 뜻할까요?</p>
+<details><summary>모범 답 보기</summary><p>히스토그램의 가로축은 끊김 없는 수직선이고 계급은 빈틈없이 이어져 있습니다. 그래서 막대 사이의 빈 곳은 "그 구간에 속한 값이 하나도 없다", 곧 도수 0인 계급을 뜻합니다. 예를 들어 통학 시간에 60~70분 계급이 비고 70~80분에 한 명이 있으면, 60과 70 사이에 틈이 보입니다. 막대그래프의 틈은 그냥 "범주가 서로 떨어져 있다"는 표시라서 뜻이 다릅니다.</p></details>
+</div>
+
+<div class="check" data-q="q8"></div>
+
+<h3>계급 폭이 모양을 바꾼다</h3>
+
+<p>계급 폭은 그리는 사람이 정합니다. 그런데 같은 자료라도 폭에 따라 그림의 인상이 달라집니다.</p>
+
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 290" role="img" aria-label="같은 통학 시간 20개를 두 가지 계급 폭으로 그렸다. (가) 폭 10분: 2, 4, 7, 3, 2, 2. 20~30분에 봉우리가 있고 오른쪽으로 꼬리가 길다. (나) 폭 20분: 0~20분 6명, 20~40분 10명, 40~60분 4명. 막대 세 개라 꼬리 모양이 거의 보이지 않는다.">
+<line class="f-ink" x1="50" y1="44" x2="50" y2="220"/>
+<line class="f-ink" x1="45" y1="220" x2="50" y2="220"/>
+<text class="f-s" x="41" y="224" text-anchor="end">0</text>
+<line class="f-ink" x1="45" y1="177.5" x2="50" y2="177.5"/>
+<text class="f-s" x="41" y="181.5" text-anchor="end">2</text>
+<line class="f-ink" x1="45" y1="135" x2="50" y2="135"/>
+<text class="f-s" x="41" y="139" text-anchor="end">4</text>
+<line class="f-ink" x1="45" y1="92.5" x2="50" y2="92.5"/>
+<text class="f-s" x="41" y="96.5" text-anchor="end">6</text>
+<line class="f-ink" x1="45" y1="50" x2="50" y2="50"/>
+<text class="f-s" x="41" y="54" text-anchor="end">8</text>
+<text class="f-s" x="41" y="36" text-anchor="end">명</text>
+<line class="f-ink" x1="50" y1="220" x2="360" y2="220"/>
+<rect class="f-soft" x="50" y="177.5" width="50" height="42.5"/>
+<text class="f-s f-ink-t" x="75" y="171.5" text-anchor="middle">2</text>
+<rect class="f-soft" x="100" y="135" width="50" height="85"/>
+<text class="f-s f-ink-t" x="125" y="129" text-anchor="middle">4</text>
+<rect class="f-soft" x="150" y="71.25" width="50" height="148.75"/>
+<text class="f-s f-ink-t" x="175" y="65.25" text-anchor="middle">7</text>
+<rect class="f-soft" x="200" y="156.25" width="50" height="63.75"/>
+<text class="f-s f-ink-t" x="225" y="150.25" text-anchor="middle">3</text>
+<rect class="f-soft" x="250" y="177.5" width="50" height="42.5"/>
+<text class="f-s f-ink-t" x="275" y="171.5" text-anchor="middle">2</text>
+<rect class="f-soft" x="300" y="177.5" width="50" height="42.5"/>
+<text class="f-s f-ink-t" x="325" y="171.5" text-anchor="middle">2</text>
+<line class="f-ink" x1="50" y1="220" x2="50" y2="225"/>
+<text class="f-s" x="50" y="240" text-anchor="middle">0</text>
+<line class="f-ink" x1="100" y1="220" x2="100" y2="225"/>
+<text class="f-s" x="100" y="240" text-anchor="middle">10</text>
+<line class="f-ink" x1="150" y1="220" x2="150" y2="225"/>
+<text class="f-s" x="150" y="240" text-anchor="middle">20</text>
+<line class="f-ink" x1="200" y1="220" x2="200" y2="225"/>
+<text class="f-s" x="200" y="240" text-anchor="middle">30</text>
+<line class="f-ink" x1="250" y1="220" x2="250" y2="225"/>
+<text class="f-s" x="250" y="240" text-anchor="middle">40</text>
+<line class="f-ink" x1="300" y1="220" x2="300" y2="225"/>
+<text class="f-s" x="300" y="240" text-anchor="middle">50</text>
+<line class="f-ink" x1="350" y1="220" x2="350" y2="225"/>
+<text class="f-s" x="350" y="240" text-anchor="middle">60</text>
+<text class="f-cap" x="200" y="270" text-anchor="middle">(가) 계급 폭 10분</text>
+<line class="f-dash" x1="380" y1="20" x2="380" y2="280"/>
+<line class="f-ink" x1="430" y1="44" x2="430" y2="220"/>
+<line class="f-ink" x1="425" y1="220" x2="430" y2="220"/>
+<text class="f-s" x="421" y="224" text-anchor="end">0</text>
+<line class="f-ink" x1="425" y1="163.33" x2="430" y2="163.33"/>
+<text class="f-s" x="421" y="167.33" text-anchor="end">4</text>
+<line class="f-ink" x1="425" y1="106.67" x2="430" y2="106.67"/>
+<text class="f-s" x="421" y="110.67" text-anchor="end">8</text>
+<line class="f-ink" x1="425" y1="50" x2="430" y2="50"/>
+<text class="f-s" x="421" y="54" text-anchor="end">12</text>
+<text class="f-s" x="421" y="36" text-anchor="end">명</text>
+<line class="f-ink" x1="430" y1="220" x2="740" y2="220"/>
+<rect class="f-soft" x="430" y="135" width="100" height="85"/>
+<text class="f-s f-ink-t" x="480" y="129" text-anchor="middle">6</text>
+<rect class="f-soft" x="530" y="78.33" width="100" height="141.67"/>
+<text class="f-s f-ink-t" x="580" y="72.33" text-anchor="middle">10</text>
+<rect class="f-soft" x="630" y="163.33" width="100" height="56.67"/>
+<text class="f-s f-ink-t" x="680" y="157.33" text-anchor="middle">4</text>
+<line class="f-ink" x1="430" y1="220" x2="430" y2="225"/>
+<text class="f-s" x="430" y="240" text-anchor="middle">0</text>
+<line class="f-ink" x1="530" y1="220" x2="530" y2="225"/>
+<text class="f-s" x="530" y="240" text-anchor="middle">20</text>
+<line class="f-ink" x1="630" y1="220" x2="630" y2="225"/>
+<text class="f-s" x="630" y="240" text-anchor="middle">40</text>
+<line class="f-ink" x1="730" y1="220" x2="730" y2="225"/>
+<text class="f-s" x="730" y="240" text-anchor="middle">60</text>
+<text class="f-cap" x="580" y="270" text-anchor="middle">(나) 계급 폭 20분</text>
+</svg>
+<figcaption>두 그림의 세로축 눈금이 다르다. 폭 20분 막대는 계급 두 개를 합친 것이라 더 높다.</figcaption>
+</figure>
+
+<p>(나)는 (가)의 계급 두 개씩을 합친 것입니다. 0~20분 = 2 + 4 = 6, 20~40분 = 7 + 3 = 10, 40~60분 = 2 + 2 = 4. 막대가 세 개뿐이라 "가운데가 높다"는 것 말고는 잘 보이지 않습니다. 특히 (가)에서 보였던 오른쪽 꼬리가 거의 사라졌습니다. 반대로 폭을 너무 좁게 잡으면(예: 1분) 거의 모든 막대가 높이 0 아니면 1이 되어 들쭉날쭉한 빗살만 남습니다.</p>
+
+<div class="box trap">
+<p class="box-k">흔한 실수</p>
+<p><b>히스토그램 하나만 보고 모양을 단정하기.</b> 정답인 계급 폭은 없습니다. 자료가 많을수록 좁은 폭을 쓸 수 있습니다. 탐색할 때는 폭을 두세 가지로 바꿔 그려 보고, 어느 폭에서나 보이는 특징만 믿습니다. 그리고 남이 그린 히스토그램을 읽을 때는 계급 폭이 얼마인지 먼저 확인합니다.</p>
+</div>
+
+<div class="more">
+<p class="box-k">더 알아보기 · 폭이 다른 계급</p>
+<p>이 장의 히스토그램은 모든 계급의 폭이 같았습니다. 폭이 다른 계급을 섞으면(예: 0~10분, 10~30분) 넓은 계급의 막대는 자연히 더 많은 값을 담아 높아집니다. 그래서 폭이 다를 때는 높이를 "도수 ÷ 계급 폭"(밀도)으로 그려 넓이가 도수를 나타내게 합니다. 이 생각은 확률 단원의 확률밀도로 이어집니다.</p>
+</div>
+
+<p>Python에서 히스토그램을 그릴 때(PY11)도 계급 수나 계급 경계를 직접 정하는 인자가 있습니다. 이 장에서 손으로 해 본 것을 기계에게 시키는 것입니다.</p>
+
+<h2>한눈에 정리</h2>
+
+<div class="table-wrap">
+<table>
+<tr><th>낱말</th><th>뜻 / 규칙</th></tr>
+<tr><td><b class="key">도수</b></td><td>범주(구간)에 속한 관측의 개수</td></tr>
+<tr><td><b class="key">상대도수</b></td><td>도수 ÷ 전체. 합은 언제나 1. 전체 수가 다른 무리를 비교할 때 쓴다</td></tr>
+<tr><td>누적도수</td><td>첫 계급부터 그 계급까지 더한 도수. "○분 미만이 몇 명"</td></tr>
+<tr><td>계급</td><td>수치를 나눈 구간. 보통 <b class="key">이상 ~ 미만</b>으로 정해 경계값을 한 번만 센다</td></tr>
+<tr><td><b class="key">막대그래프</b></td><td>범주형. 가로축은 범주 이름, 막대 사이 틈, 세로축은 0부터</td></tr>
+<tr><td><b class="key">히스토그램</b></td><td>수치형. 가로축은 수직선, 틈 없음, 막대 폭 = 계급 폭. 폭에 따라 모양이 달라진다</td></tr>
+</table>
+</div>
+
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>범주형은 세어서 막대그래프로, 수치형은 이상·미만 구간으로 묶어 세어서 히스토그램으로 그리고, 비교는 상대도수로 한다.</p></div>
+
+<h2>확인 문제</h2>
+<p>본문 중간에서 푼 문제 말고 남은 문제입니다. 보기를 누르면 바로 정답과 해설이 나옵니다.</p>
+<div id="quiz"></div>
+
+<section class="work" id="tools"></section>
+
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

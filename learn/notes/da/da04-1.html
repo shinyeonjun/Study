@@ -1,0 +1,468 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>평균·중앙값·최빈값 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e8c'/%3E%3Cpath d='M8 22V10m8 12V14m8 8V6' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="DA04-1">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+
+<header class="chapter">
+<p class="chap-sub">데이터 읽기와 탐색 · DA04 중심과 분포</p>
+<p class="chap-num">DA04·1</p>
+<h1>평균·중앙값·최빈값</h1>
+<p class="lead">친구 일곱 명에게 한 달 용돈을 물었더니 10, 12, 12, 15, 18, 20, 25만 원이었습니다. "우리는 보통 얼마 받아?"에 숫자 하나로 답하려면 무엇을 골라야 할까요? 이 장에서는 자료의 가운데를 나타내는 세 숫자(평균, 중앙값, 최빈값)를 하나씩 계산하고, 값 하나가 유난히 클 때 셋이 어떻게 다르게 움직이는지 직접 확인합니다.</p>
+</header>
+
+<div class="goal">
+<h2>이 장을 읽고 나면</h2>
+<ul>
+<li>평균, 중앙값, 최빈값을 손으로 계산할 수 있다. 개수가 짝수일 때의 중앙값도 포함한다.</li>
+<li>평균이 "받침점"이라는 것, 곧 편차의 합이 0이라는 것을 숫자로 보일 수 있다.</li>
+<li>이상값 하나가 평균과 중앙값을 얼마나 움직이는지 계산하고 그 이유를 설명할 수 있다.</li>
+<li>변수 종류와 자료 모양에 맞는 대표값을 고를 수 있다.</li>
+</ul>
+</div>
+
+<h2>가운데를 한 숫자로</h2>
+
+<p>자료 전체를 숫자 하나로 요약할 때, 그 숫자를 <b class="key">대표값</b>이라고 합니다. 가장 흔히 쓰는 대표값은 "자료의 가운데가 어디쯤인가"를 나타내는 것들입니다. 통계에서는 이것을 <b>중심 경향</b>(central tendency)이라고 부릅니다. 이 장의 세 숫자는 모두 "가운데"를 말하지만, 가운데를 정하는 방법이 다릅니다.</p>
+
+<ul>
+<li><b>평균</b>: 전체를 똑같이 나누면 한 사람당 얼마인가</li>
+<li><b>중앙값</b>: 작은 것부터 줄 세웠을 때 한가운데 사람은 얼마인가</li>
+<li><b>최빈값</b>: 가장 많은 사람이 받는 값은 얼마인가</li>
+</ul>
+
+<p>이 장 내내 쓰는 자료는 친구 7명의 용돈(만 원)입니다: <b>10, 12, 12, 15, 18, 20, 25</b>. 이미 작은 것부터 늘어놓았습니다.</p>
+
+<h2>평균: 고르게 나눈 값 <span class="tag memo">외우기</span></h2>
+
+<div class="box">
+<p class="box-k">정의</p>
+<p><b class="key">평균</b>(산술평균, mean)은 모든 값을 더해 개수로 나눈 값입니다. AR10에서 배운 대로 총합 기호로 쓰면, 값이 x₁, x₂, …, xₙ일 때</p>
+<p>평균 = (x₁ + x₂ + … + xₙ) ÷ n = (Σ xᵢ) ÷ n</p>
+<p>n은 값의 개수, Σ xᵢ는 "i번째 값을 처음부터 끝까지 모두 더한 것"입니다.</p>
+</div>
+
+<div class="box ex">
+<p class="box-k">풀이 예제 · 용돈의 평균</p>
+<p class="calc">① 합: 10 + 12 + 12 + 15 + 18 + 20 + 25 = 112<br>
+② 개수: n = 7<br>
+③ 평균: 112 ÷ 7 = 16만 원</p>
+<p>뜻: 일곱 명이 받은 용돈 112만 원을 모아서 똑같이 나눴다면 한 사람당 16만 원입니다. 실제로 16만 원을 받는 친구는 한 명도 없습니다. 평균은 자료에 있는 값이 아니어도 됩니다.</p>
+</div>
+
+<h3>평균은 받침점이다 <span class="tag grasp">이해하기</span></h3>
+
+<p>수직선 위 값마다 같은 무게의 추를 올리면(12에는 두 개), 수평을 이루는 받침점은 평균 16입니다.</p>
+
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 230" role="img" aria-label="용돈 7개 값 10, 12, 12, 15, 18, 20, 25만 원을 수직선 위에 점으로 찍었다. 12에는 점이 두 개 쌓여 있다. 수직선 아래 16 자리에 삼각형 받침점이 있고, 평균 16이라고 적혀 있다. 위쪽에는 최빈값 12와 중앙값 15를 가리키는 화살표가 있다.">
+<line class="f-ink" x1="50" y1="150" x2="710" y2="150"/>
+<line class="f-ink" x1="60" y1="150" x2="60" y2="156"/>
+<text class="f-s" x="60" y="172" text-anchor="middle">5</text>
+<line class="f-ink" x1="85.6" y1="150" x2="85.6" y2="156"/>
+<line class="f-ink" x1="111.2" y1="150" x2="111.2" y2="156"/>
+<line class="f-ink" x1="136.8" y1="150" x2="136.8" y2="156"/>
+<line class="f-ink" x1="162.4" y1="150" x2="162.4" y2="156"/>
+<line class="f-ink" x1="188" y1="150" x2="188" y2="156"/>
+<text class="f-s" x="188" y="172" text-anchor="middle">10</text>
+<line class="f-ink" x1="213.6" y1="150" x2="213.6" y2="156"/>
+<line class="f-ink" x1="239.2" y1="150" x2="239.2" y2="156"/>
+<line class="f-ink" x1="264.8" y1="150" x2="264.8" y2="156"/>
+<line class="f-ink" x1="290.4" y1="150" x2="290.4" y2="156"/>
+<line class="f-ink" x1="316" y1="150" x2="316" y2="156"/>
+<text class="f-s" x="316" y="172" text-anchor="middle">15</text>
+<line class="f-ink" x1="341.6" y1="150" x2="341.6" y2="156"/>
+<line class="f-ink" x1="367.2" y1="150" x2="367.2" y2="156"/>
+<line class="f-ink" x1="392.8" y1="150" x2="392.8" y2="156"/>
+<line class="f-ink" x1="418.4" y1="150" x2="418.4" y2="156"/>
+<line class="f-ink" x1="444" y1="150" x2="444" y2="156"/>
+<text class="f-s" x="444" y="172" text-anchor="middle">20</text>
+<line class="f-ink" x1="469.6" y1="150" x2="469.6" y2="156"/>
+<line class="f-ink" x1="495.2" y1="150" x2="495.2" y2="156"/>
+<line class="f-ink" x1="520.8" y1="150" x2="520.8" y2="156"/>
+<line class="f-ink" x1="546.4" y1="150" x2="546.4" y2="156"/>
+<line class="f-ink" x1="572" y1="150" x2="572" y2="156"/>
+<text class="f-s" x="572" y="172" text-anchor="middle">25</text>
+<line class="f-ink" x1="597.6" y1="150" x2="597.6" y2="156"/>
+<line class="f-ink" x1="623.2" y1="150" x2="623.2" y2="156"/>
+<line class="f-ink" x1="648.8" y1="150" x2="648.8" y2="156"/>
+<line class="f-ink" x1="674.4" y1="150" x2="674.4" y2="156"/>
+<line class="f-ink" x1="700" y1="150" x2="700" y2="156"/>
+<text class="f-s" x="700" y="172" text-anchor="middle">30</text>
+<text class="f-s" x="714" y="172" text-anchor="start">만 원</text>
+<circle class="f-fill" cx="188" cy="136" r="6"/>
+<circle class="f-fill" cx="239.2" cy="136" r="6"/>
+<circle class="f-fill" cx="239.2" cy="121" r="6"/>
+<circle class="f-fill" cx="316" cy="136" r="6"/>
+<circle class="f-fill" cx="392.8" cy="136" r="6"/>
+<circle class="f-fill" cx="444" cy="136" r="6"/>
+<circle class="f-fill" cx="572" cy="136" r="6"/>
+<path class="f-fill" d="M341.6 152.0 l-9.0 12.6 h18.0 z"/>
+<text class="f-s f-ink-t f-b" x="341.6" y="192" text-anchor="middle">평균 16 (받침점)</text>
+<text class="f-s f-ink-t" x="239.2" y="62" text-anchor="middle">최빈값 12</text>
+<line class="f-ink" x1="239.2" y1="68" x2="239.2" y2="110" marker-end="url(#f-arrow)"/>
+<text class="f-s f-ink-t" x="330" y="62" text-anchor="middle">중앙값 15</text>
+<line class="f-ink" x1="316" y1="68" x2="316" y2="126" marker-end="url(#f-arrow)"/>
+</svg>
+<figcaption>점을 같은 무게의 추라고 하면, 평균은 막대가 수평이 되는 받침점 자리다.</figcaption>
+</figure>
+
+<p>왜 그런지 숫자로 확인합니다. 각 값에서 평균을 뺀 값을 <b class="key">편차</b>(deviation)라고 합니다. 평균보다 작은 값은 편차가 음수(−), 큰 값은 양수(+)입니다.</p>
+
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 300" role="img" aria-label="평균 16에 세로 점선이 있고, 각 값까지 가로 화살표를 그렸다. 10은 −6, 12는 −4, 12는 −4, 15는 −1, 18은 +2, 20은 +4, 25는 +9. 왼쪽 화살표 길이 합 6 + 4 + 4 + 1 = 15, 오른쪽 합 2 + 4 + 9 = 15로 같다.">
+<line class="f-ink" x1="50" y1="250" x2="710" y2="250"/>
+<line class="f-ink" x1="60" y1="250" x2="60" y2="256"/>
+<text class="f-s" x="60" y="272" text-anchor="middle">5</text>
+<line class="f-ink" x1="85.6" y1="250" x2="85.6" y2="256"/>
+<line class="f-ink" x1="111.2" y1="250" x2="111.2" y2="256"/>
+<line class="f-ink" x1="136.8" y1="250" x2="136.8" y2="256"/>
+<line class="f-ink" x1="162.4" y1="250" x2="162.4" y2="256"/>
+<line class="f-ink" x1="188" y1="250" x2="188" y2="256"/>
+<text class="f-s" x="188" y="272" text-anchor="middle">10</text>
+<line class="f-ink" x1="213.6" y1="250" x2="213.6" y2="256"/>
+<line class="f-ink" x1="239.2" y1="250" x2="239.2" y2="256"/>
+<line class="f-ink" x1="264.8" y1="250" x2="264.8" y2="256"/>
+<line class="f-ink" x1="290.4" y1="250" x2="290.4" y2="256"/>
+<line class="f-ink" x1="316" y1="250" x2="316" y2="256"/>
+<text class="f-s" x="316" y="272" text-anchor="middle">15</text>
+<line class="f-ink" x1="341.6" y1="250" x2="341.6" y2="256"/>
+<line class="f-ink" x1="367.2" y1="250" x2="367.2" y2="256"/>
+<line class="f-ink" x1="392.8" y1="250" x2="392.8" y2="256"/>
+<line class="f-ink" x1="418.4" y1="250" x2="418.4" y2="256"/>
+<line class="f-ink" x1="444" y1="250" x2="444" y2="256"/>
+<text class="f-s" x="444" y="272" text-anchor="middle">20</text>
+<line class="f-ink" x1="469.6" y1="250" x2="469.6" y2="256"/>
+<line class="f-ink" x1="495.2" y1="250" x2="495.2" y2="256"/>
+<line class="f-ink" x1="520.8" y1="250" x2="520.8" y2="256"/>
+<line class="f-ink" x1="546.4" y1="250" x2="546.4" y2="256"/>
+<line class="f-ink" x1="572" y1="250" x2="572" y2="256"/>
+<text class="f-s" x="572" y="272" text-anchor="middle">25</text>
+<line class="f-ink" x1="597.6" y1="250" x2="597.6" y2="256"/>
+<line class="f-ink" x1="623.2" y1="250" x2="623.2" y2="256"/>
+<line class="f-ink" x1="648.8" y1="250" x2="648.8" y2="256"/>
+<line class="f-ink" x1="674.4" y1="250" x2="674.4" y2="256"/>
+<line class="f-ink" x1="700" y1="250" x2="700" y2="256"/>
+<text class="f-s" x="700" y="272" text-anchor="middle">30</text>
+<text class="f-s" x="714" y="272" text-anchor="start">만 원</text>
+<line class="f-dash" x1="341.6" y1="20" x2="341.6" y2="250"/>
+<text class="f-s f-ink-t f-b" x="341.6" y="14" text-anchor="middle">평균 16</text>
+<circle class="f-fill" cx="188" cy="40" r="4"/>
+<line class="f-line" x1="341.6" y1="40" x2="194" y2="40" marker-end="url(#f-arrow)"/>
+<text class="f-s f-ink-t" x="178" y="44" text-anchor="end">10: −6</text>
+<circle class="f-fill" cx="239.2" cy="68" r="4"/>
+<line class="f-line" x1="341.6" y1="68" x2="245.2" y2="68" marker-end="url(#f-arrow)"/>
+<text class="f-s f-ink-t" x="229.2" y="72" text-anchor="end">12: −4</text>
+<circle class="f-fill" cx="239.2" cy="96" r="4"/>
+<line class="f-line" x1="341.6" y1="96" x2="245.2" y2="96" marker-end="url(#f-arrow)"/>
+<text class="f-s f-ink-t" x="229.2" y="100" text-anchor="end">12: −4</text>
+<circle class="f-fill" cx="316" cy="124" r="4"/>
+<line class="f-line" x1="341.6" y1="124" x2="322" y2="124" marker-end="url(#f-arrow)"/>
+<text class="f-s f-ink-t" x="306" y="128" text-anchor="end">15: −1</text>
+<circle class="f-fill" cx="392.8" cy="152" r="4"/>
+<line class="f-line" x1="341.6" y1="152" x2="386.8" y2="152" marker-end="url(#f-arrow)"/>
+<text class="f-s f-ink-t" x="402.8" y="156" text-anchor="start">18: +2</text>
+<circle class="f-fill" cx="444" cy="180" r="4"/>
+<line class="f-line" x1="341.6" y1="180" x2="438" y2="180" marker-end="url(#f-arrow)"/>
+<text class="f-s f-ink-t" x="454" y="184" text-anchor="start">20: +4</text>
+<circle class="f-fill" cx="572" cy="208" r="4"/>
+<line class="f-line" x1="341.6" y1="208" x2="566" y2="208" marker-end="url(#f-arrow)"/>
+<text class="f-s f-ink-t" x="582" y="212" text-anchor="start">25: +9</text>
+<text class="f-s f-ink-t f-b" x="150" y="236" text-anchor="middle">왼쪽 합 15</text>
+<text class="f-s f-ink-t f-b" x="560" y="236" text-anchor="middle">오른쪽 합 15</text>
+</svg>
+<figcaption>평균에서 각 값까지의 거리(편차)를 왼쪽은 −, 오른쪽은 +로 더하면 0이 된다.</figcaption>
+</figure>
+
+<div class="box ex">
+<p class="box-k">풀이 예제 · 편차의 합</p>
+<p class="calc">편차 = 값 − 16<br>
+10 − 16 = −6,  12 − 16 = −4,  12 − 16 = −4,  15 − 16 = −1<br>
+18 − 16 = +2,  20 − 16 = +4,  25 − 16 = +9<br>
+음수 쪽 합: −6 − 4 − 4 − 1 = −15<br>
+양수 쪽 합: 2 + 4 + 9 = +15<br>
+전체 합: −15 + 15 = 0</p>
+<p>평균에서 왼쪽으로 떨어진 거리의 합(15)과 오른쪽으로 떨어진 거리의 합(15)이 같습니다. 이것은 이 자료에서 우연히 그런 것이 아니라 <b>어떤 자료든 편차의 합은 0</b>입니다. 평균의 정의 자체가 "합을 똑같이 나눈 값"이라, 평균보다 많은 만큼과 모자란 만큼이 정확히 맞아떨어지기 때문입니다. 편차는 다음 단원 DA05에서 "흩어진 정도"를 재는 재료가 됩니다.</p>
+</div>
+
+<p>받침점에서 멀리 놓인 추일수록 회전시키는 힘(거리 × 무게)이 크므로, <b>멀리 떨어진 값 하나가 평균을 크게 끌어당깁니다.</b> 뒤의 이상값 절에서 숫자로 확인합니다.</p>
+
+<div class="more">
+<p class="box-k">더 알아보기 · 평균과 중앙값은 무엇을 최소로 만드는가</p>
+<p>어떤 수 c를 하나 골라 자료를 대표하게 할 때, "대표값과 각 값의 차이"를 어떻게 재느냐에 따라 가장 좋은 c가 달라집니다. <b>차이의 제곱의 합</b> Σ(xᵢ − c)²을 가장 작게 하는 c는 평균이고, <b>차이의 절댓값의 합</b> Σ|xᵢ − c|를 가장 작게 하는 c는 중앙값입니다. 용돈 자료로 확인하면, 제곱합은 c = 16(평균)에서 36+16+16+1+4+16+81 = 170, c = 15(중앙값)에서 25+9+9+0+9+25+100 = 177로 평균 쪽이 작고, 절댓값 합은 c = 15에서 5+3+3+0+3+5+10 = 29, c = 16에서 6+4+4+1+2+4+9 = 30으로 중앙값 쪽이 작습니다. 제곱은 먼 값의 차이를 크게 부풀리므로 평균이 먼 값에 끌려가는 것과 같은 이야기입니다. 이 관점은 회귀에서 제곱 오차(평균)와 절댓값 오차(중앙값) 손실 함수로 다시 나옵니다.</p>
+</div>
+
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+
+<h2>중앙값: 줄 세웠을 때 가운데 <span class="tag memo">외우기</span></h2>
+
+<div class="box">
+<p class="box-k">정의</p>
+<p><b class="key">중앙값</b>(median)은 값을 <b>작은 것부터 순서대로 늘어놓았을 때</b> 한가운데에 오는 값입니다.</p>
+<p>· 개수 n이 홀수이면: (n + 1) ÷ 2 번째 값<br>
+· 개수 n이 짝수이면: n ÷ 2 번째와 n ÷ 2 + 1 번째 값의 평균</p>
+</div>
+
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 270" role="img" aria-label="(가) 값 7개 10, 12, 12, 15, 18, 20, 25를 작은 것부터 칸에 적었다. 가운데 4번째 칸 15가 중앙값이다. (나) 값 8개 10, 12, 12, 15, 18, 20, 25, 30. 가운데 두 칸 4번째 15와 5번째 18의 평균 16.5가 중앙값이다.">
+<rect class="f-box" x="146" y="30" width="60" height="36" rx="3"/>
+<text class="f-t" x="176" y="54" text-anchor="middle">10</text>
+<text class="f-s" x="176" y="24" text-anchor="middle">1</text>
+<rect class="f-box" x="214" y="30" width="60" height="36" rx="3"/>
+<text class="f-t" x="244" y="54" text-anchor="middle">12</text>
+<text class="f-s" x="244" y="24" text-anchor="middle">2</text>
+<rect class="f-box" x="282" y="30" width="60" height="36" rx="3"/>
+<text class="f-t" x="312" y="54" text-anchor="middle">12</text>
+<text class="f-s" x="312" y="24" text-anchor="middle">3</text>
+<rect class="f-soft" x="350" y="30" width="60" height="36" rx="3"/>
+<text class="f-t f-b" x="380" y="54" text-anchor="middle">15</text>
+<text class="f-s" x="380" y="24" text-anchor="middle">4</text>
+<rect class="f-box" x="418" y="30" width="60" height="36" rx="3"/>
+<text class="f-t" x="448" y="54" text-anchor="middle">18</text>
+<text class="f-s" x="448" y="24" text-anchor="middle">5</text>
+<rect class="f-box" x="486" y="30" width="60" height="36" rx="3"/>
+<text class="f-t" x="516" y="54" text-anchor="middle">20</text>
+<text class="f-s" x="516" y="24" text-anchor="middle">6</text>
+<rect class="f-box" x="554" y="30" width="60" height="36" rx="3"/>
+<text class="f-t" x="584" y="54" text-anchor="middle">25</text>
+<text class="f-s" x="584" y="24" text-anchor="middle">7</text>
+<text class="f-s f-ink-t" x="380" y="94" text-anchor="middle">(가) 7개: (7 + 1) ÷ 2 = 4번째 → 중앙값 15</text>
+<rect class="f-box" x="112" y="160" width="60" height="36" rx="3"/>
+<text class="f-t" x="142" y="184" text-anchor="middle">10</text>
+<text class="f-s" x="142" y="154" text-anchor="middle">1</text>
+<rect class="f-box" x="180" y="160" width="60" height="36" rx="3"/>
+<text class="f-t" x="210" y="184" text-anchor="middle">12</text>
+<text class="f-s" x="210" y="154" text-anchor="middle">2</text>
+<rect class="f-box" x="248" y="160" width="60" height="36" rx="3"/>
+<text class="f-t" x="278" y="184" text-anchor="middle">12</text>
+<text class="f-s" x="278" y="154" text-anchor="middle">3</text>
+<rect class="f-soft" x="316" y="160" width="60" height="36" rx="3"/>
+<text class="f-t f-b" x="346" y="184" text-anchor="middle">15</text>
+<text class="f-s" x="346" y="154" text-anchor="middle">4</text>
+<rect class="f-soft" x="384" y="160" width="60" height="36" rx="3"/>
+<text class="f-t f-b" x="414" y="184" text-anchor="middle">18</text>
+<text class="f-s" x="414" y="154" text-anchor="middle">5</text>
+<rect class="f-box" x="452" y="160" width="60" height="36" rx="3"/>
+<text class="f-t" x="482" y="184" text-anchor="middle">20</text>
+<text class="f-s" x="482" y="154" text-anchor="middle">6</text>
+<rect class="f-box" x="520" y="160" width="60" height="36" rx="3"/>
+<text class="f-t" x="550" y="184" text-anchor="middle">25</text>
+<text class="f-s" x="550" y="154" text-anchor="middle">7</text>
+<rect class="f-box" x="588" y="160" width="60" height="36" rx="3"/>
+<text class="f-t" x="618" y="184" text-anchor="middle">30</text>
+<text class="f-s" x="618" y="154" text-anchor="middle">8</text>
+<text class="f-s f-ink-t" x="380" y="224" text-anchor="middle">(나) 8개: 4번째와 5번째의 평균 (15 + 18) ÷ 2 → 중앙값 16.5</text>
+</svg>
+<figcaption>칸 위의 작은 수는 순위(몇 번째)다. 중앙값은 값이 아니라 순위로 찾는다.</figcaption>
+</figure>
+
+<div class="box ex">
+<p class="box-k">풀이 예제 · 홀수 개와 짝수 개</p>
+<p class="calc">(가) n = 7: (7 + 1) ÷ 2 = 4번째. 늘어놓은 10, 12, 12, <b>15</b>, 18, 20, 25에서 4번째 → 중앙값 15<br>
+(나) 여덟째 친구(30만 원)가 들어와 n = 8: 8 ÷ 2 = 4번째와 4 + 1 = 5번째. 10, 12, 12, <b>15</b>, <b>18</b>, 20, 25, 30 → (15 + 18) ÷ 2 = 33 ÷ 2 = 16.5</p>
+<p>(가)의 중앙값 15는 "15보다 적게 받는 사람이 3명, 많이 받는 사람이 3명"이라는 뜻입니다. 짝수일 때는 가운데 사람이 두 명이라 둘의 평균을 씁니다. 그래서 짝수일 때의 중앙값(16.5)은 자료에 없는 값일 수 있습니다.</p>
+</div>
+
+<div class="box trap">
+<p class="box-k">흔한 실수</p>
+<p><b>늘어놓지 않고 가운데를 고르기.</b> 조사한 순서대로 18, 12, 25, 10, 20, 12, 15가 적혀 있을 때, 그대로 4번째인 10을 중앙값이라고 하면 틀립니다. 중앙값은 반드시 <b>정렬한 뒤</b> 찾습니다.</p>
+</div>
+
+<div class="check" data-q="q3"></div>
+<div class="check" data-q="q4"></div>
+
+<h2>최빈값: 가장 흔한 값</h2>
+
+<div class="box">
+<p class="box-k">정의</p>
+<p><b class="key">최빈값</b>(mode)은 자료에서 <b>가장 자주 나오는 값</b>, 곧 도수가 가장 큰 값입니다.</p>
+</div>
+
+<p>용돈 자료에서 12는 두 번, 나머지는 한 번씩 나오므로 최빈값은 12만 원입니다. 최빈값은 계산이 아니라 세기로 찾습니다.</p>
+
+<p>최빈값의 가장 큰 장점은 <b>범주형 자료에도 쓸 수 있다</b>는 것입니다. DA03·1의 통학 수단(버스 8, 지하철 6, 도보 4, 자전거 2)에는 평균도 중앙값도 없지만 최빈값은 있습니다. 버스입니다. 명목형 변수의 대표값은 최빈값뿐입니다.</p>
+
+<p>대신 약점도 있습니다.</p>
+
+<ul>
+<li><b>여러 개일 수 있습니다.</b> 3, 5, 5, 7, 7, 9에서는 5와 7이 두 번씩 나와 최빈값이 둘입니다.</li>
+<li><b>없다고 볼 수도 있습니다.</b> 모든 값이 한 번씩만 나오면(예: 통학 시간 20개) 어느 값도 더 흔하지 않습니다.</li>
+<li><b>연속형에서는 잘 쓰지 않습니다.</b> 값이 거의 다 다르기 때문입니다. 대신 히스토그램에서 가장 높은 계급(통학 시간의 "20 이상 30 미만")을 <b>최빈 계급</b>으로 봅니다.</li>
+</ul>
+
+<div class="check" data-q="q5"></div>
+<div class="check" data-q="q9"></div>
+
+<h2>이상값 하나가 들어오면 <span class="tag grasp">이해하기</span></h2>
+
+<p>용돈 자료로 돌아가, 가장 많이 받는 친구의 25만 원이 사실은 95만 원이었다고 해 봅시다(그 친구는 그 달에 생일 용돈을 몰아 받았습니다). 다른 값은 그대로입니다.</p>
+
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 300" role="img" aria-label="수직선 0부터 100만 원. (가) 원래 7개 값: 10, 12, 12, 15, 18, 20, 25. 평균 16, 중앙값 15로 거의 같은 자리. (나) 25를 95로 바꿈: 평균은 26으로 오른쪽으로 끌려가 점들이 없는 빈 곳에 있다. 중앙값은 15 그대로다.">
+<line class="f-ink" x1="50" y1="70" x2="710" y2="70"/>
+<line class="f-ink" x1="60" y1="70" x2="60" y2="76"/>
+<text class="f-s" x="60" y="92" text-anchor="middle">0</text>
+<line class="f-ink" x1="124" y1="70" x2="124" y2="76"/>
+<line class="f-ink" x1="188" y1="70" x2="188" y2="76"/>
+<text class="f-s" x="188" y="92" text-anchor="middle">20</text>
+<line class="f-ink" x1="252" y1="70" x2="252" y2="76"/>
+<line class="f-ink" x1="316" y1="70" x2="316" y2="76"/>
+<text class="f-s" x="316" y="92" text-anchor="middle">40</text>
+<line class="f-ink" x1="380" y1="70" x2="380" y2="76"/>
+<line class="f-ink" x1="444" y1="70" x2="444" y2="76"/>
+<text class="f-s" x="444" y="92" text-anchor="middle">60</text>
+<line class="f-ink" x1="508" y1="70" x2="508" y2="76"/>
+<line class="f-ink" x1="572" y1="70" x2="572" y2="76"/>
+<text class="f-s" x="572" y="92" text-anchor="middle">80</text>
+<line class="f-ink" x1="636" y1="70" x2="636" y2="76"/>
+<line class="f-ink" x1="700" y1="70" x2="700" y2="76"/>
+<text class="f-s" x="700" y="92" text-anchor="middle">100</text>
+<text class="f-s" x="714" y="92" text-anchor="start">만 원</text>
+<circle class="f-fill" cx="124" cy="58" r="5"/>
+<circle class="f-fill" cx="136.8" cy="58" r="5"/>
+<circle class="f-fill" cx="136.8" cy="47" r="5"/>
+<circle class="f-fill" cx="156" cy="58" r="5"/>
+<circle class="f-fill" cx="175.2" cy="58" r="5"/>
+<circle class="f-fill" cx="188" cy="58" r="5"/>
+<circle class="f-fill" cx="220" cy="58" r="5"/>
+<path class="f-fill" d="M162.4 72.0 l-7.0 9.8 h14.0 z"/>
+<text class="f-s f-ink-t f-b" x="174.4" y="114" text-anchor="start">평균 16</text>
+<line class="f-ink" x1="162.4" y1="84" x2="172.4" y2="108"/>
+<line class="f-ink" x1="156" y1="30" x2="156" y2="44"/>
+<text class="f-s f-ink-t" x="156" y="24" text-anchor="middle">중앙값 15</text>
+<text class="f-cap" x="740" y="24" text-anchor="end">(가) 원래 자료</text>
+<line class="f-ink" x1="50" y1="190" x2="710" y2="190"/>
+<line class="f-ink" x1="60" y1="190" x2="60" y2="196"/>
+<text class="f-s" x="60" y="212" text-anchor="middle">0</text>
+<line class="f-ink" x1="124" y1="190" x2="124" y2="196"/>
+<line class="f-ink" x1="188" y1="190" x2="188" y2="196"/>
+<text class="f-s" x="188" y="212" text-anchor="middle">20</text>
+<line class="f-ink" x1="252" y1="190" x2="252" y2="196"/>
+<line class="f-ink" x1="316" y1="190" x2="316" y2="196"/>
+<text class="f-s" x="316" y="212" text-anchor="middle">40</text>
+<line class="f-ink" x1="380" y1="190" x2="380" y2="196"/>
+<line class="f-ink" x1="444" y1="190" x2="444" y2="196"/>
+<text class="f-s" x="444" y="212" text-anchor="middle">60</text>
+<line class="f-ink" x1="508" y1="190" x2="508" y2="196"/>
+<line class="f-ink" x1="572" y1="190" x2="572" y2="196"/>
+<text class="f-s" x="572" y="212" text-anchor="middle">80</text>
+<line class="f-ink" x1="636" y1="190" x2="636" y2="196"/>
+<line class="f-ink" x1="700" y1="190" x2="700" y2="196"/>
+<text class="f-s" x="700" y="212" text-anchor="middle">100</text>
+<text class="f-s" x="714" y="212" text-anchor="start">만 원</text>
+<circle class="f-fill" cx="124" cy="178" r="5"/>
+<circle class="f-fill" cx="136.8" cy="178" r="5"/>
+<circle class="f-fill" cx="136.8" cy="167" r="5"/>
+<circle class="f-fill" cx="156" cy="178" r="5"/>
+<circle class="f-fill" cx="175.2" cy="178" r="5"/>
+<circle class="f-fill" cx="188" cy="178" r="5"/>
+<circle class="f-fill" cx="668" cy="178" r="5"/>
+<path class="f-fill" d="M226.4 192.0 l-7.0 9.8 h14.0 z"/>
+<text class="f-s f-ink-t f-b" x="238.4" y="234" text-anchor="start">평균 26</text>
+<line class="f-ink" x1="226.4" y1="204" x2="236.4" y2="228"/>
+<line class="f-ink" x1="156" y1="150" x2="156" y2="164"/>
+<text class="f-s f-ink-t" x="156" y="144" text-anchor="middle">중앙값 15</text>
+<text class="f-cap" x="740" y="144" text-anchor="end">(나) 25 → 95</text>
+</svg>
+<figcaption>값 하나가 70 커지자 평균은 10 움직였고, 중앙값은 움직이지 않았다.</figcaption>
+</figure>
+
+<div class="box ex">
+<p class="box-k">풀이 예제 · 무엇이 얼마나 움직이나</p>
+<p class="calc">바뀐 자료: 10, 12, 12, 15, 18, 20, 95<br>
+① 평균: 합 = 112 − 25 + 95 = 182, 182 ÷ 7 = 26만 원 (16에서 <b>10 늘어남</b>)<br>
+② 중앙값: 늘어놓은 순서가 그대로이므로 4번째 = 15만 원 (<b>그대로</b>)<br>
+③ 최빈값: 12만 원 (그대로)</p>
+<p>값 하나가 25에서 95로 70 커지자, 평균은 70 ÷ 7 = 10만큼 올랐습니다. 늘어난 70이 일곱 명에게 똑같이 나뉘어 들어갔기 때문입니다. 중앙값은 전혀 움직이지 않았습니다. 중앙값은 <b>순서만</b> 보므로, 가장 큰 값이 25이든 95이든 950이든 "가장 크다"는 순서는 같기 때문입니다.</p>
+</div>
+
+<p>(나)에서 평균 26을 보세요. 일곱 명 중 여섯 명이 26보다 적게 받습니다. 26 근처에 있는 사람은 아무도 없습니다. 이럴 때 평균 26을 "보통 받는 용돈"이라고 말하면 오해를 부릅니다. 중앙값 15가 "보통"에 더 가깝습니다.</p>
+
+<p>이렇게 다른 값들에서 유난히 멀리 떨어진 값을 <b class="key">이상값</b>(outlier)이라고 합니다. "얼마나 떨어져야 이상값인가"를 정하는 규칙은 다음 장(DA04·2)에서 사분위수로 정합니다. 그리고 이상값에 별로 휘둘리지 않는 성질을 <b>로버스트하다</b>(robust, 저항성이 있다)고 합니다. 중앙값은 로버스트하고, 평균은 그렇지 않습니다.</p>
+
+<div class="box ex">
+<p class="box-k">풀이 예제 · "우리 회사 평균 월급"</p>
+<p>직원 다섯 명인 회사의 월급(만 원): 250, 270, 280, 300, 그리고 사장 1,200.</p>
+<p class="calc">① 평균: (250 + 270 + 280 + 300 + 1,200) ÷ 5 = 2,300 ÷ 5 = 460만 원<br>
+② 중앙값: 늘어놓은 5개 중 3번째 = 280만 원<br>
+③ 평균 460만 원보다 적게 받는 사람: 다섯 중 넷</p>
+<p>채용 공고에 "평균 월급 460만 원"이라고 적어도 거짓말은 아닙니다. 하지만 새로 들어갈 직원이 기대할 만한 숫자는 280만 원 쪽입니다. 돈(소득, 집값, 재산)처럼 아주 큰 값이 가끔 섞이는 자료에서 공식 통계가 중앙값을 함께 발표하는 경우가 많은 것은 이 때문입니다.</p>
+</div>
+
+<div class="box trap">
+<p class="box-k">흔한 실수</p>
+<p><b>"평균보다 적은 사람이 절반이다."</b> 이것은 중앙값의 성질입니다. 평균은 받침점이라, 큰 값이 한쪽에 있으면 대부분의 사람이 평균보다 작을 수 있습니다(월급 예제에서는 5명 중 4명). 반대로 작은 값이 한쪽에 있으면 대부분이 평균보다 클 수도 있습니다.</p>
+<p><b>이상값 = 틀린 값.</b> 95만 원은 실제로 받은 용돈이고, 사장의 1,200만 원도 실제 월급입니다. 이상값은 "멀리 떨어진 값"이지 "잘못된 값"이 아닙니다. 입력 실수일 수도 있지만, 확인하기 전에 지우면 진짜 정보를 버리게 됩니다.</p>
+</div>
+
+<div class="check" data-q="q6"></div>
+
+<h2>어느 것을 쓸까</h2>
+
+<div class="table-wrap">
+<table>
+<tr><th>상황</th><th>알맞은 대표값</th><th>이유</th></tr>
+<tr><td>명목형 범주 (혈액형, 통학 수단)</td><td><b class="key">최빈값</b></td><td>평균·중앙값은 계산할 수 없다</td></tr>
+<tr><td>순서형 범주 (만족도)</td><td>중앙값, 최빈값</td><td>순서는 믿을 수 있지만 간격은 모른다 (DA02·1)</td></tr>
+<tr><td>수치형, 좌우가 비슷하고 이상값 없음</td><td>평균 (중앙값과 거의 같다)</td><td>모든 값을 쓰고, 뒤의 계산(분산 등)과 이어진다</td></tr>
+<tr><td>수치형, 큰 값이 가끔 섞임 (소득, 집값)</td><td><b class="key">중앙값</b> (평균과 함께)</td><td>이상값에 휘둘리지 않는다</td></tr>
+<tr><td>총량이 중요할 때 (전체 예산, 총 판매량)</td><td>평균</td><td>평균 × 개수 = 합계. 중앙값으로는 합계를 되살릴 수 없다</td></tr>
+</table>
+</div>
+
+<p>마지막 줄을 봅시다. 카페가 "다음 달 재료비"를 정하려면 하루 평균 판매량이 필요합니다. 평균 × 날 수 = 총 판매량이기 때문입니다. 중앙값에는 이런 성질이 없습니다. 어느 대표값이 "더 좋다"가 아니라 <b>질문에 맞는 것</b>이 있을 뿐입니다. 평균과 중앙값이 크게 다르면, 둘 다 적고 왜 다른지(자료가 한쪽으로 치우쳤는지, 이상값이 있는지)를 함께 설명하는 것이 가장 정직합니다.</p>
+
+<div class="why">
+<p class="box-k">왜 그럴까?</p>
+<p>평균과 중앙값이 같으면 자료가 좌우 대칭이라고 말할 수 있을까요?</p>
+<details><summary>모범 답 보기</summary><p>말할 수 없습니다. 대칭이면 평균 = 중앙값이지만, 거꾸로는 성립하지 않습니다. 반례: 1, 1, 4, 5, 9는 평균 20 ÷ 5 = 4, 중앙값(3번째) 4로 같습니다. 그런데 4에서의 편차는 −3, −3, 0, +1, +5로, 왼쪽에는 가까운 값 둘이 모여 있고 오른쪽에는 멀리 떨어진 9가 있어 대칭이 아닙니다. 대표값 두 개가 같다는 것만으로는 분포의 모양을 알 수 없고, 히스토그램이나 상자 그림(DA04·2)을 함께 봐야 합니다.</p></details>
+</div>
+
+<div class="check" data-q="q8"></div>
+
+<h2>한눈에 정리</h2>
+
+<div class="table-wrap">
+<table>
+<tr><th></th><th>평균</th><th>중앙값</th><th>최빈값</th></tr>
+<tr><td>정하는 법</td><td>합 ÷ 개수</td><td>정렬한 뒤 가운데 (짝수면 두 값의 평균)</td><td>가장 자주 나오는 값</td></tr>
+<tr><td>용돈 10~25</td><td>16</td><td>15</td><td>12</td></tr>
+<tr><td>25 → 95</td><td>26 (움직임)</td><td>15 (그대로)</td><td>12 (그대로)</td></tr>
+<tr><td>성질</td><td><b class="key">받침점</b>: 편차의 합 = 0. 이상값에 약하다</td><td><b class="key">로버스트</b>: 순서만 본다</td><td>범주형에도 쓴다. 여러 개이거나 없을 수 있다</td></tr>
+</table>
+</div>
+
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>평균은 고르게 나눈 받침점이라 먼 값에 끌려가고, 중앙값은 줄의 가운데라 순서만 보며, 최빈값은 가장 흔한 값이라 범주에도 쓴다.</p></div>
+
+<h2>확인 문제</h2>
+<p>본문 중간에서 푼 문제 말고 남은 문제입니다. 보기를 누르면 바로 정답과 해설이 나옵니다.</p>
+<div id="quiz"></div>
+
+<section class="work" id="tools"></section>
+
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

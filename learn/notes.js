@@ -31,6 +31,11 @@ window.BDA_CHAPTERS = {
     {"id": "U04-2", "title": "변수·첨자·단위", "href": "notes/u/u04-2.html"},
     {"id": "U04-3", "title": "비트·바이트와 kB·KiB", "href": "notes/u/u04-3.html"}
   ],
+  U05: [
+    {"id": "U05-1", "title": "Python 설치와 인터프리터", "href": "notes/u/u05-1.html"},
+    {"id": "U05-2", "title": "터미널에서 .py 파일 실행하기", "href": "notes/u/u05-2.html"},
+    {"id": "U05-3", "title": "노트북의 실행 순서와 오류 메시지 읽기", "href": "notes/u/u05-3.html"}
+  ],
   U06: [
     {"id": "U06-1", "title": "자료의 종류와 믿을 정도", "href": "notes/u/u06-1.html"},
     {"id": "U06-2", "title": "검색어 만들기와 AI 답 확인하기", "href": "notes/u/u06-2.html"}
@@ -46,6 +51,64 @@ window.BDA_CHAPTERS = {
   AR10: [
     {"id": "AR10-1", "title": "합과 평균, 합 기호 Σ", "href": "notes/ar/ar10-1.html"},
     {"id": "AR10-2", "title": "가중평균과 평균의 평균 함정", "href": "notes/ar/ar10-2.html"}
+  ],
+  AL04: [
+    {"id": "AL04-1", "title": "함수: 정의역·치역, 합성, 역함수", "href": "notes/al/al04-1.html"}
+  ],
+  AL05: [
+    {"id": "AL05-1", "title": "직선과 변화율: 기울기, 일차함수, 잔차", "href": "notes/al/al05-1.html"}
+  ],
+  PY01: [
+    {"id": "PY01-1", "title": "print와 변수", "href": "notes/py/py01-1.html"},
+    {"id": "PY01-2", "title": "값의 종류: int, float, str, bool", "href": "notes/py/py01-2.html"},
+    {"id": "PY01-3", "title": "숫자 계산과 연산자", "href": "notes/py/py01-3.html"}
+  ],
+  PY02: [
+    {"id": "PY02-1", "title": "문자열 다루기", "href": "notes/py/py02-1.html"},
+    {"id": "PY02-2", "title": "입력과 형 변환", "href": "notes/py/py02-2.html"},
+    {"id": "PY02-3", "title": "참·거짓과 비교, 흔한 오류", "href": "notes/py/py02-3.html"}
+  ],
+  PY03: [
+    {"id": "PY03-1", "title": "if·elif·else와 들여쓰기", "href": "notes/py/py03-1.html"},
+    {"id": "PY03-2", "title": "and·or·not으로 조건 묶기", "href": "notes/py/py03-2.html"},
+    {"id": "PY03-3", "title": "경계값과 조건 설계", "href": "notes/py/py03-3.html"}
+  ],
+  PY04: [
+    {"id": "PY04-1", "title": "리스트와 인덱스·슬라이싱", "href": "notes/py/py04-1.html"},
+    {"id": "PY04-2", "title": "for 반복과 누적값", "href": "notes/py/py04-2.html"},
+    {"id": "PY04-3", "title": "while 반복과 종료 조건", "href": "notes/py/py04-3.html"}
+  ],
+  PY05: [
+    {"id": "PY05-1", "title": "함수 만들기: 매개변수와 반환값", "href": "notes/py/py05-1.html"},
+    {"id": "PY05-2", "title": "지역변수와 문제 분해", "href": "notes/py/py05-2.html"}
+  ],
+  PY06: [
+    {"id": "PY06-1", "title": "딕셔너리·집합·튜플", "href": "notes/py/py06-1.html"},
+    {"id": "PY06-2", "title": "바뀌는 값과 참조·복사", "href": "notes/py/py06-2.html"}
+  ],
+  PY07: [
+    {"id": "PY07-1", "title": "텍스트 파일·경로·인코딩", "href": "notes/py/py07-1.html"},
+    {"id": "PY07-2", "title": "CSV와 JSON 주고받기", "href": "notes/py/py07-2.html"}
+  ],
+  PY08: [
+    {"id": "PY08-1", "title": "오류 읽기·재현·assert", "href": "notes/py/py08-1.html"},
+    {"id": "PY08-2", "title": "예외 처리와 입력 검증", "href": "notes/py/py08-2.html"}
+  ],
+  DA01: [
+    {"id": "DA01-1", "title": "관측과 변수, 행과 열", "href": "notes/da/da01-1.html"},
+    {"id": "DA01-2", "title": "한 행의 단위와 수집 맥락", "href": "notes/da/da01-2.html"}
+  ],
+  DA02: [
+    {"id": "DA02-1", "title": "변수의 종류: 수치·범주·순서·시간", "href": "notes/da/da02-1.html"},
+    {"id": "DA02-2", "title": "데이터의 모양, 그리고 결측과 0", "href": "notes/da/da02-2.html"}
+  ],
+  DA03: [
+    {"id": "DA03-1", "title": "도수와 비율, 막대그래프와 히스토그램", "href": "notes/da/da03-1.html"},
+    {"id": "DA03-2", "title": "산점도와 선 그래프, 그림을 의심하는 법", "href": "notes/da/da03-2.html"}
+  ],
+  DA04: [
+    {"id": "DA04-1", "title": "평균·중앙값·최빈값", "href": "notes/da/da04-1.html"},
+    {"id": "DA04-2", "title": "분위수와 상자 그림, 분포의 모양", "href": "notes/da/da04-2.html"}
   ],
   RS01: [
     {"id": "RS01-1", "title": "질문에서 가설로: 조작적 정의와 측정", "href": "notes/rs/rs01-1.html"},

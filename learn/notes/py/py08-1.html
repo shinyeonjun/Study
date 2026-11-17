@@ -1,0 +1,455 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>오류 읽기·재현·assert · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e8c'/%3E%3Cpath d='M8 22V10m8 12V14m8 8V6' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="PY08-1">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+
+<header class="chapter">
+<p class="chap-sub">Python과 프로그래밍 사고 · PY08 디버깅과 검증</p>
+<p class="chap-num">PY08·1</p>
+<h1>오류 읽기·재현·assert</h1>
+<p class="lead">예외로 멈춘 프로그램이 남기는 여러 줄의 기록은 "어디서, 무엇 때문에 멈췄는지"를 정확히 적은 보고서입니다. 이 장에서는 그 보고서(traceback)를 아래에서부터 읽는 법, 오류를 일부러 다시 일으켜 범위를 좁히는 법, 그리고 오류 없이 틀린 답을 내는 코드를 assert로 붙잡는 법을 배웁니다.</p>
+</header>
+
+<div class="goal">
+<h2>이 장을 읽고 나면</h2>
+<ul>
+<li>문법 오류, 실행 중 오류(예외), 논리 오류를 구분할 수 있다.</li>
+<li>traceback을 아래에서 위로 읽어 오류의 종류, 일어난 줄, 원인이 된 호출을 찾을 수 있다.</li>
+<li>자주 나오는 오류 이름(NameError, TypeError, ValueError, IndexError, KeyError 등)을 보고 원인을 짐작할 수 있다.</li>
+<li>오류를 같은 입력으로 다시 일으키고, 입력을 줄여 가장 작은 재현을 만들 수 있다.</li>
+<li>assert로 "이래야 한다"는 검사를 코드에 남기고, 그 한계를 설명할 수 있다.</li>
+</ul>
+</div>
+
+<h2>오류의 세 종류</h2>
+
+<p>프로그램이 기대와 다르게 움직이는 것을 <b class="key">버그(bug)</b>, 버그를 찾아 고치는 일을 <b class="key">디버깅(debugging)</b>이라고 합니다. 버그가 드러나는 모습은 크게 세 가지입니다. 어느 쪽인지에 따라 찾는 방법이 다르므로 먼저 구분합니다.</p>
+
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 225" role="img" aria-label="세 줄짜리 프로그램이 오류 종류에 따라 어디까지 실행되는지 비교. (가) 문법 오류: 2번 줄 문법이 틀려 실행 전 검사에서 멈추고 1번 줄도 실행되지 않는다. (나) 실행 중 오류: 1번 줄은 실행되고 2번 줄에서 오류가 나 멈추며 3번 줄은 실행되지 않는다. traceback이 나온다. (다) 논리 오류: 세 줄 모두 실행되고 오류 메시지 없이 틀린 답이 나온다.">
+<rect class="f-box" x="50" y="40" width="160" height="30" rx="3"/><text class="f-s" x="130" y="60" text-anchor="middle">1번 줄: 실행 안 됨</text>
+<rect class="f-over" x="50" y="80" width="160" height="30" rx="3"/><text class="f-s f-ink-t" x="130" y="100" text-anchor="middle">2번 줄: 문법 틀림</text>
+<rect class="f-box" x="50" y="120" width="160" height="30" rx="3"/><text class="f-s" x="130" y="140" text-anchor="middle">3번 줄: 실행 안 됨</text>
+<text class="f-s" x="130" y="178" text-anchor="middle">실행 전 검사에서 멈춤</text>
+<rect class="f-soft" x="300" y="40" width="160" height="30" rx="3"/><text class="f-s f-ink-t" x="380" y="60" text-anchor="middle">1번 줄: 실행됨</text>
+<rect class="f-over" x="300" y="80" width="160" height="30" rx="3"/><text class="f-s f-ink-t" x="380" y="100" text-anchor="middle">2번 줄: 오류 → 멈춤</text>
+<rect class="f-box" x="300" y="120" width="160" height="30" rx="3"/><text class="f-s" x="380" y="140" text-anchor="middle">3번 줄: 실행 안 됨</text>
+<text class="f-s" x="380" y="178" text-anchor="middle">그 줄에서 멈추고 traceback</text>
+<rect class="f-soft" x="550" y="40" width="160" height="30" rx="3"/><text class="f-s f-ink-t" x="630" y="60" text-anchor="middle">1번 줄: 실행됨</text>
+<rect class="f-soft" x="550" y="80" width="160" height="30" rx="3"/><text class="f-s f-ink-t" x="630" y="100" text-anchor="middle">2번 줄: 실행됨</text>
+<rect class="f-soft" x="550" y="120" width="160" height="30" rx="3"/><text class="f-s f-ink-t" x="630" y="140" text-anchor="middle">3번 줄: 실행됨</text>
+<text class="f-s" x="630" y="178" text-anchor="middle">오류 없이 끝나지만 답이 틀림</text>
+<text class="f-cap" x="130" y="212" text-anchor="middle">(가) 문법 오류</text>
+<text class="f-cap" x="380" y="212" text-anchor="middle">(나) 실행 중 오류(예외)</text>
+<text class="f-cap" x="630" y="212" text-anchor="middle">(다) 논리 오류</text>
+</svg>
+<figcaption>같은 세 줄이라도 오류의 종류에 따라 어디까지 실행되는지가 다르다. 파란 칸이 실행된 줄이다.</figcaption>
+</figure>
+
+<div class="box">
+<p class="box-k">정의</p>
+<p><b class="key">문법 오류(SyntaxError)</b>: Python의 문법 규칙에 맞지 않아 <b>실행을 시작하기도 전에</b> 거절되는 오류. 콜론·괄호 빠뜨리기, 들여쓰기 틀리기 등.<br>
+<b class="key">예외(exception)</b>: 문법은 맞지만 <b>실행하다가</b> 더 이상 진행할 수 없는 상황(0으로 나누기, 없는 키 찾기 등)이 생겨 그 자리에서 멈추는 오류. 실행 중 오류라고도 합니다.<br>
+<b class="key">논리 오류</b>: 오류 메시지 없이 끝까지 실행되지만 <b>결과가 틀린</b> 경우. 컴퓨터는 이것이 틀린 줄 모릅니다.</p>
+</div>
+
+<p>(가)를 실제로 확인해 봅니다. 1번 줄의 print는 문법이 맞는데도 실행되지 않았습니다. 이 장의 모든 결과는 Windows 11, Python 3.14에서 실제로 실행한 것입니다(파일 경로 앞부분은 <code>C:\Users\...</code>로 줄였습니다).</p>
+
+<p class="small">파일 <code>18_syntax_first.py</code></p>
+<pre><code>print("시작")
+if True
+    print(1)</code></pre>
+<p class="small">실행 결과</p>
+<pre><code>  File "C:\Users\...\study\py08a\18_syntax_first.py", line 2
+    if True
+           ^
+SyntaxError: expected ':'</code></pre>
+<p>"시작"이 찍히지 않았습니다. Python은 파일 전체를 먼저 읽어 문법을 검사하고, 통과해야 1번 줄부터 실행합니다. 문법 오류에는 "Traceback" 줄도 없습니다. 아직 아무것도 실행하지 않았기 때문입니다. 메시지 <code>expected ':'</code>(콜론이 와야 한다)와 <code>^</code> 표시가 고칠 자리를 정확히 가리킵니다.</p>
+
+<p>이 장의 대부분은 (나) 예외와 (다) 논리 오류를 다룹니다.</p>
+
+<h2>traceback 아래에서 위로 읽기 <span class="tag grasp">이해하기</span></h2>
+
+<p>함수가 함수를 부르는 프로그램에서 예외가 나면, Python은 <b>그 순간 어떤 호출들이 쌓여 있었는지</b>를 모두 적어 줍니다. 이 기록을 <b class="key">traceback</b>(거슬러 올라간 자취)이라고 합니다. 학생별 평균을 내는 짧은 프로그램으로 봅시다.</p>
+
+<p class="small">파일 <code>01_report.py</code></p>
+<pre><code>def average(scores):
+    return sum(scores) / len(scores)
+
+def report(name, scores):
+    avg = average(scores)
+    print(name, "평균", avg)
+
+report("민수", [80, 90])
+report("하준", [])</code></pre>
+<p class="small">실행 결과</p>
+<pre><code>민수 평균 85.0
+Traceback (most recent call last):
+  File "C:\Users\...\study\py08a\01_report.py", line 9, in &lt;module&gt;
+    report("하준", [])
+    ~~~~~~^^^^^^^^^^^^
+  File "C:\Users\...\study\py08a\01_report.py", line 5, in report
+    avg = average(scores)
+  File "C:\Users\...\study\py08a\01_report.py", line 2, in average
+    return sum(scores) / len(scores)
+           ~~~~~~~~~~~~^~~~~~~~~~~~~
+ZeroDivisionError: division by zero</code></pre>
+
+<p>민수는 잘 계산되었고(85.0), 하준에서 멈췄습니다. 이 traceback의 생김새는 이렇습니다.</p>
+
+<div class="table-wrap">
+<table>
+<tr><th>부분</th><th>뜻</th></tr>
+<tr><td><code>Traceback (most recent call last):</code></td><td>"호출 기록, <b>가장 최근 호출이 마지막</b>에 있음". 곧 아래로 갈수록 더 안쪽(나중에 불린) 함수다</td></tr>
+<tr><td><code>File "...", line 9, in &lt;module&gt;</code></td><td>파일, 줄 번호, 어느 함수 안인지. <code>&lt;module&gt;</code>은 "함수 밖, 파일의 맨 바깥"</td></tr>
+<tr><td>그 아래 들여 쓴 줄</td><td>그 줄의 실제 코드</td></tr>
+<tr><td><code>~~~^^^</code></td><td>그 줄에서 문제가 된 부분. <code>^</code>가 가장 직접적인 곳(여기서는 나눗셈 <code>/</code>)</td></tr>
+<tr><td>맨 아래 줄 <code>ZeroDivisionError: division by zero</code></td><td><b>오류의 종류: 이유</b>. "0으로 나누었다"</td></tr>
+</table>
+</div>
+
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 250" role="img" aria-label="왼쪽에 호출 칸 세 개가 위에서 아래로 쌓여 있다. module 9번 줄 report(하준, [])이 report를 부르고, report 5번 줄 avg = average(scores)가 average를 부르고, average 2번 줄 sum(scores) / len(scores)에서 오류가 났다(붉은 칸). 이 칸에서 오른쪽 ZeroDivisionError: division by zero로 화살표가 간다. 오른쪽 위에 읽는 순서: ① 맨 아래 줄에서 무슨 오류인지, ② 바로 위 칸에서 어디서 났는지, ③ 위로 올라가며 그 값이 어디서 왔는지.">
+<rect class="f-box" x="30" y="30" width="300" height="50" rx="4"/>
+<text class="f-s" x="44" y="50">&lt;module&gt; · 9번 줄</text>
+<text class="f-s f-ink-t" x="44" y="70">report("하준", [])</text>
+<line class="f-line" x1="180" y1="82" x2="180" y2="98" marker-end="url(#f-arrow)"/>
+<text class="f-s" x="192" y="94">부름</text>
+<rect class="f-box" x="30" y="100" width="300" height="50" rx="4"/>
+<text class="f-s" x="44" y="120">report · 5번 줄</text>
+<text class="f-s f-ink-t" x="44" y="140">avg = average(scores)</text>
+<line class="f-line" x1="180" y1="152" x2="180" y2="168" marker-end="url(#f-arrow)"/>
+<text class="f-s" x="192" y="164">부름</text>
+<rect class="f-over" x="30" y="170" width="300" height="50" rx="4"/>
+<text class="f-s f-ink-t" x="44" y="190">average · 2번 줄</text>
+<text class="f-s f-ink-t" x="44" y="210">sum(scores) / len(scores)</text>
+<line class="f-line" x1="332" y1="195" x2="416" y2="195" marker-end="url(#f-arrow)"/>
+<rect class="f-over" x="420" y="170" width="310" height="50" rx="4"/>
+<text class="f-t f-b" x="575" y="191" text-anchor="middle">ZeroDivisionError:</text>
+<text class="f-t" x="575" y="211" text-anchor="middle">division by zero</text>
+<text class="f-cap" x="420" y="40">읽는 순서</text>
+<text class="f-s f-ink-t" x="420" y="66">① 맨 아래 줄: 무슨 오류인가</text>
+<text class="f-s f-ink-t" x="420" y="90">② 바로 위 칸: 어디서 났나 (average 2번 줄)</text>
+<text class="f-s f-ink-t" x="420" y="114">③ 위로 올라가며: 그 값은 어디서 왔나</text>
+<text class="f-s" x="420" y="136">→ 9번 줄이 빈 리스트 []를 넘겼다</text>
+<text class="f-s" x="180" y="242" text-anchor="middle">위 칸이 아래 칸을 불렀다 (traceback의 순서와 같다)</text>
+</svg>
+<figcaption>traceback을 호출 칸으로 그린 모습. 오류는 맨 아래 칸에서 났지만, 원인은 위 칸에서 넘긴 값일 수 있다.</figcaption>
+</figure>
+
+<div class="box ex">
+<p class="box-k">풀이 예제</p>
+<p>01_report.py의 traceback을 순서대로 읽어 원인을 찾습니다.</p>
+<p class="calc">① 맨 아래: ZeroDivisionError, 0으로 나누었다.<br>
+② 바로 위 칸: average 함수의 2번 줄 <code>sum(scores) / len(scores)</code>, ^가 <code>/</code>를 가리킨다. 나누는 수 len(scores)가 0이었다는 뜻이다.<br>
+③ len(scores)가 0이면 scores는 빈 리스트다. 그 scores는 어디서 왔나? 위 칸: report 5번 줄이 자기 scores를 넘겼다.<br>
+④ 그 위 칸: 9번 줄 <code>report("하준", [])</code>가 빈 리스트를 넘겼다.<br>
+⑤ 결론: 오류가 <b>난</b> 곳은 2번 줄, 오류의 <b>원인</b>이 된 값은 9번 줄에서 왔다.</p>
+<p>어디를 고칠지는 뜻에 달려 있습니다. "점수가 없는 학생도 있을 수 있다"면 average가 빈 리스트를 처리해야 하고, "그런 학생은 없어야 한다"면 9번 줄로 넘어온 자료가 잘못된 것입니다. 이 선택은 다음 장(PY08·2)에서 다룹니다.</p>
+</div>
+
+<div class="box trap">
+<p class="box-k">흔한 실수</p>
+<p><b>traceback을 위에서부터 읽다가 포기하는 것.</b> 맨 위 줄은 가장 바깥의 호출이라 대개 원인과 멉니다. 특히 json, csv 같은 Python에 딸린 도구 안에서 오류가 나면 중간에 <code>Lib\json\decoder.py</code> 같은 남의 코드 줄이 여러 개 끼어 있습니다(PY07·2에서 봤습니다). 순서는 언제나 같습니다. <b>맨 아래 줄 → 위로 올라가며 내가 쓴 파일의 줄을 찾기.</b></p>
+</div>
+
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+<div class="check" data-q="q3"></div>
+
+<h3>자주 만나는 예외 <span class="tag memo">외우기</span></h3>
+
+<p>맨 아래 줄의 이름만 보고도 원인을 짐작할 수 있도록, 처음 공부할 때 자주 만나는 오류를 하나씩 일부러 일으켜 마지막 줄을 모았습니다(파일 02~09).</p>
+
+<div class="table-wrap">
+<table>
+<tr><th>오류 이름</th><th>일으킨 코드</th><th>실제 마지막 줄</th><th>흔한 원인</th></tr>
+<tr><td><b class="key">NameError</b></td><td><code>total = 10</code><br><code>print(totl)</code></td><td><code>NameError: name 'totl' is not defined. Did you mean: 'total'?</code></td><td>이름 오타, 만들기 전에 사용</td></tr>
+<tr><td><b class="key">TypeError</b></td><td><code>print("점수: " + 85)</code></td><td><code>TypeError: can only concatenate str (not "int") to str</code></td><td>형이 맞지 않는 연산 (글자 + 숫자)</td></tr>
+<tr><td><b class="key">ValueError</b></td><td><code>print(int("팔십"))</code></td><td><code>ValueError: invalid literal for int() with base 10: '팔십'</code></td><td>형은 맞지만 값이 안 됨 (숫자가 아닌 글자, 빈 칸)</td></tr>
+<tr><td><b class="key">IndexError</b></td><td><code>x = [1, 2, 3]</code><br><code>print(x[3])</code></td><td><code>IndexError: list index out of range</code></td><td>자리 번호가 범위 밖 (길이 3이면 0~2)</td></tr>
+<tr><td><b class="key">KeyError</b></td><td><code>d = {"a": 1}</code><br><code>print(d["b"])</code></td><td><code>KeyError: 'b'</code></td><td>딕셔너리에 없는 키 (오타, BOM이 붙은 열 이름)</td></tr>
+<tr><td><b class="key">ZeroDivisionError</b></td><td>위 01_report.py</td><td><code>ZeroDivisionError: division by zero</code></td><td>0으로 나누기 (빈 목록의 평균)</td></tr>
+<tr><td>AttributeError</td><td><code>name = "abc"</code><br><code>name.push("d")</code></td><td><code>AttributeError: 'str' object has no attribute 'push'</code></td><td>그 형에 없는 메서드</td></tr>
+<tr><td>FileNotFoundError</td><td>PY07·1 04_notfound.py</td><td><code>FileNotFoundError: [Errno 2] No such file or directory: 'score.txt'</code></td><td>파일 이름, 현재 작업 폴더</td></tr>
+<tr><td>SyntaxError</td><td><code>if True</code> (콜론 없음)</td><td><code>SyntaxError: expected ':'</code></td><td>문법 (실행 전)</td></tr>
+<tr><td>IndentationError</td><td><code>if True:</code><br><code>print(1)</code> (들여쓰기 없음)</td><td><code>IndentationError: expected an indented block after 'if' statement on line 1</code></td><td>들여쓰기 (실행 전)</td></tr>
+</table>
+</div>
+
+<p>TypeError와 ValueError의 차이를 기억해 두세요. <code>"점수: " + 85</code>는 <b>형</b> 자체가 그 연산에 맞지 않습니다(TypeError). <code>int("팔십")</code>은 int에 문자열을 주는 것까지는 맞는데 <b>그 값</b>이 숫자 모양이 아닙니다(ValueError).</p>
+
+<div class="check" data-q="q5"></div>
+<div class="check" data-q="q7"></div>
+
+<h2>오류 재현하기</h2>
+
+<p>버그를 고치려면 먼저 그 버그를 <b>내 눈앞에서 다시 일으킬 수 있어야</b> 합니다. 다시 일으킬 수 없으면 고쳤는지도 확인할 수 없습니다. 같은 조건에서 같은 오류를 다시 일으키는 것을 <b class="key">재현(reproduce)</b>이라고 합니다.</p>
+
+<p>PY07·2의 성적 파일(하준의 수학 칸이 빈 data\scores.csv)로 수학 평균을 내는 코드가 멈췄다고 합시다.</p>
+
+<p class="small">파일 <code>10_math_avg.py</code></p>
+<pre><code>import csv
+with open("data/scores.csv", encoding="utf-8", newline="") as f:
+    rows = list(csv.DictReader(f))
+total = 0
+for row in rows:
+    total = total + int(row["수학"])
+print("수학 평균:", total / len(rows))</code></pre>
+<pre><code>Traceback (most recent call last):
+  File "C:\Users\...\study\py08a\10_math_avg.py", line 6, in &lt;module&gt;
+    total = total + int(row["수학"])
+                    ~~~^^^^^^^^^^^^^
+ValueError: invalid literal for int() with base 10: ''</code></pre>
+
+<p>오류는 6번 줄, 이유는 빈 문자열입니다. 그런데 반복문 안이라 <b>몇 번째 행에서</b> 났는지는 알 수 없습니다. 행이 4개면 눈으로 찾겠지만 4만 개라면 어렵습니다. 반복할 때마다 지금 무엇을 처리하는지 찍어 봅니다.</p>
+
+<p class="small">파일 <code>11_math_avg_print.py</code> (6번 줄 앞에 print 한 줄을 넣음)</p>
+<pre><code>import csv
+with open("data/scores.csv", encoding="utf-8", newline="") as f:
+    rows = list(csv.DictReader(f))
+total = 0
+for row in rows:
+    print("지금 줄:", row)
+    total = total + int(row["수학"])
+print("수학 평균:", total / len(rows))</code></pre>
+<pre><code>지금 줄: {'이름': '민수', '반': '1', '국어': '80', '수학': '90'}
+지금 줄: {'이름': '지아', '반': '2', '국어': '95', '수학': '85'}
+지금 줄: {'이름': '하준', '반': '1', '국어': '70', '수학': ''}
+Traceback (most recent call last):
+  File "C:\Users\...\study\py08a\11_math_avg_print.py", line 7, in &lt;module&gt;
+    total = total + int(row["수학"])
+                    ~~~^^^^^^^^^^^^^
+ValueError: invalid literal for int() with base 10: ''</code></pre>
+
+<p>마지막으로 찍힌 줄이 하준이고 수학이 <code>''</code>입니다. 오류 바로 앞에 찍힌 것이 범인입니다. 이제 파일도 반복문도 없이 그 한 가지만 떼어 냅니다.</p>
+
+<p class="small">파일 <code>12_min_repro.py</code></p>
+<pre><code>print(int(""))</code></pre>
+<pre><code>Traceback (most recent call last):
+  File "C:\Users\...\study\py08a\12_min_repro.py", line 1, in &lt;module&gt;
+    print(int(""))
+          ~~~^^^^
+ValueError: invalid literal for int() with base 10: ''</code></pre>
+
+<p>같은 오류가 한 줄로 재현되었습니다. 이것을 <b class="key">최소 재현</b>(가장 작은 재현 예)이라고 합니다. 이제 문제는 "CSV 처리 코드 어딘가"가 아니라 "빈 문자열을 int로 바꾸면 오류"라는 한 문장으로 줄었습니다.</p>
+
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 170" role="img" aria-label="범위 좁히기. 왼쪽 큰 칸은 scores.csv 전체 4명과 10_math_avg.py로 같은 오류를 다시 일으키는 단계. 가운데 칸은 print로 찾은 문제 행 하나, 하준의 수학 빈 칸. 오른쪽 작은 칸은 int(빈 문자열) 한 줄짜리 최소 재현.">
+<rect class="f-box" x="20" y="30" width="240" height="96" rx="4"/>
+<text class="f-t" x="140" y="70" text-anchor="middle">scores.csv 전체 (4명)</text>
+<text class="f-s" x="140" y="94" text-anchor="middle">10_math_avg.py</text>
+<line class="f-line" x1="262" y1="78" x2="306" y2="78" marker-end="url(#f-arrow)"/>
+<rect class="f-soft" x="310" y="48" width="210" height="60" rx="4"/>
+<text class="f-t" x="415" y="74" text-anchor="middle">문제 행 하나</text>
+<text class="f-s f-ink-t" x="415" y="96" text-anchor="middle">하준: 수학 ''</text>
+<line class="f-line" x1="522" y1="78" x2="566" y2="78" marker-end="url(#f-arrow)"/>
+<rect class="f-over" x="570" y="58" width="170" height="40" rx="4"/>
+<text class="f-t" x="655" y="83" text-anchor="middle">int("")</text>
+<text class="f-s" x="140" y="152" text-anchor="middle">같은 오류를 다시 일으킨다</text>
+<text class="f-s" x="415" y="152" text-anchor="middle">print로 범위를 좁힌다</text>
+<text class="f-s" x="655" y="152" text-anchor="middle">가장 작은 재현</text>
+</svg>
+<figcaption>재현에서 최소 재현까지. 칸이 작아질수록 원인이 또렷해진다.</figcaption>
+</figure>
+
+<div class="box memo">
+<p class="box-k">외우는 법</p>
+<p>디버깅 네 걸음: <b>① 재현한다</b>(같은 입력으로 같은 오류) → <b>② 좁힌다</b>(print로 어디까지 됐나, 입력 줄이기) → <b>③ 최소 재현을 만든다</b> → <b>④ 고친 뒤 같은 재현으로 확인한다.</b> ④를 빼먹으면 "고친 것 같다"로 끝나기 쉽습니다.</p>
+</div>
+
+<div class="more">
+<p class="box-k">더 알아보기 · 남에게 질문할 때</p>
+<p>선생님이나 인터넷 게시판에 질문할 때도 최소 재현을 보냅니다. ① 짧은 코드 전체, ② traceback 전체(사진이 아니라 글자로 복사), ③ 기대한 결과와 실제 결과, ④ Python 버전과 운영체제. 이 네 가지가 있으면 다른 사람도 같은 오류를 재현할 수 있습니다. 붙이기 전에 경로 속 사용자 이름 같은 개인 정보는 지웁니다.</p>
+</div>
+
+<div class="check" data-q="q8"></div>
+
+<h2>오류 없이 틀린 답: 논리 오류 찾기</h2>
+
+<p>더 까다로운 버그는 아무 메시지 없이 틀린 답을 내는 것입니다. 평균 함수를 손으로 짜다가 이렇게 썼다고 합시다.</p>
+
+<p class="small">파일 <code>13_bug_avg.py</code></p>
+<pre><code>def average(scores):
+    total = 0
+    for i in range(1, len(scores)):
+        total = total + scores[i]
+    return total / len(scores)
+
+print(average([80, 90, 70]))</code></pre>
+<pre><code>53.333333333333336</code></pre>
+
+<p>오류는 없습니다. 이게 틀렸다는 것을 알려면 <b>답을 미리 손으로 계산해 두어야</b> 합니다.</p>
+<p class="calc">① 기대값: (80 + 90 + 70) ÷ 3 = 240 ÷ 3 = 80<br>
+② 실제 출력: 53.333…<br>
+③ 다르다 → 논리 오류</p>
+
+<p>중간 값을 찍어 어디서 어긋나는지 봅니다.</p>
+
+<p class="small">파일 <code>14_bug_avg_print.py</code></p>
+<pre><code>def average(scores):
+    total = 0
+    for i in range(1, len(scores)):
+        total = total + scores[i]
+        print("i =", i, "더한 값 =", scores[i], "total =", total)
+    return total / len(scores)
+
+print(average([80, 90, 70]))</code></pre>
+<pre><code>i = 1 더한 값 = 90 total = 90
+i = 2 더한 값 = 70 total = 160
+53.333333333333336</code></pre>
+
+<div class="table-wrap">
+<table>
+<tr><th>반복</th><th>i</th><th>scores[i]</th><th>total (실제)</th><th>total (기대)</th></tr>
+<tr><td>1회</td><td>1</td><td>90</td><td>90</td><td>80 (i = 0, 80이어야 함)</td></tr>
+<tr><td>2회</td><td>2</td><td>70</td><td>160</td><td>170</td></tr>
+<tr><td>3회</td><td>없음</td><td>-</td><td>-</td><td>240</td></tr>
+</table>
+</div>
+
+<p>i가 0부터가 아니라 1부터 시작해서 첫 점수 80을 빠뜨렸습니다. 결과는 160 ÷ 3 = 53.33…입니다. PY04에서 본 <code>range(1, n)</code>은 1부터 n−1까지라는 점이 원인입니다. <code>range(len(scores))</code>로 고치면 0, 1, 2를 돕니다. 이렇게 처음이나 끝을 하나 빠뜨리거나 하나 더 도는 실수를 <b>하나 차이 오류(off-by-one error)</b>라고 부르며, 매우 흔합니다.</p>
+
+<div class="check" data-q="q9"></div>
+
+<h2>assert: "이래야 한다"를 코드로 <span class="tag grasp">이해하기</span></h2>
+
+<p>방금 우리는 "average([80, 90, 70])은 80이어야 한다"를 머리로 확인했습니다. 이 기대를 코드에 적어 두면, 실행할 때마다 컴퓨터가 대신 확인해 줍니다.</p>
+
+<div class="box">
+<p class="box-k">정의</p>
+<p><code>assert 조건, "메시지"</code>는 "이 조건은 반드시 참이어야 한다"는 <b class="key">단언(assertion)</b>입니다. 조건이 참이면 아무 일도 없이 다음 줄로 가고, 거짓이면 그 자리에서 <code>AssertionError</code>를 내고 멈춥니다. 메시지는 생략할 수 있습니다.</p>
+</div>
+
+<p class="small">파일 <code>15_assert_avg.py</code></p>
+<pre><code>def average(scores):
+    total = 0
+    for i in range(1, len(scores)):
+        total = total + scores[i]
+    return total / len(scores)
+
+assert average([80, 90, 70]) == 80, "평균 계산이 틀림"
+print("검사 통과")</code></pre>
+<pre><code>Traceback (most recent call last):
+  File "C:\Users\...\study\py08a\15_assert_avg.py", line 7, in &lt;module&gt;
+    assert average([80, 90, 70]) == 80, "평균 계산이 틀림"
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 평균 계산이 틀림</code></pre>
+
+<p>조용히 53.33을 내던 논리 오류가, 이제는 시끄러운 예외가 되었습니다. 논리 오류를 예외로 바꿔서 traceback으로 위치를 알 수 있게 한 것입니다. 이렇게 "이 입력이면 이 결과"를 assert로 적은 것을 작은 <b>테스트</b>라고 부릅니다.</p>
+
+<p>assert는 함수 <b>안</b>에도 둘 수 있습니다. "이 함수는 빈 리스트를 받으면 안 된다"는 약속을 적어 두는 것입니다.</p>
+
+<p class="small">파일 <code>16_assert_inside.py</code></p>
+<pre><code>def average(scores):
+    assert len(scores) > 0, "빈 목록의 평균은 구할 수 없음"
+    return sum(scores) / len(scores)
+
+print(average([80, 90, 70]))
+assert average([80, 90, 70]) == 80
+assert average([100]) == 100
+assert average([0, 0]) == 0
+print("검사 3개 통과")
+print(average([]))</code></pre>
+<pre><code>80.0
+검사 3개 통과
+Traceback (most recent call last):
+  File "C:\Users\...\study\py08a\16_assert_inside.py", line 10, in &lt;module&gt;
+    print(average([]))
+          ~~~~~~~^^^^
+  File "C:\Users\...\study\py08a\16_assert_inside.py", line 2, in average
+    assert len(scores) > 0, "빈 목록의 평균은 구할 수 없음"
+           ^^^^^^^^^^^^^^^
+AssertionError: 빈 목록의 평균은 구할 수 없음</code></pre>
+
+<p>세 검사(평범한 값, 값이 하나, 모두 0)는 통과했고, 빈 리스트에서는 ZeroDivisionError 대신 <b>뜻이 적힌</b> AssertionError가 났습니다. 오류 메시지가 "0으로 나눔"이 아니라 "빈 목록이라 안 됨"이라 원인을 바로 알 수 있습니다. 80.0 == 80처럼 실수와 정수가 같은 값이면 <code>==</code>는 True입니다.</p>
+
+<div class="box trap">
+<p class="box-k">흔한 실수</p>
+<p><b>assert로 사용자 입력이나 파일 내용을 검사하는 것.</b> assert는 끌 수 있습니다. <code>python -O 파일.py</code>처럼 <code>-O</code>(최적화) 옵션으로 실행하면 assert 줄은 통째로 무시됩니다. 위 16번 파일을 그렇게 실행한 실제 결과입니다.</p>
+<pre><code>80.0
+검사 3개 통과
+Traceback (most recent call last):
+  File "C:\Users\...\study\py08a\16_assert_inside.py", line 10, in &lt;module&gt;
+    print(average([]))
+          ~~~~~~~^^^^
+  File "C:\Users\...\study\py08a\16_assert_inside.py", line 3, in average
+    return sum(scores) / len(scores)
+           ~~~~~~~~~~~~^~~~~~~~~~~~~
+ZeroDivisionError: division by zero</code></pre>
+<p>2번 줄의 assert가 건너뛰어져 3번 줄에서 ZeroDivisionError가 났습니다. 그래서 assert는 <b>"내 코드가 맞다면 절대 일어나지 않을 일"</b>을 확인하는 데만 씁니다. 사용자가 잘못 넣을 수 있는 값은 assert가 아니라 if와 raise로 검사해야 하며, 그 방법은 다음 장에서 배웁니다.</p>
+</div>
+
+<div class="box trap">
+<p class="box-k">흔한 실수</p>
+<p><b>실수(소수) 계산 결과를 <code>==</code>로 검사하는 것.</b> 컴퓨터는 0.1 같은 수를 2진수로 정확히 담지 못해 아주 작은 오차가 생깁니다(U04 참고).</p>
+<p class="small">파일 <code>17_float_eq.py</code></p>
+<pre><code>import math
+print(0.1 + 0.2)
+print(0.1 + 0.2 == 0.3)
+print(math.isclose(0.1 + 0.2, 0.3))</code></pre>
+<pre><code>0.30000000000000004
+False
+True</code></pre>
+<p>실수 결과는 <code>assert math.isclose(결과, 기대값)</code>처럼 "충분히 가까운가"로 검사합니다.</p>
+</div>
+
+<div class="check" data-q="q10"></div>
+<div class="check" data-q="q11"></div>
+
+<div class="why">
+<p class="box-k">왜 그럴까?</p>
+<p>논리 오류보다 예외(프로그램이 멈추는 오류)가 오히려 "고마운" 오류라고들 합니다. 왜 그럴까요?</p>
+<details><summary>모범 답 보기</summary><p>예외는 멈추는 순간 어디서 무엇 때문에 문제가 났는지 traceback으로 알려 주기 때문입니다. 논리 오류는 조용히 틀린 값을 내고 지나가서, 그 값이 보고서나 다음 계산에 섞여 들어간 뒤에야, 또는 영영 발견되지 않을 수 있습니다. 그래서 좋은 코드는 이상한 상황에서 일부러 일찍, 크게 멈추도록 만듭니다. assert와 다음 장의 raise가 바로 그 도구입니다.</p></details>
+</div>
+
+<p>다음 장(PY08·2)에서는 예외를 잡아서 처리하는 try/except, 일부러 예외를 일으키는 raise, 그리고 입력 검증과 경계값 테스트를 다룹니다. PY09에서 환경을 꾸리고 RS04에서 실험을 재현할 때도 이 장의 "재현" 생각이 그대로 쓰입니다.</p>
+
+<h2>한눈에 정리</h2>
+
+<div class="table-wrap">
+<table>
+<tr><th>주제</th><th>핵심</th></tr>
+<tr><td>오류의 세 종류</td><td><b class="key">문법 오류</b>(실행 전 멈춤) · <b class="key">예외</b>(실행 중 그 줄에서 멈춤, traceback) · <b class="key">논리 오류</b>(멈추지 않고 답이 틀림)</td></tr>
+<tr><td><b class="key">traceback</b> 읽기</td><td>맨 아래 줄(종류: 이유) → 바로 위 칸(일어난 줄) → 위로 올라가며 원인 값이 온 곳. 가장 최근 호출이 마지막</td></tr>
+<tr><td>오류 이름</td><td>NameError 이름 · TypeError 형 · ValueError 값 · IndexError 자리 번호 · KeyError 키 · ZeroDivisionError 0 나누기</td></tr>
+<tr><td><b class="key">재현</b></td><td>재현 → print로 좁히기 → <b class="key">최소 재현</b> → 고친 뒤 같은 재현으로 확인</td></tr>
+<tr><td>논리 오류</td><td>기대값을 손으로 먼저 계산, 중간 값 출력, 하나 차이 오류 의심</td></tr>
+<tr><td><b class="key">assert</b></td><td>조건이 거짓이면 AssertionError. 작은 테스트·내부 약속용. <code>-O</code>로 꺼지므로 입력 검사에는 쓰지 않는다. 실수는 <code>math.isclose</code></td></tr>
+</table>
+</div>
+
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>traceback은 아래에서 위로 읽고, 버그는 먼저 재현해 최소 재현까지 좁히며, "이래야 한다"는 기대는 assert로 코드에 남긴다.</p></div>
+
+<h2>확인 문제</h2>
+<p>본문 중간에서 푼 문제 말고 남은 문제입니다. 보기를 누르면 바로 정답과 해설이 나옵니다.</p>
+<div id="quiz"></div>
+
+<section class="work" id="tools"></section>
+
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

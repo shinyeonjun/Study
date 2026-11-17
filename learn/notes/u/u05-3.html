@@ -1,0 +1,417 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>노트북의 실행 순서와 오류 메시지 읽기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e8c'/%3E%3Cpath d='M8 22V10m8 12V14m8 8V6' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="U05-3">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+
+<header class="chapter">
+<p class="chap-sub">공부·컴퓨터의 출발점 · U05 코드를 실행하는 자리</p>
+<p class="chap-num">U05·3</p>
+<h1>노트북의 실행 순서와 오류 메시지 읽기</h1>
+<p class="lead">데이터 분석 강의나 빅데이터분석기사 실기 연습에서는 <code>.py</code> 파일 대신 "노트북"이라는 화면을 자주 씁니다. 코드와 결과가 한 장에 나란히 남아 편하지만, 화면 순서와 실행 순서가 어긋나면 같은 화면에서 다른 답이 나옵니다. 이 장에서는 그 함정을 실제로 따라가 보고, 오류가 났을 때 나오는 긴 영어 메시지(traceback)를 한 줄씩 읽는 법을 익힙니다.</p>
+</header>
+
+<div class="goal">
+<h2>이 장을 읽고 나면</h2>
+<ul>
+<li>노트북의 셀, 실행 번호, 커널이 무엇인지 설명할 수 있다.</li>
+<li>셀을 화면 순서와 다르게 실행했을 때 변수의 값이 어떻게 바뀌는지 따라갈 수 있다.</li>
+<li>"커널 재시작 후 모두 실행"이 왜 필요한지 설명할 수 있다.</li>
+<li>traceback을 맨 아래 줄부터 읽어 오류의 종류, 위치, 원인을 찾을 수 있다.</li>
+<li>SyntaxError, NameError, ZeroDivisionError, TypeError를 메시지만 보고 구분할 수 있다.</li>
+</ul>
+</div>
+
+<h2>노트북: 코드와 결과를 한 장에</h2>
+
+<p>U05·2의 파일 실행은 결과가 터미널에 나왔다가 창을 닫으면 사라집니다. 대화형 실행은 한 줄씩 바로 볼 수 있지만 기록이 남지 않습니다. <b>노트북</b>은 둘의 장점을 섞은 모양입니다. 코드를 칸(셀)에 나눠 적고, 칸마다 실행하면 결과가 그 칸 <b>바로 아래</b>에 붙어서 파일로 함께 저장됩니다. 공책에 풀이와 답을 번갈아 적어 가는 것과 비슷합니다.</p>
+
+<div class="box">
+<p class="box-k">정의 <span class="tag memo">외우기</span></p>
+<p><b class="key">노트북</b>(notebook): 코드 칸과 설명 글 칸, 그리고 실행 결과를 한 문서에 담는 형식. 가장 널리 쓰이는 것이 <b>Jupyter 노트북</b>이고 파일 이름 끝이 <code>.ipynb</code>입니다.<br>
+<b class="key">셀</b>(cell): 노트북의 한 칸. 코드를 넣는 코드 셀과 글을 쓰는 마크다운(Markdown) 셀이 있습니다.<br>
+<b class="key">커널</b>(kernel): 노트북 뒤에서 코드를 실제로 실행하는 Python. 실행한 셀의 변수를 <b>모두 기억</b>합니다.</p>
+</div>
+
+<p>노트북은 브라우저 안에서 여는 JupyterLab, 코드 편집기 VS Code, 구글이 제공하는 Colab 같은 여러 도구에서 열 수 있습니다. 모양은 도구마다 조금 다르지만 규칙은 같습니다. 셀을 고른 뒤 <b>Shift+Enter</b>를 누르면 그 셀이 실행되고 다음 셀로 넘어갑니다. 내 컴퓨터에 Jupyter를 설치하는 일은 패키지 설치를 다루는 PY09 이후로 미룹니다. 이 장에서는 생김새와 규칙만 봅니다.</p>
+
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 250" role="img" aria-label="노트북 화면. 셀 세 개가 위에서 아래로 있다. 실행 번호 [1]: points = 0, [2]: points = points + 100, [3]: print(points). 셋째 셀 바로 아래에 출력 100. 셀들을 실행하면 오른쪽 커널로 가고, 커널은 변수를 기억하는 Python으로 지금 points가 100임을 기억한다.">
+<text class="f-s f-ink-t" x="30" y="52" font-family="Consolas, monospace">[1]:</text>
+<rect class="f-box" x="80" y="32" width="420" height="30" rx="3"/>
+<text class="f-t" x="92" y="52" font-family="Consolas, monospace">points = 0</text>
+<text class="f-s f-ink-t" x="30" y="102" font-family="Consolas, monospace">[2]:</text>
+<rect class="f-box" x="80" y="82" width="420" height="30" rx="3"/>
+<text class="f-t" x="92" y="102" font-family="Consolas, monospace">points = points + 100</text>
+<text class="f-s f-ink-t" x="30" y="152" font-family="Consolas, monospace">[3]:</text>
+<rect class="f-box" x="80" y="132" width="420" height="30" rx="3"/>
+<text class="f-t" x="92" y="152" font-family="Consolas, monospace">print(points)</text>
+<text class="f-t" x="92" y="186" font-family="Consolas, monospace">100</text>
+<text class="f-s" x="130" y="186">← 출력: 셀 바로 아래에 붙는다</text>
+<line class="f-line" x1="46" y1="160" x2="46" y2="210"/>
+<text class="f-s f-ink-t" x="24" y="228">실행 번호</text>
+<line class="f-line" x1="380" y1="164" x2="380" y2="210"/>
+<text class="f-s f-ink-t" x="380" y="228" text-anchor="middle">셀 (코드를 넣는 칸)</text>
+<line class="f-dash" x1="500" y1="47" x2="566" y2="92"/>
+<line class="f-dash" x1="500" y1="97" x2="566" y2="110"/>
+<line class="f-dash" x1="500" y1="147" x2="566" y2="128"/>
+<text class="f-s" x="650" y="58" text-anchor="middle">실행하면 커널로</text>
+<rect class="f-soft" x="570" y="70" width="170" height="90" rx="4"/>
+<text class="f-cap" x="655" y="96" text-anchor="middle">커널</text>
+<text class="f-s f-ink-t" x="655" y="118" text-anchor="middle">변수를 기억하는 Python</text>
+<text class="f-s f-ink-t f-b" x="655" y="144" text-anchor="middle" font-family="Consolas, monospace">points → 100</text>
+</svg>
+<figcaption>노트북의 세 부분. 화면(셀과 출력)과 기억(커널)이 따로 있다는 점이 이 장의 핵심이다.</figcaption>
+</figure>
+
+<p>셀 왼쪽의 <code>[1]</code>, <code>[2]</code>, <code>[3]</code>은 <b class="key">실행 번호</b>입니다. 커널이 셀을 실행할 때마다 1씩 늘어나는 번호를 붙입니다. <b>화면에서 몇째 칸인지가 아니라, 몇째로 실행되었는지</b>를 뜻합니다. 아직 실행하지 않은 셀은 <code>[ ]</code>처럼 비어 있습니다.</p>
+
+<p>커널은 U05·1의 대화형 실행과 같은 일을 합니다. 셀을 실행할 때마다 그 코드를 하나의 긴 대화형 실행에 이어서 친 것처럼 처리하고, 만든 변수를 끝까지 기억합니다. 그래서 셀 [1]에서 만든 <code>points</code>를 셀 [2]에서 쓸 수 있습니다. 또 대화형 실행처럼, 셀의 <b>마지막 줄이 값이면 print 없이도</b> 그 값을 셀 아래에 보여 줍니다.</p>
+
+<div class="check" data-q="q1"></div>
+
+<h2>셀 실행 순서의 함정 <span class="tag grasp">이해하기</span></h2>
+
+<p>위 그림의 세 셀을 셀 A, 셀 B, 셀 C라고 부르겠습니다. 셀 B는 포인트를 100점 쌓는 코드입니다. 등호(<code>=</code>)는 "같다"가 아니라 "오른쪽을 계산해서 왼쪽 이름에 넣어라"라는 뜻입니다(PY01·1에서 자세히). 그래서 <code>points = points + 100</code>은 "지금 points에 100을 더한 값을 다시 points에 넣어라"입니다.</p>
+
+<p>이 세 셀을 세 가지 방식으로 실행해 봅니다. 노트북 대신 같은 코드를 같은 순서로 Python에 실행해 결과를 확인했습니다.</p>
+
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 290" role="img" aria-label="세 장면. (가) A, B, C를 차례로 실행: 실행 번호 [1], [2], [3], 출력 100, 커널의 points는 100. (나) 이어서 B와 C를 한 번 더 실행: 실행 번호 [1], [4], [5], 출력 200, 커널의 points는 200. 화면의 코드는 (가)와 똑같다. (다) 커널을 재시작한 뒤 B부터 실행: A는 [ ], B는 [1]이고 그 아래에 NameError: name 'points' is not defined 오류, C는 [ ]. 커널의 points는 없음.">
+<line class="f-dash" x1="257" y1="10" x2="257" y2="244"/>
+<line class="f-dash" x1="510" y1="10" x2="510" y2="244"/>
+<text class="f-s" x="130" y="22" text-anchor="middle">A → B → C 순서로</text>
+<text class="f-s" x="383" y="22" text-anchor="middle">이어서 B → C 를 한 번 더</text>
+<text class="f-s" x="636" y="22" text-anchor="middle">커널 재시작 후 B부터</text>
+<text class="f-s f-ink-t" x="12" y="52" font-family="Consolas, monospace">[1]</text>
+<rect class="f-box" x="40" y="34" width="208" height="26" rx="3"/>
+<text class="f-s f-ink-t" x="48" y="52" font-family="Consolas, monospace">points = 0</text>
+<text class="f-s" x="240" y="52" text-anchor="end">A</text>
+<text class="f-s f-ink-t" x="12" y="88" font-family="Consolas, monospace">[2]</text>
+<rect class="f-box" x="40" y="70" width="208" height="26" rx="3"/>
+<text class="f-s f-ink-t" x="48" y="88" font-family="Consolas, monospace">points = points + 100</text>
+<text class="f-s" x="240" y="88" text-anchor="end">B</text>
+<text class="f-s f-ink-t" x="12" y="124" font-family="Consolas, monospace">[3]</text>
+<rect class="f-box" x="40" y="106" width="208" height="26" rx="3"/>
+<text class="f-s f-ink-t" x="48" y="124" font-family="Consolas, monospace">print(points)</text>
+<text class="f-s" x="240" y="124" text-anchor="end">C</text>
+<text class="f-t f-b" x="48" y="154" font-family="Consolas, monospace">100</text>
+<text class="f-s f-ink-t" x="130" y="214" text-anchor="middle">커널의 points: 100</text>
+<text class="f-s f-ink-t" x="265" y="52" font-family="Consolas, monospace">[1]</text>
+<rect class="f-box" x="293" y="34" width="208" height="26" rx="3"/>
+<text class="f-s f-ink-t" x="301" y="52" font-family="Consolas, monospace">points = 0</text>
+<text class="f-s" x="493" y="52" text-anchor="end">A</text>
+<text class="f-s f-ink-t f-b" x="265" y="88" font-family="Consolas, monospace">[4]</text>
+<rect class="f-box" x="293" y="70" width="208" height="26" rx="3"/>
+<text class="f-s f-ink-t" x="301" y="88" font-family="Consolas, monospace">points = points + 100</text>
+<text class="f-s" x="493" y="88" text-anchor="end">B</text>
+<text class="f-s f-ink-t f-b" x="265" y="124" font-family="Consolas, monospace">[5]</text>
+<rect class="f-box" x="293" y="106" width="208" height="26" rx="3"/>
+<text class="f-s f-ink-t" x="301" y="124" font-family="Consolas, monospace">print(points)</text>
+<text class="f-s" x="493" y="124" text-anchor="end">C</text>
+<rect class="f-over" x="297" y="138" width="40" height="22" rx="2"/>
+<text class="f-t f-b" x="301" y="154" font-family="Consolas, monospace">200</text>
+<text class="f-s f-ink-t" x="383" y="214" text-anchor="middle">커널의 points: 200</text>
+<text class="f-s f-ink-t" x="518" y="52" font-family="Consolas, monospace">[ ]</text>
+<rect class="f-box" x="546" y="34" width="208" height="26" rx="3"/>
+<text class="f-s f-ink-t" x="554" y="52" font-family="Consolas, monospace">points = 0</text>
+<text class="f-s" x="746" y="52" text-anchor="end">A</text>
+<text class="f-s f-ink-t f-b" x="518" y="88" font-family="Consolas, monospace">[1]</text>
+<rect class="f-box" x="546" y="70" width="208" height="26" rx="3"/>
+<text class="f-s f-ink-t" x="554" y="88" font-family="Consolas, monospace">points = points + 100</text>
+<text class="f-s" x="746" y="88" text-anchor="end">B</text>
+<rect class="f-over" x="546" y="102" width="208" height="42" rx="3"/>
+<text class="f-s f-ink-t" x="554" y="119" font-family="Consolas, monospace">NameError: name 'points'</text>
+<text class="f-s f-ink-t" x="554" y="136" font-family="Consolas, monospace">is not defined</text>
+<text class="f-s f-ink-t" x="518" y="170" font-family="Consolas, monospace">[ ]</text>
+<rect class="f-box" x="546" y="152" width="208" height="26" rx="3"/>
+<text class="f-s f-ink-t" x="554" y="170" font-family="Consolas, monospace">print(points)</text>
+<text class="f-s" x="746" y="170" text-anchor="end">C</text>
+<text class="f-s f-ink-t" x="636" y="214" text-anchor="middle">커널의 points: (없음)</text>
+<text class="f-cap" x="130" y="270" text-anchor="middle">(가) 위에서 아래로 한 번</text>
+<text class="f-cap" x="383" y="270" text-anchor="middle">(나) 같은 코드, 다른 값</text>
+<text class="f-cap" x="636" y="270" text-anchor="middle">(다) 기억이 비었다</text>
+</svg>
+<figcaption>(가)와 (나)는 셀에 적힌 코드가 똑같다. 다른 것은 왼쪽의 실행 번호뿐이다. (다)의 오류 상자는 마지막 줄만 옮긴 것이다.</figcaption>
+</figure>
+
+<div class="box ex">
+<p class="box-k">풀이 예제</p>
+<p>(가)를 실행한 뒤 이어서 셀 B, 셀 C를 한 번 더 실행했습니다. 커널이 기억하는 <code>points</code>를 한 단계씩 따라가 봅시다.</p>
+<p class="calc">① [1] 셀 A: points = 0 → 커널의 points는 <b>0</b><br>
+② [2] 셀 B: 0 + 100 = 100 → points는 <b>100</b><br>
+③ [3] 셀 C: print(points) → 화면에 100<br>
+④ [4] 셀 B (다시): 지금 points가 100이므로 100 + 100 = 200 → points는 <b>200</b><br>
+⑤ [5] 셀 C (다시): print(points) → 화면에 <b>200</b></p>
+<p>④가 핵심입니다. 셀 B는 "처음 값 0에서 시작"하지 않습니다. <b>그 순간 커널이 기억하는 값</b>에서 시작합니다. 화면만 보면 "0을 넣고 100을 더했으니 100"이어야 할 것 같지만, 실제로 커널 안의 값은 200입니다.</p>
+</div>
+
+<p>(다)의 <b>커널 재시작</b>(restart)은 커널을 껐다 켜서 기억을 모두 지우는 일입니다. 화면의 셀과 지난 출력은 그대로 남을 수 있지만, 커널 안의 <code>points</code>는 사라집니다. 이 상태에서 셀 A를 건너뛰고 셀 B부터 실행하면, B의 오른쪽 <code>points + 100</code>을 계산하려는 순간 <code>points</code>라는 이름이 아직 없어서 NameError가 납니다. 같은 코드를 Python에 그 순서로 실행한 실제 마지막 줄은 이렇습니다.</p>
+
+<div class="sample">
+<p class="sample-k">실제 오류의 마지막 줄 (파일로 실행한 결과)</p>
+<pre><code>NameError: name 'points' is not defined. Did you mean: 'print'?</code></pre>
+</div>
+
+<p>뒤에 붙은 <code>Did you mean: 'print'?</code>("print를 말한 건가요?")는 Python이 철자가 비슷한 이름을 골라 내놓는 추측입니다. 여기서는 엉뚱한 추측입니다. 진짜 원인은 철자가 아니라 <b>셀 A를 실행하지 않은 것</b>입니다. 추측은 참고만 합니다.</p>
+
+<h3>지운 셀의 유령</h3>
+<p>더 알아채기 어려운 함정도 있습니다. 셀 A를 실행한 뒤에 셀 A를 <b>지워 버리면</b>, 화면에는 <code>points = 0</code>이 어디에도 없는데 커널은 여전히 <code>points</code>를 기억합니다. 그래서 그날은 노트북이 잘 돌아갑니다. 다음 날 노트북을 다시 열어 처음부터 실행하면 그제야 NameError가 납니다. 다른 사람에게 노트북을 보내도 마찬가지입니다.</p>
+
+<div class="box trap">
+<p class="box-k">흔한 실수</p>
+<p><b>"화면에 보이는 대로 실행되었다"고 믿기.</b> 노트북의 결과는 <b>화면 순서가 아니라 실행 순서</b>를 따릅니다. 출력이 이상하면 먼저 실행 번호를 봅니다. 위에서 아래로 1, 2, 3 … 으로 늘어나지 않고 건너뛰거나(1, 4, 5) 거꾸로 되어 있으면, 셀을 다른 순서로 실행했거나 여러 번 실행한 것입니다.</p>
+</div>
+
+<div class="box memo">
+<p class="box-k">외우는 법: 끝내기 전 점검</p>
+<p>노트북을 저장하거나 남에게 보내기 전에 <b>"커널 재시작 후 모든 셀 실행"</b>을 한 번 합니다. JupyterLab에서는 Kernel 메뉴의 "Restart Kernel and Run All Cells", Colab에서는 런타임 메뉴의 "다시 시작 및 모두 실행"과 같은 이름입니다(도구와 판에 따라 이름이 조금 다릅니다). 기억을 비우고 위에서 아래로 한 번에 실행해서 오류 없이 같은 결과가 나오면, 그 노트북은 화면 순서만으로 다시 만들 수 있는 노트북입니다.</p>
+</div>
+
+<div class="why">
+<p class="box-k">왜 그럴까?</p>
+<p>순서가 어긋나면 이렇게 위험한데, 노트북은 왜 셀을 아무 순서로나 실행하게 해 둘까요?</p>
+<details><summary>모범 답 보기</summary><p>데이터를 살펴볼 때는 앞에서 불러온 데이터를 그대로 둔 채, 그래프를 그리는 셀 하나만 고쳐서 여러 번 다시 실행하는 일이 많습니다. 매번 처음부터 다시 실행하면 데이터를 불러오는 데만 오래 걸릴 수 있습니다. 그래서 커널이 기억을 유지하고 셀을 골라 실행할 수 있게 한 것입니다. 편리함의 대가로 순서를 관리하는 책임이 사용자에게 넘어온 셈이고, 그것을 마지막에 "재시작 후 모두 실행"으로 점검합니다.</p></details>
+</div>
+
+<div class="check" data-q="q2"></div>
+<div class="check" data-q="q3"></div>
+
+<h2>오류 메시지 읽기: traceback</h2>
+
+<p>코드가 실행 중에 더 나아갈 수 없는 일을 만나면 Python은 실행을 멈추고 긴 메시지를 남깁니다. 모양이 정해져 있으므로 읽는 순서를 알면 빠르게 원인에 닿습니다. 점수 합계를 사람 수로 나눠 평균을 내는 파일을 예로 듭니다.</p>
+
+<div class="sample">
+<p class="sample-k">코드 (average.py, 왼쪽 숫자는 줄 번호이고 파일에는 없다)</p>
+<pre><code>1  total = 240
+2  count = 0
+3  average = total / count
+4  print("평균:", average)</code></pre>
+</div>
+
+<div class="sample">
+<p class="sample-k">실행 결과 (경로만 이 책의 예시 폴더로 바꿈)</p>
+<pre><code>PS C:\Users\me\Documents\python-study&gt; python average.py
+Traceback (most recent call last):
+  File "C:\Users\me\Documents\python-study\average.py", line 3, in &lt;module&gt;
+    average = total / count
+              ~~~~~~^~~~~~~
+ZeroDivisionError: division by zero</code></pre>
+</div>
+
+<div class="side"><b>용어</b> 실행 도중에 일어나 프로그램을 멈추게 하는 오류를 <b>예외</b>(exception)라고 합니다. "예외가 발생했다(raise)"는 "이 오류가 났다"와 같은 말입니다.</div>
+
+<div class="box">
+<p class="box-k">정의</p>
+<p><b class="key">traceback</b>(트레이스백): 예외가 났을 때 Python이 남기는 기록. "어디서 출발해 어디를 거쳐 어디에서 멈췄는지"를 차례로 적고, <b>맨 아래 줄에 오류의 종류와 설명</b>을 적습니다. trace(자취) + back(거슬러 올라감)이라는 뜻입니다.</p>
+</div>
+
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 240" role="img" aria-label="traceback 다섯 줄과 각 줄의 뜻. 1줄 Traceback (most recent call last): 아래가 오류 기록이라는 머리줄. 2줄 File 경로, line 3, in &lt;module&gt;: 어느 파일의 몇째 줄인가. 3줄 average = total / count: 그 줄의 코드. 4줄 물결과 꺾쇠 표시: 문제가 난 부분. 5줄 ZeroDivisionError: division by zero: 오류 종류와 설명으로 가장 먼저 읽는 줄. 5줄 아래에 ZeroDivisionError는 오류 종류, division by zero는 설명이라고 괄호로 표시되어 있다.">
+<rect class="f-box" x="16" y="22" width="444" height="138" rx="4"/>
+<rect class="f-over" x="22" y="130" width="432" height="24" rx="2"/>
+<text class="f-s f-ink-t" x="28" y="44" font-family="Consolas, monospace" xml:space="preserve" style="white-space:pre">Traceback (most recent call last):</text>
+<text class="f-s f-ink-t" x="28" y="70" font-family="Consolas, monospace" xml:space="preserve" style="white-space:pre">  File "...\average.py", line 3, in &lt;module&gt;</text>
+<text class="f-s f-ink-t" x="28" y="96" font-family="Consolas, monospace" xml:space="preserve" style="white-space:pre">    average = total / count</text>
+<text class="f-s f-ink-t" x="28" y="118" font-family="Consolas, monospace" xml:space="preserve" style="white-space:pre">              ~~~~~~^~~~~~~</text>
+<text class="f-s f-ink-t f-b" x="28" y="147" font-family="Consolas, monospace" xml:space="preserve" style="white-space:pre">ZeroDivisionError: division by zero</text>
+<line class="f-line" x1="462" y1="40" x2="486" y2="40"/>
+<text class="f-s f-ink-t" x="492" y="44">① 머리줄: 아래가 오류 기록</text>
+<line class="f-line" x1="462" y1="66" x2="486" y2="66"/>
+<text class="f-s f-ink-t" x="492" y="70">② 어느 파일, 몇째 줄 (line 3)</text>
+<line class="f-line" x1="462" y1="92" x2="486" y2="92"/>
+<text class="f-s f-ink-t" x="492" y="96">③ 그 줄의 코드</text>
+<line class="f-line" x1="462" y1="114" x2="486" y2="114"/>
+<text class="f-s f-ink-t" x="492" y="118">④ 문제가 난 부분 (^ 가 연산 기호)</text>
+<line class="f-line" x1="462" y1="142" x2="486" y2="142"/>
+<text class="f-s f-ink-t f-b" x="492" y="147">⑤ 오류 종류: 설명 ← 먼저 읽는다</text>
+<path class="f-line" d="M28 166 v6 h117 v-6"/>
+<text class="f-s" x="86" y="192" text-anchor="middle">오류 종류</text>
+<path class="f-line" d="M159 166 v6 h110 v-6"/>
+<text class="f-s" x="214" y="192" text-anchor="middle">설명</text>
+<text class="f-s f-ink-t" x="380" y="226" text-anchor="middle">읽는 순서: ⑤ 무엇이 → ② 어디서 → ③④ 어느 부분 → 원인은 그 줄의 재료(total, count)를 거슬러 찾는다</text>
+</svg>
+<figcaption>traceback 한 장의 구조. 경로는 줄여 적었다. 붉은 줄이 가장 중요한 한 줄이다.</figcaption>
+</figure>
+
+<h3>네 단계로 읽기 <span class="tag memo">외우기</span></h3>
+<ol>
+<li><b>맨 아래 줄부터.</b> <code>ZeroDivisionError: division by zero</code>. 콜론 앞이 <b>오류 종류</b>(ZeroDivisionError: 0으로 나누기 오류), 뒤가 <b>설명</b>(0으로 나눴다)입니다. 영어가 낯설면 종류 이름만 기억해도 반은 푼 것입니다.</li>
+<li><b>바로 위 File 줄.</b> <code>average.py</code> 파일의 <code>line 3</code>(셋째 줄)에서 멈췄습니다. <code>in &lt;module&gt;</code>은 "파일의 맨 바깥 부분에서"라는 뜻으로, 지금은 신경 쓰지 않아도 됩니다.</li>
+<li><b>코드 줄과 표시.</b> <code>~~~~~~^~~~~~~</code>는 <code>total / count</code> 부분을 밑줄 긋고, <code>^</code>로 나누기 기호를 가리킵니다. "이 나눗셈에서 났다"는 뜻입니다.</li>
+<li><b>원인 거슬러 찾기.</b> 셋째 줄 자체는 평범한 나눗셈입니다. 문제는 재료인 <code>count</code>가 0이라는 것이고, 0이 된 곳은 <b>둘째 줄</b>입니다. 고칠 곳은 둘째 줄입니다.</li>
+</ol>
+
+<p>넷째 단계가 중요합니다. traceback이 알려 주는 줄은 <b>오류가 드러난 곳</b>이지, 언제나 <b>잘못을 저지른 곳</b>은 아닙니다. 둘째 줄 <code>count = 0</code>은 그 자체로는 잘못이 없어서 Python이 멈추지 않았고, 셋째 줄에 가서야 문제가 드러났습니다. 넷째 줄 <code>print</code>는 실행되지 않았습니다. 예외가 나면 그 자리에서 멈추기 때문입니다.</p>
+
+<div class="check" data-q="q4"></div>
+<div class="check" data-q="q5"></div>
+
+<h3>이름을 잘못 쳤을 때: NameError</h3>
+<p>평균 계산에서 <code>total</code>을 <code>totl</code>로 잘못 친 실제 결과입니다.</p>
+
+<div class="sample">
+<p class="sample-k">코드 (typo.py)</p>
+<pre><code>1  total = 240
+2  count = 3
+3  print("평균:", totl / count)</code></pre>
+</div>
+<div class="sample">
+<p class="sample-k">실행 결과</p>
+<pre><code>Traceback (most recent call last):
+  File "C:\Users\me\Documents\python-study\typo.py", line 3, in &lt;module&gt;
+    print("평균:", totl / count)
+                   ^^^^
+NameError: name 'totl' is not defined. Did you mean: 'total'?</code></pre>
+</div>
+<p>맨 아래 줄: <b>NameError</b>, "<code>totl</code>이라는 이름은 정해진 적이 없다". File 줄: 셋째 줄. 표시 <code>^^^^</code>: <code>totl</code>. 이번에는 Python의 추측 <code>Did you mean: 'total'?</code>이 정확히 맞았습니다. 앞의 노트북 예처럼 추측이 빗나갈 때도 있으니, 추측을 따르기 전에 "정말 철자 문제인가, 아니면 그 이름을 만드는 줄을 실행하지 않았나"를 먼저 따집니다.</p>
+
+<h3>여러 곳을 거쳐 온 오류</h3>
+<p>코드가 다른 곳에 있는 코드를 불러 쓰면 traceback에 File 줄이 여러 개 생깁니다. 아래 파일의 <code>def</code>는 여러 줄을 묶어 이름(<code>average</code>)을 붙여 두는 문법인데, 자세한 것은 PY05 "함수와 분해"에서 배웁니다. 지금은 <b>"5번 줄이 1~2번 줄을 불러 쓴다"</b>만 알면 됩니다.</p>
+
+<div class="sample">
+<p class="sample-k">코드 (twoframe.py)</p>
+<pre><code>1  def average(total, count):
+2      return total / count
+3
+4  print("시작")
+5  result = average(240, 0)
+6  print("평균:", result)</code></pre>
+</div>
+<div class="sample">
+<p class="sample-k">실행 결과</p>
+<pre><code>시작
+Traceback (most recent call last):
+  File "C:\Users\me\Documents\python-study\twoframe.py", line 5, in &lt;module&gt;
+    result = average(240, 0)
+  File "C:\Users\me\Documents\python-study\twoframe.py", line 2, in average
+    return total / count
+           ~~~~~~^~~~~~~
+ZeroDivisionError: division by zero</code></pre>
+</div>
+
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 226" role="img" aria-label="왼쪽은 twoframe.py의 여섯 줄. 5번 줄 result = average(240, 0)에서 2번 줄로 부르는 굽은 화살표가 있다. 오른쪽 위 붉은 상자: traceback 둘째 File 줄, line 2, in average, 실제로 멈춘 곳(가장 최근). 2번 줄을 가리킨다. 오른쪽 아래 상자: traceback 첫째 File 줄, line 5, in &lt;module&gt;, 출발한 곳. 5번 줄을 가리킨다. 맨 아래에 마지막 줄 ZeroDivisionError: division by zero.">
+<rect class="f-box" x="16" y="30" width="330" height="146" rx="4"/>
+<text class="f-s" x="50" y="54">1</text>
+<text class="f-s f-ink-t" x="66" y="54" font-family="Consolas, monospace" xml:space="preserve" style="white-space:pre">def average(total, count):</text>
+<text class="f-s" x="50" y="76">2</text>
+<text class="f-s f-ink-t f-b" x="66" y="76" font-family="Consolas, monospace" xml:space="preserve" style="white-space:pre">    return total / count</text>
+<text class="f-s" x="50" y="98">3</text>
+<text class="f-s" x="50" y="120">4</text>
+<text class="f-s f-ink-t" x="66" y="120" font-family="Consolas, monospace">print("시작")</text>
+<text class="f-s" x="50" y="142">5</text>
+<text class="f-s f-ink-t f-b" x="66" y="142" font-family="Consolas, monospace">result = average(240, 0)</text>
+<text class="f-s" x="50" y="164">6</text>
+<text class="f-s f-ink-t" x="66" y="164" font-family="Consolas, monospace">print("평균:", result)</text>
+<path class="f-line" d="M40 138 C 24 126, 24 84, 40 74" marker-end="url(#f-arrow)"/>
+<rect class="f-over" x="400" y="48" width="340" height="50" rx="4"/>
+<text class="f-s f-ink-t" x="412" y="68" font-family="Consolas, monospace">② File "…", line 2, in average</text>
+<text class="f-s f-ink-t" x="412" y="88">실제로 멈춘 곳 (가장 최근에 들어간 곳)</text>
+<line class="f-line" x1="398" y1="72" x2="250" y2="72" marker-end="url(#f-arrow)"/>
+<rect class="f-box" x="400" y="114" width="340" height="50" rx="4"/>
+<text class="f-s f-ink-t" x="412" y="134" font-family="Consolas, monospace">① File "…", line 5, in &lt;module&gt;</text>
+<text class="f-s f-ink-t" x="412" y="154">출발한 곳 (traceback의 위쪽)</text>
+<line class="f-line" x1="398" y1="138" x2="246" y2="138" marker-end="url(#f-arrow)"/>
+<text class="f-s f-ink-t f-b" x="400" y="204" font-family="Consolas, monospace">ZeroDivisionError: division by zero</text>
+<text class="f-s" x="181" y="204" text-anchor="middle">왼쪽 굽은 화살표: 5번 줄이 부름</text>
+</svg>
+<figcaption>traceback의 File 줄은 출발한 곳(①)부터 멈춘 곳(②) 순서로 적힌다. 그래서 맨 아래에 가까울수록 실제 오류 자리다.</figcaption>
+</figure>
+
+<p>머리줄의 <code>most recent call last</code>는 "가장 최근에 부른 것이 마지막에"라는 뜻입니다. 위의 File 줄(5번 줄)은 출발한 곳, 아래 File 줄(2번 줄)은 거기서 불려 들어가 실제로 멈춘 곳입니다. 그래서 여기서도 <b>아래에서 위로</b> 읽습니다. 맨 아래 줄로 종류를 알고, 바로 위 File 줄로 멈춘 자리를 찾고, 더 위 File 줄로 "누가 0을 넘겼나"를 거슬러 갑니다. 0을 넘긴 것은 5번 줄의 <code>average(240, 0)</code>입니다. 그리고 첫 줄 <code>시작</code>은 출력되었습니다. 4번 줄까지는 잘 실행되었다는 증거입니다.</p>
+
+<div class="check" data-q="q6"></div>
+
+<h3>실행조차 안 되는 오류: SyntaxError</h3>
+<p>괄호를 닫지 않은 파일을 실행한 실제 결과입니다.</p>
+
+<div class="sample">
+<p class="sample-k">코드 (syntax.py)</p>
+<pre><code>1  print("안녕하세요"
+2  print(2 + 3)</code></pre>
+</div>
+<div class="sample">
+<p class="sample-k">실행 결과</p>
+<pre><code>  File "C:\Users\me\Documents\python-study\syntax.py", line 1
+    print("안녕하세요"
+         ^
+SyntaxError: '(' was never closed</code></pre>
+</div>
+
+<p>두 가지가 다릅니다. 첫째, 맨 위에 <code>Traceback (most recent call last):</code> 머리줄이 <b>없습니다</b>. 둘째, 둘째 줄의 <code>print(2 + 3)</code>은 문법이 멀쩡한데도 <b>5가 출력되지 않았습니다.</b> U05·1의 "더 알아보기"에서 본 것처럼 Python은 파일 전체를 먼저 읽어 문법을 확인하고, 문법이 틀리면 한 줄도 실행하지 않기 때문입니다. 표시 <code>^</code>는 닫히지 않은 여는 괄호 <code>(</code>를 가리킵니다. 고치는 법: 첫 줄 끝에 <code>)</code>를 붙입니다.</p>
+
+<div class="table-wrap">
+<table>
+<tr><th>맨 아래 줄의 종류</th><th>뜻</th><th>이 책의 실제 예</th><th>먼저 볼 곳</th></tr>
+<tr><td><b class="key">SyntaxError</b></td><td>문법 오류. 실행 전에 걸린다</td><td><code>'(' was never closed</code></td><td>괄호·따옴표 짝, <code>^</code> 자리와 그 앞 줄</td></tr>
+<tr><td><b class="key">NameError</b></td><td>정해진 적 없는 이름을 썼다</td><td><code>name 'totl' is not defined</code></td><td>철자, 그 이름을 만드는 줄(셀)을 실행했는가</td></tr>
+<tr><td><b class="key">ZeroDivisionError</b></td><td>0으로 나눴다</td><td><code>division by zero</code></td><td>나누는 수가 0이 된 곳</td></tr>
+<tr><td><b class="key">TypeError</b></td><td>그 종류의 값끼리는 할 수 없는 계산</td><td><code>unsupported operand type(s) for +: 'int' and 'str'</code> (숫자 + 글자)</td><td>값의 종류(PY01·2, PY02)</td></tr>
+</table>
+</div>
+
+<div class="box trap">
+<p class="box-k">흔한 실수</p>
+<p><b>traceback을 위에서부터 읽다가 지치기.</b> 첫 줄 <code>Traceback (most recent call last):</code>은 매번 똑같은 머리줄이라 정보가 없습니다. 눈을 바로 맨 아래 줄로 내리세요. 그리고 <b>노트북의 traceback</b>은 색이 칠해지거나 화살표(<code>----&gt;</code>)로 줄을 가리키는 등 모양이 조금 다르지만, "맨 아래 줄이 종류와 설명"이라는 규칙은 같습니다.</p>
+</div>
+
+<div class="check" data-q="q7"></div>
+
+<h2>다음에 이어지는 곳</h2>
+<ul>
+<li><b>PY01</b>: 이제 코드를 실행할 자리(대화형 실행, 파일, 노트북)와 오류를 읽는 법을 알았으니 첫 프로그램을 씁니다.</li>
+<li><b>PY02</b>: 흔한 문법 오류와 TypeError를 값의 종류와 함께 더 자세히 봅니다.</li>
+<li><b>PY08 디버깅과 검증</b>: 오류를 일부러 다시 일으켜 원인을 좁히는 법, traceback을 이용한 디버깅을 다룹니다.</li>
+<li><b>PY09 패키지와 환경</b>: Jupyter 같은 도구를 설치하고, 다른 컴퓨터에서도 같은 결과가 나오게 환경을 기록합니다.</li>
+</ul>
+
+<h2>한눈에 정리</h2>
+
+<div class="table-wrap">
+<table>
+<tr><th>묻는 것</th><th>답</th></tr>
+<tr><td>노트북</td><td>코드 셀·글 셀·결과를 한 문서에 담는 형식. Jupyter, 파일은 <code>.ipynb</code> (<b class="key">노트북</b>)</td></tr>
+<tr><td>커널</td><td>셀을 실제로 실행하고 변수를 <b class="key">기억</b>하는 Python</td></tr>
+<tr><td>실행 번호 [n]</td><td>화면 순서가 아니라 <b class="key">실행된 순서</b></td></tr>
+<tr><td>순서 함정</td><td>같은 셀을 다시 실행하면 지금 기억하는 값에서 이어진다 (100 → 200)</td></tr>
+<tr><td>점검</td><td><b class="key">커널 재시작 후 모두 실행</b></td></tr>
+<tr><td>traceback 읽는 순서</td><td><b class="key">맨 아래 줄</b>(종류: 설명) → File 줄(파일·줄 번호) → 코드와 <code>^</code> → 원인 거슬러 찾기</td></tr>
+<tr><td>여러 File 줄</td><td>위가 출발한 곳, 아래가 실제로 멈춘 곳 (most recent call last)</td></tr>
+<tr><td>SyntaxError</td><td>머리줄 없음, <b class="key">한 줄도 실행되지 않음</b></td></tr>
+</table>
+</div>
+
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>노트북의 결과는 화면 순서가 아니라 커널이 실행한 순서를 따르므로 재시작 후 모두 실행으로 점검하고, 오류가 나면 traceback의 맨 아래 줄부터 거꾸로 읽는다.</p></div>
+
+<h2>확인 문제</h2>
+<p>본문 중간에서 푼 문제 말고 남은 문제입니다. 보기를 누르면 바로 정답과 해설이 나옵니다.</p>
+<div id="quiz"></div>
+
+<section class="work" id="tools"></section>
+
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

@@ -1,0 +1,609 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>텍스트 파일·경로·인코딩 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e8c'/%3E%3Cpath d='M8 22V10m8 12V14m8 8V6' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="PY07-1">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+
+<header class="chapter">
+<p class="chap-sub">Python과 프로그래밍 사고 · PY07 파일과 자료 교환</p>
+<p class="chap-num">PY07·1</p>
+<h1>텍스트 파일·경로·인코딩</h1>
+<p class="lead">지금까지 만든 프로그램은 끝나는 순간 모든 값을 잊었습니다. 변수는 메모리에 있고, 메모리는 프로그램이 끝나면 비워지기 때문입니다(U03의 "저장"). 이 장에서는 Python으로 파일에 글을 쓰고 다시 읽는 법, 파일을 찾아가는 경로, 그리고 한국어 Windows에서 거의 반드시 한 번은 만나는 "인코딩 오류"를 실제로 일으켜 보고 고칩니다.</p>
+</header>
+
+<div class="goal">
+<h2>이 장을 읽고 나면</h2>
+<ul>
+<li><code>open</code>과 <code>with</code>로 텍스트 파일을 쓰고, 덧붙이고, 읽을 수 있다.</li>
+<li>읽기·쓰기·덧붙이기 모드의 차이와 <code>"w"</code>가 위험한 이유를 설명할 수 있다.</li>
+<li>상대 경로가 어디를 기준으로 풀리는지 설명하고, 경로 때문에 나는 오류를 고칠 수 있다.</li>
+<li>인코딩이 무엇인지, UTF-8과 CP949가 같은 글자를 어떻게 다르게 저장하는지 설명할 수 있다.</li>
+<li><code>UnicodeDecodeError</code>를 보고 원인을 짚어 알맞은 <code>encoding</code>으로 고칠 수 있다.</li>
+</ul>
+</div>
+
+<h2>파일을 읽고 쓰는 흐름</h2>
+
+<p>U02에서 파일은 "이름이 붙은 데이터 덩어리"이고, 디스크에 저장되어 전원을 꺼도 남는다고 배웠습니다. 디스크에 실제로 적히는 것은 글자가 아니라 <b>바이트(byte)</b>, 곧 0부터 255까지의 숫자들입니다(U04). 반면 Python 프로그램 안에서 우리는 <code>"이름"</code> 같은 <b>글자(문자열)</b>를 다룹니다. 그러니 파일에 쓸 때는 글자를 바이트로 바꾸고, 읽을 때는 바이트를 글자로 되돌리는 단계가 반드시 끼어 있습니다.</p>
+
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 245" role="img" aria-label="세 칸이 나란히 있다. 왼쪽 프로그램(메모리)은 문자열 이름을 글자로 다룬다. 가운데 파일 객체 f는 open(이름, 모드, encoding)으로 만들며 인코딩과 디코딩을 맡는다. 오른쪽 디스크의 파일은 EC 9D B4 EB A6 84 같은 바이트로 저장된다. 위쪽 화살표는 쓰기: 글자가 인코딩되어 바이트로 간다. 아래쪽 화살표는 읽기: 바이트가 디코딩되어 글자로 온다.">
+<text class="f-s f-ink-t" x="380" y="36" text-anchor="middle">쓰기 f.write(…): 글자 → (인코딩) → 바이트</text>
+<rect class="f-box" x="20" y="56" width="200" height="140" rx="4"/>
+<text class="f-cap" x="120" y="96" text-anchor="middle">프로그램</text>
+<text class="f-s f-ink-t" x="120" y="124" text-anchor="middle">문자열 "이름"</text>
+<text class="f-s" x="120" y="146" text-anchor="middle">(글자로 다룸, 메모리)</text>
+<rect class="f-soft" x="290" y="56" width="180" height="140" rx="4"/>
+<text class="f-cap" x="380" y="96" text-anchor="middle">파일 객체 f</text>
+<text class="f-s f-ink-t" x="380" y="124" text-anchor="middle">open(이름, 모드,</text>
+<text class="f-s f-ink-t" x="380" y="142" text-anchor="middle">encoding=…)</text>
+<text class="f-s" x="380" y="170" text-anchor="middle">인코딩·디코딩 담당</text>
+<rect class="f-box" x="540" y="56" width="200" height="140" rx="4"/>
+<text class="f-cap" x="640" y="96" text-anchor="middle">디스크의 파일</text>
+<text class="f-s f-ink-t" x="640" y="124" text-anchor="middle">EC 9D B4 EB A6 84</text>
+<text class="f-s" x="640" y="146" text-anchor="middle">(바이트로 저장, 남음)</text>
+<line class="f-line" x1="222" y1="84" x2="286" y2="84" marker-end="url(#f-arrow)"/>
+<line class="f-line" x1="472" y1="84" x2="536" y2="84" marker-end="url(#f-arrow)"/>
+<line class="f-line" x1="538" y1="174" x2="474" y2="174" marker-end="url(#f-arrow)"/>
+<line class="f-line" x1="288" y1="174" x2="224" y2="174" marker-end="url(#f-arrow)"/>
+<text class="f-s f-ink-t" x="380" y="226" text-anchor="middle">읽기 f.read(): 바이트 → (디코딩) → 글자</text>
+</svg>
+<figcaption>파일 읽기·쓰기의 흐름. 가운데 파일 객체가 글자와 바이트 사이를 바꿔 준다. 오른쪽 바이트는 "이름"을 UTF-8로 적은 실제 값이다.</figcaption>
+</figure>
+
+<p>이 그림의 세 부분을 이 장에서 차례로 다룹니다. 가운데 칸을 여는 <code>open</code>과 닫는 <code>with</code>, 오른쪽 파일을 찾아가는 <b>경로</b>, 그리고 화살표 위의 <b>인코딩</b>입니다.</p>
+
+<h2>첫 파일 쓰고 읽기 <span class="tag grasp">이해하기</span></h2>
+
+<p>이 장의 코드는 모두 새 폴더(예: <code>study\py07a</code>)를 하나 만들어 그 안에 파일로 저장하고, 명령 프롬프트에서 <b>그 폴더로 이동한 뒤</b> <code>python 파일이름.py</code>로 실행했습니다(폴더 이동은 U05 참고). 실행 결과는 Windows 11, Python 3.14에서 실제로 나온 것입니다.</p>
+
+<p class="small">파일 <code>01_write_read.py</code></p>
+<pre><code>with open("memo.txt", "w", encoding="utf-8") as f:
+    f.write("첫째 줄\n")
+    f.write("둘째 줄\n")
+print("다 썼습니다")
+
+with open("memo.txt", "r", encoding="utf-8") as f:
+    text = f.read()
+print(repr(text))
+print(text)</code></pre>
+<p class="small">실행 결과</p>
+<pre><code>다 썼습니다
+'첫째 줄\n둘째 줄\n'
+첫째 줄
+둘째 줄
+</code></pre>
+
+<p>실행이 끝나면 폴더에 <code>memo.txt</code>가 생겨 있고, 메모장으로 열면 두 줄이 보입니다. 코드를 뜯어봅시다.</p>
+
+<div class="box">
+<p class="box-k">정의</p>
+<p><code>open(파일 이름, 모드, encoding=인코딩)</code>은 파일을 열어 <b class="key">파일 객체</b>를 돌려줍니다. 파일 객체는 파일로 드나드는 문입니다. 이 문으로 <code>f.write(문자열)</code>(쓰기), <code>f.read()</code>(전부 읽기)를 합니다.</p>
+<ul>
+<li><b>파일 이름</b>: 여는 파일의 경로. 여기서는 폴더 없이 이름만 썼으므로 "지금 폴더의 memo.txt"입니다(경로 절에서 자세히).</li>
+<li><b>모드</b>: 무엇을 하려고 여는지. 아래 표.</li>
+<li><b>encoding</b>: 글자를 바이트로 어떻게 바꿀지. 이 교재에서는 <b>항상 적습니다.</b> 이유는 인코딩 절에서 실제 오류로 보여 줍니다.</li>
+</ul>
+</div>
+
+<div class="table-wrap">
+<table>
+<tr><th>모드</th><th>뜻</th><th>파일이 없으면</th><th>파일이 있으면</th></tr>
+<tr><td><code>"r"</code> (생략하면 이것)</td><td><b class="key">읽기</b> read</td><td>FileNotFoundError</td><td>처음부터 읽는다</td></tr>
+<tr><td><code>"w"</code></td><td><b class="key">쓰기</b> write</td><td>새로 만든다</td><td><b>내용을 모두 지우고</b> 처음부터 쓴다</td></tr>
+<tr><td><code>"a"</code></td><td><b class="key">덧붙이기</b> append</td><td>새로 만든다</td><td>원래 내용 <b>끝에 이어</b> 쓴다</td></tr>
+</table>
+</div>
+
+<div class="side"><b>용어</b> <code>repr(x)</code>는 값을 "코드에 적는 모양 그대로" 보여 주는 함수입니다. 줄바꿈이 <code>\n</code>으로, 문자열 양끝의 따옴표가 그대로 보여서 눈에 안 보이는 글자를 확인할 때 씁니다.</div>
+
+<p><code>"\n"</code>은 <b>줄바꿈 글자</b>입니다. <code>write</code>는 <code>print</code>와 달리 줄을 저절로 바꿔 주지 않으므로, 줄을 바꾸려면 <code>\n</code>을 직접 넣어야 합니다. <code>repr(text)</code>로 찍어 보니 파일 내용은 <code>'첫째 줄\n둘째 줄\n'</code>이라는 문자열 하나였습니다. 그냥 <code>print(text)</code>를 하면 <code>\n</code>이 실제 줄바꿈으로 보이고, 끝의 <code>\n</code>과 print 자신의 줄바꿈이 겹쳐 맨 아래에 빈 줄이 하나 생깁니다.</p>
+
+<h3>덧붙이기와 한 줄씩 읽기</h3>
+
+<p class="small">파일 <code>02_append_lines.py</code> (01을 실행한 다음에 실행)</p>
+<pre><code>with open("memo.txt", "a", encoding="utf-8") as f:
+    f.write("셋째 줄\n")
+
+with open("memo.txt", encoding="utf-8") as f:
+    for line in f:
+        print(repr(line), "->", repr(line.strip()))
+
+with open("memo.txt", encoding="utf-8") as f:
+    lines = f.readlines()
+print(lines)
+print(len(lines))</code></pre>
+<p class="small">실행 결과</p>
+<pre><code>'첫째 줄\n' -> '첫째 줄'
+'둘째 줄\n' -> '둘째 줄'
+'셋째 줄\n' -> '셋째 줄'
+['첫째 줄\n', '둘째 줄\n', '셋째 줄\n']
+3</code></pre>
+
+<ul>
+<li><code>"a"</code>로 열었으므로 원래 두 줄 뒤에 셋째 줄이 붙었습니다.</li>
+<li>모드를 생략하면 <code>"r"</code>입니다. 그래서 둘째 <code>open</code>에는 모드가 없습니다.</li>
+<li><code>for line in f:</code>는 파일을 <b>한 줄씩</b> 읽습니다. 각 줄 끝에 <code>\n</code>이 붙어 있으므로, 내용만 쓰려면 <code>line.strip()</code>으로 양끝의 공백과 줄바꿈을 떼어 냅니다. 큰 파일도 한 줄씩만 메모리에 올리므로 부담이 적습니다.</li>
+<li><code>f.readlines()</code>는 모든 줄을 리스트로 한 번에 돌려줍니다.</li>
+</ul>
+
+<div class="box trap">
+<p class="box-k">흔한 실수</p>
+<p><b>있는 파일을 <code>"w"</code>로 여는 것.</b> <code>"w"</code>는 여는 순간 기존 내용을 전부 지웁니다. 아무것도 쓰지 않고 닫아도 빈 파일이 됩니다. 묻지도 않고, 휴지통에도 가지 않습니다.</p>
+<p class="small">파일 <code>03_overwrite.py</code> (02 다음에 실행)</p>
+<pre><code>with open("memo.txt", "w", encoding="utf-8") as f:
+    f.write("새 내용\n")
+
+with open("memo.txt", encoding="utf-8") as f:
+    print(f.read())</code></pre>
+<pre><code>새 내용
+</code></pre>
+<p>세 줄이 사라지고 "새 내용" 한 줄만 남았습니다. 원본 자료 파일은 <b>읽기 전용으로만 열고</b>, 결과는 다른 이름의 파일에 쓰는 습관을 들이세요.</p>
+</div>
+
+<h3>파일이 없으면</h3>
+<p>읽기 모드로 없는 파일을 열면 오류가 납니다. 파일 이름을 잘못 쳤을 때(score.txt와 scores.txt), 또는 다른 폴더에서 실행했을 때 가장 자주 만납니다.</p>
+
+<p class="small">파일 <code>04_notfound.py</code></p>
+<pre><code>with open("score.txt", encoding="utf-8") as f:
+    print(f.read())</code></pre>
+<pre><code>Traceback (most recent call last):
+  File "C:\Users\...\study\py07a\04_notfound.py", line 1, in &lt;module&gt;
+    with open("score.txt", encoding="utf-8") as f:
+         ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: 'score.txt'</code></pre>
+<p>마지막 줄은 "그런 파일이나 폴더가 없다: 'score.txt'"입니다. 이 오류를 보면 ① 이름의 철자, ② 확장자, ③ <b>지금 어느 폴더에서 실행했는지</b>를 차례로 확인합니다. ③은 경로 절에서 다룹니다.</p>
+
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+<div class="check" data-q="q3"></div>
+
+<h2>with문과 파일 닫기</h2>
+
+<p>문을 열었으면 닫아야 합니다. 파일 객체도 다 쓰면 <code>f.close()</code>로 닫아야 하는데, 닫는 일에는 두 가지 뜻이 있습니다.</p>
+<ul>
+<li><b>쓴 내용을 확실히 디스크에 내려보냅니다.</b> <code>write</code>한 글자는 효율을 위해 잠시 메모리에 모아 두었다가 한꺼번에 디스크로 보내는 경우가 많습니다. 닫을 때 남은 것을 모두 보냅니다. 닫지 않은 채 프로그램이 비정상으로 끝나면 끝부분이 빠질 수 있습니다.</li>
+<li><b>파일을 놓아줍니다.</b> 운영체제는 열려 있는 파일을 기억해 둡니다. 특히 Windows에서는 어떤 프로그램이 열고 있는 파일을 지우거나 이름을 바꾸지 못하는 경우가 있습니다.</li>
+</ul>
+
+<div class="box">
+<p class="box-k">정의</p>
+<p><code>with open(...) as f:</code> 아래에 들여 쓴 부분(블록)이 끝나면 <b>파일이 자동으로 닫힙니다.</b> 블록 안에서 <b>오류가 나서 중간에 빠져나가도</b> 닫힙니다. 이런 문법을 <b class="key">with문</b>이라고 하며, 파일을 열 때는 언제나 이것을 씁니다.</p>
+</div>
+
+<p class="small">파일 <code>05_closed.py</code></p>
+<pre><code>f = open("memo.txt", encoding="utf-8")
+print(f.closed)
+f.close()
+print(f.closed)
+
+with open("memo.txt", encoding="utf-8") as g:
+    print(g.closed)
+print(g.closed)
+g.read()</code></pre>
+<p class="small">실행 결과</p>
+<pre><code>False
+True
+False
+True
+Traceback (most recent call last):
+  File "C:\Users\...\study\py07a\05_closed.py", line 9, in &lt;module&gt;
+    g.read()
+    ~~~~~~^^
+ValueError: I/O operation on closed file.</code></pre>
+
+<p><code>f.closed</code>는 "닫혔는가?"를 True/False로 알려 줍니다. 1~4번 줄은 손으로 열고 닫은 경우, 6~8번 줄은 with문입니다. 블록 안에서는 False, 블록을 벗어나자마자 True가 되었습니다. 9번 줄에서 닫힌 파일을 읽으려 하자 "닫힌 파일에 입출력(I/O)을 하려 했다"는 오류가 났습니다. 파일 작업은 <b>모두 with 블록 안에서</b> 끝내야 합니다.</p>
+
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 185" role="img" aria-label="with open(...) as f: 의 흐름. 파일을 열어 f를 만들고, 블록 안에서 읽기와 쓰기를 한 뒤, 블록 끝에 이르면 f.close()가 자동으로 실행된다. 블록 안에서 중간에 오류가 나도 점선 경로를 따라 블록 끝으로 가서 닫힌다.">
+<text class="f-s f-ink-t" x="20" y="34" text-anchor="start">with open("memo.txt", encoding="utf-8") as f:</text>
+<rect class="f-box" x="20" y="56" width="150" height="50" rx="4"/>
+<text class="f-t" x="95" y="86" text-anchor="middle">열기 → f</text>
+<line class="f-line" x1="170" y1="81" x2="216" y2="81" marker-end="url(#f-arrow)"/>
+<rect class="f-soft" x="220" y="56" width="190" height="50" rx="4"/>
+<text class="f-t" x="315" y="86" text-anchor="middle">블록 안: 읽기·쓰기</text>
+<line class="f-line" x1="410" y1="81" x2="456" y2="81" marker-end="url(#f-arrow)"/>
+<rect class="f-box" x="460" y="56" width="120" height="50" rx="4"/>
+<text class="f-t" x="520" y="86" text-anchor="middle">블록 끝</text>
+<line class="f-line" x1="580" y1="81" x2="626" y2="81" marker-end="url(#f-arrow)"/>
+<rect class="f-soft" x="630" y="56" width="115" height="50" rx="4"/>
+<text class="f-t f-b" x="687" y="80" text-anchor="middle">f.close()</text>
+<text class="f-s f-ink-t" x="687" y="98" text-anchor="middle">자동</text>
+<path class="f-dash" d="M315 108 L315 140 L520 140 L520 110"/>
+<line class="f-line" x1="520" y1="122" x2="520" y2="110" marker-end="url(#f-arrow)"/>
+<text class="f-s" x="418" y="162" text-anchor="middle">중간에 오류가 나도 블록 끝으로 가서 닫는다</text>
+</svg>
+<figcaption>with문의 흐름. 어떤 길로 블록을 나가든 마지막에 닫기가 실행된다.</figcaption>
+</figure>
+
+<div class="check" data-q="q4"></div>
+<div class="check" data-q="q5"></div>
+
+<h2>경로: 파일을 찾아가는 주소</h2>
+
+<p>U02에서 경로를 두 가지로 나눴습니다. <code>C:\Users\...\study\py07a\memo.txt</code>처럼 드라이브부터 끝까지 적은 <b>절대 경로</b>, 그리고 <code>data\scores.csv</code>처럼 "어딘가를 기준으로" 적은 <b>상대 경로</b>입니다. Python에서 중요한 질문은 하나입니다. <b>상대 경로의 그 "어딘가"는 어디인가?</b></p>
+
+<div class="box">
+<p class="box-k">정의</p>
+<p>상대 경로는 <b class="key">현재 작업 폴더(current working directory)</b>를 기준으로 풀립니다. 현재 작업 폴더는 <b>python 명령을 실행한 그 순간 명령 프롬프트가 있던 폴더</b>입니다. <b>.py 파일이 있는 폴더가 아닙니다.</b></p>
+</div>
+
+<p>같은 스크립트를 두 곳에서 실행해 확인해 봅시다. <code>Path.cwd()</code>는 현재 작업 폴더를, <code>.resolve()</code>는 상대 경로를 절대 경로로 풀어 보여 줍니다(아래에서 설명할 pathlib의 기능입니다).</p>
+
+<p class="small">파일 <code>08_cwd.py</code></p>
+<pre><code>from pathlib import Path
+print(Path.cwd())
+print(Path("data/scores.csv").resolve())</code></pre>
+<p class="small">py07a 폴더에서 <code>python 08_cwd.py</code></p>
+<pre><code>C:\Users\...\study\py07a
+C:\Users\...\study\py07a\data\scores.csv</code></pre>
+<p class="small">py07a\data 폴더로 들어가서 <code>python ..\08_cwd.py</code></p>
+<pre><code>C:\Users\...\study\py07a\data
+C:\Users\...\study\py07a\data\data\scores.csv</code></pre>
+
+<p>스크립트는 똑같은데, 둘째 실행에서는 <code>data\data\scores.csv</code>라는 있지도 않은 곳을 가리킵니다. 현재 작업 폴더가 data였으니 거기에 또 data를 붙인 것입니다. 이 상태에서 파일을 열면 FileNotFoundError가 납니다. (<code>..</code>는 "한 단계 위 폴더"입니다. U02 참고.)</p>
+
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 250" role="img" aria-label="폴더 나무: study 아래 py07a, 그 아래 08_cwd.py, memo.txt, data 폴더, data 아래 scores.csv. (가) py07a에서 실행하면 data/scores.csv는 py07a\data\scores.csv로 풀려 실제 파일을 가리킨다. (나) data에서 실행하면 data\data\scores.csv로 풀려 없는 곳을 가리킨다.">
+<text class="f-t" x="30" y="40">study\</text>
+<line class="f-ink" x1="44" y1="48" x2="44" y2="72"/>
+<line class="f-ink" x1="44" y1="72" x2="60" y2="72"/>
+<text class="f-t f-b" x="64" y="77">py07a\</text>
+<line class="f-ink" x1="78" y1="84" x2="78" y2="174"/>
+<line class="f-ink" x1="78" y1="108" x2="94" y2="108"/>
+<text class="f-t" x="98" y="113">08_cwd.py</text>
+<line class="f-ink" x1="78" y1="140" x2="94" y2="140"/>
+<text class="f-t" x="98" y="145">memo.txt</text>
+<line class="f-ink" x1="78" y1="174" x2="94" y2="174"/>
+<text class="f-t f-b" x="98" y="179">data\</text>
+<line class="f-ink" x1="112" y1="186" x2="112" y2="210"/>
+<line class="f-ink" x1="112" y1="210" x2="128" y2="210"/>
+<text class="f-t" x="132" y="215">scores.csv</text>
+<text class="f-s" x="150" y="77">← (가)의 현재 작업 폴더</text>
+<text class="f-s" x="150" y="179">← (나)의 현재 작업 폴더</text>
+<line class="f-dash" x1="380" y1="20" x2="380" y2="230"/>
+<text class="f-cap" x="400" y="52">(가) py07a에서 실행</text>
+<text class="f-s f-ink-t" x="400" y="76">"data/scores.csv"</text>
+<text class="f-s f-ink-t" x="400" y="98">→ …\py07a\data\scores.csv</text>
+<text class="f-s" x="400" y="120">실제 파일을 가리킨다</text>
+<text class="f-cap" x="400" y="160">(나) data에서 실행</text>
+<text class="f-s f-ink-t" x="400" y="184">"data/scores.csv"</text>
+<text class="f-s f-ink-t" x="400" y="206">→ …\data\data\scores.csv</text>
+<text class="f-s" x="400" y="228">없는 폴더를 가리킨다 → FileNotFoundError</text>
+</svg>
+<figcaption>같은 상대 경로가 어디서 실행하느냐에 따라 다른 곳을 가리킨다. scores.csv는 다음 장에서 만드는 파일이다.</figcaption>
+</figure>
+
+<p>그래서 이 교재에서는 <b>스크립트가 있는 폴더로 이동한 뒤 실행</b>하는 것을 원칙으로 합니다. VS Code 같은 편집기의 "실행" 단추는 현재 작업 폴더를 다른 곳(열어 둔 작업 영역의 맨 위 폴더 등)으로 잡을 수 있으니, 경로 오류가 나면 먼저 <code>Path.cwd()</code>를 찍어 보세요.</p>
+
+<h3>pathlib으로 경로 다루기</h3>
+
+<p>경로를 글자로 이어 붙이다 보면 <code>\</code>를 빼먹거나 두 번 넣기 쉽습니다. Python에 딸려 오는 <code>pathlib</code>의 <code>Path</code>를 쓰면 경로를 조각으로 다룰 수 있습니다. <code>from pathlib import Path</code>는 "pathlib 묶음에서 Path를 꺼내 쓰겠다"는 줄입니다(import는 PY09에서 자세히).</p>
+
+<p class="small">파일 <code>06_paths.py</code></p>
+<pre><code>from pathlib import Path
+p = Path("data") / "scores.csv"
+print(p)
+print(p.name, p.stem, p.suffix)
+print(p.parent)
+print(p.exists())
+print(Path("06_paths.py").exists())</code></pre>
+<p class="small">실행 결과</p>
+<pre><code>data\scores.csv
+scores.csv scores .csv
+data
+False
+True</code></pre>
+
+<div class="table-wrap">
+<table>
+<tr><th>코드</th><th>결과</th><th>뜻</th></tr>
+<tr><td><code>Path("data") / "scores.csv"</code></td><td><code>data\scores.csv</code></td><td><code>/</code>로 경로 조각을 잇는다. Windows에서는 알아서 <code>\</code>로 적는다</td></tr>
+<tr><td><code>p.name</code></td><td><code>scores.csv</code></td><td>맨 끝 이름</td></tr>
+<tr><td><code>p.stem</code></td><td><code>scores</code></td><td>확장자를 뺀 이름</td></tr>
+<tr><td><code>p.suffix</code></td><td><code>.csv</code></td><td>확장자 (U02)</td></tr>
+<tr><td><code>p.parent</code></td><td><code>data</code></td><td>담고 있는 폴더</td></tr>
+<tr><td><code>p.exists()</code></td><td><code>False</code></td><td>그 파일이 실제로 있는가 (이 시점에는 아직 scores.csv를 만들지 않았다)</td></tr>
+</table>
+</div>
+<p>파일을 열기 전에 <code>exists()</code>로 확인하면 "파일이 없습니다: data\scores.csv"처럼 알아보기 쉬운 안내를 낼 수 있습니다. <code>open</code>에는 문자열 대신 Path를 그대로 넣어도 됩니다. macOS·Linux에서는 경로 구분자가 <code>/</code>이고 드라이브 문자가 없지만, Path를 쓰면 같은 코드가 그대로 돌아갑니다.</p>
+
+<div class="box trap">
+<p class="box-k">흔한 실수</p>
+<p><b>Windows 경로를 보통 문자열로 그대로 적는 것.</b> 문자열 안에서 <code>\n</code>은 줄바꿈, <code>\t</code>는 탭(넓은 칸 띄우기)이라는 특별한 뜻이 있습니다. 경로 속 <code>\new</code>, <code>\table</code>이 그렇게 읽혀 버립니다.</p>
+<p class="small">파일 <code>07_backslash.py</code></p>
+<pre><code>print("C:\new\table.txt")
+print(r"C:\new\table.txt")
+print("C:/new/table.txt")</code></pre>
+<pre><code>C:
+ew	able.txt
+C:\new\table.txt
+C:/new/table.txt</code></pre>
+<p>첫 줄은 <code>\n</code> 자리에서 줄이 바뀌고 <code>\t</code> 자리에 탭이 들어가 엉망이 되었습니다. 고치는 법은 셋입니다. ① 따옴표 앞에 <code>r</code>을 붙여 <b>날 문자열(raw string)</b>로 만들기: 역슬래시를 글자 그대로 둡니다. ② 슬래시 <code>/</code>로 적기: print는 슬래시를 그대로 보여 주지만, 파일을 열 때는 Windows도 <code>/</code>를 경로 구분자로 받아들입니다. ③ <code>Path</code> 쓰기.</p>
+</div>
+
+<div class="check" data-q="q6"></div>
+<div class="check" data-q="q7"></div>
+
+<h2>인코딩: 글자를 바이트로 바꾸는 약속 <span class="tag grasp">이해하기</span></h2>
+
+<p>그림 1의 화살표 위에서 일어나는 일입니다. 컴퓨터는 글자를 숫자로만 저장할 수 있으므로, "어떤 글자를 어떤 바이트들로 적을지" 정한 <b>약속표</b>가 필요합니다. 문제는 이 약속표가 하나가 아니라는 데 있습니다.</p>
+
+<div class="box">
+<p class="box-k">정의</p>
+<p><b class="key">인코딩(encoding)</b>: 글자를 바이트로 바꾸는 일, 또는 그 바꾸는 규칙. <b class="key">디코딩(decoding)</b>: 바이트를 글자로 되돌리는 일. <b>쓸 때와 읽을 때 같은 규칙을 써야</b> 원래 글자가 돌아옵니다.</p>
+<ul>
+<li><b class="key">UTF-8</b>: 세계의 거의 모든 글자를 담는 국제 표준 규칙. 영문·숫자는 1바이트, 한글 한 글자는 보통 3바이트. 웹과 Python, macOS·Linux의 기본입니다.</li>
+<li><b class="key">CP949</b>: 한국어 Windows가 예전부터 써 온 규칙(EUC-KR을 넓힌 것). 영문·숫자 1바이트, 한글 한 글자 2바이트. 한국어 글자는 담지만 다른 나라 글자 상당수는 담지 못합니다. Windows 메뉴에서는 "ANSI"라는 이름으로 보이기도 합니다.</li>
+</ul>
+</div>
+
+<p>Python에서 문자열의 <code>.encode(규칙)</code>는 바이트를 돌려줍니다. 결과 앞의 <code>b'...'</code>는 "바이트 값"이라는 표시이고, <code>\xea</code>는 16진수 EA인 바이트 하나입니다.</p>
+
+<p class="small">파일 <code>09_bytes.py</code></p>
+<pre><code>print("가".encode("utf-8"))
+print("가".encode("cp949"))
+print(len("가나다".encode("utf-8")), len("가나다".encode("cp949")))
+print(len("abc".encode("utf-8")), len("abc".encode("cp949")))</code></pre>
+<p class="small">실행 결과</p>
+<pre><code>b'\xea\xb0\x80'
+b'\xb0\xa1'
+9 6
+3 3</code></pre>
+
+<div class="box ex">
+<p class="box-k">풀이 예제</p>
+<p>"가나다"를 두 규칙으로 저장하면 몇 바이트일까요?</p>
+<p class="calc">① UTF-8: 한글 한 글자 3바이트 × 3글자 = 9바이트<br>
+② CP949: 한글 한 글자 2바이트 × 3글자 = 6바이트<br>
+③ "abc"는 두 규칙 모두 1바이트 × 3글자 = 3바이트 (영문은 같은 바이트)</p>
+<p>③ 때문에 영어만 있는 파일에서는 인코딩 문제가 잘 드러나지 않습니다. 한글이 들어가는 순간 차이가 납니다.</p>
+</div>
+
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 210" role="img" aria-label="같은 글자 '이름'을 두 규칙으로 저장. (가) UTF-8: 이는 EC 9D B4 세 바이트, 름은 EB A6 84 세 바이트, 모두 6바이트. (나) CP949: 이는 C0 CC 두 바이트, 름은 B8 A7 두 바이트, 모두 4바이트.">
+<rect class="f-soft" x="70" y="28" width="60" height="38" rx="4"/>
+<text class="f-cap" x="100" y="53" text-anchor="middle">이</text>
+<rect class="f-soft" x="250" y="28" width="60" height="38" rx="4"/>
+<text class="f-cap" x="280" y="53" text-anchor="middle">름</text>
+<line class="f-line" x1="100" y1="68" x2="100" y2="104" marker-end="url(#f-arrow)"/>
+<line class="f-line" x1="280" y1="68" x2="280" y2="104" marker-end="url(#f-arrow)"/>
+<rect class="f-box" x="43" y="108" width="38" height="32"/>
+<text class="f-s f-ink-t" x="62" y="129" text-anchor="middle">EC</text>
+<rect class="f-box" x="81" y="108" width="38" height="32"/>
+<text class="f-s f-ink-t" x="100" y="129" text-anchor="middle">9D</text>
+<rect class="f-box" x="119" y="108" width="38" height="32"/>
+<text class="f-s f-ink-t" x="138" y="129" text-anchor="middle">B4</text>
+<rect class="f-box" x="223" y="108" width="38" height="32"/>
+<text class="f-s f-ink-t" x="242" y="129" text-anchor="middle">EB</text>
+<rect class="f-box" x="261" y="108" width="38" height="32"/>
+<text class="f-s f-ink-t" x="280" y="129" text-anchor="middle">A6</text>
+<rect class="f-box" x="299" y="108" width="38" height="32"/>
+<text class="f-s f-ink-t" x="318" y="129" text-anchor="middle">84</text>
+<text class="f-s" x="190" y="164" text-anchor="middle">3바이트 + 3바이트 = 6바이트</text>
+<line class="f-dash" x1="380" y1="16" x2="380" y2="176"/>
+<rect class="f-soft" x="450" y="28" width="60" height="38" rx="4"/>
+<text class="f-cap" x="480" y="53" text-anchor="middle">이</text>
+<rect class="f-soft" x="630" y="28" width="60" height="38" rx="4"/>
+<text class="f-cap" x="660" y="53" text-anchor="middle">름</text>
+<line class="f-line" x1="480" y1="68" x2="480" y2="104" marker-end="url(#f-arrow)"/>
+<line class="f-line" x1="660" y1="68" x2="660" y2="104" marker-end="url(#f-arrow)"/>
+<rect class="f-box" x="442" y="108" width="38" height="32"/>
+<text class="f-s f-ink-t" x="461" y="129" text-anchor="middle">C0</text>
+<rect class="f-box" x="480" y="108" width="38" height="32"/>
+<text class="f-s f-ink-t" x="499" y="129" text-anchor="middle">CC</text>
+<rect class="f-box" x="622" y="108" width="38" height="32"/>
+<text class="f-s f-ink-t" x="641" y="129" text-anchor="middle">B8</text>
+<rect class="f-box" x="660" y="108" width="38" height="32"/>
+<text class="f-s f-ink-t" x="679" y="129" text-anchor="middle">A7</text>
+<text class="f-s" x="570" y="164" text-anchor="middle">2바이트 + 2바이트 = 4바이트</text>
+<text class="f-cap" x="190" y="198" text-anchor="middle">(가) UTF-8</text>
+<text class="f-cap" x="570" y="198" text-anchor="middle">(나) CP949</text>
+</svg>
+<figcaption>같은 두 글자, 다른 바이트. 바이트 값은 아래 10_make_files.py의 실제 출력에서 옮겼다.</figcaption>
+</figure>
+
+<h3>규칙이 어긋나면: 실제 오류</h3>
+
+<p>같은 내용을 두 규칙으로 각각 저장하고, 저장된 바이트를 그대로 들여다봅니다. <code>"rb"</code>는 "바이트 그대로 읽기(read binary)" 모드로, 디코딩을 하지 않습니다.</p>
+
+<p class="small">파일 <code>10_make_files.py</code></p>
+<pre><code>with open("utf8.txt", "w", encoding="utf-8") as f:
+    f.write("이름,점수\n민수,80\n")
+with open("ansi.txt", "w", encoding="cp949") as f:
+    f.write("이름,점수\n민수,80\n")
+with open("utf8.txt", "rb") as f:
+    print(f.read())
+with open("ansi.txt", "rb") as f:
+    print(f.read())</code></pre>
+<p class="small">실행 결과</p>
+<pre><code>b'\xec\x9d\xb4\xeb\xa6\x84,\xec\xa0\x90\xec\x88\x98\r\n\xeb\xaf\xbc\xec\x88\x98,80\r\n'
+b'\xc0\xcc\xb8\xa7,\xc1\xa1\xbc\xf6\r\n\xb9\xce\xbc\xf6,80\r\n'</code></pre>
+
+<p>쉼표(<code>,</code>)와 <code>80</code>은 양쪽이 똑같고, 한글 부분만 다릅니다. 하나 더 보이는 것이 있습니다. 코드에서는 <code>\n</code>만 썼는데 파일에는 <code>\r\n</code>이 적혔습니다. Windows의 텍스트 파일은 줄바꿈을 <code>\r\n</code> 두 글자로 적는 관례가 있어서, 텍스트 모드로 쓰면 Python이 알아서 바꿔 줍니다. 읽을 때는 다시 <code>\n</code>으로 돌려주므로 평소에는 신경 쓸 일이 없습니다(다음 장 CSV에서 한 번 더 나옵니다).</p>
+
+<p>이제 일부러 규칙을 바꿔 읽어 봅니다. 먼저 UTF-8 파일을 CP949로 읽기.</p>
+
+<p class="small">파일 <code>11_utf8_as_cp949.py</code></p>
+<pre><code>with open("utf8.txt", encoding="cp949") as f:
+    print(f.read())</code></pre>
+<pre><code>Traceback (most recent call last):
+  File "C:\Users\...\study\py07a\11_utf8_as_cp949.py", line 2, in &lt;module&gt;
+    print(f.read())
+          ~~~~~~^^
+UnicodeDecodeError: 'cp949' codec can't decode byte 0xec in position 0: illegal multibyte sequence</code></pre>
+
+<p>반대로 CP949 파일을 UTF-8로 읽기.</p>
+
+<p class="small">파일 <code>12_cp949_as_utf8.py</code></p>
+<pre><code>with open("ansi.txt", encoding="utf-8") as f:
+    print(f.read())</code></pre>
+<pre><code>Traceback (most recent call last):
+  File "C:\Users\...\study\py07a\12_cp949_as_utf8.py", line 2, in &lt;module&gt;
+    print(f.read())
+          ~~~~~~^^
+  File "&lt;frozen codecs&gt;", line 325, in decode
+UnicodeDecodeError: 'utf-8' codec can't decode byte 0xc0 in position 0: invalid start byte</code></pre>
+
+<p>마지막 줄을 끊어 읽으면 이렇습니다.</p>
+<div class="table-wrap">
+<table>
+<tr><th>부분</th><th>뜻</th></tr>
+<tr><td><code>UnicodeDecodeError</code></td><td>디코딩(바이트 → 글자)하다가 난 오류</td></tr>
+<tr><td><code>'utf-8' codec</code></td><td>지금 읽으려고 쓴 규칙. 곧 <b>open에 적은(또는 기본으로 잡힌) encoding</b></td></tr>
+<tr><td><code>can't decode byte 0xc0</code></td><td>바이트 C0을 그 규칙으로는 풀 수 없다. 그림 4 (나)에서 C0은 CP949의 "이" 첫 바이트였다</td></tr>
+<tr><td><code>in position 0</code></td><td>파일 맨 앞(0번째 바이트)에서 막혔다</td></tr>
+</table>
+</div>
+<p>정리하면 <b>파일의 바이트를 지정한 인코딩으로 해석하지 못했다</b>는 신호입니다. 파일을 만든 프로그램이나 내보내기 설정에서 인코딩을 먼저 확인합니다. 이 예처럼 한국어 Windows의 CP949 파일이라는 단서가 있으면 <code>encoding="cp949"</code>로 열어 보고, 열 이름과 값이 올바른지 확인합니다.</p>
+
+<h3>encoding을 생략하면</h3>
+<p>그럼 <code>encoding</code>을 안 적으면 어떤 규칙을 쓸까요? Python은 운영체제가 알려 주는 기본값을 씁니다. 이 교재를 만든 한국어 Windows 11 컴퓨터에서 확인한 결과입니다.</p>
+
+<p class="small">파일 <code>13_default.py</code></p>
+<pre><code>import locale
+print(locale.getpreferredencoding(False))
+with open("utf8.txt") as f:
+    print(f.read())</code></pre>
+<pre><code>cp949
+Traceback (most recent call last):
+  File "C:\Users\...\study\py07a\13_default.py", line 4, in &lt;module&gt;
+    print(f.read())
+          ~~~~~~^^
+UnicodeDecodeError: 'cp949' codec can't decode byte 0xec in position 0: illegal multibyte sequence</code></pre>
+
+<p>이 예에서는 기본값이 CP949라 UTF-8 파일을 열 때 오류가 났습니다. 기본값이 UTF-8인 환경에서는 같은 코드가 성공합니다. Python 3.15부터는 <a href="https://peps.python.org/pep-0686/">UTF-8 모드가 기본</a>이지만 설정으로 끌 수 있습니다. 파일 형식을 알고 있다면 <code>encoding</code>에 명시해 환경에 따라 뜻이 바뀌는 일을 피합니다.</p>
+
+<p>규칙을 맞추면 둘 다 잘 읽힙니다.</p>
+<p class="small">파일 <code>14_right.py</code></p>
+<pre><code>with open("utf8.txt", encoding="utf-8") as f:
+    print(f.read())
+with open("ansi.txt", encoding="cp949") as f:
+    print(f.read())</code></pre>
+<pre><code>이름,점수
+민수,80
+
+이름,점수
+민수,80
+</code></pre>
+
+<div class="box trap">
+<p class="box-k">흔한 실수</p>
+<p><b>"오류가 안 났으니 인코딩이 맞다"고 믿는 것.</b> 바이트가 우연히 다른 규칙으로도 풀리는 모양이면 오류 없이 엉뚱한 글자가 나옵니다. 이렇게 글자가 깨져 보이는 현상을 흔히 <b>글자 깨짐(mojibake)</b>이라고 합니다.</p>
+<p class="small">파일 <code>15_mojibake.py</code></p>
+<pre><code>data = "민수".encode("utf-8")
+print(data)
+print(data.decode("cp949"))</code></pre>
+<pre><code>b'\xeb\xaf\xbc\xec\x88\x98'
+誘쇱닔</code></pre>
+<p>읽은 뒤에는 <b>앞부분 몇 줄을 직접 출력해 눈으로 확인</b>하는 습관이 필요합니다. 다음 장의 "데이터 모양 확인"이 그 일입니다.</p>
+</div>
+
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 175" role="img" aria-label="바이트 여섯 개 EB AF BC EC 88 98. UTF-8은 3바이트씩 끊어 민, 수 두 글자로 읽어 민수가 된다. CP949는 2바이트씩 끊어 세 글자 誘쇱닔으로 읽는다. 오류는 나지 않는다.">
+<rect class="f-box" x="230" y="20" width="50" height="34"/>
+<text class="f-s f-ink-t" x="255" y="42" text-anchor="middle">EB</text>
+<rect class="f-box" x="280" y="20" width="50" height="34"/>
+<text class="f-s f-ink-t" x="305" y="42" text-anchor="middle">AF</text>
+<rect class="f-box" x="330" y="20" width="50" height="34"/>
+<text class="f-s f-ink-t" x="355" y="42" text-anchor="middle">BC</text>
+<rect class="f-box" x="380" y="20" width="50" height="34"/>
+<text class="f-s f-ink-t" x="405" y="42" text-anchor="middle">EC</text>
+<rect class="f-box" x="430" y="20" width="50" height="34"/>
+<text class="f-s f-ink-t" x="455" y="42" text-anchor="middle">88</text>
+<rect class="f-box" x="480" y="20" width="50" height="34"/>
+<text class="f-s f-ink-t" x="505" y="42" text-anchor="middle">98</text>
+<line class="f-line" x1="300" y1="58" x2="200" y2="102" marker-end="url(#f-arrow)"/>
+<line class="f-line" x1="460" y1="58" x2="560" y2="102" marker-end="url(#f-arrow)"/>
+<rect class="f-soft" x="60" y="106" width="260" height="38" rx="4"/>
+<text class="f-t" x="190" y="131" text-anchor="middle">3바이트씩 → 민 · 수</text>
+<rect class="f-over" x="440" y="106" width="260" height="38" rx="4"/>
+<text class="f-t" x="570" y="131" text-anchor="middle">2바이트씩 → 誘 · 쇱 · 닔</text>
+<text class="f-cap" x="190" y="166" text-anchor="middle">(가) UTF-8로 읽기</text>
+<text class="f-cap" x="570" y="166" text-anchor="middle">(나) CP949로 읽기 (오류 없음)</text>
+</svg>
+<figcaption>같은 바이트를 끊어 읽는 단위가 다르면 전혀 다른 글자가 된다.</figcaption>
+</figure>
+
+<h3>엑셀이 만든 CSV와 BOM</h3>
+<p>엑셀에서 "CSV UTF-8" 형식으로 저장한 파일은 맨 앞에 <b>BOM</b>(byte order mark)이라는 3바이트 표시(EF BB BF)를 붙이는 경우가 많습니다. "이 파일은 UTF-8"이라는 꼬리표입니다. 이것을 그냥 utf-8로 읽으면 첫 글자 앞에 보이지 않는 글자 <code>\ufeff</code>가 붙어 나옵니다.</p>
+
+<p class="small">파일 <code>16_bom.py</code></p>
+<pre><code>with open("excel.csv", "w", encoding="utf-8-sig") as f:
+    f.write("이름,점수\n민수,80\n")
+with open("excel.csv", "rb") as f:
+    print(f.read()[:6])
+with open("excel.csv", encoding="utf-8") as f:
+    print(repr(f.readline()))
+with open("excel.csv", encoding="utf-8-sig") as f:
+    print(repr(f.readline()))</code></pre>
+<pre><code>b'\xef\xbb\xbf\xec\x9d\xb4'
+'\ufeff이름,점수\n'
+'이름,점수\n'</code></pre>
+<p>첫 열 이름이 "이름"이 아니라 "\ufeff이름"이 되어 버리면, 나중에 <code>row["이름"]</code>으로 찾을 때 KeyError가 납니다. 눈에는 똑같이 보여서 찾기 어렵습니다. <code>encoding="utf-8-sig"</code>로 읽으면 BOM을 떼어 줍니다(BOM이 없는 파일도 문제없이 읽습니다). 한편 엑셀의 그냥 "CSV (쉼표로 분리)" 형식은 한국어 Windows에서 보통 CP949로 저장됩니다.</p>
+
+<div class="box memo">
+<p class="box-k">외우는 법</p>
+<p>내가 쓸 텍스트 파일의 기본은 <b>UTF-8</b>입니다. 다른 사람이 만든 파일은 인코딩 정보를 확인합니다. UTF-8 파일에 BOM이 있다면 <code>utf-8-sig</code>로 읽고, CP949로 내보낸 파일이라면 <code>cp949</code>로 읽습니다.</p>
+</div>
+
+<div class="check" data-q="q8"></div>
+<div class="check" data-q="q10"></div>
+<div class="check" data-q="q11"></div>
+
+<div class="why">
+<p class="box-k">왜 그럴까?</p>
+<p>파일 안에 "나는 UTF-8이다"라고 늘 적어 두면 이런 문제가 없을 텐데, 텍스트 파일은 왜 자기 인코딩을 스스로 알려 주지 않을까요?</p>
+<details><summary>모범 답 보기</summary><p>텍스트 파일은 "바이트를 줄줄이 늘어놓은 것" 이상의 구조가 없기 때문입니다. 어디에 꼬리표를 둘지 정해진 자리가 없고, 꼬리표를 붙이면 그것도 내용의 일부로 읽혀 버립니다. BOM이 바로 그런 시도인데, 위에서 본 것처럼 BOM을 모르는 프로그램은 그것을 이상한 글자로 읽습니다. 그래서 인코딩은 대개 파일 밖의 약속(문서, 관례, 사람 사이의 합의)으로 전해지고, 읽는 쪽이 알맞은 규칙을 골라야 합니다. 오늘날에는 "모든 곳에서 UTF-8"로 약속을 통일하는 쪽으로 가고 있습니다.</p></details>
+</div>
+
+<p>다음 장(PY07·2)에서는 이 장의 도구로 실제 자료 파일인 CSV와 JSON을 읽고 씁니다. 인코딩 오류는 PY08에서 오류 처리를 배울 때 다시 만납니다.</p>
+
+<h2>한눈에 정리</h2>
+
+<div class="table-wrap">
+<table>
+<tr><th>주제</th><th>핵심</th></tr>
+<tr><td>열기</td><td><code>open(경로, 모드, encoding="utf-8")</code> → 파일 객체</td></tr>
+<tr><td>모드</td><td><code>"r"</code> <b class="key">읽기</b>(기본) · <code>"w"</code> <b class="key">쓰기</b>(기존 내용 지움) · <code>"a"</code> <b class="key">덧붙이기</b> · <code>"rb"</code> 바이트 그대로</td></tr>
+<tr><td>읽기</td><td><code>f.read()</code> 전부 · <code>for line in f</code> 한 줄씩(끝에 \n, <code>strip()</code>으로 뗀다) · <code>f.readlines()</code> 줄 리스트</td></tr>
+<tr><td>닫기</td><td><b class="key">with문</b>: 블록이 끝나면(오류가 나도) 자동으로 닫힌다</td></tr>
+<tr><td>경로</td><td>상대 경로는 <b class="key">현재 작업 폴더</b> 기준(스크립트 폴더 아님). <code>Path</code>, <code>/</code>, <code>exists()</code>. 역슬래시는 <code>r"..."</code> 또는 <code>/</code></td></tr>
+<tr><td>인코딩</td><td>글자 ↔ 바이트 규칙. <b class="key">UTF-8</b>(한글 3바이트, 국제 표준) · <b class="key">CP949</b>(한글 2바이트, 한국어 Windows) · utf-8-sig(BOM 처리)</td></tr>
+<tr><td>오류</td><td><code>FileNotFoundError</code>: 이름·확장자·작업 폴더 확인 · <code>UnicodeDecodeError</code>: encoding 바꾸기 · 오류 없는 글자 깨짐도 있다</td></tr>
+</table>
+</div>
+
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>파일은 with문으로 열고, 경로는 현재 작업 폴더 기준이며, 글자와 바이트를 잇는 encoding은 쓸 때와 읽을 때 같아야 하므로 항상 적는다.</p></div>
+
+<h2>확인 문제</h2>
+<p>본문 중간에서 푼 문제 말고 남은 문제입니다. 보기를 누르면 바로 정답과 해설이 나옵니다.</p>
+<div id="quiz"></div>
+
+<section class="work" id="tools"></section>
+
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

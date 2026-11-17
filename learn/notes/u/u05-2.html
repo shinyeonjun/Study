@@ -1,0 +1,409 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>터미널에서 .py 파일 실행하기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e8c'/%3E%3Cpath d='M8 22V10m8 12V14m8 8V6' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="U05-2">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+
+<header class="chapter">
+<p class="chap-sub">공부·컴퓨터의 출발점 · U05 코드를 실행하는 자리</p>
+<p class="chap-num">U05·2</p>
+<h1>터미널에서 .py 파일 실행하기</h1>
+<p class="lead">대화형 실행(<code>&gt;&gt;&gt;</code>)에서 친 코드는 창을 닫으면 사라집니다. 내일 다시 쓰려면 코드를 파일로 남겨 두고, 필요할 때마다 그 파일을 실행해야 합니다. 이 장에서는 터미널에서 폴더를 옮겨 다니는 법(<code>cd</code>), <code>.py</code> 파일을 만들어 <code>python hello.py</code>로 실행하는 법, 그리고 "파일을 찾을 수 없다"는 오류를 고치는 법을 다룹니다.</p>
+</header>
+
+<div class="goal">
+<h2>이 장을 읽고 나면</h2>
+<ul>
+<li>PowerShell 프롬프트를 보고 지금 어느 폴더에 있는지 읽을 수 있다.</li>
+<li><code>cd 폴더이름</code>, <code>cd ..</code>, <code>ls</code>로 폴더를 옮기고 안에 든 파일을 볼 수 있다.</li>
+<li><code>.py</code> 파일을 만들어 <code>python 파일이름.py</code>로 실행할 수 있다.</li>
+<li>대화형 실행과 파일 실행에서 결과가 다르게 나오는 이유를 설명할 수 있다.</li>
+<li><code>can't open file … No such file or directory</code> 오류의 원인을 찾아 고칠 수 있다.</li>
+</ul>
+</div>
+
+<h2>터미널: 글자로 컴퓨터에 시키기</h2>
+
+<p>평소에는 마우스로 폴더 아이콘을 두 번 눌러 안으로 들어가고, 파일을 두 번 눌러 엽니다. 같은 일을 <b>글자 명령</b>으로 할 수도 있습니다. "문서 폴더로 들어가라", "이 파일을 Python으로 실행하라"를 키보드로 쳐서 시키는 창이 터미널입니다.</p>
+
+<div class="box">
+<p class="box-k">정의</p>
+<p><b class="key">터미널</b>(terminal): 명령을 글자로 치고, 결과를 글자로 받는 창.<br>
+<b class="key">셸</b>(shell): 터미널 안에서 내가 친 명령을 알아듣고 실행해 주는 프로그램. Windows의 기본 셸은 <b>PowerShell</b>입니다.</p>
+</div>
+
+<p>터미널과 셸을 엄밀히 나누면 "창"과 "창 안에서 말을 알아듣는 프로그램"이지만, 일상에서는 둘 다 그냥 "터미널"이라고 부르는 일이 많습니다. 이 책도 PowerShell 창을 터미널이라고 부릅니다. 비슷한 말로 <b>명령줄</b>(command line), <b>CLI</b>(command-line interface)가 있습니다. 마우스로 누르는 화면은 GUI(graphical user interface)라고 합니다.</p>
+
+<h3>PowerShell 여는 세 가지 방법</h3>
+<ol>
+<li>시작 단추를 누르고 "PowerShell"을 검색해 엽니다. 처음 위치는 보통 내 사용자 폴더(<code>C:\Users\사용자이름</code>)입니다.</li>
+<li>Windows 11에서는 파일 탐색기에서 폴더 빈 곳을 마우스 오른쪽 단추로 누르고 "터미널에서 열기"를 고르면, <b>그 폴더에서</b> 터미널이 열립니다.</li>
+<li>파일 탐색기 위쪽 주소창에 <code>powershell</code>이라고 치고 Enter를 눌러도 그 폴더에서 열립니다.</li>
+</ol>
+
+<h3>프롬프트 읽기 <span class="tag grasp">이해하기</span></h3>
+<p>PowerShell을 열면 맨 앞에 프롬프트가 보입니다. 프롬프트는 단순한 장식이 아니라 <b>지금 내가 어느 폴더에 있는지</b>를 알려 줍니다.</p>
+
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 214" role="img" aria-label="PowerShell 창의 세 줄. 첫 줄 PS C:\Users\me\Documents> python --version 에서 python --version은 내가 친 명령. 둘째 줄 Python 3.14.6은 프로그램이 보여 준 결과. 셋째 줄 PS C:\Users\me\Documents> 뒤에 커서가 있다. 셋째 줄의 PS는 PowerShell이라는 표시, C:\Users\me\Documents는 현재 위치, 커서 자리는 명령을 칠 곳이다.">
+<rect class="f-box" x="20" y="22" width="720" height="108" rx="4"/>
+<text class="f-t" x="40" y="56" font-family="Consolas, monospace">PS C:\Users\me\Documents&gt; python --version</text>
+<text class="f-t" x="40" y="82" font-family="Consolas, monospace">Python 3.14.6</text>
+<text class="f-t" x="40" y="108" font-family="Consolas, monospace">PS C:\Users\me\Documents&gt;</text>
+<rect class="f-fill" x="238" y="94" width="9" height="17"/>
+<line class="f-line" x1="380" y1="51" x2="440" y2="51"/>
+<text class="f-s f-ink-t" x="448" y="56">← 내가 친 명령</text>
+<line class="f-line" x1="150" y1="77" x2="440" y2="77"/>
+<text class="f-s f-ink-t" x="448" y="82">← 프로그램이 보여 준 결과</text>
+<path class="f-line" d="M63 116 v6 h162 v-6"/>
+<line class="f-line" x1="144" y1="122" x2="144" y2="148"/>
+<text class="f-s f-ink-t" x="144" y="164" text-anchor="middle">현재 위치 (지금 있는 폴더)</text>
+<line class="f-line" x1="51" y1="116" x2="51" y2="182"/>
+<text class="f-s f-ink-t" x="24" y="198">PS = PowerShell</text>
+<line class="f-line" x1="242" y1="116" x2="242" y2="182"/>
+<text class="f-s f-ink-t" x="234" y="198">커서: 여기에 명령을 친다</text>
+</svg>
+<figcaption>프롬프트의 가운데 부분이 현재 위치다. 명령을 칠 때마다 이 글자를 먼저 본다.</figcaption>
+</figure>
+
+<div class="box">
+<p class="box-k">정의 <span class="tag memo">외우기</span></p>
+<p><b class="key">현재 위치</b>(current directory, 작업 폴더): 터미널이 지금 "들어가 있는" 폴더. 명령에 파일 이름만 쓰면 터미널과 프로그램은 <b>이 폴더 안에서</b> 그 파일을 찾습니다.</p>
+</div>
+
+<p>U02에서 본 것처럼 폴더는 나무 모양으로 이어져 있고, <code>C:\Users\me\Documents</code>는 "C 드라이브 → Users → me → Documents"로 내려간 길(경로)입니다. 파일 탐색기에서 "문서"라고 보이는 폴더의 실제 경로 이름이 <code>Documents</code>입니다.</p>
+
+<div class="check" data-q="q1"></div>
+
+<h2>현재 위치 옮기기: cd</h2>
+
+<p>폴더를 옮기는 명령이 <b class="key">cd</b>입니다. change directory(폴더 바꾸기)의 머리글자입니다. 함께 쓰는 명령 몇 개를 표로 봅니다.</p>
+
+<div class="table-wrap">
+<table>
+<tr><th>명령</th><th>뜻</th><th>예</th></tr>
+<tr><td><code>cd 폴더이름</code></td><td>현재 위치 <b>안의</b> 폴더로 한 칸 들어간다</td><td><code>cd Documents</code></td></tr>
+<tr><td><code>cd ..</code></td><td>한 칸 <b>바깥</b>(부모 폴더)으로 나간다. 점 두 개가 "부모"라는 뜻</td><td><code>cd ..</code></td></tr>
+<tr><td><code>cd 전체경로</code></td><td>어디에 있든 그 경로로 바로 간다</td><td><code>cd C:\Users\me\Documents</code></td></tr>
+<tr><td><code>ls</code> 또는 <code>dir</code></td><td>현재 위치에 든 파일·폴더 목록을 보여 준다</td><td><code>ls</code></td></tr>
+<tr><td><code>pwd</code></td><td>현재 위치를 글자로 보여 준다</td><td><code>pwd</code></td></tr>
+<tr><td><code>mkdir 폴더이름</code></td><td>현재 위치 안에 새 폴더를 만든다</td><td><code>mkdir python-study</code></td></tr>
+</table>
+</div>
+
+<p>폴더 이름에 빈칸이 있으면 따옴표로 감쌉니다(<code>cd "my folder"</code>). 이름을 몇 글자 치다가 <b>Tab</b> 키를 누르면 나머지를 채워 줘서, 철자 실수를 줄일 수 있습니다.</p>
+
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 280" role="img" aria-label="왼쪽은 폴더 나무: C:\ 아래 Users, 그 아래 me, 그 아래 Documents, 그 아래 python-study. 오른쪽은 차례로 친 명령과 바뀌는 프롬프트: PS C:\Users\me> cd Documents, PS C:\Users\me\Documents> cd python-study, PS C:\Users\me\Documents\python-study> cd .., PS C:\Users\me\Documents>. cd 폴더이름은 한 칸 안으로, cd ..은 한 칸 바깥(부모)으로 간다.">
+<rect class="f-box" x="30" y="24" width="90" height="30" rx="3"/>
+<text class="f-s f-ink-t" x="75" y="44" text-anchor="middle" font-family="Consolas, monospace">C:\</text>
+<path class="f-line" d="M45 54 V95 H60"/>
+<rect class="f-box" x="60" y="80" width="100" height="30" rx="3"/>
+<text class="f-s f-ink-t" x="110" y="100" text-anchor="middle" font-family="Consolas, monospace">Users</text>
+<path class="f-line" d="M75 110 V151 H90"/>
+<rect class="f-box" x="90" y="136" width="100" height="30" rx="3"/>
+<text class="f-s f-ink-t" x="140" y="156" text-anchor="middle" font-family="Consolas, monospace">me</text>
+<path class="f-line" d="M105 166 V207 H120"/>
+<rect class="f-soft" x="120" y="192" width="120" height="30" rx="3"/>
+<text class="f-s f-ink-t" x="180" y="212" text-anchor="middle" font-family="Consolas, monospace">Documents</text>
+<path class="f-line" d="M135 222 V253 H150"/>
+<rect class="f-box" x="150" y="238" width="140" height="30" rx="3"/>
+<text class="f-s f-ink-t" x="220" y="258" text-anchor="middle" font-family="Consolas, monospace">python-study</text>
+<line class="f-dash" x1="380" y1="16" x2="380" y2="268"/>
+<text class="f-cap" x="404" y="40">친 명령과 바뀌는 프롬프트</text>
+<text class="f-s f-ink-t" x="404" y="76" font-family="Consolas, monospace">PS C:\Users\me&gt; cd Documents</text>
+<text class="f-s f-ink-t" x="404" y="106" font-family="Consolas, monospace">PS C:\Users\me\Documents&gt; cd python-study</text>
+<text class="f-s f-ink-t" x="404" y="136" font-family="Consolas, monospace">PS C:\Users\me\Documents\python-study&gt; cd ..</text>
+<text class="f-s f-ink-t f-b" x="404" y="166" font-family="Consolas, monospace">PS C:\Users\me\Documents&gt;</text>
+<text class="f-s" x="404" y="214"><tspan font-family="Consolas, monospace">cd 폴더이름</tspan>  → 한 칸 안으로</text>
+<text class="f-s" x="404" y="240"><tspan font-family="Consolas, monospace">cd ..</tspan>  → 한 칸 바깥(부모)으로</text>
+</svg>
+<figcaption>명령을 칠 때마다 프롬프트의 경로가 바뀐다. 마지막 줄의 현재 위치는 왼쪽 나무에서 칠한 칸이다.</figcaption>
+</figure>
+
+<div class="box ex">
+<p class="box-k">풀이 예제</p>
+<p>PowerShell을 막 열었더니 프롬프트가 <code>PS C:\Users\me&gt;</code>입니다. 문서 폴더 안에 <code>python-study</code>라는 공부용 폴더를 만들고 그 안으로 들어가 봅시다.</p>
+<p class="calc">① 지금 위치: <code>C:\Users\me</code> (프롬프트에서 읽는다)<br>
+② <code>cd Documents</code> → 프롬프트가 <code>PS C:\Users\me\Documents&gt;</code>로 바뀐다<br>
+③ <code>mkdir python-study</code> → Documents 안에 새 폴더가 생긴다<br>
+④ <code>cd python-study</code> → 프롬프트가 <code>PS C:\Users\me\Documents\python-study&gt;</code><br>
+⑤ <code>ls</code> → 방금 만든 빈 폴더라 아무것도 나오지 않는다</p>
+<p>명령마다 프롬프트의 경로가 의도대로 바뀌었는지 확인하면, 엉뚱한 폴더에서 실행하는 실수를 대부분 막을 수 있습니다.</p>
+</div>
+
+<p>나중에 이 폴더에 <code>hello.py</code>를 넣고 <code>ls</code>를 치면 이렇게 나옵니다(실제 결과, 경로만 줄임). <code>Mode</code> 칸의 <code>-a---</code>는 파일, <code>d----</code>는 폴더라는 표시이고, <code>Length</code>는 파일 크기(바이트)입니다.</p>
+
+<div class="sample">
+<p class="sample-k">PowerShell 화면</p>
+<pre><code>PS C:\Users\me\Documents\python-study&gt; ls
+
+    디렉터리: C:\Users\me\Documents\python-study
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+-a---        2026-11-18  오전 3:02             40 hello.py</code></pre>
+</div>
+
+<div class="box trap">
+<p class="box-k">흔한 실수</p>
+<p><b><code>cd..</code>처럼 붙여 쓰기, <code>cd ...</code>처럼 점 세 개.</b> 명령과 경로 사이에는 빈칸을 둡니다. "부모 폴더"를 뜻하는 것은 점 <b>두 개</b>입니다(점 하나 <code>.</code>는 "지금 폴더" 자신을 뜻합니다). 셸에 따라 붙여 써도 받아 주는 경우가 있지만, 빈칸을 두는 쪽이 어디서나 통합니다.</p>
+</div>
+
+<div class="check" data-q="q2"></div>
+<div class="check" data-q="q3"></div>
+
+<h2>.py 파일 만들기</h2>
+
+<p>Python 코드를 담은 파일은 이름 끝에 <code>.py</code>를 붙입니다. 이렇게 파일로 저장해 두고 통째로 실행하는 코드를 <b class="key">스크립트</b>(script)라고 합니다. 연극 대본(script)처럼 할 일이 처음부터 끝까지 적혀 있다는 뜻입니다.</p>
+
+<div class="side"><b>용어</b> <b>확장자</b>는 파일 이름 맨 끝의 점 뒤 글자입니다(<code>.txt</code>, <code>.py</code>). 컴퓨터는 확장자를 보고 파일 종류를 짐작합니다. 확장자 자체는 이름의 일부일 뿐, 안의 내용을 바꾸지는 않습니다.</div>
+
+<p>도구는 아무 텍스트 편집기나 됩니다. 여기서는 Windows에 기본으로 있는 메모장을 씁니다. 메모장을 열어 아래 두 줄을 그대로 적고, "다른 이름으로 저장"에서 위치를 <code>python-study</code> 폴더로, 파일 이름을 <code>hello.py</code>로 저장합니다.</p>
+
+<div class="sample">
+<p class="sample-k">코드 (hello.py)</p>
+<pre><code>print("안녕하세요")
+print(2 + 3)</code></pre>
+</div>
+
+<div class="box trap">
+<p class="box-k">흔한 실수</p>
+<p><b><code>hello.py.txt</code>로 저장되는 경우.</b> 메모장의 파일 형식이 "텍스트 문서(*.txt)"로 되어 있으면 설정에 따라 이름 뒤에 <code>.txt</code>가 덧붙을 수 있습니다. Windows는 기본으로 확장자를 숨겨서, 탐색기에는 <code>hello.py</code>로 보여도 실제 이름은 <code>hello.py.txt</code>일 수 있습니다. 파일 형식을 "모든 파일(*.*)"로 바꿔 저장하고, 탐색기의 "보기"에서 "파일 확장명"을 켜 두세요. 터미널의 <code>ls</code>는 확장자를 숨기지 않으므로 가장 확실한 확인 방법입니다.</p>
+</div>
+
+<p>메모장 말고 코드 편집기(예: VS Code)를 쓰면 줄 번호와 색이 붙어 읽기 편합니다. 편집기는 나중에 필요해지면 설치해도 충분합니다. 이 장의 내용은 메모장만으로 모두 따라 할 수 있습니다.</p>
+
+<h2>python 파일이름.py 로 실행하기</h2>
+
+<p>터미널의 현재 위치가 <code>hello.py</code>가 든 폴더인지 프롬프트로 확인한 뒤, 다음을 칩니다.</p>
+
+<div class="sample">
+<p class="sample-k">PowerShell 화면 (실제 결과)</p>
+<pre><code>PS C:\Users\me\Documents\python-study&gt; python hello.py
+안녕하세요
+5
+PS C:\Users\me\Documents\python-study&gt; </code></pre>
+</div>
+
+<p>명령의 뜻은 "<code>python</code> 프로그램을 실행하되, <code>hello.py</code>라는 파일에 적힌 코드를 실행하라"입니다. U05·1에서는 <code>python</code> 뒤에 옵션(<code>--version</code>)을 붙였고, 이번에는 <b>파일 이름</b>을 붙였습니다. <code>py hello.py</code>로 쳐도 같은 결과가 나옵니다.</p>
+
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 210" role="img" aria-label="왼쪽: 터미널에 python hello.py를 친다. 가운데: 현재 폴더의 hello.py 파일, 1번 줄 print(&quot;안녕하세요&quot;)와 2번 줄 print(2 + 3)을 위에서 아래로 차례로 실행한다. 오른쪽: 터미널에 안녕하세요와 5가 나오고, 끝나면 다시 프롬프트가 나온다.">
+<rect class="f-box" x="20" y="50" width="220" height="64" rx="4"/>
+<text class="f-t" x="130" y="80" text-anchor="middle" font-family="Consolas, monospace">python hello.py</text>
+<text class="f-s" x="130" y="102" text-anchor="middle">현재 위치에서 친다</text>
+<line class="f-line" x1="240" y1="82" x2="286" y2="82" marker-end="url(#f-arrow)"/>
+<text class="f-cap" x="395" y="30" text-anchor="middle">hello.py</text>
+<rect class="f-soft" x="290" y="40" width="210" height="88" rx="4"/>
+<text class="f-s" x="318" y="72">1</text>
+<text class="f-s f-ink-t" x="336" y="72" font-family="Consolas, monospace">print("안녕하세요")</text>
+<text class="f-s" x="318" y="104">2</text>
+<text class="f-s f-ink-t" x="336" y="104" font-family="Consolas, monospace">print(2 + 3)</text>
+<line class="f-line" x1="302" y1="60" x2="302" y2="112" marker-end="url(#f-arrow)"/>
+<line class="f-line" x1="500" y1="82" x2="546" y2="82" marker-end="url(#f-arrow)"/>
+<rect class="f-box" x="550" y="40" width="190" height="88" rx="4"/>
+<text class="f-t" x="566" y="68" font-family="Consolas, monospace">안녕하세요</text>
+<text class="f-t" x="566" y="92" font-family="Consolas, monospace">5</text>
+<text class="f-s" x="566" y="116" font-family="Consolas, monospace">PS …&gt;</text>
+<text class="f-s" x="130" y="164" text-anchor="middle">① 명령</text>
+<text class="f-s" x="395" y="164" text-anchor="middle">② 파일 전체를 읽고 위에서부터 실행</text>
+<text class="f-s" x="645" y="164" text-anchor="middle">③ print한 것만 화면에</text>
+<text class="f-s" x="645" y="186" text-anchor="middle">끝나면 프롬프트로 돌아온다</text>
+</svg>
+<figcaption>파일 실행의 흐름. 가운데 칸 왼쪽의 화살표가 실행 순서(1번 줄 다음 2번 줄)다.</figcaption>
+</figure>
+
+<p>세 가지를 눈여겨봅니다.</p>
+<ul>
+<li><b>위에서 아래로 한 줄씩</b> 실행합니다. 그래서 "안녕하세요"가 5보다 먼저 나옵니다. 두 줄의 순서를 바꿔 저장하고 다시 실행하면 5가 먼저 나옵니다.</li>
+<li>마지막 줄까지 실행하면 Python이 <b>저절로 끝나고</b> PowerShell 프롬프트로 돌아옵니다. 대화형 실행처럼 <code>&gt;&gt;&gt;</code>가 남지 않습니다.</li>
+<li>파일은 남아 있으므로 <b>같은 명령을 몇 번이고</b> 다시 칠 수 있습니다. 위 화살표 키(↑)를 누르면 방금 친 명령이 다시 나옵니다.</li>
+</ul>
+
+<div class="check" data-q="q4"></div>
+
+<h2>대화형 실행과 파일 실행은 무엇이 다른가 <span class="tag grasp">이해하기</span></h2>
+
+<p>같은 코드를 두 방식으로 실행해 보면 차이가 분명해집니다. 아래 세 줄을 <code>noprint.py</code>로 저장해 실행하고, 똑같은 세 줄을 대화형 실행에도 쳐 봤습니다.</p>
+
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 226" role="img" aria-label="(가) 대화형 실행: >>> 2 + 3 다음에 5, >>> x = 10 다음에는 아무것도 없음, >>> x 다음에 10이 나온다. 5와 10은 자동으로 보여 준 값이다. (나) 파일로 실행: noprint.py에 2 + 3, x = 10, x 세 줄이 있다. PS …> python noprint.py를 치면 아무것도 나오지 않고 바로 다음 프롬프트가 나온다.">
+<rect class="f-box" x="20" y="20" width="350" height="156" rx="4"/>
+<text class="f-t" x="38" y="50" font-family="Consolas, monospace">&gt;&gt;&gt; 2 + 3</text>
+<rect class="f-soft" x="34" y="58" width="30" height="22" rx="2"/>
+<text class="f-t" x="40" y="74" font-family="Consolas, monospace">5</text>
+<text class="f-t" x="38" y="102" font-family="Consolas, monospace">&gt;&gt;&gt; x = 10</text>
+<text class="f-t" x="38" y="128" font-family="Consolas, monospace">&gt;&gt;&gt; x</text>
+<rect class="f-soft" x="34" y="136" width="30" height="22" rx="2"/>
+<text class="f-t" x="38" y="152" font-family="Consolas, monospace">10</text>
+<line class="f-line" x1="70" y1="69" x2="190" y2="69"/>
+<line class="f-line" x1="70" y1="147" x2="190" y2="147"/>
+<line class="f-line" x1="190" y1="69" x2="190" y2="147"/>
+<line class="f-line" x1="190" y1="108" x2="214" y2="108"/>
+<text class="f-s f-ink-t" x="220" y="104">자동으로</text>
+<text class="f-s f-ink-t" x="220" y="122">보여 준 값</text>
+<rect class="f-box" x="390" y="20" width="350" height="156" rx="4"/>
+<text class="f-s" x="408" y="42">noprint.py</text>
+<text class="f-t" x="408" y="66" font-family="Consolas, monospace">2 + 3</text>
+<text class="f-t" x="408" y="88" font-family="Consolas, monospace">x = 10</text>
+<text class="f-t" x="408" y="110" font-family="Consolas, monospace">x</text>
+<line class="f-dash" x1="400" y1="122" x2="730" y2="122"/>
+<text class="f-s f-ink-t" x="408" y="144" font-family="Consolas, monospace">PS …&gt; python noprint.py</text>
+<text class="f-s f-ink-t" x="408" y="166" font-family="Consolas, monospace">PS …&gt;</text>
+<text class="f-s" x="480" y="166">← 아무것도 나오지 않고 끝</text>
+<text class="f-cap" x="195" y="206" text-anchor="middle">(가) 대화형 실행</text>
+<text class="f-cap" x="565" y="206" text-anchor="middle">(나) 파일로 실행</text>
+</svg>
+<figcaption>같은 세 줄인데 (가)에는 값이 두 번 보이고, (나)에는 아무것도 보이지 않는다.</figcaption>
+</figure>
+
+<p>(나)에서도 Python은 <code>2 + 3</code>을 계산했고, <code>x</code>에 10을 넣었고, <code>x</code>의 값도 꺼냈습니다. 다만 파일 실행에는 U05·1에서 본 <b>"값을 자동으로 보여 주는 단계"가 없어서</b> 화면에 아무것도 나오지 않은 것입니다. 파일 실행에서 무엇인가를 보고 싶으면 반드시 <code>print(…)</code>로 감싸야 합니다.</p>
+
+<div class="table-wrap">
+<table>
+<tr><th></th><th>대화형 실행 (<code>&gt;&gt;&gt;</code>)</th><th>파일 실행 (<code>python 파일.py</code>)</th></tr>
+<tr><td>시작</td><td><code>python</code>만 친다</td><td><code>python hello.py</code>처럼 파일 이름을 붙인다</td></tr>
+<tr><td>코드를 넣는 법</td><td>한 줄씩 쳐서 Enter</td><td>파일에 미리 적어 저장</td></tr>
+<tr><td>값 보여 주기</td><td>계산한 값을 <b>자동으로</b> 보여 준다</td><td><b class="key">print로 내보낸 것만</b> 보인다</td></tr>
+<tr><td>끝나면</td><td><code>exit()</code>를 칠 때까지 계속 기다린다</td><td>마지막 줄 다음에 저절로 끝난다</td></tr>
+<tr><td>코드가 남는가</td><td>창을 닫으면 사라진다</td><td>파일로 남아 몇 번이고 다시 실행</td></tr>
+<tr><td>어디에 좋은가</td><td>한두 줄 시험, 계산기처럼 쓰기</td><td>여러 줄짜리 프로그램, 다시 쓸 코드</td></tr>
+</table>
+</div>
+
+<div class="why">
+<p class="box-k">왜 그럴까?</p>
+<p>파일 실행에서도 계산한 값을 전부 자동으로 보여 주면 편할 것 같은데, 왜 그렇게 하지 않을까요? 1,000줄짜리 프로그램을 떠올리며 생각해 보세요.</p>
+<details><summary>모범 답 보기</summary><p>프로그램 안에는 중간 계산이 아주 많습니다. 그 값이 전부 화면에 쏟아지면 정작 보고 싶은 결과를 찾을 수 없습니다. 그래서 파일 실행에서는 프로그램을 쓴 사람이 <b>보여 줄 것만 골라 print로 내보내도록</b> 되어 있습니다. 대화형 실행은 한 줄씩 시험하는 자리라서, 그 한 줄의 값을 바로 보여 주는 편이 쓸모 있습니다.</p></details>
+</div>
+
+<div class="check" data-q="q5"></div>
+
+<h2>파일을 찾을 수 없을 때</h2>
+
+<p>가장 흔한 첫 오류는 이것입니다. <code>hello.py</code>가 든 폴더의 <b>한 칸 바깥</b>(<code>Documents</code>)에서 실행해 본 실제 결과입니다(경로 앞부분만 줄임).</p>
+
+<div class="sample">
+<p class="sample-k">PowerShell 화면</p>
+<pre><code>PS C:\Users\me\Documents&gt; python hello.py
+C:\Users\...\Python314\python.exe: can't open file 'C:\\Users\\me\\Documents\\hello.py': [Errno 2] No such file or directory</code></pre>
+</div>
+
+<p>한 부분씩 읽어 봅니다.</p>
+<ul>
+<li><code>C:\Users\...\Python314\python.exe:</code> — 이 말을 한 것은 Python 프로그램입니다. PATH 문제였다면 PowerShell이 "인식되지 않습니다"라고 했을 것입니다. 그러니 <b>Python은 잘 실행되었습니다.</b></li>
+<li><code>can't open file 'C:\\Users\\me\\Documents\\hello.py'</code> — 이 경로의 파일을 열 수 없었다는 뜻입니다. 현재 위치(<code>Documents</code>) 뒤에 파일 이름을 붙인 경로입니다. 역슬래시가 두 번씩 찍힌 것은 Python이 경로를 보여 주는 방식일 뿐이니 하나로 읽으면 됩니다.</li>
+<li><code>[Errno 2] No such file or directory</code> — "그런 파일이나 폴더가 없다". Errno 2는 운영체제가 정한 오류 번호입니다.</li>
+</ul>
+
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 214" role="img" aria-label="(가) 현재 위치가 python-study이고 그 안에 hello.py가 있어서 python hello.py가 파일을 찾아 실행한다. (나) 현재 위치가 Documents이고 그 안에는 python-study 폴더만 있다. 같은 명령 python hello.py가 Documents 바로 안에서 hello.py를 찾지 못해 오류가 난다.">
+<rect class="f-none" x="30" y="30" width="210" height="116" rx="4"/>
+<text class="f-s f-ink-t f-b" x="42" y="52" font-family="Consolas, monospace">python-study</text>
+<text class="f-s" x="150" y="52">← 현재 위치</text>
+<rect class="f-soft" x="70" y="76" width="130" height="40" rx="3"/>
+<text class="f-t" x="135" y="101" text-anchor="middle" font-family="Consolas, monospace">hello.py</text>
+<line class="f-line" x1="240" y1="96" x2="270" y2="96" marker-end="url(#f-arrow)"/>
+<rect class="f-soft" x="274" y="70" width="90" height="52" rx="4"/>
+<text class="f-t f-b" x="319" y="101" text-anchor="middle">찾음·실행</text>
+<rect class="f-none" x="400" y="30" width="210" height="116" rx="4"/>
+<text class="f-s f-ink-t f-b" x="412" y="52" font-family="Consolas, monospace">Documents</text>
+<text class="f-s" x="500" y="52">← 현재 위치</text>
+<rect class="f-box" x="430" y="76" width="150" height="40" rx="3"/>
+<text class="f-s f-ink-t" x="505" y="101" text-anchor="middle" font-family="Consolas, monospace">python-study\</text>
+<line class="f-line" x1="610" y1="96" x2="640" y2="96" marker-end="url(#f-arrow)"/>
+<rect class="f-over" x="644" y="70" width="96" height="52" rx="4"/>
+<text class="f-t f-b" x="692" y="101" text-anchor="middle">못 찾음</text>
+<text class="f-s" x="135" y="170" text-anchor="middle" font-family="Consolas, monospace">python hello.py</text>
+<text class="f-s" x="505" y="170" text-anchor="middle" font-family="Consolas, monospace">python hello.py</text>
+<text class="f-cap" x="195" y="200" text-anchor="middle">(가) 파일이 든 폴더에서</text>
+<text class="f-cap" x="565" y="200" text-anchor="middle">(나) 한 칸 바깥에서</text>
+</svg>
+<figcaption>명령은 같아도 현재 위치에 따라 결과가 달라진다. Python은 하위 폴더까지 뒤지지 않는다.</figcaption>
+</figure>
+
+<p>원인은 대개 셋 중 하나이고, 확인하는 순서도 이대로 하면 됩니다.</p>
+<ol>
+<li><b>현재 위치가 다르다</b> — 프롬프트를 보고, 맞는 폴더로 <code>cd</code> 한 뒤 다시 실행합니다.</li>
+<li><b>파일 이름을 잘못 쳤다</b> — <code>ls</code>로 실제 이름을 보고 똑같이 칩니다(<code>helo.py</code>, <code>Hello.py</code>).</li>
+<li><b>실제 이름이 <code>hello.py.txt</code>다</b> — <code>ls</code>에 그렇게 보이면 이름을 고칩니다.</li>
+</ol>
+<p>폴더를 옮기기 싫으면 전체 경로를 써도 됩니다: <code>python C:\Users\me\Documents\python-study\hello.py</code>.</p>
+
+<h3>Python 안에서 python 파일.py 를 친 경우</h3>
+<p>U05·1에서 본 프롬프트 혼동이 파일 실행에서도 일어납니다. <code>&gt;&gt;&gt;</code>가 떠 있는 상태에서 <code>python hello.py</code>를 치면 Python은 이것을 Python 코드로 읽으려다 실패합니다. 실제 결과의 마지막 세 줄입니다(그 위에 위치를 알려 주는 줄이 하나 더 있습니다).</p>
+
+<div class="sample">
+<p class="sample-k">대화형 실행 화면</p>
+<pre><code>&gt;&gt;&gt; python hello.py
+    python hello.py
+           ^^^^^
+SyntaxError: invalid syntax</code></pre>
+</div>
+
+<p><code>SyntaxError</code>는 "문법 오류", 곧 Python 글쓰기 규칙에 맞지 않는 줄이라는 뜻입니다. <code>^^^^^</code>는 Python이 이상하다고 느낀 자리를 가리킵니다. 고치는 법: <code>exit()</code>로 나간 뒤 PowerShell 프롬프트에서 다시 칩니다. 오류 메시지를 읽는 법은 U05·3에서 자세히 다룹니다.</p>
+
+<div class="box memo">
+<p class="box-k">외우는 법</p>
+<p><b>"누가 말했나"를 먼저 본다.</b> PowerShell이 말하면 "인식되지 않습니다"(명령을 못 찾음, PATH·철자 문제). Python이 말하면 <code>python.exe: can't open file</code>(파일을 못 찾음, 위치·이름 문제) 또는 <code>SyntaxError</code>(Python에게 PowerShell 명령을 침).</p>
+</div>
+
+<div class="check" data-q="q6"></div>
+<div class="check" data-q="q7"></div>
+
+<h2>다음에 이어지는 곳</h2>
+<ul>
+<li><b>U05·3</b>: 셀 단위로 실행하는 노트북(Jupyter)에서 실행 순서가 왜 중요한지, 오류가 나면 나오는 traceback을 어떻게 읽는지 봅니다.</li>
+<li><b>PY01</b>: 이 장에서 만든 <code>python-study</code> 폴더에 파일을 만들어 가며 <code>print</code>, 변수, 계산을 배웁니다.</li>
+<li><b>SY06 터미널과 Linux</b>: 터미널 명령, 경로, 환경 변수를 더 깊이 다룹니다.</li>
+</ul>
+
+<h2>한눈에 정리</h2>
+
+<div class="table-wrap">
+<table>
+<tr><th>묻는 것</th><th>답</th></tr>
+<tr><td>터미널 / 셸</td><td>명령을 글자로 치는 창 / 그 명령을 알아듣는 프로그램. Windows 기본 셸은 <b class="key">PowerShell</b></td></tr>
+<tr><td>현재 위치</td><td>프롬프트 <code>PS C:\…&gt;</code> 가운데의 경로. 파일 이름만 쓰면 <b class="key">이 폴더 안에서</b> 찾는다</td></tr>
+<tr><td>폴더 옮기기</td><td><code>cd 폴더이름</code>(안으로), <code>cd ..</code>(<b class="key">부모</b>로), <code>ls</code>(목록)</td></tr>
+<tr><td>스크립트</td><td>코드를 <code>.py</code> 파일로 저장해 통째로 실행하는 것 (<b class="key">스크립트</b>)</td></tr>
+<tr><td>파일 실행</td><td><code>python hello.py</code> (또는 <code>py hello.py</code>). 위에서 아래로 실행하고 저절로 끝난다</td></tr>
+<tr><td>대화형과 차이</td><td>파일 실행은 값을 자동으로 보여 주지 않는다 → <b class="key">print</b>가 필요</td></tr>
+<tr><td><code>can't open file … [Errno 2]</code></td><td>현재 위치·파일 이름·<code>.txt</code> 확장자를 확인</td></tr>
+</table>
+</div>
+
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>코드를 .py 파일로 저장하고, 터미널에서 그 파일이 든 폴더로 cd 한 뒤 python 파일이름.py로 실행하며, 이때 화면에는 print로 내보낸 것만 나온다.</p></div>
+
+<h2>확인 문제</h2>
+<p>본문 중간에서 푼 문제 말고 남은 문제입니다. 보기를 누르면 바로 정답과 해설이 나옵니다.</p>
+<div id="quiz"></div>
+
+<section class="work" id="tools"></section>
+
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

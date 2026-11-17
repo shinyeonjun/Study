@@ -1,0 +1,553 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>바뀌는 값과 참조·복사 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e8c'/%3E%3Cpath d='M8 22V10m8 12V14m8 8V6' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="PY06-2">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+
+<header class="chapter">
+<p class="chap-sub">Python과 프로그래밍 사고 · PY06 자료를 담는 방법</p>
+<p class="chap-num">PY06·2</p>
+<h1>바뀌는 값과 참조·복사</h1>
+<p class="lead">점수 목록 a를 b에 "복사해 두고" b에만 점수를 하나 더했는데, 나중에 보니 a에도 그 점수가 들어가 있습니다. PY01·1에서 본 "이름표" 모델, 곧 이름은 값을 담지 않고 객체를 가리킨다는 사실의 직접적인 결과입니다. 이 장에서는 그 모델을 리스트·딕셔너리에 적용해 가변/불변 자료형, 별칭, 얕은 복사와 깊은 복사를 정리합니다.</p>
+</header>
+
+<div class="goal">
+<h2>이 장을 읽고 나면</h2>
+<ul>
+<li>"이름이 객체를 가리킨다"는 말을 그림으로 그려 설명할 수 있다.</li>
+<li>바뀔 수 있는 자료형(mutable)과 바뀔 수 없는 자료형(immutable)을 구분할 수 있다.</li>
+<li>두 이름이 한 리스트를 가리켜서 생기는 버그를 찾아 고칠 수 있다.</li>
+<li>얕은 복사와 깊은 복사의 차이를 설명하고, 겹친 리스트에서 어느 쪽이 필요한지 고를 수 있다.</li>
+<li>상황에 맞는 그릇(리스트·튜플·집합·딕셔너리)을 고를 수 있다.</li>
+</ul>
+</div>
+
+<h2>이상한 일 하나</h2>
+
+<p>먼저 문제의 장면을 그대로 실행해 봅니다. 이 장의 실행 결과도 모두 Windows 11의 Python 3.14에서 실제로 실행한 것입니다.</p>
+
+<p class="small">파일 <code>01_alias.py</code></p>
+<pre><code>a = [80, 90, 70]
+b = a
+b.append(100)
+print("a:", a)
+print("b:", b)
+print(a is b)</code></pre>
+<p class="small">실행 결과</p>
+<pre><code>a: [80, 90, 70, 100]
+b: [80, 90, 70, 100]
+True</code></pre>
+
+<p>b에만 100을 붙였는데 a에도 100이 있습니다. <code>b = a</code>가 "a의 내용을 b에 복사하라"는 뜻이었다면 이런 일은 일어나지 않았을 것입니다. 그러니 <code>b = a</code>는 복사가 아닙니다. 그럼 무엇일까요?</p>
+
+<h2>이름은 객체를 가리킨다 <span class="tag grasp">이해하기</span></h2>
+
+<div class="box">
+<p class="box-k">정의</p>
+<p>Python에서 값 하나하나(숫자 10, 글자 "hello", 리스트 [80, 90, 70] 등)는 메모리 안에 하나의 <b class="key">객체(object)</b>로 존재합니다. 변수 이름은 그 객체에 붙인 <b>이름표</b>이고, 이름이 객체를 가리키는 것을 <b class="key">참조(reference)</b>라고 합니다.</p>
+<p><code>이름 = 식</code>은 "식의 결과인 객체에 이 이름표를 붙여라"라는 뜻입니다. 그래서 <code>b = a</code>는 "a가 가리키는 객체에 이름표 b도 붙여라"입니다. 새 객체는 생기지 않습니다.</p>
+</div>
+
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 190" role="img" aria-label="이름 a와 이름 b 두 개에서 화살표가 같은 리스트 객체 하나 [80, 90, 70, 100]로 간다. 객체는 하나뿐이므로 a is b는 True이고, b.append(100)로 이 객체를 바꾸면 a로 봐도 바뀌어 보인다.">
+<text class="f-s" x="90" y="28" text-anchor="middle">이름</text>
+<rect class="f-soft" x="60" y="40" width="60" height="36" rx="4"/>
+<text class="f-t" x="90" y="63" text-anchor="middle">a</text>
+<rect class="f-soft" x="60" y="110" width="60" height="36" rx="4"/>
+<text class="f-t" x="90" y="133" text-anchor="middle">b</text>
+<line class="f-line" x1="122" y1="58" x2="296" y2="80" marker-end="url(#f-arrow)"/>
+<line class="f-line" x1="122" y1="128" x2="296" y2="100" marker-end="url(#f-arrow)"/>
+<text class="f-s" x="208" y="96" text-anchor="middle">가리킨다</text>
+<text class="f-s" x="460" y="54" text-anchor="middle">리스트 객체 (하나뿐)</text>
+<rect class="f-box" x="300" y="66" width="80" height="44"/>
+<text class="f-t" x="340" y="93" text-anchor="middle">80</text>
+<rect class="f-box" x="380" y="66" width="80" height="44"/>
+<text class="f-t" x="420" y="93" text-anchor="middle">90</text>
+<rect class="f-box" x="460" y="66" width="80" height="44"/>
+<text class="f-t" x="500" y="93" text-anchor="middle">70</text>
+<rect class="f-soft" x="540" y="66" width="80" height="44"/>
+<text class="f-t f-b" x="580" y="93" text-anchor="middle">100</text>
+<text class="f-s f-ink-t" x="460" y="146" text-anchor="middle">a is b → True</text>
+<text class="f-s" x="460" y="170" text-anchor="middle">b.append(100)은 이 객체를 바꾼다. a로 봐도 바뀌어 보인다.</text>
+</svg>
+<figcaption>b = a 뒤의 모습. 이름표는 둘, 리스트는 하나.</figcaption>
+</figure>
+
+<p>그림처럼 객체는 하나, 이름표만 둘입니다. <code>b.append(100)</code>은 "b가 가리키는 객체 끝에 100을 붙여라"인데, 그 객체가 곧 a가 가리키는 객체이므로 a로 봐도 100이 보입니다. 한 객체에 이름이 둘 이상 붙은 상태를 <b class="key">별칭(aliasing)</b>이라고 합니다.</p>
+
+<h3>같은 객체인가, 같은 값인가: <code>is</code>와 <code>==</code></h3>
+
+<div class="side"><b>용어</b> <code>id(x)</code>는 객체마다 붙은 고유 번호를 돌려줍니다. 두 이름의 id가 같으면 같은 객체입니다. 번호 자체는 실행할 때마다 달라지므로 값보다 "같은가"만 봅니다.</div>
+
+<p>"두 이름이 같은 객체를 가리키는가?"는 <code>is</code>로 묻고, "두 객체의 내용이 같은가?"는 <code>==</code>로 묻습니다. 둘은 다른 질문입니다. <code>a.copy()</code>는 내용이 같은 <b>새</b> 리스트를 만드는 메서드인데, 바로 다음 절에서 자세히 봅니다.</p>
+
+<p class="small">파일 <code>10_id.py</code></p>
+<pre><code>a = [80, 90, 70]
+b = a
+c = a.copy()
+print(id(a) == id(b), a is b)
+print(id(a) == id(c), a is c)
+print(a == c)</code></pre>
+<p class="small">실행 결과</p>
+<pre><code>True True
+False False
+True</code></pre>
+<p>b는 a와 같은 객체(<code>is</code>가 True), c는 다른 객체지만(<code>is</code>가 False) 내용은 같습니다(<code>==</code>가 True).</p>
+
+<div class="box trap">
+<p class="box-k">흔한 실수</p>
+<p><b>대입을 복사로 읽는 것.</b> C의 배열·구조체 대입처럼 <code>b = a</code>가 값을 복사한다고 생각하면 위 결과를 설명할 수 없습니다. Python의 대입은 언제나 참조를 묶는 일이고, 복사는 <code>copy()</code> 같은 호출로만 일어납니다(PY01·1의 "이름표" 모델).</p>
+</div>
+
+<div class="check" data-q="q1"></div>
+
+<h2>바뀔 수 있는 것과 바뀔 수 없는 것 <span class="tag memo">외우기</span></h2>
+
+<p>그런데 숫자로 똑같은 일을 하면 버그가 생기지 않습니다.</p>
+
+<p class="small">파일 <code>02_immutable.py</code></p>
+<pre><code>x = 10
+y = x
+y = y + 1
+print("x:", x, "y:", y)
+s = "hello"
+t = s
+t = t.upper()
+print("s:", s, "t:", t)</code></pre>
+<p class="small">실행 결과</p>
+<pre><code>x: 10 y: 11
+s: hello t: HELLO</code></pre>
+
+<p><code>y = x</code> 직후에는 x와 y가 같은 객체 10을 가리킵니다. 리스트 때와 똑같습니다. 차이는 그 다음 줄에 있습니다. 숫자 10이라는 객체는 <b>스스로 11로 바뀔 수 없습니다.</b> 그래서 <code>y = y + 1</code>은 10을 고치는 것이 아니라 <b>새 객체 11을 만들고, 이름표 y를 그쪽으로 옮겨 붙입니다.</b> x는 여전히 10을 가리킵니다.</p>
+
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 205" role="img" aria-label="(가) y = x 직후: 이름 x와 y가 모두 객체 10을 가리킨다. (나) y = y + 1 뒤: x는 그대로 10을 가리키고, y는 새로 만들어진 객체 11을 가리킨다. 10은 바뀌지 않았다.">
+<rect class="f-soft" x="40" y="40" width="50" height="34" rx="4"/>
+<text class="f-t" x="65" y="62" text-anchor="middle">x</text>
+<rect class="f-soft" x="40" y="110" width="50" height="34" rx="4"/>
+<text class="f-t" x="65" y="132" text-anchor="middle">y</text>
+<line class="f-line" x1="92" y1="57" x2="226" y2="84" marker-end="url(#f-arrow)"/>
+<line class="f-line" x1="92" y1="127" x2="226" y2="100" marker-end="url(#f-arrow)"/>
+<rect class="f-box" x="230" y="72" width="80" height="40" rx="4"/>
+<text class="f-t" x="270" y="97" text-anchor="middle">10</text>
+<line class="f-dash" x1="380" y1="16" x2="380" y2="176"/>
+<rect class="f-soft" x="420" y="40" width="50" height="34" rx="4"/>
+<text class="f-t" x="445" y="62" text-anchor="middle">x</text>
+<rect class="f-soft" x="420" y="110" width="50" height="34" rx="4"/>
+<text class="f-t" x="445" y="132" text-anchor="middle">y</text>
+<line class="f-line" x1="472" y1="57" x2="606" y2="57" marker-end="url(#f-arrow)"/>
+<line class="f-line" x1="472" y1="127" x2="606" y2="127" marker-end="url(#f-arrow)"/>
+<rect class="f-box" x="610" y="37" width="80" height="40" rx="4"/>
+<text class="f-t" x="650" y="62" text-anchor="middle">10</text>
+<rect class="f-soft" x="610" y="107" width="80" height="40" rx="4"/>
+<text class="f-t f-b" x="650" y="132" text-anchor="middle">11 (새 객체)</text>
+<text class="f-cap" x="190" y="196" text-anchor="middle">(가) y = x 직후</text>
+<text class="f-cap" x="570" y="196" text-anchor="middle">(나) y = y + 1 뒤</text>
+<text class="f-s" x="570" y="168" text-anchor="middle">10은 그대로, y만 옮겨 붙었다</text>
+</svg>
+<figcaption>바뀔 수 없는 객체는 "고치기" 대신 새 객체를 만들고 이름표를 옮긴다.</figcaption>
+</figure>
+
+<div class="box">
+<p class="box-k">정의</p>
+<p>만든 뒤에 <b>내용을 그 자리에서 바꿀 수 있는</b> 자료형을 <b class="key">가변(mutable)</b>, 바꿀 수 없는 자료형을 <b class="key">불변(immutable)</b>이라고 합니다. 불변 객체로 "바꾼 것처럼" 보이는 일은 언제나 <b>새 객체를 만드는 일</b>입니다.</p>
+</div>
+
+<div class="table-wrap">
+<table>
+<tr><th>불변 (immutable) — 바꿀 수 없음</th><th>가변 (mutable) — 바꿀 수 있음</th></tr>
+<tr><td>정수 <code>int</code>, 실수 <code>float</code>, 참·거짓 <code>bool</code></td><td>리스트 <code>list</code></td></tr>
+<tr><td>문자열 <code>str</code></td><td>딕셔너리 <code>dict</code></td></tr>
+<tr><td>튜플 <code>tuple</code></td><td>집합 <code>set</code></td></tr>
+<tr><td>그래서 딕셔너리 키·집합 원소가 될 수 있다</td><td>그래서 딕셔너리 키·집합 원소가 될 수 없다</td></tr>
+</table>
+</div>
+
+<p>표의 마지막 줄이 PY06·1에서 미뤄 둔 답입니다. 딕셔너리는 키를 보고 "이 키는 어느 칸에 두었다"를 정해 둡니다. 키가 나중에 바뀌면 그 약속이 깨져서 다시 찾을 수 없게 되므로, 바뀔 수 있는 리스트는 처음부터 키로 받지 않습니다.</p>
+
+<h3>문자열 메서드는 원본을 바꾸지 않는다</h3>
+<p>문자열이 불변이라는 것은 실제 코드에서 이런 모습으로 나타납니다.</p>
+
+<p class="small">파일 <code>11_str_method.py</code></p>
+<pre><code>name = "minsu"
+name.upper()
+print(name)
+name = name.upper()
+print(name)
+scores = [90, 70, 80]
+scores.sort()
+print(scores)</code></pre>
+<p class="small">실행 결과</p>
+<pre><code>minsu
+MINSU
+[70, 80, 90]</code></pre>
+<p>2번 줄 <code>name.upper()</code>는 대문자로 된 <b>새 문자열</b>을 만들어 돌려주기만 하고, 그것을 아무 이름에도 붙이지 않았으니 그냥 버려집니다. name은 여전히 "minsu"입니다. 4번 줄처럼 결과를 다시 이름에 붙여야 합니다. 반대로 리스트의 <code>sort()</code>는 가변 객체를 <b>그 자리에서</b> 고치므로 결과를 다시 받을 필요가 없습니다.</p>
+
+<div class="box trap">
+<p class="box-k">흔한 실수</p>
+<p><b><code>name.upper()</code>, <code>text.strip()</code>, <code>text.replace(...)</code>만 써 놓고 원본이 바뀌었으리라 믿는 것.</b> 문자열 메서드는 모두 새 문자열을 돌려줍니다. <code>text = text.strip()</code>처럼 결과를 받아야 합니다. 거꾸로 <code>scores = scores.sort()</code>라고 쓰면 <code>sort()</code>가 돌려주는 값이 <code>None</code>이라 scores가 None이 되어 버립니다.</p>
+</div>
+
+<h3>같아 보이는 두 줄: <code>a = a + [3]</code>과 <code>a += [3]</code></h3>
+
+<p class="small">파일 <code>08_plus_eq.py</code></p>
+<pre><code>a = [1, 2]
+b = a
+a = a + [3]
+print(a, b)
+a = [1, 2]
+b = a
+a += [3]
+print(a, b)</code></pre>
+<p class="small">실행 결과</p>
+<pre><code>[1, 2, 3] [1, 2]
+[1, 2, 3] [1, 2, 3]</code></pre>
+
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 215" role="img" aria-label="(가) a = a + [3]: a는 새로 만든 리스트 [1, 2, 3]을 가리키고, b는 원래 리스트 [1, 2]를 그대로 가리킨다. (나) a += [3]: 원래 리스트 끝에 3이 붙어 [1, 2, 3]이 되고, a와 b가 모두 이 하나를 가리킨다.">
+<rect class="f-soft" x="30" y="34" width="44" height="34" rx="4"/>
+<text class="f-t" x="52" y="56" text-anchor="middle">a</text>
+<rect class="f-soft" x="30" y="114" width="44" height="34" rx="4"/>
+<text class="f-t" x="52" y="136" text-anchor="middle">b</text>
+<line class="f-line" x1="76" y1="51" x2="176" y2="51" marker-end="url(#f-arrow)"/>
+<line class="f-line" x1="76" y1="131" x2="176" y2="131" marker-end="url(#f-arrow)"/>
+<rect class="f-soft" x="180" y="31" width="44" height="40"/>
+<text class="f-t" x="202" y="56" text-anchor="middle">1</text>
+<rect class="f-soft" x="224" y="31" width="44" height="40"/>
+<text class="f-t" x="246" y="56" text-anchor="middle">2</text>
+<rect class="f-soft" x="268" y="31" width="44" height="40"/>
+<text class="f-t" x="290" y="56" text-anchor="middle">3</text>
+<text class="f-s" x="246" y="90" text-anchor="middle">새 리스트</text>
+<rect class="f-box" x="180" y="111" width="44" height="40"/>
+<text class="f-t" x="202" y="136" text-anchor="middle">1</text>
+<rect class="f-box" x="224" y="111" width="44" height="40"/>
+<text class="f-t" x="246" y="136" text-anchor="middle">2</text>
+<text class="f-s" x="224" y="170" text-anchor="middle">원래 리스트는 그대로</text>
+<line class="f-dash" x1="380" y1="16" x2="380" y2="186"/>
+<rect class="f-soft" x="420" y="34" width="44" height="34" rx="4"/>
+<text class="f-t" x="442" y="56" text-anchor="middle">a</text>
+<rect class="f-soft" x="420" y="114" width="44" height="34" rx="4"/>
+<text class="f-t" x="442" y="136" text-anchor="middle">b</text>
+<line class="f-line" x1="466" y1="51" x2="566" y2="82" marker-end="url(#f-arrow)"/>
+<line class="f-line" x1="466" y1="131" x2="566" y2="100" marker-end="url(#f-arrow)"/>
+<rect class="f-box" x="570" y="71" width="44" height="40"/>
+<text class="f-t" x="592" y="96" text-anchor="middle">1</text>
+<rect class="f-box" x="614" y="71" width="44" height="40"/>
+<text class="f-t" x="636" y="96" text-anchor="middle">2</text>
+<rect class="f-soft" x="658" y="71" width="44" height="40"/>
+<text class="f-t f-b" x="680" y="96" text-anchor="middle">3</text>
+<text class="f-s" x="636" y="140" text-anchor="middle">원래 리스트 끝에 붙임</text>
+<text class="f-cap" x="190" y="204" text-anchor="middle">(가) a = a + [3]</text>
+<text class="f-cap" x="570" y="204" text-anchor="middle">(나) a += [3]</text>
+</svg>
+<figcaption>리스트에서 + 는 새 리스트를 만들고, += 는 원래 리스트를 고친다.</figcaption>
+</figure>
+
+<p>리스트의 <code>+</code>는 두 리스트를 이은 <b>새 리스트</b>를 만듭니다. 그래서 (가)에서 a만 새 리스트로 옮겨 가고 b는 원래 [1, 2]에 남습니다. 반면 <code>+=</code>는 가변 객체인 리스트에서는 <b>원래 리스트에 붙이는</b> 일(<code>append</code>를 여러 번 한 것과 같은 효과)을 합니다. 정수나 문자열 같은 불변 객체에서는 <code>+=</code>도 새 객체를 만듭니다. 고칠 수가 없으니까요.</p>
+
+<div class="check" data-q="q3"></div>
+<div class="check" data-q="q7"></div>
+<div class="check" data-q="q8"></div>
+
+<h2>진짜 복사 만들기</h2>
+
+<p>a와 따로 노는 b가 필요하면, <b>새 객체를 만들라고</b> 명시해야 합니다. 리스트를 복사하는 방법은 세 가지가 흔히 쓰입니다.</p>
+
+<p class="small">파일 <code>03_copy.py</code></p>
+<pre><code>a = [80, 90, 70]
+b = a.copy()
+print(a == b, a is b)
+b.append(100)
+print("a:", a)
+print("b:", b)
+c = a[:]
+d = list(a)
+print(c is a, d is a)</code></pre>
+<p class="small">실행 결과</p>
+<pre><code>True False
+a: [80, 90, 70]
+b: [80, 90, 70, 100]
+False False</code></pre>
+
+<ul>
+<li><code>a.copy()</code>: 리스트의 복사 메서드. 딕셔너리(<code>d.copy()</code>)와 집합에도 있습니다.</li>
+<li><code>a[:]</code>: PY04의 슬라이싱에서 처음부터 끝까지를 잘라 낸 것. 자른 결과는 언제나 새 리스트입니다.</li>
+<li><code>list(a)</code>: a의 값들로 새 리스트를 만듭니다.</li>
+</ul>
+
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 200" role="img" aria-label="두 경우 모두 b.append(100)을 한 뒤. (가) b = a: a와 b가 객체 하나 [80, 90, 70, 100]을 함께 가리킨다. 객체 1개. (나) b = a.copy(): a는 [80, 90, 70], b는 [80, 90, 70, 100]을 따로 가리킨다. 객체 2개.">
+<rect class="f-soft" x="30" y="40" width="44" height="34" rx="4"/>
+<text class="f-t" x="52" y="62" text-anchor="middle">a</text>
+<rect class="f-soft" x="30" y="110" width="44" height="34" rx="4"/>
+<text class="f-t" x="52" y="132" text-anchor="middle">b</text>
+<line class="f-line" x1="76" y1="57" x2="146" y2="82" marker-end="url(#f-arrow)"/>
+<line class="f-line" x1="76" y1="127" x2="146" y2="98" marker-end="url(#f-arrow)"/>
+<rect class="f-box" x="150" y="70" width="50" height="40"/>
+<text class="f-t" x="175" y="95" text-anchor="middle">80</text>
+<rect class="f-box" x="200" y="70" width="50" height="40"/>
+<text class="f-t" x="225" y="95" text-anchor="middle">90</text>
+<rect class="f-box" x="250" y="70" width="50" height="40"/>
+<text class="f-t" x="275" y="95" text-anchor="middle">70</text>
+<rect class="f-over" x="300" y="70" width="50" height="40"/>
+<text class="f-t" x="325" y="95" text-anchor="middle">100</text>
+<text class="f-s" x="250" y="146" text-anchor="middle">객체 1개, a에도 100</text>
+<line class="f-dash" x1="380" y1="16" x2="380" y2="176"/>
+<rect class="f-soft" x="400" y="34" width="44" height="34" rx="4"/>
+<text class="f-t" x="422" y="56" text-anchor="middle">a</text>
+<rect class="f-soft" x="400" y="114" width="44" height="34" rx="4"/>
+<text class="f-t" x="422" y="136" text-anchor="middle">b</text>
+<line class="f-line" x1="446" y1="51" x2="516" y2="51" marker-end="url(#f-arrow)"/>
+<line class="f-line" x1="446" y1="131" x2="516" y2="131" marker-end="url(#f-arrow)"/>
+<rect class="f-box" x="520" y="31" width="50" height="40"/>
+<text class="f-t" x="545" y="56" text-anchor="middle">80</text>
+<rect class="f-box" x="570" y="31" width="50" height="40"/>
+<text class="f-t" x="595" y="56" text-anchor="middle">90</text>
+<rect class="f-box" x="620" y="31" width="50" height="40"/>
+<text class="f-t" x="645" y="56" text-anchor="middle">70</text>
+<rect class="f-box" x="520" y="111" width="50" height="40"/>
+<text class="f-t" x="545" y="136" text-anchor="middle">80</text>
+<rect class="f-box" x="570" y="111" width="50" height="40"/>
+<text class="f-t" x="595" y="136" text-anchor="middle">90</text>
+<rect class="f-box" x="620" y="111" width="50" height="40"/>
+<text class="f-t" x="645" y="136" text-anchor="middle">70</text>
+<rect class="f-soft" x="670" y="111" width="50" height="40"/>
+<text class="f-t" x="695" y="136" text-anchor="middle">100</text>
+<text class="f-s" x="620" y="94" text-anchor="middle">객체 2개, a는 그대로</text>
+<text class="f-cap" x="190" y="190" text-anchor="middle">(가) b = a</text>
+<text class="f-cap" x="570" y="190" text-anchor="middle">(나) b = a.copy()</text>
+</svg>
+<figcaption>둘 다 b.append(100)을 한 뒤의 모습. 붉은 칸은 a가 원하지 않았던 변화다.</figcaption>
+</figure>
+
+<div class="check" data-q="q4"></div>
+
+<h3>얕은 복사의 함정</h3>
+
+<p>리스트 안에 또 리스트가 있으면 이야기가 하나 더 붙습니다. 반마다 학생 이름 리스트가 있는 <code>classes</code>를 복사해 봅시다. <code>import copy</code>는 Python에 딸려 오는 도구 묶음 copy를 불러오는 줄입니다(import는 PY09에서 자세히 봅니다).</p>
+
+<p class="small">파일 <code>04_shallow.py</code></p>
+<pre><code>import copy
+classes = [["민수", "지아"], ["하준"]]
+shallow = classes.copy()
+shallow.append(["서윤"])
+shallow[0].append("도윤")
+print("classes:", classes)
+print("shallow:", shallow)
+print(classes[0] is shallow[0])
+deep = copy.deepcopy(classes)
+deep[0].append("예린")
+print("classes:", classes)
+print("deep:   ", deep)</code></pre>
+<p class="small">실행 결과</p>
+<pre><code>classes: [['민수', '지아', '도윤'], ['하준']]
+shallow: [['민수', '지아', '도윤'], ['하준'], ['서윤']]
+True
+classes: [['민수', '지아', '도윤'], ['하준']]
+deep:    [['민수', '지아', '도윤', '예린'], ['하준']]</code></pre>
+
+<p>결과를 하나씩 따져 봅니다.</p>
+<p class="calc">① shallow.append(["서윤"]) → classes에는 없음. 바깥 리스트는 따로 만들어졌다.<br>
+② shallow[0].append("도윤") → classes[0]에도 "도윤"이 생김. 안쪽 리스트는 함께 쓰고 있었다.<br>
+③ classes[0] is shallow[0] → True. ②의 증거.<br>
+④ deep[0].append("예린") → classes에는 없음. deepcopy는 안쪽 리스트까지 새로 만들었다.</p>
+
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 250" role="img" aria-label="얕은 복사 뒤의 모습. 이름 classes는 칸 2개짜리 바깥 리스트를, 이름 shallow는 칸 3개짜리 다른 바깥 리스트를 가리킨다. 두 바깥 리스트의 첫 칸은 모두 같은 안쪽 리스트 [민수, 지아, 도윤]을, 둘째 칸은 모두 같은 [하준]을 가리킨다. shallow의 셋째 칸만 [서윤]을 가리킨다.">
+<rect class="f-soft" x="20" y="40" width="100" height="36" rx="4"/>
+<text class="f-t" x="70" y="63" text-anchor="middle">classes</text>
+<rect class="f-soft" x="20" y="170" width="100" height="36" rx="4"/>
+<text class="f-t" x="70" y="193" text-anchor="middle">shallow</text>
+<line class="f-line" x1="122" y1="58" x2="166" y2="58" marker-end="url(#f-arrow)"/>
+<line class="f-line" x1="122" y1="188" x2="166" y2="188" marker-end="url(#f-arrow)"/>
+<rect class="f-box" x="170" y="40" width="50" height="36"/>
+<rect class="f-box" x="220" y="40" width="50" height="36"/>
+<circle class="f-fill" cx="195" cy="58" r="4"/>
+<circle class="f-fill" cx="245" cy="58" r="4"/>
+<rect class="f-box" x="170" y="170" width="50" height="36"/>
+<rect class="f-box" x="220" y="170" width="50" height="36"/>
+<rect class="f-box" x="270" y="170" width="50" height="36"/>
+<circle class="f-fill" cx="195" cy="188" r="4"/>
+<circle class="f-fill" cx="245" cy="188" r="4"/>
+<circle class="f-fill" cx="295" cy="188" r="4"/>
+<text class="f-s" x="220" y="30" text-anchor="middle">바깥 리스트 ①</text>
+<text class="f-s" x="245" y="228" text-anchor="middle">바깥 리스트 ② (새로 만듦)</text>
+<line class="f-line" x1="195" y1="58" x2="466" y2="44" marker-end="url(#f-arrow)"/>
+<line class="f-line" x1="245" y1="58" x2="466" y2="112" marker-end="url(#f-arrow)"/>
+<line class="f-line" x1="195" y1="188" x2="466" y2="58" marker-end="url(#f-arrow)"/>
+<line class="f-line" x1="245" y1="188" x2="466" y2="126" marker-end="url(#f-arrow)"/>
+<line class="f-line" x1="295" y1="188" x2="466" y2="208" marker-end="url(#f-arrow)"/>
+<rect class="f-over" x="470" y="30" width="80" height="36"/>
+<text class="f-t" x="510" y="53" text-anchor="middle">민수</text>
+<rect class="f-over" x="550" y="30" width="80" height="36"/>
+<text class="f-t" x="590" y="53" text-anchor="middle">지아</text>
+<rect class="f-over" x="630" y="30" width="80" height="36"/>
+<text class="f-t f-b" x="670" y="53" text-anchor="middle">도윤</text>
+<text class="f-s" x="590" y="86" text-anchor="middle">두 바깥 리스트가 함께 가리킴</text>
+<rect class="f-box" x="470" y="100" width="80" height="36"/>
+<text class="f-t" x="510" y="123" text-anchor="middle">하준</text>
+<text class="f-s" x="560" y="123" text-anchor="start">← 이것도 함께</text>
+<rect class="f-box" x="470" y="190" width="80" height="36"/>
+<text class="f-t" x="510" y="213" text-anchor="middle">서윤</text>
+<text class="f-s" x="560" y="213" text-anchor="start">← shallow에만</text>
+</svg>
+<figcaption>얕은 복사는 바깥 리스트만 새로 만들고 안쪽 리스트는 함께 쓴다. 붉은 리스트를 고치면 양쪽에 다 보인다.</figcaption>
+</figure>
+
+<div class="box">
+<p class="box-k">정의</p>
+<p><b class="key">얕은 복사(shallow copy)</b>: 바깥 그릇만 새로 만들고, 안에 든 객체들은 원본과 <b>같은 것을 가리키게</b> 하는 복사. <code>.copy()</code>, <code>[:]</code>, <code>list()</code>, <code>dict()</code>가 모두 얕은 복사입니다.<br>
+<b class="key">깊은 복사(deep copy)</b>: 안에 든 가변 객체까지 끝까지 따라 들어가 모두 새로 만드는 복사. <code>copy.deepcopy(x)</code>를 씁니다.</p>
+</div>
+
+<p>안에 든 것이 숫자·문자열처럼 불변 객체뿐이면 얕은 복사로 충분합니다. 함께 가리켜도 아무도 그것을 고칠 수 없으니까요. <b>안에 리스트·딕셔너리 같은 가변 객체가 있고, 그것을 고칠 생각이라면</b> 깊은 복사가 필요합니다. 딕셔너리도 똑같습니다.</p>
+
+<p class="small">파일 <code>05_dict_copy.py</code></p>
+<pre><code>d = {"민수": [80], "지아": [90]}
+d2 = d.copy()
+d2["하준"] = [70]
+d2["민수"].append(85)
+print(d)
+print(d2)</code></pre>
+<p class="small">실행 결과</p>
+<pre><code>{'민수': [80, 85], '지아': [90]}
+{'민수': [80, 85], '지아': [90], '하준': [70]}</code></pre>
+<p>새 키 "하준"은 d2에만 생겼지만, "민수"의 점수 리스트는 둘이 함께 쓰고 있었기 때문에 d에도 85가 붙었습니다.</p>
+
+<div class="box trap">
+<p class="box-k">흔한 실수</p>
+<p><b>2차원 리스트를 <code>[[0] * 3] * 3</code>으로 만드는 것.</b> 바깥의 <code>* 3</code>은 안쪽 리스트를 세 번 <b>복사하는 것이 아니라 같은 리스트를 세 번 가리킵니다.</b> 한 칸을 고치면 세 줄이 같이 바뀝니다.</p>
+<p class="small">파일 <code>07_grid.py</code></p>
+<pre><code>grid = [[0] * 3] * 3
+grid[0][0] = 1
+print(grid)
+grid2 = []
+for i in range(3):
+    grid2.append([0] * 3)
+grid2[0][0] = 1
+print(grid2)</code></pre>
+<pre><code>[[1, 0, 0], [1, 0, 0], [1, 0, 0]]
+[[1, 0, 0], [0, 0, 0], [0, 0, 0]]</code></pre>
+<p>grid2처럼 반복할 때마다 <code>[0] * 3</code>을 새로 계산하면 줄마다 다른 리스트가 생깁니다. 안쪽 <code>[0] * 3</code>은 괜찮습니다. 0은 불변이라 같은 0을 세 번 가리켜도 문제가 없습니다.</p>
+</div>
+
+<div class="more">
+<p class="box-k">더 알아보기 · 리스트를 품은 튜플</p>
+<p>튜플은 불변이라고 했는데, 안에 리스트를 넣으면 어떻게 될까요?</p>
+<pre><code>t = ([1, 2], 3)
+t[0].append(99)
+print(t)</code></pre>
+<pre><code>([1, 2, 99], 3)</code></pre>
+<p>오류 없이 바뀌었습니다. 튜플이 지키는 것은 "각 칸이 <b>어느 객체를 가리키는지</b>"뿐입니다. t[0]은 여전히 같은 리스트를 가리키고 있고, 그 리스트 자신이 바뀐 것입니다. 이런 튜플은 딕셔너리 키가 될 수 없습니다. 실무에서는 튜플 안에 가변 객체를 넣지 않는 편이 안전합니다.</p>
+</div>
+
+<div class="check" data-q="q5"></div>
+
+<h2>함수에 리스트를 넘길 때</h2>
+
+<p>PY05에서 함수를 부르면 넘긴 값이 매개변수 이름에 담긴다고 배웠습니다. 이 장의 말로 다시 하면, <b>매개변수는 넘겨받은 객체에 붙는 또 하나의 이름표</b>입니다. 그래서 함수 안에서 가변 객체를 고치면 함수 밖의 원본이 바뀝니다.</p>
+
+<p class="small">파일 <code>06_func.py</code></p>
+<pre><code>def add_bonus(scores):
+    scores.append(5)
+    return scores
+
+mine = [80, 90]
+result = add_bonus(mine)
+print(mine)
+print(result is mine)
+
+def add_bonus_safe(scores):
+    new = scores.copy()
+    new.append(5)
+    return new
+
+mine = [80, 90]
+result = add_bonus_safe(mine)
+print(mine, result)</code></pre>
+<p class="small">실행 결과</p>
+<pre><code>[80, 90, 5]
+True
+[80, 90] [80, 90, 5]</code></pre>
+
+<p><code>add_bonus(mine)</code>를 부르는 순간 mine이 가리키던 리스트에 이름표 scores가 하나 더 붙습니다. 함수 안의 <code>scores.append(5)</code>는 그 리스트를 고치므로 mine에도 5가 보입니다. 원본을 지키고 싶다면 <code>add_bonus_safe</code>처럼 함수 안에서 먼저 복사본을 만들고 그것을 고쳐서 돌려줍니다.</p>
+
+<p>어느 쪽이 맞다고 정해진 것은 아닙니다. 다만 함수가 넘겨받은 리스트를 고친다면, 그 사실이 함수 이름이나 설명에 드러나야 부르는 사람이 놀라지 않습니다. PY08에서 버그를 찾을 때 "이 값이 어디서 바뀌었지?"라는 질문을 자주 하게 되는데, 별칭이 그 답인 경우가 많습니다.</p>
+
+<div class="check" data-q="q9"></div>
+
+<h2>어떤 그릇을 고를까 <span class="tag grasp">이해하기</span></h2>
+
+<p>PY06·1의 네 그릇과 이 장의 "바뀔 수 있음/없음"을 합쳐, 하고 싶은 일에 따라 그릇을 고르는 표입니다.</p>
+
+<div class="table-wrap">
+<table>
+<tr><th>하고 싶은 일</th><th>고를 그릇</th><th>예</th></tr>
+<tr><td>순서대로 모으고, 더하고, 고친다</td><td><b>리스트</b></td><td>오늘 받은 점수들 <code>[80, 90, 70]</code></td></tr>
+<tr><td>몇 개의 값이 한 덩어리이고 바뀌면 안 된다</td><td><b>튜플</b></td><td>좌표 <code>(3, 5)</code>, 날짜 <code>(2026, 11, 18)</code></td></tr>
+<tr><td>짝을 딕셔너리 키로 쓰고 싶다</td><td><b>튜플</b></td><td><code>dist[("서울", "부산")]</code></td></tr>
+<tr><td>중복을 없앤다, "있나?"를 자주 묻는다, 공통·차이를 구한다</td><td><b>집합</b></td><td>서로 다른 방문자, 두 날 모두 온 사람</td></tr>
+<tr><td>이름(키)으로 값을 찾는다, 개수를 센다</td><td><b>딕셔너리</b></td><td>가격표, 메뉴별 투표 수</td></tr>
+<tr><td>표의 한 행(열 이름 → 값)</td><td><b>딕셔너리</b></td><td><code>{"이름": "민수", "국어": 80}</code></td></tr>
+<tr><td>표 전체(여러 행)</td><td><b>딕셔너리의 리스트</b></td><td>PY07에서 CSV를 읽으면 이 모양이 된다</td></tr>
+</table>
+</div>
+
+<p>고르는 순서: ① 이름으로 찾아야 하나? → 딕셔너리. ② 아니면, 중복이 없어야 하고 순서는 상관없나? → 집합. ③ 아니면, 만든 뒤 바뀌면 안 되나? → 튜플. ④ 나머지 → 리스트.</p>
+
+<div class="check" data-q="q11"></div>
+
+<div class="why">
+<p class="box-k">왜 그럴까?</p>
+<p>Python은 왜 <code>b = a</code>를 할 때마다 리스트를 통째로 복사하지 않고 이름표만 하나 더 붙이도록 만들었을까요?</p>
+<details><summary>모범 답 보기</summary><p>복사는 공짜가 아니기 때문입니다. 리스트에 값이 백만 개 들어 있으면, 이름을 붙이거나 함수에 넘길 때마다 백만 개를 베끼느라 시간과 메모리를 씁니다. 이름표만 붙이면 값이 아무리 많아도 한순간에 끝납니다. 그 대가로 "같은 객체를 두 이름이 함께 쓴다"는 사실을 프로그래머가 알고 있어야 하고, 정말 따로 쓰고 싶을 때만 copy로 명시합니다. 숫자·문자열을 불변으로 만든 것도 이 대가를 줄이는 장치입니다. 함께 가리켜도 아무도 고칠 수 없으니 안전합니다.</p></details>
+</div>
+
+<h2>한눈에 정리</h2>
+
+<div class="table-wrap">
+<table>
+<tr><th>개념</th><th>뜻</th><th>코드에서 보이는 모습</th></tr>
+<tr><td><b class="key">참조</b></td><td>이름이 객체를 가리키는 것. 이름은 이름표다</td><td><code>b = a</code>는 복사가 아니라 이름표 하나 더</td></tr>
+<tr><td><b class="key">별칭</b></td><td>한 객체에 이름이 둘 이상</td><td><code>a is b</code>가 True. 한쪽에서 고치면 다른 쪽에도 보인다</td></tr>
+<tr><td><code>is</code> / <code>==</code></td><td>같은 객체인가 / 내용이 같은가</td><td>복사본은 <code>==</code> True, <code>is</code> False</td></tr>
+<tr><td><b class="key">불변</b> immutable</td><td>만든 뒤 못 바꿈: int, float, bool, str, tuple</td><td>바꾸는 듯한 연산은 새 객체를 만든다 (<code>s.upper()</code>)</td></tr>
+<tr><td><b class="key">가변</b> mutable</td><td>그 자리에서 바뀜: list, dict, set</td><td><code>append</code>, <code>sort</code>, <code>+=</code>, <code>d[k] = v</code></td></tr>
+<tr><td><b class="key">얕은 복사</b></td><td>바깥만 새로, 안쪽은 함께 씀</td><td><code>.copy()</code>, <code>[:]</code>, <code>list()</code></td></tr>
+<tr><td><b class="key">깊은 복사</b></td><td>안쪽 가변 객체까지 모두 새로</td><td><code>copy.deepcopy(x)</code></td></tr>
+</table>
+</div>
+
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>이름은 객체를 가리키는 이름표이므로, 가변 객체를 두 이름이 함께 가리키면 한쪽의 변화가 다른 쪽에도 보이고, 따로 쓰려면 복사(겹쳐 있으면 깊은 복사)를 해야 한다.</p></div>
+
+<h2>확인 문제</h2>
+<p>본문 중간에서 푼 문제 말고 남은 문제입니다. 보기를 누르면 바로 정답과 해설이 나옵니다.</p>
+<div id="quiz"></div>
+
+<section class="work" id="tools"></section>
+
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

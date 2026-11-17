@@ -1,0 +1,409 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>값의 종류: int, float, str, bool · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e8c'/%3E%3Cpath d='M8 22V10m8 12V14m8 8V6' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="PY01-2">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+
+<header class="chapter">
+<p class="chap-sub">Python과 프로그래밍 사고 · PY01 첫 프로그램</p>
+<p class="chap-num">PY01·2</p>
+<h1>값의 종류: int, float, str, bool</h1>
+<p class="lead">대화형 실행에 <code>7 + 7</code>을 치면 14가 나오는데, <code>"7" + "7"</code>을 치면 <code>'77'</code>이 나옵니다. 눈으로는 같은 7인데 Python은 둘을 전혀 다른 것으로 다룹니다. 이 장에서는 Python 값의 네 가지 기본 종류(정수, 실수, 문자열, 참·거짓)와 그 종류를 확인하는 <code>type()</code>, 그리고 종류에 따라 계산이 어떻게 달라지는지를 다룹니다.</p>
+</header>
+
+<div class="goal">
+<h2>이 장을 읽고 나면</h2>
+<ul>
+<li>int, float, str, bool이 각각 어떤 값인지 예를 들어 설명할 수 있다.</li>
+<li><code>type()</code>을 써서 값의 종류를 확인하고, <code>&lt;class 'int'&gt;</code> 같은 결과를 읽을 수 있다.</li>
+<li>같은 <code>+</code>가 숫자끼리는 더하고, 문자열끼리는 이어 붙이고, 둘을 섞으면 오류가 나는 까닭을 설명할 수 있다.</li>
+<li>종류는 이름이 아니라 값에 붙어 있다는 것을 예로 보일 수 있다.</li>
+<li>실수 계산에 아주 작은 오차가 생길 수 있음을 알고, 결과 <code>0.30000000000000004</code>가 왜 나오는지 설명할 수 있다.</li>
+</ul>
+</div>
+
+<h2>같아 보여도 다른 값</h2>
+
+<p>대화형 실행에 다음을 차례로 쳐 본 실제 결과입니다.</p>
+
+<div class="sample">
+<p class="sample-k">대화형 실행</p>
+<pre><code>&gt;&gt;&gt; 7 + 7
+14
+&gt;&gt;&gt; "7" + "7"
+'77'
+&gt;&gt;&gt; 7 * 3
+21
+&gt;&gt;&gt; "7" * 3
+'777'</code></pre>
+</div>
+
+<p>따옴표 없는 7은 <b>수</b>이고, 따옴표로 감싼 "7"은 <b>글자</b>입니다. 수끼리 <code>+</code>하면 더하고, 글자끼리 <code>+</code>하면 앞뒤로 이어 붙입니다. 글자에 3을 곱하면 글자를 세 번 되풀이합니다. 사람에게 7은 그냥 7이지만, 컴퓨터는 값마다 <b>"이것은 무슨 종류인가"</b>를 함께 기억하고, 그 종류에 따라 계산 방법을 고릅니다.</p>
+
+<div class="side"><b>용어</b> <b>자료형</b>은 영어 data type을 옮긴 말로, 줄여서 <b>타입</b>(type)이라고도 합니다. "형(形)"은 모양·종류라는 뜻입니다.</div>
+
+<div class="box">
+<p class="box-k">정의 <span class="tag memo">외우기</span></p>
+<p><b class="key">자료형</b>(type): 값의 종류. 그 값으로 무엇을 할 수 있고, 계산이 어떻게 되는지를 정합니다. Python의 기본 자료형 넷은 다음과 같습니다.</p>
+<ul>
+<li><b class="key">int</b> (정수, integer): 소수점이 없는 수. <code>7</code>, <code>0</code>, <code>-3</code></li>
+<li><b class="key">float</b> (실수, floating point): 소수점이 있는 수. <code>7.0</code>, <code>3.14</code>, <code>-0.5</code></li>
+<li><b class="key">str</b> (문자열, string): 따옴표로 감싼 글자들. <code>"7"</code>, <code>"안녕"</code>, <code>""</code></li>
+<li><b class="key">bool</b> (참·거짓, boolean): 딱 두 값 <code>True</code>와 <code>False</code></li>
+</ul>
+</div>
+
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 210" role="img" aria-label="네 가지 기본 자료형. (가) 7은 int, 정수, type 결과는 class 'int'. (나) 7.0은 float, 실수, class 'float'. (다) 따옴표 7은 str, 문자열, class 'str'. (라) True는 bool, 참·거짓, class 'bool'.">
+<line class="f-dash" x1="190" y1="14" x2="190" y2="196"/>
+<line class="f-dash" x1="380" y1="14" x2="380" y2="196"/>
+<line class="f-dash" x1="570" y1="14" x2="570" y2="196"/>
+<rect class="f-soft" x="35" y="30" width="120" height="56" rx="4"/>
+<text class="f-cap" x="95" y="64" text-anchor="middle" font-family="Consolas, monospace">7</text>
+<text class="f-t f-b" x="95" y="114" text-anchor="middle">int</text>
+<text class="f-s" x="95" y="136" text-anchor="middle">정수</text>
+<text class="f-s f-ink-t" x="95" y="160" text-anchor="middle" font-family="Consolas, monospace">&lt;class 'int'&gt;</text>
+<rect class="f-soft" x="225" y="30" width="120" height="56" rx="4"/>
+<text class="f-cap" x="285" y="64" text-anchor="middle" font-family="Consolas, monospace">7.0</text>
+<text class="f-t f-b" x="285" y="114" text-anchor="middle">float</text>
+<text class="f-s" x="285" y="136" text-anchor="middle">실수</text>
+<text class="f-s f-ink-t" x="285" y="160" text-anchor="middle" font-family="Consolas, monospace">&lt;class 'float'&gt;</text>
+<rect class="f-box" x="415" y="30" width="120" height="56" rx="4"/>
+<text class="f-cap" x="475" y="64" text-anchor="middle" font-family="Consolas, monospace">"7"</text>
+<text class="f-t f-b" x="475" y="114" text-anchor="middle">str</text>
+<text class="f-s" x="475" y="136" text-anchor="middle">문자열</text>
+<text class="f-s f-ink-t" x="475" y="160" text-anchor="middle" font-family="Consolas, monospace">&lt;class 'str'&gt;</text>
+<rect class="f-box" x="605" y="30" width="120" height="56" rx="4"/>
+<text class="f-cap" x="665" y="64" text-anchor="middle" font-family="Consolas, monospace">True</text>
+<text class="f-t f-b" x="665" y="114" text-anchor="middle">bool</text>
+<text class="f-s" x="665" y="136" text-anchor="middle">참·거짓</text>
+<text class="f-s f-ink-t" x="665" y="160" text-anchor="middle" font-family="Consolas, monospace">&lt;class 'bool'&gt;</text>
+<text class="f-cap" x="95" y="190" text-anchor="middle">(가)</text>
+<text class="f-cap" x="285" y="190" text-anchor="middle">(나)</text>
+<text class="f-cap" x="475" y="190" text-anchor="middle">(다)</text>
+<text class="f-cap" x="665" y="190" text-anchor="middle">(라)</text>
+</svg>
+<figcaption>기본 자료형 넷. 연한 파랑 칸 둘은 수, 흰 칸 둘은 수가 아니다. 맨 아래 줄은 type()이 알려 주는 이름이다.</figcaption>
+</figure>
+
+<h2>type()으로 종류 확인하기</h2>
+
+<p>값의 종류가 궁금하면 <code>type(…)</code>에 넣어 봅니다. 대화형 실행의 실제 결과입니다.</p>
+
+<div class="sample">
+<p class="sample-k">대화형 실행</p>
+<pre><code>&gt;&gt;&gt; type(7)
+&lt;class 'int'&gt;
+&gt;&gt;&gt; type(7.0)
+&lt;class 'float'&gt;
+&gt;&gt;&gt; type("7")
+&lt;class 'str'&gt;
+&gt;&gt;&gt; type(True)
+&lt;class 'bool'&gt;</code></pre>
+</div>
+
+<p><code>&lt;class 'int'&gt;</code>는 "이 값은 int라는 종류(class)에 속한다"라고 읽습니다. class는 Python이 종류를 부르는 이름인데, 지금은 "종류"로 읽으면 충분합니다. 꺾쇠 <code>&lt; &gt;</code>와 작은따옴표는 그 모양으로 보여 주는 약속일 뿐 뜻은 없습니다.</p>
+
+<p>변수에 넣고 확인할 수도 있습니다. 파일로 실행할 때는 print로 감쌉니다.</p>
+
+<div class="sample">
+<p class="sample-k">코드 (kinds.py)</p>
+<pre><code>age = 29
+height = 172.5
+name = "김하나"
+is_member = True
+print(age, type(age))
+print(height, type(height))
+print(name, type(name))
+print(is_member, type(is_member))</code></pre>
+</div>
+<div class="sample">
+<p class="sample-k">실행 결과</p>
+<pre><code>29 &lt;class 'int'&gt;
+172.5 &lt;class 'float'&gt;
+김하나 &lt;class 'str'&gt;
+True &lt;class 'bool'&gt;</code></pre>
+</div>
+
+<div class="box trap">
+<p class="box-k">흔한 실수</p>
+<p><b>파일 이름을 <code>types.py</code>처럼 Python에 이미 있는 이름으로 짓기.</b> 이 책을 쓰면서 위 코드를 처음에 <code>types.py</code>라는 파일로 저장했더니, 그 폴더에서 실행한 <b>다른</b> 파일의 오류 메시지가 이상하게 나왔습니다. Python에는 <code>types</code>라는 이름의 부품이 이미 있는데, 같은 폴더에 같은 이름의 파일이 있으면 Python이 그 파일을 대신 읽어 버리기 때문입니다. 연습 파일에는 <code>kinds.py</code>, <code>my_test.py</code>처럼 겹치지 않을 이름을 쓰세요. 부품(모듈)을 불러오는 원리는 PY09에서 배웁니다.</p>
+</div>
+
+<h3>int: 정수</h3>
+<p>소수점이 없는 수입니다. 음수(<code>-3</code>)와 0도 정수입니다. Python의 정수는 <b>자릿수 제한이 없어서</b> 아무리 큰 수도 정확하게 계산합니다. 2를 100번 곱한 수도 끝자리까지 정확히 나옵니다.</p>
+<div class="sample">
+<p class="sample-k">대화형 실행</p>
+<pre><code>&gt;&gt;&gt; 2 ** 100
+1267650600228229401496703205376
+&gt;&gt;&gt; 1_000_000
+1000000</code></pre>
+</div>
+<p><code>**</code>는 거듭제곱(PY01·3에서 자세히)입니다. 큰 수를 읽기 쉽게 쓰고 싶으면 밑줄로 자리를 나눌 수 있습니다(<code>1_000_000</code>). 밑줄은 읽는 사람을 위한 것이라 값에는 영향이 없습니다.</p>
+
+<div class="box trap">
+<p class="box-k">흔한 실수</p>
+<p><b>쉼표로 자릿수 나누기.</b> 우리는 백만을 1,000,000으로 쓰지만 Python 코드에서 쉼표는 "여러 값을 나눈다"는 뜻입니다. <code>print(1,000,000)</code>을 실행하면 오류 없이 <code>1 0 0</code>이 나옵니다. 1과 000(=0)과 000(=0), 세 값을 빈칸으로 이어 출력한 것입니다. 수에는 쉼표를 쓰지 말고, 나누고 싶으면 밑줄을 씁니다.</p>
+</div>
+
+<h3>float: 실수</h3>
+<p>소수점이 있는 수입니다. 값이 정수와 같더라도 소수점을 찍으면 float입니다. <code>7</code>은 int, <code>7.0</code>은 float입니다. 나누기 <code>/</code>의 결과는 나누어떨어져도 항상 float입니다(<code>10 / 2</code> → <code>5.0</code>). 소수 끝의 0은 보여 줄 때 지워집니다(<code>3.50</code> → <code>3.5</code>). float라는 이름은 floating point(떠다니는 소수점)를 줄인 것으로, 컴퓨터가 실수를 저장하는 방식에서 왔습니다.</p>
+
+<h3>str: 문자열</h3>
+<p>따옴표로 감싼 글자들입니다. 안에 숫자가 들어 있어도 따옴표가 있으면 str입니다. <code>"7"</code>, <code>"True"</code>는 수나 참·거짓이 아니라 글자입니다. 따옴표만 있고 안이 빈 <code>""</code>도 문자열(빈 문자열)이고, 빈칸 하나 <code>" "</code>도 문자열입니다.</p>
+
+<h3>bool: 참·거짓</h3>
+<p><code>True</code>(참)와 <code>False</code>(거짓) 두 값뿐입니다. 이름은 이 개념을 정리한 수학자 조지 불(George Boole)에서 왔습니다. 앞 장의 <code>x == 5</code>처럼 "같은가?"를 물은 답이 bool입니다. <b>첫 글자는 반드시 대문자</b>입니다. 소문자 <code>true</code>는 Python이 모르는 이름이라 실제로 이런 오류가 납니다.</p>
+<div class="sample">
+<p class="sample-k">실제 오류의 마지막 줄 (파일에 <code>true</code> 한 줄만 썼을 때)</p>
+<pre><code>NameError: name 'true' is not defined. Did you mean: 'True'?</code></pre>
+</div>
+
+<div class="table-wrap">
+<table>
+<tr><th>자료형</th><th>읽는 법</th><th>예</th><th>알아보는 법</th></tr>
+<tr><td><b class="key">int</b></td><td>정수</td><td><code>29</code>, <code>0</code>, <code>-3</code>, <code>1_000_000</code></td><td>따옴표 없음, 소수점 없음</td></tr>
+<tr><td><b class="key">float</b></td><td>실수</td><td><code>172.5</code>, <code>7.0</code>, <code>10 / 2</code>의 결과</td><td>따옴표 없음, 소수점 있음</td></tr>
+<tr><td><b class="key">str</b></td><td>문자열</td><td><code>"김하나"</code>, <code>"7"</code>, <code>"True"</code>, <code>""</code></td><td>따옴표로 감쌈</td></tr>
+<tr><td><b class="key">bool</b></td><td>참·거짓</td><td><code>True</code>, <code>False</code></td><td>따옴표 없음, 대문자로 시작하는 이 두 낱말뿐</td></tr>
+</table>
+</div>
+
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+
+<h2>종류가 계산을 정한다 <span class="tag grasp">이해하기</span></h2>
+
+<p>같은 기호라도 양쪽 값의 종류에 따라 하는 일이 다릅니다. 가장 자주 만나는 <code>+</code>로 봅시다.</p>
+
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 214" role="img" aria-label="세 줄. 첫 줄: 7 + 7 → 14, int와 int는 더한다. 둘째 줄: &quot;7&quot; + &quot;7&quot; → &quot;77&quot;, str과 str은 이어 붙인다. 셋째 줄: 7 + &quot;7&quot; → TypeError, int와 str은 더할 수 없다.">
+<rect class="f-soft" x="40" y="24" width="70" height="40" rx="4"/>
+<text class="f-t" x="75" y="49" text-anchor="middle" font-family="Consolas, monospace">7</text>
+<text class="f-cap" x="130" y="50" text-anchor="middle">+</text>
+<rect class="f-soft" x="150" y="24" width="70" height="40" rx="4"/>
+<text class="f-t" x="185" y="49" text-anchor="middle" font-family="Consolas, monospace">7</text>
+<line class="f-line" x1="230" y1="44" x2="276" y2="44" marker-end="url(#f-arrow)"/>
+<rect class="f-soft" x="280" y="24" width="120" height="40" rx="4"/>
+<text class="f-t f-b" x="340" y="49" text-anchor="middle" font-family="Consolas, monospace">14</text>
+<text class="f-s f-ink-t" x="430" y="42">int + int</text>
+<text class="f-s" x="430" y="60">수끼리 더한다</text>
+<rect class="f-box" x="40" y="86" width="70" height="40" rx="4"/>
+<text class="f-t" x="75" y="111" text-anchor="middle" font-family="Consolas, monospace">"7"</text>
+<text class="f-cap" x="130" y="112" text-anchor="middle">+</text>
+<rect class="f-box" x="150" y="86" width="70" height="40" rx="4"/>
+<text class="f-t" x="185" y="111" text-anchor="middle" font-family="Consolas, monospace">"7"</text>
+<line class="f-line" x1="230" y1="106" x2="276" y2="106" marker-end="url(#f-arrow)"/>
+<rect class="f-box" x="280" y="86" width="120" height="40" rx="4"/>
+<text class="f-t f-b" x="340" y="111" text-anchor="middle" font-family="Consolas, monospace">"77"</text>
+<text class="f-s f-ink-t" x="430" y="104">str + str</text>
+<text class="f-s" x="430" y="122">글자를 이어 붙인다</text>
+<rect class="f-soft" x="40" y="148" width="70" height="40" rx="4"/>
+<text class="f-t" x="75" y="173" text-anchor="middle" font-family="Consolas, monospace">7</text>
+<text class="f-cap" x="130" y="174" text-anchor="middle">+</text>
+<rect class="f-box" x="150" y="148" width="70" height="40" rx="4"/>
+<text class="f-t" x="185" y="173" text-anchor="middle" font-family="Consolas, monospace">"7"</text>
+<line class="f-line" x1="230" y1="168" x2="276" y2="168" marker-end="url(#f-arrow)"/>
+<rect class="f-over" x="280" y="148" width="120" height="40" rx="4"/>
+<text class="f-t f-b" x="340" y="173" text-anchor="middle" font-family="Consolas, monospace">TypeError</text>
+<text class="f-s f-ink-t" x="430" y="166">int + str</text>
+<text class="f-s" x="430" y="184">무엇을 할지 정할 수 없어 멈춘다</text>
+</svg>
+<figcaption>같은 + 기호. 연한 파랑 칸은 수, 흰 칸은 문자열이다. 결과의 종류도 재료를 따른다.</figcaption>
+</figure>
+
+<p>셋째 줄을 실제로 실행하면 이렇게 나옵니다(U05·3에서 본 traceback 모양입니다).</p>
+
+<div class="sample">
+<p class="sample-k">실행 결과 (파일에 <code>7 + "7"</code> 한 줄, 경로 줄임)</p>
+<pre><code>Traceback (most recent call last):
+  File "C:\Users\me\Documents\python-study\one.py", line 1, in &lt;module&gt;
+    7 + "7"
+    ~~^~~~~
+TypeError: unsupported operand type(s) for +: 'int' and 'str'</code></pre>
+</div>
+
+<p>맨 아래 줄은 "+ 의 양쪽 재료(operand) 종류가 int와 str인 경우는 지원하지 않는다"입니다. Python이 멋대로 14나 "77" 가운데 하나를 고르지 않고 멈추는 데에는 까닭이 있습니다. 둘 중 무엇을 원했는지 알 수 없는데 짐작해서 계산하면, 틀린 결과가 오류 없이 조용히 흘러가 나중에 찾기 훨씬 어려워집니다. 문자열 <code>"7"</code>을 수 7로 바꾸는 법(<code>int("7")</code>)은 PY02에서 배웁니다.</p>
+
+<p>섞어도 되는 경우도 있습니다. <b>int와 float는 둘 다 수이므로</b> 함께 계산할 수 있고, 결과는 float가 됩니다.</p>
+
+<div class="sample">
+<p class="sample-k">대화형 실행</p>
+<pre><code>&gt;&gt;&gt; 3 + 2.0
+5.0
+&gt;&gt;&gt; type(3 + 2.0)
+&lt;class 'float'&gt;
+&gt;&gt;&gt; "ab" + "cd"
+'abcd'
+&gt;&gt;&gt; "하" * 3
+'하하하'</code></pre>
+</div>
+
+<div class="box ex">
+<p class="box-k">풀이 예제</p>
+<p>다음 네 식의 결과와 자료형을 실행하기 전에 예상해 봅시다. (아래는 실제 결과로 확인한 것입니다.)</p>
+<p class="calc">① <code>1200 * 3</code>: int × int → 곱한다 → <b>3600</b>, int<br>
+② <code>10 / 2</code>: 나누기 <code>/</code>는 결과가 항상 float → <b>5.0</b>, float<br>
+③ <code>"10" + "2"</code>: str + str → 이어 붙인다 → <b>'102'</b>, str (12가 아니다)<br>
+④ <code>"7" * "3"</code>: 문자열끼리는 곱할 수 없다 → <b>TypeError</b> (<code>can't multiply sequence by non-int of type 'str'</code>)</p>
+<p>③이 가장 많이 틀리는 곳입니다. 화면에서 숫자를 입력받으면 처음에는 문자열로 들어오기 때문에, 그대로 더하면 이렇게 이어 붙어 버립니다. PY02의 입력받기에서 다시 만납니다.</p>
+</div>
+
+<div class="check" data-q="q3"></div>
+<div class="check" data-q="q4"></div>
+
+<h2>종류는 이름이 아니라 값에 붙어 있다</h2>
+
+<p>PY01·1에서 변수는 값에 붙인 이름표라고 했습니다. 그러면 종류는 이름표에 붙어 있을까요, 값에 붙어 있을까요? 같은 이름에 다른 종류의 값을 대입해 본 실제 결과입니다.</p>
+
+<div class="sample">
+<p class="sample-k">대화형 실행</p>
+<pre><code>&gt;&gt;&gt; price = 1200
+&gt;&gt;&gt; type(price)
+&lt;class 'int'&gt;
+&gt;&gt;&gt; price = "천이백"
+&gt;&gt;&gt; type(price)
+&lt;class 'str'&gt;</code></pre>
+</div>
+
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 180" role="img" aria-label="이름표 price가 처음에는 int 값 1200을 가리켰다(점선, 지금은 끊김). price = &quot;천이백&quot; 다음에는 str 값 &quot;천이백&quot;을 가리킨다. 오른쪽에 type(price)가 처음에는 class 'int', 다음에는 class 'str'로 나온다고 적혀 있다.">
+<path class="f-soft" d="M40 90 L54 76 H150 V104 H54 Z"/>
+<text class="f-t f-b" x="100" y="95" text-anchor="middle" font-family="Consolas, monospace">price</text>
+<line class="f-dash" x1="150" y1="88" x2="276" y2="50"/>
+<rect class="f-none" x="280" y="28" width="120" height="40" rx="4" stroke-dasharray="5 4"/>
+<text class="f-t" x="340" y="53" text-anchor="middle" font-family="Consolas, monospace">1200</text>
+<text class="f-s" x="410" y="53">int</text>
+<line class="f-line" x1="150" y1="92" x2="276" y2="130" marker-end="url(#f-arrow)"/>
+<rect class="f-box" x="280" y="112" width="120" height="40" rx="4"/>
+<text class="f-t f-b" x="340" y="137" text-anchor="middle" font-family="Consolas, monospace">"천이백"</text>
+<text class="f-s" x="410" y="137">str</text>
+<line class="f-dash" x1="470" y1="14" x2="470" y2="166"/>
+<text class="f-s" x="490" y="38">처음 (price = 1200)</text>
+<text class="f-s f-ink-t" x="490" y="58" font-family="Consolas, monospace">type(price) → &lt;class 'int'&gt;</text>
+<text class="f-s" x="490" y="122">다음 (price = "천이백")</text>
+<text class="f-s f-ink-t" x="490" y="142" font-family="Consolas, monospace">type(price) → &lt;class 'str'&gt;</text>
+</svg>
+<figcaption>이름표는 옮겨 붙을 뿐이고, int·str이라는 종류는 각 값이 지니고 있다.</figcaption>
+</figure>
+
+<p><code>type(price)</code>는 "price라는 이름의 종류"가 아니라 <b>"price가 지금 가리키는 값의 종류"</b>를 알려 줍니다. 그래서 같은 이름이라도 언제 묻느냐에 따라 답이 다릅니다. Python처럼 변수 이름에 종류를 미리 정해 두지 않는 언어가 있고, C나 Java처럼 이름을 만들 때 종류를 정해 두어야 하는 언어도 있습니다.</p>
+
+<div class="box trap">
+<p class="box-k">흔한 실수</p>
+<p><b>"변수 price는 int형이다"라고 못박기.</b> 정확히는 "price가 <b>지금</b> 가리키는 값이 int다"입니다. 프로그램 중간에 같은 이름에 문자열을 대입해도 Python은 막지 않습니다. 그래서 오히려 한 이름에는 한 종류의 값만 넣는 습관이 중요합니다. 가격은 늘 int, 이름은 늘 str처럼 정해 두면 <code>7 + "7"</code> 같은 TypeError를 미리 피할 수 있습니다.</p>
+</div>
+
+<div class="check" data-q="q5"></div>
+
+<h2>정수와 실수는 왜 따로 있나</h2>
+
+<p>수학에서는 7과 7.0이 같은 수입니다. Python도 둘을 비교하면 같다고 답합니다(<code>7 == 7.0</code> → <code>True</code>). 그런데도 종류를 나누는 까닭은 컴퓨터가 둘을 <b>저장하는 방식</b>이 다르기 때문입니다.</p>
+
+<ul>
+<li><b>int</b>는 정확합니다. 자릿수가 아무리 많아도 끝자리까지 틀리지 않습니다.</li>
+<li><b>float</b>는 소수를 0과 1의 조합(2진법)으로 <b>근사</b>해서 저장합니다. 유효숫자가 대략 15~17자리로 정해져 있어서, 그보다 아래 자리에는 아주 작은 오차가 생길 수 있습니다.</li>
+</ul>
+
+<div class="sample">
+<p class="sample-k">대화형 실행 (실제 결과)</p>
+<pre><code>&gt;&gt;&gt; 0.1 + 0.2
+0.30000000000000004
+&gt;&gt;&gt; 0.1 + 0.2 == 0.3
+False
+&gt;&gt;&gt; 1 / 3
+0.3333333333333333</code></pre>
+</div>
+
+<p>0.1과 0.2는 2진법으로 딱 떨어지지 않는 수입니다. 10진법에서 1/3을 0.333…으로 끝없이 써야 하는 것과 같은 사정입니다. 그래서 각각 가장 가까운 값으로 저장되고, 둘을 더하면 0.3에서 아주 조금 벗어난 값이 됩니다. Python에게 소수 20자리까지 보여 달라고 하면 실제로 저장된 값이 드러납니다.</p>
+
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 196" role="img" aria-label="0.3 부근을 아주 크게 확대한 수직선. 수학의 0.3을 가운데에 두고, 왼쪽으로 조금 떨어진 곳에 코드에 0.3이라고 쓰면 실제 저장되는 0.29999999999999998890…, 오른쪽으로 더 떨어진 곳에 0.1 + 0.2의 결과 0.30000000000000004441…이 있다. 두 저장값이 서로 달라서 0.1 + 0.2 == 0.3은 False이다.">
+<line class="f-ink" x1="40" y1="100" x2="720" y2="100"/>
+<line class="f-ink" x1="233" y1="92" x2="233" y2="108"/>
+<circle class="f-fill" cx="233" cy="100" r="4"/>
+<text class="f-s f-ink-t" x="233" y="70" text-anchor="middle">0.3 이라고 쓴 값</text>
+<text class="f-s" x="233" y="134" text-anchor="middle" font-family="Consolas, monospace">0.29999999999999998890…</text>
+<line class="f-line" x1="300" y1="44" x2="300" y2="108"/>
+<text class="f-s f-ink-t f-b" x="300" y="34" text-anchor="middle">수학의 0.3</text>
+<line class="f-ink" x1="566" y1="92" x2="566" y2="108"/>
+<circle class="f-over" cx="566" cy="100" r="5"/>
+<text class="f-s f-ink-t" x="566" y="70" text-anchor="middle">0.1 + 0.2 의 결과</text>
+<text class="f-s" x="566" y="134" text-anchor="middle" font-family="Consolas, monospace">0.30000000000000004441…</text>
+<path class="f-line" d="M40 160 v-6 v12 v-6 h60 v-6 v12"/>
+<text class="f-s" x="110" y="165">= 0.00000000000000001 (10의 −17제곱)</text>
+</svg>
+<figcaption>0.3 부근을 아주 크게 확대한 수직선. 점 사이 거리는 왼쪽 아래 눈금자에 맞춘 실제 비율이다. 두 점이 달라서 == 는 False가 된다.</figcaption>
+</figure>
+
+<p>이 오차는 Python만의 문제가 아니라 거의 모든 프로그래밍 언어와 엑셀에도 있는 성질입니다. Python의 float는 IEEE 754 배정밀도(64비트, 유효 비트 53개) 형식이고, 실무에서 지킬 것은 세 가지입니다.</p>
+<ol>
+<li>오차는 계산 오류가 아니라 표현 오차다. 크기는 상대적으로 약 10의 −16제곱 수준이다(위 예에서는 소수 17째 자리).</li>
+<li>실수끼리 <code>==</code>로 "딱 같은가"를 묻는 것은 피한다. 대신 "충분히 가까운가"를 묻는 법은 PY02와 수치계산(OP) 단원에서 다룹니다.</li>
+<li>돈처럼 정확해야 하는 값은 <b>원 단위 정수(int)</b>로 다룬다. 1,200원은 <code>1200</code>으로 씁니다.</li>
+</ol>
+
+<div class="why">
+<p class="box-k">왜 그럴까?</p>
+<p>오차가 있는 float를 아예 없애고 모든 수를 정확한 int처럼 다루면 안 될까요?</p>
+<details><summary>모범 답 보기</summary><p>1/3처럼 끝없이 이어지는 소수는 어떤 방식으로도 유한한 칸에 정확히 담을 수 없습니다. 또 과학·통계 계산에는 아주 큰 수와 아주 작은 수가 함께 나오는데, float는 정해진 칸 수로 넓은 범위를 빠르게 다룰 수 있게 설계되었습니다. 정확함을 조금 양보하고 범위와 속도를 얻은 것입니다. 필요하면 분수(fractions)나 정확한 10진 소수(decimal)를 다루는 도구를 따로 쓸 수 있습니다.</p></details>
+</div>
+
+<div class="check" data-q="q6"></div>
+
+<h2>다음에 이어지는 곳</h2>
+<ul>
+<li><b>PY01·3</b>: int와 float의 계산 규칙을 연산자마다 봅니다. <code>/</code>와 <code>//</code>가 결과의 종류를 어떻게 바꾸는지가 핵심입니다.</li>
+<li><b>PY02</b>: 문자열을 더 자세히 다루고, <code>int("7")</code>처럼 종류를 바꾸는 법(형 변환), 비교와 bool을 배웁니다.</li>
+<li><b>DA02 데이터의 종류</b>: 표의 한 열이 수치형인지 범주형인지 가르는 일도 결국 "이 값으로 어떤 계산을 해도 되는가"라는 같은 질문입니다.</li>
+</ul>
+
+<h2>한눈에 정리</h2>
+
+<div class="table-wrap">
+<table>
+<tr><th>묻는 것</th><th>답</th></tr>
+<tr><td>자료형</td><td>값의 종류. 할 수 있는 계산을 정한다 (<b class="key">자료형</b>, type)</td></tr>
+<tr><td>기본 넷</td><td><b class="key">int</b>(정수) · <b class="key">float</b>(실수) · <b class="key">str</b>(문자열) · <b class="key">bool</b>(True/False)</td></tr>
+<tr><td>확인하는 법</td><td><code>type(값)</code> → <code>&lt;class 'int'&gt;</code> 꼴</td></tr>
+<tr><td><code>7</code> / <code>7.0</code> / <code>"7"</code></td><td>int / float / str. 모양이 비슷해도 다른 값</td></tr>
+<tr><td><code>+</code>의 뜻</td><td>수끼리 더하기, 문자열끼리 <b class="key">이어 붙이기</b>, int + str은 <b class="key">TypeError</b></td></tr>
+<tr><td>int와 float 섞기</td><td>계산 가능, 결과는 float (<code>3 + 2.0</code> → <code>5.0</code>). <code>/</code>의 결과는 늘 float</td></tr>
+<tr><td>종류는 어디에</td><td>이름이 아니라 <b class="key">값</b>에 붙어 있다</td></tr>
+<tr><td>float 오차</td><td><code>0.1 + 0.2</code> → <code>0.30000000000000004</code>. 실수끼리 == 는 피하고, 돈은 int로</td></tr>
+</table>
+</div>
+
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>Python의 값에는 int·float·str·bool 같은 종류가 붙어 있고, 같은 기호라도 종류에 따라 계산이 달라지므로 헷갈리면 type()으로 확인한다.</p></div>
+
+<h2>확인 문제</h2>
+<p>본문 중간에서 푼 문제 말고 남은 문제입니다. 보기를 누르면 바로 정답과 해설이 나옵니다.</p>
+<div id="quiz"></div>
+
+<section class="work" id="tools"></section>
+
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

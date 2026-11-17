@@ -77,9 +77,12 @@
       rd.onload = function () {
         try {
           var data = JSON.parse(rd.result);
-          if (!data || typeof data.q !== "object") throw 0;
+          if (!B.validBackup(data)) throw 0;
           if (!confirm("이 기기의 기록을 파일 내용으로 바꿉니다. 계속할까요?")) return;
-          B.save(data);
+          if (!B.save(data)) {
+            msg.textContent = "기록을 저장하지 못했습니다. 이 기기의 기존 기록은 보존됩니다.";
+            return;
+          }
           location.reload();
         } catch (e) { msg.textContent = "공부 기록 파일이 아닙니다."; }
       };

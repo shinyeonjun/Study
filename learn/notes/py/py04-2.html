@@ -1,0 +1,440 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>for 반복과 누적값 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e8c'/%3E%3Cpath d='M8 22V10m8 12V14m8 8V6' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="PY04-2">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+
+<header class="chapter">
+<p class="chap-sub">Python과 프로그래밍 사고 · PY04 반복과 목록</p>
+<p class="chap-num">PY04·2</p>
+<h1>for 반복과 누적값</h1>
+<p class="lead">점수 리스트 <code>[80, 90, 70]</code>의 합을 구하려면 머릿속에서 "0에 80을 더하고, 거기에 90을 더하고, 거기에 70을 더한다"를 합니다. 같은 동작(더하기)을 값마다 한 번씩 되풀이하는 것입니다. 이 장에서는 이 되풀이를 컴퓨터에 맡기는 <code>for</code> 문과, 숫자를 차례로 만들어 주는 <code>range</code>, 그리고 반복하면서 값을 쌓아 가는 누적값을 한 줄씩 따라가며 배웁니다.</p>
+</header>
+
+<div class="goal">
+<h2>이 장을 읽고 나면</h2>
+<ul>
+<li><code>for 변수 in 리스트:</code>가 몇 번, 어떤 값으로 몸통을 실행하는지 말할 수 있다.</li>
+<li>들여쓰기로 반복의 몸통이 정해진다는 것을 알고, 줄의 위치에 따라 출력이 어떻게 달라지는지 예측할 수 있다.</li>
+<li><code>range(시작, 끝, 간격)</code>이 만드는 수를 손으로 적을 수 있다.</li>
+<li><code>total += x</code> 누적을 추적표(회차별 변수 값 표)로 한 단계씩 따라갈 수 있다.</li>
+<li>누적 변수를 반복 안에서 초기화하는 실수를 찾아 고칠 수 있다.</li>
+</ul>
+</div>
+
+<h2>같은 일을 값마다 한 번씩: for 문</h2>
+
+<p>앞 장(PY04·1)에서 리스트를 배웠습니다. 리스트의 값을 하나씩 출력하려면 지금까지 배운 방법으로는 이렇게 적어야 합니다.</p>
+<pre><code>print(scores[0])
+print(scores[1])
+print(scores[2])</code></pre>
+<p>값이 3개면 세 줄, 300개면 300줄입니다. 바뀌는 것은 대괄호 안의 번호뿐이고 하는 일은 똑같습니다. 이렇게 같은 일을 되풀이시키는 문법을 <b class="key">반복문(loop)</b>이라고 합니다.</p>
+
+<pre><code>scores = [80, 90, 70]
+for s in scores:
+    print(s)
+print("끝")</code></pre>
+<div class="sample"><p class="sample-k">실행 결과</p><pre><code>80
+90
+70
+끝</code></pre></div>
+
+<p>둘째 줄 <code>for s in scores:</code>는 "scores 안의 값을 하나씩 꺼내 <b>s</b>라고 부르면서, 아래 몸통을 실행하라"로 읽습니다. 한국어로 옮기면 "scores의 각 s에 대해"입니다.</p>
+
+<div class="box">
+<p class="box-k">정의 · for 문</p>
+<pre><code>for 변수 in 리스트:
+    몸통</code></pre>
+<p>리스트의 원소를 <b>앞에서부터 하나씩</b> 꺼내 변수에 넣고, 넣을 때마다 몸통을 한 번 실행합니다. 원소가 n개면 몸통은 <b>n번</b> 실행됩니다. 원소를 다 꺼내면 반복이 끝나고 몸통 다음 줄로 넘어갑니다.</p>
+<ul>
+<li><b>변수</b>(여기서는 <code>s</code>): 매 회차의 원소를 담는 이름. 이름은 마음대로 지을 수 있습니다(<code>score</code>, <code>x</code> 등). 이 변수를 <b class="key">반복 변수</b>라고 부릅니다.</li>
+<li><b>콜론(쌍점) <code>:</code></b>: 줄 끝에 꼭 붙입니다. PY03의 <code>if</code>와 같습니다.</li>
+<li><b class="key">몸통</b>: 콜론 다음 줄부터 <b>같은 만큼 들여쓴 줄들</b>. PY03에서 "블록"이라고 부른 것과 같습니다. 보통 빈칸 4개를 씁니다.</li>
+</ul>
+</div>
+
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 300" role="img" aria-label="for 문의 흐름도. 맨 위 for s in scores에서 시작해 꺼낼 값이 남았나를 묻는 칸으로 간다. 예이면 s에 다음 값을 넣고 몸통 print(s)를 실행한 뒤 다시 꺼낼 값이 남았나로 돌아간다. 아니오이면 왼쪽으로 빠져 반복 다음 줄 print 끝을 실행한다.">
+<rect class="f-box" x="280" y="16" width="200" height="40" rx="4"/>
+<text class="f-t" x="380" y="41" text-anchor="middle">for s in scores:</text>
+<line class="f-line" x1="380" y1="56" x2="380" y2="86" marker-end="url(#f-arrow)"/>
+<rect class="f-soft" x="280" y="90" width="200" height="44" rx="4"/>
+<text class="f-t" x="380" y="117" text-anchor="middle">꺼낼 값이 남았나?</text>
+<line class="f-line" x1="380" y1="134" x2="380" y2="164" marker-end="url(#f-arrow)"/>
+<text class="f-s" x="390" y="154" text-anchor="start">예</text>
+<rect class="f-box" x="280" y="168" width="200" height="40" rx="4"/>
+<text class="f-t" x="380" y="193" text-anchor="middle">s ← 다음 값</text>
+<line class="f-line" x1="380" y1="208" x2="380" y2="238" marker-end="url(#f-arrow)"/>
+<rect class="f-box" x="280" y="242" width="200" height="40" rx="4"/>
+<text class="f-t" x="380" y="267" text-anchor="middle">몸통: print(s)</text>
+<path class="f-line" d="M480 262 H560 V112 H484" marker-end="url(#f-arrow)"/>
+<text class="f-s" x="570" y="186" text-anchor="start">몸통이 끝나면</text>
+<text class="f-s" x="570" y="204" text-anchor="start">다시 위로</text>
+<line class="f-line" x1="280" y1="112" x2="214" y2="112" marker-end="url(#f-arrow)"/>
+<text class="f-s" x="248" y="102" text-anchor="middle">아니오</text>
+<rect class="f-box" x="30" y="90" width="180" height="44" rx="4"/>
+<text class="f-t" x="120" y="117" text-anchor="middle">print("끝")</text>
+<text class="f-s" x="120" y="154" text-anchor="middle">반복 다음 줄</text>
+</svg>
+<figcaption>for 문은 "남았나?"를 물을 때마다 하나씩 꺼내고, 더 꺼낼 것이 없을 때 빠져나간다.</figcaption>
+</figure>
+
+<p>이 흐름을 실제 값으로 따라가 봅시다. 줄 번호를 붙이면 1번 줄 <code>scores = …</code>, 2번 줄 <code>for …</code>, 3번 줄 <code>print(s)</code>, 4번 줄 <code>print("끝")</code>입니다. 컴퓨터가 실제로 어떤 줄을 어떤 순서로 실행하는지 적은 표를 <b class="key">추적표(trace table)</b>라고 합니다. 반복문을 이해하는 가장 확실한 방법입니다.</p>
+
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 330" role="img" aria-label="추적표. 순서 1에서 1번 줄을 실행해 scores를 만든다. 순서 2에서 2번 줄, s는 80. 순서 3에서 3번 줄, 화면에 80. 순서 4에서 2번 줄, s는 90. 순서 5에서 3번 줄, 90 출력. 순서 6에서 2번 줄, s는 70. 순서 7에서 3번 줄, 70 출력. 순서 8에서 2번 줄, 남은 값 없음으로 반복 끝. 순서 9에서 4번 줄, 끝 출력.">
+<text class="f-cap" x="80" y="30" text-anchor="middle">순서</text>
+<text class="f-cap" x="220" y="30" text-anchor="middle">실행한 줄</text>
+<text class="f-cap" x="420" y="30" text-anchor="middle">s의 값</text>
+<text class="f-cap" x="620" y="30" text-anchor="middle">화면 출력</text>
+<line class="f-ink" x1="20" y1="42" x2="740" y2="42"/>
+<text class="f-t" x="80" y="66" text-anchor="middle">1</text><text class="f-t" x="220" y="66" text-anchor="middle">1번 (scores 만들기)</text><text class="f-s" x="420" y="66" text-anchor="middle">없음</text>
+<text class="f-t" x="80" y="96" text-anchor="middle">2</text><text class="f-t" x="220" y="96" text-anchor="middle">2번 (for)</text><text class="f-t f-b" x="420" y="96" text-anchor="middle">80</text>
+<text class="f-t" x="80" y="126" text-anchor="middle">3</text><text class="f-t" x="220" y="126" text-anchor="middle">3번 (몸통)</text><text class="f-t" x="420" y="126" text-anchor="middle">80</text><text class="f-t" x="620" y="126" text-anchor="middle">80</text>
+<line class="f-dash" x1="20" y1="138" x2="740" y2="138"/>
+<text class="f-t" x="80" y="160" text-anchor="middle">4</text><text class="f-t" x="220" y="160" text-anchor="middle">2번 (for)</text><text class="f-t f-b" x="420" y="160" text-anchor="middle">90</text>
+<text class="f-t" x="80" y="190" text-anchor="middle">5</text><text class="f-t" x="220" y="190" text-anchor="middle">3번 (몸통)</text><text class="f-t" x="420" y="190" text-anchor="middle">90</text><text class="f-t" x="620" y="190" text-anchor="middle">90</text>
+<line class="f-dash" x1="20" y1="202" x2="740" y2="202"/>
+<text class="f-t" x="80" y="224" text-anchor="middle">6</text><text class="f-t" x="220" y="224" text-anchor="middle">2번 (for)</text><text class="f-t f-b" x="420" y="224" text-anchor="middle">70</text>
+<text class="f-t" x="80" y="254" text-anchor="middle">7</text><text class="f-t" x="220" y="254" text-anchor="middle">3번 (몸통)</text><text class="f-t" x="420" y="254" text-anchor="middle">70</text><text class="f-t" x="620" y="254" text-anchor="middle">70</text>
+<line class="f-dash" x1="20" y1="266" x2="740" y2="266"/>
+<text class="f-t" x="80" y="288" text-anchor="middle">8</text><text class="f-t" x="220" y="288" text-anchor="middle">2번 (for)</text><text class="f-s" x="420" y="288" text-anchor="middle">남은 값 없음 → 반복 끝</text>
+<text class="f-t" x="80" y="318" text-anchor="middle">9</text><text class="f-t" x="220" y="318" text-anchor="middle">4번 (반복 다음)</text><text class="f-t" x="620" y="318" text-anchor="middle">끝</text>
+</svg>
+<figcaption>점선으로 나눈 묶음 하나가 반복 한 회차다. 2번 줄은 4번, 몸통 3번 줄은 3번 실행된다.</figcaption>
+</figure>
+
+<p>표에서 볼 것은 두 가지입니다. 첫째, <b>2번 줄(for)은 원소 수보다 한 번 더</b> 실행됩니다. 마지막에 "남은 값이 있나?"를 한 번 더 묻고 "없다"를 확인해야 빠져나가기 때문입니다. 둘째, 4번 줄은 들여쓰지 않았으므로 몸통이 아니고, 반복이 다 끝난 뒤 <b>한 번만</b> 실행됩니다.</p>
+
+<div class="box trap">
+<p class="box-k">흔한 실수 · 들여쓰기를 빼먹기</p>
+<p>몸통을 들여쓰지 않으면 Python은 실행조차 하지 않고 오류를 냅니다.</p>
+<pre><code>scores = [80, 90, 70]
+for s in scores:
+print(s)</code></pre>
+<pre><code>  File "C:\Users\...\practice.py", line 3
+    print(s)
+    ^^^^^
+IndentationError: expected an indented block after 'for' statement on line 2</code></pre>
+<p>"2번 줄의 for 문 다음에 들여쓴 블록이 있어야 한다"는 뜻입니다. IndentationError는 "들여쓰기 오류"입니다. Python에서 들여쓰기는 보기 좋게 하려는 장식이 아니라 <b>어디까지가 몸통인지 정하는 문법</b>입니다. 빈칸과 탭(Tab) 문자를 섞어 쓰면 눈에는 같아 보여도 오류가 날 수 있으니, 편집기의 설정대로 빈칸 4개를 쓰세요.</p>
+</div>
+
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q8"></div>
+
+<h2>숫자를 차례로 만들기: range <span class="tag memo">외우기</span></h2>
+
+<p>"안녕"을 세 번 출력하고 싶다면, 반복할 리스트가 따로 없습니다. 이때는 <code>range</code>로 <b>정해진 범위의 정수를 차례로</b> 만들어 반복합니다. range는 영어로 "범위"입니다.</p>
+
+<pre><code>for i in range(3):
+    print("안녕", i)</code></pre>
+<div class="sample"><p class="sample-k">실행 결과</p><pre><code>안녕 0
+안녕 1
+안녕 2</code></pre></div>
+
+<p><code>range(3)</code>은 0, 1, 2 세 수를 차례로 내줍니다. 3은 들어가지 않습니다. 앞 장 슬라이싱의 "끝은 포함하지 않는다"와 같은 규칙입니다. range가 내주는 수를 한눈에 보려면 <code>list(range(…))</code>처럼 리스트로 바꿔 출력합니다. (그냥 <code>print(range(3))</code>을 하면 <code>range(0, 3)</code>이라는 글자만 보입니다. range는 수를 미리 다 만들어 두지 않고 반복할 때 하나씩 내주기 때문입니다.)</p>
+
+<pre><code>print(list(range(5)))
+print(list(range(1, 6)))
+print(list(range(0, 10, 2)))
+print(list(range(5, 0, -1)))
+print(list(range(3, 3)))
+print(len(range(1, 10)))</code></pre>
+<div class="sample"><p class="sample-k">실행 결과</p><pre><code>[0, 1, 2, 3, 4]
+[1, 2, 3, 4, 5]
+[0, 2, 4, 6, 8]
+[5, 4, 3, 2, 1]
+[]
+9</code></pre></div>
+
+<div class="box">
+<p class="box-k">정의 · range</p>
+<p><code>range(끝)</code>: 0부터 끝 − 1까지.<br>
+<code>range(시작, 끝)</code>: 시작부터 끝 − 1까지.<br>
+<code>range(시작, 끝, 간격)</code>: 시작부터 간격씩 더하며, 끝에 닿기 <b>전까지</b>. 간격이 음수면 거꾸로 셉니다.</p>
+<p>세 경우 모두 <b class="key">끝은 포함하지 않습니다</b>. 간격이 1일 때 만들어지는 수의 개수는 <b>끝 − 시작</b>입니다.</p>
+</div>
+
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 250" role="img" aria-label="0부터 10까지 눈금이 같은 간격으로 있는 수직선 세 개. (가) range(5): 0, 1, 2, 3, 4에 채운 점, 5에 빈 원. (나) range(1, 6): 1부터 5까지 채운 점, 6에 빈 원. (다) range(0, 10, 2): 0, 2, 4, 6, 8에 채운 점, 10에 빈 원.">
+<text class="f-s f-ink-t" x="150" y="58" text-anchor="end">(가) range(5)</text>
+<text class="f-s" x="150" y="78" text-anchor="end">0, 1, 2, 3, 4</text>
+<line class="f-ink" x1="170" y1="60" x2="690" y2="60"/>
+<text class="f-s f-ink-t" x="150" y="138" text-anchor="end">(나) range(1, 6)</text>
+<text class="f-s" x="150" y="158" text-anchor="end">1, 2, 3, 4, 5</text>
+<line class="f-ink" x1="170" y1="140" x2="690" y2="140"/>
+<text class="f-s f-ink-t" x="150" y="218" text-anchor="end">(다) range(0, 10, 2)</text>
+<text class="f-s" x="150" y="238" text-anchor="end">0, 2, 4, 6, 8</text>
+<line class="f-ink" x1="170" y1="220" x2="690" y2="220"/>
+<g>
+<line class="f-ink" x1="170" y1="55" x2="170" y2="65"/><line class="f-ink" x1="222" y1="55" x2="222" y2="65"/><line class="f-ink" x1="274" y1="55" x2="274" y2="65"/><line class="f-ink" x1="326" y1="55" x2="326" y2="65"/><line class="f-ink" x1="378" y1="55" x2="378" y2="65"/><line class="f-ink" x1="430" y1="55" x2="430" y2="65"/><line class="f-ink" x1="482" y1="55" x2="482" y2="65"/><line class="f-ink" x1="534" y1="55" x2="534" y2="65"/><line class="f-ink" x1="586" y1="55" x2="586" y2="65"/><line class="f-ink" x1="638" y1="55" x2="638" y2="65"/><line class="f-ink" x1="690" y1="55" x2="690" y2="65"/>
+<line class="f-ink" x1="170" y1="135" x2="170" y2="145"/><line class="f-ink" x1="222" y1="135" x2="222" y2="145"/><line class="f-ink" x1="274" y1="135" x2="274" y2="145"/><line class="f-ink" x1="326" y1="135" x2="326" y2="145"/><line class="f-ink" x1="378" y1="135" x2="378" y2="145"/><line class="f-ink" x1="430" y1="135" x2="430" y2="145"/><line class="f-ink" x1="482" y1="135" x2="482" y2="145"/><line class="f-ink" x1="534" y1="135" x2="534" y2="145"/><line class="f-ink" x1="586" y1="135" x2="586" y2="145"/><line class="f-ink" x1="638" y1="135" x2="638" y2="145"/><line class="f-ink" x1="690" y1="135" x2="690" y2="145"/>
+<line class="f-ink" x1="170" y1="215" x2="170" y2="225"/><line class="f-ink" x1="222" y1="215" x2="222" y2="225"/><line class="f-ink" x1="274" y1="215" x2="274" y2="225"/><line class="f-ink" x1="326" y1="215" x2="326" y2="225"/><line class="f-ink" x1="378" y1="215" x2="378" y2="225"/><line class="f-ink" x1="430" y1="215" x2="430" y2="225"/><line class="f-ink" x1="482" y1="215" x2="482" y2="225"/><line class="f-ink" x1="534" y1="215" x2="534" y2="225"/><line class="f-ink" x1="586" y1="215" x2="586" y2="225"/><line class="f-ink" x1="638" y1="215" x2="638" y2="225"/><line class="f-ink" x1="690" y1="215" x2="690" y2="225"/>
+</g>
+<g>
+<text class="f-s" x="170" y="86" text-anchor="middle">0</text><text class="f-s" x="222" y="86" text-anchor="middle">1</text><text class="f-s" x="274" y="86" text-anchor="middle">2</text><text class="f-s" x="326" y="86" text-anchor="middle">3</text><text class="f-s" x="378" y="86" text-anchor="middle">4</text><text class="f-s" x="430" y="86" text-anchor="middle">5</text><text class="f-s" x="482" y="86" text-anchor="middle">6</text><text class="f-s" x="534" y="86" text-anchor="middle">7</text><text class="f-s" x="586" y="86" text-anchor="middle">8</text><text class="f-s" x="638" y="86" text-anchor="middle">9</text><text class="f-s" x="690" y="86" text-anchor="middle">10</text>
+<text class="f-s" x="170" y="166" text-anchor="middle">0</text><text class="f-s" x="222" y="166" text-anchor="middle">1</text><text class="f-s" x="274" y="166" text-anchor="middle">2</text><text class="f-s" x="326" y="166" text-anchor="middle">3</text><text class="f-s" x="378" y="166" text-anchor="middle">4</text><text class="f-s" x="430" y="166" text-anchor="middle">5</text><text class="f-s" x="482" y="166" text-anchor="middle">6</text><text class="f-s" x="534" y="166" text-anchor="middle">7</text><text class="f-s" x="586" y="166" text-anchor="middle">8</text><text class="f-s" x="638" y="166" text-anchor="middle">9</text><text class="f-s" x="690" y="166" text-anchor="middle">10</text>
+<text class="f-s" x="170" y="246" text-anchor="middle">0</text><text class="f-s" x="222" y="246" text-anchor="middle">1</text><text class="f-s" x="274" y="246" text-anchor="middle">2</text><text class="f-s" x="326" y="246" text-anchor="middle">3</text><text class="f-s" x="378" y="246" text-anchor="middle">4</text><text class="f-s" x="430" y="246" text-anchor="middle">5</text><text class="f-s" x="482" y="246" text-anchor="middle">6</text><text class="f-s" x="534" y="246" text-anchor="middle">7</text><text class="f-s" x="586" y="246" text-anchor="middle">8</text><text class="f-s" x="638" y="246" text-anchor="middle">9</text><text class="f-s" x="690" y="246" text-anchor="middle">10</text>
+</g>
+<circle class="f-fill" cx="170" cy="60" r="6"/><circle class="f-fill" cx="222" cy="60" r="6"/><circle class="f-fill" cx="274" cy="60" r="6"/><circle class="f-fill" cx="326" cy="60" r="6"/><circle class="f-fill" cx="378" cy="60" r="6"/><circle class="f-box" cx="430" cy="60" r="6"/>
+<circle class="f-fill" cx="222" cy="140" r="6"/><circle class="f-fill" cx="274" cy="140" r="6"/><circle class="f-fill" cx="326" cy="140" r="6"/><circle class="f-fill" cx="378" cy="140" r="6"/><circle class="f-fill" cx="430" cy="140" r="6"/><circle class="f-box" cx="482" cy="140" r="6"/>
+<circle class="f-fill" cx="170" cy="220" r="6"/><circle class="f-fill" cx="274" cy="220" r="6"/><circle class="f-fill" cx="378" cy="220" r="6"/><circle class="f-fill" cx="482" cy="220" r="6"/><circle class="f-fill" cx="586" cy="220" r="6"/><circle class="f-box" cx="690" cy="220" r="6"/>
+<text class="f-s" x="440" y="36" text-anchor="start">빈 원 = 끝 (포함 안 됨)</text>
+</svg>
+<figcaption>채운 점이 range가 내주는 수, 빈 원이 끝 값이다. 끝 값은 언제나 빠진다.</figcaption>
+</figure>
+
+<div class="box ex">
+<p class="box-k">풀이 예제 · range(2, 11, 3)이 내주는 수</p>
+<p class="calc">① 시작 2부터: 2<br>
+② 3을 더해: 5<br>
+③ 3을 더해: 8<br>
+④ 3을 더하면 11. 끝 11에 닿았으므로 넣지 않고 멈춤<br>
+⑤ 결과: 2, 5, 8 (세 개)</p>
+</div>
+
+<h3>인덱스로 반복하기</h3>
+<p>range와 <code>len</code>을 함께 쓰면 리스트의 인덱스 0, 1, 2, …를 차례로 만들 수 있습니다. 값과 함께 "몇 번 칸인지"도 필요할 때 씁니다.</p>
+<pre><code>names = ["가람", "나래", "다온"]
+for i in range(len(names)):
+    print(i, names[i])</code></pre>
+<div class="sample"><p class="sample-k">실행 결과</p><pre><code>0 가람
+1 나래
+2 다온</code></pre></div>
+<p><code>len(names)</code>는 3이므로 <code>range(3)</code>, 곧 0, 1, 2가 됩니다. 마지막 인덱스 2가 길이 3보다 하나 작다는 것(PY04·1)과 range가 끝을 빼는 것이 정확히 맞물립니다. 그래서 <code>range(len(리스트))</code>는 IndexError 없이 모든 칸을 한 번씩 돕니다.</p>
+
+<div class="check" data-q="q2"></div>
+<div class="check" data-q="q4"></div>
+
+<h2>반복하며 쌓기: 누적값 <span class="tag grasp">이해하기</span></h2>
+
+<p>이제 처음 질문으로 돌아가 점수의 합을 구해 봅시다. 지금까지의 합을 담아 둘 변수를 하나 두고, 회차마다 그 변수에 원소를 더하면 됩니다.</p>
+
+<pre><code>scores = [80, 90, 70]
+total = 0
+for s in scores:
+    total += s
+    print("s =", s, "total =", total)
+print("합계:", total)
+print("평균:", total / len(scores))</code></pre>
+<div class="sample"><p class="sample-k">실행 결과</p><pre><code>s = 80 total = 80
+s = 90 total = 170
+s = 70 total = 240
+합계: 240
+평균: 80.0</code></pre></div>
+
+<div class="side"><b>문법</b> <code>total += s</code>는 <code>total = total + s</code>를 줄여 쓴 것입니다. "total에 s를 더해서, 그 결과를 다시 total에 넣어라"로 읽습니다. <code>-=</code>, <code>*=</code>도 같은 방식입니다(<code>n -= 1</code>은 <code>n = n - 1</code>). 수학의 등호와 달리 <code>=</code>는 "오른쪽을 계산해 왼쪽 이름에 넣어라"라는 명령이라서 <code>total = total + s</code>가 말이 됩니다(PY01의 대입).</div>
+
+<div class="box">
+<p class="box-k">정의 · 누적값</p>
+<p><b class="key">누적 변수</b>(accumulator)는 반복하면서 값을 <b>계속 쌓아 가는</b> 변수입니다. 세 단계로 씁니다.</p>
+<p class="calc">① 반복 <b>전에</b> 시작값을 넣는다 (<b class="key">초기화</b>): 합이면 <code>total = 0</code><br>
+② 반복 <b>안에서</b> 원소를 하나씩 반영한다: <code>total += s</code><br>
+③ 반복 <b>뒤에</b> 결과를 쓴다: <code>print(total)</code></p>
+</div>
+
+<p>위 코드를 추적표로 따라가 봅시다. 몸통이 실행될 때마다 total이 어떻게 바뀌는지가 핵심입니다.</p>
+
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 290" role="img" aria-label="누적 추적표. 열은 회차, s, 더하기 전 total, 계산, 더한 뒤 total. 시작: total은 0. 1회차: s는 80, 0 더하기 80은 80. 2회차: s는 90, 80 더하기 90은 170. 3회차: s는 70, 170 더하기 70은 240. 반복 끝: 합계 240, 평균 240 나누기 3은 80.0. 각 회차의 더한 뒤 값이 다음 회차의 더하기 전 값이 된다.">
+<text class="f-cap" x="70" y="30" text-anchor="middle">회차</text>
+<text class="f-cap" x="180" y="30" text-anchor="middle">s</text>
+<text class="f-cap" x="310" y="30" text-anchor="middle">total (전)</text>
+<text class="f-cap" x="480" y="30" text-anchor="middle">total += s</text>
+<text class="f-cap" x="650" y="30" text-anchor="middle">total (후)</text>
+<line class="f-ink" x1="20" y1="44" x2="740" y2="44"/>
+<text class="f-t" x="70" y="76" text-anchor="middle">시작</text>
+<text class="f-s" x="480" y="76" text-anchor="middle">total = 0 (초기화)</text>
+<rect class="f-soft" x="610" y="56" width="80" height="30" rx="4"/>
+<text class="f-t f-b" x="650" y="76" text-anchor="middle">0</text>
+<line class="f-dash" x1="20" y1="96" x2="740" y2="96"/>
+<text class="f-t" x="70" y="126" text-anchor="middle">1</text>
+<text class="f-t" x="180" y="126" text-anchor="middle">80</text>
+<text class="f-t" x="310" y="126" text-anchor="middle">0</text>
+<text class="f-t" x="480" y="126" text-anchor="middle">0 + 80</text>
+<rect class="f-soft" x="610" y="106" width="80" height="30" rx="4"/>
+<text class="f-t f-b" x="650" y="126" text-anchor="middle">80</text>
+<text class="f-t" x="70" y="166" text-anchor="middle">2</text>
+<text class="f-t" x="180" y="166" text-anchor="middle">90</text>
+<text class="f-t" x="310" y="166" text-anchor="middle">80</text>
+<text class="f-t" x="480" y="166" text-anchor="middle">80 + 90</text>
+<rect class="f-soft" x="610" y="146" width="80" height="30" rx="4"/>
+<text class="f-t f-b" x="650" y="166" text-anchor="middle">170</text>
+<text class="f-t" x="70" y="206" text-anchor="middle">3</text>
+<text class="f-t" x="180" y="206" text-anchor="middle">70</text>
+<text class="f-t" x="310" y="206" text-anchor="middle">170</text>
+<text class="f-t" x="480" y="206" text-anchor="middle">170 + 70</text>
+<rect class="f-soft" x="610" y="186" width="80" height="30" rx="4"/>
+<text class="f-t f-b" x="650" y="206" text-anchor="middle">240</text>
+<line class="f-dash" x1="20" y1="226" x2="740" y2="226"/>
+<text class="f-t" x="70" y="256" text-anchor="middle">끝</text>
+<text class="f-t" x="390" y="256" text-anchor="middle">합계 240 · 평균 240 ÷ 3 = 80.0</text>
+<line class="f-ink" x1="610" y1="88" x2="340" y2="110" marker-end="url(#f-arrow)"/>
+<line class="f-ink" x1="610" y1="138" x2="340" y2="150" marker-end="url(#f-arrow)"/>
+<line class="f-ink" x1="610" y1="178" x2="345" y2="190" marker-end="url(#f-arrow)"/>
+</svg>
+<figcaption>오른쪽 칸(후)의 값이 화살표를 따라 다음 줄 왼쪽 칸(전)으로 넘어간다. 이것이 "누적"이다.</figcaption>
+</figure>
+
+<p>표의 마지막 줄을 보면 평균이 <code>80</code>이 아니라 <code>80.0</code>으로 나옵니다. Python에서 <code>/</code> 나눗셈의 결과는 나누어떨어져도 항상 실수(소수점이 있는 수)이기 때문입니다(PY01의 자료형).</p>
+
+<div class="box ex">
+<p class="box-k">풀이 예제 · 1부터 100까지의 합</p>
+<pre><code>total = 0
+for n in range(1, 101):
+    total += n
+print(total)</code></pre>
+<div class="sample"><p class="sample-k">실행 결과</p><pre><code>5050</code></pre></div>
+<p class="calc">① range(1, 101)은 1부터 100까지 (101은 빠짐). 개수 = 101 − 1 = 100개<br>
+② 처음 몇 회차: total = 0 → 0 + 1 = 1 → 1 + 2 = 3 → 3 + 3 = 6 → 6 + 4 = 10 → …<br>
+③ 결과 5050<br>
+④ 검산: 1 + 100, 2 + 99, …처럼 짝을 지으면 합이 101인 짝이 50개 → 101 × 50 = 5050 ✔</p>
+<p>끝을 <code>range(1, 100)</code>으로 쓰면 100이 빠져 4950이 나옵니다. 끝 미포함 규칙은 이렇게 결과를 조용히 바꿉니다. 오류 메시지가 나지 않으니 검산이 중요합니다.</p>
+</div>
+
+<h3>초기화 위치가 틀리면</h3>
+<p>누적 변수의 시작값을 반복 <b>안에</b> 넣으면 어떻게 될까요?</p>
+<pre><code>scores = [80, 90, 70]
+for s in scores:
+    total = 0
+    total += s
+print("합계:", total)</code></pre>
+<div class="sample"><p class="sample-k">실행 결과</p><pre><code>합계: 70</code></pre></div>
+
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 230" role="img" aria-label="두 추적표를 나란히 비교. (가) total = 0을 반복 앞에 둔 경우: 1회차 0에서 80, 2회차 80에서 170, 3회차 170에서 240. 최종 240. (나) total = 0을 반복 안에 둔 경우: 1회차 0에서 80, 2회차 다시 0에서 90, 3회차 다시 0에서 70. 최종 70으로, 마지막 값만 남는다.">
+<text class="f-cap" x="80" y="30" text-anchor="middle">회차</text>
+<text class="f-cap" x="190" y="30" text-anchor="middle">전</text>
+<text class="f-cap" x="300" y="30" text-anchor="middle">후</text>
+<line class="f-ink" x1="30" y1="42" x2="350" y2="42"/>
+<text class="f-t" x="80" y="70" text-anchor="middle">1</text><text class="f-t" x="190" y="70" text-anchor="middle">0</text><text class="f-t" x="300" y="70" text-anchor="middle">80</text>
+<text class="f-t" x="80" y="104" text-anchor="middle">2</text><text class="f-t" x="190" y="104" text-anchor="middle">80</text><text class="f-t" x="300" y="104" text-anchor="middle">170</text>
+<text class="f-t" x="80" y="138" text-anchor="middle">3</text><text class="f-t" x="190" y="138" text-anchor="middle">170</text><text class="f-t" x="300" y="138" text-anchor="middle">240</text>
+<line class="f-ink" x1="30" y1="152" x2="350" y2="152"/>
+<text class="f-t f-b" x="190" y="178" text-anchor="middle">최종 total = 240</text>
+<text class="f-cap" x="190" y="216" text-anchor="middle">(가) 반복 앞에서 0으로</text>
+<line class="f-dash" x1="380" y1="14" x2="380" y2="196"/>
+<text class="f-cap" x="460" y="30" text-anchor="middle">회차</text>
+<text class="f-cap" x="570" y="30" text-anchor="middle">전</text>
+<text class="f-cap" x="680" y="30" text-anchor="middle">후</text>
+<line class="f-ink" x1="410" y1="42" x2="730" y2="42"/>
+<text class="f-t" x="460" y="70" text-anchor="middle">1</text><text class="f-t" x="570" y="70" text-anchor="middle">0</text><text class="f-t" x="680" y="70" text-anchor="middle">80</text>
+<text class="f-t" x="460" y="104" text-anchor="middle">2</text>
+<rect class="f-over" x="545" y="86" width="50" height="26" rx="4"/>
+<text class="f-t" x="570" y="104" text-anchor="middle">0</text><text class="f-t" x="680" y="104" text-anchor="middle">90</text>
+<text class="f-t" x="460" y="138" text-anchor="middle">3</text>
+<rect class="f-over" x="545" y="120" width="50" height="26" rx="4"/>
+<text class="f-t" x="570" y="138" text-anchor="middle">0</text><text class="f-t" x="680" y="138" text-anchor="middle">70</text>
+<line class="f-ink" x1="410" y1="152" x2="730" y2="152"/>
+<text class="f-t f-b" x="570" y="178" text-anchor="middle">최종 total = 70</text>
+<text class="f-cap" x="570" y="216" text-anchor="middle">(나) 반복 안에서 0으로</text>
+</svg>
+<figcaption>(나)는 회차마다 total을 0으로 되돌려서, 앞에서 쌓은 값이 지워지고 마지막 값만 남는다.</figcaption>
+</figure>
+
+<p>반대로 초기화를 아예 빼먹으면, 처음 <code>total += s</code>를 할 때 total이 아직 없어서 오류가 납니다.</p>
+<pre><code>scores = [80, 90, 70]
+for s in scores:
+    total += s</code></pre>
+<div class="sample"><p class="sample-k">실행 결과</p><pre><code>Traceback (most recent call last):
+  File "C:\Users\...\practice.py", line 3, in &lt;module&gt;
+    total += s
+    ^^^^^
+NameError: name 'total' is not defined</code></pre></div>
+<p><code>total += s</code>는 <code>total = total + s</code>이므로, 오른쪽의 <code>total</code>을 읽으려는데 그런 이름이 아직 없다는 뜻입니다.</p>
+
+<div class="box trap">
+<p class="box-k">흔한 실수 · print의 위치</p>
+<p>합계를 한 번만 출력하려 했는데 <code>print("합계:", total)</code>를 몸통 안에 들여쓰면, 회차마다 출력되어 <code>합계: 80</code>, <code>합계: 170</code>, <code>합계: 240</code> 세 줄이 나옵니다. 들여쓰기 한 단계가 "반복마다"와 "반복이 끝난 뒤 한 번"을 가릅니다. 중간 과정을 보고 싶을 때는 일부러 몸통 안에 넣기도 합니다(위의 <code>print("s =", s, "total =", total)</code>처럼). 이렇게 확인용 출력을 넣는 것은 추적표를 컴퓨터에게 대신 쓰게 하는 좋은 방법입니다.</p>
+</div>
+
+<div class="check" data-q="q5"></div>
+<div class="check" data-q="q7"></div>
+
+<h2>세기와 골라 모으기</h2>
+
+<p>누적은 더하기에만 쓰이지 않습니다. PY03의 <code>if</code>와 합치면 "조건에 맞는 것이 몇 개인가"를 셀 수 있습니다. 세는 변수도 누적 변수입니다. 0에서 시작해 조건에 맞을 때만 1을 더합니다.</p>
+
+<pre><code>scores = [80, 90, 70, 85, 60]
+count = 0
+for s in scores:
+    if s >= 80:
+        count += 1
+print("80점 이상:", count, "명")</code></pre>
+<div class="sample"><p class="sample-k">실행 결과</p><pre><code>80점 이상: 3 명</code></pre></div>
+
+<p>들여쓰기가 두 단계라는 점을 보세요. <code>if</code>는 for의 몸통이고(빈칸 4개), <code>count += 1</code>은 if의 몸통입니다(빈칸 8개). 추적하면 80(예, count 1) → 90(예, 2) → 70(아니오, 2 그대로) → 85(예, 3) → 60(아니오, 3 그대로)입니다. 80은 <code>&gt;=</code>(이상)라서 포함됩니다.</p>
+
+<p>빈 리스트에서 시작해 조건에 맞는 값만 <code>append</code>로 붙이면 "골라 모으기"가 됩니다. 아래 코드는 PY01의 나머지 연산자 <code>%</code>로 짝수(<code>n % 2 == 0</code>)만 고릅니다.</p>
+
+<pre><code>evens = []
+for n in range(1, 11):
+    if n % 2 == 0:
+        evens.append(n)
+print(evens)</code></pre>
+<div class="sample"><p class="sample-k">실행 결과</p><pre><code>[2, 4, 6, 8, 10]</code></pre></div>
+
+<p>합계(<code>total = 0</code>), 개수(<code>count = 0</code>), 모으기(<code>evens = []</code>)는 모두 같은 틀입니다. <b>반복 전에 빈 상태로 시작 → 반복 안에서 하나씩 반영 → 반복 뒤에 사용</b>.</p>
+
+<div class="why">
+<p class="box-k">왜 그럴까?</p>
+<p>합계를 구할 때는 누적 변수를 0으로 시작합니다. 그런데 여러 수의 <b>곱</b>을 구할 때(<code>result = result * n</code>)는 1로 시작해야 합니다. 왜 0이 아니라 1일까요?</p>
+<details><summary>모범 답 보기</summary><p>시작값은 "아직 아무것도 반영하지 않은 상태"이므로 첫 값을 반영했을 때 결과가 그 첫 값 그대로여야 합니다. 더하기에서는 0 + x = x라서 0이 그 역할을 합니다. 곱하기에서는 1 × x = x라서 1이어야 합니다. 0으로 시작하면 0 × x = 0이 되어 무엇을 곱해도 끝까지 0입니다.</p></details>
+</div>
+
+<div class="check" data-q="q9"></div>
+
+<h2>이 내용이 다시 나오는 곳</h2>
+<ul>
+<li><b>다음 장(PY04·3)</b>: 정해진 목록 없이 "조건이 맞는 동안" 반복하는 <code>while</code>과, 반복이 끝나지 않는 문제, 하나 차이 실수를 봅니다.</li>
+<li><b>PY05</b>: 여기서 만든 "합계 → 평균" 반복을 함수 하나로 묶어 여러 반에 다시 씁니다.</li>
+<li><b>통계(DA 단원)</b>: 평균·분산 같은 요약값은 모두 "값마다 무언가를 더해 쌓은 뒤 개수로 나누기"입니다. 누적 추적표가 공식을 이해하는 바탕이 됩니다.</li>
+</ul>
+
+<h2>한눈에 정리</h2>
+
+<div class="table-wrap">
+<table>
+<tr><th>쓰는 법</th><th>뜻</th><th>예</th></tr>
+<tr><td><code>for x in 리스트:</code></td><td><b class="key">반복문</b>. 원소를 앞에서부터 하나씩 x에 넣고 몸통 실행. n개면 n번</td><td><code>for s in [80, 90, 70]:</code> → s가 80, 90, 70</td></tr>
+<tr><td>들여쓰기</td><td><b class="key">몸통</b>의 범위를 정하는 문법. 빼먹으면 IndentationError</td><td>빈칸 4개</td></tr>
+<tr><td><code>range(시작, 끝, 간격)</code></td><td>정수를 차례로. <b class="key">끝은 포함하지 않음</b>. 개수 = 끝 − 시작(간격 1)</td><td><code>range(1, 6)</code> → 1~5</td></tr>
+<tr><td><code>total += x</code></td><td><code>total = total + x</code>의 줄임</td><td>0 → 80 → 170 → 240</td></tr>
+<tr><td><b class="key">누적 변수</b></td><td>반복 전 <b class="key">초기화</b> → 반복 안 반영 → 반복 뒤 사용</td><td>합 0, 곱 1, 개수 0, 모으기 []</td></tr>
+<tr><td><b class="key">추적표</b></td><td>회차마다 변수 값을 적은 표. 반복을 손으로 확인하는 도구</td><td></td></tr>
+</table>
+</div>
+
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>for 문은 원소마다 몸통을 한 번씩 실행하고, 반복 전에 초기화한 누적 변수에 회차마다 값을 더해 가면 합계·개수·모음을 얻는다.</p></div>
+
+<h2>확인 문제</h2>
+<p>본문 중간에서 푼 문제 말고 남은 문제입니다. 보기를 누르면 바로 정답과 해설이 나옵니다.</p>
+<div id="quiz"></div>
+
+<section class="work" id="tools"></section>
+
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

@@ -1,0 +1,585 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CSV와 JSON 주고받기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e8c'/%3E%3Cpath d='M8 22V10m8 12V14m8 8V6' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="PY07-2">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+
+<header class="chapter">
+<p class="chap-sub">Python과 프로그래밍 사고 · PY07 파일과 자료 교환</p>
+<p class="chap-num">PY07·2</p>
+<h1>CSV와 JSON 주고받기</h1>
+<p class="lead">선생님이 반 성적을 엑셀에서 CSV 파일로 저장해 보내 주었습니다. 이 파일로 과목 평균을 내려면, 파일 속 글자를 표로 읽고, 숫자로 바꾸고, 빠진 칸을 찾아야 합니다. 이 장에서는 데이터를 주고받는 가장 흔한 두 형식인 CSV와 JSON을 Python으로 읽고 쓰고, 읽은 자료의 모양을 확인하는 법을 배웁니다.</p>
+</header>
+
+<div class="goal">
+<h2>이 장을 읽고 나면</h2>
+<ul>
+<li>CSV 파일의 구조(머리글, 행, 열, 구분자)를 설명할 수 있다.</li>
+<li><code>csv</code> 모듈로 CSV를 읽고 쓰며, 읽은 값이 모두 문자열이라는 점을 처리할 수 있다.</li>
+<li>읽은 자료의 행 수·열 이름·빈 칸을 확인하는 짧은 코드를 쓸 수 있다.</li>
+<li><code>json</code> 모듈로 딕셔너리·리스트를 JSON 파일로 저장하고 다시 읽을 수 있다.</li>
+<li>CSV와 JSON 중 어느 것을 쓸지 자료의 모양을 보고 고를 수 있다.</li>
+</ul>
+</div>
+
+<h2>CSV: 쉼표로 나눈 표</h2>
+
+<p>엑셀 표를 "CSV"로 저장한 뒤 메모장으로 열어 보면 칸 대신 쉼표가 보입니다. 이 장에서 계속 쓸 예제 파일입니다.</p>
+
+<div class="sample">
+<p class="sample-k">예제 파일 data\scores.csv</p>
+<pre><code>이름,반,국어,수학
+민수,1,80,90
+지아,2,95,85
+하준,1,70,
+서윤,2,88,92</code></pre>
+</div>
+
+<p><b>직접 만들기</b>: 실습 폴더(예: <code>study\py07b</code>) 안에 <code>data</code> 폴더를 만들고, 메모장에 위 다섯 줄을 그대로 붙여 넣은 뒤 "다른 이름으로 저장"에서 파일 이름 <code>scores.csv</code>, 인코딩 <b>UTF-8</b>로 저장합니다. 하준의 줄은 일부러 수학 점수를 비워 두었습니다(결석한 상황). 이 장의 코드는 모두 <code>study\py07b</code>에서 실행했고, 결과는 Windows 11, Python 3.14의 실제 출력입니다.</p>
+
+<div class="box">
+<p class="box-k">정의</p>
+<p><b class="key">CSV</b>(Comma-Separated Values, 쉼표로 나눈 값)는 표를 글자로 적는 형식입니다. <b>한 줄이 표의 한 행</b>이고, 줄 안에서 <b>쉼표가 칸을 나눕니다.</b> 칸을 나누는 글자를 <b class="key">구분자(delimiter)</b>라고 합니다. 보통 첫 줄은 각 열의 이름을 적은 <b class="key">머리글(header)</b>입니다.</p>
+</div>
+
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 235" role="img" aria-label="(가) 메모장으로 본 CSV 다섯 줄: 이름,반,국어,수학 / 민수,1,80,90 / 지아,2,95,85 / 하준,1,70, / 서윤,2,88,92. (나) 같은 내용을 4열 5행의 표로 본 모습. 첫 행은 머리글로 이름, 반, 국어, 수학. 하준 행의 수학 칸은 비어 있다.">
+<text class="f-s f-ink-t" x="40" y="56">이름,반,국어,수학</text>
+<text class="f-s f-ink-t" x="40" y="86">민수,1,80,90</text>
+<text class="f-s f-ink-t" x="40" y="116">지아,2,95,85</text>
+<text class="f-s f-ink-t" x="40" y="146">하준,1,70,</text>
+<text class="f-s f-ink-t" x="40" y="176">서윤,2,88,92</text>
+<line class="f-line" x1="230" y1="111" x2="296" y2="111" marker-end="url(#f-arrow)"/>
+<rect class="f-soft" x="320" y="36" width="90" height="30"/><text class="f-t f-b" x="365" y="56" text-anchor="middle">이름</text>
+<rect class="f-soft" x="410" y="36" width="90" height="30"/><text class="f-t f-b" x="455" y="56" text-anchor="middle">반</text>
+<rect class="f-soft" x="500" y="36" width="90" height="30"/><text class="f-t f-b" x="545" y="56" text-anchor="middle">국어</text>
+<rect class="f-soft" x="590" y="36" width="90" height="30"/><text class="f-t f-b" x="635" y="56" text-anchor="middle">수학</text>
+<rect class="f-box" x="320" y="66" width="90" height="30"/><text class="f-t" x="365" y="86" text-anchor="middle">민수</text>
+<rect class="f-box" x="410" y="66" width="90" height="30"/><text class="f-t" x="455" y="86" text-anchor="middle">1</text>
+<rect class="f-box" x="500" y="66" width="90" height="30"/><text class="f-t" x="545" y="86" text-anchor="middle">80</text>
+<rect class="f-box" x="590" y="66" width="90" height="30"/><text class="f-t" x="635" y="86" text-anchor="middle">90</text>
+<rect class="f-box" x="320" y="96" width="90" height="30"/><text class="f-t" x="365" y="116" text-anchor="middle">지아</text>
+<rect class="f-box" x="410" y="96" width="90" height="30"/><text class="f-t" x="455" y="116" text-anchor="middle">2</text>
+<rect class="f-box" x="500" y="96" width="90" height="30"/><text class="f-t" x="545" y="116" text-anchor="middle">95</text>
+<rect class="f-box" x="590" y="96" width="90" height="30"/><text class="f-t" x="635" y="116" text-anchor="middle">85</text>
+<rect class="f-box" x="320" y="126" width="90" height="30"/><text class="f-t" x="365" y="146" text-anchor="middle">하준</text>
+<rect class="f-box" x="410" y="126" width="90" height="30"/><text class="f-t" x="455" y="146" text-anchor="middle">1</text>
+<rect class="f-box" x="500" y="126" width="90" height="30"/><text class="f-t" x="545" y="146" text-anchor="middle">70</text>
+<rect class="f-over" x="590" y="126" width="90" height="30"/><text class="f-s f-ink-t" x="635" y="146" text-anchor="middle">빈 칸</text>
+<rect class="f-box" x="320" y="156" width="90" height="30"/><text class="f-t" x="365" y="176" text-anchor="middle">서윤</text>
+<rect class="f-box" x="410" y="156" width="90" height="30"/><text class="f-t" x="455" y="176" text-anchor="middle">2</text>
+<rect class="f-box" x="500" y="156" width="90" height="30"/><text class="f-t" x="545" y="176" text-anchor="middle">88</text>
+<rect class="f-box" x="590" y="156" width="90" height="30"/><text class="f-t" x="635" y="176" text-anchor="middle">92</text>
+<text class="f-s" x="690" y="56">머리글</text>
+<text class="f-cap" x="120" y="222" text-anchor="middle">(가) 메모장으로 본 CSV</text>
+<text class="f-cap" x="500" y="222" text-anchor="middle">(나) 표로 읽은 모습</text>
+</svg>
+<figcaption>CSV의 한 줄은 표의 한 행이다. "하준,1,70," 끝의 쉼표 뒤가 비어 있어 수학 칸이 빈다.</figcaption>
+</figure>
+
+<p>CSV는 그냥 텍스트 파일이므로 앞 장에서 배운 대로 열고 한 줄씩 읽어서 쉼표로 자를 수 있습니다. 문자열의 <code>split(",")</code>은 쉼표 자리에서 잘라 리스트를 돌려줍니다.</p>
+
+<p class="small">파일 <code>01_split.py</code></p>
+<pre><code>with open("data/scores.csv", encoding="utf-8") as f:
+    for line in f:
+        print(line.strip().split(","))</code></pre>
+<p class="small">실행 결과</p>
+<pre><code>['이름', '반', '국어', '수학']
+['민수', '1', '80', '90']
+['지아', '2', '95', '85']
+['하준', '1', '70', '']
+['서윤', '2', '88', '92']</code></pre>
+
+<p>이 파일에서는 잘 됩니다. 하준의 빈 수학 칸은 빈 문자열 <code>''</code>로 나왔습니다. 그런데 칸 <b>안에</b> 쉼표가 들어 있으면 이야기가 달라집니다. 주소 "서울, 중구"처럼요. CSV는 이럴 때 그 칸을 큰따옴표로 감싸 <code>"서울, 중구"</code>라고 적는 규칙이 있습니다. split은 이 규칙을 모릅니다.</p>
+
+<p class="small">파일 <code>07_addr.py</code></p>
+<pre><code>import csv
+rows = [["이름", "주소"], ["민수", "서울, 중구"], ["지아", "부산"]]
+with open("addr.csv", "w", encoding="utf-8", newline="") as f:
+    csv.writer(f).writerows(rows)
+
+with open("addr.csv", encoding="utf-8") as f:
+    print(f.read())
+
+with open("addr.csv", encoding="utf-8") as f:
+    for line in f:
+        print(line.strip().split(","))
+
+with open("addr.csv", encoding="utf-8", newline="") as f:
+    for row in csv.reader(f):
+        print(row)</code></pre>
+<p class="small">실행 결과</p>
+<pre><code>이름,주소
+민수,"서울, 중구"
+지아,부산
+
+['이름', '주소']
+['민수', '"서울', ' 중구"']
+['지아', '부산']
+['이름', '주소']
+['민수', '서울, 중구']
+['지아', '부산']</code></pre>
+
+<p>파일에는 <code>민수,"서울, 중구"</code>로 적혔습니다(첫 출력). split은 따옴표 안의 쉼표에서도 잘라 칸이 3개가 되었습니다(둘째 출력). 아래에서 배울 <code>csv.reader</code>는 따옴표 규칙을 알아서 칸 2개로 바르게 읽었습니다(셋째 출력). 그래서 <b>CSV는 split이 아니라 csv 모듈로 읽습니다.</b></p>
+
+<h2>csv 모듈로 읽기 <span class="tag grasp">이해하기</span></h2>
+
+<p><code>import csv</code>는 Python에 딸려 오는 CSV 도구 묶음을 불러옵니다. <code>csv.reader(f)</code>는 열린 파일에서 한 행씩 칸 리스트를 꺼내 주고, <code>list(...)</code>로 감싸면 모든 행을 리스트 하나에 모읍니다.</p>
+
+<p class="small">파일 <code>02_reader.py</code></p>
+<pre><code>import csv
+with open("data/scores.csv", encoding="utf-8", newline="") as f:
+    rows = list(csv.reader(f))
+print(len(rows))
+header = rows[0]
+body = rows[1:]
+print(header)
+print(body[0])
+print(type(body[0][2]))</code></pre>
+<p class="small">실행 결과</p>
+<pre><code>5
+['이름', '반', '국어', '수학']
+['민수', '1', '80', '90']
+&lt;class 'str'&gt;</code></pre>
+
+<ul>
+<li><code>newline=""</code>: csv 모듈을 쓸 때 open에 붙이라고 Python 공식 문서가 권하는 설정입니다. 줄바꿈 처리를 csv 모듈에 맡긴다는 뜻이고, 특히 <b>쓸 때</b> 빠뜨리면 문제가 생깁니다(쓰기 절에서 실제로 봅니다).</li>
+<li><code>rows</code>는 <b>리스트의 리스트</b>입니다. 5행이고, 첫 행이 머리글입니다. PY04의 슬라이싱으로 <code>rows[1:]</code>을 잘라 머리글을 뺀 본문을 얻었습니다.</li>
+<li>마지막 줄이 가장 중요합니다. <code>'80'</code>은 숫자 80이 아니라 <b>문자열</b>입니다. CSV는 글자 파일이라 "이 칸은 숫자"라는 정보가 없습니다. 읽은 값은 <b>모두 문자열</b>입니다.</li>
+</ul>
+
+<p>그래서 숫자로 바꾸지 않고 더하면 PY02에서 본 오류가 납니다.</p>
+
+<p class="small">파일 <code>03_sum_str.py</code></p>
+<pre><code>import csv
+with open("data/scores.csv", encoding="utf-8", newline="") as f:
+    rows = list(csv.reader(f))
+total = 0
+for row in rows[1:]:
+    total = total + row[2]</code></pre>
+<pre><code>Traceback (most recent call last):
+  File "C:\Users\...\study\py07b\03_sum_str.py", line 6, in &lt;module&gt;
+    total = total + row[2]
+            ~~~~~~^~~~~~~~
+TypeError: unsupported operand type(s) for +: 'int' and 'str'</code></pre>
+<p>"정수(int)와 문자열(str)은 +로 더할 수 없다"는 뜻입니다. <code>int(row[2])</code>로 바꿔 더해야 합니다.</p>
+
+<h3>DictReader: 열 이름으로 꺼내기</h3>
+
+<p><code>row[2]</code>의 2가 국어라는 것은 머리글을 보고 사람이 세어야 압니다. PY06·1에서 본 "자리 번호의 불편함"이 여기서도 나타납니다. <code>csv.DictReader</code>는 머리글을 키로 삼아 <b>각 행을 딕셔너리로</b> 만들어 줍니다.</p>
+
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 205" role="img" aria-label="머리글 행(이름, 반, 국어, 수학)과 둘째 줄(민수, 1, 80, 90)이 위에 있고, csv.DictReader가 열 이름을 키로 짝지어 딕셔너리 {이름: 민수, 반: 1, 국어: 80, 수학: 90}을 만든다. 값은 모두 따옴표가 붙은 문자열이다.">
+<rect class="f-soft" x="40" y="30" width="90" height="32"/><text class="f-t f-b" x="85" y="51" text-anchor="middle">이름</text>
+<rect class="f-soft" x="130" y="30" width="90" height="32"/><text class="f-t f-b" x="175" y="51" text-anchor="middle">반</text>
+<rect class="f-soft" x="220" y="30" width="90" height="32"/><text class="f-t f-b" x="265" y="51" text-anchor="middle">국어</text>
+<rect class="f-soft" x="310" y="30" width="90" height="32"/><text class="f-t f-b" x="355" y="51" text-anchor="middle">수학</text>
+<rect class="f-box" x="40" y="62" width="90" height="32"/><text class="f-t" x="85" y="83" text-anchor="middle">민수</text>
+<rect class="f-box" x="130" y="62" width="90" height="32"/><text class="f-t" x="175" y="83" text-anchor="middle">1</text>
+<rect class="f-box" x="220" y="62" width="90" height="32"/><text class="f-t" x="265" y="83" text-anchor="middle">80</text>
+<rect class="f-box" x="310" y="62" width="90" height="32"/><text class="f-t" x="355" y="83" text-anchor="middle">90</text>
+<text class="f-s" x="412" y="51">← 머리글 (1번째 줄) = 키</text>
+<text class="f-s" x="412" y="83">← 2번째 줄 = 값</text>
+<line class="f-line" x1="220" y1="98" x2="220" y2="130" marker-end="url(#f-arrow)"/>
+<text class="f-s" x="232" y="118">csv.DictReader가 같은 열끼리 짝짓는다</text>
+<rect class="f-soft" x="40" y="134" width="680" height="40" rx="4"/>
+<text class="f-t" x="380" y="159" text-anchor="middle">{"이름": "민수", "반": "1", "국어": "80", "수학": "90"}</text>
+<text class="f-s" x="380" y="196" text-anchor="middle">값은 모두 문자열("1", "80")이다. 계산하려면 int()로 바꾼다.</text>
+</svg>
+<figcaption>DictReader는 행 하나를 "열 이름 → 칸 값" 딕셔너리로 바꾼다.</figcaption>
+</figure>
+
+<p class="small">파일 <code>04_dictreader.py</code></p>
+<pre><code>import csv
+with open("data/scores.csv", encoding="utf-8", newline="") as f:
+    rows = list(csv.DictReader(f))
+print(rows[0])
+total = 0
+for row in rows:
+    total = total + int(row["국어"])
+print(total, total / len(rows))</code></pre>
+<p class="small">실행 결과</p>
+<pre><code>{'이름': '민수', '반': '1', '국어': '80', '수학': '90'}
+333 83.25</code></pre>
+
+<div class="box ex">
+<p class="box-k">풀이 예제</p>
+<p>DictReader로 읽은 rows는 <b>딕셔너리 4개의 리스트</b>입니다(머리글은 키로 쓰였으므로 행으로 세지 않습니다). PY06·2 끝의 표에서 "표 전체 = 딕셔너리의 리스트"라고 한 바로 그 모양입니다. 국어 평균을 손으로 따라가 봅니다.</p>
+<p class="calc">① 민수: int("80") = 80 → total = 0 + 80 = 80<br>
+② 지아: int("95") = 95 → total = 80 + 95 = 175<br>
+③ 하준: int("70") = 70 → total = 175 + 70 = 245<br>
+④ 서윤: int("88") = 88 → total = 245 + 88 = 333<br>
+⑤ 평균: 333 ÷ len(rows) = 333 ÷ 4 = 83.25</p>
+<p>출력 <code>333 83.25</code>와 같습니다.</p>
+</div>
+
+<h3>빈 칸을 만나면</h3>
+<p>같은 코드로 수학 평균을 내 봅니다. 열 이름만 "수학"으로 바꿨습니다.</p>
+
+<p class="small">파일 <code>05_empty_int.py</code></p>
+<pre><code>import csv
+with open("data/scores.csv", encoding="utf-8", newline="") as f:
+    rows = list(csv.DictReader(f))
+total = 0
+for row in rows:
+    total = total + int(row["수학"])</code></pre>
+<pre><code>Traceback (most recent call last):
+  File "C:\Users\...\study\py07b\05_empty_int.py", line 6, in &lt;module&gt;
+    total = total + int(row["수학"])
+                    ~~~^^^^^^^^^^^^^
+ValueError: invalid literal for int() with base 10: ''</code></pre>
+<p>"빈 문자열 <code>''</code>은 정수로 바꿀 수 없다"는 오류입니다. 하준의 수학 칸이 비어 있었기 때문입니다. 빈 칸을 0점으로 칠지, 평균에서 뺄지는 <b>코드가 아니라 자료의 뜻이 정할 문제</b>입니다(결석은 0점이 아닐 수 있습니다). 이런 결정은 DA06 "데이터 품질"에서 자세히 다루고, 오류를 잡아 처리하는 코드는 PY08에서 배웁니다. 지금 중요한 것은 계산 <b>전에</b> 이런 칸이 있는지 알아내는 일입니다.</p>
+
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+<div class="check" data-q="q3"></div>
+
+<h2>읽은 자료의 모양 확인하기</h2>
+
+<p>남이 준 파일을 읽으면 바로 계산하지 말고 먼저 <b>모양</b>을 봅니다. 앞 장에서 본 글자 깨짐, 방금 본 빈 칸, 칸 수가 다른 줄 같은 문제를 계산 전에 잡기 위해서입니다.</p>
+
+<p class="small">파일 <code>06_shape.py</code></p>
+<pre><code>import csv
+with open("data/scores.csv", encoding="utf-8", newline="") as f:
+    rows = list(csv.reader(f))
+header = rows[0]
+body = rows[1:]
+print("열 이름:", header)
+print("행 수:", len(body), "열 수:", len(header))
+for i in range(len(body)):
+    row = body[i]
+    line_no = i + 2
+    if len(row) != len(header):
+        print(line_no, "번째 줄 칸 수가 다름:", row)
+    for j in range(len(header)):
+        if row[j] == "":
+            print(line_no, "번째 줄", header[j], "칸이 비었음")</code></pre>
+<p class="small">실행 결과</p>
+<pre><code>열 이름: ['이름', '반', '국어', '수학']
+행 수: 4 열 수: 4
+4 번째 줄 수학 칸이 비었음</code></pre>
+
+<p><code>line_no = i + 2</code>인 까닭: body의 0번 행은 파일의 2번째 줄입니다(1번째 줄은 머리글). 그래서 i에 2를 더해야 메모장에서 보는 줄 번호와 맞습니다. 하준은 body[2], 곧 파일의 4번째 줄입니다.</p>
+
+<div class="table-wrap">
+<table>
+<tr><th>확인할 것</th><th>왜</th><th>어떻게</th></tr>
+<tr><td>앞 몇 줄을 눈으로</td><td>글자 깨짐, BOM(\ufeff), 구분자가 쉼표가 아닌 경우를 잡는다</td><td><code>print(rows[:3])</code></td></tr>
+<tr><td>행 수</td><td>생각한 개수와 맞는가 (반 학생 수 등)</td><td><code>len(body)</code></td></tr>
+<tr><td>열 이름</td><td>철자, 공백, 순서 확인</td><td><code>print(header)</code></td></tr>
+<tr><td>줄마다 칸 수</td><td>쉼표가 더 들어간 줄, 잘린 줄</td><td><code>len(row) != len(header)</code></td></tr>
+<tr><td>빈 칸</td><td><code>int('')</code> 오류의 원인</td><td><code>row[j] == ""</code></td></tr>
+<tr><td>자료형</td><td>CSV는 전부 문자열, JSON은 형이 남는다</td><td><code>type(값)</code></td></tr>
+</table>
+</div>
+
+<p>나중에 PY11에서 배울 pandas라는 도구는 이 확인들을 <code>shape</code>, <code>head()</code>, <code>info()</code> 같은 한 줄 명령으로 해 줍니다. 하지만 그 명령들이 무엇을 보여 주는지 이해하려면, 지금처럼 한 번은 손으로 해 보는 것이 좋습니다.</p>
+
+<div class="check" data-q="q4"></div>
+
+<h2>CSV로 쓰기</h2>
+
+<p>계산 결과를 다시 CSV로 저장해 봅니다. 행을 딕셔너리로 가지고 있다면 <code>csv.DictWriter</code>가 편합니다. <code>fieldnames</code>에 열 이름과 순서를 주고, <code>writeheader()</code>로 머리글을, <code>writerows(...)</code>로 행들을 씁니다.</p>
+
+<p class="small">파일 <code>09_dictwriter.py</code></p>
+<pre><code>import csv
+result = [{"이름": "민수", "평균": 85.0}, {"이름": "지아", "평균": 90.0}]
+with open("avg.csv", "w", encoding="utf-8", newline="") as f:
+    w = csv.DictWriter(f, fieldnames=["이름", "평균"])
+    w.writeheader()
+    w.writerows(result)
+
+with open("avg.csv", encoding="utf-8") as f:
+    print(f.read())</code></pre>
+<p class="small">실행 결과</p>
+<pre><code>이름,평균
+민수,85.0
+지아,90.0
+</code></pre>
+
+<p>숫자 85.0은 쓸 때 글자 "85.0"으로 바뀌어 적힙니다. 다시 읽으면 문자열 "85.0"이 됩니다. 리스트로 된 행이면 <code>csv.writer(f).writerows(행들)</code>을 씁니다(07_addr.py가 그 예).</p>
+
+<div class="box trap">
+<p class="box-k">흔한 실수</p>
+<p><b>CSV를 쓸 때 <code>newline=""</code>을 빠뜨리는 것 (Windows).</b> csv 모듈은 줄 끝에 스스로 <code>\r\n</code>을 붙이는데, 텍스트 모드는 앞 장에서 본 대로 <code>\n</code>을 또 <code>\r\n</code>으로 바꿉니다. 그래서 <code>\r\r\n</code>이 되어 버립니다.</p>
+<p class="small">파일 <code>08_newline.py</code></p>
+<pre><code>import csv
+rows = [["이름", "점수"], ["민수", 80]]
+with open("bad.csv", "w", encoding="utf-8") as f:
+    csv.writer(f).writerows(rows)
+with open("good.csv", "w", encoding="utf-8", newline="") as f:
+    csv.writer(f).writerows(rows)
+
+with open("bad.csv", "rb") as f:
+    print(f.read())
+with open("good.csv", "rb") as f:
+    print(f.read())
+with open("bad.csv", encoding="utf-8", newline="") as f:
+    print(list(csv.reader(f)))</code></pre>
+<pre><code>b'\xec\x9d\xb4\xeb\xa6\x84,\xec\xa0\x90\xec\x88\x98\r\r\n\xeb\xaf\xbc\xec\x88\x98,80\r\r\n'
+b'\xec\x9d\xb4\xeb\xa6\x84,\xec\xa0\x90\xec\x88\x98\r\n\xeb\xaf\xbc\xec\x88\x98,80\r\n'
+[['이름', '점수'], [], ['민수', '80'], []]</code></pre>
+<p>bad.csv를 다시 읽으면 행 사이에 빈 행 <code>[]</code>이 끼어 있습니다. 엑셀로 열어도 한 줄씩 띄워져 보입니다. macOS·Linux에서는 텍스트 모드가 줄바꿈을 바꾸지 않아 이 증상이 드러나지 않지만, 어디서나 <code>newline=""</code>을 붙이는 것이 안전합니다.</p>
+</div>
+
+<div class="check" data-q="q5"></div>
+
+<h2>JSON: 겹친 자료를 글자로 <span class="tag grasp">이해하기</span></h2>
+
+<p>CSV는 칸이 고정된 표에 맞습니다. 그런데 학생 한 명에게 과목별 점수(딕셔너리)와 동아리 목록(리스트)이 함께 있다면 표 한 장에 담기 어렵습니다. 이렇게 <b>겹쳐 담긴 자료</b>를 글자로 적는 형식이 JSON입니다. 빅데이터 노트에서 "반정형 데이터"의 대표로 나온 그 JSON입니다.</p>
+
+<div class="box">
+<p class="box-k">정의</p>
+<p><b class="key">JSON</b>(JavaScript Object Notation)은 이름: 값 짝과 목록을 겹쳐 적을 수 있는 글자 형식입니다. 웹에서 프로그램끼리 자료를 주고받을 때 가장 널리 쓰입니다. 생김새는 Python의 딕셔너리·리스트와 거의 같지만 <b>규칙이 더 엄격한 별개의 형식</b>입니다. 문자열은 반드시 <b>큰따옴표</b>, 참·거짓은 <code>true</code>/<code>false</code>, 없음은 <code>null</code>입니다.</p>
+</div>
+
+<p class="small">파일 <code>10_json_dumps.py</code></p>
+<pre><code>import json
+student = {"이름": "민수", "반": 1, "점수": {"국어": 80, "수학": 90},
+           "동아리": ["바둑", "합창"], "전학생": False, "메모": None}
+text = json.dumps(student, ensure_ascii=False, indent=2)
+print(text)
+print(type(text))
+print(json.dumps({"이름": "민수"}))</code></pre>
+<p class="small">실행 결과</p>
+<pre><code>{
+  "이름": "민수",
+  "반": 1,
+  "점수": {
+    "국어": 80,
+    "수학": 90
+  },
+  "동아리": [
+    "바둑",
+    "합창"
+  ],
+  "전학생": false,
+  "메모": null
+}
+&lt;class 'str'&gt;
+{"\uc774\ub984": "\ubbfc\uc218"}</code></pre>
+
+<ul>
+<li><code>json.dumps(객체)</code>는 객체를 JSON <b>문자열</b>로 바꿉니다(dump + s, s는 string). 결과의 type이 str입니다.</li>
+<li><code>indent=2</code>는 보기 좋게 두 칸씩 들여 써 줍니다. 없으면 한 줄로 붙여 씁니다.</li>
+<li><code>ensure_ascii=False</code>는 한글을 그대로 적으라는 설정입니다. 빼면 마지막 줄처럼 <code>\uc774</code> 같은 번호로 적힙니다. 틀린 것은 아니지만 사람이 읽을 수 없습니다.</li>
+<li>Python의 <code>False</code>는 <code>false</code>로, <code>None</code>은 <code>null</code>로 바뀌었습니다.</li>
+</ul>
+
+<div class="table-wrap">
+<table>
+<tr><th>Python</th><th>JSON</th><th>다시 읽으면</th></tr>
+<tr><td>dict <code>{"a": 1}</code></td><td>객체 <code>{"a": 1}</code></td><td>dict</td></tr>
+<tr><td>list <code>[1, 2]</code></td><td>배열 <code>[1, 2]</code></td><td>list</td></tr>
+<tr><td>tuple <code>(1, 2)</code></td><td>배열 <code>[1, 2]</code></td><td><b>list</b> (튜플이 아니다)</td></tr>
+<tr><td>str <code>"민수"</code></td><td>문자열 <code>"민수"</code> (큰따옴표만)</td><td>str</td></tr>
+<tr><td>int, float</td><td>수 <code>80</code>, <code>83.25</code></td><td>int, float</td></tr>
+<tr><td><code>True</code> / <code>False</code></td><td><code>true</code> / <code>false</code></td><td>bool</td></tr>
+<tr><td><code>None</code></td><td><code>null</code></td><td>None</td></tr>
+<tr><td>dict의 키 <code>1</code> (정수)</td><td><code>"1"</code></td><td><b>문자열 키</b> (JSON 객체의 키는 문자열뿐)</td></tr>
+</table>
+</div>
+
+<h3>파일로 저장하고 다시 읽기</h3>
+<p>파일에 바로 쓰고 읽을 때는 s가 없는 <code>json.dump(객체, 파일)</code>와 <code>json.load(파일)</code>을 씁니다. JSON 파일은 UTF-8로 쓰는 것이 표준 관례입니다.</p>
+
+<p class="small">파일 <code>11_json_file.py</code></p>
+<pre><code>import json
+student = {"이름": "민수", "반": 1, "점수": {"국어": 80, "수학": 90}, "동아리": ["바둑", "합창"]}
+with open("student.json", "w", encoding="utf-8") as f:
+    json.dump(student, f, ensure_ascii=False, indent=2)
+
+with open("student.json", encoding="utf-8") as f:
+    loaded = json.load(f)
+print(loaded)
+print(type(loaded))
+print(loaded["점수"]["수학"])
+print(loaded == student)</code></pre>
+<p class="small">실행 결과</p>
+<pre><code>{'이름': '민수', '반': 1, '점수': {'국어': 80, '수학': 90}, '동아리': ['바둑', '합창']}
+&lt;class 'dict'&gt;
+90
+True</code></pre>
+
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 215" role="img" aria-label="왼쪽 Python 딕셔너리 student(메모리 속 객체)가 json.dump로 가운데 student.json 파일(UTF-8 글자)이 되고, json.load로 오른쪽 새 딕셔너리 loaded가 된다. loaded == student는 True. 객체를 글자로 바꾸는 것을 직렬화, 글자를 객체로 되돌리는 것을 역직렬화라고 한다.">
+<text class="f-s f-ink-t" x="260" y="38" text-anchor="middle">json.dump</text>
+<text class="f-s f-ink-t" x="500" y="38" text-anchor="middle">json.load</text>
+<rect class="f-soft" x="20" y="50" width="210" height="120" rx="4"/>
+<text class="f-cap" x="125" y="80" text-anchor="middle">student</text>
+<text class="f-s f-ink-t" x="125" y="108" text-anchor="middle">{"이름": "민수",</text>
+<text class="f-s f-ink-t" x="125" y="128" text-anchor="middle">"반": 1, …}</text>
+<text class="f-s" x="125" y="155" text-anchor="middle">(메모리 속 dict 객체)</text>
+<line class="f-line" x1="232" y1="110" x2="286" y2="110" marker-end="url(#f-arrow)"/>
+<rect class="f-box" x="290" y="50" width="180" height="120" rx="4"/>
+<text class="f-cap" x="380" y="80" text-anchor="middle">student.json</text>
+<text class="f-s f-ink-t" x="380" y="108" text-anchor="middle">{"이름": "민수",</text>
+<text class="f-s f-ink-t" x="380" y="128" text-anchor="middle">"반": 1, …}</text>
+<text class="f-s" x="380" y="155" text-anchor="middle">(디스크의 UTF-8 글자)</text>
+<line class="f-line" x1="472" y1="110" x2="526" y2="110" marker-end="url(#f-arrow)"/>
+<rect class="f-soft" x="530" y="50" width="210" height="120" rx="4"/>
+<text class="f-cap" x="635" y="80" text-anchor="middle">loaded</text>
+<text class="f-s f-ink-t" x="635" y="108" text-anchor="middle">loaded == student</text>
+<text class="f-s f-ink-t" x="635" y="128" text-anchor="middle">→ True</text>
+<text class="f-s" x="635" y="155" text-anchor="middle">(새로 만든 dict 객체)</text>
+<text class="f-s" x="260" y="198" text-anchor="middle">직렬화: 객체 → 글자</text>
+<text class="f-s" x="500" y="198" text-anchor="middle">역직렬화: 글자 → 객체</text>
+</svg>
+<figcaption>JSON으로 저장하고 다시 읽기. 내용은 같지만(==), 다시 읽은 것은 새 객체다(is가 아님).</figcaption>
+</figure>
+
+<div class="side"><b>용어</b> 메모리 속 객체를 파일에 적거나 네트워크로 보낼 수 있는 글자·바이트로 바꾸는 일을 <b>직렬화(serialization)</b>, 되돌리는 일을 <b>역직렬화</b>라고 합니다. 줄 세워(직렬) 보낸다는 뜻입니다.</div>
+
+<p>JSON은 겹친 구조와 숫자·참거짓 같은 <b>형</b>이 그대로 살아 돌아옵니다. <code>loaded["점수"]["수학"]</code>이 문자열 "90"이 아니라 숫자 90인 것이 CSV와 다른 점입니다. 단, 표에 적은 두 가지 예외는 실제로 확인해 둡니다.</p>
+
+<p class="small">파일 <code>12_json_types.py</code></p>
+<pre><code>import json
+before = {1: "하나", "점": (3, 5)}
+after = json.loads(json.dumps(before, ensure_ascii=False))
+print(before)
+print(after)
+print(before == after)</code></pre>
+<pre><code>{1: '하나', '점': (3, 5)}
+{'1': '하나', '점': [3, 5]}
+False</code></pre>
+<p>정수 키 1이 문자열 "1"이 되었고, 튜플 (3, 5)가 리스트 [3, 5]가 되었습니다. <code>json.loads</code>는 JSON 문자열을 객체로 되돌리는 함수입니다(load + s). 저장했다 읽은 뒤 <code>d[1]</code>로 찾으면 KeyError가 나니, JSON에 넣을 딕셔너리의 키는 처음부터 문자열로 쓰는 것이 좋습니다.</p>
+
+<h3>JSON 문법 오류</h3>
+<p>JSON은 Python보다 엄격합니다. Python에서는 되는 두 가지가 JSON에서는 오류입니다.</p>
+
+<p class="small">파일 <code>13_json_quote.py</code> — 작은따옴표</p>
+<pre><code>import json
+json.loads("{'이름': '민수'}")</code></pre>
+<pre><code>Traceback (most recent call last):
+  File "C:\Users\...\study\py07b\13_json_quote.py", line 2, in &lt;module&gt;
+    json.loads("{'이름': '민수'}")
+    ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\...\Python314\Lib\json\__init__.py", line 352, in loads
+    return _default_decoder.decode(s)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^
+  File "C:\Users\...\Python314\Lib\json\decoder.py", line 345, in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\...\Python314\Lib\json\decoder.py", line 361, in raw_decode
+    obj, end = self.scan_once(s, idx)
+               ~~~~~~~~~~~~~~^^^^^^^^
+json.decoder.JSONDecodeError: Expecting property name enclosed in double quotes: line 1 column 2 (char 1)</code></pre>
+
+<p class="small">파일 <code>14_json_comma.py</code> — 끝에 남은 쉼표</p>
+<pre><code>import json
+json.loads('{"이름": "민수",}')</code></pre>
+<pre><code>Traceback (most recent call last):
+  File "C:\Users\...\study\py07b\14_json_comma.py", line 2, in &lt;module&gt;
+    json.loads('{"이름": "민수",}')
+    ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\...\Python314\Lib\json\__init__.py", line 352, in loads
+    return _default_decoder.decode(s)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^
+  File "C:\Users\...\Python314\Lib\json\decoder.py", line 345, in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\...\Python314\Lib\json\decoder.py", line 361, in raw_decode
+    obj, end = self.scan_once(s, idx)
+               ~~~~~~~~~~~~~~^^^^^^^^
+json.decoder.JSONDecodeError: Illegal trailing comma before end of object: line 1 column 12 (char 11)</code></pre>
+
+<p>오류 기록이 길지만, 가운데 세 덩어리는 Python에 딸린 json 도구의 내부(<code>Lib\json\...</code>)입니다. 우리 코드가 아니므로 건너뛰고 <b>맨 위(우리 파일의 줄)</b>와 <b>맨 아래(이유)</b>만 읽으면 됩니다. 이유는 각각 "큰따옴표로 감싼 이름이 와야 한다: 1번째 줄 2번째 글자", "객체 끝 앞에 쉼표가 남아 있으면 안 된다: 1번째 줄 12번째 글자"입니다. 자리까지 알려 주므로 그곳을 고치면 됩니다. 오류 기록을 읽는 법은 다음 단원 PY08에서 제대로 배웁니다.</p>
+
+<div class="box trap">
+<p class="box-k">흔한 실수</p>
+<p><b><code>print(딕셔너리)</code>의 출력을 JSON 파일로 저장하는 것.</b> print가 보여 주는 <code>{'이름': '민수'}</code>는 Python의 표기라 작은따옴표를 쓰고 True/None을 그대로 씁니다. 이걸 파일에 써 두면 위 오류처럼 JSON으로 읽을 수 없습니다. JSON 파일은 반드시 <code>json.dump</code>로 만듭니다.</p>
+</div>
+
+<h3>JSON의 모양 확인</h3>
+<p>JSON은 겹쳐 있어서, 받은 파일의 맨 바깥이 딕셔너리인지 리스트인지부터 확인하고 한 층씩 들어갑니다.</p>
+
+<p class="small">파일 <code>15_json_shape.py</code></p>
+<pre><code>import json
+with open("student.json", encoding="utf-8") as f:
+    data = json.load(f)
+print(type(data))
+print(list(data.keys()))
+for key, value in data.items():
+    print(key, type(value))</code></pre>
+<pre><code>&lt;class 'dict'&gt;
+['이름', '반', '점수', '동아리']
+이름 &lt;class 'str'&gt;
+반 &lt;class 'int'&gt;
+점수 &lt;class 'dict'&gt;
+동아리 &lt;class 'list'&gt;</code></pre>
+<p>바깥은 딕셔너리, 키는 4개, "점수"는 다시 딕셔너리, "동아리"는 리스트입니다. 이 지도가 있어야 <code>data["점수"]["국어"]</code>나 <code>data["동아리"][0]</code> 같은 꺼내기를 틀리지 않습니다.</p>
+
+<div class="check" data-q="q6"></div>
+<div class="check" data-q="q7"></div>
+<div class="check" data-q="q8"></div>
+
+<h2>CSV와 JSON 고르기</h2>
+
+<div class="table-wrap">
+<table>
+<tr><th></th><th>CSV</th><th>JSON</th></tr>
+<tr><td>모양</td><td>평평한 표 (행 × 열)</td><td>겹친 구조 (딕셔너리·리스트 안에 또)</td></tr>
+<tr><td>읽은 값의 형</td><td>전부 문자열. 숫자는 int()/float()로 바꿔야 한다</td><td>숫자·참거짓·null이 형대로 돌아온다</td></tr>
+<tr><td>빈 값</td><td>빈 문자열 <code>''</code></td><td><code>null</code> → None (또는 키가 아예 없음)</td></tr>
+<tr><td>Python 도구</td><td><code>csv.reader</code>, <code>DictReader</code>, <code>writer</code>, <code>DictWriter</code></td><td><code>json.load</code>, <code>dump</code>, <code>loads</code>, <code>dumps</code></td></tr>
+<tr><td>open 설정</td><td><code>encoding</code> + <code>newline=""</code></td><td><code>encoding="utf-8"</code></td></tr>
+<tr><td>잘 맞는 곳</td><td>엑셀과 주고받기, 큰 표, 분석용 자료</td><td>설정 파일, 웹 API 응답, 항목마다 모양이 다른 자료</td></tr>
+</table>
+</div>
+
+<div class="why">
+<p class="box-k">왜 그럴까?</p>
+<p>CSV는 숫자를 숫자로 기억하지 못하는데도 왜 이렇게 널리 쓰일까요?</p>
+<details><summary>모범 답 보기</summary><p>가장 단순하기 때문입니다. 메모장으로도 열리고, 엑셀·데이터베이스·통계 프로그램·어떤 프로그래밍 언어든 읽고 쓸 수 있으며, 같은 표를 담을 때 JSON처럼 줄마다 열 이름을 반복하지 않아 파일도 작습니다. 형 정보가 없는 대가로, 읽는 쪽이 "이 열은 정수"라고 정해서 바꿔 주고 빈 칸을 처리해야 합니다. 그래서 CSV를 읽은 뒤의 모양 확인과 형 변환이 데이터 분석의 첫 단계가 됩니다.</p></details>
+</div>
+
+<p>PY11에서 pandas로 표를 다룰 때, DA06에서 데이터 품질을 점검할 때, DB06에서 웹 API의 JSON 응답을 받을 때 이 장의 내용이 그대로 바탕이 됩니다.</p>
+
+<h2>한눈에 정리</h2>
+
+<div class="table-wrap">
+<table>
+<tr><th>주제</th><th>핵심</th></tr>
+<tr><td><b class="key">CSV</b></td><td>한 줄 = 한 행, 쉼표 = <b class="key">구분자</b>, 첫 줄 = <b class="key">머리글</b>. 칸 안의 쉼표는 큰따옴표로 감싼다</td></tr>
+<tr><td>CSV 읽기</td><td><code>open(..., encoding=..., newline="")</code> + <code>csv.reader</code>(리스트) / <code>csv.DictReader</code>(딕셔너리). split은 따옴표를 모른다</td></tr>
+<tr><td>CSV의 값</td><td>모두 <b class="key">문자열</b>. 계산 전에 <code>int()</code>/<code>float()</code>. 빈 칸 <code>''</code>은 ValueError</td></tr>
+<tr><td>CSV 쓰기</td><td><code>csv.writer</code> / <code>DictWriter</code>(<code>fieldnames</code>, <code>writeheader</code>). <code>newline=""</code> 빠뜨리면 Windows에서 빈 줄</td></tr>
+<tr><td>모양 확인</td><td>앞 몇 줄, 행 수, 열 이름, 줄마다 칸 수, 빈 칸, 자료형</td></tr>
+<tr><td><b class="key">JSON</b></td><td>겹친 dict·list를 글자로. 큰따옴표, true/false/null. <code>dump</code>/<code>load</code>(파일), <code>dumps</code>/<code>loads</code>(문자열). 한글은 <code>ensure_ascii=False</code></td></tr>
+<tr><td>JSON 주의</td><td>튜플 → 리스트, 정수 키 → 문자열 키. print 출력은 JSON이 아니다</td></tr>
+</table>
+</div>
+
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>평평한 표는 CSV(값이 모두 문자열이니 바꾸고 빈 칸을 확인), 겹친 자료는 JSON(형이 살아 돌아옴)으로 주고받고, 읽은 뒤에는 계산 전에 모양부터 확인한다.</p></div>
+
+<h2>확인 문제</h2>
+<p>본문 중간에서 푼 문제 말고 남은 문제입니다. 보기를 누르면 바로 정답과 해설이 나옵니다.</p>
+<div id="quiz"></div>
+
+<section class="work" id="tools"></section>
+
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

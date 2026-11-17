@@ -1,0 +1,432 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>관측과 변수, 행과 열 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e8c'/%3E%3Cpath d='M8 22V10m8 12V14m8 8V6' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="DA01-1">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+
+<header class="chapter">
+<p class="chap-sub">데이터 읽기와 탐색 · DA01 질문을 데이터로 바꾸기</p>
+<p class="chap-num">DA01·1</p>
+<h1>관측과 변수, 행과 열</h1>
+<p class="lead">동네 카페 주인이 영수증 뭉치를 넘기며 "점심에 손님이 정말 많은 걸까?" 하고 묻습니다. 영수증은 다 있는데 답이 바로 나오지 않습니다. 기록이 흩어져 있기 때문입니다. 이 장에서는 흩어진 기록을 표 한 장으로 옮길 때 쓰는 낱말(관측, 측정, 변수, 값)과 표의 뼈대(행, 열, 셀)를 정확히 익힙니다.</p>
+</header>
+
+<div class="goal">
+<h2>이 장을 읽고 나면</h2>
+<ul>
+<li>표를 보고 무엇이 관측이고 무엇이 변수인지 가리킬 수 있다.</li>
+<li>측정이 "규칙에 따라 값을 붙이는 일"이라는 것을 예로 설명하고, 규칙이 다르면 값이 달라지는 경우를 찾을 수 있다.</li>
+<li>행·열·셀·머리글을 구분하고, 표의 셀 개수를 셀 수 있다.</li>
+<li>잘 정돈된 표의 세 가지 약속을 말하고, 약속을 어긴 표를 고칠 수 있다.</li>
+<li>넓은 표를 긴 표로 바꾸고, 바꾼 뒤의 행 수를 계산할 수 있다.</li>
+</ul>
+</div>
+
+<h2>영수증 뭉치에서 표로</h2>
+
+<p>영수증마다 주문번호, 시각, 결제 방법, 합계 금액이 찍혀 있지만 자리와 모양이 제각각이라 수백 장을 비교할 수 없습니다. 그래서 영수증 한 장을 표의 가로 한 줄에, 같은 종류의 정보는 늘 같은 세로 칸에 옮깁니다.</p>
+
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 300" role="img" aria-label="(가) 영수증 세 장. 주문 1001은 08시 10분 카드 결제 합계 9,500원, 주문 1002는 08시 25분 현금 4,000원, 주문 1003은 12시 40분 카드 12,500원. (나) 같은 내용을 주문번호, 시각, 결제, 금액 네 칸이 있는 표에 옮겼다. 영수증 한 장이 표의 한 행이 된다.">
+<rect class="f-box" x="40" y="16" width="170" height="72" rx="3"/>
+<text class="f-cap" x="125" y="38" text-anchor="middle">주문 1001</text>
+<text class="f-s f-ink-t" x="125" y="58" text-anchor="middle">08:10 · 카드</text>
+<text class="f-s f-ink-t" x="125" y="77" text-anchor="middle">합계 9,500원</text>
+<line class="f-ink" x1="212" y1="52" x2="312" y2="111" marker-end="url(#f-arrow)"/>
+<rect class="f-box" x="40" y="100" width="170" height="72" rx="3"/>
+<text class="f-cap" x="125" y="122" text-anchor="middle">주문 1002</text>
+<text class="f-s f-ink-t" x="125" y="142" text-anchor="middle">08:25 · 현금</text>
+<text class="f-s f-ink-t" x="125" y="161" text-anchor="middle">합계 4,000원</text>
+<line class="f-ink" x1="212" y1="136" x2="312" y2="145" marker-end="url(#f-arrow)"/>
+<rect class="f-box" x="40" y="184" width="170" height="72" rx="3"/>
+<text class="f-cap" x="125" y="206" text-anchor="middle">주문 1003</text>
+<text class="f-s f-ink-t" x="125" y="226" text-anchor="middle">12:40 · 카드</text>
+<text class="f-s f-ink-t" x="125" y="245" text-anchor="middle">합계 12,500원</text>
+<line class="f-ink" x1="212" y1="220" x2="312" y2="179" marker-end="url(#f-arrow)"/>
+<rect class="f-soft" x="320" y="60" width="390" height="34"/>
+<rect class="f-none" x="320" y="60" width="390" height="136"/>
+<text class="f-s f-ink-t f-b" x="370" y="82" text-anchor="middle">주문번호</text>
+<text class="f-s f-ink-t f-b" x="465" y="82" text-anchor="middle">시각</text>
+<line class="f-line" x1="420" y1="60" x2="420" y2="196"/>
+<text class="f-s f-ink-t f-b" x="550" y="82" text-anchor="middle">결제</text>
+<line class="f-line" x1="510" y1="60" x2="510" y2="196"/>
+<text class="f-s f-ink-t f-b" x="650" y="82" text-anchor="middle">금액(원)</text>
+<line class="f-line" x1="590" y1="60" x2="590" y2="196"/>
+<line class="f-line" x1="320" y1="94" x2="710" y2="94"/>
+<text class="f-t" x="370" y="116" text-anchor="middle">1001</text>
+<text class="f-t" x="465" y="116" text-anchor="middle">08:10</text>
+<text class="f-t" x="550" y="116" text-anchor="middle">카드</text>
+<text class="f-t" x="650" y="116" text-anchor="middle">9,500</text>
+<line class="f-line" x1="320" y1="128" x2="710" y2="128"/>
+<text class="f-t" x="370" y="150" text-anchor="middle">1002</text>
+<text class="f-t" x="465" y="150" text-anchor="middle">08:25</text>
+<text class="f-t" x="550" y="150" text-anchor="middle">현금</text>
+<text class="f-t" x="650" y="150" text-anchor="middle">4,000</text>
+<line class="f-line" x1="320" y1="162" x2="710" y2="162"/>
+<text class="f-t" x="370" y="184" text-anchor="middle">1003</text>
+<text class="f-t" x="465" y="184" text-anchor="middle">12:40</text>
+<text class="f-t" x="550" y="184" text-anchor="middle">카드</text>
+<text class="f-t" x="650" y="184" text-anchor="middle">12,500</text>
+<text class="f-cap" x="125" y="288" text-anchor="middle">(가) 영수증 세 장</text>
+<text class="f-cap" x="515" y="288" text-anchor="middle">(나) 표의 세 행</text>
+</svg>
+<figcaption>영수증의 모양은 제각각이어도, 표로 옮기면 같은 자리에 같은 종류의 값이 온다.</figcaption>
+</figure>
+
+<p>표로 옮기면 "시각" 열만 훑어서 아침·점심 주문을 셀 수 있습니다. 표는 <b>같은 종류의 정보를 같은 자리에 모아</b> 비교를 가능하게 하는 구조입니다. 이 구조를 정확히 말하는 데 필요한 낱말을 정의합니다.</p>
+
+<h2>관측: 기록 하나의 대상 <span class="tag memo">외우기</span></h2>
+
+<p>그림 1의 영수증 한 장은 주문 한 건에 대한 기록입니다. 데이터를 모을 때 이렇게 <b>한 번 살펴보고 기록한 대상 하나</b>를 관측이라고 부릅니다.</p>
+
+<div class="box">
+<p class="box-k">정의</p>
+<p><b class="key">관측</b>(observation)은 데이터에 기록된 사례 하나입니다. 주문 한 건, 학생 한 명, 하루, 센서가 한 번 잰 기록처럼 "무엇에 대해 적었는가"의 그 무엇 하나가 관측입니다.</p>
+</div>
+
+<p>데이터에서 관측값 한 건은 한 대상이나 사건을 보고 <b>남긴 기록</b>입니다. 정돈된 표에서는 한 행을 이 기록에 대응시킵니다. 레코드(record), 사례(case), 머신러닝의 샘플(sample)이라는 말도 이런 기록을 가리킬 때가 있습니다. 통계에서 '표본'(sample)이라고 하면 관측 여러 건을 모은 집합일 수 있으니 문맥을 확인합니다.</p>
+
+<p>관측이 꼭 사람일 필요는 없습니다. 카페 표에서 관측은 손님이 아니라 <b>주문</b>입니다. 같은 손님이 하루에 두 번 오면 관측이 두 개 생깁니다. 무엇을 관측 하나로 삼을지는 질문에 따라 정하는 것이고, 다음 장(DA01·2)에서 이것을 "한 행의 단위"라는 이름으로 자세히 다룹니다.</p>
+
+<div class="more">
+<p class="box-k">더 알아보기 · 관측과 관측값</p>
+<p>통계 책에서는 "관측값"(observed value)이라는 말도 씁니다. 관측 하나에서 얻은 <b>값</b>을 가리킵니다. 예를 들어 "주문 1003의 금액은 12,500원"에서 12,500이 관측값입니다. 어떤 책은 이 값 자체를 그냥 "관측"이라고 부르기도 합니다. 이 교재에서는 관측 = 사례 하나, 값 = 거기에 적힌 내용으로 나눠 씁니다.</p>
+</div>
+
+<div class="check" data-q="q1"></div>
+
+<h2>측정: 값을 정하는 규칙</h2>
+
+<p>영수증의 "08:10"은 계산대 시계가 찍은 것입니다. 사람 손으로 적는 기록도 있습니다. 손님에게 "오늘 만족하셨나요?"라고 묻고 답을 적거나, 음료가 나올 때까지 걸린 시간을 초시계로 재는 것처럼요. 이렇게 관측에 값을 붙이는 일을 측정이라고 합니다.</p>
+
+<div class="box">
+<p class="box-k">정의 <span class="tag memo">외우기</span></p>
+<p><b class="key">측정</b>(measurement)은 <b>정해진 규칙이나 도구에 따라</b> 관측의 어떤 성질에 값을 붙이는 일입니다. 자로 길이를 재는 것만 측정이 아닙니다. 개수를 세는 것, 설문에서 보기를 고르게 하는 것, 영수증의 글자를 옮겨 적는 것도 모두 측정입니다.</p>
+</div>
+
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 330" role="img" aria-label="측정 세 가지를 나란히 놓았다. (가) 대기 시간: 대상은 주문 1003, 규칙은 주문 시각부터 음료를 받은 시각까지를 분 단위로 잰다, 값은 6분. (나) 만족도: 대상은 손님 C, 규칙은 1 매우 불만부터 5 매우 만족 가운데 하나를 고르게 한다, 값은 4. (다) 결제 수단: 대상은 주문 1003, 규칙은 영수증의 결제 칸을 옮겨 적는다, 값은 카드.">
+<text class="f-s" x="27" y="30" text-anchor="start">대상</text>
+<rect class="f-box" x="27" y="38" width="200" height="36" rx="3"/>
+<text class="f-t" x="127" y="61" text-anchor="middle">주문 1003</text>
+<line class="f-ink" x1="127" y1="76" x2="127" y2="104" marker-end="url(#f-arrow)"/>
+<text class="f-s" x="27" y="100" text-anchor="start">규칙·도구</text>
+<rect class="f-soft" x="17" y="108" width="220" height="64" rx="3"/>
+<text class="f-s f-ink-t" x="127" y="135" text-anchor="middle">주문 시각부터 음료를</text>
+<text class="f-s f-ink-t" x="127" y="155" text-anchor="middle">받은 시각까지, 분 단위</text>
+<line class="f-ink" x1="127" y1="174" x2="127" y2="204" marker-end="url(#f-arrow)"/>
+<text class="f-s" x="27" y="200" text-anchor="start">값</text>
+<rect class="f-box" x="67" y="208" width="120" height="44" rx="3"/>
+<text class="f-cap" x="127" y="236" text-anchor="middle">6분</text>
+<text class="f-cap" x="127" y="318" text-anchor="middle">(가) 대기 시간</text>
+<line class="f-dash" x1="253.5" y1="14" x2="253.5" y2="290"/>
+<text class="f-s" x="280" y="30" text-anchor="start">대상</text>
+<rect class="f-box" x="280" y="38" width="200" height="36" rx="3"/>
+<text class="f-t" x="380" y="61" text-anchor="middle">손님 C</text>
+<line class="f-ink" x1="380" y1="76" x2="380" y2="104" marker-end="url(#f-arrow)"/>
+<text class="f-s" x="280" y="100" text-anchor="start">규칙·도구</text>
+<rect class="f-soft" x="270" y="108" width="220" height="64" rx="3"/>
+<text class="f-s f-ink-t" x="380" y="135" text-anchor="middle">1 매우 불만 ~ 5 매우 만족</text>
+<text class="f-s f-ink-t" x="380" y="155" text-anchor="middle">가운데 하나 고르기</text>
+<line class="f-ink" x1="380" y1="174" x2="380" y2="204" marker-end="url(#f-arrow)"/>
+<text class="f-s" x="280" y="200" text-anchor="start">값</text>
+<rect class="f-box" x="320" y="208" width="120" height="44" rx="3"/>
+<text class="f-cap" x="380" y="236" text-anchor="middle">4</text>
+<text class="f-cap" x="380" y="318" text-anchor="middle">(나) 만족도</text>
+<line class="f-dash" x1="506.5" y1="14" x2="506.5" y2="290"/>
+<text class="f-s" x="533" y="30" text-anchor="start">대상</text>
+<rect class="f-box" x="533" y="38" width="200" height="36" rx="3"/>
+<text class="f-t" x="633" y="61" text-anchor="middle">주문 1003</text>
+<line class="f-ink" x1="633" y1="76" x2="633" y2="104" marker-end="url(#f-arrow)"/>
+<text class="f-s" x="533" y="100" text-anchor="start">규칙·도구</text>
+<rect class="f-soft" x="523" y="108" width="220" height="64" rx="3"/>
+<text class="f-s f-ink-t" x="633" y="135" text-anchor="middle">영수증의 결제 칸을</text>
+<text class="f-s f-ink-t" x="633" y="155" text-anchor="middle">그대로 옮겨 적기</text>
+<line class="f-ink" x1="633" y1="174" x2="633" y2="204" marker-end="url(#f-arrow)"/>
+<text class="f-s" x="533" y="200" text-anchor="start">값</text>
+<rect class="f-box" x="573" y="208" width="120" height="44" rx="3"/>
+<text class="f-cap" x="633" y="236" text-anchor="middle">카드</text>
+<text class="f-cap" x="633" y="318" text-anchor="middle">(다) 결제 수단</text>
+</svg>
+<figcaption>같은 대상이라도 규칙이 바뀌면 값이 바뀐다. 그래서 규칙을 값과 함께 적어 둔다.</figcaption>
+</figure>
+
+<p>그림 2에서 세 측정의 공통점은 <b>대상 + 규칙 → 값</b>이라는 모양입니다. 값만 보면 6, 4, 카드처럼 짧지만, 그 뒤에는 늘 "어떻게 정했는가"라는 규칙이 숨어 있습니다. 규칙에는 <b>단위</b>도 들어갑니다. "6"만 적혀 있으면 6분인지 6초인지 알 수 없습니다.</p>
+
+<div class="box ex">
+<p class="box-k">풀이 예제 · 규칙이 다르면 값이 다르다</p>
+<p>직원 두 명이 같은 주문 1003의 "대기 시간"을 재서 적었습니다. 손님은 12:31에 줄을 섰고, 12:40에 주문했고, 12:46에 음료를 받았습니다.</p>
+<p class="calc">① 직원 가: "주문한 시각부터 받은 시각까지"로 잼 → 12:46 − 12:40 = 6분<br>
+② 직원 나: "줄 선 시각부터 받은 시각까지"로 잼 → 12:46 − 12:31 = 15분<br>
+③ 같은 대상, 같은 이름("대기 시간"), 다른 규칙 → 6과 15</p>
+<p>둘 중 누가 틀린 것이 아닙니다. 둘은 이름만 같고 <b>사실상 다른 변수</b>를 잰 것입니다. 두 사람의 기록을 한 열에 섞으면, 나중에 "평균 대기 시간"을 계산할 때 뜻이 없는 숫자가 나옵니다.</p>
+</div>
+
+<div class="box trap">
+<p class="box-k">흔한 실수</p>
+<p><b>"숫자가 적혀 있으니 정확하다"고 믿는 것.</b> 숫자의 뜻은 측정 규칙이 정합니다. 데이터를 받으면 각 열이 <b>무엇을, 어떤 규칙으로, 어떤 단위로</b> 잰 것인지 먼저 확인합니다. 이런 설명을 모아 둔 문서를 데이터 사전(data dictionary) 또는 코드북(codebook)이라고 부릅니다. 이런 문서가 없으면 만든 사람에게 물어봐야 합니다.</p>
+</div>
+
+<div class="check" data-q="q4"></div>
+
+<h2>변수와 값 <span class="tag memo">외우기</span></h2>
+
+<p>카페 표의 "결제" 칸을 위에서 아래로 읽으면 카드, 현금, 카드, 카드, 앱입니다. 주문마다 내용이 <b>달라질 수 있습니다</b>. 이렇게 관측마다 달라질 수 있는 성질을 변수라고 부릅니다.</p>
+
+<div class="box">
+<p class="box-k">정의</p>
+<p><b class="key">변수</b>(variable)는 관측마다 달라질 수 있는 성질이고, 그 성질에 붙인 이름입니다. "시각", "결제", "금액(원)"이 변수입니다.<br>
+<b class="key">값</b>(value)은 관측 하나에서 그 변수가 가진 내용입니다. 주문 1002의 "결제" 값은 "현금"입니다.</p>
+</div>
+
+<p>변수의 값은 숫자일 수도 있고(9,500), 글자일 수도 있습니다(카드). 변수에는 어떤 종류가 있는지는 DA02에서 자세히 나눕니다.</p>
+
+<p>"달라질 수 있다"는 말에 주의합니다. 지금 모은 다섯 건이 우연히 모두 카드 결제였다고 해도 "결제"는 여전히 변수입니다. 다른 날에는 현금이 나올 수 있기 때문입니다. 반대로 표의 모든 행에 "매장: 본점"이 적혀 있고 다른 매장 기록이 앞으로도 없다면, 그 열은 형식상 변수이지만 관측끼리 구별해 주는 정보는 없습니다.</p>
+
+<div class="more">
+<p class="box-k">더 알아보기 · 수학의 변수와 데이터의 변수</p>
+<p>뒤의 대수 단원에서 나오는 변수 x는 "아직 정하지 않은 어떤 수"를 나타내는 글자입니다. 데이터의 변수는 "표의 열 하나, 곧 관측마다 값이 하나씩 붙는 성질"입니다. 둘 다 "바뀔 수 있는 것"이라는 뜻에서 같은 이름을 쓰지만 쓰임은 다릅니다. 데이터의 변수는 값이 이미 여러 개(행 수만큼) 적혀 있습니다.</p>
+</div>
+
+<h2>행·열·셀</h2>
+
+<p>이제 표의 생김새를 정확한 이름으로 부릅니다.</p>
+
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 300" role="img" aria-label="주문 다섯 건을 담은 표. 맨 위 머리글 줄에는 변수 이름 주문번호, 시각, 결제, 금액이 있다. 세로로 한 줄인 시각 열은 변수 하나다. 가로로 한 줄인 주문 1003의 행은 관측 하나다. 주문 1004의 결제 칸에 든 카드는 값 하나, 곧 셀 하나다. 주문번호 열은 각 행을 가리키는 이름표다.">
+<rect class="f-soft" x="200" y="154" width="380" height="32"/>
+<rect class="f-over" x="390" y="186" width="80" height="32"/>
+<rect class="f-soft" x="200" y="56" width="380" height="34"/>
+<rect class="f-none" x="200" y="56" width="380" height="194"/>
+<text class="f-s f-ink-t f-b" x="250" y="78" text-anchor="middle">주문번호</text>
+<text class="f-s f-ink-t f-b" x="345" y="78" text-anchor="middle">시각</text>
+<line class="f-line" x1="300" y1="56" x2="300" y2="250"/>
+<text class="f-s f-ink-t f-b" x="430" y="78" text-anchor="middle">결제</text>
+<line class="f-line" x1="390" y1="56" x2="390" y2="250"/>
+<text class="f-s f-ink-t f-b" x="525" y="78" text-anchor="middle">금액(원)</text>
+<line class="f-line" x1="470" y1="56" x2="470" y2="250"/>
+<line class="f-line" x1="200" y1="90" x2="580" y2="90"/>
+<text class="f-t" x="250" y="111" text-anchor="middle">1001</text>
+<text class="f-t" x="345" y="111" text-anchor="middle">08:10</text>
+<text class="f-t" x="430" y="111" text-anchor="middle">카드</text>
+<text class="f-t" x="525" y="111" text-anchor="middle">9,500</text>
+<line class="f-line" x1="200" y1="122" x2="580" y2="122"/>
+<text class="f-t" x="250" y="143" text-anchor="middle">1002</text>
+<text class="f-t" x="345" y="143" text-anchor="middle">08:25</text>
+<text class="f-t" x="430" y="143" text-anchor="middle">현금</text>
+<text class="f-t" x="525" y="143" text-anchor="middle">4,000</text>
+<line class="f-line" x1="200" y1="154" x2="580" y2="154"/>
+<text class="f-t" x="250" y="175" text-anchor="middle">1003</text>
+<text class="f-t" x="345" y="175" text-anchor="middle">12:40</text>
+<text class="f-t" x="430" y="175" text-anchor="middle">카드</text>
+<text class="f-t" x="525" y="175" text-anchor="middle">12,500</text>
+<line class="f-line" x1="200" y1="186" x2="580" y2="186"/>
+<text class="f-t" x="250" y="207" text-anchor="middle">1004</text>
+<text class="f-t" x="345" y="207" text-anchor="middle">13:05</text>
+<text class="f-t" x="430" y="207" text-anchor="middle">카드</text>
+<text class="f-t" x="525" y="207" text-anchor="middle">4,000</text>
+<line class="f-line" x1="200" y1="218" x2="580" y2="218"/>
+<text class="f-t" x="250" y="239" text-anchor="middle">1005</text>
+<text class="f-t" x="345" y="239" text-anchor="middle">15:30</text>
+<text class="f-t" x="430" y="239" text-anchor="middle">앱</text>
+<text class="f-t" x="525" y="239" text-anchor="middle">3,000</text>
+<rect class="f-dash" x="296" y="50" width="98" height="206"/>
+<text class="f-s f-ink-t" x="345" y="32" text-anchor="middle">열(column) = 변수 하나</text>
+<line class="f-ink" x1="345" y1="38" x2="345" y2="48" marker-end="url(#f-arrow)"/>
+<line class="f-ink" x1="584" y1="170" x2="614" y2="170"/>
+<text class="f-s f-ink-t" x="620" y="174" text-anchor="start">행(row) = 관측 하나</text>
+<line class="f-ink" x1="470" y1="202" x2="614" y2="236"/>
+<text class="f-s f-ink-t" x="620" y="240" text-anchor="start">셀(cell) = 값 하나</text>
+<line class="f-ink" x1="196" y1="73" x2="170" y2="73"/>
+<text class="f-s f-ink-t" x="164" y="77" text-anchor="end">머리글 = 변수 이름</text>
+<line class="f-ink" x1="196" y1="170" x2="170" y2="170"/>
+<text class="f-s f-ink-t" x="164" y="174" text-anchor="end">주문번호 = 행의 이름표</text>
+<text class="f-t f-b" x="380" y="286" text-anchor="middle">5행 × 4열 = 셀 20개</text>
+</svg>
+<figcaption>열은 '무엇을 적었나', 행은 '누구(무엇)에 대해 적었나', 셀은 '그래서 얼마(무엇)였나'.</figcaption>
+</figure>
+
+<ul>
+<li><b class="key">행</b>(row): 가로로 한 줄. 잘 정돈된 표에서 행 하나는 <b>관측 하나</b>입니다.</li>
+<li><b class="key">열</b>(column): 세로로 한 줄. 열 하나는 <b>변수 하나</b>입니다.</li>
+<li><b class="key">셀</b>(cell): 행과 열이 만나는 칸 하나. 셀 하나에는 <b>값 하나</b>가 들어갑니다.</li>
+<li><b>머리글</b>(header): 맨 위 줄. 각 열의 변수 이름이 적힙니다. 머리글은 관측이 아니므로 행 수를 셀 때 넣지 않습니다.</li>
+</ul>
+
+<p>표 크기는 "행 수 × 열 수"로 말합니다. 그림 3의 표는 5행 × 4열, 값이 든 셀은 20개입니다. pandas의 <code>DataFrame.shape</code>도 같은 순서로 (5, 4)를 돌려줍니다.</p>
+
+<h3>행의 이름표</h3>
+
+<p>"주문번호" 열은 조금 특별합니다. 분석하려는 성질이라기보다 <b>각 행이 어느 관측인지 가리키는 이름표</b>입니다. 이런 열을 식별자(identifier, 줄여서 ID)라고 합니다. 식별자가 있어야 "주문 1003의 금액을 고쳐 주세요"처럼 행 하나를 정확히 집을 수 있습니다. 식별자는 숫자로 적혀 있어도 더하거나 평균 내는 값이 아닙니다. 1001과 1002의 평균 1001.5는 아무 뜻이 없습니다.</p>
+
+<div class="check" data-q="q2"></div>
+
+<h2>잘 정돈된 표의 세 가지 약속 <span class="tag grasp">이해하기</span></h2>
+
+<p>표로 옮겼다고 다 같은 표가 아닙니다. 사람이 보기 좋게 만든 표가 분석하기에는 불편한 경우가 많습니다. 분석하기 좋은 표는 다음 세 가지를 지킵니다.</p>
+
+<div class="box">
+<p class="box-k">정의 · 정돈된 표</p>
+<p>① 변수 하나는 <b>열 하나</b>에 담는다.<br>
+② 관측 하나는 <b>행 하나</b>에 담는다.<br>
+③ 값 하나는 <b>셀 하나</b>에 담는다.</p>
+<p>이 약속을 지킨 표를 영어로 tidy data(깔끔한 데이터)라고 부르기도 합니다.</p>
+</div>
+
+<p>당연해 보이지만 실제 자료에서는 자주 어깁니다. 흔한 경우를 보면 다음과 같습니다.</p>
+
+<div class="table-wrap">
+<table>
+<tr><th>어긴 모습</th><th>어긴 약속</th><th>고친 모습</th></tr>
+<tr><td>"메뉴" 셀에 "아메리카노 2, 머핀 1"</td><td>③ 값 하나 = 셀 하나</td><td>메뉴·수량을 다른 열로 나누고, 메뉴마다 행을 따로 (다음 장)</td></tr>
+<tr><td>"키/몸무게" 열에 "172/65"</td><td>① 변수 하나 = 열 하나</td><td>"키(cm)" 열과 "몸무게(kg)" 열로 나누기</td></tr>
+<tr><td>표 중간에 "오전 합계" 행</td><td>② 관측 하나 = 행 하나</td><td>합계 행을 지우고, 합계는 필요할 때 계산</td></tr>
+<tr><td>9월, 10월, 11월이 열 이름</td><td>① 변수("월")가 열 이름 속에 숨음</td><td>"월" 열과 "판매 잔 수" 열로 바꾸기 (아래)</td></tr>
+</table>
+</div>
+
+<div class="box trap">
+<p class="box-k">흔한 실수</p>
+<p><b>보기 좋게 셀 병합하기, 색으로 정보 표시하기.</b> 같은 날짜의 행 다섯 개를 하나로 합친(병합한) 셀은 사람 눈에는 깔끔하지만, 컴퓨터가 읽으면 위의 한 행에만 날짜가 있고 나머지 네 행은 빈칸이 됩니다. 노란색으로 칠한 "환불된 주문"도 마찬가지입니다. 색은 값이 아니므로 분석 도구에는 보이지 않습니다. 정보는 언제나 <b>셀 안의 값</b>으로 적습니다. "환불" 열을 만들어 예/아니요를 적는 식입니다.</p>
+</div>
+
+<div class="check" data-q="q5"></div>
+
+<h3>넓은 표와 긴 표</h3>
+
+<p>메뉴별 월 판매량을 적은 표 두 개를 비교해 봅시다.</p>
+
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 290" role="img" aria-label="(가) 넓은 표: 메뉴 열과 9월, 10월, 11월 열. 아메리카노는 310, 290, 330잔, 라떼는 180, 200, 210잔. 달이 열 이름 속에 숨어 있다. (나) 긴 표: 메뉴, 월, 판매 잔 수 세 열에 여섯 행. 한 행이 '메뉴 하나의 한 달'이다.">
+<rect class="f-soft" x="24" y="60" width="264" height="30"/>
+<rect class="f-none" x="24" y="60" width="264" height="90"/>
+<text class="f-s f-ink-t f-b" x="72" y="80" text-anchor="middle">메뉴</text>
+<text class="f-s f-ink-t f-b" x="148" y="80" text-anchor="middle">9월</text>
+<line class="f-line" x1="120" y1="60" x2="120" y2="150"/>
+<text class="f-s f-ink-t f-b" x="204" y="80" text-anchor="middle">10월</text>
+<line class="f-line" x1="176" y1="60" x2="176" y2="150"/>
+<text class="f-s f-ink-t f-b" x="260" y="80" text-anchor="middle">11월</text>
+<line class="f-line" x1="232" y1="60" x2="232" y2="150"/>
+<line class="f-line" x1="24" y1="90" x2="288" y2="90"/>
+<text class="f-s f-ink-t" x="72" y="110" text-anchor="middle">아메리카노</text>
+<text class="f-s f-ink-t" x="148" y="110" text-anchor="middle">310</text>
+<text class="f-s f-ink-t" x="204" y="110" text-anchor="middle">290</text>
+<text class="f-s f-ink-t" x="260" y="110" text-anchor="middle">330</text>
+<line class="f-line" x1="24" y1="120" x2="288" y2="120"/>
+<text class="f-s f-ink-t" x="72" y="140" text-anchor="middle">라떼</text>
+<text class="f-s f-ink-t" x="148" y="140" text-anchor="middle">180</text>
+<text class="f-s f-ink-t" x="204" y="140" text-anchor="middle">200</text>
+<text class="f-s f-ink-t" x="260" y="140" text-anchor="middle">210</text>
+<rect class="f-dash" x="117" y="56" width="174" height="38"/>
+<text class="f-s" x="204" y="48" text-anchor="middle">열 이름 속에 '월' 값이 있다</text>
+<line class="f-ink" x1="300" y1="105" x2="386" y2="105" marker-end="url(#f-arrow)"/>
+<text class="f-s" x="343" y="96" text-anchor="middle">바꾸기</text>
+<rect class="f-soft" x="400" y="24" width="276" height="28"/>
+<rect class="f-none" x="400" y="24" width="276" height="196"/>
+<text class="f-s f-ink-t f-b" x="448" y="43" text-anchor="middle">메뉴</text>
+<text class="f-s f-ink-t f-b" x="531" y="43" text-anchor="middle">월</text>
+<line class="f-line" x1="496" y1="24" x2="496" y2="220"/>
+<text class="f-s f-ink-t f-b" x="621" y="43" text-anchor="middle">판매 잔 수</text>
+<line class="f-line" x1="566" y1="24" x2="566" y2="220"/>
+<line class="f-line" x1="400" y1="52" x2="676" y2="52"/>
+<text class="f-s f-ink-t" x="448" y="71" text-anchor="middle">아메리카노</text>
+<text class="f-s f-ink-t" x="531" y="71" text-anchor="middle">9월</text>
+<text class="f-s f-ink-t" x="621" y="71" text-anchor="middle">310</text>
+<line class="f-line" x1="400" y1="80" x2="676" y2="80"/>
+<text class="f-s f-ink-t" x="448" y="99" text-anchor="middle">아메리카노</text>
+<text class="f-s f-ink-t" x="531" y="99" text-anchor="middle">10월</text>
+<text class="f-s f-ink-t" x="621" y="99" text-anchor="middle">290</text>
+<line class="f-line" x1="400" y1="108" x2="676" y2="108"/>
+<text class="f-s f-ink-t" x="448" y="127" text-anchor="middle">아메리카노</text>
+<text class="f-s f-ink-t" x="531" y="127" text-anchor="middle">11월</text>
+<text class="f-s f-ink-t" x="621" y="127" text-anchor="middle">330</text>
+<line class="f-line" x1="400" y1="136" x2="676" y2="136"/>
+<text class="f-s f-ink-t" x="448" y="155" text-anchor="middle">라떼</text>
+<text class="f-s f-ink-t" x="531" y="155" text-anchor="middle">9월</text>
+<text class="f-s f-ink-t" x="621" y="155" text-anchor="middle">180</text>
+<line class="f-line" x1="400" y1="164" x2="676" y2="164"/>
+<text class="f-s f-ink-t" x="448" y="183" text-anchor="middle">라떼</text>
+<text class="f-s f-ink-t" x="531" y="183" text-anchor="middle">10월</text>
+<text class="f-s f-ink-t" x="621" y="183" text-anchor="middle">200</text>
+<line class="f-line" x1="400" y1="192" x2="676" y2="192"/>
+<text class="f-s f-ink-t" x="448" y="211" text-anchor="middle">라떼</text>
+<text class="f-s f-ink-t" x="531" y="211" text-anchor="middle">11월</text>
+<text class="f-s f-ink-t" x="621" y="211" text-anchor="middle">210</text>
+<text class="f-cap" x="156" y="278" text-anchor="middle">(가) 넓은 표 (2행)</text>
+<text class="f-cap" x="538" y="278" text-anchor="middle">(나) 긴 표 (6행)</text>
+</svg>
+<figcaption>같은 숫자 여섯 개. (나)에서는 '월'이 열 이름이 아니라 값이 되었다.</figcaption>
+</figure>
+
+<p>(가)는 사람이 읽기 좋습니다. 메뉴마다 석 달의 변화가 한 줄에 보입니다. 그런데 "9월, 10월, 11월"은 사실 <b>"월"이라는 변수의 값</b>입니다. 값이 열 이름 자리에 올라가 있으니 약속 ①을 어긴 셈입니다. (가)에서 "판매가 300잔 넘은 (메뉴, 달)을 모두 골라라" 같은 일을 하려면 열 세 개를 따로따로 봐야 합니다. (나)에서는 "판매 잔 수" 열 하나만 거르면 됩니다.</p>
+
+<p>(가) 같은 표를 <b>넓은 표</b>(wide), (나) 같은 표를 <b>긴 표</b>(long)라고 부릅니다. 어느 쪽이 틀린 것은 아닙니다. 보고서에 싣기는 넓은 표가, 거르고 묶고 그림 그리기는 긴 표가 편합니다. 중요한 것은 둘 사이를 오갈 수 있는 것입니다.</p>
+
+<div class="box ex">
+<p class="box-k">풀이 예제 · 바꾼 뒤의 행 수</p>
+<p>(가)를 (나)로 바꾸면 행이 몇 개가 될까요?</p>
+<p class="calc">① 넓은 표의 행 = 메뉴 2개<br>
+② 값이 들어 있는 달 열 = 3개 (9월, 10월, 11월)<br>
+③ 긴 표에서는 (메뉴, 달) 짝 하나가 행 하나 → 2 × 3 = 6행<br>
+④ 확인: 넓은 표의 숫자 셀도 2 × 3 = 6개. 숫자 하나가 긴 표의 행 하나로 간다.</p>
+<p>열은 어떻게 될까요? 넓은 표는 "메뉴 + 달 3개" = 4열, 긴 표는 "메뉴, 월, 판매 잔 수" = 3열입니다. 넓은 표는 달이 늘수록 <b>열</b>이 늘고, 긴 표는 달이 늘수록 <b>행</b>이 늡니다.</p>
+</div>
+
+<div class="why">
+<p class="box-k">왜 그럴까?</p>
+<p>그림 3의 표에 다섯 주문(9,500 / 4,000 / 12,500 / 4,000 / 3,000원) 아래에 "합계 33,000" 행을 하나 더 붙여 두었습니다. 누군가 "금액" 열 전체의 평균을 계산하면 무슨 일이 생길까요?</p>
+<details><summary>모범 답 보기</summary><p>합계 행도 관측 하나로 취급되어 평균에 섞입니다. 원래 평균은 33,000 ÷ 5 = 6,600원인데, 합계 행까지 넣으면 (33,000 + 33,000) ÷ 6 = 11,000원이 됩니다. 합계 행은 관측이 아니라 관측들을 계산한 결과이므로 약속 ② "관측 하나 = 행 하나"를 어긴 것입니다. 합계는 표 밖에서, 필요할 때 계산합니다.</p></details>
+</div>
+
+<div class="check" data-q="q6"></div>
+
+<p>이 장의 표 구조(관측 = 행, 변수 = 열)는 뒤에서 계속 나옵니다. Python의 pandas가 다루는 DataFrame, 데이터베이스의 테이블(DB01), 머신러닝에서 "특성(feature)과 샘플"이라고 부르는 것이 모두 같은 뼈대입니다.</p>
+
+<h2>한눈에 정리</h2>
+
+<div class="table-wrap">
+<table>
+<tr><th>낱말</th><th>뜻</th><th>카페 표에서</th></tr>
+<tr><td><b class="key">관측</b></td><td>기록된 사례 하나</td><td>주문 한 건</td></tr>
+<tr><td><b class="key">측정</b></td><td>규칙·도구로 값을 붙이는 일. 규칙과 <b class="key">단위</b>를 함께 적는다</td><td>계산대 시계가 시각을 찍음</td></tr>
+<tr><td><b class="key">변수</b></td><td>관측마다 달라질 수 있는 성질과 그 이름</td><td>시각, 결제, 금액(원)</td></tr>
+<tr><td><b class="key">값</b></td><td>관측 하나에서 변수가 가진 내용</td><td>주문 1002의 결제 = 현금</td></tr>
+<tr><td>행 · 열 · 셀</td><td>행 = <b class="key">관측 하나</b>, 열 = <b class="key">변수 하나</b>, 셀 = 값 하나</td><td>5행 × 4열 = 셀 20개</td></tr>
+<tr><td>식별자(ID)</td><td>행을 가리키는 이름표. 숫자여도 계산하지 않는다</td><td>주문번호</td></tr>
+<tr><td>넓은 표 · 긴 표</td><td>값이 열 이름에 올라가면 넓은 표. 분석에는 긴 표가 편하다</td><td>2메뉴 × 3달 → 6행</td></tr>
+</table>
+</div>
+
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>데이터 표는 관측 하나를 행 하나에, 변수 하나를 열 하나에, 규칙대로 잰 값 하나를 셀 하나에 담는다.</p></div>
+
+<h2>확인 문제</h2>
+<p>본문 중간에서 푼 문제 말고 남은 문제입니다. 보기를 누르면 바로 정답과 해설이 나옵니다.</p>
+<div id="quiz"></div>
+
+<section class="work" id="tools"></section>
+
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

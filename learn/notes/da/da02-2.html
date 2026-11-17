@@ -1,0 +1,365 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>데이터의 모양, 그리고 결측과 0 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e8c'/%3E%3Cpath d='M8 22V10m8 12V14m8 8V6' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="DA02-2">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+
+<header class="chapter">
+<p class="chap-sub">데이터 읽기와 탐색 · DA02 데이터의 종류</p>
+<p class="chap-num">DA02·2</p>
+<h1>데이터의 모양, 그리고 결측과 0</h1>
+<p class="lead">주문 하나가 계산대 표에도, 배달 앱이 보낸 JSON에도, 직원의 메신저 메시지에도 남습니다. 담긴 내용은 같은데 꺼내 쓰는 수고는 크게 다릅니다. 그리고 어느 모양이든 표로 옮기다 보면 빈칸이 생깁니다. 이 장에서는 정형·반정형·비정형 데이터를 "표로 바꾸는 일"의 눈으로 다시 보고, 빈칸(결측)과 0이 왜 전혀 다른 정보인지를 숫자로 확인합니다.</p>
+</header>
+
+<div class="goal">
+<h2>이 장을 읽고 나면</h2>
+<ul>
+<li>정형·반정형·비정형의 차이를 "구조가 어디에 적혀 있는가"로 설명할 수 있다.</li>
+<li>목록이 들어 있는 JSON을 표로 펼쳤을 때 행이 몇 개가 되는지 계산할 수 있다.</li>
+<li>비정형 글에서 변수를 뽑아 표로 만드는 예를 들 수 있다.</li>
+<li>결측과 0을 구분하고, 둘을 섞었을 때 평균이 어떻게 틀어지는지 계산할 수 있다.</li>
+<li>−999 같은 결측 표시가 계산에 섞이는 사고를 알아보고 막을 수 있다.</li>
+</ul>
+</div>
+
+<h2>같은 주문, 세 가지 모양</h2>
+
+<p>빅데이터분석기사 노트의 <a href="../../../bigdata/notes/1-planning/01-빅데이터란.html">"빅데이터란 무엇인가"</a> 장에서 데이터를 정형·반정형·비정형으로 나누는 법을 시험 관점에서 정리했습니다. 여기서는 한 걸음 더 들어가, <b>같은 정보</b>가 세 모양으로 있을 때 무엇이 달라지는지 봅니다. DA01의 주문 1003을 세 가지로 적어 보겠습니다.</p>
+
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 300" role="img" aria-label="주문 1003 하나를 세 형태로 적었다. (가) 정형: 주문번호, 손님, 시각, 금액 네 칸의 표 한 행에 1003, C, 12:40, 12,500. (나) 반정형: JSON으로 주문번호 1003, 손님 C, 시각 12:40, 금액 12500에 각각 이름표가 붙어 있다. (다) 비정형: 직원이 보낸 메시지 'C님 12시 40분 주문, 아메리카노 하나랑 샌드위치, 쿠키 두 개 해서 만 이천오백 원 받았어요.' 아래에 금액을 꺼내는 방법: 넷째 칸을 읽는다, 이름표 금액을 찾는다, 글을 읽고 해석한다.">
+<line class="f-dash" x1="253" y1="14" x2="253" y2="270"/>
+<line class="f-dash" x1="506" y1="14" x2="506" y2="270"/>
+<rect class="f-soft" x="10" y="70" width="232" height="30"/>
+<rect class="f-none" x="10" y="70" width="232" height="60"/>
+<line class="f-line" x1="10" y1="100" x2="242" y2="100"/>
+<rect class="f-over" x="176" y="100" width="66" height="30"/>
+<text class="f-s f-ink-t f-b" x="41" y="90" text-anchor="middle">주문번호</text>
+<text class="f-s f-ink-t" x="41" y="120" text-anchor="middle">1003</text>
+<line class="f-line" x1="72" y1="70" x2="72" y2="130"/>
+<text class="f-s f-ink-t f-b" x="95" y="90" text-anchor="middle">손님</text>
+<text class="f-s f-ink-t" x="95" y="120" text-anchor="middle">C</text>
+<line class="f-line" x1="118" y1="70" x2="118" y2="130"/>
+<text class="f-s f-ink-t f-b" x="147" y="90" text-anchor="middle">시각</text>
+<text class="f-s f-ink-t" x="147" y="120" text-anchor="middle">12:40</text>
+<line class="f-line" x1="176" y1="70" x2="176" y2="130"/>
+<text class="f-s f-ink-t f-b" x="209" y="90" text-anchor="middle">금액</text>
+<text class="f-s f-ink-t" x="209" y="120" text-anchor="middle">12,500</text>
+<text class="f-s" x="126" y="210" text-anchor="middle">넷째 칸을 읽는다</text>
+<text class="f-s f-ink-t" x="290" y="46" text-anchor="start">{</text>
+<text class="f-s f-ink-t" x="290" y="68" text-anchor="start">  "주문번호": 1003,</text>
+<text class="f-s f-ink-t" x="290" y="90" text-anchor="start">  "손님": "C",</text>
+<text class="f-s f-ink-t" x="290" y="112" text-anchor="start">  "시각": "12:40",</text>
+<text class="f-s f-ink-t" x="290" y="134" text-anchor="start">  "금액": 12500</text>
+<text class="f-s f-ink-t" x="290" y="156" text-anchor="start">}</text>
+<rect class="f-none" x="296" y="119" width="116" height="20" rx="3"/>
+<text class="f-s" x="380" y="210" text-anchor="middle">이름표 '금액'을 찾는다</text>
+<rect class="f-box" x="530" y="30" width="210" height="136" rx="10"/>
+<text class="f-s f-ink-t" x="546" y="56" text-anchor="start">C님 12시 40분 주문,</text>
+<text class="f-s f-ink-t" x="546" y="80" text-anchor="start">아메리카노 하나랑</text>
+<text class="f-s f-ink-t" x="546" y="104" text-anchor="start">샌드위치, 쿠키 두 개</text>
+<text class="f-s f-ink-t" x="546" y="128" text-anchor="start">해서 만 이천오백 원</text>
+<text class="f-s f-ink-t" x="546" y="152" text-anchor="start">받았어요.</text>
+<text class="f-s" x="634" y="210" text-anchor="middle">글을 읽고 해석한다</text>
+<text class="f-cap" x="126" y="290" text-anchor="middle">(가) 정형 · 표의 한 행</text>
+<text class="f-cap" x="380" y="290" text-anchor="middle">(나) 반정형 · JSON</text>
+<text class="f-cap" x="634" y="290" text-anchor="middle">(다) 비정형 · 메시지</text>
+</svg>
+<figcaption>담긴 정보는 같다. 다른 것은 '금액'을 꺼내는 데 드는 수고다.</figcaption>
+</figure>
+
+<p>세 모양 모두 "주문 1003, 손님 C, 12시 40분, 12,500원"이라는 정보를 담고 있습니다. 다른 점은 <b>그 정보의 구조(어느 값이 무엇인지)가 어디에 적혀 있느냐</b>입니다.</p>
+
+<div class="table-wrap">
+<table>
+<tr><th>모양</th><th>구조가 적힌 곳</th><th>"금액"을 꺼내려면</th></tr>
+<tr><td><b class="key">정형</b></td><td>데이터 <b>바깥</b>에 미리 정한 틀(스키마). 넷째 칸은 언제나 금액</td><td>넷째 칸을 읽는다</td></tr>
+<tr><td><b class="key">반정형</b></td><td>데이터 <b>안</b>에 값마다 붙은 이름표("금액": …)</td><td>이름표 "금액"을 찾는다</td></tr>
+<tr><td><b class="key">비정형</b></td><td>적힌 곳이 없다. 사람이 글의 뜻을 읽어야 안다</td><td>"만 이천오백 원"을 읽고 12500으로 바꾼다</td></tr>
+</table>
+</div>
+
+<div class="side"><b>용어</b> <b>스키마</b>(schema)는 표의 틀입니다. 어떤 열이 있고, 각 열에 어떤 종류의 값이 들어가는지 미리 정한 약속입니다.</div>
+
+<p>정형 데이터는 틀이 미리 정해져 있으므로 빠르고 정확하게 계산할 수 있습니다. 대신 틀에 없는 정보(예: "포장 꼼꼼히 해 주세요")는 들어갈 자리가 없습니다. 반정형은 이름표 덕분에 주문마다 항목이 조금씩 달라도 담을 수 있습니다. 비정형은 무엇이든 담지만, 컴퓨터가 계산할 수 있으려면 먼저 사람이나 별도의 방법이 뜻을 뽑아내야 합니다.</p>
+
+<p>분석의 관점에서 정리하면 이렇습니다. <b>계산은 결국 표(정형)에서 한다.</b> 반정형과 비정형을 분석한다는 것은 대개 그것을 DA01에서 배운 "관측 = 행, 변수 = 열" 표로 바꾸는 일부터 시작합니다. 다음 두 절은 그 바꾸는 일을 하나씩 봅니다.</p>
+
+<h2>반정형을 표로 펼치기 <span class="tag grasp">이해하기</span></h2>
+
+<p>실제 배달 앱의 주문 JSON에는 메뉴 목록이 들어 있습니다. 목록 안의 항목 수는 주문마다 다릅니다.</p>
+
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 270" role="img" aria-label="왼쪽 JSON: 주문번호 1003, 손님 C, 상품 목록 안에 아메리카노 1, 샌드위치 1, 쿠키 2 세 개가 들어 있다. 오른쪽 표: 주문번호, 손님, 메뉴, 수량 네 열에 세 행. 주문번호 1003과 손님 C는 세 행에 반복해서 적혔다.">
+<text class="f-s f-ink-t" x="24" y="34" text-anchor="start">{</text>
+<text class="f-s f-ink-t" x="24" y="58" text-anchor="start">  "주문번호": 1003,</text>
+<text class="f-s f-ink-t" x="24" y="82" text-anchor="start">  "손님": "C",</text>
+<text class="f-s f-ink-t" x="24" y="106" text-anchor="start">  "상품": [</text>
+<text class="f-s f-ink-t" x="24" y="130" text-anchor="start">    {"메뉴": "아메리카노", "수량": 1},</text>
+<text class="f-s f-ink-t" x="24" y="154" text-anchor="start">    {"메뉴": "샌드위치", "수량": 1},</text>
+<text class="f-s f-ink-t" x="24" y="178" text-anchor="start">    {"메뉴": "쿠키", "수량": 2}</text>
+<text class="f-s f-ink-t" x="24" y="202" text-anchor="start">  ]</text>
+<text class="f-s f-ink-t" x="24" y="226" text-anchor="start">}</text>
+<rect class="f-dash" x="40" y="113" width="300" height="76"/>
+<line class="f-ink" x1="350" y1="140" x2="400" y2="140" marker-end="url(#f-arrow)"/>
+<text class="f-s" x="375" y="128" text-anchor="middle">펼치기</text>
+<rect class="f-soft" x="420" y="100" width="136" height="90"/>
+<rect class="f-soft" x="420" y="70" width="310" height="30"/>
+<rect class="f-none" x="420" y="70" width="310" height="120"/>
+<text class="f-s f-ink-t f-b" x="460" y="90" text-anchor="middle">주문번호</text>
+<line class="f-line" x1="500" y1="70" x2="500" y2="190"/>
+<text class="f-s f-ink-t f-b" x="528" y="90" text-anchor="middle">손님</text>
+<line class="f-line" x1="556" y1="70" x2="556" y2="190"/>
+<text class="f-s f-ink-t f-b" x="611" y="90" text-anchor="middle">메뉴</text>
+<line class="f-line" x1="666" y1="70" x2="666" y2="190"/>
+<text class="f-s f-ink-t f-b" x="698" y="90" text-anchor="middle">수량</text>
+<line class="f-line" x1="420" y1="100" x2="730" y2="100"/>
+<text class="f-s f-ink-t" x="460" y="120" text-anchor="middle">1003</text>
+<text class="f-s f-ink-t" x="528" y="120" text-anchor="middle">C</text>
+<text class="f-s f-ink-t" x="611" y="120" text-anchor="middle">아메리카노</text>
+<text class="f-s f-ink-t" x="698" y="120" text-anchor="middle">1</text>
+<line class="f-line" x1="420" y1="130" x2="730" y2="130"/>
+<text class="f-s f-ink-t" x="460" y="150" text-anchor="middle">1003</text>
+<text class="f-s f-ink-t" x="528" y="150" text-anchor="middle">C</text>
+<text class="f-s f-ink-t" x="611" y="150" text-anchor="middle">샌드위치</text>
+<text class="f-s f-ink-t" x="698" y="150" text-anchor="middle">1</text>
+<line class="f-line" x1="420" y1="160" x2="730" y2="160"/>
+<text class="f-s f-ink-t" x="460" y="180" text-anchor="middle">1003</text>
+<text class="f-s f-ink-t" x="528" y="180" text-anchor="middle">C</text>
+<text class="f-s f-ink-t" x="611" y="180" text-anchor="middle">쿠키</text>
+<text class="f-s f-ink-t" x="698" y="180" text-anchor="middle">2</text>
+<text class="f-s" x="488" y="216" text-anchor="middle">반복해서 적힘</text>
+<text class="f-s" x="643" y="216" text-anchor="middle">목록 항목 하나 = 한 행</text>
+<text class="f-t f-b" x="565" y="250" text-anchor="middle">한 행의 단위: 주문 품목</text>
+</svg>
+<figcaption>목록 안의 항목 하나가 표의 행 하나가 된다. 바깥 정보(주문번호·손님)는 행마다 되풀이된다.</figcaption>
+</figure>
+
+<p>목록이 든 JSON을 표로 옮기면, <b>목록 항목 하나가 행 하나</b>가 됩니다. 그리고 목록 바깥에 있던 정보(주문번호, 손님)는 그 행들마다 되풀이해 적습니다. 그 결과 표의 한 행의 단위는 "주문"이 아니라 "주문 품목"이 됩니다. DA01·2에서 본 8행짜리 표가 바로 이렇게 만들어진 것입니다.</p>
+
+<div class="box ex">
+<p class="box-k">풀이 예제 · 펼친 뒤의 행 수</p>
+<p>JSON 주문 세 건이 있습니다. 주문 1001의 상품 목록에는 2개, 1002에는 1개, 1003에는 3개가 들어 있습니다. 펼치면 몇 행이 될까요?</p>
+<p class="calc">① 목록 항목 하나 = 행 하나<br>
+② 2 + 1 + 3 = 6행<br>
+③ 주문번호 1001은 2번, 1002는 1번, 1003은 3번 되풀이해 적힌다</p>
+<p>행 수가 주문 수(3)가 아니라 품목 수(6)라는 점을 기억해 두면, DA01·2의 "행 수를 건수로 믿는 실수"를 피할 수 있습니다.</p>
+</div>
+
+<h3>이름표가 없는 주문</h3>
+
+<p>반정형 데이터는 항목이 주문마다 다를 수 있습니다. 한 주문에는 "배송메모": "문 앞에 두세요"가 있고 다른 주문에는 그 이름표가 아예 없습니다. 이것을 표로 옮기면 "배송메모" 열이 생기고, 이름표가 없던 주문의 그 칸은 <b>비게</b> 됩니다. 표로 바꾸는 순간 빈칸이 생기는 것입니다. 이 빈칸이 "메모를 안 남겼다"인지 "앱 옛 버전이라 메모 칸이 없었다"인지는 데이터만으로는 알 수 없습니다. 빈칸의 뜻은 뒤의 결측 절에서 자세히 봅니다.</p>
+
+<div class="check" data-q="q2"></div>
+
+<h2>비정형에서 변수 뽑기</h2>
+
+<p>비정형 데이터도 표로 바꿀 수 있습니다. 다만 그때는 <b>무엇을 변수로 뽑을지 사람이 정해야</b> 합니다. 이 결정은 DA01·1의 측정과 같습니다. 규칙을 정해 글에 값을 붙이는 일이니까요. 배달 앱 후기 세 개로 해 보겠습니다.</p>
+
+<div class="sample">
+<p class="sample-k">후기 글 (비정형)</p>
+<blockquote>후기 1: 커피는 맛있는데 배달이 늦었어요!!<br>후기 2: 맛있어요!<br>후기 3: 포장이 새서 별로였어요. 다음엔 매장에서 먹을게요.</blockquote>
+</div>
+
+<p>규칙을 세 개 정했습니다. ① 글자 수: 띄어쓰기와 문장부호를 포함해 센다. ② "늦" 언급: 글에 "늦"이 들어 있으면 예. ③ 느낌표 수: "!"의 개수.</p>
+
+<div class="table-wrap">
+<table>
+<tr><th>후기</th><th>글자 수</th><th>"늦" 언급</th><th>느낌표 수</th></tr>
+<tr><td>1</td><td>19</td><td>예</td><td>2</td></tr>
+<tr><td>2</td><td>5</td><td>아니요</td><td>1</td></tr>
+<tr><td>3</td><td>28</td><td>아니요</td><td>0</td></tr>
+</table>
+</div>
+
+<p>이제 이 표로는 계산을 할 수 있습니다. "배달이 늦었다는 후기의 비율은 3개 중 1개"처럼요. 하지만 이 표는 원래 글의 일부만 담고 있습니다. 후기 3의 "포장이 새서"라는 중요한 불만은 세 변수 어디에도 들어가지 않았습니다. <b>비정형을 정형으로 바꿀 때는 뽑지 않은 정보가 사라진다</b>는 것, 그리고 뽑는 규칙에 따라 결과가 바뀐다는 것을 기억해야 합니다. 사진도 마찬가지로 점(픽셀)마다 밝기 숫자를 적은 표로 바꿀 수 있는데, 이 이야기는 이미지·딥러닝 단원에서 다시 나옵니다.</p>
+
+<div class="box trap">
+<p class="box-k">흔한 실수</p>
+<p><b>"비정형 = 쓸모없는 데이터" 또는 "정형 = 완전한 데이터"로 생각하기.</b> 비정형은 정보가 가장 풍부할 수 있고, 정형은 누군가 정한 틀에 맞는 것만 남긴 결과입니다. 정형 데이터를 받으면 "어떤 원래 기록에서, 어떤 규칙으로 뽑은 표인가"를 물어야 합니다. DA01·2의 수집 맥락과 같은 질문입니다.</p>
+</div>
+
+<div class="check" data-q="q3"></div>
+
+<h2>결측과 0은 다르다 <span class="tag grasp">이해하기</span></h2>
+
+<p>편의점이 월요일부터 금요일까지 우산 판매 개수를 적었습니다. 화요일 칸에는 0, 수요일 칸은 비어 있습니다. 수요일에는 점원이 바빠서 기록을 잊었습니다.</p>
+
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 270" role="img" aria-label="월요일부터 금요일까지 우산 판매 개수 막대그래프. 월 12, 화 0, 수는 기록 없음, 목 8, 금 10. 화요일 0은 바닥에 붙은 굵은 선으로, 실제로 하나도 안 팔렸다는 기록이다. 수요일은 점선 칸과 물음표로, 값을 모른다는 뜻이다.">
+<line class="f-ink" x1="90" y1="24" x2="90" y2="210"/>
+<line class="f-ink" x1="90" y1="210" x2="700" y2="210"/>
+<line class="f-ink" x1="85" y1="210" x2="90" y2="210"/>
+<text class="f-s" x="80" y="214" text-anchor="end">0</text>
+<line class="f-ink" x1="85" y1="184.29" x2="90" y2="184.29"/>
+<text class="f-s" x="80" y="188.29" text-anchor="end">2</text>
+<line class="f-ink" x1="85" y1="158.57" x2="90" y2="158.57"/>
+<text class="f-s" x="80" y="162.57" text-anchor="end">4</text>
+<line class="f-ink" x1="85" y1="132.86" x2="90" y2="132.86"/>
+<text class="f-s" x="80" y="136.86" text-anchor="end">6</text>
+<line class="f-ink" x1="85" y1="107.14" x2="90" y2="107.14"/>
+<text class="f-s" x="80" y="111.14" text-anchor="end">8</text>
+<line class="f-ink" x1="85" y1="81.43" x2="90" y2="81.43"/>
+<text class="f-s" x="80" y="85.43" text-anchor="end">10</text>
+<line class="f-ink" x1="85" y1="55.71" x2="90" y2="55.71"/>
+<text class="f-s" x="80" y="59.71" text-anchor="end">12</text>
+<line class="f-ink" x1="85" y1="30" x2="90" y2="30"/>
+<text class="f-s" x="80" y="34" text-anchor="end">14</text>
+<text class="f-s" x="80" y="18" text-anchor="end">개</text>
+<text class="f-s f-ink-t" x="160" y="232" text-anchor="middle">월</text>
+<rect class="f-soft" x="130" y="55.71" width="60" height="154.29"/>
+<text class="f-s f-ink-t" x="160" y="47.71" text-anchor="middle">12</text>
+<text class="f-s f-ink-t" x="280" y="232" text-anchor="middle">화</text>
+<rect class="f-soft" x="250" y="207" width="60" height="3"/>
+<text class="f-s f-ink-t" x="280" y="196" text-anchor="middle">0 (안 팔림)</text>
+<text class="f-s f-ink-t" x="400" y="232" text-anchor="middle">수</text>
+<rect class="f-dash" x="370" y="55.71" width="60" height="154.29"/>
+<text class="f-cap" x="400" y="138.86" text-anchor="middle">?</text>
+<text class="f-s f-ink-t" x="400" y="45.71" text-anchor="middle">기록 없음 (결측)</text>
+<text class="f-s f-ink-t" x="520" y="232" text-anchor="middle">목</text>
+<rect class="f-soft" x="490" y="107.14" width="60" height="102.86"/>
+<text class="f-s f-ink-t" x="520" y="99.14" text-anchor="middle">8</text>
+<text class="f-s f-ink-t" x="640" y="232" text-anchor="middle">금</text>
+<rect class="f-soft" x="610" y="81.43" width="60" height="128.57"/>
+<text class="f-s f-ink-t" x="640" y="73.43" text-anchor="middle">10</text>
+<text class="f-s" x="395" y="258" text-anchor="middle">요일별 우산 판매 개수</text>
+</svg>
+<figcaption>화요일은 '0개 팔렸다'를 안다. 수요일은 '몇 개 팔렸는지 모른다'. 둘은 다른 정보다.</figcaption>
+</figure>
+
+<div class="box">
+<p class="box-k">정의 <span class="tag memo">외우기</span></p>
+<p><b class="key">결측</b>(결측값, missing value)은 <b>값이 있어야 할 자리에 값이 없는 것</b>입니다. "모른다"는 뜻입니다.<br>
+<b>0</b>은 측정을 해서 얻은 <b>값</b>입니다. "알고 있고, 그 양이 0이다"라는 뜻입니다.</p>
+</div>
+
+<p>화요일의 0은 정보입니다. "화요일에는 우산이 하나도 안 팔렸다"를 우리는 압니다. 수요일의 빈칸은 정보가 없다는 표시입니다. 비가 와서 20개가 팔렸을 수도, 하나도 안 팔렸을 수도 있습니다. 둘을 섞으면 계산이 틀어집니다.</p>
+
+<div class="box ex">
+<p class="box-k">풀이 예제 · 세 가지 처리, 세 가지 평균</p>
+<p>값: 월 12, 화 0, 수 (결측), 목 8, 금 10. 아는 값의 합은 12 + 0 + 8 + 10 = 30입니다.</p>
+<p class="calc">① 결측을 빼고 아는 4일로 평균: 30 ÷ 4 = <b>7.5개</b><br>
+② 결측을 0으로 채워 5일로 평균: (12 + 0 + 0 + 8 + 10) ÷ 5 = 30 ÷ 5 = <b>6개</b><br>
+③ 0을 결측처럼 빼고 3일로 평균: (12 + 8 + 10) ÷ 3 = 30 ÷ 3 = <b>10개</b></p>
+<p>①은 "기록이 남은 날의 평균"으로 정직한 계산입니다. ②는 수요일에 하나도 안 팔렸다고 <b>지어낸</b> 것입니다. 평균이 실제보다 낮게 나올 가능성이 큽니다. ③은 화요일에 "하나도 안 팔렸다"는 진짜 정보를 버린 것입니다. 평균이 부풀려집니다. 같은 다섯 칸에서 6, 7.5, 10이 나왔습니다. 달라진 것은 <b>나누는 수(분모)</b>와 <b>더하는 값</b>입니다.</p>
+</div>
+
+<div class="box trap">
+<p class="box-k">흔한 실수</p>
+<p><b>빈칸을 0으로 채우기, 0을 빈칸으로 지우기.</b> 표 프로그램에서 빈칸을 0으로 바꾸는 것은 클릭 한 번이라 자주 일어납니다. 반대로 "0은 의미 없는 값"이라며 지우는 경우도 있습니다. 어느 쪽이든 정보를 바꾼 것입니다. ①도 완벽하지는 않습니다. 비 오는 날에 점원이 바빠 기록을 잊었다면, 기록이 남은 날만으로 낸 평균은 실제보다 낮을 수 있습니다. 결측을 어떻게 다룰지(빼기, 채우기)는 이유와 함께 결정하고 기록합니다. 채우는 방법은 데이터 품질 단원(DA06)에서 다룹니다.</p>
+</div>
+
+<div class="check" data-q="q5"></div>
+
+<h3>결측이 생기는 이유</h3>
+
+<p>빈칸은 모두 같아 보이지만, 생긴 이유에 따라 뜻이 다릅니다.</p>
+
+<div class="table-wrap">
+<table>
+<tr><th>이유</th><th>예</th><th>빈칸의 뜻</th></tr>
+<tr><td>답하지 않음</td><td>설문의 소득 문항을 건너뜀</td><td>값은 있지만 모른다</td></tr>
+<tr><td>해당 없음</td><td>자녀가 없는 사람의 "첫째 자녀 나이"</td><td>값이 애초에 없다. "모름"과 다르다</td></tr>
+<tr><td>측정 실패</td><td>센서가 고장 나 그 시간 기온이 없음</td><td>값은 있었지만 못 쟀다</td></tr>
+<tr><td>아직 생기지 않음</td><td>배송 중인 주문의 "도착 시각"</td><td>나중에 채워질 값</td></tr>
+<tr><td>합치면서 생김</td><td>JSON에 "배송메모" 이름표가 없던 주문</td><td>원래 기록에 그 항목이 없었다</td></tr>
+</table>
+</div>
+
+<p>특히 "해당 없음"과 "모름"은 분석에서 다르게 다뤄야 합니다. 자녀가 없는 사람의 자녀 나이를 "모름"처럼 평균값으로 채우면, 없는 자녀를 만들어 내는 셈이 됩니다. 그래서 좋은 데이터는 빈칸 대신 "해당 없음"과 "무응답"을 구분하는 표시를 따로 둡니다.</p>
+
+<h3>결측을 적는 여러 방법</h3>
+
+<p>결측은 데이터마다 다르게 적힙니다. 빈칸, <code>NA</code>(not available), <code>NaN</code>(not a number), <code>null</code>, <code>None</code>, "모름", "-", 그리고 <b>−999나 9999 같은 특별한 숫자</b>. 앞의 것들은 대개 분석 도구가 결측으로 알아봅니다. 문제는 마지막, 숫자로 적은 결측 표시입니다.</p>
+
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 190" role="img" aria-label="수직선 −1000부터 100까지. 오른쪽 끝 가까이에 실제 기온 21, 22, 23도가 모여 있다. 왼쪽 끝 −999에 점이 하나 있다. 네 값을 그대로 평균 내면 −233.25로 왼쪽으로 크게 끌려간다. −999를 빼고 평균 내면 22다.">
+<line class="f-ink" x1="60" y1="96" x2="700" y2="96"/>
+<line class="f-ink" x1="60" y1="96" x2="60" y2="102"/>
+<text class="f-s" x="60" y="120" text-anchor="middle">−1000</text>
+<line class="f-ink" x1="205.45" y1="96" x2="205.45" y2="102"/>
+<line class="f-ink" x1="350.91" y1="96" x2="350.91" y2="102"/>
+<text class="f-s" x="350.91" y="120" text-anchor="middle">−500</text>
+<line class="f-ink" x1="496.36" y1="96" x2="496.36" y2="102"/>
+<line class="f-ink" x1="641.82" y1="96" x2="641.82" y2="102"/>
+<text class="f-s" x="641.82" y="120" text-anchor="middle">0</text>
+<circle class="f-fill" cx="60.58" cy="96" r="6"/>
+<circle class="f-fill" cx="654.04" cy="96" r="5"/>
+<circle class="f-fill" cx="654.62" cy="96" r="5"/>
+<circle class="f-fill" cx="655.2" cy="96" r="5"/>
+<text class="f-s f-ink-t" x="58.58" y="78" text-anchor="start">−999 (측정 실패 표시)</text>
+<text class="f-s f-ink-t" x="654.62" y="78" text-anchor="middle">21, 22, 23</text>
+<line class="f-line" x1="506.11" y1="136" x2="506.11" y2="106" marker-end="url(#f-arrow)"/>
+<text class="f-s f-ink-t f-b" x="506.11" y="168" text-anchor="middle">그대로 평균: −233.25</text>
+<line class="f-line" x1="654.62" y1="136" x2="654.62" y2="106" marker-end="url(#f-arrow)"/>
+<text class="f-s f-ink-t f-b" x="654.62" y="152" text-anchor="middle">빼고 평균: 22</text>
+<text class="f-s" x="704" y="120" text-anchor="start">°C</text>
+</svg>
+<figcaption>−999는 '측정 실패'를 표시하는 약속일 뿐 기온이 아니다. 숫자로 계산하면 평균이 엉뚱한 곳으로 간다.</figcaption>
+</figure>
+
+<div class="box ex">
+<p class="box-k">풀이 예제 · −999가 섞인 평균</p>
+<p>어느 관측소의 네 시간 기온 기록: 21, 23, −999, 22. 이 관측소는 센서가 실패하면 −999를 적기로 약속했습니다.</p>
+<p class="calc">① 그대로 평균: (21 + 23 + (−999) + 22) ÷ 4 = −933 ÷ 4 = −233.25 °C<br>
+② −999를 결측으로 보고 뺌: (21 + 23 + 22) ÷ 3 = 66 ÷ 3 = 22 °C</p>
+<p>①은 지구에 있을 수 없는 기온입니다. 이렇게 크게 틀리면 눈에 띄기라도 하지만, 결측 표시가 0이나 99처럼 그럴듯한 숫자라면 조용히 틀립니다. 데이터를 받으면 데이터 사전(DA01·1)에서 <b>결측을 무엇으로 적었는지</b>부터 확인하고, 계산 전에 그 표시를 결측으로 바꿔 둡니다.</p>
+</div>
+
+<div class="why">
+<p class="box-k">왜 그럴까?</p>
+<p>강우량 센서가 고장 나면 0을 보내도록 만들어졌다고 합시다. 이 센서의 기록에서 "비가 안 온 날의 비율"을 계산하면 어떤 문제가 생길까요?</p>
+<details><summary>모범 답 보기</summary><p>고장 난 날도 0으로 기록되므로 "비가 안 온 날(진짜 0)"과 "고장 난 날(결측)"이 섞입니다. 고장 난 날 중에 실제로 비가 온 날이 있었다면 그날도 "비 안 옴"으로 세어져서 비가 안 온 날의 비율이 실제보다 높게 나옵니다. 0이 결측 표시로 쓰이면 데이터만 봐서는 구별할 수 없으므로, 고장 기록(장비 상태 열)처럼 다른 정보가 필요합니다.</p></details>
+</div>
+
+<div class="check" data-q="q7"></div>
+
+<p>결측은 앞으로 여러 번 다시 나옵니다. DA06(데이터 품질)에서 결측을 찾고 다루는 방법을, Python 단원에서 <code>NaN</code>이 계산에서 어떻게 움직이는지를 직접 실행해 봅니다.</p>
+
+<h2>한눈에 정리</h2>
+
+<div class="table-wrap">
+<table>
+<tr><th>묻는 것</th><th>답</th></tr>
+<tr><td>정형 · 반정형 · 비정형</td><td>구조가 데이터 <b class="key">바깥(스키마)</b> · 데이터 <b class="key">안(이름표)</b> · 어디에도 없음</td></tr>
+<tr><td>분석의 출발</td><td>어느 모양이든 "관측 = 행, 변수 = 열" 표로 바꾸는 일부터</td></tr>
+<tr><td>JSON 목록 펼치기</td><td>목록 항목 하나 = 행 하나. 바깥 정보는 행마다 되풀이</td></tr>
+<tr><td>비정형에서 변수 뽑기</td><td>규칙을 정해 값을 붙인다. 뽑지 않은 정보는 사라진다</td></tr>
+<tr><td><b class="key">결측</b>과 0</td><td>결측 = 모른다, 0 = 알고 있고 0이다. 섞으면 <b class="key">분모</b>와 합이 바뀐다</td></tr>
+<tr><td>결측 표시</td><td>빈칸, NA, NaN, null, … 그리고 <b class="key">−999</b> 같은 숫자. 계산 전에 결측으로 바꾼다</td></tr>
+</table>
+</div>
+
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>모든 데이터는 결국 표로 바뀌어 계산되며, 그 표의 빈칸은 0이 아니라 "모름"이다.</p></div>
+
+<h2>확인 문제</h2>
+<p>본문 중간에서 푼 문제 말고 남은 문제입니다. 보기를 누르면 바로 정답과 해설이 나옵니다.</p>
+<div id="quiz"></div>
+
+<section class="work" id="tools"></section>
+
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

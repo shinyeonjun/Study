@@ -1,0 +1,448 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>경계값과 조건 설계 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e8c'/%3E%3Cpath d='M8 22V10m8 12V14m8 8V6' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="PY03-3">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+
+<header class="chapter">
+<p class="chap-sub">Python과 프로그래밍 사고 · PY03 조건과 분기</p>
+<p class="chap-num">PY03·3</p>
+<h1>경계값과 조건 설계</h1>
+<p class="lead">쇼핑몰 공지에 "3만 원 이상 무료 배송"이라고 적혀 있습니다. 딱 30,000원어치를 산 손님은 배송비를 낼까요? 코드에서 <code>&gt;=</code>를 <code>&gt;</code>로 잘못 쓰면 그 손님만 배송비를 내게 됩니다. 이 장에서는 조건이 바뀌는 바로 그 자리, 경계값에서 프로그램이 맞게 동작하는지 표로 하나씩 확인하는 방법을 익히고, 조건을 중첩해서 쓸지 평평하게 쓸지 고르는 법과 성적 등급 프로그램 하나를 끝까지 검사해 봅니다.</p>
+</header>
+
+<div class="goal">
+<h2>이 장을 읽고 나면</h2>
+<ul>
+<li>"이상·이하·초과·미만"이 섞인 규칙을 <code>&gt;=</code>, <code>&lt;=</code>, <code>&gt;</code>, <code>&lt;</code>로 정확히 옮길 수 있다.</li>
+<li>경계마다 "바로 아래·경계·바로 위" 값을 골라 입력→출력 표를 만들고, 실행 결과와 맞춰 볼 수 있다.</li>
+<li>if 안에 if를 넣은 중첩 조건과 and로 묶은 평평한 조건을 서로 바꿔 쓰고, 둘이 같은지 표로 확인할 수 있다.</li>
+<li>성적 등급 프로그램의 모든 경계를 검사하고, 흔한 버그 세 가지(&gt; 실수, 순서 실수, if 나열 실수)를 찾아 고칠 수 있다.</li>
+</ul>
+</div>
+
+<h2>30,000원은 무료일까</h2>
+
+<p>"주문 금액 3만 원 이상이면 배송비 무료, 아니면 3,000원"을 코드로 옮깁니다. 두 사람이 각각 이렇게 썼습니다.</p>
+<pre><code># (가) &gt;= 로 쓴 것
+total = int(input("주문 금액: "))
+if total &gt;= 30000:
+    fee = 0
+else:
+    fee = 3000
+print(f"배송비 {fee}원, 낼 돈 {total + fee}원")</code></pre>
+<pre><code># (나) &gt; 로 쓴 것
+total = int(input("주문 금액: "))
+if total &gt; 30000:
+    fee = 0
+else:
+    fee = 3000
+print(f"배송비 {fee}원, 낼 돈 {total + fee}원")</code></pre>
+
+<p>네 가지 금액을 두 프로그램에 똑같이 넣어 실행했습니다. 표의 출력은 모두 실제 실행 결과입니다.</p>
+<div class="table-wrap">
+<table>
+<tr><th>입력 (원)</th><th>규칙대로라면</th><th>(가) &gt;= 의 출력</th><th>(나) &gt; 의 출력</th></tr>
+<tr><td>0</td><td>배송비 3,000</td><td>배송비 3000원, 낼 돈 3000원</td><td>배송비 3000원, 낼 돈 3000원</td></tr>
+<tr><td>29999</td><td>배송비 3,000</td><td>배송비 3000원, 낼 돈 32999원</td><td>배송비 3000원, 낼 돈 32999원</td></tr>
+<tr><td><b>30000</b></td><td><b>무료</b></td><td>배송비 0원, 낼 돈 30000원</td><td><b>배송비 3000원, 낼 돈 33000원</b></td></tr>
+<tr><td>30001</td><td>무료</td><td>배송비 0원, 낼 돈 30001원</td><td>배송비 0원, 낼 돈 30001원</td></tr>
+</table>
+</div>
+
+<p>(나)는 <b>30,000원 딱 한 값에서만</b> 틀립니다. 29,999원이나 30,001원, 0원으로 시험했다면 두 프로그램이 똑같이 맞게 나와서 실수를 찾지 못했을 것입니다. "3만 원 <b>이상</b>"은 30,000을 포함하므로 <code>&gt;=</code>가 맞습니다.</p>
+
+<div class="box">
+<p class="box-k">정의</p>
+<p>조건의 결과가 바뀌는 바로 그 자리의 값을 <b class="key">경계값</b>(boundary value)이라고 한다. 경계값이 어느 갈래에 들어가는지는 연산자가 정한다. <code>&gt;=</code>, <code>&lt;=</code>는 경계값을 <b>포함</b>하고, <code>&gt;</code>, <code>&lt;</code>는 <b>포함하지 않는다</b>.</p>
+</div>
+
+<div class="table-wrap">
+<table>
+<tr><th>규칙의 말</th><th>코드</th><th>경계값 포함?</th><th>수직선 점</th></tr>
+<tr><td>30000 <b class="key">이상</b></td><td><code>x &gt;= 30000</code></td><td>포함</td><td>찬 점 ●</td></tr>
+<tr><td>30000 <b class="key">초과</b></td><td><code>x &gt; 30000</code></td><td>포함 안 함</td><td>빈 점 ○</td></tr>
+<tr><td>30000 <b class="key">이하</b></td><td><code>x &lt;= 30000</code></td><td>포함</td><td>찬 점 ●</td></tr>
+<tr><td>30000 <b class="key">미만</b></td><td><code>x &lt; 30000</code></td><td>포함 안 함</td><td>빈 점 ○</td></tr>
+</table>
+</div>
+
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 250" role="img" aria-label="30,000 근처를 확대한 수직선 두 개. 눈금은 29,998, 29,999, 30,000, 30,001, 30,002. (가) total >= 30000: 30,000에 찬 점이 있고 그 오른쪽이 무료 구간으로 칠해져 있다. (나) total > 30000: 30,000에 빈 점이 있고 30,001부터 무료다. 아래에 시험할 세 값, 바로 아래 29,999, 경계 30,000, 바로 위 30,001이 표시되어 있다.">
+<text class="f-cap" x="20" y="48">(가)</text>
+<text class="f-t" x="60" y="48">total &gt;= 30000</text>
+<line class="f-ink" x1="100" y1="80" x2="700" y2="80"/>
+<line class="f-line" x1="380" y1="80" x2="720" y2="80" stroke-width="5"/>
+<circle class="f-fill" cx="380" cy="80" r="6"/>
+<text class="f-s" x="560" y="68" text-anchor="middle">무료 (fee = 0)</text>
+<text class="f-s" x="220" y="68" text-anchor="middle">3,000원</text>
+<text class="f-cap" x="20" y="138">(나)</text>
+<text class="f-t" x="60" y="138">total &gt; 30000</text>
+<line class="f-ink" x1="100" y1="170" x2="700" y2="170"/>
+<line class="f-line" x1="386" y1="170" x2="720" y2="170" stroke-width="5"/>
+<circle class="f-box" cx="380" cy="170" r="6"/>
+<text class="f-s" x="560" y="158" text-anchor="middle">무료 (fee = 0)</text>
+<text class="f-s" x="220" y="158" text-anchor="middle">3,000원</text>
+<line class="f-ink" x1="140" y1="164" x2="140" y2="176"/>
+<line class="f-ink" x1="260" y1="164" x2="260" y2="176"/>
+<line class="f-ink" x1="500" y1="164" x2="500" y2="176"/>
+<line class="f-ink" x1="620" y1="164" x2="620" y2="176"/>
+<line class="f-ink" x1="140" y1="74" x2="140" y2="86"/>
+<line class="f-ink" x1="260" y1="74" x2="260" y2="86"/>
+<line class="f-ink" x1="500" y1="74" x2="500" y2="86"/>
+<line class="f-ink" x1="620" y1="74" x2="620" y2="86"/>
+<text class="f-s" x="140" y="196" text-anchor="middle">29,998</text>
+<text class="f-s f-ink-t" x="260" y="196" text-anchor="middle">29,999</text>
+<text class="f-s f-ink-t" x="380" y="196" text-anchor="middle">30,000</text>
+<text class="f-s f-ink-t" x="500" y="196" text-anchor="middle">30,001</text>
+<text class="f-s" x="620" y="196" text-anchor="middle">30,002</text>
+<text class="f-s" x="260" y="222" text-anchor="middle">바로 아래</text>
+<text class="f-cap" x="380" y="222" text-anchor="middle">경계</text>
+<text class="f-s" x="500" y="222" text-anchor="middle">바로 위</text>
+<text class="f-s" x="380" y="242" text-anchor="middle">이 세 값만 넣어 봐도 (가)와 (나)의 차이가 드러난다</text>
+</svg>
+<figcaption>30,000 근처를 확대해 1원을 120px로 그렸다. 두 그림은 30,000 한 점에서만 다르다.</figcaption>
+</figure>
+
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+
+<h2>경계값 검사하는 법 <span class="tag grasp">이해하기</span></h2>
+
+<p>조건이 들어간 프로그램을 확인할 때 아무 값이나 몇 개 넣어 보는 것으로는 부족합니다. 앞의 예처럼 <b>틀린 곳은 대개 경계에 숨어 있기</b> 때문입니다. 그래서 경계마다 세 값을 골라 넣어 봅니다. 이렇게 경계 근처 값으로 시험하는 방법을 <b class="key">경계값 분석</b>(boundary value analysis)이라고 하고, 정보처리기사의 소프트웨어 테스트에서 본 그 이름입니다.</p>
+
+<div class="box memo">
+<p class="box-k">외우는 법 · 경계마다 세 값</p>
+<p>① <b>바로 아래</b> (정수면 경계 − 1) ② <b>경계 그 자체</b> ③ <b>바로 위</b> (정수면 경계 + 1).<br>
+여기에 ④ 허용 범위의 <b>양 끝</b>(예: 0점, 100점)과 ⑤ 범위를 <b>살짝 벗어난 값</b>(예: −1, 101)을 더한다.</p>
+</div>
+
+<p>절차는 이렇습니다.</p>
+<p class="calc">① 규칙에서 경계를 모두 찾는다 (예: 30,000)<br>
+② 경계마다 바로 아래·경계·바로 위 값을 고른다 (29,999 · 30,000 · 30,001)<br>
+③ 값마다 규칙대로라면 무엇이 나와야 하는지 <b>실행하기 전에</b> 표에 적는다<br>
+④ 하나씩 실행해 실제 출력을 옆 칸에 적는다<br>
+⑤ 두 칸이 다른 줄이 있으면 그 경계의 연산자를 의심한다</p>
+<p>③을 실행 <b>전에</b> 하는 것이 중요합니다. 출력을 먼저 보면 "그렇게 나오는 게 맞겠지" 하고 넘어가기 쉽기 때문입니다.</p>
+
+<div class="more">
+<p class="box-k">더 알아보기 · 실수에서는 "바로 아래"가 없다</p>
+<p>정수만 들어온다면 30,000의 바로 아래는 29,999입니다. 그래서 정수에서는 <code>x &gt;= 70</code>과 <code>x &gt; 69</code>가 같은 결과를 냅니다. 하지만 실수가 들어오면 다릅니다. 실행해 보면 <code>69.5 &gt; 69</code>는 True, <code>69.5 &gt;= 70</code>은 False입니다. 실수 69.5는 두 조건 사이에 끼어 버립니다. 그래서 규칙을 옮길 때는 숫자를 하나 바꿔 <code>&gt; 69</code>로 쓰기보다, 규칙에 적힌 경계 숫자를 그대로 쓰고 연산자로 포함 여부를 나타내는 것(<code>&gt;= 70</code>)이 안전합니다. 실수로 받은 점수 89.9, 89.99는 <code>&gt;= 90</code>에서 모두 False입니다(실행해 확인함).</p>
+</div>
+
+<div class="check" data-q="q3"></div>
+
+<h2>중첩 조건과 평평한 조건</h2>
+
+<p>규칙이 조금 복잡해졌습니다. "회원은 2만 원 이상, 비회원은 3만 원 이상이면 무료 배송, 아니면 3,000원". 두 가지 질문(회원인가, 금액이 얼마인가)이 얽혀 있습니다. 두 가지 모양으로 쓸 수 있습니다.</p>
+
+<h3>모양 1: if 안에 if (중첩)</h3>
+<pre><code>member = input("회원(y/n): ") == "y"
+total = int(input("주문 금액: "))
+if member:
+    if total &gt;= 20000:
+        fee = 0
+    else:
+        fee = 3000
+else:
+    if total &gt;= 30000:
+        fee = 0
+    else:
+        fee = 3000
+print(f"배송비 {fee}원")</code></pre>
+<p>블록 안에 또 if를 넣었습니다. 안쪽 if의 블록은 <b>빈칸 8개</b>(4 + 4)만큼 들여씁니다. 이렇게 조건 안에 조건을 넣는 것을 <b class="key">중첩</b>(nesting)이라고 합니다. 첫 질문으로 크게 둘로 나누고, 각 갈래 안에서 다시 둘로 나누는 모양입니다.</p>
+
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 260" role="img" aria-label="중첩 조건의 나무 그림. 맨 위 마름모 member?에서 True는 왼쪽 마름모 total >= 20000?으로, False는 오른쪽 마름모 total >= 30000?으로 간다. 왼쪽 마름모의 True는 0원, False는 3000원. 오른쪽 마름모의 True는 0원, False는 3000원. 맨 아래 잎은 네 개다.">
+<path class="f-soft" d="M380 16 L460 46 L380 76 L300 46 Z"/>
+<text class="f-t" x="380" y="51" text-anchor="middle">member ?</text>
+<path class="f-line" d="M300 46 H190 V96" marker-end="url(#f-arrow)"/>
+<text class="f-s" x="250" y="38" text-anchor="middle">True</text>
+<path class="f-line" d="M460 46 H570 V96" marker-end="url(#f-arrow)"/>
+<text class="f-s" x="510" y="38" text-anchor="middle">False</text>
+<path class="f-soft" d="M190 98 L290 130 L190 162 L90 130 Z"/>
+<text class="f-t" x="190" y="135" text-anchor="middle">total &gt;= 20000 ?</text>
+<path class="f-soft" d="M570 98 L670 130 L570 162 L470 130 Z"/>
+<text class="f-t" x="570" y="135" text-anchor="middle">total &gt;= 30000 ?</text>
+<line class="f-line" x1="150" y1="150" x2="110" y2="198" marker-end="url(#f-arrow)"/>
+<line class="f-line" x1="230" y1="150" x2="270" y2="198" marker-end="url(#f-arrow)"/>
+<line class="f-line" x1="530" y1="150" x2="490" y2="198" marker-end="url(#f-arrow)"/>
+<line class="f-line" x1="610" y1="150" x2="650" y2="198" marker-end="url(#f-arrow)"/>
+<text class="f-s" x="114" y="178" text-anchor="end">True</text>
+<text class="f-s" x="266" y="178">False</text>
+<text class="f-s" x="494" y="178" text-anchor="end">True</text>
+<text class="f-s" x="646" y="178">False</text>
+<rect class="f-box" x="70" y="200" width="80" height="34" rx="4"/><text class="f-t" x="110" y="222" text-anchor="middle">0원</text>
+<rect class="f-box" x="230" y="200" width="80" height="34" rx="4"/><text class="f-t" x="270" y="222" text-anchor="middle">3000원</text>
+<rect class="f-box" x="450" y="200" width="80" height="34" rx="4"/><text class="f-t" x="490" y="222" text-anchor="middle">0원</text>
+<rect class="f-box" x="610" y="200" width="80" height="34" rx="4"/><text class="f-t" x="650" y="222" text-anchor="middle">3000원</text>
+<text class="f-s" x="190" y="252" text-anchor="middle">회원의 갈래 (기준 2만)</text>
+<text class="f-s" x="570" y="252" text-anchor="middle">비회원의 갈래 (기준 3만)</text>
+</svg>
+<figcaption>중첩 조건은 나무 모양이다. 첫 질문으로 갈래를 나누고, 갈래마다 다른 기준으로 다시 묻는다.</figcaption>
+</figure>
+
+<h3>모양 2: and로 묶은 평평한 조건</h3>
+<pre><code>member = input("회원(y/n): ") == "y"
+total = int(input("주문 금액: "))
+if member and total &gt;= 20000:
+    fee = 0
+elif not member and total &gt;= 30000:
+    fee = 0
+else:
+    fee = 3000
+print(f"배송비 {fee}원")</code></pre>
+<p>나무의 "무료" 잎 두 개에 이르는 길을 각각 and로 한 줄에 적었습니다. 왼쪽 잎은 "회원이고 2만 이상", 오른쪽 잎은 "회원이 아니고 3만 이상"입니다. 나머지는 모두 else(3,000원)입니다.</p>
+
+<h3>두 모양이 같은지 확인</h3>
+<p>두 프로그램은 같은 일을 할까요? 경계값 검사를 그대로 씁니다. 경계는 20,000과 30,000 두 곳이고, 회원·비회원 두 경우가 있으므로 각 경계의 바로 아래와 경계를 골라 8가지를 넣었습니다.</p>
+<div class="table-wrap">
+<table>
+<tr><th>회원</th><th>금액</th><th>규칙대로라면</th><th>모양 1 (중첩)</th><th>모양 2 (평평)</th></tr>
+<tr><td>y</td><td>19999</td><td>3000</td><td>배송비 3000원</td><td>배송비 3000원</td></tr>
+<tr><td>y</td><td>20000</td><td>0</td><td>배송비 0원</td><td>배송비 0원</td></tr>
+<tr><td>y</td><td>29999</td><td>0</td><td>배송비 0원</td><td>배송비 0원</td></tr>
+<tr><td>y</td><td>30000</td><td>0</td><td>배송비 0원</td><td>배송비 0원</td></tr>
+<tr><td>n</td><td>19999</td><td>3000</td><td>배송비 3000원</td><td>배송비 3000원</td></tr>
+<tr><td>n</td><td>20000</td><td>3000</td><td>배송비 3000원</td><td>배송비 3000원</td></tr>
+<tr><td>n</td><td>29999</td><td>3000</td><td>배송비 3000원</td><td>배송비 3000원</td></tr>
+<tr><td>n</td><td>30000</td><td>0</td><td>배송비 0원</td><td>배송비 0원</td></tr>
+</table>
+</div>
+<p>여덟 줄 모두 두 프로그램의 실제 출력이 같고, 규칙과도 맞습니다. 특히 비회원 20,000원(회원이면 무료가 되는 금액)이 3,000원으로 나오는지가 두 기준을 섞지 않았는지 보여 주는 줄입니다.</p>
+
+<div class="table-wrap">
+<table>
+<tr><th></th><th>중첩 (if 안에 if)</th><th>평평 (and로 묶기)</th></tr>
+<tr><td>잘 맞는 때</td><td>첫 질문으로 크게 나뉘고, 갈래마다 할 일이 많을 때</td><td>결과가 같은 경우를 한 줄로 모을 수 있을 때</td></tr>
+<tr><td>좋은 점</td><td>나무 모양이 코드 모양과 같아 갈래가 잘 보인다</td><td>들여쓰기가 얕고 줄이 짧다</td></tr>
+<tr><td>조심할 점</td><td>세 겹 이상 깊어지면 읽기 어렵다</td><td><code>not member</code>처럼 앞 갈래의 반대를 빠짐없이 적어야 한다</td></tr>
+</table>
+</div>
+
+<div class="why">
+<p class="box-k">왜 그럴까?</p>
+<p>모양 2의 <code>elif not member and total &gt;= 30000:</code>에서 <code>not member and</code>를 지워 <code>elif total &gt;= 30000:</code>만 남겨도 결과가 같습니다. 왜 그럴까요? 그래도 남겨 두는 편이 나은 까닭은?</p>
+<details><summary>모범 답 보기</summary><p>회원이면서 3만 원 이상인 경우는 이미 첫 조건(<code>member and total &gt;= 20000</code>)에서 걸러졌으므로, elif에 도착한 "3만 이상"은 비회원뿐입니다. elif에는 "앞 조건이 거짓"이 숨어 있기 때문입니다(PY03·1). 그래도 <code>not member</code>를 써 두면 줄 하나만 읽어도 "비회원 규칙"임을 알 수 있고, 나중에 누가 첫 줄의 기준을 바꾸더라도 둘째 줄의 뜻이 흔들리지 않습니다. 다만 이것은 읽기와 고치기 편의를 위한 선택이고, 둘 다 맞는 코드입니다.</p></details>
+</div>
+
+<div class="check" data-q="q4"></div>
+<div class="check" data-q="q5"></div>
+
+<h2>풀이 예제: 성적 등급 끝까지 검사하기 <span class="tag grasp">이해하기</span></h2>
+
+<p>마지막으로 처음부터 끝까지 한 프로그램을 만들고 검사합니다. 규칙은 이렇습니다(흔히 쓰는 10점 단위 등급을 예로 정한 것입니다).</p>
+<div class="sample"><p class="sample-k">규칙</p><blockquote>점수는 0 이상 100 이하의 정수다. 범위 밖이면 "잘못된 점수".<br>90 이상 A, 80 이상 B, 70 이상 C, 60 이상 D, 그 아래는 F.</blockquote></div>
+
+<h3>1단계: 규칙을 수직선에 그린다</h3>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 170" role="img" aria-label="점수 수직선. 0 미만과 100 초과는 붉은 잘못된 점수 구간이다. 0 이상 60 미만은 F, 60 이상 70 미만은 D, 70 이상 80 미만은 C, 80 이상 90 미만은 B, 90 이상 100 이하는 A다. 경계 0, 60, 70, 80, 90, 100에 눈금이 있다.">
+<rect class="f-over" x="30" y="50" width="50" height="40"/>
+<rect class="f-box" x="80" y="50" width="336" height="40"/>
+<rect class="f-soft" x="416" y="50" width="56" height="40"/>
+<rect class="f-box" x="472" y="50" width="56" height="40"/>
+<rect class="f-soft" x="528" y="50" width="56" height="40"/>
+<rect class="f-box" x="584" y="50" width="56" height="40"/>
+<rect class="f-over" x="640" y="50" width="60" height="40"/>
+<text class="f-t" x="248" y="75" text-anchor="middle">F</text>
+<text class="f-t" x="444" y="75" text-anchor="middle">D</text>
+<text class="f-t" x="500" y="75" text-anchor="middle">C</text>
+<text class="f-t" x="556" y="75" text-anchor="middle">B</text>
+<text class="f-t" x="612" y="75" text-anchor="middle">A</text>
+<text class="f-s" x="55" y="38" text-anchor="middle">잘못</text>
+<text class="f-s" x="670" y="38" text-anchor="middle">잘못</text>
+<line class="f-ink" x1="80" y1="90" x2="80" y2="104"/><text class="f-s" x="80" y="120" text-anchor="middle">0</text>
+<line class="f-ink" x1="416" y1="90" x2="416" y2="104"/><text class="f-s" x="416" y="120" text-anchor="middle">60</text>
+<line class="f-ink" x1="472" y1="90" x2="472" y2="104"/><text class="f-s" x="472" y="120" text-anchor="middle">70</text>
+<line class="f-ink" x1="528" y1="90" x2="528" y2="104"/><text class="f-s" x="528" y="120" text-anchor="middle">80</text>
+<line class="f-ink" x1="584" y1="90" x2="584" y2="104"/><text class="f-s" x="584" y="120" text-anchor="middle">90</text>
+<line class="f-ink" x1="640" y1="90" x2="640" y2="104"/><text class="f-s" x="640" y="120" text-anchor="middle">100</text>
+<text class="f-s" x="380" y="150" text-anchor="middle">각 칸은 왼쪽 경계를 포함하고(이상) 오른쪽 경계는 다음 칸 몫이다. 100은 A에 포함</text>
+</svg>
+<figcaption>0~100은 1점을 5.6px로 그려 칸 길이가 점수 폭에 비례한다. 양 끝의 붉은 칸은 길이와 상관없이 "범위 밖"을 나타낸다.</figcaption>
+</figure>
+<p>그림에서 경계는 0, 60, 70, 80, 90, 100 여섯 곳입니다. "이상"으로 나누므로 등급은 큰 기준부터 elif로 잇습니다(PY03·1의 외우는 법). 범위 밖은 or로 맨 먼저 걸러 냅니다(PY03·2).</p>
+
+<h3>2단계: 코드를 쓴다</h3>
+<pre><code>score = int(input("점수: "))
+if score &lt; 0 or score &gt; 100:
+    grade = "잘못된 점수"
+elif score &gt;= 90:
+    grade = "A"
+elif score &gt;= 80:
+    grade = "B"
+elif score &gt;= 70:
+    grade = "C"
+elif score &gt;= 60:
+    grade = "D"
+else:
+    grade = "F"
+print(score, grade)</code></pre>
+<p>출력을 각 갈래에서 바로 하지 않고 변수 <code>grade</code>에 담았다가 마지막에 한 번 출력했습니다. 이렇게 하면 출력 모양을 바꿀 때 한 줄만 고치면 되고, 다음 단원에서 이 결과를 다른 계산에 넘기기도 쉽습니다.</p>
+
+<h3>3단계: 실행 전에 기대값 표를 만들고, 실행해 맞춘다</h3>
+<p>경계 여섯 곳마다 세 값을 고르면 겹치는 것을 빼고 열두 값이 나옵니다. "규칙대로라면" 칸을 먼저 채운 뒤, 열두 번 실행해 실제 출력을 옆에 적었습니다.</p>
+<div class="table-wrap">
+<table>
+<tr><th>입력</th><th>어느 경계를 보나</th><th>규칙대로라면</th><th>실제 출력</th><th>맞음?</th></tr>
+<tr><td>-1</td><td>0의 바로 아래 (범위 밖)</td><td>잘못된 점수</td><td>-1 잘못된 점수</td><td>○</td></tr>
+<tr><td>0</td><td>범위의 아래 끝</td><td>F</td><td>0 F</td><td>○</td></tr>
+<tr><td>59</td><td>60의 바로 아래</td><td>F</td><td>59 F</td><td>○</td></tr>
+<tr><td>60</td><td>60 경계</td><td>D</td><td>60 D</td><td>○</td></tr>
+<tr><td>69</td><td>70의 바로 아래</td><td>D</td><td>69 D</td><td>○</td></tr>
+<tr><td>70</td><td>70 경계</td><td>C</td><td>70 C</td><td>○</td></tr>
+<tr><td>79</td><td>80의 바로 아래</td><td>C</td><td>79 C</td><td>○</td></tr>
+<tr><td>80</td><td>80 경계</td><td>B</td><td>80 B</td><td>○</td></tr>
+<tr><td>89</td><td>90의 바로 아래</td><td>B</td><td>89 B</td><td>○</td></tr>
+<tr><td>90</td><td>90 경계</td><td>A</td><td>90 A</td><td>○</td></tr>
+<tr><td>100</td><td>범위의 위 끝</td><td>A</td><td>100 A</td><td>○</td></tr>
+<tr><td>101</td><td>100의 바로 위 (범위 밖)</td><td>잘못된 점수</td><td>101 잘못된 점수</td><td>○</td></tr>
+</table>
+</div>
+<p>열두 줄이 모두 맞습니다. 61, 71처럼 "경계 + 1"은 표에서 뺐는데, 바로 앞 경계의 같은 칸(D, C …) 안에 있어 따로 검사할 필요가 적기 때문입니다. 아래의 버그 1이 그 줄이 왜 그래도 쓸모 있는지 보여 줍니다.</p>
+
+<div class="check" data-q="q6"></div>
+<div class="check" data-q="q7"></div>
+
+<h2>성적 프로그램의 흔한 버그 세 가지</h2>
+
+<p>같은 규칙을 조금씩 다르게 잘못 쓴 코드 세 개를 실제로 실행해, 앞의 검사 표가 버그를 어떻게 잡아내는지 봅니다.</p>
+
+<h3>버그 1: &gt;= 대신 &gt;</h3>
+<pre><code>score = int(input("점수: "))
+if score &gt; 90:
+    grade = "A"
+elif score &gt; 80:
+    grade = "B"
+elif score &gt; 70:
+    grade = "C"
+elif score &gt; 60:
+    grade = "D"
+else:
+    grade = "F"
+print(score, grade)</code></pre>
+<div class="table-wrap">
+<table>
+<tr><th>입력</th><th>60</th><th>61</th><th>70</th><th>71</th><th>80</th><th>81</th><th>90</th><th>91</th><th>100</th></tr>
+<tr><td>규칙대로라면</td><td>D</td><td>D</td><td>C</td><td>C</td><td>B</td><td>B</td><td>A</td><td>A</td><td>A</td></tr>
+<tr><td>실제 출력</td><td><b>F</b></td><td>D</td><td><b>D</b></td><td>C</td><td><b>C</b></td><td>B</td><td><b>B</b></td><td>A</td><td>A</td></tr>
+</table>
+</div>
+<p>경계값 60, 70, 80, 90 네 점수만 한 등급씩 낮게 나옵니다. 61, 71처럼 경계 + 1에서는 맞게 나오므로, <b>경계 자체를 넣어 보지 않으면 절대 발견할 수 없는 버그</b>입니다. 반대로 경계 + 1이 맞고 경계만 틀리다는 사실은 "연산자에 등호가 빠졌다"는 강한 단서가 됩니다.</p>
+
+<h3>버그 2: 범위 검사를 맨 뒤에</h3>
+<pre><code>score = int(input("점수: "))
+if score &gt;= 90:
+    grade = "A"
+elif score &gt;= 80:
+    grade = "B"
+elif score &gt;= 70:
+    grade = "C"
+elif score &gt;= 60:
+    grade = "D"
+elif score &lt; 0 or score &gt; 100:
+    grade = "잘못된 점수"
+else:
+    grade = "F"
+print(score, grade)</code></pre>
+<p>-1을 넣으면 "잘못된 점수"가 맞게 나오지만, 101과 150을 넣으면 <code>101 A</code>, <code>150 A</code>가 나옵니다(실행해 확인함). 101은 첫 조건 <code>score &gt;= 90</code>에서 이미 참이라 A로 결정되고, 범위 검사 줄까지 내려가지 못합니다. PY03·1에서 본 "앞 갈래가 뒤 갈래의 몫을 먼저 가져가는" 문제입니다. <b>잘못된 입력을 거르는 조건은 맨 앞에</b> 둡니다.</p>
+
+<h3>버그 3: elif 대신 if를 나열</h3>
+<pre><code>score = int(input("점수: "))
+if score &gt;= 90:
+    grade = "A"
+if score &gt;= 80:
+    grade = "B"
+if score &gt;= 70:
+    grade = "C"
+if score &gt;= 60:
+    grade = "D"
+else:
+    grade = "F"
+print(score, grade)</code></pre>
+<p>95를 넣으면 <code>95 D</code>, 85를 넣으면 <code>85 D</code>, 50을 넣으면 <code>50 F</code>가 나옵니다(실행해 확인함). 90 이상이 모두 D가 됩니다. if가 네 개의 따로 된 질문이라서, 95점은 네 질문 모두에 참으로 답하고 그때마다 grade를 덮어씁니다.</p>
+
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 170" role="img" aria-label="95점을 넣었을 때 변수 grade의 값이 바뀌는 순서. 첫 if에서 A, 둘째 if에서 B로 덮어쓰고, 셋째 if에서 C, 넷째 if에서 D가 된다. 마지막 칸 D가 출력된다. 마지막 else는 넷째 if에만 딸려 있다.">
+<text class="f-s" x="20" y="62">grade</text>
+<rect class="f-box" x="80" y="40" width="110" height="40" rx="4"/><text class="f-cap" x="135" y="66" text-anchor="middle">"A"</text>
+<line class="f-line" x1="190" y1="60" x2="246" y2="60" marker-end="url(#f-arrow)"/>
+<rect class="f-box" x="250" y="40" width="110" height="40" rx="4"/><text class="f-cap" x="305" y="66" text-anchor="middle">"B"</text>
+<line class="f-line" x1="360" y1="60" x2="416" y2="60" marker-end="url(#f-arrow)"/>
+<rect class="f-box" x="420" y="40" width="110" height="40" rx="4"/><text class="f-cap" x="475" y="66" text-anchor="middle">"C"</text>
+<line class="f-line" x1="530" y1="60" x2="586" y2="60" marker-end="url(#f-arrow)"/>
+<rect class="f-over" x="590" y="40" width="110" height="40" rx="4"/><text class="f-cap" x="645" y="66" text-anchor="middle">"D"</text>
+<text class="f-s" x="135" y="104" text-anchor="middle">95 &gt;= 90 참</text>
+<text class="f-s" x="305" y="104" text-anchor="middle">95 &gt;= 80 참, 덮어씀</text>
+<text class="f-s" x="475" y="104" text-anchor="middle">95 &gt;= 70 참, 덮어씀</text>
+<text class="f-s" x="645" y="104" text-anchor="middle">95 &gt;= 60 참, 덮어씀</text>
+<text class="f-s" x="380" y="146" text-anchor="middle">마지막에 남은 "D"가 출력된다. else는 넷째 if(60 이상)에만 딸린다</text>
+</svg>
+<figcaption>따로 된 if 네 개가 모두 참이 되어, 변수에 마지막으로 넣은 값만 남는다.</figcaption>
+</figure>
+
+<p>마지막 else는 넷째 if에만 딸린 "아니면"이라서(PY03·1 왜 그럴까?), 50점일 때만 F가 나옵니다. 고치는 방법은 둘째 if부터 <code>elif</code>로 바꿔 한 묶음으로 만드는 것입니다.</p>
+
+<div class="box trap">
+<p class="box-k">흔한 실수</p>
+<p><b>정상값 몇 개만 넣어 보고 "된다"고 하는 것.</b> 버그 1은 75, 85, 95 같은 "무난한" 점수로는 모두 맞게 나옵니다. 버그 2는 0~100 안의 점수로는 하나도 틀리지 않습니다. 버그 3은 50점으로만 시험하면 맞습니다. 세 버그 모두 <b>경계값과 범위 밖 값</b>을 넣어야 드러납니다. 조건문을 쓰고 나면 경계값 표부터 만드는 습관을 들이세요.</p>
+</div>
+
+<div class="check" data-q="q8"></div>
+
+<h2>이 내용이 다시 나오는 곳</h2>
+<ul>
+<li><b>PY04</b>: 반복문을 배우면 경계값 열두 개를 손으로 열두 번 넣지 않고 목록에 담아 한 번에 검사할 수 있습니다.</li>
+<li><b>PY05</b>: 등급을 정하는 부분을 함수로 떼어 내면, 같은 검사 표를 그 함수에 그대로 쓸 수 있습니다.</li>
+<li><b>PY08</b>: 경계값 검사를 <code>assert</code>로 코드에 적어 두고, 고칠 때마다 자동으로 다시 확인하는 방법을 배웁니다.</li>
+<li><b>데이터 분석</b>: 나이를 "20대·30대"로, 점수를 등급으로 나누는 구간 나누기에서도 경계값이 어느 구간에 들어가는지(왼쪽 포함인지 오른쪽 포함인지)가 결과를 바꿉니다.</li>
+</ul>
+
+<h2>한눈에 정리</h2>
+
+<div class="table-wrap">
+<table>
+<tr><th>개념</th><th>요점</th><th>예</th></tr>
+<tr><td><b class="key">경계값</b></td><td>조건의 결과가 바뀌는 바로 그 값</td><td>3만 원 이상 → 30,000</td></tr>
+<tr><td>이상·초과</td><td><b class="key">이상</b> <code>&gt;=</code> 포함(●), <b class="key">초과</b> <code>&gt;</code> 포함 안 함(○)</td><td>30,000: &gt;= 무료, &gt; 유료</td></tr>
+<tr><td><b class="key">경계값 분석</b></td><td>경계마다 바로 아래·경계·바로 위, 범위 양 끝과 살짝 밖</td><td>59, 60 / 89, 90 / -1, 0, 100, 101</td></tr>
+<tr><td>기대값 먼저</td><td>실행 전에 "규칙대로라면" 칸을 채운다</td><td>입력→출력 표</td></tr>
+<tr><td><b class="key">중첩</b></td><td>if 안에 if. 나무 모양, 갈래마다 다른 기준</td><td>회원 → 2만, 비회원 → 3만</td></tr>
+<tr><td>평평한 조건</td><td>and로 길을 한 줄에. 앞 갈래의 반대를 빠짐없이</td><td><code>not member and total &gt;= 30000</code></td></tr>
+<tr><td>흔한 버그</td><td>&gt; 실수(경계만 틀림), 범위 검사를 뒤에(101 → A), if 나열(95 → D)</td><td>모두 경계·범위 밖 값으로만 드러남</td></tr>
+</table>
+</div>
+
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>조건문은 결과가 바뀌는 경계에서 틀리기 쉬우므로, 경계마다 바로 아래·경계·바로 위 값을 넣어 기대값과 실제 출력을 표로 맞춰 본다.</p></div>
+
+<h2>확인 문제</h2>
+<p>본문 중간에서 푼 문제 말고 남은 문제입니다. 보기를 누르면 바로 정답과 해설이 나옵니다.</p>
+<div id="quiz"></div>
+
+<section class="work" id="tools"></section>
+
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

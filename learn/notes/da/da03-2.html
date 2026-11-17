@@ -1,0 +1,408 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>산점도와 선 그래프, 그림을 의심하는 법 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e8c'/%3E%3Cpath d='M8 22V10m8 12V14m8 8V6' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="DA03-2">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+
+<header class="chapter">
+<p class="chap-sub">데이터 읽기와 탐색 · DA03 표와 그림 읽기</p>
+<p class="chap-num">DA03·2</p>
+<h1>산점도와 선 그래프, 그림을 의심하는 법</h1>
+<p class="lead">"공부를 오래 한 학생이 점수도 높을까?", "가게 매출은 요즘 줄고 있을까?" 앞의 질문은 두 변수의 관계를, 뒤의 질문은 시간에 따른 변화를 묻습니다. 이 장에서는 이런 질문에 맞는 그림인 산점도와 선 그래프를 익히고, 어떤 그림이든 읽기 전에 확인할 세 가지(축, 분모, 표본 수)를 숫자로 연습합니다.</p>
+</header>
+
+<div class="goal">
+<h2>이 장을 읽고 나면</h2>
+<ul>
+<li>수치형 두 변수의 표를 산점도로 옮기고, 점들의 모양에서 경향을 읽을 수 있다.</li>
+<li>선 그래프에서 변화량과 변화율을 계산하고, 선을 이어도 되는 경우와 안 되는 경우를 구분할 수 있다.</li>
+<li>질문과 변수 종류에 맞는 그림(막대·히스토그램·산점도·선)을 고를 수 있다.</li>
+<li>세로축을 자른 그림, 분모가 다른 비교, 표본 수가 작은 비율을 알아보고 바르게 다시 말할 수 있다.</li>
+</ul>
+</div>
+
+<h2>두 변수를 함께 보는 산점도</h2>
+
+<p>학생 8명의 하루 공부 시간과 시험 점수입니다. 한 행은 학생 한 명이고, 수치형 변수가 두 개입니다.</p>
+
+<div class="table-wrap">
+<table>
+<tr><th>학생</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th><th>7</th><th>8</th></tr>
+<tr><td>공부 시간(시간)</td><td>1</td><td>2</td><td>2</td><td>3</td><td>4</td><td>5</td><td>6</td><td>7</td></tr>
+<tr><td>점수(점)</td><td>50</td><td>58</td><td>64</td><td>61</td><td>70</td><td>68</td><td>79</td><td>83</td></tr>
+</table>
+</div>
+
+<p>(지면 때문에 학생을 열로 눕혀 적었습니다. 관측 단위는 여전히 학생 한 명입니다.)</p>
+
+<div class="box">
+<p class="box-k">정의</p>
+<p><b class="key">산점도</b>(scatter plot)는 수치형 변수 두 개를 가로축과 세로축에 놓고, <b>관측 하나를 점 하나</b>로 찍은 그림입니다. 학생 4는 (3, 61)에 찍힙니다.</p>
+</div>
+
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 320" role="img" aria-label="학생 8명의 산점도. 가로축은 하루 공부 시간 0부터 8시간, 세로축은 시험 점수 40부터 90점. 점: (1, 50), (2, 58), (2, 64), (3, 61), (4, 70), (5, 68), (6, 79), (7, 83). 왼쪽 아래에서 오른쪽 위로 올라가는 모양이다. (3, 61) 점에 학생 4라는 이름표가 붙어 있다.">
+<line class="f-ink" x1="110" y1="34" x2="110" y2="260"/>
+<line class="f-ink" x1="105" y1="260" x2="110" y2="260"/>
+<text class="f-s" x="101" y="264" text-anchor="end">40</text>
+<line class="f-ink" x1="105" y1="216" x2="110" y2="216"/>
+<text class="f-s" x="101" y="220" text-anchor="end">50</text>
+<line class="f-ink" x1="105" y1="172" x2="110" y2="172"/>
+<text class="f-s" x="101" y="176" text-anchor="end">60</text>
+<line class="f-ink" x1="105" y1="128" x2="110" y2="128"/>
+<text class="f-s" x="101" y="132" text-anchor="end">70</text>
+<line class="f-ink" x1="105" y1="84" x2="110" y2="84"/>
+<text class="f-s" x="101" y="88" text-anchor="end">80</text>
+<line class="f-ink" x1="105" y1="40" x2="110" y2="40"/>
+<text class="f-s" x="101" y="44" text-anchor="end">90</text>
+<text class="f-s" x="101" y="26" text-anchor="end">점</text>
+<path class="f-ink" d="M110 256 l-6 -4 l12 -6 l-6 -4"/>
+<line class="f-ink" x1="110" y1="260" x2="670" y2="260"/>
+<line class="f-ink" x1="110" y1="260" x2="110" y2="266"/>
+<text class="f-s" x="110" y="282" text-anchor="middle">0</text>
+<line class="f-ink" x1="177.5" y1="260" x2="177.5" y2="266"/>
+<text class="f-s" x="177.5" y="282" text-anchor="middle">1</text>
+<line class="f-ink" x1="245" y1="260" x2="245" y2="266"/>
+<text class="f-s" x="245" y="282" text-anchor="middle">2</text>
+<line class="f-ink" x1="312.5" y1="260" x2="312.5" y2="266"/>
+<text class="f-s" x="312.5" y="282" text-anchor="middle">3</text>
+<line class="f-ink" x1="380" y1="260" x2="380" y2="266"/>
+<text class="f-s" x="380" y="282" text-anchor="middle">4</text>
+<line class="f-ink" x1="447.5" y1="260" x2="447.5" y2="266"/>
+<text class="f-s" x="447.5" y="282" text-anchor="middle">5</text>
+<line class="f-ink" x1="515" y1="260" x2="515" y2="266"/>
+<text class="f-s" x="515" y="282" text-anchor="middle">6</text>
+<line class="f-ink" x1="582.5" y1="260" x2="582.5" y2="266"/>
+<text class="f-s" x="582.5" y="282" text-anchor="middle">7</text>
+<line class="f-ink" x1="650" y1="260" x2="650" y2="266"/>
+<text class="f-s" x="650" y="282" text-anchor="middle">8</text>
+<text class="f-s f-ink-t" x="380" y="308" text-anchor="middle">하루 공부 시간(시간)</text>
+<text class="f-s f-ink-t" x="114" y="24" text-anchor="start">시험 점수</text>
+<circle class="f-fill" cx="177.5" cy="216" r="5"/>
+<circle class="f-fill" cx="245" cy="180.8" r="5"/>
+<circle class="f-fill" cx="245" cy="154.4" r="5"/>
+<circle class="f-fill" cx="312.5" cy="167.6" r="5"/>
+<circle class="f-fill" cx="380" cy="128" r="5"/>
+<circle class="f-fill" cx="447.5" cy="136.8" r="5"/>
+<circle class="f-fill" cx="515" cy="88.4" r="5"/>
+<circle class="f-fill" cx="582.5" cy="70.8" r="5"/>
+<line class="f-ink" x1="318.5" y1="173.6" x2="352.5" y2="203.6"/>
+<text class="f-s f-ink-t" x="356.5" y="211.6" text-anchor="start">학생 4: (3시간, 61점)</text>
+</svg>
+<figcaption>점 하나 = 학생 한 명. 세로축이 40점에서 시작한다(물결 표시).</figcaption>
+</figure>
+
+<p>점 8개를 다 찍고 나면, 왼쪽 아래에서 오른쪽 위로 올라가는 모양이 보입니다. "공부 시간이 긴 학생일수록 점수도 높은 <b>경향</b>이 있다"고 읽습니다. 이렇게 한 변수가 커질 때 다른 변수도 커지는 경향을 <b>양의 관계</b>, 한쪽이 커질 때 다른 쪽이 작아지는 경향을 <b>음의 관계</b>라고 부릅니다. 점들이 아무 모양 없이 흩어져 있으면 뚜렷한 관계가 보이지 않는다고 말합니다.</p>
+
+<p>경향은 <b>전체의 모양</b>입니다. 개별 점에는 예외가 있습니다. 학생 3(2시간, 64점)은 학생 4(3시간, 61점)보다 덜 공부하고 점수가 높습니다. 그래도 전체 경향이 틀린 것은 아닙니다. 반대로 점 한두 개만 보고 경향을 말해서도 안 됩니다.</p>
+
+<div class="box trap">
+<p class="box-k">흔한 실수</p>
+<p><b>"함께 커진다"를 "원인이다"로 읽기.</b> 산점도는 두 변수가 함께 움직이는지를 보여 줄 뿐, 공부 시간이 점수를 올렸는지는 말해 주지 않습니다. 원래 그 과목을 좋아하는 학생이 공부도 오래 하고 점수도 높을 수 있습니다. 관계와 원인을 가르는 법은 DA08과 통계 단원에서 다룹니다.</p>
+</div>
+
+<p>그림 1의 세로축은 40점에서 시작합니다. 산점도는 점의 <b>위치</b>를 읽는 그림이라, 막대처럼 길이의 비를 읽지 않으므로 0에서 시작하지 않아도 됩니다. 다만 0이 아니라는 것을 축에 물결 표시 등으로 알려 주는 것이 좋습니다.</p>
+
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+
+<h2>시간에 따른 변화: 선 그래프</h2>
+
+<p>카페의 6월부터 11월까지 월 매출입니다(단위: 만 원). 6월 420, 7월 450, 8월 520, 9월 480, 10월 390, 11월 360.</p>
+
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 290" role="img" aria-label="카페 월 매출 선 그래프. 6월 420만 원, 7월 450, 8월 520, 9월 480, 10월 390, 11월 360. 세로축은 0부터 600만 원. 8월이 가장 높고 그 뒤로 내려간다.">
+<line class="f-ink" x1="110" y1="34" x2="110" y2="240"/>
+<line class="f-ink" x1="105" y1="240" x2="110" y2="240"/>
+<text class="f-s" x="101" y="244" text-anchor="end">0</text>
+<line class="f-ink" x1="105" y1="206.67" x2="110" y2="206.67"/>
+<text class="f-s" x="101" y="210.67" text-anchor="end">100</text>
+<line class="f-ink" x1="105" y1="173.33" x2="110" y2="173.33"/>
+<text class="f-s" x="101" y="177.33" text-anchor="end">200</text>
+<line class="f-ink" x1="105" y1="140" x2="110" y2="140"/>
+<text class="f-s" x="101" y="144" text-anchor="end">300</text>
+<line class="f-ink" x1="105" y1="106.67" x2="110" y2="106.67"/>
+<text class="f-s" x="101" y="110.67" text-anchor="end">400</text>
+<line class="f-ink" x1="105" y1="73.33" x2="110" y2="73.33"/>
+<text class="f-s" x="101" y="77.33" text-anchor="end">500</text>
+<line class="f-ink" x1="105" y1="40" x2="110" y2="40"/>
+<text class="f-s" x="101" y="44" text-anchor="end">600</text>
+<text class="f-s" x="101" y="26" text-anchor="end">만 원</text>
+<line class="f-ink" x1="110" y1="240" x2="690" y2="240"/>
+<line class="f-ink" x1="160" y1="240" x2="160" y2="246"/>
+<text class="f-s f-ink-t" x="160" y="262" text-anchor="middle">6월</text>
+<line class="f-ink" x1="264" y1="240" x2="264" y2="246"/>
+<text class="f-s f-ink-t" x="264" y="262" text-anchor="middle">7월</text>
+<line class="f-ink" x1="368" y1="240" x2="368" y2="246"/>
+<text class="f-s f-ink-t" x="368" y="262" text-anchor="middle">8월</text>
+<line class="f-ink" x1="472" y1="240" x2="472" y2="246"/>
+<text class="f-s f-ink-t" x="472" y="262" text-anchor="middle">9월</text>
+<line class="f-ink" x1="576" y1="240" x2="576" y2="246"/>
+<text class="f-s f-ink-t" x="576" y="262" text-anchor="middle">10월</text>
+<line class="f-ink" x1="680" y1="240" x2="680" y2="246"/>
+<text class="f-s f-ink-t" x="680" y="262" text-anchor="middle">11월</text>
+<path class="f-line" d="M160.0 100.0 L264.0 90.0 L368.0 66.7 L472.0 80.0 L576.0 110.0 L680.0 120.0"/>
+<circle class="f-fill" cx="160" cy="100" r="5"/>
+<text class="f-s f-ink-t" x="160" y="88" text-anchor="middle">420</text>
+<circle class="f-fill" cx="264" cy="90" r="5"/>
+<text class="f-s f-ink-t" x="264" y="78" text-anchor="middle">450</text>
+<circle class="f-fill" cx="368" cy="66.67" r="5"/>
+<text class="f-s f-ink-t" x="368" y="54.67" text-anchor="middle">520</text>
+<circle class="f-fill" cx="472" cy="80" r="5"/>
+<text class="f-s f-ink-t" x="472" y="68" text-anchor="middle">480</text>
+<circle class="f-fill" cx="576" cy="110" r="5"/>
+<text class="f-s f-ink-t" x="576" y="98" text-anchor="middle">390</text>
+<circle class="f-fill" cx="680" cy="120" r="5"/>
+<text class="f-s f-ink-t" x="680" y="108" text-anchor="middle">360</text>
+</svg>
+<figcaption>점은 실제로 잰 달, 선은 시간 순서를 잇는 표시. 선 위의 중간 지점은 측정한 값이 아니다.</figcaption>
+</figure>
+
+<div class="box">
+<p class="box-k">정의</p>
+<p><b class="key">선 그래프</b>(line graph)는 가로축에 <b>시간처럼 순서가 이어지는 값</b>을 놓고, 측정한 점들을 순서대로 선으로 이은 그림입니다. 오르내리는 <b>변화</b>를 보는 데 씁니다.</p>
+</div>
+
+<p>선의 기울기가 변화의 방향과 크기를 보여 줍니다. 8월까지 오르다가 그 뒤로 내려갑니다. 숫자로 확인해 봅시다.</p>
+
+<div class="box ex">
+<p class="box-k">풀이 예제 · 변화량과 변화율</p>
+<p class="calc">① 8월 → 11월 변화량: 360 − 520 = −160만 원 (160만 원 줄었다)<br>
+② 변화율: −160 ÷ 520 ≈ −0.3077 → 약 −30.8%<br>
+③ 6월 → 11월 변화량: 360 − 420 = −60만 원, 변화율 −60 ÷ 420 ≈ −14.3%</p>
+<p>같은 그래프에서 "8월보다 31% 줄었다"와 "6월보다 14% 줄었다"가 모두 맞는 말입니다. 변화율은 <b>기준(분모)</b>을 어느 달로 잡느냐에 따라 달라집니다(AR07). 그래프 설명을 읽을 때는 "어느 때와 비교한 것인가"를 확인합니다.</p>
+</div>
+
+<p>선 그래프의 선은 "이 순서로 이어진다"는 표시입니다. 8월과 9월 사이 선 위의 한 점은 측정한 값이 아닙니다. 그래서 <b>순서가 없는 범주</b>(아메리카노, 라떼, 머핀의 판매량 같은 것)를 선으로 이으면 안 됩니다. 아메리카노와 라떼 "사이"는 없기 때문입니다. 그런 자료는 막대그래프로 그립니다.</p>
+
+<div class="check" data-q="q3"></div>
+<div class="check" data-q="q4"></div>
+
+<h2>어떤 그림을 고를까 <span class="tag memo">외우기</span></h2>
+
+<p>그림은 질문과 변수의 종류가 정합니다. DA02와 이 단원의 내용을 한 표로 모으면 다음과 같습니다.</p>
+
+<div class="table-wrap">
+<table>
+<tr><th>질문</th><th>변수</th><th>그림</th></tr>
+<tr><td>범주마다 몇 개(몇 %)인가?</td><td>범주형 1개</td><td><b class="key">막대그래프</b></td></tr>
+<tr><td>값들이 어디에 몰려 있나? (분포)</td><td>수치형 1개</td><td><b class="key">히스토그램</b></td></tr>
+<tr><td>두 수치는 함께 움직이나?</td><td>수치형 2개</td><td><b class="key">산점도</b></td></tr>
+<tr><td>시간에 따라 어떻게 변하나?</td><td>시간 + 수치형</td><td><b class="key">선 그래프</b></td></tr>
+</table>
+</div>
+
+<p>이 표는 출발점입니다. 범주형 두 개의 관계(예: 학년별 통학 수단)는 막대를 나란히 놓거나 쌓아서 그리고, 분포를 무리별로 비교할 때는 DA04에서 배울 상자 그림을 씁니다.</p>
+
+<div class="check" data-q="q12"></div>
+
+<h2>그림을 읽기 전에 확인할 세 가지 <span class="tag grasp">이해하기</span></h2>
+
+<p>그림은 빠르게 인상을 남깁니다. 그 인상이 숫자와 맞는지 확인하는 습관이 필요합니다. 확인할 것은 세 가지입니다.</p>
+
+<h3>축: 세로축은 어디서 시작하나</h3>
+
+<p>두 가게의 만족도 점수 A 50점, B 55점을 막대그래프로 그립니다. 같은 두 숫자를 세로축만 바꿔 두 번 그렸습니다.</p>
+
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 300" role="img" aria-label="같은 두 값 A 50, B 55를 두 번 그렸다. (가) 세로축이 0부터 60: 두 막대 높이가 거의 비슷하다. (나) 세로축이 48부터 56: A 막대는 짧고 B 막대는 A의 3.5배 높이로 보인다.">
+<line class="f-ink" x1="80" y1="44" x2="80" y2="230"/>
+<line class="f-ink" x1="75" y1="230" x2="80" y2="230"/>
+<text class="f-s" x="71" y="234" text-anchor="end">0</text>
+<line class="f-ink" x1="75" y1="200" x2="80" y2="200"/>
+<text class="f-s" x="71" y="204" text-anchor="end">10</text>
+<line class="f-ink" x1="75" y1="170" x2="80" y2="170"/>
+<text class="f-s" x="71" y="174" text-anchor="end">20</text>
+<line class="f-ink" x1="75" y1="140" x2="80" y2="140"/>
+<text class="f-s" x="71" y="144" text-anchor="end">30</text>
+<line class="f-ink" x1="75" y1="110" x2="80" y2="110"/>
+<text class="f-s" x="71" y="114" text-anchor="end">40</text>
+<line class="f-ink" x1="75" y1="80" x2="80" y2="80"/>
+<text class="f-s" x="71" y="84" text-anchor="end">50</text>
+<line class="f-ink" x1="75" y1="50" x2="80" y2="50"/>
+<text class="f-s" x="71" y="54" text-anchor="end">60</text>
+<line class="f-ink" x1="80" y1="230" x2="320" y2="230"/>
+<rect class="f-soft" x="120" y="80" width="60" height="150"/>
+<text class="f-s f-ink-t" x="150" y="72" text-anchor="middle">50</text>
+<text class="f-s f-ink-t" x="150" y="250" text-anchor="middle">A</text>
+<rect class="f-soft" x="230" y="65" width="60" height="165"/>
+<text class="f-s f-ink-t" x="260" y="57" text-anchor="middle">55</text>
+<text class="f-s f-ink-t" x="260" y="250" text-anchor="middle">B</text>
+<text class="f-cap" x="200" y="286" text-anchor="middle">(가) 세로축 0부터</text>
+<line class="f-dash" x1="380" y1="20" x2="380" y2="290"/>
+<line class="f-ink" x1="470" y1="44" x2="470" y2="230"/>
+<line class="f-ink" x1="465" y1="230" x2="470" y2="230"/>
+<text class="f-s" x="461" y="234" text-anchor="end">48</text>
+<line class="f-ink" x1="465" y1="185" x2="470" y2="185"/>
+<text class="f-s" x="461" y="189" text-anchor="end">50</text>
+<line class="f-ink" x1="465" y1="140" x2="470" y2="140"/>
+<text class="f-s" x="461" y="144" text-anchor="end">52</text>
+<line class="f-ink" x1="465" y1="95" x2="470" y2="95"/>
+<text class="f-s" x="461" y="99" text-anchor="end">54</text>
+<line class="f-ink" x1="465" y1="50" x2="470" y2="50"/>
+<text class="f-s" x="461" y="54" text-anchor="end">56</text>
+<line class="f-ink" x1="470" y1="230" x2="710" y2="230"/>
+<rect class="f-soft" x="510" y="185" width="60" height="45"/>
+<text class="f-s f-ink-t" x="540" y="177" text-anchor="middle">50</text>
+<text class="f-s f-ink-t" x="540" y="250" text-anchor="middle">A</text>
+<rect class="f-soft" x="620" y="72.5" width="60" height="157.5"/>
+<text class="f-s f-ink-t" x="650" y="64.5" text-anchor="middle">55</text>
+<text class="f-s f-ink-t" x="650" y="250" text-anchor="middle">B</text>
+<text class="f-cap" x="590" y="286" text-anchor="middle">(나) 세로축 48부터</text>
+</svg>
+<figcaption>값의 차이는 5, 비로는 1.1배. (나)는 이 차이를 3.5배로 보이게 만든다.</figcaption>
+</figure>
+
+<div class="box ex">
+<p class="box-k">풀이 예제 · 잘린 축이 만드는 착시</p>
+<p class="calc">① 실제 값의 비: 55 ÷ 50 = 1.1배<br>
+② (가) 세로축 0부터: 막대 길이 = 값 그대로 → 55 ÷ 50 = 1.1배로 보인다<br>
+③ (나) 세로축 48부터: 막대 길이 = 값 − 48 → A는 50 − 48 = 2, B는 55 − 48 = 7<br>
+④ (나)에서 보이는 비: 7 ÷ 2 = 3.5배</p>
+<p>(나)의 숫자 자체는 틀리지 않았습니다. 하지만 막대그래프는 <b>길이</b>로 크기를 전하는 그림이라, 축을 자르면 길이의 비가 값의 비와 달라집니다. 1.1배 차이가 3.5배처럼 보입니다. 그래서 막대그래프의 세로축은 0에서 시작합니다. 산점도·선 그래프는 위치와 기울기를 읽으므로 0에서 시작하지 않아도 되지만, 그때도 눈금이 어디서 시작하는지 꼭 봅니다.</p>
+</div>
+
+<div class="check" data-q="q5"></div>
+
+<h3>분모: 무엇으로 나누었나</h3>
+
+<p>A시는 한 해 교통사고가 120건, B시는 60건입니다. A시가 더 위험할까요? A시 인구는 60만 명, B시 인구는 15만 명입니다.</p>
+
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 300" role="img" aria-label="(가) 교통사고 건수: A시 120건, B시 60건. A시가 두 배. (나) 인구 10만 명당 건수: A시 인구 60만 명이라 20건, B시 인구 15만 명이라 40건. B시가 두 배.">
+<line class="f-ink" x1="80" y1="44" x2="80" y2="230"/>
+<line class="f-ink" x1="75" y1="230" x2="80" y2="230"/>
+<text class="f-s" x="71" y="234" text-anchor="end">0</text>
+<line class="f-ink" x1="75" y1="204.29" x2="80" y2="204.29"/>
+<text class="f-s" x="71" y="208.29" text-anchor="end">20</text>
+<line class="f-ink" x1="75" y1="178.57" x2="80" y2="178.57"/>
+<text class="f-s" x="71" y="182.57" text-anchor="end">40</text>
+<line class="f-ink" x1="75" y1="152.86" x2="80" y2="152.86"/>
+<text class="f-s" x="71" y="156.86" text-anchor="end">60</text>
+<line class="f-ink" x1="75" y1="127.14" x2="80" y2="127.14"/>
+<text class="f-s" x="71" y="131.14" text-anchor="end">80</text>
+<line class="f-ink" x1="75" y1="101.43" x2="80" y2="101.43"/>
+<text class="f-s" x="71" y="105.43" text-anchor="end">100</text>
+<line class="f-ink" x1="75" y1="75.71" x2="80" y2="75.71"/>
+<text class="f-s" x="71" y="79.71" text-anchor="end">120</text>
+<line class="f-ink" x1="75" y1="50" x2="80" y2="50"/>
+<text class="f-s" x="71" y="54" text-anchor="end">140</text>
+<text class="f-s" x="71" y="36" text-anchor="end">건</text>
+<line class="f-ink" x1="80" y1="230" x2="320" y2="230"/>
+<rect class="f-soft" x="120" y="75.71" width="60" height="154.29"/>
+<text class="f-s f-ink-t" x="150" y="67.71" text-anchor="middle">120</text>
+<text class="f-s f-ink-t" x="150" y="250" text-anchor="middle">A시</text>
+<rect class="f-soft" x="230" y="152.86" width="60" height="77.14"/>
+<text class="f-s f-ink-t" x="260" y="144.86" text-anchor="middle">60</text>
+<text class="f-s f-ink-t" x="260" y="250" text-anchor="middle">B시</text>
+<text class="f-cap" x="200" y="286" text-anchor="middle">(가) 사고 건수</text>
+<line class="f-dash" x1="380" y1="20" x2="380" y2="290"/>
+<line class="f-ink" x1="470" y1="44" x2="470" y2="230"/>
+<line class="f-ink" x1="465" y1="230" x2="470" y2="230"/>
+<text class="f-s" x="461" y="234" text-anchor="end">0</text>
+<line class="f-ink" x1="465" y1="194" x2="470" y2="194"/>
+<text class="f-s" x="461" y="198" text-anchor="end">10</text>
+<line class="f-ink" x1="465" y1="158" x2="470" y2="158"/>
+<text class="f-s" x="461" y="162" text-anchor="end">20</text>
+<line class="f-ink" x1="465" y1="122" x2="470" y2="122"/>
+<text class="f-s" x="461" y="126" text-anchor="end">30</text>
+<line class="f-ink" x1="465" y1="86" x2="470" y2="86"/>
+<text class="f-s" x="461" y="90" text-anchor="end">40</text>
+<line class="f-ink" x1="465" y1="50" x2="470" y2="50"/>
+<text class="f-s" x="461" y="54" text-anchor="end">50</text>
+<text class="f-s" x="461" y="36" text-anchor="end">건</text>
+<line class="f-ink" x1="470" y1="230" x2="710" y2="230"/>
+<rect class="f-soft" x="510" y="158" width="60" height="72"/>
+<text class="f-s f-ink-t" x="540" y="150" text-anchor="middle">20</text>
+<text class="f-s f-ink-t" x="540" y="250" text-anchor="middle">A시</text>
+<rect class="f-soft" x="620" y="86" width="60" height="144"/>
+<text class="f-s f-ink-t" x="650" y="78" text-anchor="middle">40</text>
+<text class="f-s f-ink-t" x="650" y="250" text-anchor="middle">B시</text>
+<text class="f-cap" x="590" y="286" text-anchor="middle">(나) 인구 10만 명당</text>
+</svg>
+<figcaption>같은 사고 기록. 무엇으로 나누느냐(분모)에 따라 어느 도시가 더 위험해 보이는지가 뒤집힌다.</figcaption>
+</figure>
+
+<div class="box ex">
+<p class="box-k">풀이 예제 · 인구 10만 명당 사고 건수</p>
+<p class="calc">① A시: 120 ÷ 600,000 × 100,000 = 120 ÷ 6 = 20건<br>
+② B시: 60 ÷ 150,000 × 100,000 = 60 ÷ 1.5 = 40건<br>
+③ 건수로는 A가 B의 2배, 인구 10만 명당으로는 B가 A의 2배</p>
+<p>사람이 많은 곳에서는 사고도 많이 납니다. "어디가 더 위험한가"를 묻는다면 사람 수로 나눈 비율을 봐야 합니다. 이렇게 비교할 때 무엇으로 나눌지(분모)를 정하는 것은 DA03·1의 상대도수, AR07의 기준값과 같은 생각입니다.</p>
+</div>
+
+<p>백분율 기사에서도 분모를 확인합니다. 손님 100명에게 설문을 보냈고 50명이 답했으며, 그중 30명이 "만족"이라고 했습니다. "만족 60%"는 <b>응답자</b> 50명 중 30명(30 ÷ 50)이고, <b>전체 손님</b> 기준으로는 30 ÷ 100 = 30%입니다. 답하지 않은 50명은 DA01·2의 "누가 빠졌나"에 해당합니다.</p>
+
+<div class="check" data-q="q7"></div>
+
+<h3>표본 수: 몇 개로 낸 숫자인가</h3>
+
+<p>두 가게의 후기 만족도입니다. 가게 가: "만족 100%". 가게 나: "만족 92%". 가게 가가 더 나을까요? 가게 가는 후기 3개 중 3개, 가게 나는 250개 중 230개가 만족이었습니다.</p>
+
+<div class="box ex">
+<p class="box-k">풀이 예제 · 한 명이 바뀌면</p>
+<p class="calc">① 가게 가: 3 ÷ 3 = 100%. 만족한 사람 하나가 불만으로 바뀌면 2 ÷ 3 ≈ 66.7% → 약 33%p 떨어짐<br>
+② 가게 나: 230 ÷ 250 = 92%. 만족한 사람 하나가 불만으로 바뀌면 229 ÷ 250 = 91.6% → 0.4%p 떨어짐</p>
+<p>관측이 3개뿐인 비율은 한 사람의 마음에 따라 크게 흔들립니다. 250개로 낸 비율은 훨씬 안정적입니다. 그래서 비율이나 평균을 말할 때는 몇 개의 관측으로 낸 숫자인지, 곧 <b class="key">표본 수</b>를 함께 적습니다. 흔히 <b>n</b>이라는 글자로 씁니다(n = 3, n = 250). %p(퍼센트포인트)는 AR07에서 배운, 두 백분율의 차이를 나타내는 단위입니다.</p>
+</div>
+
+<div class="box memo">
+<p class="box-k">외우는 법 · 그림 앞에서 묻는 세 가지</p>
+<p><b>축</b>은 어디서 시작하나? → 막대는 0부터.<br><b>분모</b>는 무엇인가? → 전체가 다르면 비율로.<br><b>n</b>은 몇인가? → 작으면 크게 흔들린다.</p>
+</div>
+
+<div class="why">
+<p class="box-k">왜 그럴까?</p>
+<p>어떤 기사가 "올해 우리 동네 강도 사건이 작년보다 100% 늘었다"고 썼습니다. 이 문장만 보고 놀라기 전에 무엇을 확인해야 할까요?</p>
+<details><summary>모범 답 보기</summary><p>표본 수(실제 건수)와 분모를 확인합니다. 작년 1건, 올해 2건이어도 "100% 증가"입니다. 건수가 이렇게 작으면 해마다 우연히 크게 오르내립니다. 또 동네 인구가 크게 늘었다면 인구당 비율은 그대로일 수도 있습니다. 변화율만이 아니라 원래 숫자(1건 → 2건), 기준(작년), 분모(인구)를 함께 봐야 합니다.</p></details>
+</div>
+
+<div class="check" data-q="q9"></div>
+
+<h2>한눈에 정리</h2>
+
+<div class="table-wrap">
+<table>
+<tr><th>묻는 것</th><th>답</th></tr>
+<tr><td><b class="key">산점도</b></td><td>수치형 2개. 관측 하나 = 점 하나. 전체 모양으로 경향(양·음의 관계)을 읽고, 원인으로 읽지 않는다</td></tr>
+<tr><td><b class="key">선 그래프</b></td><td>시간 순서 + 수치. 변화를 본다. 순서 없는 범주는 잇지 않는다</td></tr>
+<tr><td>그림 고르기</td><td>범주 1개 → 막대, 수치 1개 → 히스토그램, 수치 2개 → 산점도, 시간 → 선</td></tr>
+<tr><td><b class="key">축</b></td><td>막대그래프는 0부터. 자르면 길이의 비가 값의 비와 달라진다</td></tr>
+<tr><td><b class="key">분모</b></td><td>전체 크기가 다르면 비율(○명당, %)로 비교. "누구 중의 %"인지 확인</td></tr>
+<tr><td><b class="key">표본 수</b> n</td><td>작으면 한두 개에 크게 흔들린다. 비율·평균과 함께 적는다</td></tr>
+</table>
+</div>
+
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>질문과 변수 종류에 맞는 그림을 고르고, 읽기 전에는 축이 어디서 시작하는지, 무엇으로 나눴는지, 몇 개로 낸 숫자인지를 확인한다.</p></div>
+
+<h2>확인 문제</h2>
+<p>본문 중간에서 푼 문제 말고 남은 문제입니다. 보기를 누르면 바로 정답과 해설이 나옵니다.</p>
+<div id="quiz"></div>
+
+<section class="work" id="tools"></section>
+
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

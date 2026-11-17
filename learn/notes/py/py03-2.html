@@ -1,0 +1,460 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>and·or·not으로 조건 묶기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e8c'/%3E%3Cpath d='M8 22V10m8 12V14m8 8V6' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="PY03-2">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+
+<header class="chapter">
+<p class="chap-sub">Python과 프로그래밍 사고 · PY03 조건과 분기</p>
+<p class="chap-num">PY03·2</p>
+<h1>and·or·not으로 조건 묶기</h1>
+<p class="lead">"20살 이상이고 표가 있으면 입장", "65세 이상이거나 회원이면 할인". 실제 규칙은 비교 하나로 끝나지 않고 "그리고", "또는", "아니다"로 여러 조건을 묶습니다. 이 장에서는 조건을 묶는 세 낱말 and·or·not을 진리표로 정확히 익히고, Python이 이 식을 계산하는 순서와 중간에 멈추는 규칙(단락 평가), 그리고 가장 흔한 함정을 실행해 보며 확인합니다.</p>
+</header>
+
+<div class="goal">
+<h2>이 장을 읽고 나면</h2>
+<ul>
+<li>and·or·not의 진리표를 쓰고, 묶인 조건식의 결과를 한 단계씩 계산할 수 있다.</li>
+<li>not → and → or 의 계산 순서를 알고, 괄호로 뜻을 분명히 할 수 있다.</li>
+<li>단락 평가 때문에 조건의 순서가 오류 여부를 바꾸는 예를 설명할 수 있다.</li>
+<li><code>x == 1 or 2</code>가 늘 참이 되는 까닭을 설명하고 바르게 고칠 수 있다.</li>
+<li>"범위 안"과 "범위 밖" 조건을 수직선에 그리고 and·or로 쓸 수 있다.</li>
+</ul>
+</div>
+
+<h2>세 낱말: and, or, not</h2>
+
+<p>놀이기구 앞에 "20살 이상이고 표가 있는 사람만 탑승"이라고 적혀 있다고 해 봅시다. 25살이고 표가 있는 사람으로 확인합니다.</p>
+
+<pre><code>age = 25
+has_ticket = True
+print(age &gt;= 20 and has_ticket)
+print(age &gt;= 30 and has_ticket)
+print(age &gt;= 30 or has_ticket)
+print(not has_ticket)</code></pre>
+<div class="sample"><p class="sample-k">실행 결과</p><pre><code>True
+False
+True
+False</code></pre></div>
+
+<div class="side"><b>용어</b> <b>논리 연산자</b>(logical operator)는 True/False 값을 받아 새 True/False를 만드는 연산자입니다. Python의 논리 연산자는 영어 낱말 그대로 <code>and</code>(그리고), <code>or</code>(또는), <code>not</code>(아니다) 세 개입니다. 다른 언어의 <code>&amp;&amp;</code>, <code>||</code>, <code>!</code>에 해당합니다.</div>
+
+<ul>
+<li>둘째 줄 <code>age &gt;= 30 and has_ticket</code>: 표는 있지만 30 이상이 아니라서 False입니다. <b>and는 양쪽이 모두 참이어야</b> 참입니다.</li>
+<li>셋째 줄 <code>age &gt;= 30 or has_ticket</code>: 30 이상은 아니지만 표가 있어서 True입니다. <b>or는 한쪽만 참이어도</b> 참입니다.</li>
+<li>넷째 줄 <code>not has_ticket</code>: True를 뒤집어 False입니다. <b>not은 하나를 받아 반대로</b> 바꿉니다.</li>
+</ul>
+
+<h2>진리표 <span class="tag memo">외우기</span></h2>
+
+<p>참·거짓 두 값만 다루므로, 가능한 경우를 모두 늘어놓은 표 하나로 연산자를 완전히 정의할 수 있습니다. 이 표를 <b class="key">진리표</b>(truth table)라고 합니다. 아래 표의 모든 칸은 <code>print(True and False)</code>처럼 한 줄씩 실행해 확인했습니다.</p>
+
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 250" role="img" aria-label="세 개의 진리표. (가) a and b: a와 b가 모두 True일 때만 True, 나머지 세 경우 False. (나) a or b: a와 b가 모두 False일 때만 False, 나머지 세 경우 True. (다) not a: a가 True면 False, False면 True. 각 표에서 결과가 다른 셋과 다른 한 칸이 색칠되어 있다.">
+<text class="f-s f-ink-t" x="55" y="36" text-anchor="middle">a</text>
+<text class="f-s f-ink-t" x="125" y="36" text-anchor="middle">b</text>
+<text class="f-cap" x="205" y="36" text-anchor="middle">a and b</text>
+<line class="f-ink" x1="20" y1="46" x2="250" y2="46"/>
+<text class="f-t" x="55" y="72" text-anchor="middle">True</text><text class="f-t" x="125" y="72" text-anchor="middle">True</text>
+<rect class="f-soft" x="165" y="54" width="80" height="26"/><text class="f-t f-b" x="205" y="72" text-anchor="middle">True</text>
+<text class="f-t" x="55" y="104" text-anchor="middle">True</text><text class="f-t" x="125" y="104" text-anchor="middle">False</text><text class="f-t" x="205" y="104" text-anchor="middle">False</text>
+<text class="f-t" x="55" y="136" text-anchor="middle">False</text><text class="f-t" x="125" y="136" text-anchor="middle">True</text><text class="f-t" x="205" y="136" text-anchor="middle">False</text>
+<text class="f-t" x="55" y="168" text-anchor="middle">False</text><text class="f-t" x="125" y="168" text-anchor="middle">False</text><text class="f-t" x="205" y="168" text-anchor="middle">False</text>
+<text class="f-s" x="135" y="198" text-anchor="middle">둘 다 참일 때만 참</text>
+<line class="f-dash" x1="270" y1="20" x2="270" y2="210"/>
+<text class="f-s f-ink-t" x="315" y="36" text-anchor="middle">a</text>
+<text class="f-s f-ink-t" x="385" y="36" text-anchor="middle">b</text>
+<text class="f-cap" x="460" y="36" text-anchor="middle">a or b</text>
+<line class="f-ink" x1="285" y1="46" x2="505" y2="46"/>
+<text class="f-t" x="315" y="72" text-anchor="middle">True</text><text class="f-t" x="385" y="72" text-anchor="middle">True</text><text class="f-t" x="460" y="72" text-anchor="middle">True</text>
+<text class="f-t" x="315" y="104" text-anchor="middle">True</text><text class="f-t" x="385" y="104" text-anchor="middle">False</text><text class="f-t" x="460" y="104" text-anchor="middle">True</text>
+<text class="f-t" x="315" y="136" text-anchor="middle">False</text><text class="f-t" x="385" y="136" text-anchor="middle">True</text><text class="f-t" x="460" y="136" text-anchor="middle">True</text>
+<text class="f-t" x="315" y="168" text-anchor="middle">False</text><text class="f-t" x="385" y="168" text-anchor="middle">False</text>
+<rect class="f-soft" x="420" y="150" width="80" height="26"/><text class="f-t f-b" x="460" y="168" text-anchor="middle">False</text>
+<text class="f-s" x="395" y="198" text-anchor="middle">둘 다 거짓일 때만 거짓</text>
+<line class="f-dash" x1="525" y1="20" x2="525" y2="210"/>
+<text class="f-s f-ink-t" x="590" y="36" text-anchor="middle">a</text>
+<text class="f-cap" x="680" y="36" text-anchor="middle">not a</text>
+<line class="f-ink" x1="545" y1="46" x2="735" y2="46"/>
+<text class="f-t" x="590" y="72" text-anchor="middle">True</text><text class="f-t" x="680" y="72" text-anchor="middle">False</text>
+<text class="f-t" x="590" y="104" text-anchor="middle">False</text><text class="f-t" x="680" y="104" text-anchor="middle">True</text>
+<text class="f-s" x="640" y="198" text-anchor="middle">반대로 뒤집는다</text>
+<text class="f-cap" x="135" y="236" text-anchor="middle">(가) and</text>
+<text class="f-cap" x="395" y="236" text-anchor="middle">(나) or</text>
+<text class="f-cap" x="640" y="236" text-anchor="middle">(다) not</text>
+</svg>
+<figcaption>색칠한 칸이 그 연산자의 "예외" 하나다. and는 참이 한 칸뿐이고, or는 거짓이 한 칸뿐이다.</figcaption>
+</figure>
+
+<div class="box">
+<p class="box-k">정의</p>
+<p><code>A and B</code>는 A와 B가 <b>모두</b> True일 때만 True다.<br>
+<code>A or B</code>는 A와 B 중 <b>적어도 하나</b>가 True이면 True다. 둘 다 True여도 True다.<br>
+<code>not A</code>는 A가 True면 False, False면 True다.</p>
+</div>
+
+<div class="box trap">
+<p class="box-k">흔한 실수</p>
+<p><b>일상 말의 "또는"은 "둘 중 하나만"일 때가 많습니다.</b> "커피 또는 차를 드립니다"는 둘 다 주지는 않는다는 뜻이지요. 하지만 Python의 <code>or</code>는 <b>둘 다 참이어도 참</b>입니다(진리표 (나)의 첫 줄). "둘 중 정확히 하나만"이 필요하면 따로 <code>a != b</code>처럼 써야 합니다. 이 뜻은 DM01 "집합과 논리"에서 배우는 합집합과 같습니다.</p>
+</div>
+
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+<div class="check" data-q="q3"></div>
+
+<h2>범위 안, 범위 밖 <span class="tag grasp">이해하기</span></h2>
+
+<p>and와 or는 수직선 위에서 보면 뜻이 또렷해집니다. "x가 10 이상 20 미만"(범위 안)과 "x가 10 미만이거나 20 이상"(범위 밖)을 실행해 봅니다.</p>
+<pre><code>x = int(input("x: "))
+print(x &gt;= 10 and x &lt; 20)
+print(x &lt; 10 or x &gt;= 20)</code></pre>
+
+<div class="table-wrap">
+<table>
+<tr><th>x</th><th><code>x &gt;= 10 and x &lt; 20</code></th><th><code>x &lt; 10 or x &gt;= 20</code></th></tr>
+<tr><td>9</td><td>False</td><td>True</td></tr>
+<tr><td>10</td><td>True</td><td>False</td></tr>
+<tr><td>19</td><td>True</td><td>False</td></tr>
+<tr><td>20</td><td>False</td><td>True</td></tr>
+</table>
+</div>
+<p>(네 값을 넣어 실제로 실행한 결과입니다.) 두 식의 결과가 언제나 정반대입니다. 하나는 범위 안, 다른 하나는 정확히 그 나머지인 범위 밖을 나타내기 때문입니다.</p>
+
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 240" role="img" aria-label="수직선 두 개. (가) x >= 10 and x < 20: 10에 속이 찬 점, 20에 속이 빈 점이 있고 그 사이만 굵게 칠해져 있다. 두 조건의 겹치는 부분이다. (나) x < 10 or x >= 20: 10에 속이 빈 점과 그 왼쪽 전체, 20에 속이 찬 점과 그 오른쪽 전체가 굵게 칠해져 있다. 두 조건 중 하나라도 맞는 부분이다.">
+<text class="f-cap" x="20" y="44">(가)</text>
+<text class="f-t" x="380" y="44" text-anchor="middle">x &gt;= 10 and x &lt; 20</text>
+<line class="f-ink" x1="60" y1="80" x2="700" y2="80"/>
+<line class="f-line" x1="220" y1="80" x2="534" y2="80" stroke-width="5"/>
+<circle class="f-fill" cx="220" cy="80" r="6"/>
+<circle class="f-box" cx="540" cy="80" r="6"/>
+<line class="f-ink" x1="60" y1="74" x2="60" y2="86"/><text class="f-s" x="60" y="104" text-anchor="middle">5</text>
+<text class="f-s" x="220" y="104" text-anchor="middle">10</text>
+<line class="f-ink" x1="380" y1="74" x2="380" y2="86"/><text class="f-s" x="380" y="104" text-anchor="middle">15</text>
+<text class="f-s" x="540" y="104" text-anchor="middle">20</text>
+<line class="f-ink" x1="700" y1="74" x2="700" y2="86"/><text class="f-s" x="700" y="104" text-anchor="middle">25</text>
+<text class="f-s" x="720" y="84">겹침</text>
+<text class="f-cap" x="20" y="150">(나)</text>
+<text class="f-t" x="380" y="150" text-anchor="middle">x &lt; 10 or x &gt;= 20</text>
+<line class="f-ink" x1="60" y1="186" x2="700" y2="186"/>
+<line class="f-line" x1="40" y1="186" x2="214" y2="186" stroke-width="5"/>
+<line class="f-line" x1="540" y1="186" x2="720" y2="186" stroke-width="5"/>
+<circle class="f-box" cx="220" cy="186" r="6"/>
+<circle class="f-fill" cx="540" cy="186" r="6"/>
+<line class="f-ink" x1="60" y1="180" x2="60" y2="192"/><text class="f-s" x="60" y="210" text-anchor="middle">5</text>
+<text class="f-s" x="220" y="210" text-anchor="middle">10</text>
+<line class="f-ink" x1="380" y1="180" x2="380" y2="192"/><text class="f-s" x="380" y="210" text-anchor="middle">15</text>
+<text class="f-s" x="540" y="210" text-anchor="middle">20</text>
+<line class="f-ink" x1="700" y1="180" x2="700" y2="192"/><text class="f-s" x="700" y="210" text-anchor="middle">25</text>
+<text class="f-s" x="380" y="232" text-anchor="middle">찬 점 = 포함(&gt;=), 빈 점 = 포함 안 함(&lt;)</text>
+</svg>
+<figcaption>and는 두 조건이 겹치는 곳, or는 둘 중 하나라도 맞는 곳이다. 눈금 1당 32px로 실제 간격대로 그렸다.</figcaption>
+</figure>
+
+<p>(가)는 PY02·3에서 본 이어 쓴 비교로 <code>10 &lt;= x &lt; 20</code>이라고 써도 같습니다. 반면 (나)처럼 <b>범위 밖</b>은 이어 쓴 비교 하나로 쓸 수 없고 or가 필요합니다. 점수 검사에 자주 쓰는 모양입니다.</p>
+<pre><code>score = int(input("점수: "))
+if 0 &lt;= score &lt;= 100:
+    print("올바른 점수")
+else:
+    print("0~100 밖의 점수")</code></pre>
+<p>-1, 0, 55, 100, 101을 넣어 실행하면 차례로 "0~100 밖의 점수", "올바른 점수", "올바른 점수", "올바른 점수", "0~100 밖의 점수"가 나옵니다. 범위 밖을 먼저 걸러 내고 싶으면 <code>if score &lt; 0 or score &gt; 100:</code>으로 쓰면 됩니다. PY03·3의 성적 예제가 이 방법을 씁니다.</p>
+
+<div class="box trap">
+<p class="box-k">시험 함정</p>
+<p><b>범위 밖을 and로 쓰는 실수.</b> <code>score &lt; 0 and score &gt; 100</code>은 "0보다 작으면서 동시에 100보다 큰 수"라서 그런 수는 없습니다. 이 식은 어떤 점수를 넣어도 언제나 False입니다. 수직선에서 두 조건이 겹치는 곳이 없기 때문입니다. "범위 밖"은 or, "범위 안"은 and로 기억하세요.</p>
+</div>
+
+<div class="check" data-q="q13"></div>
+
+<h2>계산 순서: not → and → or</h2>
+
+<p>and와 or를 한 식에 섞으면 어느 쪽을 먼저 계산할까요? 같은 값으로 괄호 위치만 바꿔 봅니다.</p>
+<pre><code>print(True or False and False)
+print((True or False) and False)
+print(not True and False)
+print(not (True and False))</code></pre>
+<div class="sample"><p class="sample-k">실행 결과</p><pre><code>True
+False
+False
+True</code></pre></div>
+
+<div class="box">
+<p class="box-k">정의</p>
+<p>논리 연산자는 <b class="key">not → and → or</b> 순서로 계산한다. 곱셈이 덧셈보다 먼저인 것처럼 and가 or보다 먼저다. 비교 연산자(<code>&gt;=</code> 등)는 이 셋보다도 먼저 계산된다. 괄호가 있으면 괄호 안이 가장 먼저다.</p>
+</div>
+
+<p>첫째 줄을 한 단계씩 계산하면 이렇습니다.</p>
+<p class="calc">① and가 먼저: <code>False and False</code> → False<br>
+② 식이 <code>True or False</code>가 된다<br>
+③ or: → True</p>
+<p>둘째 줄은 괄호 때문에 or가 먼저입니다.</p>
+<p class="calc">① 괄호 안: <code>True or False</code> → True<br>
+② <code>True and False</code> → False</p>
+
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 220" role="img" aria-label="두 계산 나무. (가) True or False and False: 맨 위 or 아래 왼쪽에 True, 오른쪽에 and가 있고 and 아래에 False와 False가 있다. and가 먼저 False를 만들고, or가 True or False로 True를 만든다. (나) (True or False) and False: 맨 위 and 아래 왼쪽에 or, 오른쪽에 False. or 아래에 True와 False. or가 먼저 True, and가 True and False로 False.">
+<rect class="f-soft" x="150" y="20" width="70" height="30" rx="4"/><text class="f-t" x="185" y="40" text-anchor="middle">or</text>
+<text class="f-s" x="230" y="40">→ True</text>
+<line class="f-ink" x1="170" y1="50" x2="100" y2="86"/>
+<line class="f-ink" x1="200" y1="50" x2="270" y2="86"/>
+<rect class="f-box" x="65" y="88" width="70" height="30" rx="4"/><text class="f-t" x="100" y="108" text-anchor="middle">True</text>
+<rect class="f-soft" x="235" y="88" width="70" height="30" rx="4"/><text class="f-t" x="270" y="108" text-anchor="middle">and</text>
+<text class="f-s" x="315" y="108">→ False</text>
+<line class="f-ink" x1="255" y1="118" x2="215" y2="154"/>
+<line class="f-ink" x1="285" y1="118" x2="325" y2="154"/>
+<rect class="f-box" x="180" y="156" width="70" height="30" rx="4"/><text class="f-t" x="215" y="176" text-anchor="middle">False</text>
+<rect class="f-box" x="290" y="156" width="70" height="30" rx="4"/><text class="f-t" x="325" y="176" text-anchor="middle">False</text>
+<line class="f-dash" x1="400" y1="16" x2="400" y2="190"/>
+<rect class="f-soft" x="545" y="20" width="70" height="30" rx="4"/><text class="f-t" x="580" y="40" text-anchor="middle">and</text>
+<text class="f-s" x="625" y="40">→ False</text>
+<line class="f-ink" x1="565" y1="50" x2="495" y2="86"/>
+<line class="f-ink" x1="595" y1="50" x2="665" y2="86"/>
+<rect class="f-soft" x="460" y="88" width="70" height="30" rx="4"/><text class="f-t" x="495" y="108" text-anchor="middle">or</text>
+<text class="f-s" x="455" y="108" text-anchor="end">True ←</text>
+<rect class="f-box" x="630" y="88" width="70" height="30" rx="4"/><text class="f-t" x="665" y="108" text-anchor="middle">False</text>
+<line class="f-ink" x1="480" y1="118" x2="440" y2="154"/>
+<line class="f-ink" x1="510" y1="118" x2="550" y2="154"/>
+<rect class="f-box" x="405" y="156" width="70" height="30" rx="4"/><text class="f-t" x="440" y="176" text-anchor="middle">True</text>
+<rect class="f-box" x="515" y="156" width="70" height="30" rx="4"/><text class="f-t" x="550" y="176" text-anchor="middle">False</text>
+<text class="f-cap" x="200" y="210" text-anchor="middle">(가) True or False and False</text>
+<text class="f-cap" x="580" y="210" text-anchor="middle">(나) (True or False) and False</text>
+</svg>
+<figcaption>아래쪽 연산자부터 계산해 위로 올라간다. 괄호가 나무의 모양을 바꾼다.</figcaption>
+</figure>
+
+<p>셋째·넷째 줄도 같은 원리입니다. <code>not True and False</code>는 not이 먼저라 <code>False and False</code> → False이고, <code>not (True and False)</code>는 괄호 안이 먼저라 <code>not False</code> → True입니다.</p>
+
+<div class="box memo">
+<p class="box-k">외우는 법</p>
+<p><b>헷갈리면 괄호를 친다.</b> 계산 순서를 외워도, and와 or가 섞인 식은 사람이 읽다가 틀리기 쉽습니다. <code>a or (b and c)</code>처럼 괄호를 넣으면 Python이 하는 계산은 그대로이고 읽는 사람만 편해집니다.</p>
+</div>
+
+<div class="check" data-q="q5"></div>
+
+<h2>중간에 멈추는 계산: 단락 평가</h2>
+
+<p>and의 왼쪽이 False라면 오른쪽이 무엇이든 결과는 False입니다(진리표 (가)의 아래 두 줄). 그래서 Python은 <b>오른쪽을 아예 계산하지 않습니다.</b> 이것이 실제로 어떤 차이를 만드는지, 0으로 나누기를 이용해 확인합니다.</p>
+
+<pre><code>x = 0
+print(x != 0 and 10 / x &gt; 1)
+print(10 / x &gt; 1 and x != 0)</code></pre>
+<div class="sample"><p class="sample-k">실행 결과</p><pre><code>False
+Traceback (most recent call last):
+  File "C:\Users\...\short.py", line 3, in &lt;module&gt;
+    print(10 / x &gt; 1 and x != 0)
+          ~~~^~~
+ZeroDivisionError: division by zero</code></pre></div>
+
+<p>두 줄은 순서만 다를 뿐 같은 두 조건을 and로 묶었습니다. 그런데 둘째 줄은 False, 셋째 줄은 오류입니다.</p>
+<ul>
+<li>둘째 줄: 왼쪽 <code>x != 0</code>이 False → 결과는 이미 False로 정해짐 → 오른쪽 <code>10 / x</code>는 계산하지 않음 → 0으로 나누는 일이 일어나지 않음.</li>
+<li>셋째 줄: 왼쪽 <code>10 / x</code>부터 계산 → 0으로 나눌 수 없어 <code>ZeroDivisionError</code>("0으로 나누기")로 멈춤.</li>
+</ul>
+
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 200" role="img" aria-label="x가 0일 때 두 식의 계산. (가) x != 0 and 10 / x > 1: 왼쪽 칸 x != 0이 False로 계산되고, 오른쪽 칸 10 / x > 1은 점선 테두리로 계산하지 않음. 결과 False. (나) 10 / x > 1 and x != 0: 왼쪽 칸 10 / x > 1을 계산하다가 붉은 칸 ZeroDivisionError로 멈춘다. 오른쪽 칸은 도달하지 못한다.">
+<text class="f-cap" x="20" y="54">(가)</text>
+<rect class="f-soft" x="70" y="30" width="150" height="40" rx="4"/>
+<text class="f-t" x="145" y="55" text-anchor="middle">x != 0</text>
+<text class="f-s" x="145" y="90" text-anchor="middle">① 계산 → False</text>
+<text class="f-t" x="250" y="55" text-anchor="middle">and</text>
+<rect class="f-none" x="280" y="30" width="170" height="40" rx="4" stroke-dasharray="5 4"/>
+<text class="f-s" x="365" y="55" text-anchor="middle">10 / x &gt; 1</text>
+<text class="f-s" x="365" y="90" text-anchor="middle">② 계산하지 않음</text>
+<line class="f-line" x1="460" y1="50" x2="536" y2="50" marker-end="url(#f-arrow)"/>
+<text class="f-cap" x="548" y="55">False</text>
+<text class="f-cap" x="20" y="144">(나)</text>
+<rect class="f-over" x="70" y="120" width="150" height="40" rx="4"/>
+<text class="f-t" x="145" y="145" text-anchor="middle">10 / x &gt; 1</text>
+<text class="f-s" x="145" y="180" text-anchor="middle">① 0으로 나누다 멈춤</text>
+<text class="f-t" x="250" y="145" text-anchor="middle">and</text>
+<rect class="f-none" x="280" y="120" width="170" height="40" rx="4" stroke-dasharray="5 4"/>
+<text class="f-s" x="365" y="145" text-anchor="middle">x != 0</text>
+<text class="f-s" x="365" y="180" text-anchor="middle">닿지 못함</text>
+<line class="f-line" x1="460" y1="140" x2="536" y2="140" marker-end="url(#f-arrow)"/>
+<text class="f-cap" x="548" y="145">ZeroDivisionError</text>
+</svg>
+<figcaption>and·or는 왼쪽부터 계산하고, 결과가 정해지는 순간 멈춘다. 점선 칸은 계산되지 않은 부분이다.</figcaption>
+</figure>
+
+<div class="box">
+<p class="box-k">정의</p>
+<p><b class="key">단락 평가</b>(short-circuit evaluation): and와 or는 왼쪽부터 계산해서, 결과가 정해지면 오른쪽을 계산하지 않는다.<br>
+· <code>A and B</code>: A가 False이면 B를 보지 않고 False.<br>
+· <code>A or B</code>: A가 True이면 B를 보지 않고 True.</p>
+</div>
+
+<p>or도 마찬가지입니다. <code>print(True or 1 / 0)</code>은 오류 없이 <code>True</code>가 나오고, <code>print(False and 1 / 0)</code>은 오류 없이 <code>False</code>가 나옵니다(실행해 확인함). <code>1 / 0</code>은 계산되었다면 반드시 오류가 났을 식인데, 계산되지 않았으므로 오류도 없습니다.</p>
+
+<p>"단락"은 전기 회로의 지름길(short circuit)에서 온 말로, 끝까지 가지 않고 중간에서 빠져나간다는 뜻입니다. 이 성질 덕분에 <b>안전 검사를 왼쪽에, 위험한 계산을 오른쪽에</b> 두면 위험한 계산이 필요할 때만 실행되게 할 수 있습니다. 둘째 줄이 바로 그 모양입니다.</p>
+
+<div class="check" data-q="q6"></div>
+<div class="check" data-q="q7"></div>
+
+<h2>가장 흔한 함정: x == 1 or 2</h2>
+
+<p>"x가 1 또는 2이면"을 말 그대로 옮겨 쓰면 이렇게 됩니다. x에 5를 넣어 봅니다.</p>
+<pre><code>x = 5
+if x == 1 or 2:
+    print("1 또는 2입니다")
+print(x == 1 or 2)
+print(x == 1 or x == 2)</code></pre>
+<div class="sample"><p class="sample-k">실행 결과</p><pre><code>1 또는 2입니다
+2
+False</code></pre></div>
+
+<p>x는 5인데 "1 또는 2입니다"가 출력되었습니다. 둘째 출력에서 까닭이 보입니다. Python은 이 식을 사람의 뜻처럼 <code>x == (1 or 2)</code>나 "x가 1이거나 x가 2"로 읽지 않고, 계산 순서대로 <b><code>(x == 1) or 2</code></b>로 읽습니다.</p>
+<p class="calc">① 비교가 먼저: <code>x == 1</code> → 5 == 1 → False<br>
+② <code>False or 2</code> → 왼쪽이 거짓이니 오른쪽 값 <code>2</code>를 결과로 낸다<br>
+③ if는 <code>2</code>를 참으로 친다(PY02·3: 0이 아닌 수는 True) → 블록 실행</p>
+
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 180" role="img" aria-label="두 개의 읽는 법. (가) 사람이 뜻한 것: x == 1 또는 x == 2, 두 비교를 or로 묶었다. (나) Python이 읽는 것: (x == 1) or 2. 오른쪽의 2는 비교가 아니라 그냥 값 2이고, 0이 아니므로 언제나 참으로 친다.">
+<text class="f-cap" x="20" y="54">(가) 뜻한 것</text>
+<rect class="f-soft" x="170" y="32" width="100" height="36" rx="4"/><text class="f-t" x="220" y="56" text-anchor="middle">x == 1</text>
+<text class="f-t" x="300" y="56" text-anchor="middle">or</text>
+<rect class="f-soft" x="330" y="32" width="100" height="36" rx="4"/><text class="f-t" x="380" y="56" text-anchor="middle">x == 2</text>
+<text class="f-s" x="450" y="56">비교 두 개를 묶음</text>
+<text class="f-cap" x="20" y="134">(나) 쓴 것</text>
+<rect class="f-soft" x="170" y="112" width="100" height="36" rx="4"/><text class="f-t" x="220" y="136" text-anchor="middle">x == 1</text>
+<text class="f-t" x="300" y="136" text-anchor="middle">or</text>
+<rect class="f-over" x="330" y="112" width="100" height="36" rx="4"/><text class="f-t" x="380" y="136" text-anchor="middle">2</text>
+<text class="f-s" x="450" y="128">비교가 아니라 그냥 값 2</text>
+<text class="f-s" x="450" y="146">0이 아니므로 언제나 참</text>
+</svg>
+<figcaption>or의 양쪽은 각각 완전한 조건이어야 한다. 오른쪽에도 x == 를 다시 써야 한다.</figcaption>
+</figure>
+
+<p>바르게 쓰려면 마지막 줄처럼 <b>양쪽에 비교를 하나씩 완전하게</b> 써야 합니다. <code>x == 1 or x == 2</code>는 x가 2일 때 True, 5일 때 False가 나옵니다(실행해 확인함). 목록을 배우고 나면(PY04) <code>x in [1, 2]</code>처럼 더 짧게 쓰는 방법도 있습니다.</p>
+
+<div class="more">
+<p class="box-k">더 알아보기 · and·or는 True/False가 아닌 값을 낼 수도 있다</p>
+<p>②에서 <code>False or 2</code>의 결과가 <code>True</code>가 아니라 <code>2</code>였습니다. Python의 and·or는 정확히는 "결과를 정한 쪽의 값"을 그대로 돌려줍니다. 실행해 보면 <code>0 or "기본값"</code>은 <code>기본값</code>, <code>"민지" or "기본값"</code>은 <code>민지</code>, <code>3 and 5</code>는 <code>5</code>, <code>0 and 5</code>는 <code>0</code>입니다. if 조건 안에서는 이 값을 다시 참·거짓으로 치므로 결과가 같지만, print로 찍으면 차이가 드러납니다. "입력이 비어 있으면 기본값을 쓴다" 같은 짧은 코드에 쓰이지만, 입문 단계에서는 조건에는 진짜 True/False가 나오는 비교식을 쓰는 것이 안전합니다.</p>
+</div>
+
+<div class="check" data-q="q8"></div>
+
+<h2>not을 괄호 안으로: 드모르간 법칙</h2>
+
+<p>"20살 이상이고 표가 있다"의 반대는 무엇일까요? "20살 미만이고 표가 없다"가 아닙니다. 둘 중 <b>하나라도</b> 어긋나면 탈 수 없으므로 "20살 미만<b>이거나</b> 표가 없다"입니다. 이 규칙을 <b class="key">드모르간 법칙</b>(De Morgan's laws)이라고 합니다.</p>
+<div class="box">
+<p class="box-k">정의</p>
+<p><code>not (A and B)</code> 는 <code>(not A) or (not B)</code> 와 같다.<br>
+<code>not (A or B)</code> 는 <code>(not A) and (not B)</code> 와 같다.<br>
+not을 괄호 안으로 들여보내면 <b>and와 or가 서로 바뀐다.</b></p>
+</div>
+<pre><code>a = True
+b = False
+print(not (a and b), (not a) or (not b))
+print(not (a or b), (not a) and (not b))</code></pre>
+<div class="sample"><p class="sample-k">실행 결과</p><pre><code>True True
+False False</code></pre></div>
+<p>한 쌍의 값만 넣어 봤지만, a·b의 네 가지 조합을 모두 따져 보면 언제나 양쪽이 같습니다. 아래 표를 직접 채워 확인해 보세요.</p>
+<div class="table-wrap">
+<table>
+<tr><th>a</th><th>b</th><th>a and b</th><th>not (a and b)</th><th>not a</th><th>not b</th><th>(not a) or (not b)</th></tr>
+<tr><td>True</td><td>True</td><td>True</td><td>False</td><td>False</td><td>False</td><td>False</td></tr>
+<tr><td>True</td><td>False</td><td>False</td><td>True</td><td>False</td><td>True</td><td>True</td></tr>
+<tr><td>False</td><td>True</td><td>False</td><td>True</td><td>True</td><td>False</td><td>True</td></tr>
+<tr><td>False</td><td>False</td><td>False</td><td>True</td><td>True</td><td>True</td><td>True</td></tr>
+</table>
+</div>
+<p>넷째 열과 마지막 열이 네 줄 모두 같습니다. 앞 절의 수직선 그림에서 "범위 안(and)"을 뒤집은 것이 "범위 밖(or)"이었던 것도 이 법칙입니다. <code>not (x &gt;= 10 and x &lt; 20)</code>은 <code>x &lt; 10 or x &gt;= 20</code>과 같습니다. 비교를 뒤집을 때 <code>&gt;=</code>는 <code>&lt;</code>로, <code>&lt;</code>는 <code>&gt;=</code>로 바뀐다는 점(경계값이 반대쪽으로 넘어감)도 함께 보세요.</p>
+
+<h2>풀이 예제: 할인 대상</h2>
+
+<div class="box ex">
+<p class="box-k">풀이 예제</p>
+<p>"65세 이상이거나 회원이면 할인"을 코드로 쓰고, 네 가지 경우를 손으로 먼저 계산한 뒤 실행해 맞춰 봅니다.</p>
+<pre><code>age = int(input("나이: "))
+member = input("회원(y/n): ") == "y"
+if age &gt;= 65 or member:
+    print("할인 적용")
+else:
+    print("정상 요금")</code></pre>
+<p>둘째 줄은 처음 보는 모양입니다. <code>input(…) == "y"</code>는 입력이 "y"인지 비교한 결과, 곧 True나 False를 <code>member</code>에 담습니다. 비교식의 결과가 값이라는 PY02·3의 내용을 그대로 쓴 것입니다.</p>
+<p class="calc">① 70, n: age &gt;= 65 → True. or의 왼쪽이 True이므로 member는 보지 않고 True → 할인 적용<br>
+② 30, y: age &gt;= 65 → False. member → True. False or True → True → 할인 적용<br>
+③ 30, n: False or False → False → 정상 요금<br>
+④ 65, y: 65 &gt;= 65 → True (경계값 65 포함) → 할인 적용</p>
+<div class="sample"><p class="sample-k">실행 결과 (네 번 실행, 안내문 뒤는 키보드로 친 것)</p><pre><code>나이: 70
+회원(y/n): n
+할인 적용
+
+나이: 30
+회원(y/n): y
+할인 적용
+
+나이: 30
+회원(y/n): n
+정상 요금
+
+나이: 65
+회원(y/n): y
+할인 적용</code></pre></div>
+<p>손으로 계산한 것과 같습니다. 회원 입력에 대문자 "Y"를 넣으면 <code>"Y" == "y"</code>가 False라서 회원으로 치지 않는다는 점도 짚어 둡니다(PY02·3: 대소문자는 다른 글자).</p>
+</div>
+
+<div class="why">
+<p class="box-k">왜 그럴까?</p>
+<p>①에서 나이가 70이면 회원 여부를 묻는 input()은 실행될까요, 안 될까요? 단락 평가와 헷갈리기 쉬운 부분입니다.</p>
+<details><summary>모범 답 보기</summary><p>실행됩니다. 회원을 묻는 <code>input()</code>은 둘째 줄에서 이미 실행되어 member에 값이 담긴 뒤입니다. 단락 평가가 건너뛰는 것은 if 줄의 <code>or</code> 오른쪽인 <code>member</code>라는 <b>값을 읽는 일</b>뿐입니다. 만약 if 줄에 <code>age &gt;= 65 or input("회원(y/n): ") == "y"</code>라고 직접 썼다면, 70세일 때는 회원을 묻는 안내문 자체가 나오지 않았을 것입니다.</p></details>
+</div>
+
+<h2>이 내용이 다시 나오는 곳</h2>
+<ul>
+<li><b>PY03·3</b>: and로 묶은 평평한 조건과 if 안의 if(중첩)를 비교하고, 경계값마다 결과를 확인합니다.</li>
+<li><b>PY08</b>: 입력 검증에서 "비어 있지 않고 숫자 모양이며 범위 안"처럼 여러 조건을 and로 묶고, 단락 평가로 위험한 검사를 뒤로 미룹니다.</li>
+<li><b>집합과 확률</b>: and는 교집합, or는 합집합, not은 여집합과 같은 구조입니다. 드모르간 법칙은 집합에서도 똑같이 성립합니다(DM01, PR01).</li>
+<li><b>데이터 분석</b>: 표에서 "서울이고 30대인 행"을 고르는 필터가 바로 and입니다(PY11).</li>
+</ul>
+
+<h2>한눈에 정리</h2>
+
+<div class="table-wrap">
+<table>
+<tr><th>개념</th><th>요점</th><th>예 (실행 결과)</th></tr>
+<tr><td><code>and</code></td><td>둘 다 참일 때만 참. 수직선에서 겹치는 곳</td><td><code>True and False</code> → False</td></tr>
+<tr><td><code>or</code></td><td>하나라도 참이면 참(둘 다 참이어도 참)</td><td><code>False or True</code> → True</td></tr>
+<tr><td><code>not</code></td><td>참·거짓을 뒤집는다</td><td><code>not True</code> → False</td></tr>
+<tr><td><b class="key">진리표</b></td><td>모든 경우를 늘어놓은 표. and는 참 1칸, or는 거짓 1칸</td><td>4줄(and, or), 2줄(not)</td></tr>
+<tr><td>계산 순서</td><td>비교 → <b class="key">not → and → or</b>. 헷갈리면 괄호</td><td><code>True or False and False</code> → True</td></tr>
+<tr><td><b class="key">단락 평가</b></td><td>결과가 정해지면 오른쪽은 계산하지 않는다</td><td><code>x != 0 and 10 / x &gt; 1</code> (x=0) → False</td></tr>
+<tr><td>함정</td><td><code>x == 1 or 2</code>는 늘 참. 양쪽에 비교를 완전히</td><td><code>x == 1 or x == 2</code></td></tr>
+<tr><td><b class="key">드모르간 법칙</b></td><td>not을 안으로 넣으면 and ↔ or</td><td>범위 안의 반대 = 범위 밖</td></tr>
+</table>
+</div>
+
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>and는 모두 참일 때, or는 하나라도 참일 때 참이고, Python은 not → and → or 순서로 왼쪽부터 계산하다가 결과가 정해지면 멈춘다.</p></div>
+
+<h2>확인 문제</h2>
+<p>본문 중간에서 푼 문제 말고 남은 문제입니다. 보기를 누르면 바로 정답과 해설이 나옵니다.</p>
+<div id="quiz"></div>
+
+<section class="work" id="tools"></section>
+
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

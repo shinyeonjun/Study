@@ -1,0 +1,801 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>직선과 변화율: 기울기, 일차함수, 잔차 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e8c'/%3E%3Cpath d='M8 22V10m8 12V14m8 8V6' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="AL05-1">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+
+<header class="chapter">
+<p class="chap-sub">대수·함수·그래프 · AL05 직선과 변화율</p>
+<p class="chap-num">AL05·1</p>
+<h1>직선과 변화율: 기울기, 일차함수, 잔차</h1>
+<p class="lead">기온과 아이스크림 판매량을 점으로 찍고 직선 하나를 대면, 그 직선은 "기온 1°C당 판매 몇 개"라는 변화율과 "내일 26°C면 몇 개"라는 예측을 함께 줍니다. 예측이 실제와 얼마나 어긋났는지를 재는 잔차는 회귀와 머신러닝 손실함수의 출발점입니다. 이 장은 기울기(단위가 붙은 변화율), 일차함수 y = ax + b와 절편, 두 점으로 직선 정하기, 예측과 잔차를 압축해 복습합니다.</p>
+</header>
+
+<div class="goal">
+<h2>이 장을 읽고 나면</h2>
+<ul>
+<li>두 점 사이의 평균 변화율 Δy/Δx를 단위와 함께 계산하고 해석할 수 있다.</li>
+<li>y = ax + b에서 a(기울기)와 b(y절편)의 뜻을 말하고, x절편과 그래프를 구할 수 있다.</li>
+<li>기울기와 한 점, 또는 두 점에서 직선의 식을 구할 수 있다.</li>
+<li>y = 2x + 1을 말·표·그래프·코드로 나타내고, x가 1 늘 때 y가 2 는다는 것을 각 표현에서 확인할 수 있다.</li>
+<li>잔차 = 실제값 − 예측값을 계산하고, 잔차의 합이 아니라 절댓값 합·제곱합으로 직선을 비교하는 이유를 설명할 수 있다.</li>
+</ul>
+</div>
+
+<h2>평균 변화율과 기울기</h2>
+
+<p>두 점 (x₁, y₁), (x₂, y₂) 사이의 변화량을 Δx = x₂ − x₁, Δy = y₂ − y₁로 적습니다(Δ는 "델타", 변화량 표시이며 곱셈이 아닙니다).</p>
+
+<div class="box">
+<p class="box-k">정의 <span class="tag memo">외우기</span></p>
+<p>두 점 사이의 <b class="key">평균 변화율</b> = Δy / Δx = (y₂ − y₁) / (x₂ − x₁)  (x₁ ≠ x₂).<br>
+그래프가 직선이면 이 값은 어느 두 점을 골라도 같고, 그 값을 직선의 <b class="key">기울기</b>라 합니다. 기울기의 단위는 <b>(y의 단위) / (x의 단위)</b>입니다.</p>
+</div>
+
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 332" role="img" aria-label="가로축 시간(분) 0부터 7, 세로축 물의 양(L) 0부터 35. 점 A(2, 10)과 점 B(5, 25)가 있고 두 점을 지나는 직선이 그려져 있다. A에서 오른쪽으로 가는 가로 화살표는 가로 변화 5 − 2 = 3분, 거기서 B까지 올라가는 세로 화살표는 세로 변화 25 − 10 = 15L. 기울기 = 15 ÷ 3 = 5 L/분.">
+<line class="f-dash" x1="90" y1="40" x2="90" y2="285" style="opacity:.45"/>
+<line class="f-dash" x1="140" y1="40" x2="140" y2="285" style="opacity:.45"/>
+<line class="f-dash" x1="190" y1="40" x2="190" y2="285" style="opacity:.45"/>
+<line class="f-dash" x1="240" y1="40" x2="240" y2="285" style="opacity:.45"/>
+<line class="f-dash" x1="290" y1="40" x2="290" y2="285" style="opacity:.45"/>
+<line class="f-dash" x1="340" y1="40" x2="340" y2="285" style="opacity:.45"/>
+<line class="f-dash" x1="390" y1="40" x2="390" y2="285" style="opacity:.45"/>
+<line class="f-dash" x1="440" y1="40" x2="440" y2="285" style="opacity:.45"/>
+<line class="f-dash" x1="90" y1="285" x2="440" y2="285" style="opacity:.45"/>
+<line class="f-dash" x1="90" y1="250" x2="440" y2="250" style="opacity:.45"/>
+<line class="f-dash" x1="90" y1="215" x2="440" y2="215" style="opacity:.45"/>
+<line class="f-dash" x1="90" y1="180" x2="440" y2="180" style="opacity:.45"/>
+<line class="f-dash" x1="90" y1="145" x2="440" y2="145" style="opacity:.45"/>
+<line class="f-dash" x1="90" y1="110" x2="440" y2="110" style="opacity:.45"/>
+<line class="f-dash" x1="90" y1="75" x2="440" y2="75" style="opacity:.45"/>
+<line class="f-dash" x1="90" y1="40" x2="440" y2="40" style="opacity:.45"/>
+<line class="f-ink" x1="90" y1="285" x2="440" y2="285"/>
+<line class="f-ink" x1="90" y1="285" x2="90" y2="40"/>
+<line class="f-ink" x1="90" y1="285" x2="90" y2="290"/>
+<text class="f-s" x="90" y="304" text-anchor="middle">0</text>
+<line class="f-ink" x1="140" y1="285" x2="140" y2="290"/>
+<text class="f-s" x="140" y="304" text-anchor="middle">1</text>
+<line class="f-ink" x1="190" y1="285" x2="190" y2="290"/>
+<text class="f-s" x="190" y="304" text-anchor="middle">2</text>
+<line class="f-ink" x1="240" y1="285" x2="240" y2="290"/>
+<text class="f-s" x="240" y="304" text-anchor="middle">3</text>
+<line class="f-ink" x1="290" y1="285" x2="290" y2="290"/>
+<text class="f-s" x="290" y="304" text-anchor="middle">4</text>
+<line class="f-ink" x1="340" y1="285" x2="340" y2="290"/>
+<text class="f-s" x="340" y="304" text-anchor="middle">5</text>
+<line class="f-ink" x1="390" y1="285" x2="390" y2="290"/>
+<text class="f-s" x="390" y="304" text-anchor="middle">6</text>
+<line class="f-ink" x1="440" y1="285" x2="440" y2="290"/>
+<text class="f-s" x="440" y="304" text-anchor="middle">7</text>
+<line class="f-ink" x1="85" y1="285" x2="90" y2="285"/>
+<text class="f-s" x="81" y="289" text-anchor="end">0</text>
+<line class="f-ink" x1="85" y1="250" x2="90" y2="250"/>
+<text class="f-s" x="81" y="254" text-anchor="end">5</text>
+<line class="f-ink" x1="85" y1="215" x2="90" y2="215"/>
+<text class="f-s" x="81" y="219" text-anchor="end">10</text>
+<line class="f-ink" x1="85" y1="180" x2="90" y2="180"/>
+<text class="f-s" x="81" y="184" text-anchor="end">15</text>
+<line class="f-ink" x1="85" y1="145" x2="90" y2="145"/>
+<text class="f-s" x="81" y="149" text-anchor="end">20</text>
+<line class="f-ink" x1="85" y1="110" x2="90" y2="110"/>
+<text class="f-s" x="81" y="114" text-anchor="end">25</text>
+<line class="f-ink" x1="85" y1="75" x2="90" y2="75"/>
+<text class="f-s" x="81" y="79" text-anchor="end">30</text>
+<line class="f-ink" x1="85" y1="40" x2="90" y2="40"/>
+<text class="f-s" x="81" y="44" text-anchor="end">35</text>
+<text class="f-s f-ink-t" x="265" y="325" text-anchor="middle">시간 (분)</text>
+<text class="f-s f-ink-t" x="90" y="28" text-anchor="middle">물의 양 (L)</text>
+<line class="f-line" x1="90" y1="285" x2="440" y2="40"/>
+<line class="f-line" x1="190" y1="215" x2="340" y2="215" marker-end="url(#f-arrow)" style="stroke-width:2.4"/>
+<line class="f-line" x1="340" y1="215" x2="340" y2="110" marker-end="url(#f-arrow)" style="stroke-width:2.4"/>
+<circle class="f-fill" cx="190" cy="215" r="5"/>
+<text class="f-cap" x="182" y="207" text-anchor="end">A(2, 10)</text>
+<circle class="f-fill" cx="340" cy="110" r="5"/>
+<text class="f-cap" x="332" y="102" text-anchor="end">B(5, 25)</text>
+<text class="f-s f-ink-t f-b" x="265" y="235" text-anchor="middle">가로 변화 3분</text>
+<text class="f-s f-ink-t f-b" x="350" y="166.5" text-anchor="start">세로 변화 15 L</text>
+<text class="f-t" x="520" y="90" text-anchor="start">가로 변화 = 5 − 2 = 3 (분)</text>
+<text class="f-t" x="520" y="120" text-anchor="start">세로 변화 = 25 − 10 = 15 (L)</text>
+<line class="f-ink" x1="520" y1="140" x2="740" y2="140"/>
+<text class="f-cap" x="520" y="168" text-anchor="start">기울기 = 15 ÷ 3 = 5</text>
+<text class="f-s" x="520" y="190" text-anchor="start">단위: L ÷ 분 = L/분</text>
+<text class="f-t" x="520" y="220" text-anchor="start">"1분에 5리터씩 찬다"</text>
+</svg>
+<figcaption>직각을 낀 두 화살표가 만드는 삼각형을 기울기 삼각형이라고 부른다. 가로 화살표를 먼저, 세로 화살표를 나중에 그린다.</figcaption>
+</figure>
+
+<p>"기울기 5 L/분"은 "x가 1분 늘 때 y가 5L 는다"입니다. 단위를 붙이면 기울기가 그 상황에서 무엇인지 바로 드러납니다. 거리(km)–시간(h)의 기울기는 속력 km/h, 비용(원)–개수의 기울기는 단가 원/개, 손실–매개변수의 기울기는 "매개변수를 1 바꿀 때 손실이 얼마 변하는가"입니다. 마지막 것이 경사하강법이 쓰는 양입니다.</p>
+
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 262" role="img" aria-label="작은 좌표평면 네 개. (가) 오른쪽 위로 올라가는 직선: 기울기가 양수. (나) 오른쪽 아래로 내려가는 직선: 기울기가 음수. (다) 수평선: 세로 변화가 0이라 기울기 0. (라) 수직선: 가로 변화가 0이라 0으로 나누게 되어 기울기를 정할 수 없다.">
+<line class="f-dash" x1="30" y1="34" x2="30" y2="174" style="opacity:.45"/>
+<line class="f-dash" x1="58" y1="34" x2="58" y2="174" style="opacity:.45"/>
+<line class="f-dash" x1="86" y1="34" x2="86" y2="174" style="opacity:.45"/>
+<line class="f-dash" x1="114" y1="34" x2="114" y2="174" style="opacity:.45"/>
+<line class="f-dash" x1="142" y1="34" x2="142" y2="174" style="opacity:.45"/>
+<line class="f-dash" x1="170" y1="34" x2="170" y2="174" style="opacity:.45"/>
+<line class="f-dash" x1="30" y1="174" x2="170" y2="174" style="opacity:.45"/>
+<line class="f-dash" x1="30" y1="146" x2="170" y2="146" style="opacity:.45"/>
+<line class="f-dash" x1="30" y1="118" x2="170" y2="118" style="opacity:.45"/>
+<line class="f-dash" x1="30" y1="90" x2="170" y2="90" style="opacity:.45"/>
+<line class="f-dash" x1="30" y1="62" x2="170" y2="62" style="opacity:.45"/>
+<line class="f-dash" x1="30" y1="34" x2="170" y2="34" style="opacity:.45"/>
+<line class="f-ink" x1="26" y1="146" x2="178" y2="146" marker-end="url(#f-arrow)"/>
+<line class="f-ink" x1="58" y1="178" x2="58" y2="26" marker-end="url(#f-arrow)"/>
+<line class="f-ink" x1="30" y1="142" x2="30" y2="150"/>
+<line class="f-ink" x1="86" y1="142" x2="86" y2="150"/>
+<line class="f-ink" x1="114" y1="142" x2="114" y2="150"/>
+<line class="f-ink" x1="142" y1="142" x2="142" y2="150"/>
+<line class="f-ink" x1="170" y1="142" x2="170" y2="150"/>
+<line class="f-ink" x1="54" y1="174" x2="62" y2="174"/>
+<line class="f-ink" x1="54" y1="118" x2="62" y2="118"/>
+<line class="f-ink" x1="54" y1="90" x2="62" y2="90"/>
+<line class="f-ink" x1="54" y1="62" x2="62" y2="62"/>
+<line class="f-ink" x1="54" y1="34" x2="62" y2="34"/>
+<line class="f-line" x1="58" y1="132" x2="142" y2="48" style="stroke-width:2.2"/>
+<text class="f-cap" x="100" y="212" text-anchor="middle">(가) 기울기 > 0</text>
+<text class="f-s" x="100" y="232" text-anchor="middle">오른쪽으로 갈수록 올라감</text>
+<line class="f-dash" x1="220" y1="34" x2="220" y2="174" style="opacity:.45"/>
+<line class="f-dash" x1="248" y1="34" x2="248" y2="174" style="opacity:.45"/>
+<line class="f-dash" x1="276" y1="34" x2="276" y2="174" style="opacity:.45"/>
+<line class="f-dash" x1="304" y1="34" x2="304" y2="174" style="opacity:.45"/>
+<line class="f-dash" x1="332" y1="34" x2="332" y2="174" style="opacity:.45"/>
+<line class="f-dash" x1="360" y1="34" x2="360" y2="174" style="opacity:.45"/>
+<line class="f-dash" x1="220" y1="174" x2="360" y2="174" style="opacity:.45"/>
+<line class="f-dash" x1="220" y1="146" x2="360" y2="146" style="opacity:.45"/>
+<line class="f-dash" x1="220" y1="118" x2="360" y2="118" style="opacity:.45"/>
+<line class="f-dash" x1="220" y1="90" x2="360" y2="90" style="opacity:.45"/>
+<line class="f-dash" x1="220" y1="62" x2="360" y2="62" style="opacity:.45"/>
+<line class="f-dash" x1="220" y1="34" x2="360" y2="34" style="opacity:.45"/>
+<line class="f-ink" x1="216" y1="146" x2="368" y2="146" marker-end="url(#f-arrow)"/>
+<line class="f-ink" x1="248" y1="178" x2="248" y2="26" marker-end="url(#f-arrow)"/>
+<line class="f-ink" x1="220" y1="142" x2="220" y2="150"/>
+<line class="f-ink" x1="276" y1="142" x2="276" y2="150"/>
+<line class="f-ink" x1="304" y1="142" x2="304" y2="150"/>
+<line class="f-ink" x1="332" y1="142" x2="332" y2="150"/>
+<line class="f-ink" x1="360" y1="142" x2="360" y2="150"/>
+<line class="f-ink" x1="244" y1="174" x2="252" y2="174"/>
+<line class="f-ink" x1="244" y1="118" x2="252" y2="118"/>
+<line class="f-ink" x1="244" y1="90" x2="252" y2="90"/>
+<line class="f-ink" x1="244" y1="62" x2="252" y2="62"/>
+<line class="f-ink" x1="244" y1="34" x2="252" y2="34"/>
+<line class="f-line" x1="248" y1="48" x2="332" y2="132" style="stroke-width:2.2"/>
+<text class="f-cap" x="290" y="212" text-anchor="middle">(나) 기울기 < 0</text>
+<text class="f-s" x="290" y="232" text-anchor="middle">오른쪽으로 갈수록 내려감</text>
+<line class="f-dash" x1="410" y1="34" x2="410" y2="174" style="opacity:.45"/>
+<line class="f-dash" x1="438" y1="34" x2="438" y2="174" style="opacity:.45"/>
+<line class="f-dash" x1="466" y1="34" x2="466" y2="174" style="opacity:.45"/>
+<line class="f-dash" x1="494" y1="34" x2="494" y2="174" style="opacity:.45"/>
+<line class="f-dash" x1="522" y1="34" x2="522" y2="174" style="opacity:.45"/>
+<line class="f-dash" x1="550" y1="34" x2="550" y2="174" style="opacity:.45"/>
+<line class="f-dash" x1="410" y1="174" x2="550" y2="174" style="opacity:.45"/>
+<line class="f-dash" x1="410" y1="146" x2="550" y2="146" style="opacity:.45"/>
+<line class="f-dash" x1="410" y1="118" x2="550" y2="118" style="opacity:.45"/>
+<line class="f-dash" x1="410" y1="90" x2="550" y2="90" style="opacity:.45"/>
+<line class="f-dash" x1="410" y1="62" x2="550" y2="62" style="opacity:.45"/>
+<line class="f-dash" x1="410" y1="34" x2="550" y2="34" style="opacity:.45"/>
+<line class="f-ink" x1="406" y1="146" x2="558" y2="146" marker-end="url(#f-arrow)"/>
+<line class="f-ink" x1="438" y1="178" x2="438" y2="26" marker-end="url(#f-arrow)"/>
+<line class="f-ink" x1="410" y1="142" x2="410" y2="150"/>
+<line class="f-ink" x1="466" y1="142" x2="466" y2="150"/>
+<line class="f-ink" x1="494" y1="142" x2="494" y2="150"/>
+<line class="f-ink" x1="522" y1="142" x2="522" y2="150"/>
+<line class="f-ink" x1="550" y1="142" x2="550" y2="150"/>
+<line class="f-ink" x1="434" y1="174" x2="442" y2="174"/>
+<line class="f-ink" x1="434" y1="118" x2="442" y2="118"/>
+<line class="f-ink" x1="434" y1="90" x2="442" y2="90"/>
+<line class="f-ink" x1="434" y1="62" x2="442" y2="62"/>
+<line class="f-ink" x1="434" y1="34" x2="442" y2="34"/>
+<line class="f-line" x1="424" y1="90" x2="536" y2="90" style="stroke-width:2.2"/>
+<text class="f-cap" x="480" y="212" text-anchor="middle">(다) 기울기 = 0</text>
+<text class="f-s" x="480" y="232" text-anchor="middle">세로 변화가 0</text>
+<line class="f-dash" x1="600" y1="34" x2="600" y2="174" style="opacity:.45"/>
+<line class="f-dash" x1="628" y1="34" x2="628" y2="174" style="opacity:.45"/>
+<line class="f-dash" x1="656" y1="34" x2="656" y2="174" style="opacity:.45"/>
+<line class="f-dash" x1="684" y1="34" x2="684" y2="174" style="opacity:.45"/>
+<line class="f-dash" x1="712" y1="34" x2="712" y2="174" style="opacity:.45"/>
+<line class="f-dash" x1="740" y1="34" x2="740" y2="174" style="opacity:.45"/>
+<line class="f-dash" x1="600" y1="174" x2="740" y2="174" style="opacity:.45"/>
+<line class="f-dash" x1="600" y1="146" x2="740" y2="146" style="opacity:.45"/>
+<line class="f-dash" x1="600" y1="118" x2="740" y2="118" style="opacity:.45"/>
+<line class="f-dash" x1="600" y1="90" x2="740" y2="90" style="opacity:.45"/>
+<line class="f-dash" x1="600" y1="62" x2="740" y2="62" style="opacity:.45"/>
+<line class="f-dash" x1="600" y1="34" x2="740" y2="34" style="opacity:.45"/>
+<line class="f-ink" x1="596" y1="146" x2="748" y2="146" marker-end="url(#f-arrow)"/>
+<line class="f-ink" x1="628" y1="178" x2="628" y2="26" marker-end="url(#f-arrow)"/>
+<line class="f-ink" x1="600" y1="142" x2="600" y2="150"/>
+<line class="f-ink" x1="656" y1="142" x2="656" y2="150"/>
+<line class="f-ink" x1="684" y1="142" x2="684" y2="150"/>
+<line class="f-ink" x1="712" y1="142" x2="712" y2="150"/>
+<line class="f-ink" x1="740" y1="142" x2="740" y2="150"/>
+<line class="f-ink" x1="624" y1="174" x2="632" y2="174"/>
+<line class="f-ink" x1="624" y1="118" x2="632" y2="118"/>
+<line class="f-ink" x1="624" y1="90" x2="632" y2="90"/>
+<line class="f-ink" x1="624" y1="62" x2="632" y2="62"/>
+<line class="f-ink" x1="624" y1="34" x2="632" y2="34"/>
+<line class="f-line" x1="684" y1="160" x2="684" y2="39.6" style="stroke-width:2.2"/>
+<text class="f-cap" x="670" y="212" text-anchor="middle">(라) 기울기 없음</text>
+<text class="f-s" x="670" y="232" text-anchor="middle">가로 변화가 0 → ÷ 0</text>
+<line class="f-dash" x1="200" y1="14" x2="200" y2="244"/>
+<line class="f-dash" x1="390" y1="14" x2="390" y2="244"/>
+<line class="f-dash" x1="580" y1="14" x2="580" y2="244"/>
+</svg>
+<figcaption>기울기의 부호는 그래프를 왼쪽에서 오른쪽으로 읽을 때 오르는지 내려가는지를 알려 준다.</figcaption>
+</figure>
+
+<p>부호: Δy/Δx &gt; 0이면 증가, &lt; 0이면 감소, = 0이면 수평선입니다. 세로선은 Δx = 0이라 기울기가 <b>정의되지 않습니다</b>(0이 아님). 세로선은 세로선 판정에 걸리므로 애초에 y가 x의 함수인 그래프가 아닙니다.</p>
+
+<p>곡선에서는 평균 변화율이 구간마다 다릅니다. 예를 들어 f(x) = x²에서 [0, 1]의 평균 변화율은 (1 − 0)/1 = 1, [1, 3]에서는 (9 − 1)/2 = 4입니다. 구간을 한 점으로 좁혀 가는 극한이 미분이므로, 평균 변화율은 미적분 단원의 출발점입니다.</p>
+
+<div class="box trap">
+<p class="box-k">흔한 실수</p>
+<p><b>빼는 순서를 섞기.</b> (1, 4), (3, 10)에서 (10 − 4)/(1 − 3) = −3은 틀립니다. 분자와 분모에서 같은 점을 먼저 빼야 6/2 = 3입니다. <b>Δx/Δy로 뒤집기</b>도 흔합니다. (0, 0), (4, 2)의 기울기는 2/4 = 0.5입니다.</p>
+<p><b>그림의 가파름으로 기울기 비교하기.</b> 화면에서 보이는 각도는 가로·세로 눈금 간격과 그림 틀의 비율에 따라 달라집니다. 기울기는 눈금 숫자로 계산해 비교합니다.</p>
+</div>
+
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+
+<h2>일차함수 y = ax + b</h2>
+
+<div class="box">
+<p class="box-k">정의 <span class="tag memo">외우기</span></p>
+<p><b class="key">일차함수</b>: y = ax + b (a ≠ 0). 그래프는 직선이고,<br>
+<b>a</b> = 기울기: x가 1 늘 때 y의 변화량. f(x + 1) − f(x) = a(x + 1) + b − (ax + b) = a.<br>
+<b>b</b> = <b class="key">y절편</b>: x = 0일 때의 값. 그래프가 y축과 만나는 점 (0, b).<br>
+<b class="key">x절편</b>: y = 0이 되는 x. ax + b = 0 → x = −b/a. 그래프가 x축과 만나는 점.</p>
+</div>
+
+<p>a = 0이면 y = b인 <b>상수함수</b>(수평선)이고, 한국 교과에서는 일차함수에 넣지 않습니다. 같은 a를 가진 두 직선은 평행하고(b가 달라 만나지 않음), 같은 b를 가진 직선들은 모두 (0, b)를 지납니다. 함수 단원의 f(c) = 1.8c + 32에서 1.8은 °F/°C 단위의 기울기, 32는 0°C일 때의 화씨온도(y절편)입니다.</p>
+
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 346" role="img" aria-label="y = 2x + 1의 그래프. y절편 (0, 1)과 x절편 (−0.5, 0)에 점이 있다. (0, 1)에서 오른쪽 1, 위 2로 가는 계단이 (1, 3), 다시 오른쪽 1, 위 2로 (2, 5)까지 그려져 있다. 표의 점 (−2, −3), (−1, −1), (3, 7)도 직선 위에 있다.">
+<line class="f-dash" x1="200" y1="44" x2="200" y2="324" style="opacity:.45"/>
+<line class="f-dash" x1="240" y1="44" x2="240" y2="324" style="opacity:.45"/>
+<line class="f-dash" x1="280" y1="44" x2="280" y2="324" style="opacity:.45"/>
+<line class="f-dash" x1="320" y1="44" x2="320" y2="324" style="opacity:.45"/>
+<line class="f-dash" x1="360" y1="44" x2="360" y2="324" style="opacity:.45"/>
+<line class="f-dash" x1="400" y1="44" x2="400" y2="324" style="opacity:.45"/>
+<line class="f-dash" x1="440" y1="44" x2="440" y2="324" style="opacity:.45"/>
+<line class="f-dash" x1="480" y1="44" x2="480" y2="324" style="opacity:.45"/>
+<line class="f-dash" x1="200" y1="324" x2="500" y2="324" style="opacity:.45"/>
+<line class="f-dash" x1="200" y1="300.7" x2="500" y2="300.7" style="opacity:.45"/>
+<line class="f-dash" x1="200" y1="277.3" x2="500" y2="277.3" style="opacity:.45"/>
+<line class="f-dash" x1="200" y1="254" x2="500" y2="254" style="opacity:.45"/>
+<line class="f-dash" x1="200" y1="230.7" x2="500" y2="230.7" style="opacity:.45"/>
+<line class="f-dash" x1="200" y1="207.3" x2="500" y2="207.3" style="opacity:.45"/>
+<line class="f-dash" x1="200" y1="184" x2="500" y2="184" style="opacity:.45"/>
+<line class="f-dash" x1="200" y1="160.7" x2="500" y2="160.7" style="opacity:.45"/>
+<line class="f-dash" x1="200" y1="137.3" x2="500" y2="137.3" style="opacity:.45"/>
+<line class="f-dash" x1="200" y1="114" x2="500" y2="114" style="opacity:.45"/>
+<line class="f-dash" x1="200" y1="90.7" x2="500" y2="90.7" style="opacity:.45"/>
+<line class="f-dash" x1="200" y1="67.3" x2="500" y2="67.3" style="opacity:.45"/>
+<line class="f-dash" x1="200" y1="44" x2="500" y2="44" style="opacity:.45"/>
+<line class="f-ink" x1="196" y1="230.7" x2="512" y2="230.7" marker-end="url(#f-arrow)"/>
+<line class="f-ink" x1="320" y1="328" x2="320" y2="32" marker-end="url(#f-arrow)"/>
+<line class="f-ink" x1="200" y1="226.7" x2="200" y2="234.7"/>
+<line class="f-ink" x1="240" y1="226.7" x2="240" y2="234.7"/>
+<line class="f-ink" x1="280" y1="226.7" x2="280" y2="234.7"/>
+<line class="f-ink" x1="360" y1="226.7" x2="360" y2="234.7"/>
+<line class="f-ink" x1="400" y1="226.7" x2="400" y2="234.7"/>
+<line class="f-ink" x1="440" y1="226.7" x2="440" y2="234.7"/>
+<line class="f-ink" x1="480" y1="226.7" x2="480" y2="234.7"/>
+<line class="f-ink" x1="316" y1="324" x2="324" y2="324"/>
+<line class="f-ink" x1="316" y1="300.7" x2="324" y2="300.7"/>
+<line class="f-ink" x1="316" y1="277.3" x2="324" y2="277.3"/>
+<line class="f-ink" x1="316" y1="254" x2="324" y2="254"/>
+<line class="f-ink" x1="316" y1="207.3" x2="324" y2="207.3"/>
+<line class="f-ink" x1="316" y1="184" x2="324" y2="184"/>
+<line class="f-ink" x1="316" y1="160.7" x2="324" y2="160.7"/>
+<line class="f-ink" x1="316" y1="137.3" x2="324" y2="137.3"/>
+<line class="f-ink" x1="316" y1="114" x2="324" y2="114"/>
+<line class="f-ink" x1="316" y1="90.7" x2="324" y2="90.7"/>
+<line class="f-ink" x1="316" y1="67.3" x2="324" y2="67.3"/>
+<line class="f-ink" x1="316" y1="44" x2="324" y2="44"/>
+<text class="f-s" x="200" y="248.7" text-anchor="middle">−3</text>
+<text class="f-s" x="240" y="248.7" text-anchor="middle">−2</text>
+<text class="f-s" x="280" y="248.7" text-anchor="middle">−1</text>
+<text class="f-s" x="360" y="248.7" text-anchor="middle">1</text>
+<text class="f-s" x="400" y="248.7" text-anchor="middle">2</text>
+<text class="f-s" x="440" y="248.7" text-anchor="middle">3</text>
+<text class="f-s" x="480" y="248.7" text-anchor="middle">4</text>
+<text class="f-s" x="312" y="328" text-anchor="end">−4</text>
+<text class="f-s" x="312" y="281.3" text-anchor="end">−2</text>
+<text class="f-s" x="312" y="188" text-anchor="end">2</text>
+<text class="f-s" x="312" y="141.3" text-anchor="end">4</text>
+<text class="f-s" x="312" y="94.7" text-anchor="end">6</text>
+<text class="f-s" x="312" y="48" text-anchor="end">8</text>
+<text class="f-s f-ink-t" x="312" y="246.7" text-anchor="end">O</text>
+<text class="f-t" x="520" y="235.7" text-anchor="start">x</text>
+<text class="f-t" x="320" y="24" text-anchor="middle">y</text>
+<line class="f-line" x1="220" y1="324" x2="460" y2="44"/>
+<line class="f-line" x1="320" y1="207.3" x2="360" y2="207.3" marker-end="url(#f-arrow)" style="stroke-width:2.4"/>
+<line class="f-line" x1="360" y1="207.3" x2="360" y2="160.7" marker-end="url(#f-arrow)" style="stroke-width:2.4"/>
+<text class="f-s f-ink-t f-b" x="340" y="223.3" text-anchor="middle">+1</text>
+<text class="f-s f-ink-t f-b" x="368" y="188" text-anchor="start">+2</text>
+<line class="f-line" x1="360" y1="160.7" x2="400" y2="160.7" marker-end="url(#f-arrow)" style="stroke-width:2.4"/>
+<line class="f-line" x1="400" y1="160.7" x2="400" y2="114" marker-end="url(#f-arrow)" style="stroke-width:2.4"/>
+<circle class="f-fill" cx="240" cy="300.7" r="3.5"/>
+<circle class="f-fill" cx="280" cy="254" r="3.5"/>
+<circle class="f-fill" cx="440" cy="67.3" r="3.5"/>
+<circle class="f-fill" cx="320" cy="207.3" r="5"/>
+<circle class="f-fill" cx="300" cy="230.7" r="5"/>
+<text class="f-cap" x="60" y="120" text-anchor="start">y절편 (0, 1)</text>
+<text class="f-s" x="60" y="139" text-anchor="start">x = 0일 때 y = b</text>
+<line class="f-ink" x1="150" y1="134" x2="314" y2="205.3"/>
+<text class="f-cap" x="60" y="250" text-anchor="start">x절편 (−0.5, 0)</text>
+<text class="f-s" x="60" y="269" text-anchor="start">y = 0이 되는 x = −b/a</text>
+<line class="f-ink" x1="170" y1="256" x2="295" y2="234.7"/>
+<text class="f-cap" x="560" y="120" text-anchor="start">기울기 a = 2</text>
+<text class="f-s" x="560" y="139" text-anchor="start">x가 1 늘 때 y가 2 는다</text>
+<text class="f-cap" x="560" y="64" text-anchor="start">y = 2x + 1</text>
+</svg>
+<figcaption>계단 하나가 기울기 삼각형이다. 어느 자리에서 계단을 그려도 가로 1에 세로 2다.</figcaption>
+</figure>
+
+<div class="box ex">
+<p class="box-k">풀이 예제: 직선의 식 구하기</p>
+<p>(가) 기울기 3, 점 (2, 5)를 지나는 직선. (나) 두 점 (1, 3), (4, 9)를 지나는 직선.</p>
+<p class="calc">(가) y = 3x + b에 (2, 5) 대입: 5 = 6 + b → b = −1 → <b>y = 3x − 1</b><br>
+   같은 계산을 점-기울기 꼴로: y − y₁ = a(x − x₁) → y − 5 = 3(x − 2) → y = 3x − 1<br>
+(나) a = (9 − 3)/(4 − 1) = 6/3 = 2 → y = 2x + b에 (1, 3) 대입: 3 = 2 + b → b = 1 → <b>y = 2x + 1</b><br>
+   검산: 다른 점 (4, 9): 2 × 4 + 1 = 9 ✓<br>
+x절편: 2x + 1 = 0 → x = −1/2</p>
+</div>
+
+<p>점 두 개로 직선이 하나 정해지는 것은, 미지수가 a와 b 두 개이고 점 하나가 식 하나를 주기 때문입니다. 점이 세 개 이상이고 한 직선 위에 있지 않으면 모든 점을 지나는 직선은 없습니다. 그때는 "가장 덜 어긋나는" 직선을 고르게 되는데, 그 어긋남을 재는 것이 아래의 잔차입니다.</p>
+
+<div class="check" data-q="q3"></div>
+<div class="check" data-q="q4"></div>
+
+<h2>성취 과제: y = 2x + 1을 네 가지로 <span class="tag grasp">이해하기</span></h2>
+
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 262" role="img" aria-label="y = 2x + 1을 네 가지로 나타냈다. (가) 말: x를 두 배 하고 1을 더한 값이 y. (나) 표: x가 −2, −1, 0, 1, 2, 3일 때 y는 −3, −1, 1, 3, 5, 7. 오른쪽에 아래로 내려갈 때마다 +2. (다) 그래프: 표의 점 여섯 개와 직선. (라) 코드: def f(x): return 2 * x + 1.">
+<line class="f-dash" x1="190" y1="10" x2="190" y2="220"/>
+<line class="f-dash" x1="380" y1="10" x2="380" y2="220"/>
+<line class="f-dash" x1="570" y1="10" x2="570" y2="220"/>
+<rect class="f-box" x="15" y="50" width="160" height="130" rx="6"/>
+<text class="f-t" x="95" y="98" text-anchor="middle">x를 두 배 하고</text>
+<text class="f-t" x="95" y="124" text-anchor="middle">1을 더한 값이</text>
+<text class="f-t" x="95" y="150" text-anchor="middle">y다</text>
+<rect class="f-soft" x="230" y="24" width="100" height="24"/>
+<rect class="f-none" x="230" y="24" width="100" height="168"/>
+<line class="f-ink" x1="280" y1="24" x2="280" y2="192"/>
+<text class="f-s f-ink-t f-b" x="255" y="41" text-anchor="middle">x</text>
+<text class="f-s f-ink-t f-b" x="305" y="41" text-anchor="middle">y</text>
+<line class="f-ink" x1="230" y1="48" x2="330" y2="48" style="opacity:.5"/>
+<text class="f-t" x="255" y="65" text-anchor="middle">−2</text>
+<text class="f-t" x="305" y="65" text-anchor="middle">−3</text>
+<text class="f-s" x="334" y="77" text-anchor="start">+2</text>
+<line class="f-ink" x1="230" y1="72" x2="330" y2="72" style="opacity:.5"/>
+<text class="f-t" x="255" y="89" text-anchor="middle">−1</text>
+<text class="f-t" x="305" y="89" text-anchor="middle">−1</text>
+<text class="f-s" x="334" y="101" text-anchor="start">+2</text>
+<line class="f-ink" x1="230" y1="96" x2="330" y2="96" style="opacity:.5"/>
+<text class="f-t" x="255" y="113" text-anchor="middle">0</text>
+<text class="f-t" x="305" y="113" text-anchor="middle">1</text>
+<text class="f-s" x="334" y="125" text-anchor="start">+2</text>
+<line class="f-ink" x1="230" y1="120" x2="330" y2="120" style="opacity:.5"/>
+<text class="f-t" x="255" y="137" text-anchor="middle">1</text>
+<text class="f-t" x="305" y="137" text-anchor="middle">3</text>
+<text class="f-s" x="334" y="149" text-anchor="start">+2</text>
+<line class="f-ink" x1="230" y1="144" x2="330" y2="144" style="opacity:.5"/>
+<text class="f-t" x="255" y="161" text-anchor="middle">2</text>
+<text class="f-t" x="305" y="161" text-anchor="middle">5</text>
+<text class="f-s" x="334" y="173" text-anchor="start">+2</text>
+<line class="f-ink" x1="230" y1="168" x2="330" y2="168" style="opacity:.5"/>
+<text class="f-t" x="255" y="185" text-anchor="middle">3</text>
+<text class="f-t" x="305" y="185" text-anchor="middle">7</text>
+<line class="f-dash" x1="420.8" y1="36" x2="420.8" y2="196" style="opacity:.45"/>
+<line class="f-dash" x1="442.5" y1="36" x2="442.5" y2="196" style="opacity:.45"/>
+<line class="f-dash" x1="464.2" y1="36" x2="464.2" y2="196" style="opacity:.45"/>
+<line class="f-dash" x1="485.8" y1="36" x2="485.8" y2="196" style="opacity:.45"/>
+<line class="f-dash" x1="507.5" y1="36" x2="507.5" y2="196" style="opacity:.45"/>
+<line class="f-dash" x1="529.2" y1="36" x2="529.2" y2="196" style="opacity:.45"/>
+<line class="f-dash" x1="410" y1="196" x2="540" y2="196" style="opacity:.45"/>
+<line class="f-dash" x1="410" y1="169.3" x2="540" y2="169.3" style="opacity:.45"/>
+<line class="f-dash" x1="410" y1="142.7" x2="540" y2="142.7" style="opacity:.45"/>
+<line class="f-dash" x1="410" y1="116" x2="540" y2="116" style="opacity:.45"/>
+<line class="f-dash" x1="410" y1="89.3" x2="540" y2="89.3" style="opacity:.45"/>
+<line class="f-dash" x1="410" y1="62.7" x2="540" y2="62.7" style="opacity:.45"/>
+<line class="f-dash" x1="410" y1="36" x2="540" y2="36" style="opacity:.45"/>
+<line class="f-ink" x1="406" y1="142.7" x2="548" y2="142.7" marker-end="url(#f-arrow)"/>
+<line class="f-ink" x1="464.2" y1="200" x2="464.2" y2="28" marker-end="url(#f-arrow)"/>
+<line class="f-ink" x1="420.8" y1="138.7" x2="420.8" y2="146.7"/>
+<line class="f-ink" x1="442.5" y1="138.7" x2="442.5" y2="146.7"/>
+<line class="f-ink" x1="485.8" y1="138.7" x2="485.8" y2="146.7"/>
+<line class="f-ink" x1="507.5" y1="138.7" x2="507.5" y2="146.7"/>
+<line class="f-ink" x1="529.2" y1="138.7" x2="529.2" y2="146.7"/>
+<line class="f-ink" x1="460.2" y1="196" x2="468.2" y2="196"/>
+<line class="f-ink" x1="460.2" y1="169.3" x2="468.2" y2="169.3"/>
+<line class="f-ink" x1="460.2" y1="116" x2="468.2" y2="116"/>
+<line class="f-ink" x1="460.2" y1="89.3" x2="468.2" y2="89.3"/>
+<line class="f-ink" x1="460.2" y1="62.7" x2="468.2" y2="62.7"/>
+<line class="f-ink" x1="460.2" y1="36" x2="468.2" y2="36"/>
+<text class="f-s" x="420.8" y="160.7" text-anchor="middle">−2</text>
+<text class="f-s" x="507.5" y="160.7" text-anchor="middle">2</text>
+<text class="f-s" x="456.2" y="93.3" text-anchor="end">4</text>
+<text class="f-s" x="456.2" y="40" text-anchor="end">8</text>
+<text class="f-t" x="556" y="147.7" text-anchor="start">x</text>
+<text class="f-t" x="464.2" y="20" text-anchor="middle">y</text>
+<line class="f-line" x1="410" y1="196" x2="540" y2="36"/>
+<circle class="f-fill" cx="420.8" cy="182.7" r="3"/>
+<circle class="f-fill" cx="442.5" cy="156" r="3"/>
+<circle class="f-fill" cx="464.2" cy="129.3" r="3"/>
+<circle class="f-fill" cx="485.8" cy="102.7" r="3"/>
+<circle class="f-fill" cx="507.5" cy="76" r="3"/>
+<circle class="f-fill" cx="529.2" cy="49.3" r="3"/>
+<rect class="f-box" x="585" y="70" width="170" height="76" rx="4"/>
+<text class="f-s f-ink-t" x="595" y="98" style="font-family:monospace">def f(x):</text>
+<text class="f-s f-ink-t" x="595" y="122" style="font-family:monospace">  return 2 * x + 1</text>
+<text class="f-s" x="670" y="172" text-anchor="middle">f(x + 1) − f(x) = 2</text>
+<text class="f-cap" x="95" y="248" text-anchor="middle">(가) 말</text>
+<text class="f-cap" x="280" y="248" text-anchor="middle">(나) 표</text>
+<text class="f-cap" x="475" y="248" text-anchor="middle">(다) 그래프</text>
+<text class="f-cap" x="670" y="248" text-anchor="middle">(라) 코드</text>
+</svg>
+<figcaption>"x가 1 늘면 y가 2 는다"가 (나)에서는 +2 열, (다)에서는 기울기, (라)에서는 출력 차이로 보인다.</figcaption>
+</figure>
+
+<p><b>말</b>: "x를 두 배 하고 1을 더한 값이 y다." <b>표</b>: x가 1씩 늘 때 y는 −3, −1, 1, 3, 5, 7로 2씩 는다. <b>그래프</b>: y절편 (0, 1)에서 출발해 오른쪽 1, 위 2의 계단을 밟는 직선(그림 3). <b>식</b>: y = 2x + 1, 기울기 2, y절편 1. 네 표현 모두에서 "x가 1 늘면 y가 2 는다"를 읽을 수 있고, 이는 위에서 계산한 f(x + 1) − f(x) = a = 2 그대로입니다.</p>
+
+<p><b>코드</b>: Python에서 함수를 정의하고 표를 출력합니다. 아래 파일을 <code>line.py</code>로 저장하고 명령 프롬프트나 PowerShell에서 <code>python line.py</code>(또는 <code>py line.py</code>)로 실행합니다. macOS·Linux에서는 보통 <code>python3 line.py</code>입니다.</p>
+
+<pre><code>def f(x):
+    return 2 * x + 1
+
+for x in range(-2, 4):
+    print(x, f(x))</code></pre>
+
+<div class="sample"><p class="sample-k">실행 결과 (Python 3.14.6)</p><blockquote><pre><code>-2 -3
+-1 -1
+0 1
+1 3
+2 5
+3 7</code></pre></blockquote></div>
+
+<p><code>def f(x):</code>는 입력 x를 받는 함수 f를 정의하고, <code>return</code> 뒤의 값을 출력으로 돌려줍니다. <code>range(-2, 4)</code>는 −2부터 3까지의 정수입니다(끝값 4는 포함하지 않음). <code>print(x, f(x))</code>는 두 값을 빈칸으로 띄어 한 줄에 출력합니다. 이 출력이 그림 4 (나)의 표와 같습니다. 이어서 x가 1 늘 때의 변화를 코드로 확인합니다(<code>change.py</code>).</p>
+
+<pre><code>def f(x):
+    return 2 * x + 1
+
+for x in range(-2, 3):
+    print(x, &quot;→&quot;, x + 1, &quot;일 때 y의 변화:&quot;, f(x + 1) - f(x))</code></pre>
+
+<div class="sample"><p class="sample-k">실행 결과</p><blockquote><pre><code>-2 → -1 일 때 y의 변화: 2
+-1 → 0 일 때 y의 변화: 2
+0 → 1 일 때 y의 변화: 2
+1 → 2 일 때 y의 변화: 2
+2 → 3 일 때 y의 변화: 2</code></pre></blockquote></div>
+
+<p>모든 구간에서 2입니다. 곡선이었다면 이 열이 구간마다 달라졌을 것입니다. 출력의 음수 부호가 −가 아니라 -인 것은 Python이 ASCII 하이픈을 쓰기 때문입니다.</p>
+
+<div class="check" data-q="q5"></div>
+
+<h2>예측과 잔차</h2>
+
+<p>어느 가게의 기온 x(°C)와 아이스크림 판매량 y(개) 다섯 날의 기록이 (20, 41), (22, 48), (25, 53), (28, 63), (30, 70)입니다. 다섯 점은 한 직선 위에 있지 않습니다. 직선 A: ŷ = 3x − 20을 대어 봅니다. ŷ("와이 햇")은 실제값 y와 구별해 <b>직선이 내놓은 예측값</b>을 뜻합니다. 기울기 3은 "기온 1°C당 판매 약 3개 증가"라는 변화율이고, 26°C의 예측은 ŷ = 3 × 26 − 20 = 58개입니다.</p>
+
+<div class="box">
+<p class="box-k">정의 <span class="tag memo">외우기</span></p>
+<p>각 자료점의 <b class="key">잔차</b>(residual) e = <b>y − ŷ</b> = 실제값 − 예측값.<br>
+e &gt; 0: 실제가 예측보다 크다(점이 직선 위). e &lt; 0: 실제가 예측보다 작다(점이 직선 아래). 그래프에서는 점과 직선 사이의 <b>세로</b> 거리(부호 포함)입니다.</p>
+</div>
+
+<div class="table-wrap">
+<table>
+<tr><th>x (°C)</th><th>y (개)</th><th>A: ŷ = 3x − 20</th><th>A 잔차 y − ŷ</th><th>B: ŷ = 2x + 5</th><th>B 잔차</th></tr>
+<tr><td>20</td><td>41</td><td>40</td><td>+1</td><td>45</td><td>−4</td></tr>
+<tr><td>22</td><td>48</td><td>46</td><td>+2</td><td>49</td><td>−1</td></tr>
+<tr><td>25</td><td>53</td><td>55</td><td>−2</td><td>55</td><td>−2</td></tr>
+<tr><td>28</td><td>63</td><td>64</td><td>−1</td><td>61</td><td>+2</td></tr>
+<tr><td>30</td><td>70</td><td>70</td><td>0</td><td>65</td><td>+5</td></tr>
+<tr><th colspan="3">합</th><td>0</td><th></th><td>0</td></tr>
+<tr><th colspan="3">절댓값의 합</th><td>6</td><th></th><td>14</td></tr>
+<tr><th colspan="3">제곱의 합</th><td>10</td><th></th><td>50</td></tr>
+</table>
+</div>
+
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 322" role="img" aria-label="기온(°C)과 판매량(개) 자료 다섯 점: (20, 41), (22, 48), (25, 53), (28, 63), (30, 70). (가) 직선 A: y = 3x − 20. 각 점에서 직선까지의 세로 선분이 잔차이고 값은 +1, +2, −2, −1, 0. (나) 직선 B: y = 2x + 5. 잔차는 −4, −1, −2, +2, +5. 두 직선 모두 잔차의 합은 0이지만, B의 세로 선분이 훨씬 길다.">
+<line class="f-dash" x1="70" y1="40" x2="70" y2="240" style="opacity:.45"/>
+<line class="f-dash" x1="108.6" y1="40" x2="108.6" y2="240" style="opacity:.45"/>
+<line class="f-dash" x1="147.1" y1="40" x2="147.1" y2="240" style="opacity:.45"/>
+<line class="f-dash" x1="185.7" y1="40" x2="185.7" y2="240" style="opacity:.45"/>
+<line class="f-dash" x1="224.3" y1="40" x2="224.3" y2="240" style="opacity:.45"/>
+<line class="f-dash" x1="262.9" y1="40" x2="262.9" y2="240" style="opacity:.45"/>
+<line class="f-dash" x1="301.4" y1="40" x2="301.4" y2="240" style="opacity:.45"/>
+<line class="f-dash" x1="340" y1="40" x2="340" y2="240" style="opacity:.45"/>
+<line class="f-dash" x1="70" y1="240" x2="340" y2="240" style="opacity:.45"/>
+<line class="f-dash" x1="70" y1="215" x2="340" y2="215" style="opacity:.45"/>
+<line class="f-dash" x1="70" y1="190" x2="340" y2="190" style="opacity:.45"/>
+<line class="f-dash" x1="70" y1="165" x2="340" y2="165" style="opacity:.45"/>
+<line class="f-dash" x1="70" y1="140" x2="340" y2="140" style="opacity:.45"/>
+<line class="f-dash" x1="70" y1="115" x2="340" y2="115" style="opacity:.45"/>
+<line class="f-dash" x1="70" y1="90" x2="340" y2="90" style="opacity:.45"/>
+<line class="f-dash" x1="70" y1="65" x2="340" y2="65" style="opacity:.45"/>
+<line class="f-dash" x1="70" y1="40" x2="340" y2="40" style="opacity:.45"/>
+<line class="f-ink" x1="70" y1="240" x2="340" y2="240"/>
+<line class="f-ink" x1="70" y1="240" x2="70" y2="40"/>
+<line class="f-ink" x1="70" y1="240" x2="70" y2="245"/>
+<text class="f-s" x="70" y="259" text-anchor="middle">18</text>
+<line class="f-ink" x1="108.6" y1="240" x2="108.6" y2="245"/>
+<text class="f-s" x="108.6" y="259" text-anchor="middle">20</text>
+<line class="f-ink" x1="147.1" y1="240" x2="147.1" y2="245"/>
+<text class="f-s" x="147.1" y="259" text-anchor="middle">22</text>
+<line class="f-ink" x1="185.7" y1="240" x2="185.7" y2="245"/>
+<text class="f-s" x="185.7" y="259" text-anchor="middle">24</text>
+<line class="f-ink" x1="224.3" y1="240" x2="224.3" y2="245"/>
+<text class="f-s" x="224.3" y="259" text-anchor="middle">26</text>
+<line class="f-ink" x1="262.9" y1="240" x2="262.9" y2="245"/>
+<text class="f-s" x="262.9" y="259" text-anchor="middle">28</text>
+<line class="f-ink" x1="301.4" y1="240" x2="301.4" y2="245"/>
+<text class="f-s" x="301.4" y="259" text-anchor="middle">30</text>
+<line class="f-ink" x1="340" y1="240" x2="340" y2="245"/>
+<text class="f-s" x="340" y="259" text-anchor="middle">32</text>
+<line class="f-ink" x1="65" y1="240" x2="70" y2="240"/>
+<text class="f-s" x="61" y="244" text-anchor="end">35</text>
+<line class="f-ink" x1="65" y1="190" x2="70" y2="190"/>
+<text class="f-s" x="61" y="194" text-anchor="end">45</text>
+<line class="f-ink" x1="65" y1="140" x2="70" y2="140"/>
+<text class="f-s" x="61" y="144" text-anchor="end">55</text>
+<line class="f-ink" x1="65" y1="90" x2="70" y2="90"/>
+<text class="f-s" x="61" y="94" text-anchor="end">65</text>
+<line class="f-ink" x1="65" y1="40" x2="70" y2="40"/>
+<text class="f-s" x="61" y="44" text-anchor="end">75</text>
+<text class="f-s f-ink-t" x="205" y="280" text-anchor="middle">기온 (°C)</text>
+<text class="f-s f-ink-t" x="70" y="28" text-anchor="middle">판매량 (개)</text>
+<line class="f-line" x1="76.4" y1="240" x2="333.6" y2="40"/>
+<line class="f-line" x1="108.6" y1="215" x2="108.6" y2="210" style="stroke-width:2.6;opacity:.7"/>
+<circle class="f-fill" cx="108.6" cy="210" r="4"/>
+<text class="f-s f-ink-t f-b" x="115.6" y="216.5" text-anchor="start">+1</text>
+<line class="f-line" x1="147.1" y1="185" x2="147.1" y2="175" style="stroke-width:2.6;opacity:.7"/>
+<circle class="f-fill" cx="147.1" cy="175" r="4"/>
+<text class="f-s f-ink-t f-b" x="154.1" y="184" text-anchor="start">+2</text>
+<line class="f-line" x1="205" y1="140" x2="205" y2="150" style="stroke-width:2.6;opacity:.7"/>
+<circle class="f-fill" cx="205" cy="150" r="4"/>
+<text class="f-s f-ink-t f-b" x="212" y="149" text-anchor="start">−2</text>
+<line class="f-line" x1="262.9" y1="95" x2="262.9" y2="100" style="stroke-width:2.6;opacity:.7"/>
+<circle class="f-fill" cx="262.9" cy="100" r="4"/>
+<text class="f-s f-ink-t f-b" x="269.9" y="101.5" text-anchor="start">−1</text>
+<circle class="f-fill" cx="301.4" cy="65" r="4"/>
+<text class="f-s f-ink-t f-b" x="308.4" y="56" text-anchor="start">0</text>
+<text class="f-cap" x="205" y="310" text-anchor="middle">(가) A: y = 3x − 20</text>
+<line class="f-dash" x1="460" y1="40" x2="460" y2="240" style="opacity:.45"/>
+<line class="f-dash" x1="498.6" y1="40" x2="498.6" y2="240" style="opacity:.45"/>
+<line class="f-dash" x1="537.1" y1="40" x2="537.1" y2="240" style="opacity:.45"/>
+<line class="f-dash" x1="575.7" y1="40" x2="575.7" y2="240" style="opacity:.45"/>
+<line class="f-dash" x1="614.3" y1="40" x2="614.3" y2="240" style="opacity:.45"/>
+<line class="f-dash" x1="652.9" y1="40" x2="652.9" y2="240" style="opacity:.45"/>
+<line class="f-dash" x1="691.4" y1="40" x2="691.4" y2="240" style="opacity:.45"/>
+<line class="f-dash" x1="730" y1="40" x2="730" y2="240" style="opacity:.45"/>
+<line class="f-dash" x1="460" y1="240" x2="730" y2="240" style="opacity:.45"/>
+<line class="f-dash" x1="460" y1="215" x2="730" y2="215" style="opacity:.45"/>
+<line class="f-dash" x1="460" y1="190" x2="730" y2="190" style="opacity:.45"/>
+<line class="f-dash" x1="460" y1="165" x2="730" y2="165" style="opacity:.45"/>
+<line class="f-dash" x1="460" y1="140" x2="730" y2="140" style="opacity:.45"/>
+<line class="f-dash" x1="460" y1="115" x2="730" y2="115" style="opacity:.45"/>
+<line class="f-dash" x1="460" y1="90" x2="730" y2="90" style="opacity:.45"/>
+<line class="f-dash" x1="460" y1="65" x2="730" y2="65" style="opacity:.45"/>
+<line class="f-dash" x1="460" y1="40" x2="730" y2="40" style="opacity:.45"/>
+<line class="f-ink" x1="460" y1="240" x2="730" y2="240"/>
+<line class="f-ink" x1="460" y1="240" x2="460" y2="40"/>
+<line class="f-ink" x1="460" y1="240" x2="460" y2="245"/>
+<text class="f-s" x="460" y="259" text-anchor="middle">18</text>
+<line class="f-ink" x1="498.6" y1="240" x2="498.6" y2="245"/>
+<text class="f-s" x="498.6" y="259" text-anchor="middle">20</text>
+<line class="f-ink" x1="537.1" y1="240" x2="537.1" y2="245"/>
+<text class="f-s" x="537.1" y="259" text-anchor="middle">22</text>
+<line class="f-ink" x1="575.7" y1="240" x2="575.7" y2="245"/>
+<text class="f-s" x="575.7" y="259" text-anchor="middle">24</text>
+<line class="f-ink" x1="614.3" y1="240" x2="614.3" y2="245"/>
+<text class="f-s" x="614.3" y="259" text-anchor="middle">26</text>
+<line class="f-ink" x1="652.9" y1="240" x2="652.9" y2="245"/>
+<text class="f-s" x="652.9" y="259" text-anchor="middle">28</text>
+<line class="f-ink" x1="691.4" y1="240" x2="691.4" y2="245"/>
+<text class="f-s" x="691.4" y="259" text-anchor="middle">30</text>
+<line class="f-ink" x1="730" y1="240" x2="730" y2="245"/>
+<text class="f-s" x="730" y="259" text-anchor="middle">32</text>
+<line class="f-ink" x1="455" y1="240" x2="460" y2="240"/>
+<text class="f-s" x="451" y="244" text-anchor="end">35</text>
+<line class="f-ink" x1="455" y1="190" x2="460" y2="190"/>
+<text class="f-s" x="451" y="194" text-anchor="end">45</text>
+<line class="f-ink" x1="455" y1="140" x2="460" y2="140"/>
+<text class="f-s" x="451" y="144" text-anchor="end">55</text>
+<line class="f-ink" x1="455" y1="90" x2="460" y2="90"/>
+<text class="f-s" x="451" y="94" text-anchor="end">65</text>
+<line class="f-ink" x1="455" y1="40" x2="460" y2="40"/>
+<text class="f-s" x="451" y="44" text-anchor="end">75</text>
+<text class="f-s f-ink-t" x="595" y="280" text-anchor="middle">기온 (°C)</text>
+<text class="f-s f-ink-t" x="460" y="28" text-anchor="middle">판매량 (개)</text>
+<line class="f-line" x1="460" y1="210" x2="730" y2="70"/>
+<line class="f-line" x1="498.6" y1="190" x2="498.6" y2="210" style="stroke-width:2.6;opacity:.7"/>
+<circle class="f-fill" cx="498.6" cy="210" r="4"/>
+<text class="f-s f-ink-t f-b" x="505.6" y="204" text-anchor="start">−4</text>
+<line class="f-line" x1="537.1" y1="170" x2="537.1" y2="175" style="stroke-width:2.6;opacity:.7"/>
+<circle class="f-fill" cx="537.1" cy="175" r="4"/>
+<text class="f-s f-ink-t f-b" x="544.1" y="176.5" text-anchor="start">−1</text>
+<line class="f-line" x1="595" y1="140" x2="595" y2="150" style="stroke-width:2.6;opacity:.7"/>
+<circle class="f-fill" cx="595" cy="150" r="4"/>
+<text class="f-s f-ink-t f-b" x="602" y="149" text-anchor="start">−2</text>
+<line class="f-line" x1="652.9" y1="110" x2="652.9" y2="100" style="stroke-width:2.6;opacity:.7"/>
+<circle class="f-fill" cx="652.9" cy="100" r="4"/>
+<text class="f-s f-ink-t f-b" x="659.9" y="109" text-anchor="start">+2</text>
+<line class="f-line" x1="691.4" y1="90" x2="691.4" y2="65" style="stroke-width:2.6;opacity:.7"/>
+<circle class="f-fill" cx="691.4" cy="65" r="4"/>
+<text class="f-s f-ink-t f-b" x="698.4" y="81.5" text-anchor="start">+5</text>
+<text class="f-cap" x="595" y="310" text-anchor="middle">(나) B: y = 2x + 5</text>
+</svg>
+<figcaption>세로 선분 하나하나가 잔차다. 점이 직선 위에 있으면 +, 아래에 있으면 −. 두 축 모두 0이 아닌 값에서 시작한다(산점도).</figcaption>
+</figure>
+
+<p>두 직선의 잔차 합은 둘 다 0입니다. 양수와 음수가 서로 상쇄되기 때문입니다. 실제로 두 직선 모두 평균점 (x̄, ȳ) = (25, 55)를 지나는데, 평균점을 지나는 직선은 기울기와 상관없이 잔차 합이 0이 됩니다(Σ(yᵢ − a xᵢ − b) = n(ȳ − a x̄ − b) = 0). 그래서 <b>잔차의 합은 직선이 얼마나 맞는지 재는 기준이 될 수 없습니다.</b> 부호를 없애야 합니다.</p>
+
+<ul>
+<li><b>절댓값 합</b> Σ|eᵢ|: A 6, B 14. 평균하면 MAE(평균 절대 오차) A 1.2개, B 2.8개.</li>
+<li><b>제곱합</b> Σeᵢ²: A 10, B 50. 평균하면 MSE(평균 제곱 오차) A 2, B 10. 큰 잔차에 더 큰 벌점을 줍니다(B의 +5가 25로 커짐).</li>
+</ul>
+
+<p>어느 기준으로도 A가 낫습니다. 제곱합을 가장 작게 하는 직선을 고르는 방법이 최소제곱법이고(통계·머신러닝 단원), 이 자료의 최소제곱 직선은 A와도 조금 다릅니다. Σ는 "모두 더하기" 기호로, 산술 단원의 합과 평균에서 다룬 것입니다.</p>
+
+<div class="box trap">
+<p class="box-k">시험 함정</p>
+<p><b>잔차를 예측 − 실제로 계산하기.</b> 정의는 실제 − 예측입니다. 순서를 바꾸면 모든 부호가 뒤집혀 "직선 위/아래" 해석이 반대가 됩니다(제곱합·절댓값 합은 같지만, 잔차를 보고 하는 판단이 틀어집니다).</p>
+<p><b>잔차를 점과 직선의 수직 거리(최단 거리)로 재기.</b> y를 x로 예측하므로 어긋남은 y 방향, 곧 세로로 잽니다.</p>
+</div>
+
+<p>같은 계산을 Python으로 해 봅니다(<code>resid.py</code>). <code>zip(temps, sales)</code>는 두 목록에서 같은 자리의 값을 짝지어 (20, 41), (22, 48), …을 차례로 꺼내고, <code>[ … for x, y in … ]</code>는 그 짝마다 잔차를 계산해 목록으로 모읍니다. <code>sum</code>은 합, <code>abs</code>는 절댓값입니다.</p>
+
+<pre><code>temps = [20, 22, 25, 28, 30]   # x: 기온 (°C)
+sales = [41, 48, 53, 63, 70]   # y: 판매량 (개)
+
+def report(a, b):
+    resid = [y - (a * x + b) for x, y in zip(temps, sales)]
+    print(f&quot;y = {a}x + ({b})&quot;)
+    print(&quot;  잔차:&quot;, resid)
+    print(&quot;  합:&quot;, sum(resid),
+          &quot; 절댓값 합:&quot;, sum(abs(e) for e in resid),
+          &quot; 제곱합:&quot;, sum(e * e for e in resid))
+
+report(3, -20)
+report(2, 5)</code></pre>
+
+<div class="sample"><p class="sample-k">실행 결과</p><blockquote><pre><code>y = 3x + (-20)
+  잔차: [1, 2, -2, -1, 0]
+  합: 0  절댓값 합: 6  제곱합: 10
+y = 2x + (5)
+  잔차: [-4, -1, -2, 2, 5]
+  합: 0  절댓값 합: 14  제곱합: 50</code></pre></blockquote></div>
+
+<div class="check" data-q="q6"></div>
+<div class="check" data-q="q7"></div>
+
+<h3>자료 범위 밖의 예측</h3>
+
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 330" role="img" aria-label="가로축 기온(°C) 0부터 45, 세로축 판매량(개) −30부터 130. 자료 다섯 점은 기온 20~30 구간(색칠한 띠)에 있다. 직선 y = 3x − 20은 그 구간에서는 실선, 구간 밖으로는 점선으로 늘렸다. x = 0에서 예측 −20개(불가능한 값), x = 45에서 예측 115개(근거 없음)에 빈 동그라미가 있다.">
+<rect class="f-soft" x="342.5" y="40" width="87.5" height="250"/>
+<line class="f-dash" x1="167.5" y1="40" x2="167.5" y2="290" style="opacity:.45"/>
+<line class="f-dash" x1="211.2" y1="40" x2="211.2" y2="290" style="opacity:.45"/>
+<line class="f-dash" x1="255" y1="40" x2="255" y2="290" style="opacity:.45"/>
+<line class="f-dash" x1="298.8" y1="40" x2="298.8" y2="290" style="opacity:.45"/>
+<line class="f-dash" x1="342.5" y1="40" x2="342.5" y2="290" style="opacity:.45"/>
+<line class="f-dash" x1="386.2" y1="40" x2="386.2" y2="290" style="opacity:.45"/>
+<line class="f-dash" x1="430" y1="40" x2="430" y2="290" style="opacity:.45"/>
+<line class="f-dash" x1="473.8" y1="40" x2="473.8" y2="290" style="opacity:.45"/>
+<line class="f-dash" x1="517.5" y1="40" x2="517.5" y2="290" style="opacity:.45"/>
+<line class="f-dash" x1="561.2" y1="40" x2="561.2" y2="290" style="opacity:.45"/>
+<line class="f-dash" x1="150" y1="274.4" x2="570" y2="274.4" style="opacity:.45"/>
+<line class="f-dash" x1="150" y1="243.1" x2="570" y2="243.1" style="opacity:.45"/>
+<line class="f-dash" x1="150" y1="211.9" x2="570" y2="211.9" style="opacity:.45"/>
+<line class="f-dash" x1="150" y1="180.6" x2="570" y2="180.6" style="opacity:.45"/>
+<line class="f-dash" x1="150" y1="149.4" x2="570" y2="149.4" style="opacity:.45"/>
+<line class="f-dash" x1="150" y1="118.1" x2="570" y2="118.1" style="opacity:.45"/>
+<line class="f-dash" x1="150" y1="86.9" x2="570" y2="86.9" style="opacity:.45"/>
+<line class="f-dash" x1="150" y1="55.6" x2="570" y2="55.6" style="opacity:.45"/>
+<line class="f-ink" x1="146" y1="243.1" x2="582" y2="243.1" marker-end="url(#f-arrow)"/>
+<line class="f-ink" x1="167.5" y1="294" x2="167.5" y2="28" marker-end="url(#f-arrow)"/>
+<line class="f-ink" x1="211.2" y1="239.1" x2="211.2" y2="247.1"/>
+<line class="f-ink" x1="255" y1="239.1" x2="255" y2="247.1"/>
+<line class="f-ink" x1="298.8" y1="239.1" x2="298.8" y2="247.1"/>
+<line class="f-ink" x1="342.5" y1="239.1" x2="342.5" y2="247.1"/>
+<line class="f-ink" x1="386.2" y1="239.1" x2="386.2" y2="247.1"/>
+<line class="f-ink" x1="430" y1="239.1" x2="430" y2="247.1"/>
+<line class="f-ink" x1="473.8" y1="239.1" x2="473.8" y2="247.1"/>
+<line class="f-ink" x1="517.5" y1="239.1" x2="517.5" y2="247.1"/>
+<line class="f-ink" x1="561.2" y1="239.1" x2="561.2" y2="247.1"/>
+<line class="f-ink" x1="163.5" y1="274.4" x2="171.5" y2="274.4"/>
+<line class="f-ink" x1="163.5" y1="211.9" x2="171.5" y2="211.9"/>
+<line class="f-ink" x1="163.5" y1="180.6" x2="171.5" y2="180.6"/>
+<line class="f-ink" x1="163.5" y1="149.4" x2="171.5" y2="149.4"/>
+<line class="f-ink" x1="163.5" y1="118.1" x2="171.5" y2="118.1"/>
+<line class="f-ink" x1="163.5" y1="86.9" x2="171.5" y2="86.9"/>
+<line class="f-ink" x1="163.5" y1="55.6" x2="171.5" y2="55.6"/>
+<text class="f-s" x="255" y="261.1" text-anchor="middle">10</text>
+<text class="f-s" x="342.5" y="261.1" text-anchor="middle">20</text>
+<text class="f-s" x="430" y="261.1" text-anchor="middle">30</text>
+<text class="f-s" x="517.5" y="261.1" text-anchor="middle">40</text>
+<text class="f-s" x="159.5" y="278.4" text-anchor="end">−20</text>
+<text class="f-s" x="159.5" y="215.9" text-anchor="end">20</text>
+<text class="f-s" x="159.5" y="153.4" text-anchor="end">60</text>
+<text class="f-s" x="159.5" y="90.9" text-anchor="end">100</text>
+<text class="f-s f-ink-t" x="159.5" y="259.1" text-anchor="end">O</text>
+<text class="f-t" x="590" y="248.1" text-anchor="start">기온</text>
+<text class="f-t" x="167.5" y="20" text-anchor="middle">판매량</text>
+<line class="f-line" x1="150" y1="283.8" x2="342.5" y2="180.6" style="stroke-dasharray:6 4"/>
+<line class="f-line" x1="430" y1="133.8" x2="570" y2="58.8" style="stroke-dasharray:6 4"/>
+<line class="f-line" x1="342.5" y1="180.6" x2="430" y2="133.8" style="stroke-width:2.4"/>
+<circle class="f-fill" cx="342.5" cy="179.1" r="3.5"/>
+<circle class="f-fill" cx="360" cy="168.1" r="3.5"/>
+<circle class="f-fill" cx="386.2" cy="160.3" r="3.5"/>
+<circle class="f-fill" cx="412.5" cy="144.7" r="3.5"/>
+<circle class="f-fill" cx="430" cy="133.8" r="3.5"/>
+<circle class="f-box" cx="167.5" cy="274.4" r="5"/>
+<text class="f-s f-ink-t" x="179.5" y="294.4" text-anchor="start">x = 0 → −20개?</text>
+<circle class="f-box" cx="561.2" cy="63.4" r="5"/>
+<text class="f-s f-ink-t" x="551.2" y="67.4" text-anchor="end">x = 45 → 115개?</text>
+<text class="f-s f-ink-t f-b" x="386.2" y="56" text-anchor="middle">자료 범위</text>
+</svg>
+<figcaption>색칠한 띠 안의 예측은 내삽, 밖의 예측은 외삽이다. 직선은 자료 범위 밖에서도 계속 그려지지만, 근거는 띠 안에만 있다.</figcaption>
+</figure>
+
+<p>자료가 있는 x 범위 안의 예측을 <b class="key">내삽</b>(interpolation), 밖의 예측을 <b class="key">외삽</b>(extrapolation)이라 합니다. 직선 A는 0°C에서 −20개를 예측하는데, 판매량은 음수가 될 수 없습니다. 45°C의 115개도 그 온도에서 관계가 계속 직선이라는 근거가 없습니다. 잔차가 작다는 것은 <b>자료 범위 안에서</b> 잘 맞는다는 뜻일 뿐입니다. 함수 단원의 말로 하면, 모형의 정의역은 식이 계산되는 범위가 아니라 근거가 있는 범위로 잡아야 합니다.</p>
+
+<div class="why">
+<p class="box-k">왜 그럴까?</p>
+<p>자료 다섯 점을 모두 정확히 지나는 곡선(잔차가 모두 0)을 만들 수 있습니다. 그 곡선이 직선 A보다 더 좋은 예측 모형일까요?</p>
+<details><summary>모범 답 보기</summary><p>꼭 그렇지 않습니다. 판매량에는 기온 말고도 요일·행사 같은 우연한 요인이 섞여 있어서, 다섯 점을 정확히 지나도록 구부린 곡선은 그 우연까지 따라간 것입니다. 새 날의 자료에서는 오히려 크게 빗나가기 쉽습니다. 이미 가진 자료의 잔차가 아니라 새 자료에서의 오차로 모형을 평가해야 한다는 것, 이것이 머신러닝의 과적합과 검증 데이터 이야기입니다.</p></details>
+</div>
+
+<div class="check" data-q="q8"></div>
+
+<h2>한눈에 정리</h2>
+
+<div class="table-wrap">
+<table>
+<tr><th>묻는 것</th><th>답</th></tr>
+<tr><td>평균 변화율</td><td><b class="key">Δy/Δx</b>, 단위 = y 단위 / x 단위. 직선이면 어디서나 같고 그것이 기울기</td></tr>
+<tr><td>기울기 부호</td><td>+ 증가, − 감소, 0 수평. 세로선은 <b class="key">정의되지 않음</b></td></tr>
+<tr><td>일차함수</td><td>y = ax + b (a ≠ 0). a: x 1당 변화, <b class="key">b: y절편</b>, x절편 = −b/a</td></tr>
+<tr><td>직선의 식</td><td>점-기울기 y − y₁ = a(x − x₁). 두 점이면 a부터</td></tr>
+<tr><td>잔차</td><td><b class="key">e = y − ŷ</b> (실제 − 예측). +면 점이 직선 위</td></tr>
+<tr><td>직선 비교</td><td>잔차 합은 상쇄되어 쓸 수 없다. <b class="key">절댓값 합(MAE)·제곱합(MSE)</b></td></tr>
+<tr><td>내삽·외삽</td><td>자료 범위 안/밖의 예측. 외삽은 근거가 없다</td></tr>
+</table>
+</div>
+
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>직선 y = ax + b의 a는 단위가 붙은 변화율, b는 출발값이고, 직선으로 한 예측의 어긋남은 잔차 y − ŷ로 재되 부호를 없앤 합으로 비교한다.</p></div>
+
+<h2>확인 문제</h2>
+<p>본문 중간에서 푼 문제 말고 남은 문제입니다. 보기를 누르면 바로 정답과 해설이 나옵니다.</p>
+<div id="quiz"></div>
+
+<section class="work" id="tools"></section>
+
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

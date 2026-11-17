@@ -1,0 +1,444 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>숫자 계산과 연산자 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e8c'/%3E%3Cpath d='M8 22V10m8 12V14m8 8V6' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="PY01-3">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+
+<header class="chapter">
+<p class="chap-sub">Python과 프로그래밍 사고 · PY01 첫 프로그램</p>
+<p class="chap-num">PY01·3</p>
+<h1>숫자 계산과 연산자</h1>
+<p class="lead">동영상 길이가 125분이라면 몇 시간 몇 분일까요? 사람은 "60분이 두 번 들어가고 5분 남는다"고 셉니다. Python에는 이 "몇 번 들어가나"와 "얼마 남나"를 바로 계산하는 기호 <code>//</code>와 <code>%</code>가 따로 있습니다. 이 장에서는 Python의 산술 연산자 일곱 가지와 그 결과의 자료형, 그리고 여러 기호가 섞였을 때의 계산 순서를 다룹니다.</p>
+</header>
+
+<div class="goal">
+<h2>이 장을 읽고 나면</h2>
+<ul>
+<li><code>+ - * / // % **</code> 일곱 연산자의 결과를 실행 전에 예상할 수 있다.</li>
+<li><code>/</code>와 <code>//</code>의 차이, 그리고 결과가 int인지 float인지 설명할 수 있다.</li>
+<li><code>//</code>와 <code>%</code>로 몫과 나머지를 구해 시간·돈 나누기 문제를 풀고, 검산할 수 있다.</li>
+<li>여러 연산자가 섞인 식을 Python과 같은 순서로 계산할 수 있다.</li>
+<li>0으로 나눌 때와 음수를 <code>//</code>로 나눌 때 무슨 일이 생기는지 말할 수 있다.</li>
+</ul>
+</div>
+
+
+<h2>일곱 가지 계산 기호 <span class="tag memo">외우기</span></h2>
+
+<div class="side"><b>용어</b> <code>+</code>, <code>*</code>처럼 계산을 시키는 기호를 <b>연산자</b>(operator)라고 합니다. <code>7 + 2</code>에서 7과 2처럼 연산자가 다루는 값은 <b>피연산자</b>(operand)라고 합니다. U05·3에서 본 TypeError의 "operand"가 이것입니다.</div>
+
+<p>같은 두 수 7과 2에 일곱 연산자를 모두 써 본 실제 결과입니다.</p>
+
+<div class="table-wrap">
+<table>
+<tr><th>연산자</th><th>이름</th><th>코드</th><th>결과</th><th>결과 자료형</th></tr>
+<tr><td><code>+</code></td><td>더하기</td><td><code>7 + 2</code></td><td><code>9</code></td><td>int</td></tr>
+<tr><td><code>-</code></td><td>빼기</td><td><code>7 - 2</code></td><td><code>5</code></td><td>int</td></tr>
+<tr><td><code>*</code></td><td>곱하기</td><td><code>7 * 2</code></td><td><code>14</code></td><td>int</td></tr>
+<tr><td><code>/</code></td><td><b class="key">나누기</b></td><td><code>7 / 2</code></td><td><code>3.5</code></td><td><b>항상 float</b></td></tr>
+<tr><td><code>//</code></td><td><b class="key">몫</b> (정수 나눗셈)</td><td><code>7 // 2</code></td><td><code>3</code></td><td>int (재료가 int일 때)</td></tr>
+<tr><td><code>%</code></td><td><b class="key">나머지</b></td><td><code>7 % 2</code></td><td><code>1</code></td><td>int (재료가 int일 때)</td></tr>
+<tr><td><code>**</code></td><td><b class="key">거듭제곱</b></td><td><code>7 ** 2</code></td><td><code>49</code></td><td>int</td></tr>
+</table>
+</div>
+
+<p><code>%</code>는 여기서 "퍼센트"가 아니라 <b>나머지</b>라는 뜻이고, <code>**</code>는 별표 두 개를 붙여 씁니다(사이에 빈칸이 있으면 안 됩니다). 연산자 앞뒤의 빈칸은 있어도 없어도 결과가 같지만, <code>7 + 2</code>처럼 한 칸씩 띄우는 것이 읽기 좋습니다.</p>
+
+<h2>나누기 세 가지: /, //, %</h2>
+
+<p>7 ÷ 2에 대해 "정확한 값"(3.5), "몇 번 들어가나"(3), "얼마 남나"(1)는 서로 다른 질문이고, Python은 질문마다 연산자를 하나씩 둡니다.</p>
+
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 226" role="img" aria-label="(가) 점 7개를 2개씩 묶으면 묶음 3개와 남는 점 1개. 7 // 2는 3으로 묶음 수(몫), 7 % 2는 1로 남은 것(나머지). (나) 0부터 4까지 수직선에서 7 / 2는 3.5에 있고, // 는 3.5를 3으로 내린다.">
+<line class="f-dash" x1="380" y1="14" x2="380" y2="196"/>
+<rect class="f-none" x="34" y="62" width="62" height="36" rx="8"/>
+<circle class="f-fill" cx="52" cy="80" r="8"/>
+<circle class="f-fill" cx="78" cy="80" r="8"/>
+<rect class="f-none" x="108" y="62" width="62" height="36" rx="8"/>
+<circle class="f-fill" cx="126" cy="80" r="8"/>
+<circle class="f-fill" cx="152" cy="80" r="8"/>
+<rect class="f-none" x="182" y="62" width="62" height="36" rx="8"/>
+<circle class="f-fill" cx="200" cy="80" r="8"/>
+<circle class="f-fill" cx="226" cy="80" r="8"/>
+<circle class="f-over" cx="290" cy="80" r="13"/>
+<circle class="f-fill" cx="290" cy="80" r="8"/>
+<text class="f-s" x="65" y="120" text-anchor="middle">1묶음</text>
+<text class="f-s" x="139" y="120" text-anchor="middle">2묶음</text>
+<text class="f-s" x="213" y="120" text-anchor="middle">3묶음</text>
+<text class="f-s" x="290" y="120" text-anchor="middle">남음</text>
+<text class="f-s" x="190" y="40" text-anchor="middle">점 7개를 2개씩 묶기</text>
+<text class="f-t" x="40" y="156" font-family="Consolas, monospace">7 // 2 → 3</text>
+<text class="f-s f-ink-t" x="170" y="156">묶음 수 (몫)</text>
+<text class="f-t" x="40" y="182" font-family="Consolas, monospace">7 % 2  → 1</text>
+<text class="f-s f-ink-t" x="170" y="182">남은 것 (나머지)</text>
+<line class="f-ink" x1="410" y1="110" x2="720" y2="110"/>
+<line class="f-ink" x1="420" y1="104" x2="420" y2="116"/>
+<line class="f-ink" x1="490" y1="104" x2="490" y2="116"/>
+<line class="f-ink" x1="560" y1="104" x2="560" y2="116"/>
+<line class="f-ink" x1="630" y1="104" x2="630" y2="116"/>
+<line class="f-ink" x1="700" y1="104" x2="700" y2="116"/>
+<text class="f-s f-ink-t" x="420" y="134" text-anchor="middle">0</text>
+<text class="f-s f-ink-t" x="490" y="134" text-anchor="middle">1</text>
+<text class="f-s f-ink-t" x="560" y="134" text-anchor="middle">2</text>
+<text class="f-s f-ink-t" x="630" y="134" text-anchor="middle">3</text>
+<text class="f-s f-ink-t" x="700" y="134" text-anchor="middle">4</text>
+<circle class="f-fill" cx="665" cy="110" r="6"/>
+<text class="f-t" x="665" y="84" text-anchor="middle" font-family="Consolas, monospace">7 / 2 = 3.5</text>
+<circle class="f-over" cx="630" cy="110" r="7"/>
+<path class="f-line" d="M665 120 Q 650 160, 634 122" marker-end="url(#f-arrow)"/>
+<text class="f-s f-ink-t" x="600" y="172" text-anchor="middle">// 는 3.5를 3으로 내린다</text>
+<text class="f-cap" x="190" y="214" text-anchor="middle">(가) 2개씩 묶기</text>
+<text class="f-cap" x="565" y="214" text-anchor="middle">(나) 수직선 위의 7 ÷ 2</text>
+</svg>
+<figcaption>같은 7 ÷ 2라도 묻는 것에 따라 3.5, 3, 1 세 가지 답이 있다.</figcaption>
+</figure>
+
+<div class="box">
+<p class="box-k">정의 <span class="tag memo">외우기</span></p>
+<p><b class="key">/</b> (나누기): 소수까지 정확히 나눈 값. 결과는 항상 float.<br>
+<b class="key">//</b> (몫, floor division): 나눈 값을 <b>내린</b> 정수 부분. "몇 번 들어가나".<br>
+<b class="key">%</b> (나머지, modulo): 몫만큼 빼고 <b>남은 것</b>. "얼마 남나".<br>
+세 연산 사이에는 늘 이 관계가 성립합니다: <b>나뉘는 수 = 나누는 수 × 몫 + 나머지</b>. 7 = 2 × 3 + 1.<br>정확히 쓰면 <code>a // b</code> = ⌊a / b⌋ (⌊ ⌋는 그 수 이하의 가장 큰 정수, 바닥 함수), <code>a % b</code> = a − b × ⌊a / b⌋ 입니다.</p>
+</div>
+
+<p>floor는 "바닥"이라는 뜻입니다. 수직선에서 바닥 쪽(왼쪽, 작은 쪽)으로 내린다는 말입니다. 양수에서는 소수 부분을 떼어 버리는 것과 같습니다. 음수에서는 결과가 달라지는데, 이 장 끝의 "음수를 // 로 나눌 때"에서 봅니다.</p>
+
+<div class="box ex">
+<p class="box-k">풀이 예제</p>
+<p>125분은 몇 시간 몇 분일까요? Python으로 풀고 검산합니다.</p>
+<div class="sample">
+<p class="sample-k">코드 (m.py)</p>
+<pre><code>minutes = 125
+hours = minutes // 60
+rest = minutes % 60
+print(hours, "시간", rest, "분")</code></pre>
+</div>
+<div class="sample">
+<p class="sample-k">실행 결과</p>
+<pre><code>2 시간 5 분</code></pre>
+</div>
+<p class="calc">① 1시간 = 60분이므로 60으로 나눈다<br>
+② 몫: 125 // 60 → 60이 몇 번 들어가나? 60 × 2 = 120 ≤ 125, 60 × 3 = 180 &gt; 125 → <b>2</b><br>
+③ 나머지: 125 % 60 → 125 − 120 = <b>5</b><br>
+④ 검산: 60 × 2 + 5 = 120 + 5 = 125 ✓</p>
+<p>결과 줄의 "2 시간 5 분"에 빈칸이 끼어 있는 것은 print에 쉼표로 네 값을 넣었기 때문입니다(PY01·1). 빈칸 없이 "2시간 5분"으로 붙이는 법은 PY02의 문자열에서 배웁니다.</p>
+</div>
+
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 170" role="img" aria-label="125분을 막대로 그린 그림. 60분짜리 칸 두 개(각 1시간)와 5분짜리 작은 칸 하나. 앞의 두 칸 아래에 125 // 60 = 2, 마지막 작은 칸 아래에 125 % 60 = 5.">
+<rect class="f-soft" x="40" y="44" width="300" height="44"/>
+<text class="f-t" x="190" y="71" text-anchor="middle">60분 = 1시간</text>
+<rect class="f-soft" x="340" y="44" width="300" height="44"/>
+<text class="f-t" x="490" y="71" text-anchor="middle">60분 = 1시간</text>
+<rect class="f-over" x="640" y="44" width="25" height="44"/>
+<text class="f-s f-ink-t" x="674" y="71">5분</text>
+<path class="f-line" d="M40 96 v6 h600 v-6"/>
+<line class="f-line" x1="340" y1="102" x2="340" y2="114"/>
+<text class="f-t" x="340" y="132" text-anchor="middle" font-family="Consolas, monospace">125 // 60 = 2  (시간)</text>
+<path class="f-line" d="M640 96 v6 h25 v-6"/>
+<line class="f-line" x1="652" y1="102" x2="652" y2="140"/>
+<text class="f-t" x="720" y="158" text-anchor="end" font-family="Consolas, monospace">125 % 60 = 5  (분)</text>
+<text class="f-s" x="40" y="30">0분</text>
+<text class="f-s" x="665" y="30" text-anchor="middle">125분</text>
+</svg>
+<figcaption>막대 길이는 분에 비례해 그렸다(1분 = 같은 길이). 60분 칸이 몇 개인지가 몫, 남는 칸이 나머지다.</figcaption>
+</figure>
+
+<h3>몫과 나머지가 쓰이는 곳</h3>
+<ul>
+<li><b>짝수·홀수 가리기</b>: 2로 나눈 나머지가 0이면 짝수, 1이면 홀수입니다. <code>14 % 2</code> → <code>0</code>, <code>15 % 2</code> → <code>1</code>.</li>
+<li><b>돈 나누기</b>: 아래 예처럼 1원 단위로 정확히 나눠야 할 때.</li>
+<li><b>단위 바꾸기</b>: 초 → 분·초, 날수 → 주·날(<code>365 // 7</code> → <code>52</code>, <code>365 % 7</code> → <code>1</code>, 1년은 52주와 1일).</li>
+</ul>
+
+<div class="sample">
+<p class="sample-k">코드 (split.py): 10,000원을 3명이 나눠 내기</p>
+<pre><code>bill = 10000
+people = 3
+each = bill // people
+left = bill % people
+print("한 사람:", each)
+print("남는 돈:", left)
+print("나누기만 하면:", bill / people)</code></pre>
+</div>
+<div class="sample">
+<p class="sample-k">실행 결과</p>
+<pre><code>한 사람: 3333
+남는 돈: 1
+나누기만 하면: 3333.3333333333335</code></pre>
+</div>
+<p>검산: 3,333 × 3 + 1 = 9,999 + 1 = 10,000 ✓. 마지막 줄의 <code>/</code> 결과는 원 단위로 낼 수 없는 값이고, 끝자리 5는 PY01·2에서 본 float의 작은 오차입니다. 돈처럼 낱개로 세는 것에는 <code>//</code>와 <code>%</code>가 맞습니다.</p>
+
+<h3>경계에 있는 경우</h3>
+<div class="table-wrap">
+<table>
+<tr><th>코드</th><th>실제 결과</th><th>까닭</th></tr>
+<tr><td><code>50 // 60</code>, <code>50 % 60</code></td><td><code>0</code>, <code>50</code></td><td>60이 한 번도 안 들어가므로 몫 0, 전부 남는다</td></tr>
+<tr><td><code>7 % 7</code></td><td><code>0</code></td><td>나누어떨어지면 나머지 0</td></tr>
+<tr><td><code>3 % 8</code></td><td><code>3</code></td><td>작은 수를 큰 수로 나누면 나머지는 자기 자신</td></tr>
+<tr><td><code>7 / 0</code>, <code>7 // 0</code>, <code>7 % 0</code></td><td><code>ZeroDivisionError: division by zero</code></td><td>0으로는 나눌 수 없다. 셋 다 같은 오류</td></tr>
+</table>
+</div>
+
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+<div class="check" data-q="q3"></div>
+
+<h2>/ 의 결과는 언제나 float <span class="tag grasp">이해하기</span></h2>
+
+<p>정수끼리 나눠 딱 떨어져도 <code>/</code>는 소수점을 붙입니다. 실제 결과입니다.</p>
+
+<div class="sample">
+<p class="sample-k">대화형 실행</p>
+<pre><code>&gt;&gt;&gt; 6 / 2
+3.0
+&gt;&gt;&gt; 6 // 2
+3
+&gt;&gt;&gt; 9 / 3
+3.0
+&gt;&gt;&gt; 7.0 // 2
+3.0
+&gt;&gt;&gt; 7.5 % 2
+1.5
+&gt;&gt;&gt; 3 + 2.0
+5.0</code></pre>
+</div>
+
+<p>규칙은 두 줄로 정리됩니다.</p>
+<ol>
+<li><b><code>/</code>는 재료가 무엇이든 결과가 float</b>입니다. "나누면 소수가 나올 수 있다"를 늘 전제하기 때문입니다.</li>
+<li><b>나머지 연산자(<code>+ - * // % **</code>)는 재료가 모두 int면 int, 하나라도 float면 float</b>입니다. 그래서 <code>7.0 // 2</code>는 몫이지만 <code>3.0</code>(float)으로 나옵니다.</li>
+</ol>
+<p>(<code>**</code>는 지수가 음수일 때 예외입니다. <code>2 ** -1</code>은 int끼리지만 <code>0.5</code>가 나옵니다. 아래 거듭제곱 절에서 봅니다.)</p>
+
+<div class="box trap">
+<p class="box-k">흔한 실수</p>
+<p><b>개수를 <code>/</code>로 구하기.</b> 학생 30명을 6모둠으로 나눈 모둠 인원을 <code>30 / 6</code>으로 구하면 <code>5.0</code>이 나옵니다. 값은 맞지만 float라서, 나중에 "다섯째 칸"처럼 <b>정수만 받는 자리</b>(PY04의 목록 번호, <code>range</code>)에 넣으면 TypeError가 납니다. 사람 수·개수·번호처럼 낱개로 세는 값에는 <code>//</code>를 씁니다.</p>
+<p><b>다른 언어에서 배운 습관.</b> 예전 Python 2나 C 같은 언어에서는 정수끼리 <code>/</code>하면 몫(3)이 나왔습니다. Python 3에서 <code>7 / 2</code>는 3.5입니다. 인터넷의 오래된 예제를 볼 때 주의하세요.</p>
+</div>
+
+<div class="check" data-q="q4"></div>
+
+<h2>거듭제곱: **</h2>
+
+<p><code>a ** b</code>는 a를 b번 곱한 값입니다. <code>2 ** 3</code>은 2 × 2 × 2 = 8입니다. 빅데이터분석기사 노트 1-01에서 계산한 데이터 단위도 바로 확인할 수 있습니다.</p>
+
+<div class="sample">
+<p class="sample-k">대화형 실행</p>
+<pre><code>&gt;&gt;&gt; 2 ** 10
+1024
+&gt;&gt;&gt; 1024 ** 2
+1048576
+&gt;&gt;&gt; 10 ** 6
+1000000
+&gt;&gt;&gt; 5 ** 0
+1
+&gt;&gt;&gt; 2 ** 0.5
+1.4142135623730951
+&gt;&gt;&gt; 2 ** -1
+0.5</code></pre>
+</div>
+
+<ul>
+<li><code>2 ** 10</code> = 1,024는 1KB를 1,024바이트로 셀 때의 그 수이고, <code>1024 ** 2</code> = 1,048,576은 그렇게 셀 때 1MB의 바이트 수입니다(1-01은 시험 관례에 따라 1KB = 1,024B로 계산했습니다. 국제 표준에서는 1kB = 1,000B, 1KiB = 1,024B로 구분합니다. U04에서 자세히).</li>
+<li>0제곱은 1입니다(<code>5 ** 0</code> → <code>1</code>).</li>
+<li>지수가 0.5면 제곱근(√2 ≈ 1.414…), 음수면 역수(2<sup>−1</sup> = 1/2 = 0.5)가 됩니다. 이런 지수는 AR·AL 단원에서 다시 다룹니다.</li>
+</ul>
+
+<div class="box trap">
+<p class="box-k">흔한 실수</p>
+<p><b><code>^</code>를 거듭제곱으로 쓰기.</b> 엑셀이나 계산기에서는 2^10이 1024지만, Python에서 <code>2 ^ 10</code>은 오류 없이 <code>8</code>이 나옵니다. Python의 <code>^</code>는 수를 2진법 자리마다 비교하는 전혀 다른 연산자이기 때문입니다. 거듭제곱은 반드시 <code>**</code>입니다.</p>
+</div>
+
+<h2>계산 순서 <span class="tag memo">외우기</span></h2>
+
+<p>여러 연산자가 한 식에 섞이면 Python은 정해진 순서대로 계산합니다. 곱셈·나눗셈이 덧셈·뺄셈보다 먼저인 수학의 규칙에, <code>**</code>와 <code>//</code>, <code>%</code>가 더해진 것입니다.</p>
+
+<div class="table-wrap">
+<table>
+<tr><th>순서</th><th>연산자</th><th>같은 줄끼리는</th></tr>
+<tr><td>1 (가장 먼저)</td><td><code>( )</code> 괄호 안</td><td>안쪽 괄호부터</td></tr>
+<tr><td>2</td><td><code>**</code></td><td><b>오른쪽부터</b></td></tr>
+<tr><td>3</td><td>부호 <code>-x</code></td><td></td></tr>
+<tr><td>4</td><td><code>*</code> <code>/</code> <code>//</code> <code>%</code></td><td>왼쪽부터</td></tr>
+<tr><td>5 (가장 나중)</td><td><code>+</code> <code>-</code></td><td>왼쪽부터</td></tr>
+</table>
+</div>
+
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 240" role="img" aria-label="계산 나무 두 개. (가) 2 + 3 * 4: 맨 위 + 아래에 2와 *가 있고, * 아래에 3과 4가 있다. ① 3 * 4 = 12를 먼저, ② 2 + 12 = 14. (나) (2 + 3) * 4: 맨 위 * 아래에 +와 4가 있고, + 아래에 2와 3이 있다. ① 2 + 3 = 5를 먼저, ② 5 * 4 = 20.">
+<line class="f-dash" x1="380" y1="10" x2="380" y2="222"/>
+<text class="f-t" x="190" y="24" text-anchor="middle" font-family="Consolas, monospace">2 + 3 * 4</text>
+<line class="f-line" x1="190" y1="58" x2="120" y2="110"/>
+<line class="f-line" x1="190" y1="58" x2="260" y2="110"/>
+<line class="f-line" x1="260" y1="128" x2="210" y2="178"/>
+<line class="f-line" x1="260" y1="128" x2="310" y2="178"/>
+<circle class="f-soft" cx="190" cy="56" r="18"/>
+<text class="f-cap" x="190" y="61" text-anchor="middle">+</text>
+<rect class="f-box" x="100" y="110" width="40" height="28" rx="3"/>
+<text class="f-t" x="120" y="129" text-anchor="middle" font-family="Consolas, monospace">2</text>
+<circle class="f-soft" cx="260" cy="124" r="18"/>
+<text class="f-cap" x="260" y="130" text-anchor="middle">*</text>
+<rect class="f-box" x="190" y="178" width="40" height="28" rx="3"/>
+<text class="f-t" x="210" y="197" text-anchor="middle" font-family="Consolas, monospace">3</text>
+<rect class="f-box" x="290" y="178" width="40" height="28" rx="3"/>
+<text class="f-t" x="310" y="197" text-anchor="middle" font-family="Consolas, monospace">4</text>
+<text class="f-s f-ink-t f-b" x="286" y="129">① 12</text>
+<text class="f-s f-ink-t f-b" x="216" y="61">② 14</text>
+<text class="f-t" x="570" y="24" text-anchor="middle" font-family="Consolas, monospace">(2 + 3) * 4</text>
+<line class="f-line" x1="570" y1="58" x2="500" y2="110"/>
+<line class="f-line" x1="570" y1="58" x2="640" y2="110"/>
+<line class="f-line" x1="500" y1="128" x2="450" y2="178"/>
+<line class="f-line" x1="500" y1="128" x2="550" y2="178"/>
+<circle class="f-soft" cx="570" cy="56" r="18"/>
+<text class="f-cap" x="570" y="62" text-anchor="middle">*</text>
+<circle class="f-soft" cx="500" cy="124" r="18"/>
+<text class="f-cap" x="500" y="129" text-anchor="middle">+</text>
+<rect class="f-box" x="620" y="110" width="40" height="28" rx="3"/>
+<text class="f-t" x="640" y="129" text-anchor="middle" font-family="Consolas, monospace">4</text>
+<rect class="f-box" x="430" y="178" width="40" height="28" rx="3"/>
+<text class="f-t" x="450" y="197" text-anchor="middle" font-family="Consolas, monospace">2</text>
+<rect class="f-box" x="530" y="178" width="40" height="28" rx="3"/>
+<text class="f-t" x="550" y="197" text-anchor="middle" font-family="Consolas, monospace">3</text>
+<text class="f-s f-ink-t f-b" x="526" y="129">① 5</text>
+<text class="f-s f-ink-t f-b" x="596" y="61">② 20</text>
+<text class="f-cap" x="190" y="230" text-anchor="middle">(가) 곱하기가 먼저</text>
+<text class="f-cap" x="570" y="230" text-anchor="middle">(나) 괄호가 먼저</text>
+</svg>
+<figcaption>계산 나무는 아래(잎)부터 계산해 올라간다. 괄호 한 쌍이 나무 모양을 바꾸고 답을 14에서 20으로 바꾼다.</figcaption>
+</figure>
+
+<p>실제로 실행해 확인한 예입니다.</p>
+
+<div class="table-wrap">
+<table>
+<tr><th>코드</th><th>계산 순서</th><th>실제 결과</th></tr>
+<tr><td><code>2 + 3 * 4</code></td><td>3 * 4 = 12 → 2 + 12</td><td><code>14</code></td></tr>
+<tr><td><code>(2 + 3) * 4</code></td><td>2 + 3 = 5 → 5 * 4</td><td><code>20</code></td></tr>
+<tr><td><code>10 - 4 - 3</code></td><td>왼쪽부터: 10 − 4 = 6 → 6 − 3</td><td><code>3</code></td></tr>
+<tr><td><code>100 / 10 / 2</code></td><td>왼쪽부터: 100 / 10 = 10.0 → 10.0 / 2</td><td><code>5.0</code></td></tr>
+<tr><td><code>2 * 3 ** 2</code></td><td>** 먼저: 3 ** 2 = 9 → 2 * 9</td><td><code>18</code></td></tr>
+<tr><td><code>2 ** 3 ** 2</code></td><td><b>오른쪽부터</b>: 3 ** 2 = 9 → 2 ** 9</td><td><code>512</code></td></tr>
+<tr><td><code>-2 ** 2</code></td><td>** 가 부호보다 먼저: 2 ** 2 = 4 → −4</td><td><code>-4</code></td></tr>
+<tr><td><code>(-2) ** 2</code></td><td>괄호 먼저: (−2) × (−2)</td><td><code>4</code></td></tr>
+</table>
+</div>
+
+<div class="box ex">
+<p class="box-k">풀이 예제</p>
+<p><code>1 + 2 * 3 - 4 / 2</code>를 Python과 같은 순서로 계산해 봅시다.</p>
+<p class="calc">① 곱하기·나누기를 왼쪽부터: 2 * 3 = 6<br>
+② 이어서 4 / 2 = 2.0 (나누기라서 float)<br>
+③ 식이 1 + 6 - 2.0 이 된다. 더하기·빼기를 왼쪽부터: 1 + 6 = 7<br>
+④ 7 - 2.0 = <b>5.0</b> (float가 섞였으므로 결과도 float)</p>
+<p>실제로 실행하면 <code>5.0</code>이 나옵니다. 답의 크기(5)뿐 아니라 <b>소수점이 붙는지</b>까지 예상하는 것이 이 장의 목표입니다.</p>
+</div>
+
+<div class="box trap">
+<p class="box-k">시험·코딩 함정</p>
+<p><b><code>-2 ** 2</code>는 4가 아니라 −4.</b> 거듭제곱이 부호보다 먼저이므로 −(2²)으로 계산됩니다. 음수를 제곱하려면 <code>(-2) ** 2</code>처럼 괄호를 칩니다. <b><code>2 ** 3 ** 2</code>는 64가 아니라 512.</b> 거듭제곱만 오른쪽부터 계산합니다(2<sup>(3<sup>2</sup>)</sup> = 2<sup>9</sup>). 헷갈릴 때는 언제나 <b>괄호를 쳐서 뜻을 분명히</b> 하는 것이 가장 좋은 습관입니다. 괄호는 결과가 같을 때도 쳐도 됩니다.</p>
+</div>
+
+<div class="check" data-q="q5"></div>
+<div class="check" data-q="q6"></div>
+
+<h2>음수를 // 로 나눌 때</h2>
+
+<p>양수에서 <code>//</code>는 소수 부분을 떼는 것처럼 보이지만, 정확한 뜻은 <b>"수직선에서 왼쪽(더 작은 쪽)의 정수로 내린다"</b>입니다. 음수에서 이 차이가 드러납니다.</p>
+
+<div class="sample">
+<p class="sample-k">대화형 실행</p>
+<pre><code>&gt;&gt;&gt; -7 / 2
+-3.5
+&gt;&gt;&gt; -7 // 2
+-4
+&gt;&gt;&gt; -7 % 2
+1</code></pre>
+</div>
+
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 180" role="img" aria-label="−5부터 0까지의 수직선. −7 / 2 = −3.5가 −4와 −3 사이에 있다. 실선 화살표는 왼쪽으로 내려 −4로 간다: Python의 // 는 내림이라 −4. 점선 화살표는 0 쪽으로 −3에 가지만 Python은 이렇게 하지 않는다.">
+<line class="f-ink" x1="40" y1="100" x2="720" y2="100"/>
+<line class="f-ink" x1="60" y1="94" x2="60" y2="106"/>
+<line class="f-ink" x1="180" y1="94" x2="180" y2="106"/>
+<line class="f-ink" x1="300" y1="94" x2="300" y2="106"/>
+<line class="f-ink" x1="420" y1="94" x2="420" y2="106"/>
+<line class="f-ink" x1="540" y1="94" x2="540" y2="106"/>
+<line class="f-ink" x1="660" y1="94" x2="660" y2="106"/>
+<text class="f-s f-ink-t" x="60" y="124" text-anchor="middle">−5</text>
+<text class="f-s f-ink-t" x="180" y="124" text-anchor="middle">−4</text>
+<text class="f-s f-ink-t" x="300" y="124" text-anchor="middle">−3</text>
+<text class="f-s f-ink-t" x="420" y="124" text-anchor="middle">−2</text>
+<text class="f-s f-ink-t" x="540" y="124" text-anchor="middle">−1</text>
+<text class="f-s f-ink-t" x="660" y="124" text-anchor="middle">0</text>
+<circle class="f-fill" cx="240" cy="100" r="6"/>
+<text class="f-t" x="240" y="72" text-anchor="middle" font-family="Consolas, monospace">-7 / 2 = -3.5</text>
+<circle class="f-over" cx="180" cy="100" r="7"/>
+<path class="f-line" d="M236 110 Q 210 150, 184 110" marker-end="url(#f-arrow)"/>
+<path class="f-dash" d="M244 110 Q 270 150, 296 110"/>
+<text class="f-s f-ink-t f-b" x="226" y="166" text-anchor="end">// 는 왼쪽으로 내림 → −4</text>
+<text class="f-s" x="256" y="166">0 쪽으로 자르면 −3 (Python은 아님)</text>
+</svg>
+<figcaption>내림(floor)은 언제나 수직선의 왼쪽으로 간다. 눈금 간격은 일정하다.</figcaption>
+</figure>
+
+<p>−3.5에서 왼쪽의 정수는 −4이므로 <code>-7 // 2</code>는 −4입니다. 그러면 나머지는 관계식 "나뉘는 수 = 나누는 수 × 몫 + 나머지"를 맞추도록 정해집니다: −7 = 2 × (−4) + <b>1</b>. 그래서 <code>-7 % 2</code>는 1입니다. 나누는 수가 양수이면 Python의 나머지는 늘 0 이상이 되어, 음수든 양수든 <code>n % 2</code>로 짝수·홀수를 가릴 수 있습니다. C·Java의 정수 나눗셈은 0 쪽으로 자르므로(−7 / 2 → −3, 나머지 −1) 다른 언어와 결과가 다를 수 있다는 점도 기억해 둡니다.</p>
+
+<div class="check" data-q="q7"></div>
+
+<h2>다음에 이어지는 곳</h2>
+<ul>
+<li><b>PY02</b>: 입력받은 문자열을 수로 바꿔 계산하고, 결과를 비교(<code>&lt;</code>, <code>==</code>)합니다.</li>
+<li><b>PY04</b>: <code>i % 2 == 0</code>처럼 나머지로 짝수 번째만 고르고, 누적 합을 구합니다.</li>
+<li><b>AR10 지수와 로그</b>: <code>**</code>로 계산한 거듭제곱의 뜻을 자세히 다룹니다.</li>
+</ul>
+
+<h2>한눈에 정리</h2>
+
+<div class="table-wrap">
+<table>
+<tr><th>묻는 것</th><th>답</th></tr>
+<tr><td>일곱 연산자</td><td><code>+ - * /</code> 와 <b class="key">//</b>(몫) <b class="key">%</b>(나머지) <b class="key">**</b>(거듭제곱)</td></tr>
+<tr><td><code>7 / 2</code>, <code>7 // 2</code>, <code>7 % 2</code></td><td><code>3.5</code>, <code>3</code>, <code>1</code></td></tr>
+<tr><td>관계식</td><td>나뉘는 수 = 나누는 수 × <b class="key">몫</b> + <b class="key">나머지</b> (125 = 60 × 2 + 5)</td></tr>
+<tr><td>결과 자료형</td><td><code>/</code>는 <b class="key">항상 float</b>. 나머지 연산자는 int끼리면 int, float가 섞이면 float</td></tr>
+<tr><td>0으로 나누기</td><td><code>/ // %</code> 모두 <b class="key">ZeroDivisionError</b></td></tr>
+<tr><td>계산 순서</td><td>괄호 → <code>**</code>(오른쪽부터) → 부호 → <code>* / // %</code> → <code>+ -</code> (같은 줄은 왼쪽부터)</td></tr>
+<tr><td>함정</td><td><code>-2 ** 2</code> = −4, <code>2 ** 3 ** 2</code> = 512, <code>2 ^ 10</code> = 8 (거듭제곱 아님)</td></tr>
+<tr><td>음수의 //</td><td>버림이 아니라 <b class="key">내림</b>: <code>-7 // 2</code> = −4</td></tr>
+</table>
+</div>
+
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>나누기는 / (항상 float), 몫은 //, 나머지는 %, 거듭제곱은 ** 이고, 섞이면 괄호 → ** → 곱셈 무리 → 덧셈 무리 순서로 계산한다.</p></div>
+
+<h2>확인 문제</h2>
+<p>본문 중간에서 푼 문제 말고 남은 문제입니다. 보기를 누르면 바로 정답과 해설이 나옵니다.</p>
+<div id="quiz"></div>
+
+<section class="work" id="tools"></section>
+
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

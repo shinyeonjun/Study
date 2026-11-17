@@ -6,7 +6,7 @@
 - 검사: data-note와 파일 이름 일치, 단원 ID가 지도에 있음, quiz/<장 id>.js 존재·키 일치,
   본문 .check의 data-q가 문제 파일에 있음, 객관식 정답 번호가 보기 안에 있고 모든 보기에 why,
   필요한 스크립트·자리(#quiz, #tools, .toc)가 있음, 문을 닫지 않은 HTML이 없음.
-검사에 실패한 장은 등록하지 않고 이유를 출력한다.
+검사에 실패하면 이유를 출력하고 기존 목록을 보존한다.
 - tools/reviewed.txt에 적힌(검토를 통과한) 장만 등록한다. 나머지는 "검토 대기"로 출력만 한다.
 """
 import io, os, re, json, subprocess, sys
@@ -59,7 +59,7 @@ for dirpath, _, files in os.walk(os.path.join(ROOT, "notes")):
                 ids = [q["id"] for q in qs]
                 if len(ids) != len(set(ids)): errs.append("문제 id 중복")
                 for q in qs:
-                    if q["type"] == "mc" and (q["answer"] is None or q["answer"] >= q["n"] or not q["why"]):
+                    if q["type"] == "mc" and (type(q["answer"]) is not int or not 0 <= q["answer"] < q["n"] or not q["why"]):
                         errs.append("객관식 %s: 정답 번호 또는 why" % q["id"])
                 for d in re.findall(r'class="check" data-q="([^"]+)"', html):
                     if d not in ids: errs.append("본문 check %s가 문제 파일에 없음" % d)
@@ -75,6 +75,16 @@ for uid, chs in found.items():
     nums = sorted(n for n, _ in chs)
     if nums != list(range(1, len(nums) + 1)): problems.append((uid, ["장 번호가 비어 있음: %s" % nums]))
 
+registered = {c["id"] for chs in found.values() for _, c in chs}
+for cid in sorted(REVIEWED - registered):
+    problems.append((cid, ["검토 목록에 있지만 등록할 수 없는 장"]))
+
+sys.stdout.reconfigure(encoding="utf-8")
+if problems:
+    print("문제 있음 (기존 목록 보존):")
+    for rel, errs in problems: print("  %s: %s" % (rel, "; ".join(errs)))
+    sys.exit(1)
+
 lines = ["window.BDA_CHAPTERS = {"]
 units = [u for u in order if u in found]
 for i, uid in enumerate(units):
@@ -89,10 +99,6 @@ src = src[:a] + "\n".join(lines) + src[b:]
 io.open(NOTES, "w", encoding="utf-8", newline="\n").write(src)
 
 total = sum(len(v) for v in found.values())
-sys.stdout.reconfigure(encoding="utf-8")
 print("등록: 단원 %d개, 장 %d개" % (len(units), total))
 for uid in units: print("  %s: %s" % (uid, ", ".join(c["id"] for _, c in sorted(found[uid], key=lambda x: x[0]))))
 if waiting: print("검토 대기(등록 안 함): %s" % ", ".join(sorted(waiting)))
-if problems:
-    print("문제 있음:")
-    for rel, errs in problems: print("  %s: %s" % (rel, "; ".join(errs)))
