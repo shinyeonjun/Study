@@ -2,11 +2,10 @@
    type "mc"    객관식. options의 why에 그 보기가 왜 맞는지/틀린지 적는다. answer는 정답 보기의 순서(0부터).
    type "num"   숫자로 답하기. answer는 숫자, a는 풀이, steps는 미리 보여 줄 풀이 단계(이어서 풀기용).
    type "short" 내 말로 적기. a는 모범 답. 스스로 맞았는지 표시한다.
-   pre: true    노트 맨 위 '읽기 전 문제'에도 나온다(객관식만).
    id는 한번 정하면 바꾸지 않는다(복습 기록이 이 번호로 저장된다). */
 (window.BDA_QUIZ = window.BDA_QUIZ || {})["1-01"] = [
   {
-    id: "q1", type: "mc", pre: true,
+    id: "q1", type: "mc",
     q: "다음 중 빅데이터의 3V에 들어가지 않는 것은?",
     options: [
       { t: "규모 (Volume)", why: "3V의 하나. 데이터의 양이 매우 많다는 뜻입니다." },
@@ -28,7 +27,7 @@
     answer: 1
   },
   {
-    id: "q3", type: "mc", pre: true,
+    id: "q3", type: "mc",
     q: "고객이 쓴 상품 후기 글과 매장 카메라 영상은 어떤 데이터일까요?",
     options: [
       { t: "정형 데이터", why: "정형은 칸이 정해진 표에 딱 들어가는 데이터입니다. 글과 영상은 표에 넣을 수 없습니다." },

@@ -3,7 +3,7 @@
 
    복습 규칙 (학습 연구 근거: 떠올리기 연습 + 간격 복습 + 틀린 것은 그날 다시)
    - 맞히면 다음 단계로: 1 → 3 → 7 → 14 → 30 → 60 → 120일 뒤에 다시 나온다.
-   - 틀리면 그날 한 번 더 풀어 맞혀야 하고, 단계는 처음으로 돌아가 내일 다시 나온다.
+   - 틀리면 그 자리에서 다시 풀어 맞히고, 단계는 처음으로 돌아가 내일 다시 나온다.
    - 복습 날이 되기 전에 미리 푼 것은 연습으로만 치고 일정을 바꾸지 않는다. */
 (function () {
   var B = (window.BDA = window.BDA || {});
@@ -122,11 +122,12 @@
   };
 
   // ---- 문제 한 개를 그린다 ----
-  // 순서: 답을 고르거나 적어서 확정 → 얼마나 확실한지 누름 → 정답과 보기별 해설
-  // opt.onDone(correct): 채점이 끝났을 때 / opt.dry: 기록하지 않음(읽기 전 문제)
+  // 누르는 횟수를 줄인다: 객관식은 보기를 누르면 바로 정답과 보기별 해설이 나온다.
+  // 숫자·서술 문제는 적고 나서 '답 확인'을 누른다. 서술 문제만 스스로 맞음/틀림을 고른다.
+  // opt.onDone(correct): 채점이 끝났을 때
   B.renderQ = function (box, noteId, q, opt) {
     opt = opt || {};
-    var el = B.el, key = noteId + "#" + q.id, picked = null, input = null, locked = false;
+    var el = B.el, key = noteId + "#" + q.id, locked = false;
     box.textContent = "";
     box.className = "qa";
     box.appendChild(el("p", "q-text", q.q));
@@ -136,73 +137,63 @@
       box.appendChild(st);
     }
 
-    var conf = el("div", "conf");
-    conf.appendChild(el("span", "", opt.dry ? "" : "얼마나 확실한가요?"));
-    var confBtns = [];
-    function ready(on) { confBtns.forEach(function (b) { b.disabled = !on; }); }
+    function finish(correct, choice) {
+      var r = B.record(key, correct, "", choice);
+      box.classList.add(correct ? "is-ok" : "is-no");
+      var msg = correct
+        ? (r.stage > 1 ? "맞았습니다. 다음 복습은 " + B.dayText(r.due) + "." : "맞았습니다. 내일 복습 문제로 다시 나옵니다.")
+        : "틀렸습니다. 해설을 읽고 다시 풀어 보세요. 내일 복습에도 나옵니다.";
+      box.appendChild(el("p", "q-result", msg));
+      if (!correct) {
+        var again = el("button", "btn ghost", "다시 풀기");
+        again.type = "button";
+        again.onclick = function () { B.renderQ(box, noteId, q, opt); };
+        box.appendChild(again);
+      }
+      if (opt.onDone) opt.onDone(correct);
+    }
 
-    var opts = [];
     if (q.type === "mc") {
-      var list = el("div", "opts");
+      var list = el("div", "opts"), opts = [];
       B.shuffle(q.options.map(function (o, i) { return { o: o, i: i }; })).forEach(function (x) {
         var b = el("button", "opt", x.o.t);
         b.type = "button";
         b.onclick = function () {
           if (locked) return;
-          picked = x;
-          opts.forEach(function (y) { y.b.classList.toggle("sel", y === x); });
-          if (opt.dry) dryDone(); else ready(true);
+          locked = true;
+          opts.forEach(function (y) {
+            y.b.disabled = true;
+            var right = y.i === q.answer;
+            y.b.classList.add(right ? "right" : (y === x ? "wrong" : "dim"));
+            if (y.o.why) y.b.appendChild(el("span", "why-line", (right ? "정답. " : (y === x ? "내가 고른 답. " : "")) + y.o.why));
+          });
+          finish(x.i === q.answer, x.o.t);
         };
         x.b = b;
         opts.push(x);
         list.appendChild(b);
       });
       box.appendChild(list);
-    } else {
-      input = q.type === "num" ? el("input", "q-input") : el("textarea", "q-input");
-      if (q.type === "num") { input.type = "text"; input.inputMode = "numeric"; input.placeholder = "숫자로 답하기"; }
-      else { input.rows = 3; input.placeholder = "먼저 내 말로 적어 보기"; }
-      input.oninput = function () { ready(input.value.trim() !== ""); };
-      box.appendChild(input);
+      return;
     }
 
-    function dryDone() {
-      var m = box.querySelector(".q-note") || box.appendChild(el("p", "q-note"));
-      m.textContent = "골랐습니다. 정답은 아래 내용을 읽으면서 찾아보세요. 맨 끝 확인 문제에 다시 나옵니다.";
-    }
-    if (opt.dry) return;
-
-    [["sure", "확실"], ["half", "긴가민가"], ["guess", "찍음"]].forEach(function (c) {
-      var b = el("button", "", c[1]);
-      b.type = "button";
-      b.disabled = true;
-      b.onclick = function () {
-        if (locked) return;
-        b.classList.add("sel");
-        reveal(c[0]);
-      };
-      confBtns.push(b);
-      conf.appendChild(b);
-    });
-    box.appendChild(conf);
-
-    function reveal(c) {
+    var input = q.type === "num" ? el("input", "q-input") : el("textarea", "q-input");
+    if (q.type === "num") { input.type = "text"; input.inputMode = "numeric"; input.placeholder = "숫자로 답하기"; }
+    else { input.rows = 3; input.placeholder = "먼저 내 말로 적어 보기"; }
+    var go = el("button", "btn", "답 확인");
+    go.type = "button";
+    go.disabled = true;
+    input.oninput = function () { go.disabled = input.value.trim() === ""; };
+    if (q.type === "num") input.onkeydown = function (e) { if (e.key === "Enter" && !go.disabled) go.onclick(); };
+    go.onclick = function () {
+      if (locked) return;
       locked = true;
-      ready(false);
-      if (input) input.readOnly = true;
-      if (q.type === "mc") {
-        opts.forEach(function (x) {
-          x.b.disabled = true;
-          var right = x.i === q.answer;
-          x.b.classList.add(right ? "right" : (x === picked ? "wrong" : "dim"));
-          if (x.o.why) x.b.appendChild(el("span", "why-line", (right ? "정답. " : "") + x.o.why));
-        });
-        finish(picked.i === q.answer, c, picked.o.t);
-      } else if (q.type === "num") {
+      input.readOnly = true;
+      go.remove();
+      if (q.type === "num") {
         var mine = input.value.replace(/[^0-9.\-]/g, "");
-        var ok = mine !== "" && Number(mine) === Number(q.answer);
         box.appendChild(el("p", "q-model", "정답: " + Number(q.answer).toLocaleString("ko-KR") + (q.a ? " · " + q.a : "")));
-        finish(ok, c, input.value.trim());
+        finish(mine !== "" && Number(mine) === Number(q.answer), input.value.trim());
       } else {
         box.appendChild(el("p", "q-model", "모범 답: " + q.a));
         var self = el("div", "conf");
@@ -210,36 +201,14 @@
         [[true, "맞았다"], [false, "틀렸다"]].forEach(function (p) {
           var b = el("button", "", p[1]);
           b.type = "button";
-          b.onclick = function () { self.remove(); finish(p[0], c, input.value.trim()); };
+          b.onclick = function () { self.remove(); finish(p[0], input.value.trim()); };
           self.appendChild(b);
         });
         box.appendChild(self);
       }
-    }
-
-    function finish(correct, c, choice) {
-      var st = B.record(key, correct, c, choice);
-      box.classList.add(correct ? "is-ok" : "is-no");
-      var msg;
-      if (correct) msg = st.due > B.today() + 1 || st.stage > 1
-        ? "맞았습니다. 다음 복습은 " + B.dayText(st.due) + "."
-        : "맞았습니다. 내일 다시 나옵니다.";
-      else msg = c === "sure"
-        ? "틀렸습니다. 확실하다고 생각한 것을 틀리면 다시 틀리기 쉽습니다. 오늘 한 번 더 풀고, 내일 다시 나옵니다."
-        : "틀렸습니다. 오늘 한 번 더 풀고, 내일 다시 나옵니다.";
-      box.appendChild(el("p", "q-result", msg));
-      if (!correct && q.type === "mc") {
-        var why = el("input", "q-input small");
-        why.type = "text";
-        why.placeholder = "왜 그 보기를 골랐는지 한 줄 (선택, 오답 모음에 남습니다)";
-        why.onchange = function () {
-          var s = B.load(), r = s.q[key];
-          if (r && r.wrong) { r.wrong.why = why.value.trim(); B.save(s); }
-        };
-        box.appendChild(why);
-      }
-      if (opt.onDone) opt.onDone(correct);
-    }
+    };
+    box.appendChild(input);
+    box.appendChild(go);
   };
 
   // ---- 밝게 / 어둡게 ----

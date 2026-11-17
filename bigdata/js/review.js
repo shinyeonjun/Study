@@ -53,8 +53,8 @@
         box.appendChild(card);
         B.renderQ(card.appendChild(el("div")), it.note.id, it.q, {
           onDone: function (correct) {
-            if (correct) done++;
-            else { if (!it.missed) { it.missed = true; missed++; } queue.push(it); }
+            if (!correct) { if (!it.missed) { it.missed = true; missed++; } return; }
+            done++;
             var src = el("p", "q-src");
             src.appendChild(document.createTextNode("이 문제의 노트: "));
             var a = el("a", "", it.note.subject.short + " · " + it.note.title);

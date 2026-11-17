@@ -1,4 +1,4 @@
-/* 노트 페이지: 과목 이름·이전 다음 링크, 핵심어 가리기, 읽기 전 문제, '왜 그럴까' 적기, 확인 문제 */
+/* 노트 페이지: 목차와 읽기 진행, 과목 이름·이전 다음 링크, 핵심어 가리기, '왜 그럴까' 적기, 확인 문제, 연습장, 내 메모 */
 (function () {
   var B = window.BDA, el = B.el;
 
@@ -51,61 +51,128 @@
     });
   }
 
-  // 읽기 전 문제: 틀려도 괜찮다. 고르기만 하고 답은 읽으면서 찾는다 (기록하지 않음)
-  function initPre(id, qs) {
-    var box = document.getElementById("prequiz");
-    if (!box) return;
-    var pre = qs.filter(function (q) { return q.pre && q.type === "mc"; });
-    if (!pre.length) { box.remove(); return; }
-    pre.forEach(function (q) {
-      var card = el("div", "qcard");
-      box.appendChild(card);
-      B.renderQ(card.appendChild(el("div")), id, q, { dry: true });
+  // 맨 왼쪽 아이콘 줄: 홈, 차례 여닫기, 내 공책 여닫기, 복습, 그리고 이전·다음 노트
+  var ICON = {
+    home: "M4 11l8-7 8 7M6 10v9h12v-9",
+    list: "M9 6h11M9 12h11M9 18h11M4.5 6h.01M4.5 12h.01M4.5 18h.01",
+    book: "M5 4h11a3 3 0 013 3v13H8a3 3 0 01-3-3zM5 17a3 3 0 013-3h11M9 8h6",
+    redo: "M20 12a8 8 0 11-2.6-5.9M20 4v5h-5",
+    prev: "M15 5l-7 7 7 7",
+    next: "M9 5l7 7-7 7"
+  };
+  function icon(name) {
+    var ns = "http://www.w3.org/2000/svg", svg = document.createElementNS(ns, "svg"), p = document.createElementNS(ns, "path");
+    svg.setAttribute("viewBox", "0 0 24 24");
+    svg.setAttribute("aria-hidden", "true");
+    p.setAttribute("d", ICON[name]);
+    svg.appendChild(p);
+    return svg;
+  }
+  function initRail(note) {
+    var rail = document.getElementById("rail");
+    if (!rail) return;
+    function item(tag, name, text) {
+      var e = el(tag);
+      if (tag === "button") e.type = "button";
+      e.appendChild(icon(name));
+      e.appendChild(el("span", "", text));
+      rail.appendChild(e);
+      return e;
+    }
+    function toggle(name, text, cls, key) {
+      var b = item("button", name, text), off = false;
+      try { off = localStorage.getItem(key) === "1"; } catch (e) {}
+      function set(v) {
+        off = v;
+        document.body.classList.toggle(cls, off);
+        b.setAttribute("aria-pressed", off ? "false" : "true");
+        try { localStorage.setItem(key, off ? "1" : "0"); } catch (e) {}
+      }
+      b.onclick = function () { set(!off); };
+      set(off);
+    }
+    item("a", "home", "홈").href = B.BASE + "index.html";
+    toggle("list", "차례", "no-toc", "bda-no-toc");
+    toggle("book", "내 공책", "no-work", "bda-no-work");
+    item("a", "redo", "복습").href = B.BASE + "review.html";
+    rail.appendChild(el("span", "spacer"));
+    [["prev", "이전 노트", note && note.prev], ["next", "다음 노트", note && note.next]].forEach(function (x) {
+      var a = item("a", x[0], x[1]);
+      a.className = "step" + (x[2] ? "" : " off");
+      if (x[2]) a.href = B.BASE + x[2].href;
     });
   }
 
-  // 확인 문제: 모두 맞힐 때까지. 틀린 문제는 그 자리에서 다시 푼다
-  function initQuiz(id, qs) {
-    var box = document.getElementById("quiz");
-    if (!box) return;
-    if (!qs.length) { box.appendChild(el("p", "muted", "확인 문제를 불러오지 못했습니다.")); return; }
-    var status = el("div", "quiz-status"), cards = {};
-    function draw(q, n) {
-      var card = cards[q.id] || (cards[q.id] = box.insertBefore(el("div", "qcard"), status));
-      card.textContent = "";
-      card.appendChild(el("span", "q-no", "문제 " + n));
-      B.renderQ(card.appendChild(el("div")), id, q, { onDone: paint });
-    }
-    function paint() {
-      var r = B.noteStatus(id);
-      status.textContent = "";
-      var p = el("p");
-      if (!r.tried) p.textContent = "답을 고르거나 적은 다음, 얼마나 확실한지 누르면 정답과 해설이 나옵니다.";
-      else if (r.tried < r.total) p.textContent = r.total + "문제 중 " + r.tried + "문제 풂" + (r.open ? " · 틀린 문제 " + r.open + "개" : "");
-      else if (r.open) p.textContent = "틀린 문제가 " + r.open + "개 남았습니다. 다시 풀어서 모두 맞히면 이 노트 공부가 끝납니다.";
-      else p.textContent = "확인 문제를 모두 맞혔습니다. 이 노트 공부 끝. 내일부터 복습 문제로 다시 나옵니다.";
-      status.appendChild(p);
-      if (r.open && r.tried === r.total) {
-        var b = el("button", "btn", "틀린 문제 다시 풀기");
-        b.type = "button";
-        b.onclick = function () {
-          var s = B.load(), first = null;
-          qs.forEach(function (q, i) {
-            var st = s.q[id + "#" + q.id];
-            if (st && st.open) { draw(q, i + 1); first = first || cards[q.id]; }
-          });
-          paint();
-          if (first) first.scrollIntoView({ behavior: "smooth", block: "center" });
-        };
-        status.appendChild(b);
-      } else if (r.tried === r.total) {
-        var a = el("a", "btn", "홈으로");
-        a.href = B.BASE + "index.html";
-        status.appendChild(a);
+  // 왼쪽 목차: 본문의 큰 제목(h2)과 작은 제목(h3)에서 자동으로 만든다. 지금 읽는 곳을 표시한다
+  function initToc() {
+    var toc = document.getElementById("toc"), main = document.querySelector("main");
+    if (!toc || !main) return;
+    var heads = [].slice.call(main.querySelectorAll("h2, h3")).filter(function (h) { return !h.closest(".goal, .kit, .panel"); });
+    var box = el("details", "toc-box"), list = el("ol"), links = [];
+    box.open = window.matchMedia("(min-width: 1180px)").matches;
+    box.appendChild(el("summary", "", "차례"));
+    heads.forEach(function (h, i) {
+      if (!h.id) h.id = "s" + (i + 1);
+      var text = "";
+      h.childNodes.forEach(function (n) {
+        if (n.nodeType === 3) text += n.textContent;
+        else if (!n.classList || !(n.classList.contains("step-k") || n.classList.contains("tag"))) text += n.textContent;
+      });
+      var li = el("li", h.tagName === "H3" ? "sub" : ""), a = el("a", "", text.trim());
+      a.href = "#" + h.id;
+      li.appendChild(a);
+      list.appendChild(li);
+      links.push(a);
+    });
+    box.appendChild(list);
+    toc.appendChild(box);
+    var bar = document.querySelector(".read-bar i");
+    function onScroll() {
+      var y = window.scrollY + 90, cur = 0;
+      heads.forEach(function (h, i) { if (h.getBoundingClientRect().top + window.scrollY <= y) cur = i; });
+      links.forEach(function (a, i) { a.classList.toggle("on", i === cur); });
+      if (bar) {
+        var max = document.documentElement.scrollHeight - window.innerHeight;
+        bar.style.width = (max > 0 ? Math.min(100, window.scrollY / max * 100) : 0) + "%";
       }
     }
-    box.appendChild(status);
-    qs.forEach(function (q, i) { draw(q, i + 1); });
+    window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+  }
+
+  // 확인 문제. 본문 중간의 <div class="check" data-q="q3">에는 그 문제가 그 자리에 나오고,
+  // 맨 끝 <div id="quiz">에는 본문에 놓이지 않은 나머지 문제가 나온다. 쭉 읽으면서 그 자리에서 푼다.
+  function initQuiz(id, qs) {
+    var end = document.getElementById("quiz"), placed = {}, status = null;
+    function paint() {
+      if (!status) return;
+      var r = B.noteStatus(id), text;
+      if (!r.tried) text = "보기를 누르면 바로 정답과 해설이 나옵니다.";
+      else if (r.tried < r.total) text = r.total + "문제 중 " + r.tried + "문제 풂" + (r.open ? " · 다시 풀 문제 " + r.open + "개" : "");
+      else if (r.open) text = "다시 풀 문제가 " + r.open + "개 남았습니다. 틀린 문제의 '다시 풀기'로 모두 맞히면 이 노트 공부가 끝납니다.";
+      else text = "확인 문제를 모두 맞혔습니다. 이 노트 공부 끝. 내일부터 복습 문제로 다시 나옵니다.";
+      status.firstChild.textContent = text;
+    }
+    function draw(host, q, label) {
+      var card = host.appendChild(el("div", "qcard"));
+      card.appendChild(el("span", "q-no", label));
+      B.renderQ(card.appendChild(el("div")), id, q, { onDone: paint });
+    }
+    document.querySelectorAll(".check[data-q]").forEach(function (host) {
+      var q = qs.filter(function (x) { return x.id === host.getAttribute("data-q"); })[0];
+      if (!q) return;
+      placed[q.id] = true;
+      draw(host, q, "여기서 확인");
+    });
+    if (!end) return;
+    if (!qs.length) { end.appendChild(el("p", "muted", "확인 문제를 불러오지 못했습니다.")); return; }
+    qs.filter(function (q) { return !placed[q.id]; }).forEach(function (q, i) { draw(end, q, "문제 " + (i + 1)); });
+    status = el("div", "quiz-status");
+    status.appendChild(el("p"));
+    var home = el("a", "btn ghost", "홈으로");
+    home.href = B.BASE + "index.html";
+    status.appendChild(home);
+    end.appendChild(status);
     paint();
   }
 
@@ -114,7 +181,7 @@
     var box = el("section", "panel kit");
     box.appendChild(el("h2", "", "내 메모"));
     var ta = el("textarea", "q-input");
-    ta.rows = 5;
+    ta.rows = 8;
     ta.placeholder = "헷갈린 점, 내 말로 다시 쓴 정리, 나중에 찾아볼 것";
     ta.value = (B.load().memo || {})[id] || "";
     var note = el("p", "muted small", "쓰는 대로 이 기기에 저장됩니다.");
@@ -133,7 +200,8 @@
   // 연습장: 종이 대신 손가락이나 마우스로 그림·계산을 끄적이는 곳. 저장되지 않는다
   function initPad(host) {
     var d = el("details", "panel kit pad");
-    d.appendChild(el("summary", "", "연습장 열기 (그림 따라 그리기 · 계산)"));
+    d.open = window.matchMedia("(min-width: 1180px)").matches;
+    d.appendChild(el("summary", "", "연습장 (그림 따라 그리기 · 계산)"));
     var tools = el("div", "pad-tools"), cv = el("canvas"), ctx = null, erase = false, on = false;
     function setup() {
       if (ctx) return;
@@ -188,14 +256,19 @@
     if (!id) return;
     var note = B.findNote(id);
     if (note) initNav(note);
+    initRail(note);
     initHide();
     initWhy(id);
     var tools = document.getElementById("tools");
-    if (tools) { initPad(tools); initMemo(id, tools); }
+    if (tools) {
+      tools.appendChild(el("p", "work-title", "내 공책"));
+      tools.appendChild(el("p", "muted small", "읽다가 떠오른 것을 바로 적고 끄적이는 곳"));
+      initMemo(id, tools);
+      initPad(tools);
+    }
     B.loadQuiz([id], function () {
-      var qs = B.QUIZ[id] || [];
-      initPre(id, qs);
-      initQuiz(id, qs);
+      initQuiz(id, B.QUIZ[id] || []);
+      initToc();
     });
   });
 })();

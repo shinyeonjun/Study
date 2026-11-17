@@ -66,7 +66,7 @@
     });
   }
 
-  // 오답 모음: 확실하다고 했는데 틀린 것이 맨 위
+  // 오답 모음: 최근에 틀린 것이 맨 위
   function drawWrong(notes, s) {
     var box = document.getElementById("wrong");
     if (!box) return;
@@ -79,13 +79,12 @@
       });
     });
     if (!list.length) { box.appendChild(el("p", "muted", "틀린 문제가 생기면 여기에 모입니다.")); return; }
-    list.sort(function (a, b) { return (b.w.conf === "sure") - (a.w.conf === "sure") || b.w.day - a.w.day; });
+    list.sort(function (a, b) { return b.w.day - a.w.day; });
     var ul = el("ul", "wrong-list");
     list.slice(0, 8).forEach(function (x) {
       var li = el("li");
-      if (x.w.conf === "sure") li.appendChild(el("span", "st no", "확실했는데 틀림"));
       li.appendChild(el("p", "", x.q.q));
-      if (x.w.c) li.appendChild(el("p", "muted small", "내가 고른 답: " + x.w.c + (x.w.why ? " · 이유: " + x.w.why : "")));
+      if (x.w.c) li.appendChild(el("p", "muted small", "내가 고른 답: " + x.w.c));
       ul.appendChild(li);
     });
     box.appendChild(ul);
