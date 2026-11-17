@@ -8,6 +8,16 @@
   var THEME = "bda-theme";
   var GAPS = [1, 3, 7, 14, 30];
   var root = document.documentElement;
+  // 이 파일이 있는 폴더(bigdata/) 주소. 노트가 어느 깊이에 있어도 링크를 맞게 만든다
+  var BASE = document.currentScript ? new URL(".", document.currentScript.src).href : "";
+  var SUBJECTS = window.BDA_SUBJECTS || [];
+  function findNote(id) {
+    for (var i = 0; i < SUBJECTS.length; i++) {
+      var ns = SUBJECTS[i].notes;
+      for (var j = 0; j < ns.length; j++) if (ns[j].id === id) return { subject: SUBJECTS[i], prev: ns[j - 1], next: ns[j + 1] };
+    }
+    return null;
+  }
 
   function load() {
     var s = {};
@@ -53,6 +63,24 @@
       try { localStorage.setItem(THEME, next); } catch (e) {}
       label();
     });
+  }
+
+  // 노트: 과목 이름과 이전·다음 링크를 노트 목록에서 채운다
+  function initNav(id) {
+    var f = findNote(id);
+    if (!f) return;
+    var crumb = document.querySelector(".crumb");
+    if (crumb) crumb.textContent = f.subject.short;
+    var pager = document.querySelector(".pager");
+    if (!pager) return;
+    pager.textContent = "";
+    function link(n, text) {
+      var a = el("a", "", text);
+      a.href = BASE + (n ? n.href : "index.html");
+      return a;
+    }
+    pager.appendChild(f.prev ? link(f.prev, "← " + f.prev.title) : link(null, "← 빅분기 홈"));
+    pager.appendChild(f.next ? link(f.next, f.next.title + " →") : link(null, "목록으로 →"));
   }
 
   // 핵심어 가리기
@@ -137,8 +165,34 @@
     render();
   }
 
-  // 홈: 노트별 상태, 과목별 진행, 오늘 복습할 것
+  // 홈: 과목별 목록을 노트 목록에서 만들고, 노트별 상태·진행·오늘 복습할 것을 보여 준다
+  function renderSubjects() {
+    var wrap = document.getElementById("subjects");
+    if (!wrap) return;
+    wrap.textContent = "";
+    SUBJECTS.forEach(function (sub) {
+      var sec = el("section", "panel subject");
+      var head = el("div", "subject-head");
+      head.appendChild(el("h3", "", sub.name));
+      head.appendChild(el("span", "prog"));
+      sec.appendChild(head);
+      var bar = el("div", "bar");
+      bar.appendChild(el("i"));
+      sec.appendChild(bar);
+      var ul = el("ul", "notes");
+      sub.notes.forEach(function (n, i) {
+        var li = el("li"), a = el("a", "", (i + 1 < 10 ? "0" : "") + (i + 1) + " " + n.title);
+        a.href = BASE + n.href;
+        a.setAttribute("data-note", n.id);
+        li.appendChild(a);
+        ul.appendChild(li);
+      });
+      sec.appendChild(ul);
+      wrap.appendChild(sec);
+    });
+  }
   function initHome() {
+    renderSubjects();
     var links = document.querySelectorAll("a[data-note]");
     if (!links.length && !document.getElementById("review")) return;
     var s = load(), due = [], doneAll = 0;
@@ -180,7 +234,7 @@
   document.addEventListener("DOMContentLoaded", function () {
     initTheme();
     var id = document.body.getAttribute("data-note");
-    if (id) { initHide(); initQuiz(id); initDone(id); }
+    if (id) { initNav(id); initHide(); initQuiz(id); initDone(id); }
     else initHome();
   });
 })();

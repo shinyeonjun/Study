@@ -1,3 +1,5 @@
 .DS_Store
 Thumbs.db
 .claude/
+# 그림 원본(PNG)은 올리지 않는다. WebP로 줄인 것만 올린다
+bigdata/img/*.png
