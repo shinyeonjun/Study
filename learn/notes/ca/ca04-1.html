@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>편미분과 기울기: 어느 쪽으로 움직이면 더 빨리 변할까 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e8c'/%3E%3Cpath d='M8 22V10m8 12V14m8 8V6' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="CA04-1">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+
+<header class="chapter">
+<p class="chap-sub">미적분과 변화 · CA04 여러 변수의 변화</p>
+<p class="chap-num">CA04·1</p>
+<h1>편미분과 기울기: 어느 쪽으로 움직이면 더 빨리 변할까</h1>
+<p class="lead">바닥의 온도를 앞뒤 위치 x와 좌우 위치 y로 알아낸다고 합시다. 한 방향으로 한 걸음 내딛을 때의 온도 변화는 어느 좌표만 바꾸는지, 두 좌표를 함께 바꾸는지에 따라 달라집니다. 한 변수를 고정하는 계산에서 출발해 임의 방향의 순간 변화율까지 구합니다.</p>
+</header>
+
+<div class="goal">
+<h2>이 장을 읽고 나면</h2>
+<ul>
+<li>한 점에서 다른 변수를 고정한 편미분을 계산한다.</li>
+<li>기울기 벡터와 단위벡터의 내적으로 방향미분을 구한다.</li>
+<li>변화율의 단위를 쓰고, 입력 스케일이 달라지면 방향 해석도 점검한다.</li>
+</ul>
+</div>
+
+<h2>입력은 좌표 두 개이고 출력은 온도 한 개다</h2>
+<p>작은 공간에서 바닥 온도를 <b>T(x, y) = 20 + 0.1(x² + y²)</b>로 근사한다고 합시다. x, y는 원점을 기준으로 각각 m로 잰 위치입니다. 0.1의 단위는 ℃/m²입니다. (3, 4)에서 T = 20 + 0.1(9 + 16) = 22.5℃입니다. 입력은 두 성분을 가진 좌표이고 출력은 수 하나입니다. 이것이 두 변수의 스칼라값 함수의 예입니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 226" role="img" aria-label="점 P (3, 4)에서 x축 방향으로 이동하는 선은 y를 4로 고정한다. y축 방향 선은 x를 3으로 고정한다. 각 선의 기울기를 따로 구한다.">
+<line class="f-ink" x1="101" y1="180" x2="638" y2="180" marker-end="url(#f-arrow)"/>
+<line class="f-ink" x1="101" y1="180" x2="101" y2="32" marker-end="url(#f-arrow)"/>
+<line class="f-dash" x1="101" y1="98" x2="637" y2="98"/>
+<line class="f-dash" x1="346" y1="181" x2="346" y2="40"/>
+<text class="f-cap" x="661" y="184" text-anchor="middle">x (m)</text>
+<text class="f-cap" x="83" y="29" text-anchor="middle">y (m)</text>
+<text class="f-s" x="84" y="103" text-anchor="middle">4</text>
+<text class="f-s" x="346" y="201" text-anchor="middle">3</text>
+<circle class="f-fill" cx="346" cy="98" r="5"/>
+<line class="f-line" x1="353" y1="98" x2="526" y2="98" marker-end="url(#f-arrow)"/>
+<line class="f-line" x1="346" y1="91" x2="346" y2="43" marker-end="url(#f-arrow)"/>
+<text class="f-t" x="491" y="78" text-anchor="middle">y = 4를 고정하고 x만 바꿈</text>
+<text class="f-t" x="328" y="51" text-anchor="end">x = 3에서 y만 바꿈</text>
+<text class="f-cap" x="362" y="124" text-anchor="start">P = (3, 4)</text>
+</svg>
+<figcaption>화살표는 움직이는 방향을 나타낸다. 길이는 실제 변화량을 뜻하지 않는다.</figcaption>
+</figure>
+<p>첫째 좌표가 3m에서 4m가 되는 동안 둘째 좌표를 4m로 두면 온도가 22.5℃에서 23.2℃로 바뀝니다. 이 1m 구간의 평균 변화율은 0.7℃/m입니다. 출발점의 기울기를 얻으려면 움직인 거리 h를 0에 가까이 해야 합니다(CA02).</p>
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+<h2>편미분은 한 좌표만 움직인 단면의 기울기다</h2>
+<div class="box "><p class="box-k">편미분의 정의</p>
+<p>나머지 입력을 고정하고 한 입력에 대해 구한 순간 변화율을 <b class="key">편미분</b>(partial derivative)이라 합니다. ∂T/∂x는 ‘T를 x로 편미분’이라고 읽습니다.</p><p class="calc">∂T/∂x = lim<sub>h→0</sub> [T(x+h, y) − T(x, y)]/h<br>∂T/∂y = lim<sub>h→0</sub> [T(x, y+h) − T(x, y)]/h</p>
+</div>
+<p>T를 x로 미분할 때 y²은 상수입니다. 따라서 ∂T/∂x = 0.2x, ∂T/∂y = 0.2y입니다. P = (3, 4)에서 각 값은 0.6과 0.8℃/m입니다. 위에서 계산한 0.7℃/m는 1m를 이동한 평균이라 ∂T/∂x와 같을 필요가 없습니다.</p>
+<p><b>고정한다</b>는 말은 항 전체를 지운다는 뜻이 아닙니다. U(x, y) = xy라면 y는 상수 배율이고 ∂U/∂x = y입니다. y를 4로 고정하면 U(x, 4) = 4x가 되므로 기울기가 4라는 설명과 같습니다.</p>
+<div class="check" data-q="q3"></div>
+<div class="check" data-q="q4"></div>
+<h2>편미분들을 모아서 기울기 벡터를 만든다</h2>
+<p><b class="key">기울기 벡터</b>(gradient)는 입력 순서대로 편미분을 모은 벡터입니다. 여기서는 ∇T = (∂T/∂x, ∂T/∂y)이고, P에서는 (0.6, 0.8)입니다. 아주 조금 δ = (Δx, Δy)만큼 움직이면 온도 변화는 <b>ΔT ≈ ∇T(P) · δ = 0.6Δx + 0.8Δy</b>입니다. ·는 두 벡터의 대응 성분을 곱해 합하는 내적(LA02)입니다.</p>
+<div class="box ex"><p class="box-k">작은 움직임의 근사</p>
+<p>P에서 Δx = 0.03m, Δy = 0.04m만큼 이동합니다. ① x 성분은 0.6 × 0.03 = 0.018℃. ② y 성분은 0.8 × 0.04 = 0.032℃. ③ 합은 0.05℃입니다. 원식에 두 좌표를 넣은 실제 변화량은 0.05025℃입니다. 이 차이는 작은 움직임의 2차 항까지 원식에는 들어 있기 때문입니다.</p>
+</div>
+<p>이런 근사를 <b>선형 근사</b>라고 합니다. 다변수 함수가 한 점에서 미분 가능하다는 말은 그 점 가까이에서 이와 같은 선형식으로 잘 근사된다는 뜻입니다. 편미분 값 두 개를 각각 구할 수 있다는 사실만으로는 항상 다변수 미분 가능성을 보장하지 않습니다. 이 장의 다항함수처럼 근방에서 편미분이 연속인 경우는 미분 가능합니다.</p>
+<div class="check" data-q="q5"></div>
+<h2>하나의 방향을 골라 1m당 얼마나 바뀌는지 묻는다</h2>
+<p>두 좌표를 함께 움직일 때는 방향 벡터를 정합니다. 예에서 v = (3, 4)의 길이는 5이므로 <b>단위벡터</b> u = (3/5, 4/5)를 씁니다. P에서 h·u를 더하면 h가 양수일 때 h m만큼 그 방향으로 움직입니다. u가 단위벡터인 이유는 ‘실제 이동 거리 1m당’ 변화율을 얻기 위해서입니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 423" role="img" aria-label="등온선 T=22.5는 중심 원점 반지름 5의 원이다. 그 위 점 P=(3,4)에서 기울기는 (0.6,0.8)이고 원 바깥으로 향한다. 접선 방향의 단위벡터는 (-0.8,0.6)이고 이 방향의 순간 변화율은 0이다.">
+<line class="f-ink" x1="67" y1="230" x2="650" y2="230" marker-end="url(#f-arrow)"/>
+<line class="f-ink" x1="279" y1="404" x2="279" y2="33" marker-end="url(#f-arrow)"/>
+<line class="f-ink" x1="147" y1="226" x2="147" y2="234"/>
+<text class="f-s" x="147" y="253" text-anchor="middle">-4</text>
+<line class="f-ink" x1="213" y1="226" x2="213" y2="234"/>
+<text class="f-s" x="213" y="253" text-anchor="middle">-2</text>
+<line class="f-ink" x1="345" y1="226" x2="345" y2="234"/>
+<text class="f-s" x="345" y="253" text-anchor="middle">2</text>
+<line class="f-ink" x1="411" y1="226" x2="411" y2="234"/>
+<text class="f-s" x="411" y="253" text-anchor="middle">4</text>
+<line class="f-ink" x1="477" y1="226" x2="477" y2="234"/>
+<text class="f-s" x="477" y="253" text-anchor="middle">6</text>
+<line class="f-ink" x1="543" y1="226" x2="543" y2="234"/>
+<text class="f-s" x="543" y="253" text-anchor="middle">8</text>
+<line class="f-ink" x1="609" y1="226" x2="609" y2="234"/>
+<text class="f-s" x="609" y="253" text-anchor="middle">10</text>
+<line class="f-ink" x1="275" y1="362" x2="283" y2="362"/>
+<text class="f-s" x="267" y="366" text-anchor="end">-4</text>
+<line class="f-ink" x1="275" y1="296" x2="283" y2="296"/>
+<text class="f-s" x="267" y="300" text-anchor="end">-2</text>
+<line class="f-ink" x1="275" y1="164" x2="283" y2="164"/>
+<text class="f-s" x="267" y="168" text-anchor="end">2</text>
+<line class="f-ink" x1="275" y1="98" x2="283" y2="98"/>
+<text class="f-s" x="267" y="102" text-anchor="end">4</text>
+<circle class="f-ink" cx="279" cy="230" r="165" fill="none"/>
+<circle class="f-fill" cx="378" cy="98" r="5"/>
+<line class="f-line" x1="378" y1="98" x2="417.6" y2="45.20000000000002" marker-end="url(#f-arrow)"/>
+<line class="f-line" x1="378" y1="98" x2="325.2" y2="58.400000000000006" marker-end="url(#f-arrow)"/>
+<text class="f-cap" x="428" y="41" text-anchor="start">∇T 방향</text>
+<text class="f-s" x="300" y="58" text-anchor="end">등온선에 접하는 방향</text>
+<text class="f-cap" x="386" y="119" text-anchor="start">P (3, 4)</text>
+<text class="f-t" x="125" y="137" text-anchor="end">등온선 22.5℃</text>
+<text class="f-cap" x="668" y="234" text-anchor="middle">x (m)</text>
+<text class="f-cap" x="259" y="27" text-anchor="middle">y (m)</text>
+</svg>
+<figcaption>x와 y에 같은 축척을 썼다. 화살표는 방향을 보여 주도록 늘려 그렸다.</figcaption>
+</figure>
+<div class="box "><p class="box-k">방향미분</p>
+<p class="calc">D<sub>u</sub>T(P) = lim<sub>h→0</sub> [T(P+hu) − T(P)]/h = ∇T(P) · u</p><p>내적으로 계산하는 식은 T가 P에서 미분 가능할 때 성립합니다. u = (0.6, 0.8)일 때 0.6² + 0.8² = 1℃/m입니다. 그림의 접선 방향 u = (−0.8, 0.6)에서는 0.6 × (−0.8) + 0.8 × 0.6 = 0입니다. 등온선은 같은 온도를 주는 점들의 모음이므로, 그에 접하는 방향으로 움직일 때 1차 변화가 없습니다.</p>
+</div>
+<p>같은 거리만큼 움직일 때 가장 큰 내적은 기울기와 같은 방향에서 나옵니다. 그 최대 변화율은 기울기의 길이인 1℃/m입니다. 반대 방향에서는 −1℃/m로 가장 빨리 낮아집니다. 기울기가 0이면 모든 방향의 1차 변화율이 0이며 이 정보만으로 최솟값·최댓값인지 알 수 없습니다.</p>
+<div class="check" data-q="q6"></div>
+<div class="check" data-q="q7"></div>
+<h2>단위와 수치 검산</h2>
+<p>이 예에서는 x와 y가 둘 다 m이고 같은 거리 눈금을 씁니다. 입력 하나가 거리이고 하나가 시간이라면 편미분 단위도 다릅니다. 예를 들어 ℃/m와 ℃/초를 성분으로 붙인 벡터를 그대로 그려 ‘실제 공간에서 가장 뜨거워지는 방향’이라고 해석할 수는 없습니다. 어떤 입력 변화에 같은 크기를 부여할지, 단위나 스케일을 먼저 정해야 합니다.</p>
+<pre data-example="python"><code>def temperature(x, y):
+    return 20 + (x*x + y*y) / 10
+
+x, y = 3, 4
+h = 0.001
+dx = (temperature(x+h, y) - temperature(x-h, y)) / (2*h)
+dy = (temperature(x, y+h) - temperature(x, y-h)) / (2*h)
+along = (temperature(x+0.6*h, y+0.8*h)
+         - temperature(x-0.6*h, y-0.8*h)) / (2*h)
+print(f"편미분: {dx:.3f}, {dy:.3f} ℃/m")
+print(f"방향미분: {along:.3f} ℃/m")
+print(f"작은 이동의 실제 변화: {temperature(3.03, 4.04)-temperature(3, 4):.5f} ℃")</code></pre>
+<pre data-output><code>편미분: 0.600, 0.800 ℃/m
+방향미분: 1.000 ℃/m
+작은 이동의 실제 변화: 0.05025 ℃</code></pre>
+<p>앞뒤로 h만큼 움직여 두 함수값의 차이를 2h로 나눈 것은 중앙 차분입니다. 코드의 근삿값을 정확한 미분과 대조했습니다. h를 지나치게 작게 잡으면 두 수가 거의 같아 계산기에서 생기는 반올림 오차가 상대적으로 커질 수 있습니다.</p>
+<div class="check" data-q="q8"></div>
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table>
+<tr><th scope="col">질문</th><th scope="col">계산</th></tr>
+<tr><td>x만 바꿀 때</td><td>∂T/∂x. y는 고정.</td></tr>
+<tr><td>아주 조금 두 입력을 모두 바꿀 때</td><td>∇T · (Δx, Δy)로 선형 근사.</td></tr>
+<tr><td>단위 방향 u로 1m당 변화</td><td>미분 가능한 점에서 ∇T · u.</td></tr>
+<tr><td>가장 빠른 증가 방향</td><td>같은 거리 눈금을 쓸 때, 0이 아닌 ∇T 방향.</td></tr>
+</table></div>
+<h2>참고 자료</h2>
+<ul><li><a href="https://openstax.org/books/calculus-volume-3/pages/4-3-partial-derivatives">OpenStax · 편미분</a></li>
+<li><a href="https://openstax.org/books/calculus-volume-3/pages/4-6-directional-derivatives-and-the-gradient">OpenStax · 방향미분과 기울기</a></li></ul>
+
+<h2>확인 문제</h2>
+<p>본문에서 푼 것 말고 남은 문제입니다. 먼저 답을 정한 뒤 해설을 확인합니다.</p>
+<div id="quiz"></div>
+
+<section class="work" id="tools"></section>
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

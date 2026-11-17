@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>내적과 노름: 가중합과 거리 계산 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="LA02-1">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">선형대수 · LA02 내적과 거리</p>
+<p class="chap-num">LA02·1</p>
+<h1>내적과 노름: 가중합과 거리 계산</h1>
+<p class="lead">상품 세 개를 몇 개씩 샀고 단가가 얼마인지 알 때, 대응하는 수를 곱하고 합치면 비용 한 숫자가 나옵니다. 내적의 구조를 이해한 뒤, 자기 자신과의 내적이 길이와 거리로 이어지는 과정을 봅니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>실수 벡터의 내적을 성분별로 구한다.</li><li>유클리드 노름과 두 점의 거리를 연결한다.</li><li>스케일과 단위가 거리 해석에 미치는 효과를 설명한다.</li></ul></div>
+
+<h2>곱하고 더해서 값 하나 얻기</h2>
+<p>구매 수량이 (2,3,1)이고 대응하는 단가가 (1200,800,3000)원입니다. 가격 한 숫자는 2×1200 + 3×800 + 1×3000 = 7800원입니다. 어느 가격을 어느 수량에 붙이는지 정해져 있으므로 벡터의 순서를 맞춥니다.</p>
+<div class="box "><p class="box-k">정의</p><p>실수 성분을 가진 같은 차원 벡터 x, w의 <b class="key">내적</b> x·w는 ∑ᵢ xᵢwᵢ입니다. 같은 자리끼리 곱한 결과를 모두 더합니다. 내적의 결과는 스칼라입니다.</p></div>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 160" role="img" aria-label="수량·단가를 같은 품목 순서로 짝지어 곱한 값을 모두 더한다.">
+<rect class="f-box" x="42" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="135" y="61" text-anchor="middle">수량 벡터</text><text class="f-s" x="135" y="89" text-anchor="middle">(2, 3, 1)</text><text class="f-s" x="135" y="110" text-anchor="middle">품목 순서대로</text><line class="f-line" x1="235" y1="84" x2="278" y2="84" marker-end="url(#f-arrow)"/><rect class="f-soft" x="287" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="380" y="61" text-anchor="middle">단가 벡터</text><text class="f-s" x="380" y="89" text-anchor="middle">(1200, 800, 3000)</text><text class="f-s" x="380" y="110" text-anchor="middle">같은 품목 순서</text><line class="f-line" x1="480" y1="84" x2="523" y2="84" marker-end="url(#f-arrow)"/><rect class="f-box" x="532" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="625" y="61" text-anchor="middle">합계</text><text class="f-s" x="625" y="89" text-anchor="middle">2400 + 2400 + 3000</text><text class="f-s" x="625" y="110" text-anchor="middle">7800원</text>
+</svg><figcaption>내적은 성분마다 다른 무게를 주는 가중합으로 읽을 수 있다.</figcaption></figure>
+<p>가중평균은 가중합에 가중치 합으로 나누는 조건이 붙습니다. 총비용 7800원은 가중합이고, 수량이 총 6개일 때 평균 단가는 7800/6 = 1300원입니다.</p>
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+<h2>자기 자신과의 내적에서 길이 구하기</h2>
+<p>v = (3,4)의 내적 v·v는 3²+4² = 25입니다. 제곱근이 5이므로 원점부터 v까지 유클리드 길이는 5입니다. 이를 <b class="key">유클리드 노름</b> ∥v∥₂라 씁니다. x가 (x₁,…,x<sub>n</sub>)이면 ∥x∥₂ = √(x·x)입니다. 영벡터의 길이는 0입니다.</p>
+<div class="check" data-q="q3"></div>
+<h2>두 점 사이 거리는 차이 벡터의 길이</h2>
+<p>P=(1,1), Q=(4,5)일 때 Q−P=(3,4)입니다. ∥Q−P∥₂ = 5입니다. P와 Q의 순서를 뒤집으면 차이 벡터의 방향이 바뀌지만 길이는 그대로입니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 301" role="img" aria-label="P=(1,1), Q=(4,5). 가로와 세로 차는 3과 4이고 두 점 사이 직선 거리 5.">
+<line class="f-ink" x1="117" y1="257" x2="607.2" y2="257" marker-end="url(#f-arrow)"/><line class="f-ink" x1="160" y1="280.65" x2="160" y2="32.54000000000002" marker-end="url(#f-arrow)"/><line class="f-ink" x1="203" y1="259.58" x2="203" y2="254.42"/><text class="f-s" x="203" y="275" text-anchor="middle">1</text><line class="f-ink" x1="246" y1="259.58" x2="246" y2="254.42"/><text class="f-s" x="246" y="275" text-anchor="middle">2</text><line class="f-ink" x1="289" y1="259.58" x2="289" y2="254.42"/><text class="f-s" x="289" y="275" text-anchor="middle">3</text><line class="f-ink" x1="332" y1="259.58" x2="332" y2="254.42"/><text class="f-s" x="332" y="275" text-anchor="middle">4</text><line class="f-ink" x1="375" y1="259.58" x2="375" y2="254.42"/><text class="f-s" x="375" y="275" text-anchor="middle">5</text><line class="f-ink" x1="418" y1="259.58" x2="418" y2="254.42"/><text class="f-s" x="418" y="275" text-anchor="middle">6</text><line class="f-ink" x1="461" y1="259.58" x2="461" y2="254.42"/><text class="f-s" x="461" y="275" text-anchor="middle">7</text><line class="f-ink" x1="504" y1="259.58" x2="504" y2="254.42"/><text class="f-s" x="504" y="275" text-anchor="middle">8</text><line class="f-ink" x1="547" y1="259.58" x2="547" y2="254.42"/><text class="f-s" x="547" y="275" text-anchor="middle">9</text><line class="f-ink" x1="590" y1="259.58" x2="590" y2="254.42"/><text class="f-s" x="590" y="275" text-anchor="middle">10</text><line class="f-ink" x1="157.42" y1="214" x2="162.58" y2="214"/><text class="f-s" x="146" y="218" text-anchor="middle">1</text><line class="f-ink" x1="157.42" y1="171" x2="162.58" y2="171"/><text class="f-s" x="146" y="175" text-anchor="middle">2</text><line class="f-ink" x1="157.42" y1="128" x2="162.58" y2="128"/><text class="f-s" x="146" y="132" text-anchor="middle">3</text><line class="f-ink" x1="157.42" y1="85" x2="162.58" y2="85"/><text class="f-s" x="146" y="89" text-anchor="middle">4</text><line class="f-ink" x1="157.42" y1="42" x2="162.58" y2="42"/><text class="f-s" x="146" y="46" text-anchor="middle">5</text><text class="f-s" x="149" y="273" text-anchor="middle">0</text><text class="f-s" x="613.6500000000001" y="252" text-anchor="middle">x</text><text class="f-s" x="173" y="29.53" text-anchor="middle">y</text><line class="f-dash" x1="203" y1="214" x2="332" y2="214"/><line class="f-dash" x1="332" y1="214" x2="332" y2="42"/><line class="f-line" x1="203" y1="214" x2="332" y2="42"/><circle class="f-fill" cx="203" cy="214" r="3.2"/><circle class="f-fill" cx="332" cy="42" r="3.2"/><text class="f-t" x="194" y="205" text-anchor="middle">P</text><text class="f-t" x="342" y="34" text-anchor="middle">Q</text><text class="f-t" x="267.5" y="230" text-anchor="middle">3</text><text class="f-t" x="351" y="140.60000000000002" text-anchor="middle">4</text><text class="f-t" x="236.8" y="127.69999999999999" text-anchor="middle">거리 5</text>
+</svg><figcaption>직각삼각형에서 가로 3, 세로 4이므로 거리는 5다.</figcaption></figure>
+<pre data-example="python"><code>import numpy as np
+
+q = np.array([2, 3, 1])
+w = np.array([1200, 800, 3000])
+P = np.array([1, 1])
+Q = np.array([4, 5])
+print(int(q @ w))
+print((Q - P).tolist())
+print(float(np.linalg.norm(Q - P)))</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>7800
+[3, 4]
+5.0</code></pre>
+<p><code>@</code>는 NumPy에서 행렬 곱 문법이고 1차원 배열 두 개에는 해당 벡터의 내적을 계산합니다. <code>q * w</code>는 중간의 성분별 곱 <code>[2400,2400,3000]</code>을 돌려줍니다. 한 숫자가 필요한가, 성분별 곱을 따로 갖고 있어야 하는가에 따라 선택합니다.</p>
+<div class="check" data-q="q4"></div>
+<div class="check" data-q="q5"></div>
+<h2>특징 척도가 다르면 거리가 달라진다</h2>
+<p>예를 들어 x축이 키(cm)이고 y축이 체중(kg)이라면, 두 열을 그대로 합쳐 구한 수를 실제 길이 ‘몇 cm’로 해석할 수 없습니다. 키를 m로 적는 것만으로도 수치상 거리가 달라집니다. 기능상 어떤 차이를 중요하게 볼지 결정한 뒤 단위 변환, 가중치, 혹은 DA05에서 배운 표준화를 적용합니다. 표준화를 해도 그 관측들에 어떤 거리가 적합한지는 문제에 따라 다릅니다.</p>
+<div class="check" data-q="q6"></div>
+<h2>풀이 점검</h2>
+<p>내적, 크기, 거리의 차이를 식으로 적어 봅시다. 내적은 두 벡터를 넣고, 크기는 하나의 벡터를 자기 자신과 비교하고, 거리는 두 점의 차이 벡터를 만든 뒤 길이를 구합니다. 다음 장에서는 내적이 0이거나, 일부만 특정 방향으로 겹칠 때를 그림으로 해석합니다.</p>
+
+<h2>참고 자료</h2>
+<ul><li><a href="https://ocw.mit.edu/courses/18-06sc-linear-algebra-fall-2011/pages/ax-b-and-the-four-subspaces/">MIT OCW · Linear Algebra, Ax = b and the Four Subspaces</a></li><li><a href="https://ocw.mit.edu/courses/18-06sc-linear-algebra-fall-2011/pages/least-squares-determinants-and-eigenvalues/">MIT OCW · Orthogonality and Projections</a></li><li><a href="https://numpy.org/doc/stable/reference/generated/numpy.dot.html">NumPy · 내적과 행렬 곱</a></li></ul>
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

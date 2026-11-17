@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>함수의 극한과 연속: 그 점과 그 주변 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e8c'/%3E%3Cpath d='M8 22V10m8 12V14m8 8V6' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="CA01-2">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+
+<header class="chapter">
+<p class="chap-sub">미적분과 변화 · CA01 극한과 연속</p>
+<p class="chap-num">CA01·2</p>
+<h1>함수의 극한과 연속: 그 점과 그 주변</h1>
+<p class="lead">식에서 x=3을 넣을 수 없는데도 x가 3에 가까워질수록 출력이 6에 가까워질 수 있습니다. 또 x=3에서 값을 정해 놓고도 왼쪽과 오른쪽에서 보이는 값이 다를 수 있습니다. 함수값, 극한값, 연속을 차례로 구별합니다.</p>
+</header>
+
+<div class="goal">
+<h2>이 장을 읽고 나면</h2>
+<ul>
+<li>주변의 값에서 좌극한·우극한을 읽고 양쪽 극한을 판단한다.</li>
+<li>함수값이 없거나 극한값과 다른 경우를 설명한다.</li>
+<li>한 점에서의 연속을 세 조건으로 판정한다.</li>
+</ul>
+</div>
+
+<h2>정확히 그 점에 넣는 질문과 주변에서 다가가는 질문</h2>
+<p><code>f(x) = (x² − 9)/(x − 3)</code>에는 3을 넣을 수 없습니다. 하지만 x≠3인 가까운 값에서는 <code>f(x) = x + 3</code>이라는 같은 계산을 합니다. 이때 <code>|f(x) − 6| = |x − 3|</code>입니다. x가 3에 가까워지는 만큼 출력도 6에 가까워지므로 <code>lim<sub>x→3</sub> f(x) = 6</code>입니다(AL06·1).</p>
+<p><b class="key">함수의 극한</b> <code>lim<sub>x→a</sub> f(x) = L</code>은 a 바로 주변의 서로 다른 입력으로 다가가면 함수값이 L에 원하는 만큼 가까워진다는 말입니다. x=a를 빼고 그 주변을 봅니다. 여기서는 a 양쪽에 a와 다른 정의역의 점이 얼마든지 가깝게 있다고 가정합니다. 주어진 모든 허용 오차 ε&gt;0마다 양수 δ가 있어서, 정의역의 x가 <code>0 &lt; |x−a| &lt; δ</code>를 만족하면 <code>|f(x)−L| &lt; ε</code>여야 합니다. 이 예에서는 δ=ε이면 됩니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 301" role="img" aria-label="x가 3이 아닐 때 직선 x+3을 따른다. (3,6)은 열린 점이다. x=3에 해당하는 실제 출력 1을 채운 점 (3,1)로 표시했다.">
+<text class="f-cap" x="94" y="24" text-anchor="start">g(x)</text>
+<text class="f-s" x="677" y="274" text-anchor="start">x</text>
+<line class="f-ink" x1="95" y1="45" x2="95" y2="242"/>
+<line class="f-ink" x1="95" y1="242" x2="661" y2="242"/>
+<line class="f-ink" x1="151.5" y1="242" x2="151.5" y2="249"/>
+<text class="f-s" x="151.5" y="269" text-anchor="middle">1</text>
+<line class="f-ink" x1="264.5" y1="242" x2="264.5" y2="249"/>
+<text class="f-s" x="264.5" y="269" text-anchor="middle">2</text>
+<line class="f-ink" x1="377.5" y1="242" x2="377.5" y2="249"/>
+<text class="f-s" x="377.5" y="269" text-anchor="middle">3</text>
+<line class="f-ink" x1="490.5" y1="242" x2="490.5" y2="249"/>
+<text class="f-s" x="490.5" y="269" text-anchor="middle">4</text>
+<line class="f-ink" x1="603.5" y1="242" x2="603.5" y2="249"/>
+<text class="f-s" x="603.5" y="269" text-anchor="middle">5</text>
+<line class="f-ink" x1="88" y1="242" x2="95" y2="242"/>
+<text class="f-s" x="80" y="246" text-anchor="end">0</text>
+<line class="f-ink" x1="95" y1="242" x2="661" y2="242"/>
+<line class="f-ink" x1="88" y1="220.11" x2="95" y2="220.11"/>
+<text class="f-s" x="80" y="224.11" text-anchor="end">1</text>
+<line class="f-dash" x1="95" y1="220.11" x2="661" y2="220.11"/>
+<line class="f-ink" x1="88" y1="176.33" x2="95" y2="176.33"/>
+<text class="f-s" x="80" y="180.33" text-anchor="end">3</text>
+<line class="f-dash" x1="95" y1="176.33" x2="661" y2="176.33"/>
+<line class="f-ink" x1="88" y1="110.67" x2="95" y2="110.67"/>
+<text class="f-s" x="80" y="114.67" text-anchor="end">6</text>
+<line class="f-dash" x1="95" y1="110.67" x2="661" y2="110.67"/>
+<line class="f-ink" x1="88" y1="45" x2="95" y2="45"/>
+<text class="f-s" x="80" y="49" text-anchor="end">9</text>
+<line class="f-dash" x1="95" y1="45" x2="661" y2="45"/>
+<line class="f-dash" x1="377.5" y1="45" x2="377.5" y2="242"/>
+<polyline class="f-line" fill="none" points="95,165.39 109.13,162.65 123.25,159.92 137.38,157.18 151.5,154.44 165.63,151.71 179.75,148.97 193.88,146.24 208,143.5 222.13,140.76 236.25,138.03 250.38,135.29 264.5,132.56 278.63,129.82 292.75,127.08 306.88,124.35 321,121.61 335.13,118.88 349.25,116.14 363.38,113.4 377.5,110.67 391.63,107.93 405.75,105.19 419.88,102.46 434,99.72 448.13,96.99 462.25,94.25 476.38,91.51 490.5,88.78 504.63,86.04 518.75,83.31 532.88,80.57 547,77.83 561.13,75.1 575.25,72.36 589.38,69.63 603.5,66.89 617.63,64.15 631.75,61.42 645.88,58.68 660,55.94"/>
+<circle class="f-box" cx="377.5" cy="110.67" r="7"/>
+<circle class="f-fill" cx="377.5" cy="220.11" r="5"/>
+<text class="f-s" x="396.5" y="99.67" text-anchor="start">극한값 6</text>
+<text class="f-s" x="396.5" y="211.11" text-anchor="start">함수값 1</text>
+</svg>
+<figcaption>x=3의 값은 채운 점에서 읽고 주변이 향하는 값은 열린 점의 높이에서 읽는다.</figcaption>
+</figure>
+<p>3에서 값 1을 따로 정한 g는 주변의 식이 f와 같으므로 역시 극한이 6입니다. 하지만 g(3)=1입니다. 그래프에서 열린 점 (3,6)은 주변 선이 향하는 곳이고, 채운 점 (3,1)은 3에 정확히 넣은 값입니다.</p>
+<p class="small">실행 예제</p>
+<pre data-example="python"><code>from fractions import Fraction as F
+
+def g(x):
+    return (x*x - 9) / (x - 3) if x != 3 else F(1)
+
+for x in (F(29,10), F(299,100), F(3), F(301,100), F(31,10)):
+    print(f"{float(x):.2f}  {float(g(x)):.2f}")</code></pre>
+<pre data-output><code>2.90  5.90
+2.99  5.99
+3.00  1.00
+3.01  6.01
+3.10  6.10</code></pre>
+<div class="box trap"><p class="box-k">흔한 실수</p><p>0/0은 구하려는 값이 0이라는 뜻도, 극한이 없다는 결론도 아닙니다. 원래 식에 직접 대입할 수 없다는 신호입니다. 주변의 식을 다른 형태로 바꾸거나 좌우 접근을 따로 판단합니다.</p></div>
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+<div class="check" data-q="q3"></div>
+
+<h2>왼쪽과 오른쪽을 따로 확인한다</h2>
+<p><code>lim<sub>x→a⁻</sub></code>는 a보다 작은 값에서 다가가는 <b class="key">좌극한</b>입니다. <code>lim<sub>x→a⁺</sub></code>는 a보다 큰 값에서 다가가는 <b class="key">우극한</b>입니다. a 양쪽에서 접근할 수 있는 이 장의 예에서는, 좌극한과 우극한이 둘 다 존재하고 같은 실수 L일 때 양쪽 극한이 L입니다.</p>
+<p>예를 들어 <code>j(x)=1 (x&lt;3), j(x)=4 (x≥3)</code>으로 둡니다. 왼쪽에서는 계속 1, 오른쪽에서는 계속 4입니다. 따라서 좌극한은 1, 우극한은 4이고 둘이 달라 양쪽 극한은 없습니다. j(3)=4가 있어도 판단은 그대로입니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 301" role="img" aria-label="x가 3보다 작으면 j(x)=1, x가 3 이상이면 j(x)=4이다. 왼쪽 그래프의 끝 (3,1)은 빈 점, 오른쪽 시작 (3,4)는 채운 점이다.">
+<text class="f-cap" x="94" y="24" text-anchor="start">j(x)</text>
+<text class="f-s" x="677" y="274" text-anchor="start">x</text>
+<line class="f-ink" x1="95" y1="45" x2="95" y2="242"/>
+<line class="f-ink" x1="95" y1="242" x2="661" y2="242"/>
+<line class="f-ink" x1="151.5" y1="242" x2="151.5" y2="249"/>
+<text class="f-s" x="151.5" y="269" text-anchor="middle">1</text>
+<line class="f-ink" x1="264.5" y1="242" x2="264.5" y2="249"/>
+<text class="f-s" x="264.5" y="269" text-anchor="middle">2</text>
+<line class="f-ink" x1="377.5" y1="242" x2="377.5" y2="249"/>
+<text class="f-s" x="377.5" y="269" text-anchor="middle">3</text>
+<line class="f-ink" x1="490.5" y1="242" x2="490.5" y2="249"/>
+<text class="f-s" x="490.5" y="269" text-anchor="middle">4</text>
+<line class="f-ink" x1="603.5" y1="242" x2="603.5" y2="249"/>
+<text class="f-s" x="603.5" y="269" text-anchor="middle">5</text>
+<line class="f-ink" x1="88" y1="242" x2="95" y2="242"/>
+<text class="f-s" x="80" y="246" text-anchor="end">0</text>
+<line class="f-ink" x1="95" y1="242" x2="661" y2="242"/>
+<line class="f-ink" x1="88" y1="202.6" x2="95" y2="202.6"/>
+<text class="f-s" x="80" y="206.6" text-anchor="end">1</text>
+<line class="f-dash" x1="95" y1="202.6" x2="661" y2="202.6"/>
+<line class="f-ink" x1="88" y1="163.2" x2="95" y2="163.2"/>
+<text class="f-s" x="80" y="167.2" text-anchor="end">2</text>
+<line class="f-dash" x1="95" y1="163.2" x2="661" y2="163.2"/>
+<line class="f-ink" x1="88" y1="123.8" x2="95" y2="123.8"/>
+<text class="f-s" x="80" y="127.8" text-anchor="end">3</text>
+<line class="f-dash" x1="95" y1="123.8" x2="661" y2="123.8"/>
+<line class="f-ink" x1="88" y1="84.4" x2="95" y2="84.4"/>
+<text class="f-s" x="80" y="88.4" text-anchor="end">4</text>
+<line class="f-dash" x1="95" y1="84.4" x2="661" y2="84.4"/>
+<line class="f-ink" x1="88" y1="45" x2="95" y2="45"/>
+<text class="f-s" x="80" y="49" text-anchor="end">5</text>
+<line class="f-dash" x1="95" y1="45" x2="661" y2="45"/>
+<line class="f-dash" x1="377.5" y1="45" x2="377.5" y2="242"/>
+<line class="f-line" x1="95" y1="202.6" x2="377.5" y2="202.6"/>
+<line class="f-line" x1="377.5" y1="84.4" x2="660" y2="84.4"/>
+<circle class="f-box" cx="377.5" cy="202.6" r="7"/>
+<circle class="f-fill" cx="377.5" cy="84.4" r="5"/>
+<text class="f-s" x="277" y="190.6" text-anchor="middle">왼쪽에서 접근 → 1</text>
+<text class="f-s" x="494" y="72.4" text-anchor="middle">오른쪽에서 접근 → 4</text>
+</svg>
+<figcaption>좌극한 1과 우극한 4가 서로 달라서 양쪽 극한은 없다.</figcaption>
+</figure>
+<p>양쪽 모두 값이 유한한 수에 가까워져야 한다는 점도 확인합니다. <code>1/(x−3)²</code>은 x가 3에 가까워질수록 양수 쪽으로 한없이 커집니다. <code>lim<sub>x→3</sub> 1/(x−3)² = +∞</code>라는 표기는 유한한 실수 극한이 있다는 뜻이 아니라 커지는 방향을 기록한 것입니다.</p>
+<div class="check" data-q="q4"></div>
+<div class="check" data-q="q5"></div>
+<div class="check" data-q="q6"></div>
+
+<h2>연속이려면 그 점과 주변이 맞아야 한다</h2>
+<div class="box"><p class="box-k">양쪽에서 접근할 수 있는 점에서 연속의 세 조건</p><ol><li>f(a)가 정의된다.</li><li><code>lim<sub>x→a</sub> f(x)</code>가 유한한 값으로 존재한다.</li><li>둘이 같은 값이다.</li></ol></div>
+<p>앞의 f는 3이 빠져 첫 조건, g는 극한 6과 g(3)=1이 달라 셋째 조건을 만족하지 않습니다. 두 함수 모두 3의 값을 6으로 놓은 새 함수를 만들면 3에서 연속입니다. 이런 경우를 <b class="key">제거 가능한 불연속</b>이라 부릅니다. j는 좌우 극한이 달라 둘째 조건을 만족하지 않습니다. 그 점의 값 하나로 좌우를 맞출 수 없는 <b class="key">점프 불연속</b>입니다.</p>
+<div class="box ex"><p class="box-k">풀이 예제</p><p><code>u(x) = 2x + 1 (x &lt; 2), u(2) = k, u(x) = x + 3 (x &gt; 2)</code>라면 좌극한은 2×2+1=5이고 우극한은 2+3=5입니다. 두 방향이 같은 값을 주므로 u(2)도 5로 정할 때에만 연속입니다.</p></div>
+<p>다항함수는 실수 전체에서 연속이고, 두 다항식의 몫은 분모가 0이 아닌 곳에서 연속입니다. 함수가 정의된 범위가 [1, 4]처럼 닫힌 구간이라면 끝점에서는 구간 안쪽의 한 방향으로 접근해 연속인지 판단합니다. 예를 들어 왼끝 1에서는 우극한과 함수값을 비교합니다.</p>
+<div class="check" data-q="q7"></div>
+<div class="check" data-q="q8"></div>
+<div class="check" data-q="q9"></div>
+
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table><thead><tr><th scope="col">질문</th><th scope="col">확인할 값</th></tr></thead><tbody>
+<tr><th scope="row">함수값</th><td>정확히 x=a에 대입했을 때의 값</td></tr>
+<tr><th scope="row">양쪽 극한</th><td>양쪽에서 접근했을 때의 같은 유한값</td></tr>
+<tr><th scope="row">연속</th><td>함수값이 있고, 극한이 있고, 서로 같음</td></tr></tbody></table></div>
+<div class="box sum"><p class="box-k">다음 단원으로</p><p><a href="../../unit.html?u=CA02">CA02</a>에서는 평균변화율의 입력 간격을 0으로 가까이 보내, 한 점에서의 변화율을 극한으로 정의합니다. 함수가 연속이라는 사실과 변화율의 극한이 존재한다는 사실은 서로 구별합니다.</p></div>
+
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://openstax.org/books/calculus-volume-1/pages/2-2-the-limit-of-a-function">함수 극한, 좌극한과 우극한</a></li>
+<li><a href="https://openstax.org/books/calculus-volume-1/pages/2-4-continuity">한 점과 구간에서의 연속</a></li>
+<li><a href="https://openstax.org/books/calculus-volume-1/pages/2-5-the-precise-definition-of-a-limit">엡실론과 델타로 표현하는 극한의 정의</a></li>
+</ul>
+
+<h2>확인 문제</h2>
+<p>본문에서 다룬 예제를 떠올린 뒤 남은 문제를 직접 풀어 보세요.</p>
+<div id="quiz"></div>
+
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

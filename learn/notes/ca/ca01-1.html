@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>항을 크게 보낼 때와 두 점을 좁힐 때 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e8c'/%3E%3Cpath d='M8 22V10m8 12V14m8 8V6' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="CA01-1">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+
+<header class="chapter">
+<p class="chap-sub">미적분과 변화 · CA01 극한과 연속</p>
+<p class="chap-num">CA01·1</p>
+<h1>항을 크게 보낼 때와 두 점을 좁힐 때</h1>
+<p class="lead">2에 1/n을 더한 값은 어느 항에서도 정확히 2가 되지 않지만, n을 충분히 크게 하면 원하는 만큼 2에 가까워집니다. 위치의 평균변화율에서도 두 시각 사이를 좁히면 같은 종류의 질문을 할 수 있습니다.</p>
+</header>
+
+<div class="goal">
+<h2>이 장을 읽고 나면</h2>
+<ul>
+<li>수열의 극한에서 ‘충분히 큰 모든 번호’의 뜻을 설명한다.</li>
+<li>항이 한 값의 양쪽을 오가더라도 그 값까지의 거리가 0에 가까워지면 수렴함을 설명한다.</li>
+<li>두 점 사이의 평균변화율을 단위와 함께 계산한다.</li>
+</ul>
+</div>
+
+<h2>도달하는지보다 결국 얼마나 가까운지 묻는다</h2>
+<p>수열 <code>aₙ = 2 + 1/n, n = 1, 2, …</code>의 처음 항은 3, 2.5, 2.333…, 2.25입니다. 어떤 항도 정확히 2는 아니지만 오차 <code>|aₙ − 2| = 1/n</code>를 더 작게 할 수 있습니다. 예를 들어 0.01보다 가까우려면 <code>n ≥ 101</code>이면 됩니다. 그전 일부 항이 멀어도 뒤에서 늘 가까이 있으면 됩니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 301" role="img" aria-label="aₙ=2+1/n의 n=1부터 12까지 점을 그렸다. 처음에는 3, 2.5, 2.333이고 점점 2의 높이에 가까워진다.">
+<text class="f-cap" x="94" y="24" text-anchor="start">aₙ의 값</text>
+<text class="f-s" x="677" y="274" text-anchor="start">번호 n</text>
+<line class="f-ink" x1="95" y1="45" x2="95" y2="242"/>
+<line class="f-ink" x1="95" y1="242" x2="661" y2="242"/>
+<line class="f-ink" x1="118.54" y1="242" x2="118.54" y2="249"/>
+<text class="f-s" x="118.54" y="269" text-anchor="middle">1</text>
+<line class="f-ink" x1="165.63" y1="242" x2="165.63" y2="249"/>
+<text class="f-s" x="165.63" y="269" text-anchor="middle">2</text>
+<line class="f-ink" x1="259.79" y1="242" x2="259.79" y2="249"/>
+<text class="f-s" x="259.79" y="269" text-anchor="middle">4</text>
+<line class="f-ink" x1="353.96" y1="242" x2="353.96" y2="249"/>
+<text class="f-s" x="353.96" y="269" text-anchor="middle">6</text>
+<line class="f-ink" x1="448.13" y1="242" x2="448.13" y2="249"/>
+<text class="f-s" x="448.13" y="269" text-anchor="middle">8</text>
+<line class="f-ink" x1="542.29" y1="242" x2="542.29" y2="249"/>
+<text class="f-s" x="542.29" y="269" text-anchor="middle">10</text>
+<line class="f-ink" x1="636.46" y1="242" x2="636.46" y2="249"/>
+<text class="f-s" x="636.46" y="269" text-anchor="middle">12</text>
+<line class="f-ink" x1="88" y1="218.36" x2="95" y2="218.36"/>
+<text class="f-s" x="80" y="222.36" text-anchor="end">2</text>
+<line class="f-dash" x1="95" y1="218.36" x2="661" y2="218.36"/>
+<line class="f-ink" x1="88" y1="178.96" x2="95" y2="178.96"/>
+<text class="f-s" x="80" y="182.96" text-anchor="end">2.25</text>
+<line class="f-dash" x1="95" y1="178.96" x2="661" y2="178.96"/>
+<line class="f-ink" x1="88" y1="139.56" x2="95" y2="139.56"/>
+<text class="f-s" x="80" y="143.56" text-anchor="end">2.5</text>
+<line class="f-dash" x1="95" y1="139.56" x2="661" y2="139.56"/>
+<line class="f-ink" x1="88" y1="100.16" x2="95" y2="100.16"/>
+<text class="f-s" x="80" y="104.16" text-anchor="end">2.75</text>
+<line class="f-dash" x1="95" y1="100.16" x2="661" y2="100.16"/>
+<line class="f-ink" x1="88" y1="60.76" x2="95" y2="60.76"/>
+<text class="f-s" x="80" y="64.75999999999999" text-anchor="end">3</text>
+<line class="f-dash" x1="95" y1="60.76" x2="661" y2="60.76"/>
+<line class="f-line" x1="95" y1="218.36" x2="660" y2="218.36"/>
+<circle class="f-fill" cx="118.54" cy="60.76" r="4"/>
+<circle class="f-fill" cx="165.63" cy="139.56" r="4"/>
+<circle class="f-fill" cx="212.71" cy="165.83" r="4"/>
+<circle class="f-fill" cx="259.79" cy="178.96" r="4"/>
+<circle class="f-fill" cx="306.88" cy="186.84" r="4"/>
+<circle class="f-fill" cx="353.96" cy="192.09" r="4"/>
+<circle class="f-fill" cx="401.04" cy="195.85" r="4"/>
+<circle class="f-fill" cx="448.13" cy="198.66" r="4"/>
+<circle class="f-fill" cx="495.21" cy="200.85" r="4"/>
+<circle class="f-fill" cx="542.29" cy="202.6" r="4"/>
+<circle class="f-fill" cx="589.38" cy="204.03" r="4"/>
+<circle class="f-fill" cx="636.46" cy="205.23" r="4"/>
+<text class="f-s" x="406" y="234.36" text-anchor="middle">가까워지는 값 2</text>
+</svg>
+<figcaption>보이는 점들은 첫 12개뿐이다. 차이 1/n의 식을 통해 이후의 행동을 판단한다.</figcaption>
+</figure>
+<div class="box"><p class="box-k">수열의 극한</p><p>허용 오차 ε를 아무리 작게 정해도, 그 뒤의 <b class="key">모든</b> 항에 대해 <code>|aₙ − L| &lt; ε</code>가 되는 번호 N을 고를 수 있으면 <code>lim<sub>n→∞</sub> aₙ = L</code>입니다. 이때 수열이 L로 <b class="key">수렴</b>한다고 합니다.</p></div>
+<p>ε는 ‘엡실론’이라고 읽으며 양수입니다. 위의 수열에서는 <code>N &gt; 1/ε</code>인 정수를 고르면, <code>n ≥ N</code>일 때 <code>1/n ≤ 1/N &lt; ε</code>입니다. 원하는 정밀도가 먼저 주어지면 거기에 맞춰 출발 번호를 찾는다는 뜻입니다. 무한대는 마지막 항의 번호가 아닙니다.</p>
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+<div class="check" data-q="q3"></div>
+
+<h2>양쪽을 오가도 수렴할 수 있다</h2>
+<p><code>bₙ = (−1)ⁿ/n</code>은 음수와 양수가 번갈아 나오지만, 0까지의 거리는 늘 1/n입니다. 어느 쪽에서 접근하는지보다 결국 얼마나 가까운지가 중요하므로 <code>lim bₙ = 0</code>입니다.</p>
+<p><code>cₙ = (−1)ⁿ</code>은 거리가 줄지 않아 −1과 1을 번갈아 오갑니다. 두 값 사이 거리가 2이므로 양쪽 모두 어떤 하나의 수에서 0.5 이내에 있을 수 없습니다. 뒤로 가도 두 값이 계속 나타나므로 유한한 극한이 없습니다. 또 <code>dₙ = n</code>처럼 임의의 큰 기준을 결국 계속 넘어서는 경우는 양의 무한대로 발산한다고 말합니다. 특정 실수가 극한이라는 뜻은 아닙니다.</p>
+<p class="small">실행 예제</p>
+<pre data-example="python"><code>for n in (1, 2, 10, 101):
+    a = 2 + 1/n
+    b = (-1)**n/n
+    print(n, f"{a:.5f}", f"{b:.5f}")</code></pre>
+<pre data-output><code>1 3.00000 -1.00000
+2 2.50000 0.50000
+10 2.10000 0.10000
+101 2.00990 -0.00990</code></pre>
+<div class="box trap"><p class="box-k">표의 역할</p><p>몇 항의 수치만으로 극한을 증명할 수는 없습니다. 표와 그래프는 후보를 보게 해 줍니다. 위 수열의 극한은 오차를 나타내는 <code>1/n</code>이 충분히 뒤의 모든 항에서 작다는 식으로 확인합니다.</p></div>
+<div class="check" data-q="q4"></div>
+<div class="check" data-q="q5"></div>
+
+<h2>평균변화율은 ‘출력 차이 ÷ 입력 차이’</h2>
+<p>시각 t의 수치를 초, 그 시각의 위치 <code>s(t) = t²</code>의 수치를 미터로 둔 간단한 모형을 생각합니다. 2초에 위치 4m, 3초에 위치 9m입니다. 두 시각 사이의 <b class="key">평균변화율</b>은 <code>(9 − 4)/(3 − 2) = 5 m/s</code>입니다. 그래프에서 두 점을 잇는 직선인 <b>할선</b>의 기울기입니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 301" role="img" aria-label="s(t)=t² 곡선에서 (2,4), (3,9)를 잇는 할선. 두 점의 가로 차이는 1초, 세로 차이는 5미터이며 기울기는 5미터 매초다.">
+<text class="f-cap" x="94" y="24" text-anchor="start">위치 s(t) (m)</text>
+<text class="f-s" x="677" y="274" text-anchor="start">t (초)</text>
+<line class="f-ink" x1="95" y1="45" x2="95" y2="242"/>
+<line class="f-ink" x1="95" y1="242" x2="661" y2="242"/>
+<line class="f-ink" x1="95" y1="242" x2="95" y2="249"/>
+<text class="f-s" x="95" y="269" text-anchor="middle">0</text>
+<line class="f-ink" x1="261.18" y1="242" x2="261.18" y2="249"/>
+<text class="f-s" x="261.18" y="269" text-anchor="middle">1</text>
+<line class="f-ink" x1="427.35" y1="242" x2="427.35" y2="249"/>
+<text class="f-s" x="427.35" y="269" text-anchor="middle">2</text>
+<line class="f-ink" x1="593.53" y1="242" x2="593.53" y2="249"/>
+<text class="f-s" x="593.53" y="269" text-anchor="middle">3</text>
+<line class="f-ink" x1="88" y1="242" x2="95" y2="242"/>
+<text class="f-s" x="80" y="246" text-anchor="end">0</text>
+<line class="f-ink" x1="95" y1="242" x2="661" y2="242"/>
+<line class="f-ink" x1="88" y1="176.33" x2="95" y2="176.33"/>
+<text class="f-s" x="80" y="180.33" text-anchor="end">4</text>
+<line class="f-dash" x1="95" y1="176.33" x2="661" y2="176.33"/>
+<line class="f-ink" x1="88" y1="110.67" x2="95" y2="110.67"/>
+<text class="f-s" x="80" y="114.67" text-anchor="end">8</text>
+<line class="f-dash" x1="95" y1="110.67" x2="661" y2="110.67"/>
+<line class="f-ink" x1="88" y1="45" x2="95" y2="45"/>
+<text class="f-s" x="80" y="49" text-anchor="end">12</text>
+<line class="f-dash" x1="95" y1="45" x2="661" y2="45"/>
+<polyline class="f-line" fill="none" points="95,242 109.13,241.88 123.25,241.53 137.38,240.93 151.5,240.1 165.63,239.03 179.75,237.73 193.88,236.19 208,234.41 222.13,232.39 236.25,230.14 250.38,227.65 264.5,224.92 278.63,221.95 292.75,218.75 306.88,215.31 321,211.64 335.13,207.72 349.25,203.57 363.38,199.18 377.5,194.56 391.62,189.69 405.75,184.59 419.88,179.26 434,173.68 448.13,167.87 462.25,161.82 476.38,155.53 490.5,149.01 504.63,142.25 518.75,135.25 532.88,128.02 547,120.54 561.13,112.83 575.25,104.89 589.38,96.7 603.5,88.28 617.63,79.62 631.75,70.73 645.88,61.59 660,52.22"/>
+<line class="f-line" x1="427.35" y1="176.33" x2="593.53" y2="94.25"/>
+<line class="f-dash" x1="427.35" y1="176.33" x2="593.53" y2="176.33"/>
+<line class="f-dash" x1="593.53" y1="176.33" x2="593.53" y2="94.25"/>
+<circle class="f-fill" cx="427.35" cy="176.33" r="5"/>
+<circle class="f-fill" cx="593.53" cy="94.25" r="5"/>
+<text class="f-s" x="412.35" y="192.33" text-anchor="end">(2, 4)</text>
+<text class="f-s" x="606.53" y="85.25" text-anchor="start">(3, 9)</text>
+<text class="f-s" x="510.44" y="195.33" text-anchor="middle">Δt = 1초</text>
+<text class="f-s" x="608.53" y="135.29000000000002" text-anchor="start">Δs = 5 m</text>
+</svg>
+<figcaption>할선의 기울기를 읽을 때는 가로와 세로의 단위를 각각 확인한다.</figcaption>
+</figure>
+<div class="box ex"><p class="box-k">두 번째 시각을 조금만 옮겨 보기</p><p>첫 시각을 2에 고정하고 두 번째 시각을 2+h에 둡니다. h≠0이면 차이를 나눌 수 있습니다.</p><p class="calc"><code>[s(2+h) − s(2)]/h = [(2+h)² − 4]/h = [4h + h²]/h = 4+h</code></p><p>두 시각을 뒤로 좁혀도 같은 식입니다. h=−0.1이면 두 시각은 2초와 1.9초이고, 분자와 분모가 모두 음수여서 평균변화율은 3.9 m/s입니다. 시간 순서대로 두 시각을 써도 분자와 분모를 동시에 뒤집으므로 같은 결과입니다.</p></div>
+<p class="small">실행 예제</p>
+<pre data-example="python"><code>from fractions import Fraction as F
+
+def s(t):
+    return t*t
+
+for h in (F(-1), F(-1, 10), F(1, 10), F(1)):
+    rate = (s(2 + h) - s(2)) / h
+    assert rate == 4 + h
+    print(h, f"{float(rate):.1f} m/s")</code></pre>
+<pre data-output><code>-1 3.0 m/s
+-1/10 3.9 m/s
+1/10 4.1 m/s
+1 5.0 m/s</code></pre>
+<p>h를 0으로 정하면 두 점이 같은 점이어서 원래 몫은 0/0이 되어 정의되지 않습니다. h가 0에 <em>접근</em>할 때 몫이 무엇에 가까워지는지 묻는 것은 별개의 질문입니다. <code>4+h</code>는 h가 0에 가까울수록 4에 가까워집니다. 다음 장의 함수 극한을 거치면 이 아이디어가 미분으로 연결됩니다.</p>
+<div class="check" data-q="q6"></div>
+<div class="check" data-q="q7"></div>
+<div class="check" data-q="q8"></div>
+<div class="check" data-q="q9"></div>
+
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table><thead><tr><th scope="col">보낼 것</th><th scope="col">관찰하는 값</th></tr></thead><tbody>
+<tr><th scope="row">항 번호 n을 계속 크게 함</th><td>수열 aₙ의 항이 어떤 값 주변에 결국 계속 머무는가</td></tr>
+<tr><th scope="row">두 시각을 가까이 둠</th><td>두 점을 잇는 할선의 기울기가 어떤 값에 접근하는가</td></tr>
+<tr><th scope="row">h=0 대입</th><td>원래 변화율의 몫을 정의하지 않으므로 접근과 구분</td></tr></tbody></table></div>
+<div class="box sum"><p class="box-k">다음 장으로</p><p><a href="ca01-2.html">다음 장</a>에서는 한 점에 왼쪽과 오른쪽에서 다가가 보며 함수 극한과 함수값을 구별합니다.</p></div>
+
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://openstax.org/books/calculus-volume-2/pages/5-1-sequences">수열 극한과 수렴의 정의</a></li>
+<li><a href="https://openstax.org/books/calculus-volume-1/pages/3-1-defining-the-derivative">할선과 순간변화율</a></li>
+</ul>
+
+<h2>확인 문제</h2>
+<p>본문에서 다룬 예제를 떠올린 뒤 남은 문제를 직접 풀어 보세요.</p>
+<div id="quiz"></div>
+
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

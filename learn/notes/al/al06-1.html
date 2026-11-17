@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>다항식을 펼치고, 약분 뒤에도 정의역 남기기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e8c'/%3E%3Cpath d='M8 22V10m8 12V14m8 8V6' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="AL06-1">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+
+<header class="chapter">
+<p class="chap-sub">대수·함수·그래프 · AL06 다항식과 이차함수</p>
+<p class="chap-num">AL06·1</p>
+<h1>다항식을 펼치고, 약분 뒤에도 정의역 남기기</h1>
+<p class="lead">같은 넓이를 한 덩어리로 곱할 수도 있고 작은 넓이로 나눠 더할 수도 있습니다. 전개와 인수분해는 그 두 표현을 오가는 일입니다. 분수식에서는 같은 값을 주는 표현을 찾은 뒤에도 처음부터 뺀 입력을 기억해야 합니다.</p>
+</header>
+
+<div class="goal">
+<h2>이 장을 읽고 나면</h2>
+<ul>
+<li>항의 차수를 읽고 분배법칙으로 다항식을 전개한다.</li>
+<li>공통인수·합차·이차식의 인수분해를 검산한다.</li>
+<li>유리식에서 약분할 인수와 처음 정의되지 않는 입력을 구별한다.</li>
+</ul>
+</div>
+
+<h2>다항식의 구조와 전개</h2>
+<p>변수 x가 들어간 식 <code>x² + 5x + 6</code>은 세 항의 합입니다. <b class="key">다항식</b>은 <code>a·xᵏ</code> 꼴의 항을 유한 개 더한 식입니다. k는 0 이상의 정수이고 a는 계수입니다. 항을 모아 정리했을 때 계수가 0이 아닌 항의 최고 지수를 다항식의 <b class="key">차수</b>라고 합니다. 예를 들어 <code>x³ − x³ + 2x</code>는 정리하면 1차이고, 0이 아닌 상수만 남으면 0차입니다. <code>1/x</code>는 x의 지수가 −1이어서 다항식이 아닙니다.</p>
+<p>가로가 <code>x + 2</code>, 세로가 <code>x + 3</code>인 직사각형을 생각합니다. x가 양수일 때 실제 길이로 그릴 수 있습니다. 두 변을 각각 x와 나머지 길이로 나누면 넓이는 <code>x·x + 3x + 2x + 2·3</code>입니다. 분배법칙은 양의 길이를 벗어난 입력에도 쓸 수 있는 대수 규칙입니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 257" role="img" aria-label="가로 x+2, 세로 x+3인 직사각형을 네 칸으로 나눴다. 칸의 넓이는 x², 2x, 3x, 6이다.">
+<text class="f-cap" x="312" y="38" text-anchor="middle">가로 x</text>
+<text class="f-cap" x="460" y="38" text-anchor="middle">가로 2</text>
+<text class="f-cap" x="182" y="102" text-anchor="end">세로 x</text>
+<text class="f-cap" x="182" y="174" text-anchor="end">세로 3</text>
+<rect class="f-soft" x="200" y="57" width="224" height="85" rx="3"/>
+<rect class="f-box" x="424" y="57" width="72" height="85" rx="3"/>
+<rect class="f-box" x="200" y="142" width="224" height="55" rx="3"/>
+<rect class="f-soft" x="424" y="142" width="72" height="55" rx="3"/>
+<text class="f-t" x="312" y="105" text-anchor="middle">x²</text>
+<text class="f-t" x="460" y="105" text-anchor="middle">2x</text>
+<text class="f-t" x="312" y="175" text-anchor="middle">3x</text>
+<text class="f-t" x="460" y="175" text-anchor="middle">6</text>
+<text class="f-cap" x="348" y="231" text-anchor="middle">전체 넓이 = x² + 2x + 3x + 6</text>
+</svg>
+<figcaption>x가 양수일 때의 넓이 그림이다. 실제 길이 대신 식의 구조를 보기 위한 개략도다.</figcaption>
+</figure>
+<div class="box ex"><p class="box-k">풀이 예제</p><p><code>(x + 2)(x + 3) = x(x + 3) + 2(x + 3) = x² + 3x + 2x + 6 = x² + 5x + 6</code>입니다. 모든 항의 쌍을 한 번씩 곱한 뒤 지수가 같은 항끼리 모읍니다.</p></div>
+<p><code>(x − 3)²</code>도 <code>(x − 3)(x − 3)</code>이므로 <code>x² − 6x + 9</code>입니다. 첫 항의 제곱과 마지막 항의 제곱만 쓰면 두 교차항 <code>−3x</code>를 빠뜨립니다.</p>
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+
+<h2>인수분해는 곱의 구조를 되찾는 일</h2>
+<p><b class="key">인수</b>는 곱을 이루는 한 덩어리입니다. <code>6x² + 9x = 3x(2x + 3)</code>에서 두 항에 공통으로 곱해진 <code>3x</code>를 밖으로 꺼냈습니다. <code>x² − 9 = (x − 3)(x + 3)</code>은 합과 차를 곱하면 교차항이 지워지는 성질입니다. <code>x² + 5x + 6</code>에서는 합이 5, 곱이 6인 2와 3을 찾아 <code>(x + 2)(x + 3)</code>로 씁니다.</p>
+<p>먼저 공통인수를 찾고, 남은 부분의 구조를 봅니다. 인수분해가 맞는지 확인할 때는 다시 전개합니다. 서로 다른 두 식이 특정 x 하나에서 같은 값이라는 계산만으로는 항등식을 검증하지 못합니다. 예를 들어 x=1에서는 <code>x</code>와 <code>x²</code>가 모두 1이지만 대부분의 입력에서는 다릅니다.</p>
+<div class="check" data-q="q3"></div>
+<div class="check" data-q="q4"></div>
+
+<h2>분모를 먼저 살피고 약분한다</h2>
+<p><b class="key">유리식</b>은 다항식을 다항식으로 나눈 식입니다. 함수로 읽을 때 분모를 0으로 만드는 입력은 정의역에서 뺍니다. 예를 들어 <code>f(x) = (x² − 9)/(x − 3)</code>에는 x=3을 넣을 수 없습니다.</p>
+<div class="box ex"><p class="box-k">풀이 예제</p><p>① 원래 분모를 보고 <code>x ≠ 3</code>을 적습니다.<br>② 분자를 인수분해해 <code>(x − 3)(x + 3)/(x − 3)</code>을 얻습니다.<br>③ <code>x − 3 ≠ 0</code>인 곳에서 약분합니다.<br>결과는 <code>x + 3, 단 x ≠ 3</code>입니다.</p></div>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 302" role="img" aria-label="x+3의 직선에 (3, 6)의 빈 점이 있다. 원래 분모 x−3이 영이므로 그 한 점은 그래프에 속하지 않는다.">
+<text class="f-cap" x="94" y="24" text-anchor="start">f(x)</text>
+<text class="f-s" x="677" y="274" text-anchor="start">x</text>
+<line class="f-ink" x1="95" y1="45" x2="95" y2="242"/>
+<line class="f-ink" x1="95" y1="242" x2="661" y2="242"/>
+<line class="f-ink" x1="95" y1="242" x2="95" y2="249"/>
+<text class="f-s" x="95" y="269" text-anchor="middle">0</text>
+<line class="f-ink" x1="189.17" y1="242" x2="189.17" y2="249"/>
+<text class="f-s" x="189.17" y="269" text-anchor="middle">1</text>
+<line class="f-ink" x1="283.33" y1="242" x2="283.33" y2="249"/>
+<text class="f-s" x="283.33" y="269" text-anchor="middle">2</text>
+<line class="f-ink" x1="377.5" y1="242" x2="377.5" y2="249"/>
+<text class="f-s" x="377.5" y="269" text-anchor="middle">3</text>
+<line class="f-ink" x1="471.67" y1="242" x2="471.67" y2="249"/>
+<text class="f-s" x="471.67" y="269" text-anchor="middle">4</text>
+<line class="f-ink" x1="565.83" y1="242" x2="565.83" y2="249"/>
+<text class="f-s" x="565.83" y="269" text-anchor="middle">5</text>
+<line class="f-ink" x1="660" y1="242" x2="660" y2="249"/>
+<text class="f-s" x="660" y="269" text-anchor="middle">6</text>
+<line class="f-ink" x1="88" y1="242" x2="95" y2="242"/>
+<text class="f-s" x="80" y="246" text-anchor="end">2</text>
+<line class="f-dash" x1="95" y1="242" x2="661" y2="242"/>
+<line class="f-ink" x1="88" y1="192.75" x2="95" y2="192.75"/>
+<text class="f-s" x="80" y="196.75" text-anchor="end">4</text>
+<line class="f-dash" x1="95" y1="192.75" x2="661" y2="192.75"/>
+<line class="f-ink" x1="88" y1="143.5" x2="95" y2="143.5"/>
+<text class="f-s" x="80" y="147.5" text-anchor="end">6</text>
+<line class="f-dash" x1="95" y1="143.5" x2="661" y2="143.5"/>
+<line class="f-ink" x1="88" y1="94.25" x2="95" y2="94.25"/>
+<text class="f-s" x="80" y="98.25" text-anchor="end">8</text>
+<line class="f-dash" x1="95" y1="94.25" x2="661" y2="94.25"/>
+<line class="f-ink" x1="88" y1="45" x2="95" y2="45"/>
+<text class="f-s" x="80" y="49" text-anchor="end">10</text>
+<line class="f-dash" x1="95" y1="45" x2="661" y2="45"/>
+<polyline class="f-line" fill="none" points="95,217.38 109.13,213.68 123.25,209.99 137.38,206.29 151.5,202.6 165.63,198.91 179.75,195.21 193.88,191.52 208,187.82 222.13,184.13 236.25,180.44 250.38,176.74 264.5,173.05 278.63,169.36 292.75,165.66 306.88,161.97 321,158.27 335.13,154.58 349.25,150.89 363.38,147.19 377.5,143.5 391.63,139.81 405.75,136.11 419.88,132.42 434,128.73 448.13,125.03 462.25,121.34 476.38,117.64 490.5,113.95 504.63,110.26 518.75,106.56 532.88,102.87 547,99.18 561.13,95.48 575.25,91.79 589.38,88.09 603.5,84.4 617.63,80.71 631.75,77.01 645.88,73.32 660,69.63"/>
+<circle class="f-box" cx="377.5" cy="143.5" r="7"/>
+<line class="f-line" x1="449" y1="116" x2="389.5" y2="139.5" marker-end="url(#f-arrow)"/>
+<text class="f-t" x="459" y="118" text-anchor="start">빈 점 (3, 6)</text>
+</svg>
+<figcaption>약분한 규칙을 따라가다가도, 원래 함수의 x=3은 비워 둔다.</figcaption>
+</figure>
+<p>약분한 식을 <em>모든 실수</em>에서 정의한 <code>g(x) = x + 3</code>은 f의 그래프에서 빈 점을 채운 새 함수입니다. f(3)은 정의되지 않고 g(3)은 6입니다. 계산값이 같다는 말은 원래 정의역 안에서만 적용합니다.</p>
+<p class="small">실행 예제</p>
+<pre data-example="python"><code>from fractions import Fraction as F
+
+for x in (F(2), F(29, 10), F(3), F(31, 10), F(4)):
+    if x == 3:
+        print(x, "정의되지 않음")
+    else:
+        original = (x*x - 9) / (x - 3)
+        assert original == x + 3
+        print(x, original)</code></pre>
+<pre data-output><code>2 5
+29/10 59/10
+3 정의되지 않음
+31/10 61/10
+4 7</code></pre>
+<p>더 복잡한 예로 <code>(x² − 4)/[(x − 2)(x + 1)]</code>은 원래 x=2와 x=−1에서 정의되지 않습니다. <code>(x + 2)/(x + 1)</code>로 줄인 뒤에도 두 값은 계속 제외합니다. 반면 <code>(x + 3)/x</code>는 분자의 두 <em>항</em> 가운데 x가 하나 있다고 해서 약분할 수 없습니다. x는 분자 전체에 공통으로 곱해진 인수가 아닙니다. x≠0에서는 <code>1 + 3/x</code>로 나눠 쓰면 두 항이 모두 남습니다.</p>
+<div class="check" data-q="q5"></div>
+<div class="check" data-q="q6"></div>
+<div class="check" data-q="q7"></div>
+<div class="check" data-q="q8"></div>
+
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table><thead><tr><th scope="col">작업</th><th scope="col">확인할 것</th></tr></thead><tbody>
+<tr><th scope="row">전개</th><td>괄호 안 항의 쌍을 모두 곱하고 동류항을 모음</td></tr>
+<tr><th scope="row">인수분해</th><td>공통인수와 곱의 구조를 찾고 다시 전개해 검산</td></tr>
+<tr><th scope="row">유리식 약분</th><td>공통인수를 지우되 원래 분모가 0인 입력을 계속 제외</td></tr>
+</tbody></table></div>
+<div class="box sum"><p class="box-k">다음 장으로</p><p>하나의 다항식도 어떤 표현을 고르는지에 따라 읽기 쉬운 정보가 달라집니다. <a href="al06-2.html">다음 장</a>에서는 근과 최솟값을 각각 읽기 쉬운 형태로 바꿉니다.</p></div>
+
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://openstax.org/books/algebra-and-trigonometry-2e/pages/1-4-polynomials">다항식과 분배 연산</a></li>
+<li><a href="https://openstax.org/books/algebra-and-trigonometry-2e/pages/1-6-rational-expressions">유리식과 인수 약분</a></li>
+</ul>
+
+<h2>확인 문제</h2>
+<p>본문에서 다룬 예제를 떠올린 뒤 남은 문제를 직접 풀어 보세요.</p>
+<div id="quiz"></div>
+
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

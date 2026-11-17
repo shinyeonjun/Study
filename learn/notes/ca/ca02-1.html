@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>미분계수 · 한 순간의 변화율과 접선 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="CA02-1">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">미적분과 변화 · 미분의 뜻 · CA02</p>
+<p class="chap-num">CA02·1</p>
+<h1>미분계수 · 한 순간의 변화율과 접선</h1>
+<p class="lead">움직이는 물체가 2초에서 3초까지 평균 5 m/s로 움직였다고 할 때, 정확히 2초의 속도는 같은 값일까요? 시간 간격을 줄이며 두 위치를 잇는 직선의 기울기를 계산하고, 그 값이 어디에 가까워지는지 확인합니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul>
+<li>할선 기울기를 차분몫으로 표현한다.</li>
+<li>미분계수를 극한으로 구하고 단위를 해석한다.</li>
+<li>접선과 근사값을 계산하고 좌우 기울기가 다른 점을 찾는다.</li>
+</ul></div>
+<h2>가까운 두 시점을 골라 평균 변화율을 계산한다</h2>
+<p>직선 위를 움직이는 물체의 위치를 <code>s(t)=t²</code>라고 합시다. 여기서 t는 초로 잰 시간, s는 기준점에서 오른쪽으로 몇 미터 갔는지를 나타냅니다. 이 식은 설명을 위해 정한 모형입니다. 2초의 위치는 4 m이고 3초는 9 m입니다. 이 1초 동안에는 <code>(9 − 4) ÷ (3 − 2) = 5 m/s</code>만큼의 평균 속도가 나옵니다.</p>
+<p>구간을 2초부터 2.5초까지 줄이면 위치는 4 m에서 6.25 m로 바뀝니다. 평균 속도는 <code>(6.25 − 4) ÷ 0.5 = 4.5 m/s</code>입니다. 기준 시간을 2초로 정한 채 두 번째 시점을 바꾸면 평균 변화율도 달라집니다. 그 두 점을 지나는 직선을 <b class="key">할선</b>이라고 합니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 326" role="img" aria-label="시간 제곱으로 늘어나는 위치 그래프. 2초 위치 4미터에서 3초 위치 9미터를 잇는 선의 기울기는 5, 2.5초 위치 6.25미터를 잇는 선의 기울기는 4.5, 접선의 기울기는 4다.">
+<line class="f-ink" x1="118" y1="34" x2="118" y2="258"/>
+<line class="f-ink" x1="118" y1="258" x2="708" y2="258"/>
+<text class="f-s" x="106" y="279" text-anchor="end">0</text>
+<line class="f-ink" x1="112" y1="236" x2="118" y2="236"/><text class="f-s" x="102" y="240" text-anchor="end">1</text>
+<line class="f-ink" x1="112" y1="170" x2="118" y2="170"/><text class="f-s" x="102" y="174" text-anchor="end">4</text>
+<line class="f-ink" x1="112" y1="60" x2="118" y2="60"/><text class="f-s" x="102" y="64" text-anchor="end">9</text>
+<line class="f-ink" x1="238" y1="258" x2="238" y2="265"/><text class="f-s" x="238" y="284" text-anchor="middle">1</text>
+<line class="f-ink" x1="358" y1="258" x2="358" y2="265"/><text class="f-s" x="358" y="284" text-anchor="middle">2</text>
+<line class="f-ink" x1="418" y1="258" x2="418" y2="265"/><text class="f-s" x="418" y="284" text-anchor="middle">2.5</text>
+<line class="f-ink" x1="478" y1="258" x2="478" y2="265"/><text class="f-s" x="478" y="284" text-anchor="middle">3</text>
+<text class="f-cap" x="46" y="21" text-anchor="start">위치 s (m)</text>
+<text class="f-cap" x="619" y="283" text-anchor="start">시간 t (s)</text>
+<path class="f-ink" d="M118,258 Q307,258 496,39.705"/>
+<line stroke-dasharray="6 3" class="f-line" x1="358" y1="170" x2="478" y2="60"/>
+<line stroke-dasharray="2 2" class="f-line" x1="358" y1="170" x2="418" y2="120.5"/>
+<line class="f-line" x1="256" y1="244.8" x2="496" y2="68.8"/>
+<circle class="f-fill" cx="358" cy="170" r="5"/>
+<circle class="f-fill" cx="418" cy="120.5" r="4"/>
+<circle class="f-fill" cx="478" cy="60" r="4"/>
+<text class="f-s" x="338" y="157" text-anchor="end">P(2, 4)</text>
+<text class="f-s" x="430" y="109" text-anchor="start">Q(2.5, 6.25)</text>
+<text class="f-s" x="511" y="42" text-anchor="start">R(3, 9)</text>
+<text class="f-cap" x="517" y="115" text-anchor="start">실선: 접선 기울기 4</text>
+<text class="f-s" x="517" y="143" text-anchor="start">짧은 점선: P와 Q, 기울기 4.5</text>
+<text class="f-s" x="517" y="170" text-anchor="start">긴 점선: P와 R, 기울기 5</text>
+</svg>
+<figcaption>P는 고정하고 두 번째 점을 P 쪽으로 옮기면 할선의 기울기가 접선 기울기 4에 가까워집니다.</figcaption>
+</figure>
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+
+<h2>두 점 사이의 간격을 0에 가깝게 만든다</h2>
+<p>2초를 기준으로 두 번째 시점을 <code>2 + h</code>초라고 씁니다. h는 입력값의 변화량입니다. h가 양수면 조금 뒤, 음수면 조금 앞, 0이면 같은 시점입니다. 아래 비율은 입력이 h만큼 달라질 때 출력이 얼마나 달라지는지 나타냅니다. 두 시점이 같아지는 h=0을 바로 넣을 수는 없습니다.</p>
+<div class="box"><p class="box-k">차분몫과 미분계수</p><p><b class="key">차분몫</b>은 <code>[f(a+h) − f(a)] ÷ h</code>입니다(<code>h ≠ 0</code>). a가 정의역의 내부이고 h가 양수와 음수 쪽에서 0으로 가까워질 때 차분몫이 하나의 유한한 수로 모이면, 그 수를 a에서의 <b class="key">미분계수</b> <code>f′(a)</code>라고 합니다. <code>f′(a)</code>는 '에프 프라임 에이'라고 읽습니다.</p></div>
+<div class="box ex"><p class="box-k">풀이 예제</p><ol><li>분자는 <code>(2+h)² − 2² = 4h + h²</code>입니다.</li><li>h가 0이 아니므로 나누면 차분몫이 <code>4+h</code>입니다.</li><li>h가 0에 가까워지면 <code>4+h</code>는 4에 가까워집니다. 따라서 <code>s′(2)=4 m/s</code>입니다.</li></ol></div>
+<p>입력이 시간(초)이고 출력이 위치(미터)이므로, 위치 변화량을 시간 변화량으로 나눈 값의 단위는 m/s입니다. 단위가 바뀌면 미분계수의 숫자도 달라집니다. 예를 들어 초 대신 밀리초를 사용하면 같은 속도 4 m/s를 0.004 m/ms로 적습니다.</p>
+<pre data-example="python"><code>def position(t):
+    return t**2
+
+for h in (-0.5, -0.1, -0.01, 0.01, 0.1, 0.5):
+    rate = (position(2 + h) - position(2)) / h
+    assert abs(rate - (4 + h)) &lt; 1e-9
+    print(f"h={h:+.2f} s, 차분몫={rate:.2f} m/s")</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>h=-0.50 s, 차분몫=3.50 m/s
+h=-0.10 s, 차분몫=3.90 m/s
+h=-0.01 s, 차분몫=3.99 m/s
+h=+0.01 s, 차분몫=4.01 m/s
+h=+0.10 s, 차분몫=4.10 m/s
+h=+0.50 s, 차분몫=4.50 m/s</code></pre>
+<p>코드의 표는 몇 개의 h를 골라 계산한 예입니다. 극한이 4라는 근거는 표에 4와 가까운 수가 나왔다는 사실에만 있지 않습니다. 위에서 모든 h≠0에 대해 차분몫을 <code>4+h</code>로 정리했기 때문에 왼쪽과 오른쪽에서 같은 극한을 확인할 수 있습니다.</p>
+<div class="check" data-q="q3"></div>
+<div class="check" data-q="q4"></div>
+<div class="check" data-q="q5"></div>
+
+<h2>접선은 그 점에서 기울기를 맞춘 직선이다</h2>
+<p>함수의 그래프 <code>y=f(x)</code>에서 점 <code>(a,f(a))</code>를 지나고 기울기가 <code>f′(a)</code>인 직선이 <b class="key">접선</b>입니다. 따라서 접선식은 <code>y=f(a)+f′(a)(x−a)</code>로 씁니다. 위치 그래프의 2초 접선은 <code>s=4+4(t−2)</code>입니다. t=2.01이면 위치를 <code>4+4×0.01=4.04</code> m로 근사합니다. 실제 위치는 4.0401 m입니다. 가까운 곳에서의 근사이며 원래 식 전체를 대체하는 식으로 사용하지 않습니다.</p>
+<div class="table-wrap"><table>
+<tr><th scope="col">시점</th><th scope="col">원래 위치 s(t)</th><th scope="col">접선으로 계산한 위치</th><th scope="col">원래 위치 − 접선</th></tr>
+<tr><td>2 s</td><td>4 m</td><td>4 m</td><td>0 m</td></tr>
+<tr><td>2.01 s</td><td>4.0401 m</td><td>4.04 m</td><td>0.0001 m</td></tr>
+<tr><td>2.5 s</td><td>6.25 m</td><td>6 m</td><td>0.25 m</td></tr>
+</table></div>
+<div class="box trap"><p class="box-k">접선이 곡선과 딱 한 점에서만 만난다는 오해</p><p>접선 조건은 정해진 점에서 함수와 같은 기울기를 가진다는 뜻입니다. 멀리서 곡선을 다시 만나거나, 그 점에서 곡선이 직선을 가로지를 수도 있습니다. 두 그래프 전체에서 교점 개수를 세는 것으로 접선을 판정하지 않습니다.</p></div>
+<div class="check" data-q="q6"></div>
+<div class="check" data-q="q7"></div>
+
+<h2>한 점의 좌우 기울기가 다를 때</h2>
+<p><code>f(x)=|x|</code>에서 0의 차분몫은 <code>|h|/h</code>입니다. h&gt;0에서는 1, h&lt;0에서는 −1입니다. 양쪽에서 서로 다른 수가 나오므로 0에서는 보통의 양쪽 미분계수가 없습니다. 그렇다고 왼쪽이나 오른쪽에 기울기가 아예 없다는 뜻은 아닙니다. 0을 기준으로 한 방향에서만 접근한 값은 <b class="key">한쪽 미분계수</b>라고 합니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 245" role="img" aria-label="절댓값 함수 그래프가 원점에서 뾰족하다. 원점 왼쪽의 기울기는 마이너스 1, 오른쪽은 플러스 1이라 원점의 미분계수는 존재하지 않는다.">
+<line class="f-ink" x1="105" y1="174" x2="680" y2="174"/><line class="f-ink" x1="380" y1="32" x2="380" y2="207"/><line class="f-line" x1="225" y1="63" x2="380" y2="174"/><line class="f-line" x1="380" y1="174" x2="535" y2="63"/><text class="f-cap" x="160" y="77" text-anchor="middle">왼쪽 기울기 −1</text><text class="f-cap" x="605" y="77" text-anchor="middle">오른쪽 기울기 +1</text><text class="f-cap" x="394" y="41" text-anchor="start">y = |x|</text><text class="f-t" x="695" y="177" text-anchor="middle">x</text><circle class="f-fill" cx="380" cy="174" r="4"/><text class="f-s" x="367" y="198" text-anchor="end">0</text>
+</svg>
+<figcaption>원점에서 함수값은 자연스럽게 이어지지만 좌우 차분몫은 서로 다른 값으로 갑니다.</figcaption>
+</figure>
+<p>이 경우 함수값은 0에서 이어집니다. <a href="../../unit.html?u=CA01">연속</a>이어도 미분 가능하지 않을 수 있다는 예입니다. 반대로 a에서 미분 가능하면 a에서 연속입니다. <code>f(a+h)−f(a)</code>를 'h × 차분몫'으로 다시 쓰면, 미분 가능할 때 유한한 값으로 가는 차분몫에 0으로 가는 h를 곱하므로 함수값 변화가 0으로 갑니다.</p>
+<div class="check" data-q="q8"></div>
+<div class="why"><p class="box-k">왜 그럴까?</p><p><code>[(2+h)²−4] ÷ h</code>에 h=0을 먼저 넣을 수 없는데, 어떻게 2초에서의 변화율을 말할 수 있나요?</p><details><summary>모범 답 보기</summary><p>0을 넣은 비율의 값을 구하는 것이 아닙니다. 0이 아닌 h에서 차분몫이 4+h이고, h가 양쪽에서 0으로 가까워질 때 이 차분몫은 4에 가까워집니다.</p></details></div>
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table>
+<tr><th scope="col">구별할 말</th><th scope="col">뜻</th></tr>
+<tr><td><b class='key'>차분몫</b></td><td>간격 h가 0이 아닌 두 점 사이의 평균 변화율</td></tr>
+<tr><td><b class='key'>미분계수</b></td><td>간격을 양쪽에서 0으로 보내어 얻는 한 점의 변화율</td></tr>
+<tr><td><b class='key'>접선</b></td><td>함수값과 그 점의 기울기를 맞춘 직선</td></tr>
+<tr><td><b class='key'>단위</b></td><td>출력 변화의 단위 ÷ 입력 변화의 단위</td></tr>
+</table></div>
+<p>다음 장은 기준점을 2초에 고정하지 않고, 기준점마다 미분계수로 새 함수를 만드는 방법을 다룹니다.</p>
+<p class="small">공식 참고 자료 <a href="https://openstax.org/books/calculus-volume-1/pages/3-1-defining-the-derivative">OpenStax Calculus · 미분계수와 접선</a> · <a href="https://openstax.org/books/calculus-volume-1/pages/3-2-the-derivative-as-a-function">OpenStax Calculus · 연속과 미분 가능성</a></p>
+<h2>확인 문제</h2>
+<p>본문에서 풀지 않은 문제가 여기에 나옵니다. 결과를 예측한 뒤 필요하면 코드로 검산합니다.</p>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

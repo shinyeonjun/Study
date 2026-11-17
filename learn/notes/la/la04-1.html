@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>행렬 곱과 전치: 계산 전에 모양부터 읽기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="LA04-1">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">선형대수 · LA04 행렬 계산</p>
+<p class="chap-num">LA04·1</p>
+<h1>행렬 곱과 전치: 계산 전에 모양부터 읽기</h1>
+<p class="lead">두 매장의 품목별 수량으로 비용과 포장 무게를 계산합니다. 값 하나는 행과 열의 내적이며, 행렬 곱 전체는 이 계산을 여러 줄과 여러 열에 반복합니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>행렬–벡터와 행렬–행렬 곱의 모양을 손으로 구한다.</li><li>같은 행렬 곱을 행 내적과 열의 선형 결합으로 읽는다.</li><li>전치와 NumPy의 @·* 차이를 구분한다.</li></ul></div>
+
+<h2>행과 벡터의 내적</h2>
+<p>품목이 삼각김밥, 물, 샌드위치 순서입니다. 매장별 수량을 A=[[2,3,1],[1,2,4]]에 넣고 단가 w=(1200,800,3000)원을 열벡터로 생각합니다. Aw는 각 행의 수량을 단가와 내적합니다.</p>
+<div class="box ex"><p class="box-k">계산</p><p class="calc">첫 매장: 2×1200 + 3×800 + 1×3000 = 7800원<br>둘째 매장: 1×1200 + 2×800 + 4×3000 = 14800원</p><p>A는 2행 3열, w는 길이 3이므로 결과는 매장마다 하나인 길이 2의 벡터입니다.</p></div>
+<div class="check" data-q="q1"></div>
+<h2>열마다 가중치 묶음을 넣는다</h2>
+<p>포장 무게도 한꺼번에 구해 봅시다. 단가와 무게를 B의 열로 놓습니다. 행은 같은 품목 세 개입니다.</p>
+<div class="table-wrap"><table><thead><tr><th scope="col">품목</th><th scope="col">B 첫째 열: 원/개</th><th scope="col">B 둘째 열: g/개</th></tr></thead><tbody><tr><td>삼각김밥</td><td>1200</td><td>100</td></tr><tr><td>물</td><td>800</td><td>500</td></tr><tr><td>샌드위치</td><td>3000</td><td>200</td></tr></tbody></table></div>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 160" role="img" aria-label="수량 행렬 2×3과 품목별 가중치 3×2를 곱해 매장별 두 지표 2×2를 계산한다.">
+<rect class="f-box" x="42" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="135" y="61" text-anchor="middle">수량 A</text><text class="f-s" x="135" y="89" text-anchor="middle">2행 × 3열</text><text class="f-s" x="135" y="110" text-anchor="middle">행은 매장, 열은 품목</text><line class="f-line" x1="235" y1="84" x2="278" y2="84" marker-end="url(#f-arrow)"/><rect class="f-soft" x="287" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="380" y="61" text-anchor="middle">가중치 B</text><text class="f-s" x="380" y="89" text-anchor="middle">3행 × 2열</text><text class="f-s" x="380" y="110" text-anchor="middle">행은 품목, 열은 지표</text><line class="f-line" x1="480" y1="84" x2="523" y2="84" marker-end="url(#f-arrow)"/><rect class="f-box" x="532" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="625" y="61" text-anchor="middle">결과 AB</text><text class="f-s" x="625" y="89" text-anchor="middle">2행 × 2열</text><text class="f-s" x="625" y="110" text-anchor="middle">행은 매장, 열은 지표</text>
+</svg><figcaption>가운데 3은 같은 품목끼리 묶어서 내적할 길이다.</figcaption></figure>
+<p>일반적으로 (m×n)과 (n×p)를 곱하면 (m×p)입니다. (AB)<sub>ij</sub>는 <code>∑ₖ AᵢₖBₖⱼ</code>로, A의 i번째 행과 B의 j번째 열을 짝짓습니다. 여기서 (AB)<sub>12</sub>는 첫 매장의 무게이고 <code>2×100 + 3×500 + 1×200 = 1900</code> g입니다.</p>
+<div class="check" data-q="q2"></div>
+<div class="check" data-q="q3"></div>
+<h2>행 하나가 아닌 열 하나로도 읽기</h2>
+<p>Aw는 A의 열 세 개에 w의 세 계수를 각각 곱해 더한 결과이기도 합니다. A의 첫 열 (2,1)에 1200을, 둘째 열 (3,2)에 800을, 셋째 열 (1,4)에 3000을 곱해 합하면 (7800,14800)으로 같습니다. 행 중심 해석은 출력 한 자리를 계산하는 데 편하고, 열 중심 해석은 각 입력 방향의 기여를 보는 데 편합니다.</p>
+<pre data-example="python"><code>import numpy as np
+
+A = np.array([[2, 3, 1], [1, 2, 4]])
+B = np.array([[1200, 100], [800, 500], [3000, 200]])
+C = A @ B
+print(A.shape, B.shape, C.shape)
+print(C.tolist())
+print((C[:, 0] == A @ B[:, 0]).all())</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>(2, 3) (3, 2) (2, 2)
+[[7800, 1900], [14800, 1900]]
+True</code></pre>
+<p>이 예에서 둘째 매장 무게도 100 + 1000 + 800 = 1900g입니다. 비슷한 결과가 다른 조합에서도 나올 수 있습니다. 결과 한 숫자만으로 원래 수량을 되찾을 수 있는지는 다른 질문입니다.</p>
+<div class="check" data-q="q4"></div>
+<h2>전치와 원소별 곱</h2>
+<p><b class="key">전치</b> Aᵀ는 행과 열을 바꾸고, A<sub>ij</sub>를 Aᵀ<sub>ji</sub>에 놓습니다. NumPy의 2차원 배열에서 <code>A.T</code>는 전치이고, <code>A * B</code>는 가능한 경우 원소별로 곱합니다. 곱셈 기호를 똑같이 읽지 않습니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 160" role="img" aria-label="A의 1번 행 2번 열 값을 전치 후 2번 행 1번 열에 둔다. 인덱스는 0부터.">
+<rect class="f-box" x="42" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="135" y="61" text-anchor="middle">원래 A</text><text class="f-s" x="135" y="89" text-anchor="middle">(2, 3)</text><text class="f-s" x="135" y="110" text-anchor="middle">원소 A[1,2]</text><line class="f-line" x1="235" y1="84" x2="278" y2="84" marker-end="url(#f-arrow)"/><rect class="f-soft" x="287" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="380" y="61" text-anchor="middle">행·열 교환</text><text class="f-s" x="380" y="89" text-anchor="middle">인덱스를 바꾼다</text><text class="f-s" x="380" y="110" text-anchor="middle">값은 그대로</text><line class="f-line" x1="480" y1="84" x2="523" y2="84" marker-end="url(#f-arrow)"/><rect class="f-box" x="532" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="625" y="61" text-anchor="middle">A.T</text><text class="f-s" x="625" y="89" text-anchor="middle">(3, 2)</text><text class="f-s" x="625" y="110" text-anchor="middle">같은 원소 A.T[2,1]</text>
+</svg><figcaption>전치는 숫자를 바꾸지 않으며 자리를 옮긴다.</figcaption></figure>
+<div class="check" data-q="q5"></div>
+<div class="check" data-q="q6"></div>
+<h2>단위와 모양으로 검산하기</h2>
+<p>결과의 첫 열은 원, 둘째 열은 g입니다. 2×3과 2×2를 그대로 곱할 수 없습니다. 연결할 축의 길이와 의미를 먼저 확인하세요. 품목 순서가 어긋나면 모양이 맞더라도 올바른 결과를 얻지 못합니다.</p>
+
+<h2>참고 자료</h2>
+<ul><li><a href="https://ocw.mit.edu/courses/18-06sc-linear-algebra-fall-2011/pages/ax-b-and-the-four-subspaces/">MIT OCW · Linear Algebra, Ax = b and the Four Subspaces</a></li><li><a href="https://numpy.org/doc/stable/reference/generated/numpy.matmul.html">NumPy · 행렬 곱 matmul</a></li></ul>
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

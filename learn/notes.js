@@ -58,9 +58,17 @@ window.BDA_CHAPTERS = {
   AL05: [
     {"id": "AL05-1", "title": "직선과 변화율: 기울기, 일차함수, 잔차", "href": "notes/al/al05-1.html"}
   ],
+  AL06: [
+    {"id": "AL06-1", "title": "다항식을 펼치고, 약분 뒤에도 정의역 남기기", "href": "notes/al/al06-1.html"},
+    {"id": "AL06-2", "title": "이차함수의 뿌리, 꼭짓점과 최솟값", "href": "notes/al/al06-2.html"}
+  ],
   AL07: [
     {"id": "AL07-1", "title": "지수와 지수함수: 같은 양을 더할 때와 같은 배를 곱할 때", "href": "notes/al/al07-1.html"},
     {"id": "AL07-2", "title": "로그: 몇 번 곱했는지 거꾸로 찾기", "href": "notes/al/al07-2.html"}
+  ],
+  AL09: [
+    {"id": "AL09-1", "title": "등차와 등비: 항의 번호와 변화 규칙", "href": "notes/al/al09-1.html"},
+    {"id": "AL09-2", "title": "유한합과 유한곱, 조건을 세는 지시함수", "href": "notes/al/al09-2.html"}
   ],
   PY01: [
     {"id": "PY01-1", "title": "print와 변수", "href": "notes/py/py01-1.html"},
@@ -155,6 +163,45 @@ window.BDA_CHAPTERS = {
   DM03: [
     {"id": "DM03-1", "title": "경우의 수를 세는 두 법칙과 순열", "href": "notes/dm/dm03-1.html"},
     {"id": "DM03-2", "title": "순서를 빼고 세기: 조합과 이항계수", "href": "notes/dm/dm03-2.html"}
+  ],
+  LA01: [
+    {"id": "LA01-1", "title": "벡터와 성분: 한 관측을 숫자 여러 개로 나타내기", "href": "notes/la/la01-1.html"},
+    {"id": "LA01-2", "title": "벡터 덧셈과 스칼라곱: 방향과 성분으로 계산하기", "href": "notes/la/la01-2.html"}
+  ],
+  LA02: [
+    {"id": "LA02-1", "title": "내적과 노름: 가중합과 거리 계산", "href": "notes/la/la02-1.html"},
+    {"id": "LA02-2", "title": "직교·사영·코사인 유사도: 방향을 따로 읽기", "href": "notes/la/la02-2.html"}
+  ],
+  LA03: [
+    {"id": "LA03-1", "title": "행렬의 두 관점: 숫자 표와 선형변환", "href": "notes/la/la03-1.html"}
+  ],
+  LA04: [
+    {"id": "LA04-1", "title": "행렬 곱과 전치: 계산 전에 모양부터 읽기", "href": "notes/la/la04-1.html"},
+    {"id": "LA04-2", "title": "행렬 곱의 순서와 변환의 합성", "href": "notes/la/la04-2.html"}
+  ],
+  LA05: [
+    {"id": "LA05-1", "title": "가우스 소거: 연립식의 해가 한 개·없음·여러 개인 경우", "href": "notes/la/la05-1.html"},
+    {"id": "LA05-2", "title": "역행렬과 선형계 풀이: 어떻게 되돌릴 것인가", "href": "notes/la/la05-2.html"}
+  ],
+  CA01: [
+    {"id": "CA01-1", "title": "항을 크게 보낼 때와 두 점을 좁힐 때", "href": "notes/ca/ca01-1.html"},
+    {"id": "CA01-2", "title": "함수의 극한과 연속: 그 점과 그 주변", "href": "notes/ca/ca01-2.html"}
+  ],
+  CA02: [
+    {"id": "CA02-1", "title": "미분계수 · 한 순간의 변화율과 접선", "href": "notes/ca/ca02-1.html"},
+    {"id": "CA02-2", "title": "도함수 · 증가와 감소, 극값 찾기", "href": "notes/ca/ca02-2.html"}
+  ],
+  CA03: [
+    {"id": "CA03-1", "title": "미분 계산 · 다항식, 곱·몫, 지수·로그", "href": "notes/ca/ca03-1.html"},
+    {"id": "CA03-2", "title": "합성함수의 연쇄법칙과 작은 계산 그래프", "href": "notes/ca/ca03-2.html"}
+  ],
+  CA04: [
+    {"id": "CA04-1", "title": "편미분과 기울기: 어느 쪽으로 움직이면 더 빨리 변할까", "href": "notes/ca/ca04-1.html"},
+    {"id": "CA04-2", "title": "다변수 연쇄법칙과 야코비 행렬", "href": "notes/ca/ca04-2.html"}
+  ],
+  CA05: [
+    {"id": "CA05-1", "title": "정적분: 순간 변화율을 합해 순변화를 구하기", "href": "notes/ca/ca05-1.html"},
+    {"id": "CA05-2", "title": "부정적분·치환과 측정값의 수치 적분", "href": "notes/ca/ca05-2.html"}
   ],
   PR01: [
     {"id": "PR01-1", "title": "가능한 결과와 그중에 묻는 사건", "href": "notes/pr/pr01-1.html"}

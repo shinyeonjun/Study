@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>정적분: 순간 변화율을 합해 순변화를 구하기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e8c'/%3E%3Cpath d='M8 22V10m8 12V14m8 8V6' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="CA05-1">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+
+<header class="chapter">
+<p class="chap-sub">미적분과 변화 · CA05 적분과 누적</p>
+<p class="chap-num">CA05·1</p>
+<h1>정적분: 순간 변화율을 합해 순변화를 구하기</h1>
+<p class="lead">물탱크에 물이 들어올 때는 양의 유량, 빠질 때는 음의 유량으로 기록한다고 합시다. 그래프 높이는 분당 몇 L인지 나타냅니다. 구간 하나에 담긴 양을 구하려면 그 높이에 시간을 곱합니다. 시간을 잘게 나누어 양을 합하는 과정에서 정적분이 등장합니다.</p>
+</header>
+
+<div class="goal">
+<h2>이 장을 읽고 나면</h2>
+<ul>
+<li>유량과 순변화량의 단위를 구별하고 그래프 부호를 해석한다.</li>
+<li>구간을 분할해 왼쪽·오른쪽 리만 합을 구한다.</li>
+<li>미적분의 기본정리 두 관점을 누적 함수와 실제 계산에 적용한다.</li>
+</ul>
+</div>
+
+<h2>변화율에 시간을 곱하면 변화량이 된다</h2>
+<p>유량이 2 L/분으로 일정하면 3분에 6 L가 들어옵니다. −2 L/분이면 3분에 순변화가 −6 L입니다. ‘높이 × 폭’이 하는 일입니다. 유량이 계속 달라지는 경우에는 폭을 잘게 나눠 각 안에서 유량이 거의 일정하다고 보고, 구간별 변화량을 더합니다.</p>
+<p>여기서는 0분부터 5분까지 순유량의 숫자를 r(t) = t − 2라고 둡니다. t는 분으로 읽고 r은 L/분으로 읽습니다. 처음엔 물이 빠지다가 2분을 지나 유입으로 바뀝니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 242" role="img" aria-label="유량 r=t−2의 그래프는 2분에서 0을 지난다. 0~2분에는 축 아래 삼각형의 넓이가 2, 2~5분에는 축 위 삼각형의 넓이가 4.5이다. 부호를 붙인 순변화량은 -2+4.5=2.5리터다.">
+<polygon class="f-over" points="105,202 105,142 309,142"/>
+<polygon class="f-soft" points="309,142 615,142 615,52"/>
+<line class="f-ink" x1="87" y1="142" x2="661" y2="142" marker-end="url(#f-arrow)"/>
+<line class="f-ink" x1="105" y1="213" x2="105" y2="31" marker-end="url(#f-arrow)"/>
+<text class="f-cap" x="87" y="23" text-anchor="start">r (L/분)</text>
+<text class="f-cap" x="689" y="146" text-anchor="middle">t (분)</text>
+<line class="f-ink" x1="105" y1="138" x2="105" y2="146"/>
+<text class="f-s" x="105" y="159" text-anchor="middle">0</text>
+<line class="f-ink" x1="207" y1="138" x2="207" y2="146"/>
+<text class="f-s" x="207" y="159" text-anchor="middle">1</text>
+<line class="f-ink" x1="309" y1="138" x2="309" y2="146"/>
+<text class="f-s" x="309" y="159" text-anchor="middle">2</text>
+<line class="f-ink" x1="411" y1="138" x2="411" y2="146"/>
+<text class="f-s" x="411" y="159" text-anchor="middle">3</text>
+<line class="f-ink" x1="513" y1="138" x2="513" y2="146"/>
+<text class="f-s" x="513" y="159" text-anchor="middle">4</text>
+<line class="f-ink" x1="615" y1="138" x2="615" y2="146"/>
+<text class="f-s" x="615" y="159" text-anchor="middle">5</text>
+<line class="f-ink" x1="101" y1="202" x2="109" y2="202"/>
+<text class="f-s" x="95" y="206" text-anchor="end">-2</text>
+<line class="f-ink" x1="101" y1="172" x2="109" y2="172"/>
+<text class="f-s" x="95" y="176" text-anchor="end">-1</text>
+<line class="f-ink" x1="101" y1="112" x2="109" y2="112"/>
+<text class="f-s" x="95" y="116" text-anchor="end">1</text>
+<line class="f-ink" x1="101" y1="82" x2="109" y2="82"/>
+<text class="f-s" x="95" y="86" text-anchor="end">2</text>
+<line class="f-ink" x1="101" y1="52" x2="109" y2="52"/>
+<text class="f-s" x="95" y="56" text-anchor="end">3</text>
+<line class="f-line" x1="105" y1="202" x2="615" y2="52"/>
+<circle class="f-fill" cx="309" cy="142" r="4"/>
+<text class="f-s" x="166" y="177" text-anchor="middle">아래 · −2L</text>
+<text class="f-t" x="533" y="121" text-anchor="middle">위 · +4.5L</text>
+<text class="f-cap" x="380" y="228" text-anchor="middle">순변화량 = −2 + 4.5 = +2.5L</text>
+</svg>
+<figcaption>면적에는 가로 분과 세로 L/분의 곱인 L 단위가 붙는다.</figcaption>
+</figure>
+<div class="box ex"><p class="box-k">풀이 예제</p>
+<p>0~2분의 삼각형은 폭 2분, 높이 2 L/분입니다. 물이 빠지므로 순변화는 −(2 × 2)/2 = −2 L입니다. 2~5분에는 폭 3분, 높이 3 L/분이라 +(3 × 3)/2 = +4.5 L입니다.</p><p class="calc">순변화량 = −2 + 4.5 = 2.5 L.<br>순유량의 절댓값을 누적한 양 = 2 + 4.5 = 6.5 L.</p><p>부호는 물의 양이 늘었는지 줄었는지를 알려 줍니다. 두 질문에 답하는 값은 다릅니다.</p>
+</div>
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+<h2>시간을 나누어 직사각형으로 근사한다</h2>
+<p>0~5분을 폭 Δt = 1분짜리 다섯 구간으로 나눕니다. 각 구간에서 왼쪽 끝 시각의 유량을 그 구간 대표값으로 씁니다. 계산은 (−2)×1 + (−1)×1 + 0×1 + 1×1 + 2×1 = 0L입니다. 오른쪽 끝을 쓰면 (−1 + 0 + 1 + 2 + 3)×1 = 5L입니다. 두 값이 다른 것은 경계 하나의 유량만으로 구간 전체를 근사했기 때문입니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 242" role="img" aria-label="0부터 5분을 폭 1분씩 여섯 경계로 나눈다. 각 구간의 왼쪽 끝 높이 -2,-1,0,1,2를 써 직사각형을 그리고 부호 있는 합 0리터를 얻는다.">
+<rect class="f-over" x="105" y="142" width="102" height="60"/>
+<rect class="f-over" x="207" y="142" width="102" height="30"/>
+<rect class="f-soft" x="411" y="112" width="102" height="30"/>
+<rect class="f-soft" x="513" y="82" width="102" height="60"/>
+<line class="f-ink" x1="87" y1="142" x2="661" y2="142" marker-end="url(#f-arrow)"/>
+<line class="f-ink" x1="105" y1="213" x2="105" y2="31" marker-end="url(#f-arrow)"/>
+<text class="f-cap" x="87" y="23" text-anchor="start">r (L/분)</text>
+<text class="f-cap" x="689" y="146" text-anchor="middle">t (분)</text>
+<line class="f-ink" x1="105" y1="138" x2="105" y2="146"/>
+<text class="f-s" x="105" y="159" text-anchor="middle">0</text>
+<line class="f-ink" x1="207" y1="138" x2="207" y2="146"/>
+<text class="f-s" x="207" y="159" text-anchor="middle">1</text>
+<line class="f-ink" x1="309" y1="138" x2="309" y2="146"/>
+<text class="f-s" x="309" y="159" text-anchor="middle">2</text>
+<line class="f-ink" x1="411" y1="138" x2="411" y2="146"/>
+<text class="f-s" x="411" y="159" text-anchor="middle">3</text>
+<line class="f-ink" x1="513" y1="138" x2="513" y2="146"/>
+<text class="f-s" x="513" y="159" text-anchor="middle">4</text>
+<line class="f-ink" x1="615" y1="138" x2="615" y2="146"/>
+<text class="f-s" x="615" y="159" text-anchor="middle">5</text>
+<line class="f-ink" x1="101" y1="202" x2="109" y2="202"/>
+<text class="f-s" x="95" y="206" text-anchor="end">-2</text>
+<line class="f-ink" x1="101" y1="172" x2="109" y2="172"/>
+<text class="f-s" x="95" y="176" text-anchor="end">-1</text>
+<line class="f-ink" x1="101" y1="112" x2="109" y2="112"/>
+<text class="f-s" x="95" y="116" text-anchor="end">1</text>
+<line class="f-ink" x1="101" y1="82" x2="109" y2="82"/>
+<text class="f-s" x="95" y="86" text-anchor="end">2</text>
+<line class="f-ink" x1="101" y1="52" x2="109" y2="52"/>
+<text class="f-s" x="95" y="56" text-anchor="end">3</text>
+<line class="f-line" x1="105" y1="202" x2="615" y2="52"/>
+<circle class="f-fill" cx="105" cy="202" r="3"/>
+<circle class="f-fill" cx="207" cy="172" r="3"/>
+<circle class="f-fill" cx="309" cy="142" r="3"/>
+<circle class="f-fill" cx="411" cy="112" r="3"/>
+<circle class="f-fill" cx="513" cy="82" r="3"/>
+<circle class="f-fill" cx="615" cy="52" r="3"/>
+<text class="f-t" x="156" y="188" text-anchor="middle">-2</text>
+<text class="f-t" x="258" y="164" text-anchor="middle">-1</text>
+<text class="f-t" x="360" y="177" text-anchor="middle">0</text>
+<text class="f-t" x="462" y="128" text-anchor="middle">+1</text>
+<text class="f-t" x="564" y="98" text-anchor="middle">+2</text>
+<text class="f-cap" x="382" y="228" text-anchor="middle">폭 1분 × 높이의 합 (−2 − 1 + 0 + 1 + 2)</text>
+</svg>
+<figcaption>같은 함수 위에 직사각형을 그렸다. 시작점의 높이로 계산한 면적은 아직 근삿값이다.</figcaption>
+</figure>
+<div class="box "><p class="box-k">리만 합과 정적분</p>
+<p>구간마다 대표점 tᵢ*를 골라 높이와 폭을 곱해 더한 값이 <b class="key">리만 합</b>(Riemann sum)입니다. 같은 폭으로 나누면 ∑ r(tᵢ*)·Δt이고, 폭이 제각각이면 각 구간의 Δtᵢ를 곱합니다.</p><p>분할의 가장 넓은 구간도 0으로 줄일 때 대표점 선택에 관계없이 같은 극한을 얻으면, 그 값이 <b class="key">정적분</b> ∫<sub>a</sub><sup>b</sup> r(t) dt입니다. 이 장처럼 닫힌 구간에서 연속인 함수는 적분할 수 있습니다.</p>
+</div>
+<p>∫는 잘게 나누어 합한다는 표기이고, a와 b는 적분 범위입니다. dt는 t에 대해 폭을 잡는다는 표기입니다. 정적분의 결과는 숫자 하나입니다. 구간을 이어 붙이면 순변화량도 더할 수 있습니다. 양 끝을 거꾸로 쓰면 부호를 뒤집는 규약을 사용합니다. a와 b가 같으면 구간 길이가 0이므로 적분도 0입니다.</p>
+<div class="check" data-q="q3"></div>
+<div class="check" data-q="q4"></div>
+<div class="check" data-q="q5"></div>
+<h2>누적한 함수를 미분하면 순간 변화율이 돌아온다</h2>
+<p>정적분의 위끝을 바꾸어 <b>A(x) = ∫<sub>0</sub><sup>x</sup> r(t) dt</b>라고 두면, x를 넣었을 때 처음부터 그때까지 얼마나 물이 달라졌는지 주는 함수가 됩니다. x 근처의 작은 구간에서 r이 연속이라면, 그 구간의 면적을 폭 h로 나눈 값은 h가 작은 동안 r(x)에 가까워집니다. 따라서 내부점에서 <b>A′(x) = r(x)</b>입니다.</p>
+<p>이를 <b class="key">미적분의 기본정리</b>의 누적 관점으로 읽습니다. A(x)는 순변화량이고 저장량 그 자체는 아닙니다. 초기 저장량이 10L라면 저장량은 10 + A(x)입니다. 2분에 A(2) = −2L여서 저장량은 8L이고, 5분에는 A(5) = 2.5L여서 12.5L입니다.</p>
+<div class="check" data-q="q6"></div>
+<div class="check" data-q="q7"></div>
+<h2>순간 변화율의 원시함수를 알면 정적분을 계산한다</h2>
+<p>미분해서 r이 되는 함수 F를 원시함수라고 합니다. r이 [a, b]에서 연속이고 F가 원시함수라면 누적 함수와 F는 같은 도함수를 갖습니다. 초기 누적량을 0으로 맞추면 <b>정적분 ∫<sub>a</sub><sup>b</sup> r(t) dt = F(b) − F(a)</b>입니다. 원시함수에 어떤 상수를 더해도 이 차에서는 상쇄됩니다.</p>
+<p>예에서는 F(t) = t²/2 − 2t입니다. F′(t) = t − 2입니다. F(5) − F(0) = 25/2 − 10 − 0 = 2.5L라 그래프 넓이와 맞습니다. 두 기본정리의 관점을 연결하면, ‘적분으로 함수를 만든 뒤 미분’과 ‘미분이 알려진 함수의 끝값 차이’가 같은 구조입니다.</p>
+<pre data-example="python"><code>def rate(t):
+    return t - 2
+
+for n in (5, 10, 100):
+    dt = 5 / n
+    left = dt * sum(rate(i * dt) for i in range(n))
+    right = dt * sum(rate((i + 1) * dt) for i in range(n))
+    print(f"{n:3d}칸: 왼쪽 {left:.3f}, 오른쪽 {right:.3f}")
+
+def F(t):
+    return t*t/2 - 2*t
+
+print(f"정적분: {F(5)-F(0):.3f} L")</code></pre>
+<pre data-output><code>  5칸: 왼쪽 0.000, 오른쪽 5.000
+ 10칸: 왼쪽 1.250, 오른쪽 3.750
+100칸: 왼쪽 2.375, 오른쪽 2.625
+정적분: 2.500 L</code></pre>
+<p>이 예에서 함수가 증가하기 때문에 왼쪽 합이 작고 오른쪽 합이 큽니다. 일반적인 함수를 두고 한쪽 합이 항상 낮다고 말할 수는 없습니다. 더 잘게 나눈 결과가 어디로 가는지와 실제 함수의 모양을 함께 봅니다.</p>
+<div class="check" data-q="q8"></div>
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table>
+<tr><th scope="col">묻는 것</th><th scope="col">계산</th></tr>
+<tr><td>유량에서 순변화</td><td>각 구간에 r × 폭, 축 아래는 음수로 합한다.</td></tr>
+<tr><td>순유량의 크기를 누적</td><td>∫ |r(t)| dt. 양과 음이 상쇄되지 않는다.</td></tr>
+<tr><td>누적 변화까지의 순간 기울기</td><td>r이 연속인 내부점에서 A′(x) = r(x).</td></tr>
+<tr><td>한 구간의 정적분</td><td>연속 r의 원시함수 F를 찾아 F(위끝) − F(아래끝).</td></tr>
+</table></div>
+<h2>참고 자료</h2>
+<ul><li><a href="https://openstax.org/books/calculus-volume-1/pages/5-2-the-definite-integral">OpenStax · 정적분과 부호 있는 넓이</a></li>
+<li><a href="https://openstax.org/books/calculus-volume-1/pages/5-3-the-fundamental-theorem-of-calculus">OpenStax · 미적분의 기본정리</a></li></ul>
+
+<h2>확인 문제</h2>
+<p>본문에서 푼 것 말고 남은 문제입니다. 먼저 답을 정한 뒤 해설을 확인합니다.</p>
+<div id="quiz"></div>
+
+<section class="work" id="tools"></section>
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

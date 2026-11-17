@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>이차함수의 뿌리, 꼭짓점과 최솟값 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e8c'/%3E%3Cpath d='M8 22V10m8 12V14m8 8V6' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="AL06-2">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+
+<header class="chapter">
+<p class="chap-sub">대수·함수·그래프 · AL06 다항식과 이차함수</p>
+<p class="chap-num">AL06·2</p>
+<h1>이차함수의 뿌리, 꼭짓점과 최솟값</h1>
+<p class="lead">같은 이차함수를 전개해도, 곱으로 써도, 제곱 하나와 상수로 써도 그래프는 그대로입니다. 곱은 함수값이 0인 곳을 보여 주고, 제곱은 값이 가장 작거나 큰 곳을 보여 줍니다.</p>
+</header>
+
+<div class="goal">
+<h2>이 장을 읽고 나면</h2>
+<ul>
+<li>이차함수의 세 가지 형태에서 읽을 수 있는 정보를 구별한다.</li>
+<li>완전제곱식으로 꼭짓점과 최댓값·최솟값을 구한다.</li>
+<li>이차방정식의 실근 수를 판별식으로 해석한다.</li>
+<li>입력에 제한이 있는 최솟값 문제를 구별한다.</li>
+</ul>
+</div>
+
+<h2>함수값이 0인 입력을 고르기</h2>
+<p>실수 x에 대해 <code>f(x) = x² − 6x + 5</code>를 정의합니다. <b class="key">이차함수</b>는 일반적으로 <code>ax² + bx + c</code>이며 a가 0이 아닙니다. 이 함수의 <b class="key">근</b>은 <code>f(x) = 0</code>을 만족하는 x입니다. 그래프에서 x축과 만나는 점의 x좌표와 같습니다.</p>
+<div class="box ex"><p class="box-k">풀이 예제</p><p><code>x² − 6x + 5 = (x − 1)(x − 5)</code>입니다. 두 실수를 곱한 결과가 0이라면 적어도 하나가 0입니다. 따라서 <code>x − 1 = 0</code> 또는 <code>x − 5 = 0</code>에서 근은 1, 5입니다. 근은 입력값이고, y절편은 x=0의 출력인 5입니다.</p></div>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 301" role="img" aria-label="f(x)=x²−6x+5의 아래로 낮아졌다 올라가는 포물선. (1, 0)과 (5, 0)에서 x축을 만나며 꼭짓점은 (3, −4)다.">
+<text class="f-cap" x="94" y="24" text-anchor="start">f(x)</text>
+<text class="f-s" x="677" y="274" text-anchor="start">x</text>
+<line class="f-ink" x1="95" y1="45" x2="95" y2="242"/>
+<line class="f-ink" x1="95" y1="242" x2="661" y2="242"/>
+<line class="f-ink" x1="95" y1="242" x2="95" y2="249"/>
+<text class="f-s" x="95" y="269" text-anchor="middle">0</text>
+<line class="f-ink" x1="189.17" y1="242" x2="189.17" y2="249"/>
+<text class="f-s" x="189.17" y="269" text-anchor="middle">1</text>
+<line class="f-ink" x1="283.33" y1="242" x2="283.33" y2="249"/>
+<text class="f-s" x="283.33" y="269" text-anchor="middle">2</text>
+<line class="f-ink" x1="377.5" y1="242" x2="377.5" y2="249"/>
+<text class="f-s" x="377.5" y="269" text-anchor="middle">3</text>
+<line class="f-ink" x1="471.67" y1="242" x2="471.67" y2="249"/>
+<text class="f-s" x="471.67" y="269" text-anchor="middle">4</text>
+<line class="f-ink" x1="565.83" y1="242" x2="565.83" y2="249"/>
+<text class="f-s" x="565.83" y="269" text-anchor="middle">5</text>
+<line class="f-ink" x1="660" y1="242" x2="660" y2="249"/>
+<text class="f-s" x="660" y="269" text-anchor="middle">6</text>
+<line class="f-ink" x1="88" y1="225.58" x2="95" y2="225.58"/>
+<text class="f-s" x="80" y="229.58" text-anchor="end">-4</text>
+<line class="f-dash" x1="95" y1="225.58" x2="661" y2="225.58"/>
+<line class="f-ink" x1="88" y1="192.75" x2="95" y2="192.75"/>
+<text class="f-s" x="80" y="196.75" text-anchor="end">-2</text>
+<line class="f-dash" x1="95" y1="192.75" x2="661" y2="192.75"/>
+<line class="f-ink" x1="88" y1="159.92" x2="95" y2="159.92"/>
+<text class="f-s" x="80" y="163.92" text-anchor="end">0</text>
+<line class="f-ink" x1="95" y1="159.92" x2="661" y2="159.92"/>
+<line class="f-ink" x1="88" y1="127.08" x2="95" y2="127.08"/>
+<text class="f-s" x="80" y="131.07999999999998" text-anchor="end">2</text>
+<line class="f-dash" x1="95" y1="127.08" x2="661" y2="127.08"/>
+<line class="f-ink" x1="88" y1="94.25" x2="95" y2="94.25"/>
+<text class="f-s" x="80" y="98.25" text-anchor="end">4</text>
+<line class="f-dash" x1="95" y1="94.25" x2="661" y2="94.25"/>
+<line class="f-ink" x1="88" y1="61.42" x2="95" y2="61.42"/>
+<text class="f-s" x="80" y="65.42" text-anchor="end">6</text>
+<line class="f-dash" x1="95" y1="61.42" x2="661" y2="61.42"/>
+<line class="f-dash" x1="377.5" y1="45" x2="377.5" y2="242"/>
+<polyline class="f-line" fill="none" points="95,77.83 109.13,92.24 123.25,105.91 137.38,118.83 151.5,131.02 165.63,142.47 179.75,153.19 193.88,163.16 208,172.39 222.13,180.89 236.25,188.65 250.38,195.66 264.5,201.94 278.63,207.48 292.75,212.29 306.88,216.35 321,219.67 335.13,222.26 349.25,224.11 363.38,225.21 377.5,225.58 391.63,225.21 405.75,224.11 419.88,222.26 434,219.67 448.13,216.35 462.25,212.29 476.38,207.48 490.5,201.94 504.63,195.66 518.75,188.65 532.88,180.89 547,172.39 561.13,163.16 575.25,153.19 589.38,142.47 603.5,131.02 617.63,118.83 631.75,105.91 645.88,92.24 660,77.83"/>
+<circle class="f-fill" cx="189.17" cy="159.92" r="5"/>
+<circle class="f-fill" cx="377.5" cy="225.58" r="5"/>
+<circle class="f-fill" cx="565.83" cy="159.92" r="5"/>
+<text class="f-s" x="174.17" y="147.92" text-anchor="end">(1, 0)</text>
+<text class="f-s" x="580.83" y="147.92" text-anchor="start">(5, 0)</text>
+<text class="f-s" x="405.5" y="216.58" text-anchor="start">(3, −4)</text>
+<text class="f-s" x="391.5" y="63" text-anchor="start">대칭축 x = 3</text>
+</svg>
+<figcaption>x축 교점은 두 근의 위치이고, 꼭짓점은 가장 낮은 출력이 있는 점이다.</figcaption>
+</figure>
+<p>인수분해된 식에서 a가 빠지면 같은 근을 가져도 다른 함수가 될 수 있습니다. 예를 들어 <code>2(x − 1)(x − 5)</code>은 근이 같지만 y절편은 10입니다.</p>
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+
+<h2>완전제곱으로 꼭짓점 읽기</h2>
+<p><code>x² − 6x</code>를 <code>(x − 3)²</code>로 만들려면 9를 더해야 합니다. 식 전체의 값이 바뀌지 않도록 같은 9를 빼면 <code>x² − 6x + 5 = (x² − 6x + 9) − 9 + 5 = (x − 3)² − 4</code>입니다. 이를 <b class="key">완전제곱</b>으로 정리한다고 합니다.</p>
+<p><code>(x − 3)²</code>은 0 이상이며 x=3에서만 0입니다. 따라서 모든 실수에서 가장 작은 함수값은 −4이고, 그때의 입력은 3입니다. 좌표 <code>(3, −4)</code>가 <b class="key">꼭짓점</b>입니다. 입력 3, 출력 −4, 점 (3, −4)는 질문에 따라 구분해 답합니다. x=3에서 같은 거리만큼 떨어진 두 점은 제곱이 같아 그래프가 좌우 대칭입니다.</p>
+<div class="box"><p class="box-k">일반형에서 읽기</p><p><code>ax² + bx + c = a(x + b/(2a))² + c − b²/(4a)</code>입니다. 대칭축은 <code>x = −b/(2a)</code>입니다. 앞 계수 a가 양수이면 꼭짓점이 최솟값, 음수이면 최댓값을 줍니다. 이 말은 정의역을 모든 실수로 두었을 때의 결론입니다.</p></div>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 301" role="img" aria-label="g(x)=−2(x−1)²+8에서는 x=1일 때 최대 8이다. x=0과 2는 꼭짓점에서 같은 거리이고 함수값이 6으로 같다.">
+<text class="f-cap" x="94" y="24" text-anchor="start">g(x)</text>
+<text class="f-s" x="677" y="274" text-anchor="start">x</text>
+<line class="f-ink" x1="95" y1="45" x2="95" y2="242"/>
+<line class="f-ink" x1="95" y1="242" x2="661" y2="242"/>
+<line class="f-ink" x1="151.5" y1="242" x2="151.5" y2="249"/>
+<text class="f-s" x="151.5" y="269" text-anchor="middle">-1</text>
+<line class="f-ink" x1="264.5" y1="242" x2="264.5" y2="249"/>
+<text class="f-s" x="264.5" y="269" text-anchor="middle">0</text>
+<line class="f-ink" x1="377.5" y1="242" x2="377.5" y2="249"/>
+<text class="f-s" x="377.5" y="269" text-anchor="middle">1</text>
+<line class="f-ink" x1="490.5" y1="242" x2="490.5" y2="249"/>
+<text class="f-s" x="490.5" y="269" text-anchor="middle">2</text>
+<line class="f-ink" x1="603.5" y1="242" x2="603.5" y2="249"/>
+<text class="f-s" x="603.5" y="269" text-anchor="middle">3</text>
+<line class="f-ink" x1="88" y1="227.93" x2="95" y2="227.93"/>
+<text class="f-s" x="80" y="231.93" text-anchor="end">-4</text>
+<line class="f-dash" x1="95" y1="227.93" x2="661" y2="227.93"/>
+<line class="f-ink" x1="88" y1="171.64" x2="95" y2="171.64"/>
+<text class="f-s" x="80" y="175.64" text-anchor="end">0</text>
+<line class="f-ink" x1="95" y1="171.64" x2="661" y2="171.64"/>
+<line class="f-ink" x1="88" y1="115.36" x2="95" y2="115.36"/>
+<text class="f-s" x="80" y="119.36" text-anchor="end">4</text>
+<line class="f-dash" x1="95" y1="115.36" x2="661" y2="115.36"/>
+<line class="f-ink" x1="88" y1="59.07" x2="95" y2="59.07"/>
+<text class="f-s" x="80" y="63.07" text-anchor="end">8</text>
+<line class="f-dash" x1="95" y1="59.07" x2="661" y2="59.07"/>
+<line class="f-dash" x1="377.5" y1="45" x2="377.5" y2="242"/>
+<polyline class="f-line" fill="none" points="95,234.96 109.13,217.81 123.25,201.54 137.38,186.15 151.5,171.64 165.63,158.01 179.75,145.26 193.88,133.39 208,122.39 222.13,112.28 236.25,103.04 250.38,94.69 264.5,87.21 278.63,80.62 292.75,74.9 306.88,70.06 321,66.11 335.13,63.03 349.25,60.83 363.38,59.51 377.5,59.07 391.63,59.51 405.75,60.83 419.88,63.03 434,66.11 448.13,70.06 462.25,74.9 476.38,80.62 490.5,87.21 504.63,94.69 518.75,103.04 532.88,112.28 547,122.39 561.13,133.39 575.25,145.26 589.38,158.01 603.5,171.64 617.63,186.15 631.75,201.54 645.88,217.81 660,234.96"/>
+<circle class="f-fill" cx="264.5" cy="87.21" r="5"/>
+<circle class="f-fill" cx="377.5" cy="59.07" r="5"/>
+<circle class="f-fill" cx="490.5" cy="87.21" r="5"/>
+<text class="f-s" x="392.5" y="51.07" text-anchor="start">꼭짓점 (1, 8)</text>
+<text class="f-s" x="251.5" y="94.21" text-anchor="end">(0, 6)</text>
+<text class="f-s" x="503.5" y="94.21" text-anchor="start">(2, 6)</text>
+</svg>
+<figcaption>대칭축 좌우에서 같은 거리의 점은 같은 높이에 놓인다.</figcaption>
+</figure>
+<p>예를 들어 <code>g(x) = −2(x − 1)² + 8</code>이라면, 제곱항을 빼는 구조이므로 x=1에서 최댓값 8이 됩니다. f의 정의역을 <code>[4, 6]</code>으로 줄인다면 3을 고를 수 없습니다. 이때는 x=4가 3에 가장 가까워 <code>f(4) = −3</code>이 최소입니다.</p>
+<p class="small">실행 예제</p>
+<pre data-example="python"><code>def f(x):
+    return x*x - 6*x + 5
+
+for x in (0, 1, 3, 4, 5, 6):
+    assert f(x) == (x - 1)*(x - 5) == (x - 3)**2 - 4
+    print(x, f(x))</code></pre>
+<pre data-output><code>0 5
+1 0
+3 -4
+4 -3
+5 0
+6 5</code></pre>
+<div class="box trap"><p class="box-k">흔한 실수</p><p>위 코드가 본 입력 몇 개의 값을 비교한다고 해서 모든 실수에서의 최솟값이 증명되는 것은 아닙니다. 제곱항이 항상 0 이상이라는 사실과 0을 만드는 입력이 정의역에 있다는 사실이 증명의 근거입니다.</p></div>
+<div class="check" data-q="q3"></div>
+<div class="check" data-q="q4"></div>
+<div class="check" data-q="q5"></div>
+
+<h2>근이 몇 개인지 먼저 판별하기</h2>
+<p><code>ax² + bx + c = 0</code>을 완전제곱으로 정리하고 양변을 a로 나누면 <code>(x + b/(2a))² = (b² − 4ac)/(4a²)</code>입니다. 분모가 양수이므로 오른쪽의 부호는 <b class="key">판별식</b> <code>D = b² − 4ac</code>의 부호로 결정됩니다.</p>
+<div class="table-wrap"><table><thead><tr><th scope="col">D의 부호</th><th scope="col">제곱해야 하는 수</th><th scope="col">서로 다른 실근 수</th></tr></thead><tbody>
+<tr><th scope="row">D &gt; 0</th><td>양수이므로 양·음 제곱근</td><td>2</td></tr>
+<tr><th scope="row">D = 0</th><td>0만 가능</td><td>1 (중근)</td></tr>
+<tr><th scope="row">D &lt; 0</th><td>실수의 제곱은 음수가 될 수 없음</td><td>0</td></tr></tbody></table></div>
+<p>D≥0인 경우에 식을 정리하면 <code>x = (−b ± √D)/(2a)</code>입니다. f에는 a=1, b=−6, c=5이므로 <code>D = 36 − 20 = 16</code>, <code>x = (6 ± 4)/2</code>여서 다시 1과 5입니다. <code>(x − 3)²</code>은 x=3에서만 x축에 닿고, <code>(x − 3)² + 1</code>은 모든 x에서 양수라 x축에 닿지 않습니다.</p>
+<div class="check" data-q="q6"></div>
+<div class="check" data-q="q7"></div>
+<div class="check" data-q="q8"></div>
+
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table><thead><tr><th scope="col">표현</th><th scope="col">바로 읽을 정보</th></tr></thead><tbody>
+<tr><td><code>ax² + bx + c</code></td><td>계수와 y절편 c, 판별식</td></tr>
+<tr><td><code>a(x − r₁)(x − r₂)</code></td><td>실근 r₁, r₂가 있는 경우의 영점</td></tr>
+<tr><td><code>a(x − h)² + k</code></td><td>꼭짓점 (h, k)와 대칭축 x=h</td></tr></tbody></table></div>
+<div class="box sum"><p class="box-k">다음 단원으로</p><p>공식으로 찾은 최적점의 의미는 나중에 미분에서 다시 만납니다. <a href="../../unit.html?u=CA02">미분 단원</a>에서는 함수의 위치마다 변화율을 구해 함수가 증가하고 감소하는 구간을 살펴봅니다.</p></div>
+
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://openstax.org/books/algebra-and-trigonometry-2e/pages/5-1-quadratic-functions">이차함수의 표현과 그래프</a></li>
+<li><a href="https://openstax.org/books/algebra-and-trigonometry-2e/pages/2-5-quadratic-equations">이차방정식과 판별식</a></li>
+</ul>
+
+<h2>확인 문제</h2>
+<p>본문에서 다룬 예제를 떠올린 뒤 남은 문제를 직접 풀어 보세요.</p>
+<div id="quiz"></div>
+
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

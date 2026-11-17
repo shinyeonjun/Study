@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>벡터 덧셈과 스칼라곱: 방향과 성분으로 계산하기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="LA01-2">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">선형대수 · LA01 벡터와 차원</p>
+<p class="chap-num">LA01·2</p>
+<h1>벡터 덧셈과 스칼라곱: 방향과 성분으로 계산하기</h1>
+<p class="lead">오른쪽으로 두 칸, 위로 한 칸 움직인 뒤 오른쪽으로 세 칸, 위로 두 칸 이동합니다. 성분별 계산과 그림이 같은 결과 (5,3)을 주는 이유를 확인하고, 실제 자료에서 같은 계산을 쓸 조건을 살펴봅니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>같은 차원의 벡터를 성분별로 더하고 뺀다.</li><li>스칼라를 곱했을 때 그림과 각 성분의 변화를 설명한다.</li><li>두 관측의 차이 벡터와 평균 벡터를 구한다.</li></ul></div>
+
+<h2>같은 자리끼리 합친다</h2>
+<p>u = (2,1), v = (3,2)로 둡니다. u + v에서는 x 성분끼리 더하고 y 성분끼리 더합니다. 두 변위를 이어 붙인 결과는 (2+3,1+2) = (5,3)입니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 280" role="img" aria-label="u=(2,1), v=(3,2)를 이어 붙이면 (5,3).">
+<line class="f-ink" x1="98" y1="225" x2="633.8" y2="225" marker-end="url(#f-arrow)"/><line class="f-ink" x1="145" y1="250.85" x2="145" y2="26.660000000000025" marker-end="url(#f-arrow)"/><line class="f-ink" x1="192" y1="227.82" x2="192" y2="222.18"/><text class="f-s" x="192" y="243" text-anchor="middle">1</text><line class="f-ink" x1="239" y1="227.82" x2="239" y2="222.18"/><text class="f-s" x="239" y="243" text-anchor="middle">2</text><line class="f-ink" x1="286" y1="227.82" x2="286" y2="222.18"/><text class="f-s" x="286" y="243" text-anchor="middle">3</text><line class="f-ink" x1="333" y1="227.82" x2="333" y2="222.18"/><text class="f-s" x="333" y="243" text-anchor="middle">4</text><line class="f-ink" x1="380" y1="227.82" x2="380" y2="222.18"/><text class="f-s" x="380" y="243" text-anchor="middle">5</text><line class="f-ink" x1="427" y1="227.82" x2="427" y2="222.18"/><text class="f-s" x="427" y="243" text-anchor="middle">6</text><line class="f-ink" x1="474" y1="227.82" x2="474" y2="222.18"/><text class="f-s" x="474" y="243" text-anchor="middle">7</text><line class="f-ink" x1="521" y1="227.82" x2="521" y2="222.18"/><text class="f-s" x="521" y="243" text-anchor="middle">8</text><line class="f-ink" x1="568" y1="227.82" x2="568" y2="222.18"/><text class="f-s" x="568" y="243" text-anchor="middle">9</text><line class="f-ink" x1="615" y1="227.82" x2="615" y2="222.18"/><text class="f-s" x="615" y="243" text-anchor="middle">10</text><line class="f-ink" x1="142.18" y1="178" x2="147.82" y2="178"/><text class="f-s" x="131" y="182" text-anchor="middle">1</text><line class="f-ink" x1="142.18" y1="131" x2="147.82" y2="131"/><text class="f-s" x="131" y="135" text-anchor="middle">2</text><line class="f-ink" x1="142.18" y1="84" x2="147.82" y2="84"/><text class="f-s" x="131" y="88" text-anchor="middle">3</text><line class="f-ink" x1="142.18" y1="37" x2="147.82" y2="37"/><text class="f-s" x="131" y="41" text-anchor="middle">4</text><text class="f-s" x="134" y="241" text-anchor="middle">0</text><text class="f-s" x="640.85" y="220" text-anchor="middle">x</text><text class="f-s" x="158" y="23.370000000000005" text-anchor="middle">y</text><line class="f-line" x1="145" y1="225" x2="239" y2="178" marker-end="url(#f-arrow)"/><line class="f-line" x1="239" y1="178" x2="380" y2="84" marker-end="url(#f-arrow)"/><line class="f-ink" x1="145" y1="225" x2="380" y2="84" marker-end="url(#f-arrow)"/><text class="f-t" x="204.8" y="209.1" text-anchor="middle">u</text><text class="f-t" x="331.9" y="137.95" text-anchor="middle">v</text><text class="f-t" x="423" y="69" text-anchor="middle">u+v = (5, 3)</text>
+</svg><figcaption>끝에 이어 붙인 결과가 두 변위의 합이다.</figcaption></figure>
+<p>u를 먼저 그린 뒤 그 끝을 v의 시작점으로 옮깁니다. 그림에서는 세 화살표가 있고 계산에는 가로·세로 성분이 따로 있습니다. 같은 차원의 벡터를 더할 때 u+v와 v+u는 같습니다. 각 성분의 덧셈이 순서에 영향을 받지 않기 때문입니다.</p>
+<div class="check" data-q="q1"></div>
+<h2>스칼라를 각 성분에 곱한다</h2>
+<p><code>c·u</code>는 u의 각 성분을 c배 한 벡터입니다. u=(2,1)이라면 2u=(4,2), (1/2)u=(1,0.5), −u=(−2,−1)입니다. 양수 곱은 0이 아닌 화살표의 방향을 유지하고 음수 곱은 방향을 뒤집습니다. 0을 곱하면 영벡터가 됩니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 160" role="img" aria-label="u에 같은 스칼라를 각 성분마다 곱한다. 음수 −1이면 반대 방향.">
+<rect class="f-box" x="42" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="135" y="61" text-anchor="middle">2배</text><text class="f-s" x="135" y="89" text-anchor="middle">2u=(4,2)</text><text class="f-s" x="135" y="110" text-anchor="middle">같은 방향, 길이 2배</text><line class="f-line" x1="278" y1="84" x2="235" y2="84" marker-end="url(#f-arrow)"/><rect class="f-soft" x="287" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="380" y="61" text-anchor="middle">원래 벡터</text><text class="f-s" x="380" y="89" text-anchor="middle">u=(2,1)</text><text class="f-s" x="380" y="110" text-anchor="middle">두 성분</text><line class="f-line" x1="480" y1="84" x2="523" y2="84" marker-end="url(#f-arrow)"/><rect class="f-box" x="532" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="625" y="61" text-anchor="middle">−1배</text><text class="f-s" x="625" y="89" text-anchor="middle">−u=(−2,−1)</text><text class="f-s" x="625" y="110" text-anchor="middle">반대 방향, 같은 길이</text>
+</svg><figcaption>왼쪽과 오른쪽은 가운데의 원래 벡터에 각각 2와 −1을 곱한 결과다.</figcaption></figure>
+<p>뺄셈 u−v는 v를 반대로 뒤집어 더하는 것입니다. 점 P=(2,1), Q=(5,3)에서 P에서 Q로 가는 변위는 <b>끝−시작</b>인 Q−P=(3,2)입니다. P−Q는 반대 방향입니다.</p>
+<div class="check" data-q="q2"></div>
+<div class="check" data-q="q3"></div>
+<h2>데이터 두 줄에 적용하기</h2>
+<p>월요일 특징 (120건, 32분), 화요일 (136건, 28분)을 보겠습니다. 화요일−월요일은 (16건, −4분)입니다. 첫 성분이 16 늘고 둘째가 4 줄었습니다. 두 날을 똑같이 한 번씩 세는 평균 벡터는 (128건, 30분)입니다.</p>
+<p>이 둘째 평균은 <b>하루의 평균 배송 시간에 같은 무게</b>를 준 결과입니다. 배송 한 건씩 같은 무게로 평균을 내는 문제라면 날마다 배송 건수를 알아야 합니다. 벡터 계산은 각 성분에 같은 규칙을 적용하지만, 보고서에 쓸 분모는 분석 질문이 정합니다.</p>
+<pre data-example="python"><code>import numpy as np
+
+previous = np.array([120, 32])
+current = np.array([136, 28])
+print((current - previous).tolist())
+print(((previous + current) / 2).tolist())
+print((2 * np.array([2, 1])).tolist())</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>[16, -4]
+[128.0, 30.0]
+[4, 2]</code></pre>
+<div class="check" data-q="q4"></div>
+<div class="check" data-q="q5"></div>
+<h2>모양만 같아서 생기는 실수</h2>
+<p>(건, 분)과 (명, 시)를 더하면 자리가 두 개라 코드에서는 계산할 수 있습니다. 같은 의미와 단위의 성분끼리 비교하는 식인지 먼저 살펴야 합니다. 모양이 다르면 NumPy가 브로드캐스팅하는 경우도 있습니다. 행이나 열의 모양이 달라졌다면 연산 결과의 shape와 의도를 같이 검사합니다.</p>
+<div class="box "><p class="box-k">검산 기준</p><p>같은 종류의 성분끼리 비교했나요? 부호를 반대로 쓰지 않았나요? 편차나 평균을 만들 때 분모가 분석에서 세려는 단위와 맞나요?</p></div>
+<div class="check" data-q="q6"></div>
+<h2>다음 계산</h2>
+<p>더하기는 벡터를 하나 만듭니다. 다음 단원에서는 벡터 두 개의 대응 성분을 곱해 모두 더한 다음 숫자 하나를 만드는 내적을 배웁니다. 특징마다 다른 무게를 줄 때 쓰는 계산입니다.</p>
+
+<h2>참고 자료</h2>
+<ul><li><a href="https://ocw.mit.edu/courses/18-06sc-linear-algebra-fall-2011/pages/ax-b-and-the-four-subspaces/">MIT OCW · Linear Algebra, Ax = b and the Four Subspaces</a></li></ul>
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>
