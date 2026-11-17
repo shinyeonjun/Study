@@ -9,42 +9,47 @@
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<header class="top"><div class="top-in">
+<header class="top"><div class="top-in wide">
 <a class="brand" href="index.html">빅분기 노트</a>
-<span class="crumb"><a href="../index.html">← 공부 홈</a></span>
+<span class="crumb"><a href="../index.html">← 책꽂이</a></span>
 <button class="tool theme-btn" type="button">어둡게</button>
 </div></header>
-<main>
-<p class="eyebrow">빅데이터분석기사 · 필기 · 기초 수학</p>
+<div class="book solo">
+<main class="page plain">
+
+<header class="cover">
+<p class="chap-sub">빅데이터분석기사 · 필기 · 기초 수학</p>
 <h1>나의 빅분기 노트</h1>
-<p class="lead">공책도 태블릿도 없이, 읽기·문제 풀기·메모·복습을 이 사이트 하나로 합니다.</p>
+<p class="lead">기초 없이 시작해서 한 장씩. 책처럼 쭉 읽고, 읽다가 그 자리에서 문제로 확인하고, 잊을 때쯤 다시 풉니다.</p>
+</header>
 
 <div class="duo">
 <section class="panel"><h2>오늘 할 일</h2><div id="today"><p class="muted">불러오는 중…</p></div></section>
 <section class="panel"><h2>시험까지</h2><div id="dday"></div></section>
 </div>
 
-<h2>과목과 노트</h2>
+<h2>차례</h2>
 <p class="legend-dots">
 <span><span class="dots"><i></i></span>아직 안 푼 문제</span>
 <span><span class="dots"><i class="s1"></i><i class="s2"></i><i class="s3"></i></span>맞힐수록 진해짐</span>
 <span><span class="dots"><i class="due"></i></span>복습할 때</span>
 <span><span class="dots"><i class="no"></i></span>틀림</span>
 </p>
-<div id="subjects"><noscript><p class="muted">노트 목록을 보려면 자바스크립트를 켜 주세요.</p></noscript></div>
+<div id="subjects"><noscript><p class="muted">차례를 보려면 자바스크립트를 켜 주세요.</p></noscript></div>
 
 <h2>오답 모음</h2>
-<section class="panel"><div id="wrong"></div></section>
+<div id="wrong"></div>
 
 <h2>공부한 날</h2>
-<section class="panel"><div id="days"></div></section>
+<div id="days"></div>
 
-<h2>이렇게 공부합니다</h2>
+<h2>이 책을 읽는 법</h2>
 <ol class="how">
-<li><b>쭉 읽기.</b> 노트는 책처럼 위에서 아래로 읽습니다. 왼쪽 차례로 어디쯤인지 보고, 그림과 예제를 하나씩 자세히 봅니다. <span class="tag memo">외우기</span>는 그대로 외울 것, <span class="tag grasp">이해하기</span>는 왜 그런지 설명할 수 있어야 하는 것입니다.</li>
-<li><b>읽다가 그 자리에서 확인.</b> 본문 중간에 문제가 나옵니다. 보기를 누르면 바로 정답과 보기별 해설이 나옵니다.</li>
-<li><b>내 공책에 적기.</b> 오른쪽 '내 공책'에 메모를 적고, 연습장에 그림을 따라 그리거나 계산합니다. 종이 공책 대신 씁니다.</li>
-<li><b>복습은 문제로.</b> 맞힌 문제는 1 → 3 → 7 → 14 → 30일 간격으로 다시 나오고, 틀리면 내일 다시 나옵니다. 여러 노트의 문제가 섞여서 나옵니다.</li>
+<li><b>쭉 읽기.</b> 한 장을 위에서 아래로 읽습니다. 그림 자료를 하나씩 자세히 보고, 옆 쪽지의 용어 풀이도 읽습니다. <span class="tag memo">외우기</span>는 그대로 외울 것, <span class="tag grasp">이해하기</span>는 왜 그런지 설명할 수 있어야 하는 것입니다.</li>
+<li><b>읽다가 그 자리에서 확인.</b> 절이 끝나는 곳에 문제가 있습니다. 보기를 누르면 바로 정답과 보기별 해설이 나옵니다.</li>
+<li><b>형광펜 가리기.</b> 다 읽었으면 위쪽 '핵심어 가리기'를 켜고, 빈칸을 머릿속으로 채운 뒤 눌러서 확인합니다.</li>
+<li><b>내 공책에 적기.</b> 장 끝의 '내 공책'에 메모를 적고, 연습장에 그림을 따라 그리거나 계산합니다.</li>
+<li><b>복습은 문제로.</b> 맞힌 문제는 1 → 3 → 7 → 14 → 30일 간격으로 다시 나오고, 틀리면 내일 다시 나옵니다. 여러 장의 문제가 섞여 나옵니다.</li>
 </ol>
 
 <div class="box warn">
@@ -52,11 +57,11 @@
 </div>
 
 <h2>기록 백업</h2>
-<section class="panel">
 <p class="muted small">공부 기록과 메모는 이 기기의 브라우저에만 저장됩니다. 브라우저 기록을 지우면 사라지니 가끔 파일로 내보내 두세요. 휴대폰과 PC 사이에 옮길 때도 씁니다.</p>
 <div id="backup"></div>
-</section>
+
 </main>
+</div>
 <script src="notes.js"></script>
 <script src="js/core.js"></script>
 <script src="js/home.js"></script>

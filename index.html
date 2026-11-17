@@ -3,33 +3,48 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>공부 노트</title>
+<title>공부 책꽂이</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e8c'/%3E%3Cpath d='M8 22V10m8 12V14m8 8V6' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
 <style>
-  /* 루트 홈 전용. 과목별 스타일은 각 폴더가 따로 가진다. */
-  :root { --bg:#f7f7f5; --surface:#fff; --text:#1f2328; --muted:#5b6470; --line:#e2e2dc; --accent:#2f5f8f; }
+  /* 전체 홈 전용. 책꽂이에 책 표지가 놓인 모양. 과목별 스타일은 각 폴더가 따로 가진다. */
+  :root { --bg:#e9e5dc; --paper:#fffdf8; --text:#1e1c19; --muted:#6c665c; --line:#d9d2c3; --shelf:#b9ad97; --shadow:0 2px 4px rgba(30,28,25,.10), 0 14px 30px rgba(30,28,25,.14); }
   @media (prefers-color-scheme: dark) {
-    :root { --bg:#14171a; --surface:#1c2024; --text:#e6e8eb; --muted:#9aa4b0; --line:#2d3339; --accent:#8ab8e6; }
+    :root { --bg:#121110; --paper:#1c1b19; --text:#e9e5dc; --muted:#a39c8f; --line:#302d28; --shelf:#3a362f; --shadow:0 2px 4px rgba(0,0,0,.4); }
   }
   * { box-sizing: border-box; }
   body { margin:0; background:var(--bg); color:var(--text); font-family:"Pretendard","Malgun Gothic","Apple SD Gothic Neo",system-ui,sans-serif; line-height:1.7; word-break:keep-all; }
-  main { max-width:720px; margin:0 auto; padding:48px 16px 80px; }
-  h1 { font-size:1.6rem; margin:0 0 6px; }
-  .lead { color:var(--muted); margin:0 0 28px; }
-  .list { display:grid; gap:14px; }
-  a.item { display:block; background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:18px 20px; color:inherit; text-decoration:none; }
-  a.item:hover, a.item:focus-visible { border-color:var(--accent); }
-  .item b { display:block; font-size:1.1rem; color:var(--accent); }
-  .item span { color:var(--muted); font-size:0.95rem; }
+  main { max-width:880px; margin:0 auto; padding:64px 20px 96px; }
+  h1 { font-size:2.4rem; font-weight:800; letter-spacing:-.02em; margin:0 0 8px; }
+  .lead { color:var(--muted); margin:0 0 44px; }
+  .shelf { display:grid; grid-template-columns:repeat(auto-fill, minmax(230px, 1fr)); gap:34px 30px; align-items:end; padding:0 8px 22px; border-bottom:10px solid var(--shelf); border-radius:0 0 4px 4px; }
+  a.cover { position:relative; display:flex; flex-direction:column; justify-content:space-between; aspect-ratio:3 / 4; padding:26px 22px 22px 34px; border-radius:3px 8px 8px 3px; color:#fff; text-decoration:none; box-shadow:var(--shadow); transition:transform .15s ease; overflow:hidden; }
+  a.cover::before { content:""; position:absolute; left:0; top:0; bottom:0; width:14px; background:rgba(0,0,0,.22); border-right:1px solid rgba(255,255,255,.18); }
+  a.cover:hover, a.cover:focus-visible { transform:translateY(-6px); outline:none; }
+  .cover.navy { background:#1f4e8c; }
+  .cover.wine { background:#3a3f4b; }
+  .cover small { display:block; font-size:.78rem; font-weight:700; letter-spacing:.06em; opacity:.8; }
+  .cover b { display:block; font-size:1.55rem; line-height:1.3; margin-top:8px; letter-spacing:-.01em; }
+  .cover p { margin:0; font-size:.9rem; line-height:1.6; opacity:.92; }
+  .cover .state { display:inline-block; margin-top:14px; font-size:.75rem; font-weight:700; padding:3px 10px; border-radius:999px; background:rgba(255,255,255,.18); }
+  .note { color:var(--muted); font-size:.88rem; margin-top:28px; }
+  @media (max-width:520px) { main { padding-top:40px; } h1 { font-size:2rem; } .shelf { grid-template-columns:1fr 1fr; gap:20px 16px; } a.cover { aspect-ratio:auto; min-height:230px; padding:18px 14px 16px 26px; } .cover b { font-size:1.2rem; } .cover p { display:none; } .cover .state { margin-top:0; } }
 </style>
 </head>
 <body>
 <main>
-<h1>공부 노트</h1>
-<p class="lead">자격증별로 정리한 공부 페이지 모음입니다.</p>
-<div class="list">
-  <a class="item" href="bigdata/index.html"><b>빅데이터분석기사</b><span>필기 · 개념부터 차근차근 (진행 중)</span></a>
-  <a class="item" href="jcg/index.html"><b>정보처리기사 실기</b><span>C · Java · Python · SQL 코드 노트, 연습 문제, 모의고사</span></a>
+<h1>공부 책꽂이</h1>
+<p class="lead">자격증별로 한 권씩. 표지를 누르면 책이 펼쳐집니다.</p>
+<div class="shelf">
+  <a class="cover navy" href="bigdata/index.html">
+    <span><small>빅데이터분석기사 · 필기</small><b>나의 빅분기 노트</b></span>
+    <span><p>기초 없이 한 장씩. 자세한 설명과 도해, 그 자리에서 푸는 문제, 간격 복습.</p><span class="state">지금 공부 중</span></span>
+  </a>
+  <a class="cover wine" href="jcg/index.html">
+    <span><small>정보처리기사 · 실기</small><b>정처기 코드 노트</b></span>
+    <span><p>C · Java · Python · SQL을 한 줄씩 따라가기. 연습 문제와 모의고사.</p><span class="state">다 본 책</span></span>
+  </a>
 </div>
+<p class="note">공부 기록은 이 기기의 브라우저에만 저장됩니다.</p>
 </main>
 </body>
 </html>

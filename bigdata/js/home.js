@@ -21,47 +21,49 @@
     });
     if (due) {
       box.appendChild(el("p", "big-num", due + "문제"));
-      box.appendChild(el("p", "muted", "오늘 복습할 문제입니다. 노트를 다시 읽지 말고 문제부터 풀어 보세요."));
+      box.appendChild(el("p", "muted", "오늘 복습할 문제입니다. 책을 다시 읽지 말고 문제부터 풀어 보세요."));
       box.appendChild(link("btn", "복습 시작", "review.html"));
     } else {
       box.appendChild(el("p", "muted", "오늘 복습할 문제가 없습니다."));
     }
     if (nextNote) {
       var p = el("p", "next-note");
-      p.appendChild(document.createTextNode(due ? "복습을 마치면 이어서: " : "이어서 공부할 노트: "));
+      p.appendChild(document.createTextNode(due ? "복습을 마치면 이어서: " : "이어서 읽을 장: "));
       p.appendChild(link("", nextNote.title, nextNote.href));
       box.appendChild(p);
     }
   }
 
-  // 과목별 노트 목록. 점 하나가 문제 하나이고, 색이 진할수록 오래 기억하고 있다는 뜻
+  // 차례: 책의 차례 쪽처럼 과목(부) 아래에 장을 점선으로 잇는다.
+  // 점 하나가 문제 하나이고, 색이 진할수록 오래 기억하고 있다는 뜻
   function drawSubjects(s) {
     var wrap = document.getElementById("subjects");
     if (!wrap) return;
     wrap.textContent = "";
     B.SUBJECTS.forEach(function (sub) {
-      var sec = el("section", "panel subject"), head = el("div", "subject-head");
+      var sec = el("section", "part"), head = el("div", "part-head");
       head.appendChild(el("h3", "", sub.name));
       var prog = head.appendChild(el("span", "prog"));
       sec.appendChild(head);
-      var bar = sec.appendChild(el("div", "bar")).appendChild(el("i"));
-      var ul = sec.appendChild(el("ul", "notes")), all = 0, mastered = 0;
+      var ol = sec.appendChild(el("ol", "chapters")), all = 0, mastered = 0;
       sub.notes.forEach(function (n, i) {
-        var r = B.noteStatus(n.id, s), li = el("li"), left = el("div", "note-main");
-        left.appendChild(link("", (i < 9 ? "0" : "") + (i + 1) + " " + n.title, n.href));
+        var r = B.noteStatus(n.id, s), li = el("li"), row = link("chap-row", "", n.href);
+        row.appendChild(el("span", "no", (i < 9 ? "0" : "") + (i + 1)));
+        row.appendChild(el("span", "ti", n.title));
+        row.appendChild(el("span", "dotline"));
+        var text = { "new": "새 장", ing: "읽는 중", due: "복습 " + r.due + "문제", ok: "읽음" }[r.state];
+        row.appendChild(el("span", "st " + r.state, text));
+        li.appendChild(row);
         var dots = el("span", "dots");
         dots.title = "점 하나가 문제 하나";
         r.dots.forEach(function (d) { dots.appendChild(el("i", d)); });
-        left.appendChild(dots);
-        li.appendChild(left);
-        var text = { "new": "새 노트", ing: "공부 중", due: "복습 " + r.due + "문제", ok: "공부함" }[r.state];
-        li.appendChild(el("span", "st " + r.state, text));
-        ul.appendChild(li);
+        li.appendChild(dots);
+        ol.appendChild(li);
         all += r.total;
         mastered += r.mastered;
       });
+      if (!sub.notes.length) ol.appendChild(el("li", "empty", "아직 쓴 장이 없습니다."));
       prog.textContent = sub.notes.length ? "익힌 문제 " + mastered + " / " + all : "준비 중";
-      bar.style.width = all ? (mastered / all * 100) + "%" : "0";
       wrap.appendChild(sec);
     });
   }

@@ -9,16 +9,21 @@
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<header class="top"><div class="top-in">
+<header class="top"><div class="top-in wide">
 <a class="brand" href="index.html">빅분기 노트</a>
 <span class="crumb">복습</span>
 <button class="tool theme-btn" type="button">어둡게</button>
 </div></header>
-<main>
+<div class="book solo">
+<main class="page plain">
+<header class="cover">
+<p class="chap-sub">복습</p>
 <h1 id="review-title">오늘의 복습</h1>
-<p class="lead">여러 노트의 문제가 섞여 나옵니다. 답을 정하고, 얼마나 확실한지 누르면 정답과 해설이 나옵니다.</p>
+<p class="lead">여러 장의 문제가 섞여 나옵니다. 보기를 누르면 바로 정답과 해설이 나옵니다.</p>
+</header>
 <div id="review"><p class="muted">불러오는 중…</p></div>
 </main>
+</div>
 <script src="notes.js"></script>
 <script src="js/core.js"></script>
 <script src="js/review.js"></script>

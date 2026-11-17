@@ -81,6 +81,30 @@ main { max-width: 700px; margin: 0 auto; padding: 28px 16px 96px; }
 .read-bar i { display: block; height: 100%; width: 0; background: var(--accent); }
 .top-in.wide { max-width: 1120px; }
 
+/* 차례 없이 종이 한 장만 쓰는 쪽(홈, 복습). 절 번호를 붙이지 않는다 */
+.book.solo { grid-template-columns: minmax(0, 820px); }
+.page.plain > h2 { counter-increment: none; }
+.page.plain > h2::before { content: none; }
+.cover { border-bottom: 2px solid var(--text); padding-bottom: 22px; margin-bottom: 28px; }
+.cover h1 { font-size: 2.5rem; margin: 6px 0 12px; }
+.cover .lead { margin: 0; }
+.page .panel { box-shadow: none; background: none; margin: 0; }
+.page .panel h2 { font-size: 0.82rem; color: var(--muted); letter-spacing: 0.04em; }
+
+/* 차례 쪽: 과목(부) 아래에 장 번호 · 제목 · 점선 · 상태 */
+.part { margin-top: 30px; }
+.part-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; border-bottom: 1.5px solid var(--text); padding-bottom: 6px; }
+.part-head h3 { margin: 0; font-size: 1.08rem; }
+.chapters { list-style: none; margin: 0; padding: 0; }
+.chapters li { margin: 0; padding: 13px 0 12px; border-bottom: 1px solid var(--line); }
+.chapters li.empty { color: var(--muted); font-size: 0.92rem; }
+.chap-row { display: flex; align-items: baseline; gap: 12px; text-decoration: none; color: var(--text); }
+.chap-row .no { font-weight: 800; color: var(--accent); font-variant-numeric: tabular-nums; }
+.chap-row .ti { font-weight: 700; }
+.chap-row .dotline { flex: 1; min-width: 16px; border-bottom: 2px dotted var(--line); transform: translateY(-5px); }
+.chap-row:hover .ti { color: var(--accent); text-decoration: underline; text-underline-offset: 4px; }
+.chapters .dots { margin: 6px 0 0 34px; }
+
 /* 장 머리: 과목, 큰 장 번호, 제목 */
 .chapter { border-bottom: 2px solid var(--text); padding-bottom: 20px; margin-bottom: 28px; }
 .chap-sub { font-size: 0.85rem; font-weight: 700; color: var(--accent); margin: 0 0 2px; letter-spacing: 0.02em; }
@@ -301,6 +325,10 @@ footer { margin-top: 56px; color: var(--muted); font-size: 0.85rem; }
   .toc { padding: 12px 12px 0; }
   .page { padding: 32px 20px 56px; margin: 12px 0 0; border-radius: 0; box-shadow: none; }
   .side { float: none; width: auto; margin: 16px 0; }
+  .cover h1 { font-size: 2rem; }
+  .chap-row { flex-wrap: wrap; }
+  .chap-row .dotline { display: none; }
+  .chap-row .st { margin-left: auto; }
   /* 좁은 화면: 도해는 글자가 읽히는 크기를 지키고, 옆으로 밀어서 본다 */
   .fig { overflow-x: auto; }
   .fig-svg { min-width: 600px; }
