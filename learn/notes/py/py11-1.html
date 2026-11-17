@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>pandas로 표 읽고 필요한 행 고르기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="PY11-1">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">Python과 프로그래밍 사고 · PY11 표와 시각화 코드</p>
+<p class="chap-num">PY11·1</p>
+<h1>pandas로 표 읽고 필요한 행 고르기</h1>
+<p class="lead">주문 표에서 둘째 행과 주문번호 104번은 지금은 같은 행입니다. 표를 결제액순으로 정렬하면 둘째 행은 달라집니다. 주문번호를 보존한 표를 만든 뒤, 이름과 위치를 각각 기준으로 값을 찾아보고 조건에 맞는 행을 골라 냅니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul>
+<li>Series와 DataFrame을 구분하고 행 하나의 뜻을 적을 수 있다.</li>
+<li>CSV 읽기에 자료형을 명시하고 0과 결측을 구분할 수 있다.</li>
+<li>loc, iloc, 불리언 마스크로 행과 열을 선택할 수 있다.</li>
+<li>원본을 유지하면서 추린 표를 복사해 작업할 수 있다.</li>
+</ul></div>
+<h2>한 행의 뜻과 자료형을 정한다</h2>
+<p>카페의 작은 주문 표입니다. <b>한 행은 주문 한 건</b>이고 행 번호표에 주문번호가 있습니다. 주문번호가 비어 있거나 중복되지 않는다는 가정입니다. 다섯 번째 주문은 수량을 알지만 결제액이 기록되지 않았습니다.</p>
+<div class="table-wrap"><table>
+<tr><th scope="col">주문번호</th><th scope="col">매장</th><th scope="col">수량(개)</th><th scope="col">결제액(원)</th></tr>
+<tr><td>101</td><td>East</td><td>2</td><td>3,200</td></tr>
+<tr><td>104</td><td>West</td><td>3</td><td>5,100</td></tr>
+<tr><td>105</td><td>East</td><td>1</td><td>2,400</td></tr>
+<tr><td>108</td><td>West</td><td>4</td><td>6,100</td></tr>
+<tr><td>109</td><td>East</td><td>2</td><td>&lt;NA&gt;</td></tr>
+</table></div>
+<div class="box"><p class="box-k">정의</p><p><b class="key">Series</b>는 값과 행 라벨로 이루어진 1차원 자료입니다. 이 표에서는 <code>amount</code> 열 하나가 Series입니다. <b class="key">DataFrame</b>은 행 라벨과 열 이름이 있는 2차원 표입니다. NumPy 배열과 달리 열마다 자료형이 다를 수 있습니다. 행 라벨의 모음을 <b class="key">인덱스</b>(index)라고 부릅니다.</p></div>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 244" role="img" aria-label="주문 DataFrame의 다섯 행과 세 열 옆에서 결제액 열 하나만 Series로 꺼낸다. 원래의 주문번호 라벨을 그대로 유지한다.">
+<text class="f-cap" x="237" y="24" text-anchor="middle">DataFrame · (5, 3)</text><text class="f-cap" x="604" y="24" text-anchor="middle">결제액 Series · (5,)</text><rect class="f-soft" x="30" y="43" width="101.25" height="30"/><text class="f-cap" x="80.625" y="63" text-anchor="middle">행 라벨</text>
+<rect class="f-soft" x="131.25" y="43" width="101.25" height="30"/><text class="f-cap" x="181.875" y="63" text-anchor="middle">store</text>
+<rect class="f-soft" x="232.5" y="43" width="101.25" height="30"/><text class="f-cap" x="283.125" y="63" text-anchor="middle">qty</text>
+<rect class="f-soft" x="333.75" y="43" width="101.25" height="30"/><text class="f-cap" x="384.375" y="63" text-anchor="middle">amount</text>
+<rect class="f-box" x="30" y="73" width="101.25" height="30"/><text class="f-t" x="80.625" y="93" text-anchor="middle">101</text>
+<rect class="f-box" x="131.25" y="73" width="101.25" height="30"/><text class="f-t" x="181.875" y="93" text-anchor="middle">East</text>
+<rect class="f-box" x="232.5" y="73" width="101.25" height="30"/><text class="f-t" x="283.125" y="93" text-anchor="middle">2</text>
+<rect class="f-soft" x="333.75" y="73" width="101.25" height="30"/><text class="f-t" x="384.375" y="93" text-anchor="middle">3,200</text>
+<rect class="f-box" x="30" y="103" width="101.25" height="30"/><text class="f-t" x="80.625" y="123" text-anchor="middle">104</text>
+<rect class="f-box" x="131.25" y="103" width="101.25" height="30"/><text class="f-t" x="181.875" y="123" text-anchor="middle">West</text>
+<rect class="f-box" x="232.5" y="103" width="101.25" height="30"/><text class="f-t" x="283.125" y="123" text-anchor="middle">3</text>
+<rect class="f-soft" x="333.75" y="103" width="101.25" height="30"/><text class="f-t" x="384.375" y="123" text-anchor="middle">5,100</text>
+<rect class="f-box" x="30" y="133" width="101.25" height="30"/><text class="f-t" x="80.625" y="153" text-anchor="middle">105</text>
+<rect class="f-box" x="131.25" y="133" width="101.25" height="30"/><text class="f-t" x="181.875" y="153" text-anchor="middle">East</text>
+<rect class="f-box" x="232.5" y="133" width="101.25" height="30"/><text class="f-t" x="283.125" y="153" text-anchor="middle">1</text>
+<rect class="f-soft" x="333.75" y="133" width="101.25" height="30"/><text class="f-t" x="384.375" y="153" text-anchor="middle">2,400</text>
+<rect class="f-box" x="30" y="163" width="101.25" height="30"/><text class="f-t" x="80.625" y="183" text-anchor="middle">108</text>
+<rect class="f-box" x="131.25" y="163" width="101.25" height="30"/><text class="f-t" x="181.875" y="183" text-anchor="middle">West</text>
+<rect class="f-box" x="232.5" y="163" width="101.25" height="30"/><text class="f-t" x="283.125" y="183" text-anchor="middle">4</text>
+<rect class="f-soft" x="333.75" y="163" width="101.25" height="30"/><text class="f-t" x="384.375" y="183" text-anchor="middle">6,100</text>
+<rect class="f-box" x="30" y="193" width="101.25" height="30"/><text class="f-t" x="80.625" y="213" text-anchor="middle">109</text>
+<rect class="f-box" x="131.25" y="193" width="101.25" height="30"/><text class="f-t" x="181.875" y="213" text-anchor="middle">East</text>
+<rect class="f-box" x="232.5" y="193" width="101.25" height="30"/><text class="f-t" x="283.125" y="213" text-anchor="middle">2</text>
+<rect class="f-soft" x="333.75" y="193" width="101.25" height="30"/><text class="f-t" x="384.375" y="213" text-anchor="middle">&lt;NA&gt;</text><line class="f-line" x1="443" y1="134" x2="486" y2="134" marker-end="url(#f-arrow)"/><rect class="f-soft" x="494" y="43" width="110" height="30"/><text class="f-cap" x="549" y="63" text-anchor="middle">행 라벨</text>
+<rect class="f-soft" x="604" y="43" width="110" height="30"/><text class="f-cap" x="659" y="63" text-anchor="middle">값</text>
+<rect class="f-box" x="494" y="73" width="110" height="30"/><text class="f-t" x="549" y="93" text-anchor="middle">101</text>
+<rect class="f-soft" x="604" y="73" width="110" height="30"/><text class="f-t" x="659" y="93" text-anchor="middle">3,200</text>
+<rect class="f-box" x="494" y="103" width="110" height="30"/><text class="f-t" x="549" y="123" text-anchor="middle">104</text>
+<rect class="f-soft" x="604" y="103" width="110" height="30"/><text class="f-t" x="659" y="123" text-anchor="middle">5,100</text>
+<rect class="f-box" x="494" y="133" width="110" height="30"/><text class="f-t" x="549" y="153" text-anchor="middle">105</text>
+<rect class="f-soft" x="604" y="133" width="110" height="30"/><text class="f-t" x="659" y="153" text-anchor="middle">2,400</text>
+<rect class="f-box" x="494" y="163" width="110" height="30"/><text class="f-t" x="549" y="183" text-anchor="middle">108</text>
+<rect class="f-soft" x="604" y="163" width="110" height="30"/><text class="f-t" x="659" y="183" text-anchor="middle">6,100</text>
+<rect class="f-box" x="494" y="193" width="110" height="30"/><text class="f-t" x="549" y="213" text-anchor="middle">109</text>
+<rect class="f-soft" x="604" y="193" width="110" height="30"/><text class="f-t" x="659" y="213" text-anchor="middle">&lt;NA&gt;</text>
+</svg>
+<figcaption>행 라벨은 주문을 찾는 데 쓰며, 열을 세는 shape의 둘째 값에는 들어가지 않습니다.</figcaption>
+</figure>
+<p>매장은 문자열 <code>string</code>으로 정하고, 수량과 결제액은 정수 <code>Int64</code>로 정합니다. 대문자 <code>I</code>로 시작하는 pandas <code>Int64</code>는 결측값 <code>pd.NA</code>도 허용합니다. 일반 NumPy <code>int64</code>는 결측값을 담지 못합니다. 자료형을 명시하면 문자열 연산과 수치 계산 중 어느 쪽을 의도했는지 코드에서 드러납니다.</p>
+<pre data-example="python"><code>import pandas as pd
+
+orders = pd.DataFrame(
+    {
+        "store": pd.array(["East", "West", "East", "West", "East"], dtype="string"),
+        "qty": pd.array([2, 3, 1, 4, 2], dtype="Int64"),
+        "amount": pd.array([3200, 5100, 2400, 6100, None], dtype="Int64"),
+    },
+    index=pd.Index([101, 104, 105, 108, 109], name="order_id"),
+)
+
+assert orders.index.is_unique
+print("shape:", orders.shape)
+print("열:", orders.columns.tolist())
+print("수량의 자료형:", orders["qty"].dtype)
+print("결제액 결측:", int(orders["amount"].isna().sum()))
+print("한 열:", type(orders["amount"]).__name__)
+print("한 열을 담은 표:", type(orders[["amount"]]).__name__)</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>shape: (5, 3)
+열: ['store', 'qty', 'amount']
+수량의 자료형: Int64
+결제액 결측: 1
+한 열: Series
+한 열을 담은 표: DataFrame</code></pre>
+<p><code>orders["amount"]</code>에서 대괄호 안에 열 이름 하나를 줍니다. <code>orders[["amount"]]</code>에서는 열 이름들의 리스트를 주므로 한 열만 있어도 표로 남습니다. 둘의 행 라벨은 같습니다. 결제액 Series에 <code>isna()</code>를 쓰면 결측인 위치만 참인 Series가 생깁니다. <code>sum()</code>은 여기서 참을 1, 거짓을 0으로 더해 결측을 셉니다.</p>
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+
+<h3>CSV에서 읽을 때도 열의 뜻을 먼저 정하기</h3>
+<p>주문번호의 <code>001</code>이 세 자리 식별자라면 앞의 0도 데이터입니다. 수량은 계산할 정수입니다. 같은 숫자 모양이라도 열의 뜻에 따라 읽는 방법을 달리합니다. 다음 예에서 <code>StringIO</code>는 짧은 문자열을 파일 대신 읽게 합니다. 실제 파일에서는 <code>pd.read_csv("orders.csv", ...)</code>처럼 파일 경로를 넣습니다.</p>
+<pre data-example="python"><code>import pandas as pd
+from io import StringIO
+
+csv_text = "order_id,qty\n001,2\n002,\n"
+df = pd.read_csv(
+    StringIO(csv_text), dtype={"order_id": "string", "qty": "Int64"}
+)
+print(df["order_id"].tolist())
+print(df["qty"].isna().tolist())</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>['001', '002']
+[False, True]</code></pre>
+<p>CSV의 빈 칸을 결측으로 읽었습니다. 실제 자료의 <code>NA</code> 같은 표기가 지역 코드인지 결측 코드인지는 출처에서 확인한 뒤 필요에 따라 <code>na_values</code>와 <code>keep_default_na</code>를 지정합니다.</p>
+<div class="check" data-q="q3"></div>
+
+<h2>행 라벨과 위치로 각각 고르기</h2>
+<p>둘째 행에 적힌 주문번호는 104입니다. 컴퓨터가 세는 위치는 1입니다. 행 선택 명령을 읽을 때 <b>104라는 라벨</b>을 찾는지, <b>위치 1</b>을 찾는지 먼저 확인합니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 250" role="img" aria-label="같은 주문 표에서 주문번호 104인 행은 0부터 센 위치 1이다. 위치가 0,1,2,3,4일 때 라벨은 차례로 101,104,105,108,109다.">
+<text class="f-cap" x="36" y="33" text-anchor="start">표에 적힌 이름과 지금 놓인 자리는 서로 다른 정보입니다</text><rect class="f-soft" x="45" y="52" width="111.25" height="30"/><text class="f-cap" x="100.625" y="72" text-anchor="middle">위치</text>
+<rect class="f-soft" x="156.25" y="52" width="111.25" height="30"/><text class="f-cap" x="211.875" y="72" text-anchor="middle">행 라벨</text>
+<rect class="f-soft" x="267.5" y="52" width="111.25" height="30"/><text class="f-cap" x="323.125" y="72" text-anchor="middle">store</text>
+<rect class="f-soft" x="378.75" y="52" width="111.25" height="30"/><text class="f-cap" x="434.375" y="72" text-anchor="middle">amount</text>
+<rect class="f-box" x="45" y="82" width="111.25" height="30"/><text class="f-t" x="100.625" y="102" text-anchor="middle">0</text>
+<rect class="f-box" x="156.25" y="82" width="111.25" height="30"/><text class="f-t" x="211.875" y="102" text-anchor="middle">101</text>
+<rect class="f-box" x="267.5" y="82" width="111.25" height="30"/><text class="f-t" x="323.125" y="102" text-anchor="middle">East</text>
+<rect class="f-box" x="378.75" y="82" width="111.25" height="30"/><text class="f-t" x="434.375" y="102" text-anchor="middle">3,200</text>
+<rect class="f-soft" x="45" y="112" width="111.25" height="30"/><text class="f-t" x="100.625" y="132" text-anchor="middle">1</text>
+<rect class="f-soft" x="156.25" y="112" width="111.25" height="30"/><text class="f-t" x="211.875" y="132" text-anchor="middle">104</text>
+<rect class="f-soft" x="267.5" y="112" width="111.25" height="30"/><text class="f-t" x="323.125" y="132" text-anchor="middle">West</text>
+<rect class="f-soft" x="378.75" y="112" width="111.25" height="30"/><text class="f-t" x="434.375" y="132" text-anchor="middle">5,100</text>
+<rect class="f-box" x="45" y="142" width="111.25" height="30"/><text class="f-t" x="100.625" y="162" text-anchor="middle">2</text>
+<rect class="f-box" x="156.25" y="142" width="111.25" height="30"/><text class="f-t" x="211.875" y="162" text-anchor="middle">105</text>
+<rect class="f-box" x="267.5" y="142" width="111.25" height="30"/><text class="f-t" x="323.125" y="162" text-anchor="middle">East</text>
+<rect class="f-box" x="378.75" y="142" width="111.25" height="30"/><text class="f-t" x="434.375" y="162" text-anchor="middle">2,400</text>
+<rect class="f-box" x="45" y="172" width="111.25" height="30"/><text class="f-t" x="100.625" y="192" text-anchor="middle">3</text>
+<rect class="f-box" x="156.25" y="172" width="111.25" height="30"/><text class="f-t" x="211.875" y="192" text-anchor="middle">108</text>
+<rect class="f-box" x="267.5" y="172" width="111.25" height="30"/><text class="f-t" x="323.125" y="192" text-anchor="middle">West</text>
+<rect class="f-box" x="378.75" y="172" width="111.25" height="30"/><text class="f-t" x="434.375" y="192" text-anchor="middle">6,100</text>
+<rect class="f-box" x="45" y="202" width="111.25" height="30"/><text class="f-t" x="100.625" y="222" text-anchor="middle">4</text>
+<rect class="f-box" x="156.25" y="202" width="111.25" height="30"/><text class="f-t" x="211.875" y="222" text-anchor="middle">109</text>
+<rect class="f-box" x="267.5" y="202" width="111.25" height="30"/><text class="f-t" x="323.125" y="222" text-anchor="middle">East</text>
+<rect class="f-box" x="378.75" y="202" width="111.25" height="30"/><text class="f-t" x="434.375" y="222" text-anchor="middle">&lt;NA&gt;</text><line class="f-line" x1="535" y1="115" x2="498" y2="121" marker-end="url(#f-arrow)"/><text class="f-cap" x="545" y="119" text-anchor="start">iloc: 위치 1</text><line class="f-line" x1="535" y1="147" x2="498" y2="132" marker-end="url(#f-arrow)"/><text class="f-cap" x="545" y="151" text-anchor="start">loc: 라벨 104</text>
+</svg>
+<figcaption>표를 재정렬하면 위치가 바뀝니다. 여기서 주문번호 라벨은 그대로입니다.</figcaption>
+</figure>
+<div class="table-wrap"><table>
+<tr><th scope="col">선택하는 기준</th><th scope="col">이 표에서 쓰는 표현</th><th scope="col">돌아오는 값</th></tr>
+<tr><td><b class='key'>.loc</b>는 라벨</td><td><code>orders.loc[104, 'amount']</code></td><td>주문 104의 결제액 5,100원</td></tr>
+<tr><td><b class='key'>.iloc</b>는 위치</td><td><code>orders.iloc[1, 2]</code></td><td>둘째 행의 셋째 열, 5,100원</td></tr>
+<tr><td>라벨로 구간</td><td><code>orders.loc[104:108]</code></td><td>104, 105, 108. 이 예에서는 양 끝 라벨 포함</td></tr>
+<tr><td>위치로 구간</td><td><code>orders.iloc[1:3]</code></td><td>위치 1, 2의 행. 끝 위치 3 제외</td></tr>
+</table></div>
+<p>라벨 범위는 번호가 연속으로 늘어나는 정수 범위와 다릅니다. 오늘 표처럼 라벨이 고유하고 정렬되어 있고 양 끝이 존재하면 위처럼 읽으면 됩니다. 라벨 범위의 의미가 불분명한 표에서는 원하는 라벨들을 리스트로 주거나 먼저 정렬합니다.</p>
+<div class="box trap"><p class="box-k">흔한 함정</p><p><code>orders.loc[1]</code>은 행 라벨 1을 찾습니다. 이 표에는 없어 <code>KeyError</code>가 납니다. <code>orders.iloc[104]</code>는 105번째 자리의 행을 찾으므로 <code>IndexError</code>가 납니다. 우연히 0·1·2 라벨을 쓴 표에서는 두 결과가 같아 보여도, 정렬이나 필터가 들어가면 쉽게 달라집니다.</p></div>
+<div class="check" data-q="q4"></div>
+<div class="check" data-q="q5"></div>
+
+<h2>조건으로 고르고 안전하게 수정한다</h2>
+<p>이번에는 '결제액이 5,000원 이상이고 수량이 3개 이상'인 주문만 남깁니다. 열과 수를 비교하면 행마다 참·거짓을 담은 Series가 나옵니다. 이것이 <b class="key">불리언 마스크</b>입니다. pandas의 <code>Int64</code> 열에서 <code>pd.NA</code>를 수와 비교하면 결측 판정이 나올 수 있습니다. <code>fillna(False)</code>를 조건에 적용하면 결제액을 모르는 주문을 조건 결과에서 제외하겠다는 결정이 명시됩니다. 원본 결제액은 바꾸지 않습니다.</p>
+<pre data-example="python"><code>import pandas as pd
+
+orders = pd.DataFrame(
+    {
+        "store": pd.array(["East", "West", "East", "West", "East"], dtype="string"),
+        "qty": pd.array([2, 3, 1, 4, 2], dtype="Int64"),
+        "amount": pd.array([3200, 5100, 2400, 6100, None], dtype="Int64"),
+    },
+    index=pd.Index([101, 104, 105, 108, 109], name="order_id"),
+)
+
+high = (orders["amount"] &gt;= 5000).fillna(False)
+many = orders["qty"] &gt;= 3
+picked = orders.loc[high &amp; many, ["store", "amount"]].copy()
+picked.loc[104, "amount"] = 5200
+print("선택한 행:", picked.index.tolist())
+print("복사본:", int(picked.loc[104, "amount"]))
+print("원본:", int(orders.loc[104, "amount"]))</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>선택한 행: [104, 108]
+복사본: 5200
+원본: 5100</code></pre>
+<p>조건을 각각 괄호로 감싼 뒤 <code>&amp;</code>는 둘 다, <code>|</code>는 둘 중 하나, <code>~</code>는 반대를 뜻합니다. Python의 <code>and</code>와 <code>or</code>는 Series 각각의 원소를 묶지 못합니다. 기본적으로 같은 표에서 마스크를 만들면 행 라벨이 맞습니다. 다른 표의 마스크를 가져올 때에는 행의 순서와 라벨을 확인합니다.</p>
+<div class="box ex"><p class="box-k">복사와 원본 수정의 차이</p><p>이 예제의 목적은 원본 기록을 유지한 채 복사본을 시험하는 것입니다. <code>.copy()</code>로 떼어낸 뒤 <code>picked.loc[104, "amount"] = 5200</code>을 한 번에 지정합니다. 반대로 정정 내역에 따라 원본 표를 수정하려면 <code>orders.loc[104, "amount"] = 5200</code>처럼 어느 표를 바꿀지 코드에 명시합니다. <code>orders[high]["amount"] = ...</code>처럼 연달아 선택해서 대입하면 의도한 원본 수정이 보장되지 않습니다.</p></div>
+<div class="check" data-q="q6"></div>
+<div class="check" data-q="q7"></div>
+<div class="check" data-q="q8"></div>
+<div class="why"><p class="box-k">왜 그럴까?</p><p>결제액을 모르는 주문을 찾는 필터와, 0원 주문을 찾는 필터를 왜 분리해야 할까요?</p><details><summary>모범 답 보기</summary><p>0원은 확인한 수치이며 결측은 값의 부재입니다. <code>amount.isna()</code>로 누락된 기록을 찾고, <code>(amount == 0).fillna(False)</code>로 확인된 0원만 찾습니다. 둘을 섞으면 품질 확인과 결제액 계산이 달라집니다.</p></details></div>
+
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table>
+<tr><th scope="col">도구</th><th scope="col">확인할 것</th></tr>
+<tr><td><b class='key'>Series / DataFrame</b></td><td>한 축의 값과 행 라벨 / 행 라벨과 열 이름이 있는 표</td></tr>
+<tr><td><b class='key'>dtype</b></td><td>식별자는 문자열로, 결측 가능한 정수는 <code>Int64</code>로 명시</td></tr>
+<tr><td><b class='key'>loc / iloc</b></td><td>라벨을 고를지, 0부터 센 자리를 고를지 결정</td></tr>
+<tr><td><b class='key'>마스크</b></td><td>각 행의 참·거짓과 결측을 확인하고 조건을 괄호로 묶기</td></tr>
+<tr><td><b class='key'>copy</b></td><td>분석용 사본과 의도적으로 수정할 원본을 명시</td></tr>
+</table></div>
+<p>다음 장에서는 행을 매장별로 나누어 집계하고, 매장 정보가 든 별도 표와 결합합니다.</p>
+<p class="small">공식 참고 자료 <a href="https://pandas.pydata.org/docs/user_guide/indexing.html">pandas 인덱싱 안내</a> · <a href="https://pandas.pydata.org/docs/user_guide/integer_na.html">결측 가능한 정수</a> · <a href="https://pandas.pydata.org/docs/reference/api/pandas.read_csv.html">read_csv</a></p>
+<h2>확인 문제</h2>
+<p>본문에서 풀지 않은 문제가 여기에 나옵니다. 결과를 예측한 뒤 필요하면 코드로 검산합니다.</p>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

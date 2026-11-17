@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>브로드캐스팅과 재현할 수 있는 난수 실험 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e8c'/%3E%3Cpath d='M8 22V10m8 12V14m8 8V6' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="PY10-3">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+
+<header class="chapter">
+<p class="chap-sub">Python과 프로그래밍 사고 · PY10 수치 배열</p>
+<p class="chap-num">PY10·3</p>
+<h1>브로드캐스팅과 재현할 수 있는 난수 실험</h1>
+<p class="lead">두 날의 판매량 표에서 상품별 가격을 곱하면 칸마다 매출액이 나옵니다. 가격표에는 세 값뿐인데 어떻게 두 날에 적용될까요? 배열의 모양을 맞춰 계산하는 브로드캐스팅으로 이 문제를 풀고, 같은 배열 도구로 주사위 실험을 여러 번 반복합니다.</p>
+</header>
+
+<div class="goal">
+<h2>이 장을 읽고 나면</h2>
+<ul>
+<li>브로드캐스팅에서 모양을 오른쪽부터 비교한다.</li>
+<li>날짜별 값과 상품별 값이 어느 축을 따라 적용되는지 설명한다.</li>
+<li>난수 생성기를 만들고 정수 뽑기와 복원 추출을 실행한다.</li>
+<li>시드, 호출 순서, 환경을 기록하고 재현성의 범위를 설명한다.</li>
+</ul>
+</div>
+
+<h2>상품 가격표 하나를 두 날에 적용하기</h2>
+<p>상품 A, B, C의 단가를 각각 100원, 200원, 300원으로 정합니다. 월요일 상품 B의 매출액은 <code>5 × 200 = 1,000</code>원입니다. 화요일 상품 B에도 같은 200원을 곱합니다. NumPy에서는 판매량 표 <code>(2, 3)</code>에 가격 배열 <code>(3,)</code>을 바로 곱할 수 있습니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 224" role="img" aria-label="두 날의 판매량 표 아래에 상품별 단가 배열 100, 200, 300을 둔다. 가격을 열에 맞춰 곱하면 월요일 매출은 1200, 1000, 2400, 화요일 매출은 2000, 800, 3000이다.">
+<text class="f-cap" x="210" y="25" text-anchor="middle">판매량 (개)</text>
+<text class="f-cap" x="560" y="25" text-anchor="middle">매출액 (원)</text>
+<rect class="f-box" x="90" y="44" width="80" height="44" rx="3"/><text class="f-t" x="130" y="71" text-anchor="middle">12</text>
+<rect class="f-soft" x="170" y="44" width="80" height="44" rx="3"/><text class="f-t" x="210" y="71" text-anchor="middle">5</text>
+<rect class="f-box" x="250" y="44" width="80" height="44" rx="3"/><text class="f-t" x="290" y="71" text-anchor="middle">8</text>
+<rect class="f-box" x="90" y="88" width="80" height="44" rx="3"/><text class="f-t" x="130" y="115" text-anchor="middle">20</text>
+<rect class="f-soft" x="170" y="88" width="80" height="44" rx="3"/><text class="f-t" x="210" y="115" text-anchor="middle">4</text>
+<rect class="f-box" x="250" y="88" width="80" height="44" rx="3"/><text class="f-t" x="290" y="115" text-anchor="middle">10</text>
+<text class="f-s" x="61" y="173" text-anchor="middle">단가</text>
+<rect class="f-box" x="90" y="154" width="80" height="38" rx="3"/><text class="f-t" x="130" y="178" text-anchor="middle">100</text>
+<rect class="f-soft" x="170" y="154" width="80" height="38" rx="3"/><text class="f-t" x="210" y="178" text-anchor="middle">200</text>
+<rect class="f-box" x="250" y="154" width="80" height="38" rx="3"/><text class="f-t" x="290" y="178" text-anchor="middle">300</text>
+<line class="f-line" x1="370" y1="92" x2="431" y2="92" marker-end="url(#f-arrow)"/>
+<text class="f-s" x="401" y="72" text-anchor="middle">곱셈</text>
+<rect class="f-box" x="440" y="44" width="80" height="44" rx="3"/><text class="f-t" x="480" y="71" text-anchor="middle">1200</text>
+<rect class="f-soft" x="520" y="44" width="80" height="44" rx="3"/><text class="f-t" x="560" y="71" text-anchor="middle">1000</text>
+<rect class="f-box" x="600" y="44" width="80" height="44" rx="3"/><text class="f-t" x="640" y="71" text-anchor="middle">2400</text>
+<rect class="f-box" x="440" y="88" width="80" height="44" rx="3"/><text class="f-t" x="480" y="115" text-anchor="middle">2000</text>
+<rect class="f-soft" x="520" y="88" width="80" height="44" rx="3"/><text class="f-t" x="560" y="115" text-anchor="middle">800</text>
+<rect class="f-box" x="600" y="88" width="80" height="44" rx="3"/><text class="f-t" x="640" y="115" text-anchor="middle">3000</text>
+</svg>
+<figcaption>축 1 위치가 같은 판매량과 단가를 곱해 매출액을 얻는다.</figcaption>
+</figure>
+<p class="small">실행 예제</p>
+<pre data-example="python"><code>import numpy as np
+
+sales = np.array([[12, 5, 8], [20, 4, 10]])
+price = np.array([100, 200, 300])
+money = sales * price
+print(money.tolist())
+print(money.sum(axis=1).tolist())</code></pre>
+<pre data-output><code>[[1200, 1000, 2400], [2000, 800, 3000]]
+[4600, 5800]</code></pre>
+<p>크기가 다른 두 배열에 대해 같은 자리끼리 계산할 수 있도록 축을 맞추는 규칙을 <b class="key">브로드캐스팅</b>(broadcasting)이라고 합니다. 이 예에서는 가격이 날짜마다 반복되는 것처럼 계산되지만, 가격 배열을 2행으로 복사해 둘 필요는 없습니다. 다만 출력 배열 자체는 커질 수 있습니다.</p>
+<div class="check" data-q="q1"></div>
+
+
+<h2>모양은 오른쪽 끝의 축부터 맞추기</h2>
+<p>길이 <code>1</code>인 축은 해당 칸을 필요한 만큼 다시 읽을 수 있습니다. 빠진 축도 길이 <code>1</code>로 간주합니다. 각 축을 오른쪽 끝부터 비교해 길이가 <b>같거나</b>, 둘 중 하나가 <b>1</b>이면 계산할 수 있습니다. 둘 다 1이 아니면서 서로 다른 길이면 그 자리에서 모양이 맞지 않습니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 161" role="img" aria-label="(2, 3) 판매량에 (3,) 가격표를 오른쪽부터 맞추면 오른쪽은 3과 3, 왼쪽은 2와 생략된 1이다. 생략된 길이 1이 모든 행에 적용된다.">
+<text class="f-s" x="300" y="22" text-anchor="middle">축 0</text>
+<text class="f-cap" x="400" y="22" text-anchor="middle">축 1</text>
+<text class="f-t" x="200" y="61" text-anchor="end">판매량</text>
+<rect class="f-box" x="250" y="41" width="100" height="32" rx="3"/><text class="f-t" x="300" y="62" text-anchor="middle">2</text>
+<rect class="f-soft" x="350" y="41" width="100" height="32" rx="3"/><text class="f-t" x="400" y="62" text-anchor="middle">3</text>
+<text class="f-t" x="200" y="102" text-anchor="end">가격</text>
+<rect class="f-box" x="250" y="82" width="100" height="32" rx="3"/><text class="f-t" x="300" y="103" text-anchor="middle">1 (생략)</text>
+<rect class="f-soft" x="350" y="82" width="100" height="32" rx="3"/><text class="f-t" x="400" y="103" text-anchor="middle">3</text>
+<line class="f-line" x1="475" y1="105" x2="475" y2="55" marker-end="url(#f-arrow)"/>
+<text class="f-s" x="543" y="83" text-anchor="middle">오른쪽부터 확인</text>
+</svg>
+<figcaption>빠진 왼쪽 축은 길이 1로 본다. 오른쪽 3과 길이 2를 짝지으면 계산이 실패한다.</figcaption>
+</figure>
+<ol>
+<li><code>(2, 3)</code>과 <code>(3,)</code>을 맞추면, 오른쪽에서 <code>3</code>과 <code>3</code>이 같습니다. 왼쪽의 빠진 자리는 길이 1로 봅니다. <code>2</code>와 <code>1</code>도 맞아서 결과는 <code>(2, 3)</code>입니다.</li>
+<li><code>(2, 3)</code>과 <code>(2,)</code>를 맞추면, 오른쪽에서 <code>3</code>과 <code>2</code>가 만납니다. 어느 쪽도 1이 아니므로 실패합니다.</li>
+<li><code>(2, 3)</code>과 <code>(2, 1)</code>을 맞추면 오른쪽 <code>3</code>과 <code>1</code>, 왼쪽 <code>2</code>와 <code>2</code>가 모두 맞아 결과는 <code>(2, 3)</code>입니다.</li>
+</ol>
+<div class="check" data-q="q2"></div>
+<div class="check" data-q="q3"></div>
+
+<p>두 날의 판매량에 날짜별 보정량 1개, 2개를 더한다면 보정값을 <code>(2, 1)</code>로 만들어야 합니다. <code>daily[:, np.newaxis]</code>는 <code>(2,)</code>의 뒤에 길이 1인 축을 새로 둡니다. 이 경우 <code>daily.reshape(2, 1)</code>과 모양이 같습니다.</p>
+<p class="small">실행 예제</p>
+<pre data-example="python"><code>import numpy as np
+
+sales = np.array([[12, 5, 8], [20, 4, 10]])
+daily = np.array([1, 2])
+try:
+    sales + daily
+except ValueError:
+    print("오른쪽 축의 길이가 맞지 않습니다.")
+print(daily[:, np.newaxis].shape)
+print((sales + daily[:, np.newaxis]).tolist())</code></pre>
+<pre data-output><code>오른쪽 축의 길이가 맞지 않습니다.
+(2, 1)
+[[13, 6, 9], [22, 6, 12]]</code></pre>
+<div class="box trap"><p class="box-k">흔한 실수</p><p>판매표가 우연히 <code>(2, 2)</code>라면 <code>(2,)</code> 배열을 더하는 코드가 실행됩니다. 그래도 정렬하는 기준은 마지막 축입니다. 첫 보정값을 첫날 <em>모든</em> 상품에 더할 의도라면, 정사각형 표에서도 날짜별 보정 배열을 <code>(2, 1)</code>로 만듭니다. 모양이 계산 가능한지 확인한 다음 축의 의미도 대조하세요.</p></div>
+<p>각 상품이 그날 총판매량에서 차지하는 비율을 구할 때도 같은 원리입니다. <code>sales.sum(axis=1, keepdims=True)</code>로 날짜별 합계의 모양을 <code>(2, 1)</code>로 남기면, 날짜가 같은 행의 값들을 그 합계로 나눌 수 있습니다. 날짜별 합계에 0이 있다면 나눗셈 전에 별도로 처리 규칙을 정합니다.</p>
+<p class="small">실행 예제</p>
+<pre data-example="python"><code>import numpy as np
+
+sales = np.array([[12, 5, 8], [20, 4, 10]])
+daily_total = sales.sum(axis=1, keepdims=True)
+share = sales / daily_total
+print(daily_total.tolist())
+print(share[0].round(2).tolist())
+print(np.allclose(share.sum(axis=1), [1, 1]))</code></pre>
+<pre data-output><code>[[25], [34]]
+[0.48, 0.2, 0.32]
+True</code></pre>
+<div class="check" data-q="q4"></div>
+<div class="check" data-q="q5"></div>
+
+
+<h2>난수 생성기의 상태와 시드</h2>
+<p>주사위를 여러 번 던지는 과정을 컴퓨터로 흉내 내 보겠습니다. NumPy의 <code>default_rng(seed)</code>는 <b class="key">난수 생성기</b>(Generator)를 만듭니다. 컴퓨터가 내부 상태를 정해진 규칙으로 바꾸면서 무작위처럼 보이는 수를 생성하므로 이 수를 <b>의사난수</b>라고 합니다. <b class="key">시드</b>(seed)는 시작 상태를 만들 때 쓰는 입력입니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 166" role="img" aria-label="난수 생성기에 시드 2026을 넣어 시작 상태를 만든다. 첫 호출은 6, 2, 1, 4, 3, 3을 내고 상태를 바꾼다. 다음 호출은 1, 3, 4, 3, 5, 5를 낸다.">
+<rect class="f-soft" x="42" y="48" width="150" height="65" rx="3"/>
+<text class="f-cap" x="117" y="76" text-anchor="middle">시드 2026</text>
+<text class="f-s" x="117" y="97" text-anchor="middle">시작 상태를 정함</text>
+<line class="f-line" x1="200" y1="80" x2="254" y2="80" marker-end="url(#f-arrow)"/>
+<rect class="f-box" x="260" y="48" width="200" height="65" rx="3"/>
+<text class="f-cap" x="360" y="76" text-anchor="middle">첫 호출</text>
+<text class="f-s" x="360" y="97" text-anchor="middle">6, 2, 1, 4, 3, 3</text>
+<line class="f-line" x1="468" y1="80" x2="527" y2="80" marker-end="url(#f-arrow)"/>
+<rect class="f-box" x="534" y="48" width="184" height="65" rx="3"/>
+<text class="f-cap" x="626" y="76" text-anchor="middle">다음 호출</text>
+<text class="f-s" x="626" y="97" text-anchor="middle">1, 3, 4, 3, 5, 5</text>
+<text class="f-s" x="498" y="131" text-anchor="middle">상태 진행</text>
+</svg>
+<figcaption>같은 생성기를 다시 부르는 것은 처음 상태로 돌아가는 동작과 다르다.</figcaption>
+</figure>
+<p><code>rng.integers(1, 7, size=6)</code>은 1 이상 7 미만의 정수 6개를 뽑습니다. 뽑기 한 번에서 각 숫자가 나올 확률은 같습니다. 같은 생성기를 다시 호출하면 바뀐 상태에서 다음 수를 뽑습니다. 처음과 똑같이 맞춰 보려면 같은 시드로 생성기를 새로 만들고, 메서드와 인수, 호출 순서도 같게 실행합니다.</p>
+<p class="small">실행 예제</p>
+<pre data-example="python"><code>import numpy as np
+
+rng = np.random.default_rng(2026)
+first = rng.integers(1, 7, size=6)
+second = rng.integers(1, 7, size=6)
+repeat = np.random.default_rng(2026).integers(1, 7, size=6)
+print(first.tolist())
+print(second.tolist())
+print(np.array_equal(first, repeat))</code></pre>
+<pre data-output><code>[6, 2, 1, 4, 3, 3]
+[1, 3, 4, 3, 5, 5]
+True</code></pre>
+<p>위에 나온 수열은 이 예제를 검증한 NumPy 2.5.3에서 얻었습니다. 마지막 줄은 같은 환경에서 각각 새로 만든 두 생성기의 첫 결과가 같은지 확인합니다. 시드를 같게 적어도 버전, 난수 알고리즘, 호출 순서나 크기를 바꾸면 정확히 같은 수열이 보장되지 않습니다. 보고서에는 시드와 코드, NumPy 버전 등을 함께 기록하고, 분석 결과가 특정 시드 하나에 지나치게 의존하지 않는지도 봅니다.</p>
+<div class="check" data-q="q6"></div>
+<div class="check" data-q="q7"></div>
+
+
+<h2>실험 한 번과 여러 번을 배열로 구별하기</h2>
+<p>주사위를 네 번 던져 평균을 내는 실험을 세 번 하겠습니다. 결과 배열의 행 하나는 실험 한 번, 열 하나는 그 실험에서의 던지기 한 번입니다. 그러므로 <code>size=(3, 4)</code>로 값을 생성하고 <code>mean(axis=1)</code>을 구하면 실험별로 평균 하나씩 남습니다.</p>
+<p class="small">실행 예제</p>
+<pre data-example="python"><code>import numpy as np
+
+rng = np.random.default_rng(2026)
+rolls = rng.integers(1, 7, size=(3, 4))
+print(rolls.tolist())
+print(rolls.mean(axis=1).tolist())</code></pre>
+<pre data-output><code>[[6, 2, 1, 4], [3, 3, 1, 3], [4, 3, 5, 5]]
+[3.25, 2.5, 4.25]</code></pre>
+<p>첫 실험 평균은 <code>(6 + 2 + 1 + 4) ÷ 4 = 3.25</code>이고, 다음 두 실험은 다른 값이 나왔습니다. 이 세 결과를 정답처럼 외울 필요는 없습니다. 반복할 때 평균이 얼마나 달라지는지 살펴보기 위한 작은 실험입니다. 실제 모집단에서 몇 개를 뽑을지나 표본 편향은 <a href="../../unit.html?u=DA08">DA08</a>에서 자세히 다룹니다.</p>
+<p><code>rng.choice([12, 5, 8], size=4, replace=True)</code>를 쓰면 주사위 눈 대신 관측된 값 중에서 네 번 뽑을 수 있습니다. <code>replace=True</code>는 매번 원래 후보 중에서 다시 뽑는 복원 추출입니다. 그래서 서로 다른 후보가 셋뿐이어도 네 번 뽑을 수 있습니다. <code>replace=False</code>는 뽑았던 <em>자리</em>를 다시 고르지 않으므로, 세 자리에서 서로 다른 네 자리를 고르려고 하면 실패합니다. 원래 자료에 값이 같은 두 자리가 있다면 비복원 추출에서도 동일한 값이 나올 수 있습니다.</p>
+<p class="small">실행 예제</p>
+<pre data-example="python"><code>import numpy as np
+
+rng = np.random.default_rng(2026)
+sample = rng.choice([12, 5, 8], size=4, replace=True)
+print(sample.tolist())</code></pre>
+<pre data-output><code>[8, 12, 12, 5]</code></pre>
+<div class="check" data-q="q8"></div>
+<div class="check" data-q="q9"></div>
+
+
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table><tr><th>상황</th><th>확인할 것</th></tr>
+<tr><td>크기가 다른 두 배열의 계산</td><td><b class="key">브로드캐스팅</b>은 오른쪽 축부터 길이가 같거나 하나가 1인지 검사</td></tr>
+<tr><td>행별 값을 같은 행 전체에 사용</td><td>길이 1인 열 축을 두어 <code>(행의 수, 1)</code>로 만듦</td></tr>
+<tr><td>정수를 여러 개 뽑을 때</td><td><code>integers(아래, 위, size=...)</code>의 기본 범위는 아래 포함, 위 제외</td></tr>
+<tr><td>결과 다시 계산</td><td><b class="key">시드</b>에 메서드·인수·호출 순서와 환경을 같이 기록</td></tr></table></div>
+<div class="box sum"><p class="box-k">다음 단원으로</p><p>NumPy에서는 숫자 위치와 축을 바탕으로 계산했습니다. <a href="../../unit.html?u=PY11">pandas 단원</a>에서는 상품명·날짜처럼 뜻 있는 열과 행의 이름을 붙여 읽고 집계합니다.</p></div>
+
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://numpy.org/doc/stable/user/basics.broadcasting.html">NumPy broadcasting 규칙</a></li>
+<li><a href="https://numpy.org/doc/stable/reference/random/generator.html">NumPy Generator API</a></li>
+<li><a href="https://numpy.org/doc/stable/reference/random/compatibility.html">NumPy 난수 호환 정책</a></li>
+</ul>
+
+<h2>확인 문제</h2>
+<p>본문에서 다룬 예제를 떠올린 뒤 남은 문제를 직접 풀어 보세요.</p>
+<div id="quiz"></div>
+
+<section class="work" id="tools"></section>
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

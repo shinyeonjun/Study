@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>import와 가상환경: 어떤 Python을 쓰고 있나 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="PY09-1">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">Python과 프로그래밍 사고 · PY09 패키지와 환경</p>
+<p class="chap-num">PY09·1</p>
+<h1>import와 가상환경: 어떤 Python을 쓰고 있나</h1>
+<p class="lead">어제까지 실행되던 코드에 <code>ModuleNotFoundError</code>가 뜨면 먼저 설치한 위치를 확인합니다. 같은 컴퓨터에도 여러 Python과 가상환경이 있을 수 있습니다. 이 장에서는 코드를 불러오는 일과 그 코드를 사용할 수 있게 설치하는 일을 연결합니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>모듈, 패키지, 표준 라이브러리의 역할을 구분한다.</li><li>가상환경을 만들고 그 환경의 Python으로 실행한다.</li><li>설치가 안 된 경우와 다른 Python을 쓴 경우를 구분한다.</li></ul></div>
+
+<h2>이미 작성된 코드를 불러오기</h2>
+<p>숫자 세 개의 평균을 구할 때 직접 <code>sum(values) / len(values)</code>를 써도 됩니다. Python에 포함된 <code>statistics</code> 모듈에서 평균 함수를 가져오면 다른 코드에도 같은 이름으로 쓸 수 있습니다.</p>
+<pre data-example="python"><code>import statistics as stats
+values = [60, 80, 100]
+print(stats.mean(values))
+print(stats.median(values))</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>80
+80</code></pre>
+<div class="box "><p class="box-k">용어</p><p><b class="key">모듈</b>은 가져와 쓸 수 있는 코드 단위입니다. <b class="key">패키지</b>는 모듈이나 하위 패키지를 묶어 이름으로 접근할 수 있게 합니다. <b class="key">표준 라이브러리</b>에는 이미 Python에 함께 제공되는 모듈이 들어 있습니다. NumPy처럼 따로 설치하는 것은 외부 라이브러리입니다.</p></div>
+<p><code>as stats</code>는 현재 파일에서 부를 이름을 정합니다. <code>import numpy as np</code>에서도 <code>np</code>는 짧게 부르는 이름이고, 실제로 가져오는 이름은 <code>numpy</code>입니다. 설치용 이름은 배포 패키지의 이름이라 import할 이름과 다른 경우도 있습니다.</p>
+<div class="check" data-q="q1"></div>
+<h2>같은 파일을 두 환경에서 실행하면</h2>
+<p>분석 A에 NumPy를 설치한 다음 분석 B의 Python으로 같은 코드를 실행한다고 가정합시다. B에는 아직 NumPy가 없으므로 첫 줄에서 멈춥니다. 터미널 창을 바꿨다거나 편집기가 다른 인터프리터를 가리킬 때 흔히 만나는 상황입니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 160" role="img" aria-label="코드가 A의 Python으로 실행되면 그 환경의 설치 위치에서 NumPy를 가져온다.">
+<rect class="f-box" x="42" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="135" y="61" text-anchor="middle">실행할 코드</text><text class="f-s" x="135" y="89" text-anchor="middle">import numpy as np</text><text class="f-s" x="135" y="110" text-anchor="middle">이름 numpy를 찾는다</text><line class="f-line" x1="235" y1="84" x2="278" y2="84" marker-end="url(#f-arrow)"/><rect class="f-soft" x="287" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="380" y="61" text-anchor="middle">선택한 Python</text><text class="f-s" x="380" y="89" text-anchor="middle">작업 A의 .venv</text><text class="f-s" x="380" y="110" text-anchor="middle">A가 볼 수 있는 설치 위치</text><line class="f-line" x1="480" y1="84" x2="523" y2="84" marker-end="url(#f-arrow)"/><rect class="f-box" x="532" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="625" y="61" text-anchor="middle">가져올 패키지</text><text class="f-s" x="625" y="89" text-anchor="middle">A에 설치한 NumPy</text><text class="f-s" x="625" y="110" text-anchor="middle">성공하면 np라는 이름</text>
+</svg><figcaption>실행할 Python의 위치를 정하면 가져올 수 있는 외부 패키지도 정해진다.</figcaption></figure>
+<div class="box "><p class="box-k">정의</p><p><b class="key">가상환경</b>은 프로젝트별로 패키지 설치 위치를 나누는 Python 실행 환경입니다. C 드라이브 전체를 복제하지 않습니다. <code>.venv</code>를 새로 만들어도 다른 프로젝트에 설치된 패키지가 자동으로 들어오지 않습니다. 일반적인 <code>venv</code> 기본 설정을 기준으로 설명합니다.</p></div>
+<div class="check" data-q="q2"></div>
+<h2>Windows에서 만들고 실행하기</h2>
+<p>연습 폴더를 만든 뒤 그 안에서 PowerShell을 엽니다. <code>-m venv</code>는 현재 명령의 Python으로 <code>venv</code> 모듈을 실행하고, 마지막 인수 <code>.venv</code>는 환경을 만들 폴더입니다. 생성 후에는 이 폴더의 실행 파일을 명시합니다.</p>
+<pre><code>python -m venv .venv
+.\.venv\Scripts\python.exe --version
+.\.venv\Scripts\python.exe -m pip --version</code></pre>
+<p>첫 명령은 보통 메시지 없이 끝납니다. 버전은 설치한 Python에 따라 달라집니다. macOS·Linux의 일반적인 <code>venv</code>에서는 <code>./.venv/bin/python</code>을 씁니다. 활성화는 명령을 짧게 쓰도록 현재 셸의 검색 경로를 바꾸는 편의 기능입니다. 여기서는 실행 파일을 직접 가리켜 PowerShell 활성화 정책에 의존하지 않습니다.</p>
+<p>이 과정을 직접 연습할 때만 다음 설치 명령을 실행합니다. 인터넷이 필요하며 <code>-m pip</code>는 명령 앞에 지정한 Python이 사용하는 pip를 실행합니다.</p>
+<pre><code>.\.venv\Scripts\python.exe -m pip install numpy pandas matplotlib
+.\.venv\Scripts\python.exe -c &quot;import numpy, pandas, matplotlib; print(numpy.__version__, pandas.__version__, matplotlib.__version__)&quot;</code></pre>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 160" role="img" aria-label="환경을 만든 뒤 동일한 실행 파일로 pip 설치와 분석을 한다.">
+<rect class="f-box" x="42" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="135" y="61" text-anchor="middle">환경 생성</text><text class="f-s" x="135" y="89" text-anchor="middle">python -m venv .venv</text><text class="f-s" x="135" y="110" text-anchor="middle">기반 Python의 버전 사용</text><line class="f-line" x1="235" y1="84" x2="278" y2="84" marker-end="url(#f-arrow)"/><rect class="f-soft" x="287" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="380" y="61" text-anchor="middle">그 환경에 설치</text><text class="f-s" x="380" y="89" text-anchor="middle">.venv의 Python -m pip</text><text class="f-s" x="380" y="110" text-anchor="middle">설치 위치를 지정</text><line class="f-line" x1="480" y1="84" x2="523" y2="84" marker-end="url(#f-arrow)"/><rect class="f-box" x="532" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="625" y="61" text-anchor="middle">같은 환경에서 실행</text><text class="f-s" x="625" y="89" text-anchor="middle">.venv의 Python analyze.py</text><text class="f-s" x="625" y="110" text-anchor="middle">설치와 실행을 일치</text>
+</svg><figcaption>설치와 실행에 같은 환경의 Python을 쓰는지 확인한다.</figcaption></figure>
+<div class="check" data-q="q3"></div>
+<h2>실행한 Python과 모듈의 출처를 확인하기</h2>
+<p><code>sys.executable</code>은 지금 실행한 Python의 경로입니다. 아래 예제의 첫 줄은 Windows에서 보이는 실행 파일 이름입니다. 운영체제에 따라 이름이 달라질 수 있으니 실제 문제를 찾을 때는 <code>print(sys.executable)</code>로 전체 경로를 비교하세요. <code>sys.prefix</code>와 <code>sys.base_prefix</code>가 다르면 표준 <code>venv</code>에서 실행 중인지 확인하는 단서입니다.</p>
+<pre data-example="python"><code>from pathlib import Path
+import sys
+
+print(f"실행 파일: {Path(sys.executable).name.lower()}")
+print(f"가상환경: {sys.prefix != sys.base_prefix}")</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>실행 파일: python.exe
+가상환경: True</code></pre>
+<p>이 출력은 가상환경의 Python으로 실행했을 때입니다. 기본 Python에서 실행하면 둘째 줄은 <code>False</code>가 나올 수 있습니다.</p>
+<p>예를 들어 연습 폴더에 <code>numpy.py</code>를 만들면 그 파일이 외부 NumPy보다 먼저 발견될 수 있습니다. <code>import numpy</code>가 성공했는데 <code>numpy.array</code>가 없다는 오류가 나면 <code>print(numpy.__file__)</code>로 불러온 파일의 위치를 확인합니다. 이 경우 연습 파일의 이름을 <code>array_practice.py</code>처럼 바꾸고, 같은 세션에서 다시 불러오던 중이었다면 Python을 다시 시작합니다.</p>
+<div class="check" data-q="q4"></div>
+<div class="table-wrap"><table><thead><tr><th scope="col">증상</th><th scope="col">먼저 확인할 것</th></tr></thead><tbody><tr><td>import부터 실패</td><td>실행 경로와 설치한 환경, 이름 철자</td></tr><tr><td>import는 되는데 필요한 이름이 없음</td><td>내 파일과 이름이 겹치는지, 패키지 버전</td></tr><tr><td>편집기와 터미널의 결과가 다름</td><td>두 곳에서 <code>sys.executable</code> 비교</td></tr><tr><td>패키지 넣었는데 다른 환경에서 안 보임</td><td>해당 환경의 <code>python -m pip show</code>로 설치 위치 확인</td></tr></tbody></table></div>
+<h2>짧은 실습</h2>
+<p>같은 폴더에서 터미널의 Python과 편집기가 선택한 Python을 각각 실행해 경로를 적습니다. 둘이 다르면 어느 쪽을 프로젝트 환경으로 쓸지 결정한 뒤, 그 Python에서 NumPy를 불러오는지 확인합니다. 다음 장에서는 이 실습을 다른 날에도 다시 실행할 수 있도록 기록합니다.</p>
+
+<h2>참고 자료</h2>
+<ul><li><a href="https://docs.python.org/3/tutorial/modules.html">Python 공식 자습서 · 모듈</a></li><li><a href="https://docs.python.org/3/tutorial/venv.html">Python 공식 자습서 · 가상환경과 패키지</a></li><li><a href="https://packaging.python.org/en/latest/guides/installing-using-pip-and-virtual-environments/">Python Packaging User Guide · 가상환경과 pip</a></li></ul>
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NumPy 배열의 모양·축·자료형 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e8c'/%3E%3Cpath d='M8 22V10m8 12V14m8 8V6' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="PY10-1">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+
+<header class="chapter">
+<p class="chap-sub">Python과 프로그래밍 사고 · PY10 수치 배열</p>
+<p class="chap-num">PY10·1</p>
+<h1>NumPy 배열의 모양·축·자료형</h1>
+<p class="lead">월요일과 화요일의 상품별 판매량을 기록했습니다. 값은 여섯 개인데, 그냥 한 줄로 읽으면 어느 값이 어느 날의 판매량인지 잊기 쉽습니다. NumPy 배열은 값과 함께 축의 길이와 자료형을 기억합니다. 그 정보로 다음 장에서 어느 방향으로 합할지 판단할 수 있습니다.</p>
+</header>
+
+<div class="goal">
+<h2>이 장을 읽고 나면</h2>
+<ul>
+<li>리스트와 배열의 곱셈 결과를 비교한다.</li>
+<li>shape, ndim, size, dtype이 각각 답하는 질문을 구별한다.</li>
+<li>판매량 배열에서 축 0과 축 1이 가리키는 대상을 찾는다.</li>
+<li>dtype과 reshape를 바꾸기 전 값과 원소 수를 확인한다.</li>
+</ul>
+</div>
+
+<h2>숫자 목록을 배열로 바꾸기</h2>
+<p>상품 A, B, C가 월요일에 12개, 5개, 8개 팔렸습니다. 내일 각각 두 배 팔린다고 가정하면 24개, 10개, 16개입니다. 파이썬 리스트에 <code>* 2</code>를 하면 목록을 한 번 더 이어 붙입니다(PY04). 같은 모양의 계산을 NumPy 배열에 하면 각 원소에 2가 곱해집니다.</p>
+<p class="small">실행 예제</p>
+<pre data-example="python"><code>import numpy as np
+
+sales = [12, 5, 8]
+print(sales * 2)
+print(np.array(sales) * 2)</code></pre>
+<pre data-output><code>[12, 5, 8, 12, 5, 8]
+[24 10 16]</code></pre>
+<div class="box"><p class="box-k">정의</p><p><b class="key">NumPy 배열</b>(<code>ndarray</code>)은 원소를 축에 따라 배치하는 자료구조입니다. 배열 하나에는 원소를 저장하는 규칙 하나(<b class="key">dtype</b>)가 적용됩니다. 숫자 배열에 대해 NumPy는 각 원소에 같은 연산을 적용하는 기능을 제공합니다.</p></div>
+<p>예제에서는 <code>import numpy as np</code>로 모듈을 불러오고, <code>np.array(리스트)</code>로 배열을 만듭니다. <code>np</code>는 이 코드에서 쓰는 짧은 이름입니다. 설치와 가상환경은 <a href="../../unit.html?u=PY09">PY09</a>를 참고하세요. 예제의 출력에서 <code>[24 10 16]</code>처럼 쉼표가 없는 것은 NumPy가 화면에 배열을 표시하는 방식입니다.</p>
+<div class="check" data-q="q1"></div>
+
+
+<h2>shape는 축의 길이를 순서대로 적은 튜플</h2>
+<p>화요일 판매량인 20, 4, 10을 다음 행에 이어 적겠습니다. 행 하나가 하루이고, 같은 열에는 언제나 같은 상품을 놓습니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 224" role="img" aria-label="2행 3열의 판매량 배열. 첫째 행 월요일의 판매량은 A 12, B 5, C 8이고 둘째 행 화요일의 판매량은 A 20, B 4, C 10이다. 축 0은 행이 변하는 아래 방향, 축 1은 열이 변하는 오른쪽 방향이다.">
+<text class="f-cap" x="380" y="23" text-anchor="middle">축 1 · 상품에 따라 이동</text>
+<line class="f-line" x1="251" y1="39" x2="509" y2="39" marker-end="url(#f-arrow)"/>
+<text class="f-s" x="290" y="74" text-anchor="middle">상품 A</text>
+<text class="f-s" x="380" y="74" text-anchor="middle">상품 B</text>
+<text class="f-s" x="470" y="74" text-anchor="middle">상품 C</text>
+<rect class="f-box" x="245" y="86" width="90" height="42" rx="3"/><text class="f-t" x="290" y="112" text-anchor="middle">12</text>
+<rect class="f-box" x="335" y="86" width="90" height="42" rx="3"/><text class="f-t" x="380" y="112" text-anchor="middle">5</text>
+<rect class="f-box" x="425" y="86" width="90" height="42" rx="3"/><text class="f-t" x="470" y="112" text-anchor="middle">8</text>
+<rect class="f-box" x="245" y="128" width="90" height="42" rx="3"/><text class="f-t" x="290" y="154" text-anchor="middle">20</text>
+<rect class="f-box" x="335" y="128" width="90" height="42" rx="3"/><text class="f-t" x="380" y="154" text-anchor="middle">4</text>
+<rect class="f-box" x="425" y="128" width="90" height="42" rx="3"/><text class="f-t" x="470" y="154" text-anchor="middle">10</text>
+<text class="f-s" x="210" y="112" text-anchor="middle">월요일</text>
+<text class="f-s" x="210" y="154" text-anchor="middle">화요일</text>
+<line class="f-line" x1="116" y1="91" x2="116" y2="165" marker-end="url(#f-arrow)"/>
+<text class="f-s" x="116" y="77" text-anchor="middle">축 0 · 날짜</text>
+<text class="f-cap" x="380" y="200" text-anchor="middle">shape = (2, 3)</text>
+</svg>
+<figcaption>숫자 2는 날짜 수, 숫자 3은 상품 수다. 축의 의미는 데이터를 기록한 순서에서 정한다.</figcaption>
+</figure>
+<p class="small">실행 예제</p>
+<pre data-example="python"><code>import numpy as np
+
+sales = np.array([[12, 5, 8], [20, 4, 10]], dtype=np.int16)
+print(sales)
+print(sales.shape, sales.ndim, sales.size, sales.dtype)
+print(np.array(12).shape, np.array([12]).shape)</code></pre>
+<pre data-output><code>[[12  5  8]
+ [20  4 10]]
+(2, 3) 2 6 int16
+() (1,)</code></pre>
+<p><b class="key">축(axis)</b>은 배열에서 위치를 지정하는 방향입니다. 그림에서 <code>axis=0</code> 방향으로 한 칸 움직이면 행이 바뀌어 월요일에서 화요일로 내려갑니다. <code>axis=1</code> 방향으로 한 칸 움직이면 같은 행에서 상품이 바뀝니다. 두 축의 길이를 순서대로 적으면 <code>shape == (2, 3)</code>입니다.</p>
+<div class="table-wrap"><table>
+<tr><th>속성</th><th>무슨 질문에 답하나?</th><th>이 표의 값</th></tr>
+<tr><td><b class="key">shape</b></td><td>각 축에 몇 칸이 있나?</td><td><code>(2, 3)</code></td></tr>
+<tr><td><b class="key">ndim</b></td><td>축은 몇 개인가?</td><td><code>2</code></td></tr>
+<tr><td><b class="key">size</b></td><td>원소는 전부 몇 개인가?</td><td><code>6</code></td></tr>
+<tr><td><b class="key">dtype</b></td><td>각 칸을 어떤 자료형으로 저장하나?</td><td><code>int16</code></td></tr>
+</table></div>
+<p>축 0이 날이고 축 1이 상품이라는 <em>의미</em>는 배열을 만든 사람이 정했습니다. 시각, 지점, 상품이 차례로 놓인 배열이라면 <code>shape == (7, 2, 3)</code>은 시각 7개, 지점 2개, 상품 3개를 뜻합니다. 축 0을 지점으로 정한 다른 배열도 가능합니다. 코드에서 숫자 위치를 해석하기 전에 축의 의미를 적어 두세요.</p>
+<p>한 숫자로 만든 <code>np.array(12)</code>는 0차원이고 <code>shape == ()</code>이지만 원소 하나가 있습니다. <code>np.array([12, 5, 8])</code>의 <code>shape == (3,)</code>에서 끝의 쉼표는 길이 1인 튜플 표기입니다. 행이 한 줄인 표 <code>np.array([[12, 5, 8]])</code>는 <code>(1, 3)</code>이어서 축이 두 개입니다.</p>
+<div class="check" data-q="q2"></div>
+<div class="check" data-q="q3"></div>
+<div class="check" data-q="q4"></div>
+
+
+<h2>dtype은 칸마다 적용되는 저장 규칙</h2>
+<p>판매 수량은 정수, 상품의 무게나 평균 판매량은 소수, 재고가 있는지 여부는 <code>True</code>/<code>False</code>로 나타낼 수 있습니다. dtype을 지정하지 않으면 NumPy가 입력 값을 보고 고릅니다. 기본 정수 dtype은 환경에 따라 달라질 수 있으므로 예제에서는 <code>np.int16</code>처럼 필요할 때 명시합니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 182" role="img" aria-label="int16의 원소 하나는 두 바이트다. 2행 3열의 int16 배열은 6개 원소를 담아 원소 데이터만 12바이트가 된다.">
+<text class="f-cap" x="380" y="26" text-anchor="middle">int16 값 하나</text>
+<rect class="f-soft" x="290" y="45" width="90" height="40" rx="3"/><text class="f-t" x="335" y="70" text-anchor="middle">1바이트</text>
+<rect class="f-soft" x="380" y="45" width="90" height="40" rx="3"/><text class="f-t" x="425" y="70" text-anchor="middle">1바이트</text>
+<line class="f-line" x1="380" y1="96" x2="380" y2="126" marker-end="url(#f-arrow)"/>
+<text class="f-cap" x="380" y="149" text-anchor="middle">한 값 2바이트 × 원소 6개 = 12바이트</text>
+</svg>
+<figcaption>nbytes에는 배열의 모양 등 관리 정보가 들지 않는다.</figcaption>
+</figure>
+<p><code>int16</code>은 부호 있는 16비트 정수입니다. 한 원소는 2바이트를 쓰며, 표현 범위는 −32,768부터 32,767까지입니다. <code>float32</code>는 부호와 크기 등을 정해진 32비트 안에 담는 부동소수점 자료형으로, 모든 십진 소수를 정확히 표현할 수는 없습니다. <code>bool</code> 배열은 참·거짓을 담습니다. 필요한 범위와 정밀도에 맞춰 고르고, 자료형의 한계를 분석 결과에 포함합니다.</p>
+<p class="small">실행 예제</p>
+<pre data-example="python"><code>import numpy as np
+
+counts = np.array([[12, 5, 8], [20, 4, 10]], dtype=np.int16)
+measured = np.array([2.9, -2.9], dtype=np.float32)
+print(counts.itemsize, counts.nbytes)
+print(measured.astype(np.int16))
+print(np.array([12, "미기록"]).tolist())</code></pre>
+<pre data-output><code>2 12
+[ 2 -2]
+['12', '미기록']</code></pre>
+<p><code>nbytes</code>는 배열 원소에 해당하는 바이트 수입니다. 배열 객체 자체가 사용하는 전체 메모리나 뷰가 새로 할당한 바이트 수를 측정하는 값은 아닙니다. <code>astype(np.int16)</code>으로 위 소수 둘을 바꾸면 소수 부분이 0 방향으로 잘립니다. 2.9의 가장 가까운 정수는 3이지만 변환 결과는 2입니다. 결측이나 범위를 벗어난 값을 바꾸기 전에 검사하면 값이 의도치 않게 바뀌는 일을 찾기 쉽습니다.</p>
+<div class="box trap"><p class="box-k">흔한 실수</p><p><code>np.array([12, "미기록"])</code>는 정수 12도 문자열로 저장합니다. 숫자가 문자로 바뀐 채 남으면 숫자 합계를 낼 수 없습니다. 실제 표에 숫자 열과 이름 열을 함께 두려면 pandas의 열별 자료형(PY11)을 활용하고, 결측 처리 이유를 기록합니다(DA06).</p></div>
+<div class="check" data-q="q5"></div>
+<div class="check" data-q="q6"></div>
+
+
+<h2>배열을 만들고 모양 바꾸기</h2>
+<p><code>np.zeros((2, 3), dtype=np.int16)</code>는 빈 칸을 나중에 채울 때 쓸 수 있는 2행 3열의 0 배열입니다. 다만 실측 자료에 0을 채우면 실제로 0개 팔렸다는 뜻이 생길 수 있으므로, 누락과 0은 구별해야 합니다. <code>np.arange(6)</code>은 0부터 6 바로 전까지의 정수 6개를 만든 1차원 배열입니다. <code>reshape(2, 3)</code>은 그 여섯 값을 2행 3열로 다시 읽습니다.</p>
+<p class="small">실행 예제</p>
+<pre data-example="python"><code>import numpy as np
+
+a = np.arange(6).reshape(2, 3)
+print(np.zeros((2, 3), dtype=np.int16))
+print(a)
+print(a.reshape(3, 2))
+print(a.T)</code></pre>
+<pre data-output><code>[[0 0 0]
+ [0 0 0]]
+[[0 1 2]
+ [3 4 5]]
+[[0 1]
+ [2 3]
+ [4 5]]
+[[0 3]
+ [1 4]
+ [2 5]]</code></pre>
+<p>기본 순서에서는 앞의 3개가 첫 행, 뒤의 3개가 둘째 행에 들어갑니다. 값을 복제하거나 새로 계산하는 단계가 없으므로 원하는 축 길이를 곱한 값은 원래 원소 수와 같아야 합니다. 원소가 6개인데 <code>reshape(4, 2)</code>를 요청하면 8개 자리가 필요해 <code>ValueError</code>가 납니다. 모양을 바꿔도 행이 어떤 관측을 나타내는지는 사람이 보존해야 합니다. 예를 들어 날과 상품의 축을 바꾸려면 값의 위치를 옮기는 전치 <code>a.T</code>를 씁니다. <code>reshape(3, 2)</code>는 전치가 아닙니다.</p>
+<div class="check" data-q="q7"></div>
+<div class="check" data-q="q8"></div>
+
+
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table><tr><th>작업</th><th>먼저 확인할 것</th></tr>
+<tr><td>계산하기</td><td><b class="key">ndarray</b>인지, 연산이 각 원소에 어떻게 적용되는지</td></tr>
+<tr><td>모양 읽기</td><td><b class="key">shape</b>의 각 숫자와 축이 뜻하는 관측의 단위</td></tr>
+<tr><td>형 바꾸기</td><td><b class="key">dtype</b>의 표현 범위, 소수부와 결측의 처리</td></tr>
+<tr><td>모양 바꾸기</td><td><b class="key">size</b>가 같은지, 행과 열의 의미가 맞는지</td></tr></table></div>
+<div class="box sum"><p class="box-k">다음 장으로</p><p>배열을 받으면 먼저 축의 의미, 모양, 자료형을 적습니다. <a href="py10-2.html">다음 장</a>에서는 같은 배열에서 일부 값을 꺼내고, 한 축씩 줄여 합계를 만듭니다.</p></div>
+
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://numpy.org/doc/stable/user/absolute_beginners.html">NumPy 입문 문서</a></li>
+<li><a href="https://numpy.org/doc/stable/user/basics.types.html">NumPy 자료형과 변환</a></li>
+<li><a href="https://numpy.org/doc/stable/reference/generated/numpy.reshape.html">numpy.reshape</a></li>
+</ul>
+
+<h2>확인 문제</h2>
+<p>본문에서 다룬 예제를 떠올린 뒤 남은 문제를 직접 풀어 보세요.</p>
+<div id="quiz"></div>
+
+<section class="work" id="tools"></section>
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

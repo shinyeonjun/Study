@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>범위·분산·표준편차 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e8c'/%3E%3Cpath d='M8 22V10m8 12V14m8 8V6' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="DA05-1">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+
+<header class="chapter">
+<p class="chap-sub">데이터 읽기와 탐색 · DA05 흩어진 정도</p>
+<p class="chap-num">DA05·1</p>
+<h1>범위·분산·표준편차</h1>
+<p class="lead">두 경로의 통학 시간이 평균 10분으로 같다고 합시다. 어느 경로가 더 일정한지는 평균만으로 알 수 없습니다. 실제 기록을 같은 수직선에 놓고, 범위와 분산·표준편차가 각각 무엇을 보는지 비교합니다.</p>
+</header>
+
+<div class="goal">
+<h2>이 장을 읽고 나면</h2>
+<ul>
+<li>범위와 표준편차가 쓰는 정보의 차이를 설명한다.</li>
+<li>평균, 편차, 편차 제곱, 분산, 표준편차를 차례대로 계산한다.</li>
+<li>자료 자체의 퍼짐과 표본으로 모집단 분산을 추정하는 상황을 구분한다.</li>
+</ul>
+</div>
+
+<h2>평균이 같아도 매일 같은 시간에 도착하진 않는다</h2>
+<p>경로 A를 이용한 네 날에는 8, 9, 11, 12분이 걸렸습니다. 경로 B를 이용한 네 날에는 4, 8, 12, 16분이 걸렸습니다. 둘 다 합계 40분이므로 평균은 10분입니다. 수직선에서 점을 보면 A는 가운데 모여 있고 B는 더 멀리 퍼져 있습니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 233" role="img" aria-label="두 경로의 통학 시간이 같은 2분부터 18분 눈금에 놓인다. A는 8, 9, 11, 12. B는 4, 8, 12, 16. 평균 10에 파선이 있다.">
+<line class="f-dash" x1="346" y1="23" x2="346" y2="203"/>
+<text class="f-cap" x="346" y="18" text-anchor="middle">공통 평균 10분</text>
+<line class="f-ink" x1="74" y1="77" x2="618" y2="77"/>
+<line class="f-ink" x1="74" y1="73" x2="74" y2="81"/>
+<text class="f-s" x="74" y="99" text-anchor="middle">2</text>
+<line class="f-ink" x1="142" y1="73" x2="142" y2="81"/>
+<text class="f-s" x="142" y="99" text-anchor="middle">4</text>
+<line class="f-ink" x1="210" y1="73" x2="210" y2="81"/>
+<text class="f-s" x="210" y="99" text-anchor="middle">6</text>
+<line class="f-ink" x1="278" y1="73" x2="278" y2="81"/>
+<text class="f-s" x="278" y="99" text-anchor="middle">8</text>
+<line class="f-ink" x1="346" y1="73" x2="346" y2="81"/>
+<text class="f-s" x="346" y="99" text-anchor="middle">10</text>
+<line class="f-ink" x1="414" y1="73" x2="414" y2="81"/>
+<text class="f-s" x="414" y="99" text-anchor="middle">12</text>
+<line class="f-ink" x1="482" y1="73" x2="482" y2="81"/>
+<text class="f-s" x="482" y="99" text-anchor="middle">14</text>
+<line class="f-ink" x1="550" y1="73" x2="550" y2="81"/>
+<text class="f-s" x="550" y="99" text-anchor="middle">16</text>
+<line class="f-ink" x1="618" y1="73" x2="618" y2="81"/>
+<text class="f-s" x="618" y="99" text-anchor="middle">18</text>
+<circle class="f-fill" cx="278" cy="67" r="5"/>
+<circle class="f-fill" cx="312" cy="67" r="5"/>
+<circle class="f-fill" cx="380" cy="67" r="5"/>
+<circle class="f-fill" cx="414" cy="67" r="5"/>
+<text class="f-cap" x="697" y="71" text-anchor="middle">경로 A</text>
+<line class="f-ink" x1="74" y1="167" x2="618" y2="167"/>
+<line class="f-ink" x1="74" y1="163" x2="74" y2="171"/>
+<text class="f-s" x="74" y="189" text-anchor="middle">2</text>
+<line class="f-ink" x1="142" y1="163" x2="142" y2="171"/>
+<text class="f-s" x="142" y="189" text-anchor="middle">4</text>
+<line class="f-ink" x1="210" y1="163" x2="210" y2="171"/>
+<text class="f-s" x="210" y="189" text-anchor="middle">6</text>
+<line class="f-ink" x1="278" y1="163" x2="278" y2="171"/>
+<text class="f-s" x="278" y="189" text-anchor="middle">8</text>
+<line class="f-ink" x1="346" y1="163" x2="346" y2="171"/>
+<text class="f-s" x="346" y="189" text-anchor="middle">10</text>
+<line class="f-ink" x1="414" y1="163" x2="414" y2="171"/>
+<text class="f-s" x="414" y="189" text-anchor="middle">12</text>
+<line class="f-ink" x1="482" y1="163" x2="482" y2="171"/>
+<text class="f-s" x="482" y="189" text-anchor="middle">14</text>
+<line class="f-ink" x1="550" y1="163" x2="550" y2="171"/>
+<text class="f-s" x="550" y="189" text-anchor="middle">16</text>
+<line class="f-ink" x1="618" y1="163" x2="618" y2="171"/>
+<text class="f-s" x="618" y="189" text-anchor="middle">18</text>
+<circle class="f-fill" cx="142" cy="157" r="5"/>
+<circle class="f-fill" cx="278" cy="157" r="5"/>
+<circle class="f-fill" cx="414" cy="157" r="5"/>
+<circle class="f-fill" cx="550" cy="157" r="5"/>
+<text class="f-cap" x="697" y="161" text-anchor="middle">경로 B</text>
+<text class="f-s" x="620" y="218" text-anchor="middle">통학 시간 (분)</text>
+</svg>
+<figcaption>두 자료는 같은 눈금을 썼다. 점의 가로 위치가 통학 시간이다.</figcaption>
+</figure>
+<div class="box "><p class="box-k">정의</p>
+<p><b class='key'>범위</b>(range)는 최댓값에서 최솟값을 뺀 값입니다. A는 12 − 8 = 4분, B는 16 − 4 = 12분입니다. 최댓값이나 최솟값이 바뀌면 범위도 움직입니다.</p>
+</div>
+<p>범위가 같아도 가운데가 다를 수 있습니다. 예를 들어 [4, 9, 11, 16]과 [4, 4, 16, 16]은 평균 10, 범위 12로 같지만, 앞 자료의 두 값은 평균 가까이에 있고 뒤 자료에는 그런 값이 없습니다. 네 값 모두를 쓰는 척도가 필요합니다. DA04·2의 사분위범위(IQR)는 그중 가운데 절반에 초점을 맞추는 별도 방법입니다.</p>
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+<h2>각 값에서 평균을 빼면 편차가 된다</h2>
+<p>어떤 값 x에서 평균을 빼면 평균에서 얼마나 멀고 어느 쪽에 있는지 알 수 있습니다. 이를 <b class="key">편차</b>(deviation)라고 합니다. 평균보다 작으면 음수, 크면 양수입니다. 양·음의 편차를 그대로 더하면 서로 상쇄됩니다. ‘자료 합계 = 평균 × 값 개수’이므로 편차 총합은 항상 0입니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 164" role="img" aria-label="실측값 8과 12의 평균은 10이다. 8에서 10을 빼면 마이너스 2, 12에서 10을 빼면 플러스 2. 제곱하면 두 편차가 모두 4가 된다.">
+<line class="f-ink" x1="72" y1="89" x2="691" y2="89"/>
+<circle class="f-fill" cx="157" cy="89" r="5"/>
+<circle class="f-fill" cx="603" cy="89" r="5"/>
+<circle class="f-fill" cx="380" cy="89" r="6"/>
+<line class="f-line" x1="373" y1="78" x2="163" y2="78" marker-end="url(#f-arrow)"/>
+<line class="f-line" x1="387" y1="78" x2="597" y2="78" marker-end="url(#f-arrow)"/>
+<text class="f-cap" x="267" y="62" text-anchor="middle">편차 −2분</text>
+<text class="f-cap" x="493" y="62" text-anchor="middle">편차 +2분</text>
+<text class="f-t" x="157" y="111" text-anchor="middle">8분</text>
+<text class="f-t" x="380" y="111" text-anchor="middle">평균 10분</text>
+<text class="f-t" x="603" y="111" text-anchor="middle">12분</text>
+<text class="f-s" x="380" y="145" text-anchor="middle">제곱 편차는 양쪽 모두 4분²</text>
+</svg>
+<figcaption>평균의 양쪽에서 편차 부호는 반대지만 제곱 뒤 두 값의 기여는 같다.</figcaption>
+</figure>
+<p>퍼짐을 잴 때는 절댓값을 취하는 방법도 있습니다. 여기서는 편차를 <b>제곱</b>합니다. 부호가 모두 사라지고 먼 값에는 더 큰 무게가 생깁니다. 평균에서 2분 떨어진 값은 제곱합에 4분², 6분 떨어진 값은 36분²를 더합니다. 거리가 3배일 때 기여는 9배입니다.</p>
+<div class="table-wrap"><table>
+<tr><th scope="col">경로</th><th scope="col">편차 (분)</th><th scope="col">제곱 편차 (분²)</th><th scope="col">제곱합 (분²)</th></tr>
+<tr><td>A</td><td>−2, −1, +1, +2</td><td>4, 1, 1, 4</td><td>10</td></tr>
+<tr><td>B</td><td>−6, −2, +2, +6</td><td>36, 4, 4, 36</td><td>80</td></tr>
+</table></div>
+<div class="check" data-q="q3"></div>
+<div class="check" data-q="q4"></div>
+<h2>분산과 표준편차</h2>
+<p>지금 가진 n개 기록 자체를 요약할 때, 제곱 편차의 평균을 <b class="key">분산</b>(variance)이라고 합니다. A의 경우 10 ÷ 4 = 2.5분², B는 80 ÷ 4 = 20분²입니다. 단위가 분²이므로 분산을 ‘평소 2.5분 차이’처럼 읽으면 안 됩니다.</p>
+<div class="box ex"><p class="box-k">풀이 예제</p>
+<p>경로 A의 표준편차를 구합니다.</p><p class="calc">① 평균은 (8 + 9 + 11 + 12) ÷ 4 = 10분.<br>② 제곱합은 (−2)² + (−1)² + 1² + 2² = 10분².<br>③ 네 기록을 요약하므로 분산은 10 ÷ 4 = 2.5분².<br>④ 양의 제곱근 √2.5 ≈ 1.58분이 <b class="key">표준편차</b>(standard deviation)입니다.</p>
+</div>
+<p>표준편차를 제곱하면 원래 분산이 되고, 표준편차의 단위는 원자료와 같습니다. B의 표준편차는 √20 ≈ 4.47분입니다. 여기서는 B의 시간이 더 퍼져 있습니다. 표준편차는 편차 절댓값들의 산술평균과 다릅니다. 네 값이 모두 같으면 편차가 전부 0이어서 분산과 표준편차도 0입니다.</p>
+<div class="check" data-q="q5"></div>
+<div class="check" data-q="q6"></div>
+<h2>n으로 나눌까, n − 1로 나눌까</h2>
+<p>앞의 네 날이 분석할 날 <b>전부</b>라면 n으로 나눠 이 기록을 설명합니다. 반면 같은 조건에서 독립적으로 얻은 네 날을 표본으로 삼아 더 넓은 모집단의 분산을 추정한다면, 보통 표본평균을 대신 넣어 계산한 제곱합을 <b>n − 1</b>로 나눕니다. 같은 A의 기록에서 표본분산은 10 ÷ 3 ≈ 3.33분², 표본표준편차는 √(10/3) ≈ 1.83분입니다.</p>
+<div class="box "><p class="box-k">분모가 바뀌는 이유</p>
+<p>표본평균은 그 표본에 맞춘 중심입니다. 그 중심으로부터의 제곱합은 (알려지지 않은) 모집단 평균을 중심으로 얻을 제곱합보다 작거나 같습니다. 독립이고 같은 분포에서 얻은 관측이라면 n − 1로 나눈 <b>분산 추정량</b>이 평균적으로 모집단 분산과 일치합니다. 거기에 제곱근을 씌운 표준편차까지 같은 성질을 가진다고 볼 수는 없습니다.</p><p>네 편차의 합은 0이어서 세 편차를 정하면 마지막 하나는 저절로 결정됩니다. 이 예의 자유도는 3입니다. n − 1 분산은 n ≥ 2에서만 계산할 수 있습니다.</p>
+</div>
+<p>분자에 들어가는 평균과 분모를 먼저 종이에 적어 두면 도구 결과를 비교하기 쉽습니다. 표본을 얻었더라도 <em>기록된 값 목록의 퍼짐 자체</em>를 보고하는 경우에는 n을 사용한 기술 통계가 필요할 수 있습니다. 보고서에 분모를 적으면 두 계산을 구별할 수 있습니다.</p>
+<div class="check" data-q="q7"></div>
+<div class="check" data-q="q8"></div>
+<h2>같은 네 값을 두 가지 분모로 실행해 보기</h2>
+<p>표준 라이브러리 <code>statistics</code>로 먼저 손계산을 확인합니다. <code>pvariance</code>와 <code>pstdev</code>는 n, <code>variance</code>와 <code>stdev</code>는 n − 1을 사용합니다. 값 목록에 결측이 있다면 제외·보존·정정 기준을 먼저 정합니다(DA06·1).</p>
+<pre data-example="python"><code>from statistics import mean, pvariance, pstdev, variance, stdev
+
+minutes = [8, 9, 11, 12]
+print("평균:", mean(minutes))
+print("n:    분산 {:.2f}, 표준편차 {:.2f}".format(pvariance(minutes), pstdev(minutes)))
+print("n-1:  분산 {:.2f}, 표준편차 {:.2f}".format(variance(minutes), stdev(minutes)))</code></pre>
+<pre data-output><code>평균: 10
+n:    분산 2.50, 표준편차 1.58
+n-1:  분산 3.33, 표준편차 1.83</code></pre>
+<p>NumPy에서는 <code>np.var(x)</code>와 <code>np.std(x)</code>의 기본 <code>ddof=0</code>이 분모 n이고, <code>ddof=1</code>을 주면 분모 n − 1입니다. 같은 자료에서 두 라이브러리가 서로 다른 숫자를 내더라도 분모가 같았는지부터 확인합니다.</p>
+<div class="box trap"><p class="box-k">해석할 때 흔한 실수</p>
+<p>표준편차 4.47분을 ‘모든 값이 평균 10분의 ±4.47분 안에 있다’로 읽지 않습니다. B에서는 4분과 16분이 그 바깥에 있습니다. 평균과 표준편차는 숫자 요약이므로 점 그림이나 히스토그램과 함께 읽습니다.</p>
+</div>
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table>
+<tr><th scope="col">척도</th><th scope="col">계산</th><th scope="col">A의 값</th></tr>
+<tr><td><b class='key'>범위</b></td><td>최대 − 최소</td><td>4분</td></tr>
+<tr><td><b class='key'>편차 제곱합</b></td><td>각 값에서 평균을 뺀 뒤 제곱하여 합한다</td><td>10분²</td></tr>
+<tr><td><b class='key'>분산</b></td><td>기록 자체는 n으로, 모집단 분산의 표준적 표본 추정은 n − 1로 나눈다</td><td>2.5분² 또는 약 3.33분²</td></tr>
+<tr><td><b class='key'>표준편차</b></td><td>분산의 제곱근</td><td>약 1.58분 또는 1.83분</td></tr>
+</table></div>
+<h2>참고 자료</h2>
+<ul><li><a href="https://www.itl.nist.gov/div898/handbook/eda/section3/eda356.htm">NIST · 퍼짐을 재는 척도</a></li>
+<li><a href="https://docs.python.org/3/library/statistics.html">Python · statistics의 분산과 표준편차</a></li>
+<li><a href="https://numpy.org/doc/stable/reference/generated/numpy.var.html">NumPy · var와 ddof</a></li></ul>
+
+<h2>확인 문제</h2>
+<p>본문에서 푼 것 말고 남은 문제입니다. 먼저 답을 정한 뒤 해설을 확인합니다.</p>
+<div id="quiz"></div>
+
+<section class="work" id="tools"></section>
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

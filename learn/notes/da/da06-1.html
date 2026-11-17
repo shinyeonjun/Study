@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>중복·결측·단위·범주 검사 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e8c'/%3E%3Cpath d='M8 22V10m8 12V14m8 8V6' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="DA06-1">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+
+<header class="chapter">
+<p class="chap-sub">데이터 읽기와 탐색 · DA06 데이터 품질</p>
+<p class="chap-num">DA06·1</p>
+<h1>중복·결측·단위·범주 검사</h1>
+<p class="lead">매장 주문표를 두 파일에서 모았더니 같은 주문이 두 번 나오고, 결제 금액이 ‘4천원’인 행과 빈칸인 행도 있습니다. 평균을 내기 전에 어떤 값을 고쳐도 되고 어떤 행을 확인해야 하는지, 원본 아홉 행을 따라가며 판단합니다.</p>
+</header>
+
+<div class="goal">
+<h2>이 장을 읽고 나면</h2>
+<ul>
+<li>행 단위와 키를 정한 뒤 동일 사본과 충돌 기록을 구분한다.</li>
+<li>단위 환산과 범주 검사로 비교 가능한 값을 만든다.</li>
+<li>분석에 사용한 행과 확인 대기 행을 나누고 건수를 대조한다.</li>
+</ul>
+</div>
+
+<h2>행을 고치기 전에 무엇을 한 건으로 세는지 정한다</h2>
+<p>가상의 주문 분석을 해 봅니다. 질문은 ‘온라인과 매장에서, 금액이 확인된 주문 한 건당 얼마인가?’입니다. 이 예의 <b>행 단위</b>는 상품 한 개나 주문 상태 변경 한 번이 아니라 <b>결제가 확정된 주문 한 건</b>입니다. 주문번호가 그 한 건을 구별하는 <b class="key">키</b>(key)입니다. 주문 항목표라면 주문번호가 같아도 품목마다 행이 여럿일 수 있습니다. 그 표를 분석하면 판단 기준도 달라집니다.</p>
+<p>아래 원본에는 주문번호와 기록된 금액, 단위, 채널이 있습니다. ‘공백’은 표에서 설명하기 위한 표시입니다.</p>
+<div class="table-wrap"><table>
+<tr><th scope="col">주문번호</th><th scope="col">금액</th><th scope="col">단위</th><th scope="col">채널</th></tr>
+<tr><td>101</td><td>3000</td><td>원</td><td>온라인</td></tr>
+<tr><td>101</td><td>3000</td><td>원</td><td>온라인</td></tr>
+<tr><td>102</td><td>4</td><td>천원</td><td>매장</td></tr>
+<tr><td>103</td><td>빈칸</td><td>원</td><td>온라인</td></tr>
+<tr><td>104</td><td>0</td><td>원</td><td>매장</td></tr>
+<tr><td>105</td><td>9000</td><td>원</td><td>온라인 (끝 공백)</td></tr>
+<tr><td>106</td><td>6000</td><td>원</td><td>전화? (끝 공백)</td></tr>
+<tr><td>107</td><td>12000</td><td>원</td><td>매장</td></tr>
+<tr><td>107</td><td>15000</td><td>원</td><td>매장</td></tr>
+</table></div>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 218" role="img" aria-label="아래의 예에서 주문 101 두 행의 정보는 모두 같아 중복 사본이라고 확인되었다. 주문 107 두 행은 금액이 12000원과 15000원으로 달라 어느 것이 맞는지 확인이 필요하다.">
+<text class="f-cap" x="197" y="33" text-anchor="middle">같은 주문 · 값도 같음</text>
+<rect class="f-box" x="52" y="56" width="290" height="42" rx="4"/>
+<rect class="f-box" x="52" y="113" width="290" height="42" rx="4"/>
+<text class="f-t" x="197" y="82" text-anchor="middle">101  ·  3,000원  ·  온라인</text>
+<text class="f-t" x="197" y="139" text-anchor="middle">101  ·  3,000원  ·  온라인</text>
+<text class="f-s" x="197" y="185" text-anchor="middle">사본으로 확인 → 한 행 유지</text>
+<text class="f-cap" x="563" y="33" text-anchor="middle">같은 주문 · 값이 다름</text>
+<rect class="f-soft" x="418" y="56" width="290" height="42" rx="4"/>
+<rect class="f-soft" x="418" y="113" width="290" height="42" rx="4"/>
+<text class="f-t" x="563" y="82" text-anchor="middle">107  ·  12,000원  ·  매장</text>
+<text class="f-t" x="563" y="139" text-anchor="middle">107  ·  15,000원  ·  매장</text>
+<text class="f-s" x="563" y="185" text-anchor="middle">충돌 → 두 행을 확인 대기</text>
+</svg>
+<figcaption>행의 기준이 주문 한 건일 때, 같은 번호를 발견해도 값이 충돌하면 보존과 조사가 먼저다.</figcaption>
+</figure>
+<p>101번의 두 행은 같은 내보내기를 합치면서 생긴 사본이라고 확인했습니다. 한 행만 유지해도 원본 주문은 빠지지 않습니다. 107번은 금액이 충돌합니다. 파일의 마지막 값이 언제나 최신이라는 보장이 없으므로 두 행을 모두 따로 보관하고, 주문 원장이나 확인 시각으로 해결한 뒤 집계합니다.</p>
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+<h2>거래의 0원, 비어 있는 금액, 단위가 섞인 값</h2>
+<p><b class="key">결측</b>(missing)은 값이 기록되지 않았거나 알 수 없는 상태입니다. 103번은 금액 필드가 비어 있어 주문 건수에는 나타나지만, 확인된 금액의 평균을 계산할 때 사용할 수 없습니다. 104번은 지급액이 0원으로 확인된 주문입니다. 이 교재의 질문은 ‘확인된 결제 금액’이므로 0도 분모에 넣습니다.</p>
+<div class="box ex"><p class="box-k">풀이 예제</p>
+<p>온라인의 101, 103, 105번에서 금액을 아는 주문은 3,000원과 9,000원의 두 건입니다. 확인된 금액만의 평균은 (3,000 + 9,000) ÷ 2 = 6,000원입니다. 결측을 0으로 덮으면 12,000 ÷ 3 = 4,000원으로 바뀝니다. 없는 값을 추측하는 순간 분모와 결과도 바뀝니다.</p>
+</div>
+<p>102번의 4는 4원이 아니라 4천원입니다. 단위 열을 본 뒤 1,000을 곱해 4,000원으로 환산합니다. 단위가 적혀 있지 않다면 값이 작다는 이유로 ‘천원’이라고 추측하지 않습니다. 같은 원칙이 초와 밀리초, m와 cm에도 적용됩니다.</p>
+<p>105번은 끝 공백을 없애면 허용 범주인 ‘온라인’과 같습니다. 106번 ‘전화?’는 이 예에서 허용 범주가 아닙니다. 전화 주문이 어떤 채널인지 정의가 없는 상태라 원본은 남기고 확인 대기에 둡니다. 실제 보고서에서 채널 미확인을 별도 범주로 집계할 수도 있습니다. 어떤 기준을 썼는지 명시합니다.</p>
+<div class="check" data-q="q3"></div>
+<div class="check" data-q="q4"></div>
+<div class="check" data-q="q5"></div>
+<h2>원본과 확인 대기 목록을 분리해 정리한다</h2>
+<p>먼저 원본을 보존합니다. 확인된 사본을 제외하고, 같은 키의 값이 서로 다른 기록을 찾습니다. 그 밖의 행에서 단위, 범주, 타입, 필수값을 검사해 분석 자료와 확인 대기를 나눕니다. 결제 금액이 음수인 환불은 이 결제 자료의 허용 범위 밖이지만, 환불을 연구하는 별도 표에서는 정상 값일 수 있습니다. 범위 규칙은 분석 목적과 데이터 설명에 근거합니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 178" role="img" aria-label="원본 아홉 행에서 확인된 사본 한 행을 제외하면 여덟 행이다. 여덟 행은 사용 가능한 네 행과 별도 확인이 필요한 네 행으로 나뉜다.">
+<rect class="f-box" x="30" y="70" width="142" height="44" rx="4"/>
+<text class="f-cap" x="101" y="96" text-anchor="middle">원본 9행</text>
+<line class="f-line" x1="173" y1="92" x2="314" y2="92" marker-end="url(#f-arrow)"/>
+<text class="f-s" x="244" y="73" text-anchor="middle">사본 1행 제외</text>
+<rect class="f-box" x="318" y="70" width="142" height="44" rx="4"/>
+<text class="f-cap" x="389" y="96" text-anchor="middle">기록 8행</text>
+<line class="f-line" x1="462" y1="89" x2="561" y2="46" marker-end="url(#f-arrow)"/>
+<line class="f-line" x1="462" y1="97" x2="561" y2="140" marker-end="url(#f-arrow)"/>
+<rect class="f-soft" x="565" y="24" width="168" height="44" rx="4"/>
+<rect class="f-box" x="565" y="118" width="168" height="44" rx="4"/>
+<text class="f-cap" x="649" y="50" text-anchor="middle">분석 사용 4행</text>
+<text class="f-cap" x="649" y="144" text-anchor="middle">확인 대기 4행</text>
+</svg>
+<figcaption>제외된 행도 사유별로 세어 합계가 원본 수와 맞는지 확인한다.</figcaption>
+</figure>
+<p>아래 코드는 이 표에서 확정한 규칙을 적용합니다. <code>dict.fromkeys</code>는 같은 튜플에 한 번만 키를 넣어 <b>완전히 동일한</b> 행을 모읍니다. 이 예에서는 동일 행이 사본이라는 사실이 이미 확인되었습니다. <code>Counter</code>는 같은 주문번호가 사본을 제거한 뒤에도 남는지 셉니다. 처음 배우는 코드는 결과를 먼저 본 뒤 조건을 한 줄씩 읽어 보세요.</p>
+<pre data-example="python"><code>from collections import Counter
+from statistics import mean
+
+raw = [
+    ("101", "3000", "원", "온라인"),
+    ("101", "3000", "원", "온라인"),
+    ("102", "4", "천원", "매장"),
+    ("103", "", "원", "온라인"),
+    ("104", "0", "원", "매장"),
+    ("105", "9000", "원", "온라인 "),
+    ("106", "6000", "원", "전화? "),
+    ("107", "12000", "원", "매장"),
+    ("107", "15000", "원", "매장"),
+]
+units = {"원": 1, "천원": 1000}
+channels = {"온라인", "매장"}
+
+unique = list(dict.fromkeys(raw))
+key_count = Counter(row[0] for row in unique)
+clean = []
+pending = []
+for order, amount, unit, channel in unique:
+    channel = channel.strip()
+    if key_count[order] &gt; 1:
+        pending.append((order, "키 충돌"))
+    elif amount == "":
+        pending.append((order, "금액 결측"))
+    elif unit not in units or channel not in channels:
+        pending.append((order, "단위·채널 확인"))
+    else:
+        try:
+            won = int(amount) * units[unit]
+        except ValueError:
+            pending.append((order, "금액 형식 확인"))
+        else:
+            if won &lt; 0:
+                pending.append((order, "음수 금액 확인"))
+            else:
+                clean.append((order, won, channel))
+
+copies = len(raw) - len(unique)
+assert len(clean) + len(pending) + copies == len(raw)
+print("원본 / 사본 / 사용 / 대기:", len(raw), copies, len(clean), len(pending))
+print("대기:", pending)
+for channel in sorted(channels):
+    amounts = [won for _, won, c in clean if c == channel]
+    print(channel, "n =", len(amounts), "평균 =", mean(amounts))</code></pre>
+<pre data-output><code>원본 / 사본 / 사용 / 대기: 9 1 4 4
+대기: [('103', '금액 결측'), ('106', '단위·채널 확인'), ('107', '키 충돌'), ('107', '키 충돌')]
+매장 n = 2 평균 = 2000
+온라인 n = 2 평균 = 6000</code></pre>
+<p>여기서 대기는 4<b>행</b>이지만 주문번호로는 103, 106, 107의 3<b>건</b>입니다. 최종 보고에는 채널당 사용 건수와 제외 사유를 같이 적습니다. 네 행으로 확인된 평균이 이 기간의 전체 주문을 대표한다고 단정하지 않습니다. 정리 작업 자체가 어느 주문이 비교에 남는지를 바꿀 수 있습니다.</p>
+<div class="check" data-q="q6"></div>
+<div class="check" data-q="q7"></div>
+<div class="check" data-q="q8"></div>
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table>
+<tr><th scope="col">검사</th><th scope="col">질문</th><th scope="col">처리 예</th></tr>
+<tr><td><b class='key'>키와 중복</b></td><td>이 번호가 행 하나를 구별해야 하는가?</td><td>확인된 사본만 한 행 유지. 값이 충돌하면 조사.</td></tr>
+<tr><td><b class='key'>결측</b></td><td>0이라는 관측인가, 관측이 없는가?</td><td>빈칸을 보존하고 집계 분모와 제외 이유를 기록.</td></tr>
+<tr><td><b class='key'>단위</b></td><td>모두 같은 단위로 비교하는가?</td><td>명시된 ‘천원’은 1,000배해 ‘원’으로 통일.</td></tr>
+<tr><td><b class='key'>범주</b></td><td>같은 범주를 다르게 적었는가?</td><td>공백 제거. 의미를 모르는 새 범주는 원본을 보존.</td></tr>
+<tr><td><b class='key'>추적</b></td><td>고친 규칙을 다시 실행할 수 있는가?</td><td>원본, 규칙, 결과, 확인 대기를 분리.</td></tr>
+</table></div>
+<h2>참고 자료</h2>
+<ul><li><a href="https://docs.python.org/3/library/collections.html#collections.Counter">Python · Counter로 같은 키 세기</a></li>
+<li><a href="https://pandas.pydata.org/docs/user_guide/missing_data.html">pandas · 결측 표시와 검사</a></li></ul>
+
+<h2>확인 문제</h2>
+<p>본문에서 푼 것 말고 남은 문제입니다. 먼저 답을 정한 뒤 해설을 확인합니다.</p>
+<div id="quiz"></div>
+
+<section class="work" id="tools"></section>
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

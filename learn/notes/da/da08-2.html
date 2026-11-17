@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>표본을 반복해서 뽑아 보면: 정확한 계산과 시뮬레이션 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="DA08-2">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">데이터 읽기와 탐색 · DA08 표본과 시뮬레이션</p>
+<p class="chap-num">DA08·2</p>
+<h1>표본을 반복해서 뽑아 보면: 정확한 계산과 시뮬레이션</h1>
+<p class="lead">표본평균은 표본을 어떻게 뽑았느냐에 따라 바뀝니다. 값 네 개에서 두 개를 뽑는 경우를 모두 세고, NumPy로 같은 추출을 반복해 그 분포를 확인합니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>모집단 분포와 표본평균의 분포를 구별한다.</li><li>비복원 표본의 가능한 조합을 모두 세어 정확한 확률을 구한다.</li><li>난수 생성기로 같은 표집 규칙을 반복하고 결과의 한계를 설명한다.</li></ul></div>
+
+<h2>한 번 뽑으면 평균 하나가 나온다</h2>
+<p>네 칸 A, B, C, D에 각각 0, 0, 10, 10이 있습니다. 모집단 평균은 (0 + 0 + 10 + 10) ÷ 4 = 5입니다. 서로 다른 칸 두 개를 같은 가능성으로 뽑아 평균을 내면, A와 B는 평균 0, C와 D는 평균 10, 나머지 조합은 평균 5입니다.</p>
+<p>이 방법을 <b class="key">비복원 추출</b>이라고 합니다. 한 번의 표본 안에서 같은 칸을 다시 뽑지 않습니다. A와 B는 값이 둘 다 0이지만 다른 칸이며, 두 칸을 동시에 뽑을 수 있습니다. 다음 표본을 만들 때는 다시 원래의 네 칸에서 시작합니다.</p>
+<div class="table-wrap"><table><thead><tr><th scope="col">두 칸 조합</th><th scope="col">값</th><th scope="col">표본평균</th></tr></thead><tbody><tr><td>A와 B</td><td>0, 0</td><td>0</td></tr><tr><td>A와 C / A와 D / B와 C / B와 D</td><td>0, 10</td><td>5</td></tr><tr><td>C와 D</td><td>10, 10</td><td>10</td></tr></tbody></table></div>
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+<h2>표본평균이 가질 수 있는 값의 분포</h2>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 247" role="img" aria-label="두 칸을 뽑는 여섯 조합의 표본평균. 평균 0인 조합 1개, 평균 5인 조합 4개, 평균 10인 조합 1개.">
+<line class="f-ink" x1="92" y1="183" x2="675" y2="183"/><line class="f-ink" x1="92" y1="39" x2="92" y2="183"/><text class="f-t f-b" x="87" y="24" text-anchor="start">가능한 조합 수</text><line class="f-dash" x1="92" y1="152" x2="675" y2="152"/><text class="f-s" x="78" y="156" text-anchor="end">1</text><line class="f-dash" x1="92" y1="121" x2="675" y2="121"/><text class="f-s" x="78" y="125" text-anchor="end">2</text><line class="f-dash" x1="92" y1="90" x2="675" y2="90"/><text class="f-s" x="78" y="94" text-anchor="end">3</text><line class="f-dash" x1="92" y1="59" x2="675" y2="59"/><text class="f-s" x="78" y="63" text-anchor="end">4</text><rect class="f-soft" x="173" y="152" width="70" height="31" rx="3"/><text class="f-s" x="208" y="145" text-anchor="middle">1</text><text class="f-t" x="208" y="203" text-anchor="middle">0</text><rect class="f-soft" x="353" y="59" width="70" height="124" rx="3"/><text class="f-s" x="388" y="52" text-anchor="middle">4</text><text class="f-t" x="388" y="203" text-anchor="middle">5</text><rect class="f-soft" x="533" y="152" width="70" height="31" rx="3"/><text class="f-s" x="568" y="145" text-anchor="middle">1</text><text class="f-t" x="568" y="203" text-anchor="middle">10</text><text class="f-t" x="380" y="232" text-anchor="middle">두 관측의 표본평균</text>
+</svg><figcaption>모집단의 값에는 5가 없지만 표본평균의 가능한 값에는 5가 있다.</figcaption></figure>
+<p>정해진 표집 절차를 반복했을 때 표본평균이 가질 수 있는 값과 그 확률을 표본평균의 <b class="key">표집분포</b>라고 합니다. 모든 조합이 같은 가능성을 가지므로 평균이 0이거나 10일 확률은 2/6 = 1/3입니다. 평균이 5인 조합이 4개이므로, 뽑기 한 번의 표본평균이 모집단 평균과 같을 확률은 4/6입니다.</p>
+<pre data-example="python"><code>from collections import Counter
+from itertools import combinations
+
+values = [0, 0, 10, 10]
+means = [(values[i] + values[j]) / 2 for i, j in combinations(range(4), 2)]
+print(dict(sorted(Counter(means).items())))
+print(sum(means) / len(means))</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>{0.0: 1, 5.0: 4, 10.0: 1}
+5.0</code></pre>
+<p><code>combinations</code>는 서로 다른 위치를 순서와 상관없이 짝짓습니다. <code>Counter</code>는 같은 평균이 몇 번 나왔는지 셉니다. 가능한 경우가 여섯 개뿐이므로 이 결과는 근삿값을 만들기 위한 시뮬레이션과 달리 전수 계산입니다.</p>
+<div class="check" data-q="q3"></div>
+<div class="check" data-q="q4"></div>
+<h2>시뮬레이션으로 추출을 반복하기</h2>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 160" role="img" aria-label="네 값에서 두 칸을 비복원 추출한 뒤 그 표본평균을 기록하고, 다음 번에는 다시 원래 네 값에서 뽑는다.">
+<rect class="f-box" x="42" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="135" y="61" text-anchor="middle">한 번의 추출</text><text class="f-s" x="135" y="89" text-anchor="middle">4칸에서 2칸 선택</text><text class="f-s" x="135" y="110" text-anchor="middle">replace=False</text><line class="f-line" x1="235" y1="84" x2="278" y2="84" marker-end="url(#f-arrow)"/><rect class="f-soft" x="287" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="380" y="61" text-anchor="middle">그 표본을 요약</text><text class="f-s" x="380" y="89" text-anchor="middle">선택한 2개의 평균</text><text class="f-s" x="380" y="110" text-anchor="middle">표본당 1개 결과</text><line class="f-line" x1="480" y1="84" x2="523" y2="84" marker-end="url(#f-arrow)"/><rect class="f-box" x="532" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="625" y="61" text-anchor="middle">다시 네 칸에서</text><text class="f-s" x="625" y="89" text-anchor="middle">같은 규칙 10,000회</text><text class="f-s" x="625" y="110" text-anchor="middle">빈도와 평균 확인</text>
+</svg><figcaption>비복원 규칙은 한 표본 안에서 적용한다.</figcaption></figure>
+<pre data-example="python"><code>import numpy as np
+
+values = [0, 0, 10, 10]
+rng = np.random.default_rng(42)
+means = np.array([
+    rng.choice(values, size=2, replace=False).mean()
+    for _ in range(10_000)
+])
+print(np.unique(means, return_counts=True)[1].tolist())
+print(f&quot;{means.mean():.3f}&quot;)
+print(f&quot;{((means == 0) | (means == 10)).mean():.4f}&quot;)</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>[1667, 6689, 1644]
+4.989
+0.3311</code></pre>
+<p>예제의 반복마다 평균 0과 10인 경우를 함께 세면 1,667 + 1,644 = 3,311회입니다. 관측된 비율 0.3311은 정확한 확률 1/3에 가깝습니다. 시드를 바꾸면 빈도는 달라질 수 있습니다. 출력은 Python 3.14.6, NumPy 2.5.4에서 확인했습니다.</p>
+<div class="check" data-q="q5"></div>
+<div class="check" data-q="q6"></div>
+<h2>반복 횟수와 표본 크기를 구별하기</h2>
+<p>시뮬레이션에서 10,000은 표본을 다시 뽑은 횟수이고 2는 한 표본의 크기입니다. 반복을 많이 하면 <em>이 표집 규칙의</em> 결과 분포를 더 잘 관찰할 수 있습니다. 표본 크기를 4로 바꾸고 비복원으로 뽑으면 매번 네 값이 전부 들어가므로 평균은 늘 5입니다.</p>
+<p>처음부터 10인 칸만 고르는 편향된 규칙이라면 같은 실험을 수천 번 반복해도 결과는 10입니다. 실제 분석에서는 모집단 전체의 값이 보이지 않는 경우가 많습니다. 이 예의 의의는 표집 규칙을 바꿨을 때 추정치가 어떻게 달라지는지 작은 데이터에서 직접 확인하는 데 있습니다.</p>
+<div class="check" data-q="q7"></div>
+<h2>혼자 바꾸어 볼 조건</h2>
+<p>네 칸에서 한 칸만 뽑으면 평균 0과 10이 각각 절반입니다. 이번에는 <b class="key">복원 추출</b>을 시험하세요. 첫 칸을 뽑은 다음 되돌려 놓고, 다시 네 칸 중 하나를 같은 가능성으로 뽑습니다. 두 번의 선택은 독립입니다. 평균이 0 또는 10일 확률을 손으로 먼저 구하고 <code>replace=True</code>로 바꿔 실행합니다.</p>
+
+<h2>참고 자료</h2>
+<ul><li><a href="https://numpy.org/doc/stable/reference/random/generated/numpy.random.Generator.choice.html">NumPy · Generator.choice</a></li><li><a href="https://docs.python.org/3/library/itertools.html#itertools.combinations">Python · itertools.combinations</a></li></ul>
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

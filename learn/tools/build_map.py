@@ -35,6 +35,7 @@ for line in part.splitlines():
 def rng(prefix, a, b): return ["%s%02d" % (prefix, i) for i in range(a, b + 1)]
 PATHS = [
     {"id": "start", "name": "공통 출발", "targets": rng("U", 1, 5) + rng("AR", 1, 7) + ["AR10"] + rng("PY", 1, 8) + rng("AL", 1, 5) + rng("DA", 1, 4) + ["U06", "RS01"]},
+    {"id": "analysis", "name": "데이터 분석 실습", "targets": rng("PY", 9, 11) + rng("DA", 5, 8)},
     {"id": "bd", "name": "빅분기", "targets": rng("BD", 1, 5)},
     {"id": "data", "name": "데이터·통계", "targets": ["DA07", "DB02", "DA08"] + rng("ST", 1, 9) + ["ML02", "ML10", "ML11"] + rng("RS", 5, 9)},
     {"id": "ml", "name": "머신러닝", "targets": rng("ML", 1, 12)},

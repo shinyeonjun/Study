@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>실전 분석 1: 마우나로아 관측 CSV 읽고 검사하기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="DA07-1">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">데이터 읽기와 탐색 · DA07 탐색 보고서</p>
+<p class="chap-num">DA07·1</p>
+<h1>실전 분석 1: 마우나로아 관측 CSV 읽고 검사하기</h1>
+<p class="lead">하와이 마우나로아에서 관측한 공기 속 이산화탄소의 연평균 값은 1990년부터 2019년까지 어떻게 달라졌을까요? 원자료 출처를 먼저 확인하고 pandas로 표를 읽어, 그 질문에 답할 만한 자료인지 확인합니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>측정값의 단위·기간·한 행의 의미를 기록한다.</li><li>정렬하고 결측·중복·비연속 연도를 검사한다.</li><li>원본과 분석용 계산을 구별해 첫 변화량을 구한다.</li></ul></div>
+
+<h2>이 표로 답할 질문 정하기</h2>
+<p>이번 질문은 <b>마우나로아에서 1990–2019년 사이 연평균 CO₂ 몰분율이 얼마나, 어떤 흐름으로 변했나?</b>입니다. 한 해의 관측을 모아 보고한 평균 한 건을 한 행으로 봅니다. 연도마다 한 줄이라는 뜻이지, 한 줄에 관측 하나를 직접 측정했다는 뜻은 아닙니다.</p>
+<p>자료 출처는 NOAA Global Monitoring Laboratory의 Xin Lan과 Scripps Institution of Oceanography의 Ralph Keeling입니다. 2026년 10월 9일 생성본에서 1990~2019년의 세 열을 옮겨 실습 CSV를 만들었습니다. 열 이름과 구분자만 바꿨습니다. 나중에 공개 원자료와 끝자리가 달라지면 보정과 품질 검사에 따른 자료 개정 여부를 살핍니다.</p>
+<div class="table-wrap"><table><thead><tr><th scope="col">열 이름</th><th scope="col">한 칸의 뜻</th><th scope="col">단위와 주의점</th></tr></thead><tbody><tr><td>year</td><td>연평균이 속한 연도</td><td>정수이며 이 파일에서는 행 식별자</td></tr><tr><td>mean_ppm</td><td>건조 공기 중 CO₂ 몰분율의 연평균</td><td>ppm = μmol/mol. 354.45 ppm이면 건조 공기 1몰당 CO₂ 354.45 μmol</td></tr><tr><td>uncertainty_ppm</td><td>보고된 연평균 불확실성</td><td>ppm. NOAA 설명에서 두 기관의 연평균 추정값 차이의 표준편차</td></tr></tbody></table></div>
+<div class="box trap"><p class="box-k">관측 위치를 확인하세요</p><p>이 관측소의 연평균으로 이 파일의 기간을 기술할 수 있습니다. 전 지구 평균, 월별 계절 변화, 특정 배출원의 효과를 답하려면 이 질문과 다른 자료가 필요합니다.</p></div>
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+<h2>연습 파일 준비와 첫 읽기</h2>
+<p><a href="../../labs/mauna-loa/annual_co2.csv" download>연평균 관측 CSV</a>를 연습 작업 폴더에 저장합니다. <a href="../py/py09-1.html">가상환경</a>에서 pandas를 쓰세요. 아래 코드를 같은 연습 폴더에 <code>inspect_co2.py</code>로 저장하고 그 폴더에서 실행하면 됩니다. 경로를 적는 방식은 PY07·1에서 배운 현재 작업 폴더 기준입니다.</p>
+<pre data-example="python"><code>import pandas as pd
+
+df = pd.read_csv(&quot;annual_co2.csv&quot;, dtype={&quot;year&quot;: &quot;Int64&quot;})
+print(df.shape)
+print(df.columns.tolist())
+print(df.loc[0, "year"], df.loc[0, "mean_ppm"], df.loc[0, "uncertainty_ppm"])
+print(df.isna().sum().tolist())</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>(30, 3)
+['year', 'mean_ppm', 'uncertainty_ppm']
+1990 354.45 0.12
+[0, 0, 0]</code></pre>
+<p><code>shape</code>에서 앞은 행의 개수, 뒤는 열의 개수입니다. <code>Int64</code>는 연도를 정수로 읽으면서 결측 표시를 허용하는 pandas 자료형입니다. 마지막 줄의 <code>isna().sum()</code>은 열마다 True를 더해 비어 있는 칸의 수를 셉니다. 이번 데이터에서 세 열 모두 0개입니다.</p>
+<div class="check" data-q="q3"></div>
+<h2>연도가 연속이어야 차이의 뜻이 맞다</h2>
+<p>다음에 쓸 <code>diff()</code>는 바로 위 행의 숫자를 뺍니다. 위 행이 전년인지 함수가 확인해 주지 않습니다. 따라서 먼저 순서를 맞추고, 연도 하나가 두 줄로 들어왔는지와 중간 연도가 빠졌는지를 확인합니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 160" role="img" aria-label="정렬하고 연도별로 한 행이며 연속인지 확인한 뒤 연평균 차이를 계산.">
+<rect class="f-box" x="42" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="135" y="61" text-anchor="middle">정렬 전</text><text class="f-s" x="135" y="89" text-anchor="middle">연도를 키로 본다</text><text class="f-s" x="135" y="110" text-anchor="middle">행 순서 자체는 근거가 아니다</text><line class="f-line" x1="235" y1="84" x2="278" y2="84" marker-end="url(#f-arrow)"/><rect class="f-soft" x="287" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="380" y="61" text-anchor="middle">순서와 개수 검사</text><text class="f-s" x="380" y="89" text-anchor="middle">1990 … 2019</text><text class="f-s" x="380" y="110" text-anchor="middle">연마다 정확히 한 줄</text><line class="f-line" x1="480" y1="84" x2="523" y2="84" marker-end="url(#f-arrow)"/><rect class="f-box" x="532" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="625" y="61" text-anchor="middle">계산</text><text class="f-s" x="625" y="89" text-anchor="middle">내 행 − 바로 앞 행</text><text class="f-s" x="625" y="110" text-anchor="middle">1년 간격인지 확인</text>
+</svg><figcaption>1993년 행 뒤에 1995년이 오면 차이는 1년치가 아니다.</figcaption></figure>
+<pre data-example="python"><code>import pandas as pd
+
+df = pd.read_csv(&quot;annual_co2.csv&quot;, dtype={&quot;year&quot;: &quot;Int64&quot;})
+if df.isna().any().any():
+    raise ValueError(&quot;비어 있는 값이 있습니다.&quot;)
+if df[&quot;year&quot;].duplicated().any():
+    raise ValueError(&quot;중복 연도가 있습니다.&quot;)
+df = df.sort_values(&quot;year&quot;, ignore_index=True)
+if df[&quot;year&quot;].tolist() != list(range(1990, 2020)):
+    raise ValueError(&quot;1990–2019년에 매년 한 행이 필요합니다.&quot;)
+
+change = df[&quot;mean_ppm&quot;].diff()
+print(pd.isna(change.iloc[0]))
+for i in (1, 2, 3):
+    print(f&quot;{df.loc[i, 'year']}: {change.iloc[i]:.2f}&quot;)</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>True
+1991: 1.25
+1992: 0.84
+1993: 0.67</code></pre>
+<p>1991년은 355.70 − 354.45 = 1.25 ppm입니다. 첫 행인 1990년은 표 안에 앞 행이 없어서 차이를 계산할 수 없습니다. 여기서 결측은 <b>변화를 계산하는 과정에서 새로 생긴 첫 빈칸</b>입니다. 원자료에 농도가 0이라고 적혀 있었던 것이 아닙니다. 따라서 첫 차이를 0으로 채우지 않습니다.</p>
+<div class="check" data-q="q4"></div>
+<div class="check" data-q="q5"></div>
+<h2>그림으로 먼저 보기</h2>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 293" role="img" aria-label="1990년 354.45 ppm부터 2019년 411.65 ppm까지 마우나로아의 연평균 점 30개를 연도순으로 연결한 선 그림. 모든 인접 연도에서 값이 커진다. 세로축은 350 ppm부터 표시.">
+<line class="f-ink" x1="99" y1="232" x2="674" y2="232"/><line class="f-ink" x1="99" y1="36" x2="99" y2="232"/><text class="f-t f-b" x="95" y="21" text-anchor="start">연평균 CO₂ (ppm)</text><text class="f-s" x="378" y="277" text-anchor="middle">연도</text><line class="f-dash" x1="99" y1="232" x2="674" y2="232"/><text class="f-s" x="87" y="236" text-anchor="end">350</text><line class="f-dash" x1="99" y1="202" x2="674" y2="202"/><text class="f-s" x="87" y="206" text-anchor="end">360</text><line class="f-dash" x1="99" y1="172" x2="674" y2="172"/><text class="f-s" x="87" y="176" text-anchor="end">370</text><line class="f-dash" x1="99" y1="142" x2="674" y2="142"/><text class="f-s" x="87" y="146" text-anchor="end">380</text><line class="f-dash" x1="99" y1="112" x2="674" y2="112"/><text class="f-s" x="87" y="116" text-anchor="end">390</text><line class="f-dash" x1="99" y1="82" x2="674" y2="82"/><text class="f-s" x="87" y="86" text-anchor="end">400</text><line class="f-dash" x1="99" y1="52" x2="674" y2="52"/><text class="f-s" x="87" y="56" text-anchor="end">410</text><line class="f-ink" x1="99" y1="232" x2="99" y2="238"/><text class="f-s" x="99" y="254" text-anchor="middle">1990</text><line class="f-ink" x1="194.5" y1="232" x2="194.5" y2="238"/><text class="f-s" x="194.5" y="254" text-anchor="middle">1995</text><line class="f-ink" x1="290" y1="232" x2="290" y2="238"/><text class="f-s" x="290" y="254" text-anchor="middle">2000</text><line class="f-ink" x1="385.5" y1="232" x2="385.5" y2="238"/><text class="f-s" x="385.5" y="254" text-anchor="middle">2005</text><line class="f-ink" x1="481" y1="232" x2="481" y2="238"/><text class="f-s" x="481" y="254" text-anchor="middle">2010</text><line class="f-ink" x1="576.5" y1="232" x2="576.5" y2="238"/><text class="f-s" x="576.5" y="254" text-anchor="middle">2015</text><line class="f-ink" x1="652.9000000000001" y1="232" x2="652.9000000000001" y2="238"/><text class="f-s" x="652.9000000000001" y="254" text-anchor="middle">2019</text><polyline class="f-line" fill="none" points="99,218.65000000000003 118.1,214.90000000000003 137.2,212.37999999999994 156.3,210.37000000000006 175.4,205.12000000000006 194.5,199.08999999999992 213.60000000000002,193.77999999999997 232.70000000000002,190.36 251.8,181.48000000000008 270.9,176.37999999999994 290,172.87000000000006 309.1,168.04000000000002 328.20000000000005,161.65000000000003 347.3,154.05999999999995 366.40000000000003,148.90000000000003 385.5,142.05999999999995 404.6,135.73000000000008 423.70000000000005,129.94000000000005 442.8,124.51000000000005 461.90000000000003,119.08000000000004 481,111.69999999999993 500.1,106.44999999999993 519.2,99.82 538.3,91.77999999999997 557.4000000000001,85.57 576.5,78.97000000000003 595.6,68.76999999999992 614.7,61.72000000000003 633.8000000000001,55.83999999999992 652.9000000000001,47.05000000000007"/><circle class="f-fill" cx="99" cy="218.65000000000003" r="2.6"/><circle class="f-fill" cx="118.1" cy="214.90000000000003" r="2.6"/><circle class="f-fill" cx="137.2" cy="212.37999999999994" r="2.6"/><circle class="f-fill" cx="156.3" cy="210.37000000000006" r="2.6"/><circle class="f-fill" cx="175.4" cy="205.12000000000006" r="2.6"/><circle class="f-fill" cx="194.5" cy="199.08999999999992" r="2.6"/><circle class="f-fill" cx="213.60000000000002" cy="193.77999999999997" r="2.6"/><circle class="f-fill" cx="232.70000000000002" cy="190.36" r="2.6"/><circle class="f-fill" cx="251.8" cy="181.48000000000008" r="2.6"/><circle class="f-fill" cx="270.9" cy="176.37999999999994" r="2.6"/><circle class="f-fill" cx="290" cy="172.87000000000006" r="2.6"/><circle class="f-fill" cx="309.1" cy="168.04000000000002" r="2.6"/><circle class="f-fill" cx="328.20000000000005" cy="161.65000000000003" r="2.6"/><circle class="f-fill" cx="347.3" cy="154.05999999999995" r="2.6"/><circle class="f-fill" cx="366.40000000000003" cy="148.90000000000003" r="2.6"/><circle class="f-fill" cx="385.5" cy="142.05999999999995" r="2.6"/><circle class="f-fill" cx="404.6" cy="135.73000000000008" r="2.6"/><circle class="f-fill" cx="423.70000000000005" cy="129.94000000000005" r="2.6"/><circle class="f-fill" cx="442.8" cy="124.51000000000005" r="2.6"/><circle class="f-fill" cx="461.90000000000003" cy="119.08000000000004" r="2.6"/><circle class="f-fill" cx="481" cy="111.69999999999993" r="2.6"/><circle class="f-fill" cx="500.1" cy="106.44999999999993" r="2.6"/><circle class="f-fill" cx="519.2" cy="99.82" r="2.6"/><circle class="f-fill" cx="538.3" cy="91.77999999999997" r="2.6"/><circle class="f-fill" cx="557.4000000000001" cy="85.57" r="2.6"/><circle class="f-fill" cx="576.5" cy="78.97000000000003" r="2.6"/><circle class="f-fill" cx="595.6" cy="68.76999999999992" r="2.6"/><circle class="f-fill" cx="614.7" cy="61.72000000000003" r="2.6"/><circle class="f-fill" cx="633.8000000000001" cy="55.83999999999992" r="2.6"/><circle class="f-fill" cx="652.9000000000001" cy="47.05000000000007" r="2.6"/><text class="f-s" x="124" y="207" text-anchor="start">1990년 354.45</text><text class="f-s" x="642" y="37" text-anchor="end">2019년 411.65</text>
+</svg><figcaption>세로축은 350 ppm부터 표시했다. 선의 점은 실제 연평균이며 연도 사이의 월별 값은 들어 있지 않다.</figcaption></figure>
+<p>이 기간의 선은 전체적으로 올라갑니다. 그렇다고 모든 해의 상승량이 같은 것은 아닙니다. 다음 장에서는 연평균 수준의 변화와 해마다의 변화량을 따로 계산하고, 수치와 한계를 함께 적습니다.</p>
+<div class="check" data-q="q6"></div>
+<h2>작업 기록에 남길 것</h2>
+<p>이 장에서는 원자료에서 30개 행과 세 열을 골라 CSV로 옮겼고, 값의 결측·중복·연도 간격을 검사했습니다. 누락을 채우거나 이상한 값을 임의로 지우지 않았습니다. 다른 기간을 분석할 때는 끊긴 연도가 없는지 다시 확인하고, 실제로 걸러 낸 행과 이유를 기록합니다.</p>
+
+<h2>참고 자료</h2>
+<ul><li><a href="https://gml.noaa.gov/ccgg/trends/data.html">NOAA GML · 마우나로아 CO₂ 자료와 출처</a></li><li><a href="https://gml.noaa.gov/webdata/ccgg/trends/co2/co2_annmean_mlo.txt">NOAA GML · 연평균 원자료</a></li><li><a href="https://pandas.pydata.org/docs/reference/api/pandas.read_csv.html">pandas 공식 문서 · CSV 읽기</a></li></ul>
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

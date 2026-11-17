@@ -94,6 +94,20 @@ window.BDA_CHAPTERS = {
     {"id": "PY08-1", "title": "오류 읽기·재현·assert", "href": "notes/py/py08-1.html"},
     {"id": "PY08-2", "title": "예외 처리와 입력 검증", "href": "notes/py/py08-2.html"}
   ],
+  PY09: [
+    {"id": "PY09-1", "title": "import와 가상환경: 어떤 Python을 쓰고 있나", "href": "notes/py/py09-1.html"},
+    {"id": "PY09-2", "title": "다시 실행할 수 있게 버전과 작업 조건 남기기", "href": "notes/py/py09-2.html"}
+  ],
+  PY10: [
+    {"id": "PY10-1", "title": "NumPy 배열의 모양·축·자료형", "href": "notes/py/py10-1.html"},
+    {"id": "PY10-2", "title": "배열에서 값을 골라 계산하고 집계하기", "href": "notes/py/py10-2.html"},
+    {"id": "PY10-3", "title": "브로드캐스팅과 재현할 수 있는 난수 실험", "href": "notes/py/py10-3.html"}
+  ],
+  PY11: [
+    {"id": "PY11-1", "title": "pandas로 표 읽고 필요한 행 고르기", "href": "notes/py/py11-1.html"},
+    {"id": "PY11-2", "title": "pandas로 묶어 세고 키로 두 표 잇기", "href": "notes/py/py11-2.html"},
+    {"id": "PY11-3", "title": "Matplotlib로 그래프 그리고 오차 막대 읽기", "href": "notes/py/py11-3.html"}
+  ],
   DA01: [
     {"id": "DA01-1", "title": "관측과 변수, 행과 열", "href": "notes/da/da01-1.html"},
     {"id": "DA01-2", "title": "한 행의 단위와 수집 맥락", "href": "notes/da/da01-2.html"}
@@ -109,6 +123,22 @@ window.BDA_CHAPTERS = {
   DA04: [
     {"id": "DA04-1", "title": "평균·중앙값·최빈값", "href": "notes/da/da04-1.html"},
     {"id": "DA04-2", "title": "분위수와 상자 그림, 분포의 모양", "href": "notes/da/da04-2.html"}
+  ],
+  DA05: [
+    {"id": "DA05-1", "title": "범위·분산·표준편차", "href": "notes/da/da05-1.html"},
+    {"id": "DA05-2", "title": "표준화와 z 점수", "href": "notes/da/da05-2.html"}
+  ],
+  DA06: [
+    {"id": "DA06-1", "title": "중복·결측·단위·범주 검사", "href": "notes/da/da06-1.html"},
+    {"id": "DA06-2", "title": "관측 시점과 데이터 누출", "href": "notes/da/da06-2.html"}
+  ],
+  DA07: [
+    {"id": "DA07-1", "title": "실전 분석 1: 마우나로아 관측 CSV 읽고 검사하기", "href": "notes/da/da07-1.html"},
+    {"id": "DA07-2", "title": "실전 분석 2: 변화량·요약표·분석 보고서", "href": "notes/da/da07-2.html"}
+  ],
+  DA08: [
+    {"id": "DA08-1", "title": "모집단·표본·선택 편향: 결과를 어디까지 말할 수 있나", "href": "notes/da/da08-1.html"},
+    {"id": "DA08-2", "title": "표본을 반복해서 뽑아 보면: 정확한 계산과 시뮬레이션", "href": "notes/da/da08-2.html"}
   ],
   RS01: [
     {"id": "RS01-1", "title": "질문에서 가설로: 조작적 정의와 측정", "href": "notes/rs/rs01-1.html"},
@@ -351,6 +381,7 @@ window.BDA_MAP = {
   ],
   paths: [
     {"id": "start", "name": "공통 출발", "targets": ["U01", "U02", "U03", "U04", "U05", "AR01", "AR02", "AR03", "AR04", "AR05", "AR06", "AR07", "AR10", "PY01", "PY02", "PY03", "PY04", "PY05", "PY06", "PY07", "PY08", "AL01", "AL02", "AL03", "AL04", "AL05", "DA01", "DA02", "DA03", "DA04", "U06", "RS01"]},
+    {"id": "analysis", "name": "데이터 분석 실습", "targets": ["PY09", "PY10", "PY11", "DA05", "DA06", "DA07", "DA08"]},
     {"id": "bd", "name": "빅분기", "targets": ["BD01", "BD02", "BD03", "BD04", "BD05"]},
     {"id": "data", "name": "데이터·통계", "targets": ["DA07", "DB02", "DA08", "ST01", "ST02", "ST03", "ST04", "ST05", "ST06", "ST07", "ST08", "ST09", "ML02", "ML10", "ML11", "RS05", "RS06", "RS07", "RS08", "RS09"]},
     {"id": "ml", "name": "머신러닝", "targets": ["ML01", "ML02", "ML03", "ML04", "ML05", "ML06", "ML07", "ML08", "ML09", "ML10", "ML11", "ML12"]},

@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>관측 시점과 데이터 누출 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e8c'/%3E%3Cpath d='M8 22V10m8 12V14m8 8V6' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="DA06-2">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+
+<header class="chapter">
+<p class="chap-sub">데이터 읽기와 탐색 · DA06 데이터 품질</p>
+<p class="chap-num">DA06·2</p>
+<h1>관측 시점과 데이터 누출</h1>
+<p class="lead">오늘 오전 9시에 오늘의 주문량을 예상한다고 합시다. 마감 뒤 만든 파일에는 정오 실제 기온과 최종 주문 수까지 한 행에 들어 있습니다. 파일만 보면 쓸 수 있는 숫자처럼 보이지만, 오전 9시에는 아직 없었습니다. 예측 시점과 정보가 도착한 시점을 나눠 봅니다.</p>
+</header>
+
+<div class="goal">
+<h2>이 장을 읽고 나면</h2>
+<ul>
+<li>값이 생긴 때와 실제로 쓸 수 있게 된 때를 나눠 기록한다.</li>
+<li>정답이나 미래에만 알 수 있는 정보가 입력에 섞이는 예를 찾는다.</li>
+<li>시간순으로 학습·평가를 나눈 뒤 학습 기준으로 두 자료를 처리한다.</li>
+</ul>
+</div>
+
+<h2>파일을 받은 날짜와 예측하는 순간을 구분한다</h2>
+<p>6일 모두 지난 뒤 표를 펼치면 자료가 꽉 차 있습니다. 실제 업무를 흉내 내어 비교하려면 시간을 과거로 돌려 각 날 09:00에 무엇을 알았는지 따져야 합니다. <b class="key">예측 시점</b>은 입력을 확정하고 예측을 내리는 순간입니다. 예에서 <b>정답 자료</b>(target)는 18:00에 확정한 그날 주문 수이고, <b>입력 자료</b>(feature)는 09:00까지 정해진 변수입니다. 정답은 학습과 채점에 필요하지만, 그날의 입력 열에는 두지 않습니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 215" role="img" aria-label="시간은 왼쪽에서 오른쪽으로 흐른다. 오전 8시 50분에는 날씨 예보가 나왔고 오전 9시에 예측한다. 정오 실제 기온과 오후 6시 확정 주문 수는 예측할 때 알 수 없다.">
+<line class="f-ink" x1="51" y1="108" x2="699" y2="108" marker-end="url(#f-arrow)"/>
+<line class="f-dash" x1="293" y1="35" x2="293" y2="177"/>
+<circle class="f-fill" cx="146" cy="108" r="5"/>
+<circle class="f-fill" cx="293" cy="108" r="5"/>
+<circle class="f-fill" cx="459" cy="108" r="5"/>
+<circle class="f-fill" cx="622" cy="108" r="5"/>
+<text class="f-s" x="146" y="88" text-anchor="middle">08:50</text>
+<text class="f-s" x="293" y="88" text-anchor="middle">09:00</text>
+<text class="f-s" x="459" y="88" text-anchor="middle">12:00</text>
+<text class="f-s" x="622" y="88" text-anchor="middle">18:00</text>
+<text class="f-t" x="146" y="137" text-anchor="middle">발표된 날씨 예보</text>
+<text class="f-cap" x="293" y="137" text-anchor="middle">예측 실행</text>
+<text class="f-t" x="459" y="137" text-anchor="middle">정오 실제 기온</text>
+<text class="f-t" x="622" y="137" text-anchor="middle">주문 수 확정</text>
+<text class="f-s" x="186" y="185" text-anchor="middle">예측할 때 아는 정보</text>
+<text class="f-s" x="498" y="185" text-anchor="middle">예측하고 난 뒤 들어오는 정보</text>
+<text class="f-s" x="700" y="132" text-anchor="middle">시간</text>
+</svg>
+<figcaption>시각의 순서만 나타낸 그림이다. 예보에 적힌 대상은 정오지만 발표는 예측 전에 이루어졌다.</figcaption>
+</figure>
+<div class="table-wrap"><table>
+<tr><th scope="col">후보 열</th><th scope="col">언제 알 수 있나</th><th scope="col">09:00 입력으로?</th></tr>
+<tr><td>어제 최종 주문 수</td><td>어제 18:00 확정</td><td>예. 오늘 예측 전에 확인했다면 사용.</td></tr>
+<tr><td>오늘 정오에 대한 기온 <b>예보</b></td><td>오늘 08:50 발표</td><td>예. 실제로 당시 받은 예보를 저장해 사용.</td></tr>
+<tr><td>오늘 정오 <b>실제</b> 기온</td><td>오늘 12:00 이후</td><td>아니요. 09:00에는 아직 관측되지 않았다.</td></tr>
+<tr><td>08:30에 잰 재고</td><td>오늘 09:10 분석 시스템 도착</td><td>아니요. 잰 시각이 먼저여도 그때 시스템에 없었다.</td></tr>
+<tr><td>오늘 최종 주문 수</td><td>오늘 18:00 확정</td><td>입력으로는 제외. 예측과 비교하는 정답 열이다.</td></tr>
+</table></div>
+<p>기온 예보에 ‘정오’라는 이름이 붙어도 예보를 받아 둔 시각은 앞설 수 있습니다. 반대로 08:30에 잰 자료가 09:10에야 도착할 수도 있습니다. 행마다 <b>사건 시각</b>과 <b>처음 사용할 수 있었던 시각</b>을 따로 두면 이 차이를 확인할 수 있습니다. 역사 데이터를 며칠 뒤 수정한 값은 최초 시점에는 없었을 수 있으므로, 가능하면 당시의 파일이나 버전 기록을 보존합니다.</p>
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+<div class="check" data-q="q3"></div>
+<h2>오전 9시에 보이는 열을 코드로 고르기</h2>
+<p>이 실습은 시간대가 모두 한국 시각(+09:00)이라고 가정합니다. <code>datetime.fromisoformat</code>으로 시각 문자열을 비교 가능한 객체로 바꾸고, 사용 가능 시각이 09:00 이전 또는 같은 값만 고릅니다. 09:00에 입수한 값을 예측 전에 확인할 수 있다는 계약을 가정한 예라 <code>&lt;=</code>를 씁니다. 실제 업무에서 시각이 같을 때 순서가 불분명하면 엄밀한 도착 기록을 확인하거나 안전한 간격을 둡니다.</p>
+<pre data-example="python"><code>from datetime import datetime
+
+cutoff = datetime.fromisoformat("2026-11-05T09:00:00+09:00")
+fields = [
+    ("어제 주문 수", "2026-11-04T18:00:00+09:00"),
+    ("정오 기온 예보", "2026-11-05T08:50:00+09:00"),
+    ("정오 실제 기온", "2026-11-05T12:01:00+09:00"),
+    ("오전 재고", "2026-11-05T09:10:00+09:00"),
+    ("오늘 주문 수", "2026-11-05T18:00:00+09:00"),
+]
+available = [
+    name for name, time in fields
+    if datetime.fromisoformat(time) &lt;= cutoff
+]
+print("입력:", ", ".join(available))
+print("제외:", ", ".join(name for name, _ in fields if name not in available))</code></pre>
+<pre data-output><code>입력: 어제 주문 수, 정오 기온 예보
+제외: 정오 실제 기온, 오전 재고, 오늘 주문 수</code></pre>
+<p>예측할 때 쓸 수 없는 정보를 가져오면 <b class="key">데이터 누출</b>(data leakage)이 일어납니다. 정답을 입력 열에 그대로 두는 것이 가장 눈에 잘 띄는 경우입니다. ‘최종 주문 수 × 1.05로 만든 예상 수수료’처럼 정답에서 계산한 열을 쓰는 경우에도 누출이 발생합니다. <b>이 열의 원래 출처와 기록 시각은 무엇인가?</b>를 물으면 이름만으로 숨겨진 정보를 찾기 쉽습니다.</p>
+<div class="check" data-q="q4"></div>
+<div class="check" data-q="q5"></div>
+<h2>미래에 써 볼 문제면 과거부터 나눈다</h2>
+<p>각 날 09:00에 확인한 오전 기온을 새 입력 예로 씁니다. 첫 4일로 기준을 정하고 이어지는 2일로 성능을 확인한다고 합시다. 날짜를 마구 섞으면 뒤 날짜의 상황을 본 뒤 앞 날짜를 예측하는 과제가 될 수 있습니다. <b class="key">시간순 분리</b>에서는 먼저 날짜로 나누고, 학습 구간의 정답도 평가 예측을 시작할 때 이미 확정된 것만 씁니다. 이 사례는 매일 18:00에 그날 정답이 확정되므로, 4일의 마감 뒤 5일 09:00에 평가를 시작할 수 있습니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 198" role="img" aria-label="시간순으로 날짜 1일부터 4일까지가 학습 자료이며 5일과 6일은 평가 자료이다. 학습 자료에서 계산한 평균 20도와 표준편차 2도를 평가에도 그대로 쓴다.">
+<text class="f-cap" x="244" y="29" text-anchor="middle">기준을 계산하는 자료</text>
+<text class="f-cap" x="599" y="29" text-anchor="middle">성능을 점검하는 자료</text>
+<rect class="f-soft" x="40" y="46" width="95" height="52" rx="4"/>
+<text class="f-s" x="87.5" y="65" text-anchor="middle">1일</text>
+<text class="f-cap" x="87.5" y="87" text-anchor="middle">18℃</text>
+<rect class="f-soft" x="145" y="46" width="95" height="52" rx="4"/>
+<text class="f-s" x="192.5" y="65" text-anchor="middle">2일</text>
+<text class="f-cap" x="192.5" y="87" text-anchor="middle">18℃</text>
+<rect class="f-soft" x="250" y="46" width="95" height="52" rx="4"/>
+<text class="f-s" x="297.5" y="65" text-anchor="middle">3일</text>
+<text class="f-cap" x="297.5" y="87" text-anchor="middle">22℃</text>
+<rect class="f-soft" x="355" y="46" width="95" height="52" rx="4"/>
+<text class="f-s" x="402.5" y="65" text-anchor="middle">4일</text>
+<text class="f-cap" x="402.5" y="87" text-anchor="middle">22℃</text>
+<rect class="f-box" x="495" y="46" width="95" height="52" rx="4"/>
+<text class="f-s" x="542.5" y="65" text-anchor="middle">5일</text>
+<text class="f-cap" x="542.5" y="87" text-anchor="middle">26℃</text>
+<rect class="f-box" x="600" y="46" width="95" height="52" rx="4"/>
+<text class="f-s" x="647.5" y="65" text-anchor="middle">6일</text>
+<text class="f-cap" x="647.5" y="87" text-anchor="middle">28℃</text>
+<line class="f-dash" x1="472" y1="26" x2="472" y2="112"/>
+<rect class="f-box" x="174" y="133" width="172" height="38" rx="4"/>
+<text class="f-s" x="260" y="157" text-anchor="middle">학습 평균 20 · 표준편차 2</text>
+<line class="f-line" x1="346" y1="152" x2="502" y2="152" marker-end="url(#f-arrow)"/>
+<rect class="f-box" x="507" y="133" width="184" height="38" rx="4"/>
+<text class="f-s" x="599" y="157" text-anchor="middle">같은 기준으로 z = 3, 4</text>
+<line class="f-line" x1="246" y1="100" x2="246" y2="132" marker-end="url(#f-arrow)"/>
+</svg>
+<figcaption>기온은 매일 오전 9시에 수집했다. 시간 경계 오른쪽의 값은 평균·표준편차 계산에 쓰지 않았다.</figcaption>
+</figure>
+<p>학습 자료에서 평균·표준편차를 계산하여 학습과 평가에 공통으로 적용합니다. 전처리 규칙에 숫자를 맞추는 활동을 <b class="key">적합</b>(fit), 정해진 값을 실제 자료에 쓰는 활동을 <b>변환</b>(transform)이라고 합니다. 평가 자료에서 계산한 중앙값으로 결측을 채우거나, 전체 기간의 평균으로 표준화하면 평가 값을 미리 본 셈입니다. 기술 통계가 목적이어서 전체 기간을 요약하는 상황과 예측 성능을 가늠하는 상황을 구별합니다.</p>
+<pre data-example="python"><code>from statistics import mean, pstdev
+
+observations = [
+    ("2026-11-01", 18), ("2026-11-02", 18),
+    ("2026-11-03", 22), ("2026-11-04", 22),
+    ("2026-11-05", 26), ("2026-11-06", 28),
+]
+first_eval_day = "2026-11-05"
+train = [temp for day, temp in observations if day &lt; first_eval_day]
+evaluation = [temp for day, temp in observations if day &gt;= first_eval_day]
+center = mean(train)
+scale = pstdev(train)
+assert scale &gt; 0
+print(f"학습 {len(train)}일, 평가 {len(evaluation)}일")
+print(f"평균 {center:.1f}, 표준편차 {scale:.1f}")
+print("평가 z:", [(temp - center) / scale for temp in evaluation])</code></pre>
+<pre data-output><code>학습 4일, 평가 2일
+평균 20.0, 표준편차 2.0
+평가 z: [3.0, 4.0]</code></pre>
+<p>예제의 날짜는 모두 <code>YYYY-MM-DD</code> 고정 길이 문자열이라 문자 순서가 날짜 순서와 같습니다. 다른 날짜 표기나 시간대가 섞이면 실제 날짜·시각으로 변환해 비교합니다. 기온 26℃와 28℃의 z가 모두 큰 것은 더 따뜻한 날이 뒤에 왔기 때문입니다. 학습 구간과 다른 상황에서도 예측이 통하는지는 그때 얻은 정답과 비교해야 알 수 있습니다.</p>
+<div class="check" data-q="q6"></div>
+<div class="check" data-q="q7"></div>
+<div class="check" data-q="q8"></div>
+<h2>정답 확정 지연과 반복 기록을 살펴본다</h2>
+<p>예를 들어 ‘앞으로 7일 안에 돌아오는 고객’을 예측하면 4일 시점의 정답을 알기 위해 11일까지 기다려야 합니다. 5일 시작 시점으로 평가 상태를 재현하려면 4일 행을 그 시점의 학습 정답으로 쓰면 안 됩니다. 관측일뿐 아니라 정답을 확인할 수 있는 날도 자르고, 필요한 경우 학습 끝과 평가 시작 사이에 간격을 둡니다. 구체적인 분리 방식은 예측 업무와 자료 주기에 맞춥니다.</p>
+<p>같은 고객의 여러 행에서 앞 행이 나중 행과 거의 같은 사본이라면 행을 나눠도 성능이 과대평가될 수 있습니다. 아직 만난 적 없는 고객에 대한 예측이 목표라면 고객 단위로 분리하는 것도 고려합니다. 한 사람의 과거 행동을 활용해 그 사람의 미래를 예측하는 등 실제 목표가 다르면, 언제 어떤 과거 기록을 사용할지 명확히 정합니다.</p>
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table>
+<tr><th scope="col">검사</th><th scope="col">남길 내용</th></tr>
+<tr><td><b class='key'>예측 시점</b></td><td>예측을 내는 시간과 당시에 실제 들어온 변수 목록</td></tr>
+<tr><td>입력과 정답</td><td>입력 열의 원천, 입수 시각, 정답 열과 정답 확정 시각</td></tr>
+<tr><td><b class='key'>시간순 분리</b></td><td>학습과 평가 시점의 경계, 필요한 간격, 제외 기준</td></tr>
+<tr><td><b class='key'>학습 기준 전처리</b></td><td>학습 자료에서 계산한 값과 평가에도 적용한 동일 규칙</td></tr>
+</table></div>
+<h2>참고 자료</h2>
+<ul><li><a href="https://docs.python.org/3/library/datetime.html#datetime.datetime.fromisoformat">Python · 날짜·시각 문자열 읽기</a></li>
+<li><a href="https://scikit-learn.org/stable/common_pitfalls.html#data-leakage">scikit-learn · 전처리와 데이터 누출</a></li>
+<li><a href="https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.TimeSeriesSplit.html">scikit-learn · 시간순 검증과 간격</a></li></ul>
+
+<h2>확인 문제</h2>
+<p>본문에서 푼 것 말고 남은 문제입니다. 먼저 답을 정한 뒤 해설을 확인합니다.</p>
+<div id="quiz"></div>
+
+<section class="work" id="tools"></section>
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

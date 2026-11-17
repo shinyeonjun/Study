@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>모집단·표본·선택 편향: 결과를 어디까지 말할 수 있나 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="DA08-1">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">데이터 읽기와 탐색 · DA08 표본과 시뮬레이션</p>
+<p class="chap-num">DA08·1</p>
+<h1>모집단·표본·선택 편향: 결과를 어디까지 말할 수 있나</h1>
+<p class="lead">강의실에서 손을 든 학생 30명 중 24명이 교내 버스에 만족합니다. 80%라는 계산은 맞지만, 학교 전체의 만족도를 알아보려면 누가 응답할 기회를 얻었는지부터 살펴야 합니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>모집단·표본틀·응답 표본을 서로 구별한다.</li><li>선택 편향과 우연한 표본 차이를 구별한다.</li><li>무작위 추출과 무작위 배정이 답하려는 질문을 설명한다.</li></ul></div>
+
+<h2>누구에 대해 말할지 먼저 정한다</h2>
+<p>교내 버스 만족도를 조사한다면 대상이 전체 재학생인지, 지난달 이용자 전체인지부터 정합니다. 질문은 같아 보여도 분모가 달라집니다. 여기서는 <b>지난달 교내 버스를 한 번 이상 이용한 재학생 전체</b>를 생각합시다.</p>
+<div class="table-wrap"><table><thead><tr><th scope="col">말</th><th scope="col">이 조사의 예</th></tr></thead><tbody><tr><td><b class="key">모집단</b></td><td>답을 알고 싶은 대상 전부. 지난달 이용한 재학생 전체.</td></tr><tr><td><b class="key">표본틀</b></td><td>조사 대상을 뽑거나 접촉하는 데 쓰는 명단. 예를 들어 실제 승차 카드 기록에서 식별한 대상.</td></tr><tr><td><b class="key">추출 표본</b></td><td>명단에서 조사 대상으로 뽑은 학생들.</td></tr><tr><td><b class="key">응답 표본</b></td><td>뽑은 학생 중 실제로 설문에 응답한 학생들.</td></tr></tbody></table></div>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 160" role="img" aria-label="전체 모집단, 접촉에 쓰는 명단, 실제 응답으로 좁혀지면서 누락이 생길 수 있다.">
+<rect class="f-box" x="42" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="135" y="61" text-anchor="middle">목표 모집단</text><text class="f-s" x="135" y="89" text-anchor="middle">지난달 버스 이용 재학생</text><text class="f-s" x="135" y="110" text-anchor="middle">누구의 만족도인지 결정</text><line class="f-line" x1="235" y1="84" x2="278" y2="84" marker-end="url(#f-arrow)"/><rect class="f-soft" x="287" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="380" y="61" text-anchor="middle">접촉 가능한 명단</text><text class="f-s" x="380" y="89" text-anchor="middle">승차 카드 기록</text><text class="f-s" x="380" y="110" text-anchor="middle">기록에서 빠진 이용자 확인</text><line class="f-line" x1="480" y1="84" x2="523" y2="84" marker-end="url(#f-arrow)"/><rect class="f-box" x="532" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="625" y="61" text-anchor="middle">실제 응답</text><text class="f-s" x="625" y="89" text-anchor="middle">응답 학생들의 답</text><text class="f-s" x="625" y="110" text-anchor="middle">누가 응답하지 않았는가</text>
+</svg><figcaption>모집단에서 표본으로 넘어가는 중간 단계를 보고서에 적는다.</figcaption></figure>
+<div class="check" data-q="q1"></div>
+<h2>수가 많아도 같은 방향으로 어긋날 수 있다</h2>
+<p>수업에 나온 사람만 묻는 경우, 다른 시간대에 통학하는 학생은 응답할 기회가 없습니다. 링크를 모두에게 보냈더라도 불편을 겪은 사람만 많이 답하면 결과가 달라질 수 있습니다. 앞의 경우는 표본틀 또는 접촉 범위에 누락이 있는 사례이고, 뒤의 경우는 응답 여부가 관심 변수와 관련된 사례입니다.</p>
+<p><b class="key">선택 편향</b>은 이런 선발과 응답 과정 때문에 관측된 자료가 관심 대상의 특성을 체계적으로 다르게 보여 주는 문제입니다. 잘 설계된 무작위 표본도 우연히 한쪽에 더 많이 뽑힐 수 있습니다. 그 흔들림은 반복 추출마다 방향이 달라질 수 있고, 조사에서 같은 부류를 계속 누락하는 문제와 구별해야 합니다.</p>
+<div class="box ex"><p class="box-k">계산 예제</p><p>학생을 주 이용 시간대에 따라 오전과 오후 중 하나로 나눕니다. 오전 이용자 200명 중 160명이 만족하고 오후 이용자 800명 중 320명이 만족한다고 합시다. 오전 이용자 전부의 답을 알면 160 ÷ 200 = 80%입니다. 두 집단 모두의 답을 알 때는 (160 + 320) ÷ (200 + 800) = 48%입니다. 오전만 조사하면 오후 이용자가 빠집니다.</p></div>
+<div class="check" data-q="q2"></div>
+<div class="check" data-q="q3"></div>
+<h2>관계가 원인인지 가려 보기</h2>
+<p>다음은 문제 해결 도구 A와 B를 비교한 <strong>가상 자료</strong>입니다. A는 어려운 문제에, B는 쉬운 문제에 더 자주 쓰였습니다. 도구 선택과 성공률 양쪽에 문제 난도가 관련되므로, 집계 비율만 보면 서로 다른 작업 구성의 효과를 섞게 됩니다.</p>
+<div class="table-wrap"><table><thead><tr><th scope="col">문제 난도</th><th scope="col">A 성공/시도</th><th scope="col">B 성공/시도</th></tr></thead><tbody><tr><td>쉬움</td><td>18/20 = 90%</td><td>80/100 = 80%</td></tr><tr><td>어려움</td><td>30/100 = 30%</td><td>4/20 = 20%</td></tr><tr><td>전체</td><td>48/120 = 40%</td><td>84/120 = 70%</td></tr></tbody></table></div>
+<p>각 난도에서는 A의 성공률이 10퍼센트포인트 높습니다. 전체에서는 B가 30퍼센트포인트 높습니다. 난도를 나눠 봐야 함을 보여 주는 예입니다. 난도를 맞췄어도 작업자의 경험처럼 다른 요인이 남을 수 있으므로, 이 관찰표만으로 도구 자체의 효과를 확정하지 않습니다.</p>
+<pre data-example="python"><code>for name, easy, hard in (
+    (&quot;A&quot;, (18, 20), (30, 100)),
+    (&quot;B&quot;, (80, 100), (4, 20)),
+):
+    success = easy[0] + hard[0]
+    trials = easy[1] + hard[1]
+    print(f&quot;{name}: {success}/{trials} = {success / trials:.0%}&quot;)</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>A: 48/120 = 40%
+B: 84/120 = 70%</code></pre>
+<div class="check" data-q="q4"></div>
+<div class="check" data-q="q5"></div>
+<h2>무작위 추출과 무작위 배정</h2>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 160" role="img" aria-label="무작위 추출은 조사 참가자를 정하고, 무작위 배정은 선정된 참가자의 실험 조건을 정한다.">
+<rect class="f-box" x="42" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="135" y="61" text-anchor="middle">무작위 추출</text><text class="f-s" x="135" y="89" text-anchor="middle">모집단 → 조사 참가자</text><text class="f-s" x="135" y="110" text-anchor="middle">누구에게 결과를 일반화할까</text><line class="f-line" x1="235" y1="84" x2="278" y2="84" marker-end="url(#f-arrow)"/><rect class="f-soft" x="287" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="380" y="61" text-anchor="middle">무작위 배정</text><text class="f-s" x="380" y="89" text-anchor="middle">참가자 → A 또는 B</text><text class="f-s" x="380" y="110" text-anchor="middle">조건을 공정하게 비교</text><line class="f-line" x1="480" y1="84" x2="523" y2="84" marker-end="url(#f-arrow)"/><rect class="f-box" x="532" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="625" y="61" text-anchor="middle">결과 읽기</text><text class="f-s" x="625" y="89" text-anchor="middle">효과와 적용 대상을 분리</text><text class="f-s" x="625" y="110" text-anchor="middle">누락·이탈·측정 방법 확인</text>
+</svg><figcaption>두 과정은 한 연구에 함께 들어갈 수 있으며 서로 다른 질문을 푼다.</figcaption></figure>
+<p>무작위 추출은 미리 정한 모집 범위에서 표본을 뽑는 방법입니다. 무작위 배정은 확보한 참가자나 작업을 조건에 보냅니다. 배정이 잘 이뤄지면 비교 조건의 차이가 결과에 미치는 영향을 파악하기 유리합니다. 다만 다른 집단에도 같은 효과가 있는지, 누락과 측정이 어떤지에는 별도 근거가 필요합니다.</p>
+<div class="check" data-q="q6"></div>
+<h2>보고서에 적기</h2>
+<p>“응답 학생 30명 중 24명이 만족했다. 오전 수업에서 자원한 학생을 대상으로 했으므로 이 수치가 전체 이용자의 만족도를 나타낸다고 단정할 수 없다.” 범위, 모집 방법, 분모, 누락을 같이 적으면 독자가 숫자의 의미를 판단할 수 있습니다.</p>
+
+<h2>참고 자료</h2>
+<ul><li><a href="https://aapor.org/standards-and-ethics/best-practices/">AAPOR · 설문 조사 설계와 표집</a></li><li><a href="https://online.stat.psu.edu/stat200/Lesson01">Penn State STAT 200 · 수집 방식, 표집, 실험</a></li></ul>
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>
