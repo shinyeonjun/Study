@@ -26,30 +26,37 @@ index.html              전체 홈. 책꽂이에 책 표지가 놓인 모양(자
 .nojekyll               GitHub Pages가 파일을 그대로 내보내게 하는 빈 파일
 jcg/                    정보처리기사 실기 (이미 완성. 모양·구조를 바꾸지 않는다)
   index.html, css/, js/, pages/
-bigdata/                나의 공부 교재 (빅분기 + 수학·코딩·데이터·AI·네트워크, 지금 공부 중). 폴더 이름은 주소 유지를 위해 그대로 둔다
+learn/                  나의 공부 교재 (수학·코딩·데이터·AI·네트워크, 지식 지도 199단원). 지금 공부 중
   index.html            홈 = 목차. 왼쪽에 검색·경로·분야, 오른쪽에 오늘 상태 한 줄과 목차. 설명 문단 없이 목록만
   unit.html             단원 안내 (?u=AR04): 다루는 개념, 장 목록, 먼저 볼 단원, 이어지는 단원, 들어 있는 경로
-  review.html           복습 페이지 (여러 장 문제를 섞어서. ?wrong=1 이면 오답 다시 풀기)
+  review.html           복습 (이 책의 장 문제만 섞어서. ?wrong=1 이면 오답 다시 풀기)
   notes.js              CHAPTERS(실제로 쓴 장, 손으로 고침) + BDA_MAP(지식 지도, 생성됨) + 분야별 묶음
   tools/build_map.py    LEARNING_MAP.md를 읽어 notes.js의 지도 부분을 다시 만들고 검사한다
-  style.css             모든 페이지가 같이 쓰는 모양
-  js/core.js            공통: 기록 저장, 복습 일정, 문제 한 개 그리기, 밝게/어둡게
-  js/map.js             지도 도우미: 선수관계 펼치기, 경로 순서, 단원 상태, 검색, 목차 한 줄
-  js/note.js            장 페이지: 차례, 읽기 진행, 단원 위치 한 줄, 핵심어 가리기, 왜 그럴까, 확인 문제, 내 공책
-  js/home.js, js/unit.js, js/review.js   홈·단원 안내·복습
+  style.css, js/        core(기록·복습·문제) · map(지도 도우미) · note(장 페이지) · home · unit · review
   quiz/<장 id>.js       장별 확인 문제 (예: quiz/AR04-2.js)
-  notes/<분야>/          장 HTML. 예: notes/ar/ar04-2.html (장 id AR04-2). 빅분기 첫 장만 notes/1-planning/01-빅데이터란.html(id 1-01)
+  notes/<분야>/          장 HTML. 예: notes/ar/ar04-2.html (장 id AR04-2)
+bigdata/                빅분기 노트 (시험 전용 책). 과목 → 출제 기준 항목 → 장
+  index.html            홈 = 목차. 오늘 상태 한 줄, 과목별 장 목록. 공통 기초는 learn/으로 링크
+  notes.js              과목·출제 기준 항목(plan)·장(area) 목록
+  style.css, js/, quiz/, review.html
+  notes/1-planning/     1과목 장 (예: 01-빅데이터란.html, id 1-01). 2-explore·3-modeling·4-result 순서
   img/                  GPT로 만든 그림만. 도해는 장 안에 SVG로 그린다
 ```
 
-## 지식 지도 (2026-11-18 도입)
+## 두 책: 공부 교재(learn/)와 빅분기 노트(bigdata/)
+
+- 2026-11-18에 나눴다. 수학·코딩·데이터·AI 같은 공통 지식은 learn/에, 빅분기 시험 정리는 bigdata/에 쓴다. 같은 내용을 두 책에 복제하지 않고 링크로 잇는다.
+- 두 책은 같은 브라우저 기록 키(`bda-study-v2`)를 같이 쓴다. 장 id가 겹치지 않으므로(learn은 AR04-2 같은 단원ID, bigdata는 1-01 같은 번호) 기록이 섞이지 않는다. 백업 파일 하나로 두 책 기록이 함께 저장된다.
+- 스타일과 js는 책마다 따로 둔다(복사본). 한쪽을 고치면 다른 쪽에 필요한지 확인한다.
+
+## 지식 지도 (learn/, 2026-11-18 도입)
 
 - 기준 문서: GPT가 조사한 `LEARNING_MAP.md`(22개 분야·199개 단원·선수관계·경로)와 `CLAUDE_GOAL.md`. 원본은 이 저장소 밖(사용자의 Codex 작업 폴더 `research-learning-map`)에 있다. 공개 저장소이므로 개인 경로는 적지 않는다.
 - 지도를 고칠 때는 notes.js를 손으로 고치지 말고 `python tools/build_map.py <LEARNING_MAP.md>`로 다시 만든다. 검사(분야 22, 단원 199, ID 중복·없는 선수·순환, RL01~RL08에 CA·DL 없음)가 통과해야 쓴다.
 - 세 가지 상태를 섞지 않는다: 지도에 있음 / 본문이 있음(CHAPTERS에 장이 있음) / 내가 공부함(기록). 본문 없는 단원은 "준비 전"으로 보인다.
 - 경로(공통 출발, 빅분기, 데이터·통계, 머신러닝, AI·딥러닝, 강화학습, 네트워크, 수학 심화)는 목표 단원과 그 앞내용을 함께 펼쳐 보여 준다. 잠금이 아니라 추천이다.
 - 집필 순서: 첫 16단원(U01~U05, AR01~AR07, AR10, PY01~PY03) 다음은 AL01~AL05, PY04~PY08, DA01~DA04, 그다음 PY10·PY11과 DA07. U06과 RS01은 일찍 짧게.
-- 새 장 쓰는 법: `notes/<분야 소문자>/<단원ID 소문자>-<n>.html`, `<body data-note="<단원ID>-<n>">`, 문제는 `quiz/<장 id>.js`, 그리고 notes.js의 `BDA_CHAPTERS`에 단원 ID 아래 한 줄. 본보기는 `notes/1-planning/01-빅데이터란.html`과 첫 16단원 장들.
+- 새 장 쓰는 법(learn/): `notes/<분야 소문자>/<단원ID 소문자>-<n>.html`, `<body data-note="<단원ID>-<n>">`, 문제는 `quiz/<장 id>.js`, 그리고 notes.js의 `BDA_CHAPTERS`에 단원 ID 아래 한 줄. 본보기는 `notes/1-planning/01-빅데이터란.html`과 첫 16단원 장들.
 
 ## 이 사이트의 성격
 

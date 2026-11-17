@@ -44,6 +44,15 @@
           ol.appendChild(li);
         });
         page.appendChild(ol);
+      } else if (u.area === "BD") {
+        var bd = el("div", "box");
+        var bp = el("p", "", "빅분기 시험 내용은 따로 있는 책 ");
+        var ba = el("a", "", "빅분기 노트");
+        ba.href = "../bigdata/index.html";
+        bp.appendChild(ba);
+        bp.appendChild(document.createTextNode("에 씁니다. 이 단원 안내는 시험 내용과 연결되는 공통 기초(아래 ‘먼저 볼 단원’)를 찾는 데 씁니다."));
+        bd.appendChild(bp);
+        page.appendChild(bd);
       } else {
         var box = el("div", "box warn");
         box.appendChild(el("p", "", "본문 준비 전입니다. 이 단원의 장은 아직 쓰지 않았습니다. 위의 개념 목록과 아래 연결만 먼저 볼 수 있습니다."));
