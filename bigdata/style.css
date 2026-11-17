@@ -22,6 +22,7 @@
   --hl: #ffec99;
   --blank: #d8d2c4;
   --shadow: 0 1px 2px rgba(30, 28, 25, 0.06), 0 10px 30px rgba(30, 28, 25, 0.08);
+  --fig-bg: #ffffff;
   --r: 10px;
   --top: 50px;
 }
@@ -33,7 +34,7 @@
     --warn: #e9c46a; --warn-soft: #362d14;
     --memo: #c3a2ee; --memo-soft: #2a2138;
     --ok: #6fd08c; --ok-soft: #14301f; --no: #f0958a; --no-soft: #3a1c19;
-    --hl: #5c4d10; --blank: #3a362f; --shadow: none;
+    --hl: #5c4d10; --blank: #3a362f; --shadow: none; --fig-bg: #201f1c;
   }
 }
 :root[data-theme="dark"] {
@@ -43,7 +44,7 @@
   --warn: #e9c46a; --warn-soft: #362d14;
   --memo: #c3a2ee; --memo-soft: #2a2138;
   --ok: #6fd08c; --ok-soft: #14301f; --no: #f0958a; --no-soft: #3a1c19;
-  --hl: #5c4d10; --blank: #3a362f; --shadow: none;
+  --hl: #5c4d10; --blank: #3a362f; --shadow: none; --fig-bg: #201f1c;
 }
 
 * { box-sizing: border-box; }
@@ -157,6 +158,23 @@ body.hide-keys .key.shown { background: var(--hl); }
 .fig img { display: block; width: 100%; height: auto; border-radius: 6px; border: 1px solid var(--line); background: #fff; }
 .fig figcaption { color: var(--muted); font-size: 0.88rem; margin-top: 8px; text-align: center; }
 .fig figcaption::before { content: "그림 " counter(fig) "  "; font-weight: 800; color: var(--text); }
+
+/* 직접 그린 도해(SVG). 교재 자료처럼 흰 바탕에 가는 선, 이름표, 아래에 (가)(나)(다) */
+.fig-defs { position: absolute; }
+.fig-svg { display: block; width: 100%; height: auto; border: 1px solid var(--line); border-radius: 6px; background: var(--fig-bg); font-family: inherit; }
+.f-box { fill: var(--fig-bg); stroke: var(--accent); stroke-width: 1.4; }
+.f-soft { fill: var(--accent-soft); stroke: var(--accent); stroke-width: 1.4; }
+.f-over { fill: var(--no-soft); stroke: var(--no); stroke-width: 1.4; }
+.f-none { fill: none; stroke: var(--accent); stroke-width: 1.4; }
+.f-line { fill: none; stroke: var(--accent); stroke-width: 1.4; }
+.f-ink { fill: none; stroke: var(--muted); stroke-width: 1.4; }
+.f-dash { fill: none; stroke: var(--muted); stroke-width: 1; stroke-dasharray: 5 4; }
+.f-fill { fill: var(--accent); stroke: none; }
+.f-t { fill: var(--text); font-size: 14px; }
+.f-s { fill: var(--muted); font-size: 12.5px; }
+.f-ink-t { fill: var(--text); }
+.f-cap { fill: var(--text); font-size: 14.5px; font-weight: 700; }
+.f-b { font-weight: 700; }
 
 /* 표 */
 .table-wrap { overflow-x: auto; margin: 16px 0; }
@@ -283,6 +301,10 @@ footer { margin-top: 56px; color: var(--muted); font-size: 0.85rem; }
   .toc { padding: 12px 12px 0; }
   .page { padding: 32px 20px 56px; margin: 12px 0 0; border-radius: 0; box-shadow: none; }
   .side { float: none; width: auto; margin: 16px 0; }
+  /* 좁은 화면: 도해는 글자가 읽히는 크기를 지키고, 옆으로 밀어서 본다 */
+  .fig { overflow-x: auto; }
+  .fig-svg { min-width: 600px; }
+  .fig figcaption { position: sticky; left: 0; width: calc(100vw - 40px); text-align: left; }
   .chap-num { font-size: 3.2rem; }
 }
 @media (max-width: 480px) {

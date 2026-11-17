@@ -19,6 +19,7 @@
 <div class="book">
 <aside class="toc" id="toc"></aside>
 <main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
 
 <header class="chapter">
 <p class="chap-sub">1과목 · 빅데이터 분석 기획</p>
@@ -42,8 +43,43 @@
 <p>정의부터 외우기 전에, 먼저 장면 하나를 떠올려 봅시다.</p>
 
 <figure class="fig">
-<img src="../../img/1-01-analogy.webp" width="1200" height="800" decoding="async" alt="왼쪽은 동네 가게 사장님이 공책 한 권과 계산기로 판매 기록을 적는 모습. 오른쪽은 대형 마트의 계산대, 포인트 카드, 쇼핑 앱, 고객 후기, 매장 카메라에서 데이터가 쉬지 않고 쏟아져 저장 장치가 넘치고, 공책은 감당하지 못하는 모습.">
-<figcaption>동네 가게는 공책 한 권이면 되지만, 대형 마트는 공책으로 감당할 수 없다.</figcaption>
+<svg class="fig-svg" viewBox="0 0 760 300" role="img" aria-label="동네 가게는 하루 판매를 공책 한 권에 적는다. 대형 마트는 계산대, 포인트 카드, 쇼핑 앱, 고객 후기, 매장 카메라 다섯 곳에서 숫자, 글, 영상이 쉬지 않고 저장·처리 장치로 들어온다.">
+<text class="f-cap" x="130" y="26" text-anchor="middle">동네 가게</text>
+<rect class="f-box" x="28" y="112" width="92" height="40" rx="4"/>
+<text class="f-t" x="74" y="137" text-anchor="middle">하루 판매</text>
+<line class="f-line" x1="120" y1="132" x2="156" y2="132" marker-end="url(#f-arrow)"/>
+<rect class="f-soft" x="160" y="102" width="84" height="60" rx="4"/>
+<text class="f-t f-b" x="202" y="129" text-anchor="middle">공책</text>
+<text class="f-s" x="202" y="148" text-anchor="middle">한 권</text>
+<text class="f-s" x="130" y="196" text-anchor="middle">하루에 한 번 · 숫자만</text>
+<line class="f-dash" x1="274" y1="12" x2="274" y2="292"/>
+<text class="f-cap" x="520" y="26" text-anchor="middle">대형 마트</text>
+<rect class="f-box" x="300" y="46" width="158" height="34" rx="4"/>
+<text class="f-t" x="312" y="68" text-anchor="start">계산대</text>
+<text class="f-s" x="448" y="68" text-anchor="end">숫자</text>
+<line class="f-line" x1="458" y1="63" x2="596" y2="118" marker-end="url(#f-arrow)"/>
+<rect class="f-box" x="300" y="92" width="158" height="34" rx="4"/>
+<text class="f-t" x="312" y="114" text-anchor="start">포인트 카드</text>
+<text class="f-s" x="448" y="114" text-anchor="end">숫자</text>
+<line class="f-line" x1="458" y1="109" x2="596" y2="135" marker-end="url(#f-arrow)"/>
+<rect class="f-box" x="300" y="138" width="158" height="34" rx="4"/>
+<text class="f-t" x="312" y="160" text-anchor="start">쇼핑 앱</text>
+<text class="f-s" x="448" y="160" text-anchor="end">누른 기록</text>
+<line class="f-line" x1="458" y1="155" x2="596" y2="152" marker-end="url(#f-arrow)"/>
+<rect class="f-box" x="300" y="184" width="158" height="34" rx="4"/>
+<text class="f-t" x="312" y="206" text-anchor="start">고객 후기</text>
+<text class="f-s" x="448" y="206" text-anchor="end">글</text>
+<line class="f-line" x1="458" y1="201" x2="596" y2="169" marker-end="url(#f-arrow)"/>
+<rect class="f-box" x="300" y="230" width="158" height="34" rx="4"/>
+<text class="f-t" x="312" y="252" text-anchor="start">매장 카메라</text>
+<text class="f-s" x="448" y="252" text-anchor="end">영상</text>
+<line class="f-line" x1="458" y1="247" x2="596" y2="186" marker-end="url(#f-arrow)"/>
+<rect class="f-soft" x="600" y="96" width="132" height="112" rx="4"/>
+<text class="f-t f-b" x="666" y="146" text-anchor="middle">저장 · 처리</text>
+<text class="f-s" x="666" y="168" text-anchor="middle">쉬지 않고 들어옴</text>
+<text class="f-s" x="520" y="288" text-anchor="middle">양이 많고 · 형태가 여러 가지고 · 쉬지 않는다</text>
+</svg>
+<figcaption>동네 가게와 대형 마트의 데이터 흐름. 출처가 늘고, 형태가 섞이고, 멈추지 않는다.</figcaption>
 </figure>
 
 <p>동네 작은 가게 사장님은 하루 장사를 마치고 공책 한 권에 "오늘 라면 12개, 우유 5개 팔림"이라고 적습니다. 적을 것이 많지 않고, 전부 숫자이고, 하루에 한 번만 적으면 됩니다. 공책과 계산기면 충분합니다.</p>
@@ -98,8 +134,123 @@
 <p>"기존 방법으로 안 되는 이유"를 세 가지로 정리한 것이 3V입니다. 세 낱말이 모두 영어 V로 시작해서 붙은 이름입니다. 2001년에 더그 레이니(Doug Laney)라는 분석가가 이렇게 정리했고, 지금까지 빅데이터를 설명하는 기본 틀로 쓰입니다.</p>
 
 <figure class="fig">
-<img src="../../img/1-01-3v.webp" width="1400" height="933" loading="lazy" decoding="async" alt="빅데이터의 3V. 규모(Volume): 데이터의 양이 매우 많다. 저장 장치가 끝없이 늘어서 있고, 종이 더미 앞에서 사람이 머리를 싸맨다. 다양성(Variety): 데이터의 형태가 여러 가지다. 표, 글, 사진, 영상, 소리가 섞여 있어 사람이 고민한다. 속도(Velocity): 빠르게 생기고 빠르게 처리해야 한다. 문서가 컨베이어 벨트로 밀려오는데 컴퓨터는 아직 처리 중이다.">
-<figcaption>빅데이터의 3V. 아래 칸은 기존 방법으로 감당하지 못하는 모습이다.</figcaption>
+<svg class="fig-svg" viewBox="0 0 760 292" role="img" aria-label="3V 도해. (가) 규모: 컴퓨터 한 대의 저장 공간보다 들어온 데이터가 많아 한계선을 넘는다. (나) 다양성: 표, 글, 사진, 영상, 소리. (다) 속도: 예전에는 데이터를 모았다가 한꺼번에 처리했지만 지금은 생기는 즉시 처리한다.">
+<line class="f-dash" x1="253" y1="12" x2="253" y2="250"/>
+<line class="f-dash" x1="507" y1="12" x2="507" y2="250"/>
+<rect class="f-box" x="36" y="112" width="74" height="108" rx="4"/>
+<text class="f-t" x="73" y="172" text-anchor="middle">저장</text>
+<text class="f-t" x="73" y="190" text-anchor="middle">공간</text>
+<text class="f-s" x="73" y="240" text-anchor="middle">컴퓨터 한 대</text>
+<rect class="f-soft" x="140" y="208" width="22" height="14" rx="2"/>
+<rect class="f-soft" x="140" y="190" width="22" height="14" rx="2"/>
+<rect class="f-soft" x="140" y="172" width="22" height="14" rx="2"/>
+<rect class="f-soft" x="140" y="154" width="22" height="14" rx="2"/>
+<rect class="f-soft" x="140" y="136" width="22" height="14" rx="2"/>
+<rect class="f-soft" x="140" y="118" width="22" height="14" rx="2"/>
+<rect class="f-over" x="140" y="100" width="22" height="14" rx="2"/>
+<rect class="f-over" x="140" y="82" width="22" height="14" rx="2"/>
+<rect class="f-over" x="140" y="64" width="22" height="14" rx="2"/>
+<rect class="f-over" x="140" y="46" width="22" height="14" rx="2"/>
+<rect class="f-soft" x="166" y="208" width="22" height="14" rx="2"/>
+<rect class="f-soft" x="166" y="190" width="22" height="14" rx="2"/>
+<rect class="f-soft" x="166" y="172" width="22" height="14" rx="2"/>
+<rect class="f-soft" x="166" y="154" width="22" height="14" rx="2"/>
+<rect class="f-soft" x="166" y="136" width="22" height="14" rx="2"/>
+<rect class="f-soft" x="166" y="118" width="22" height="14" rx="2"/>
+<rect class="f-over" x="166" y="100" width="22" height="14" rx="2"/>
+<rect class="f-over" x="166" y="82" width="22" height="14" rx="2"/>
+<rect class="f-over" x="166" y="64" width="22" height="14" rx="2"/>
+<rect class="f-over" x="166" y="46" width="22" height="14" rx="2"/>
+<rect class="f-soft" x="192" y="208" width="22" height="14" rx="2"/>
+<rect class="f-soft" x="192" y="190" width="22" height="14" rx="2"/>
+<rect class="f-soft" x="192" y="172" width="22" height="14" rx="2"/>
+<rect class="f-soft" x="192" y="154" width="22" height="14" rx="2"/>
+<rect class="f-soft" x="192" y="136" width="22" height="14" rx="2"/>
+<rect class="f-soft" x="192" y="118" width="22" height="14" rx="2"/>
+<rect class="f-over" x="192" y="100" width="22" height="14" rx="2"/>
+<rect class="f-over" x="192" y="82" width="22" height="14" rx="2"/>
+<rect class="f-over" x="192" y="64" width="22" height="14" rx="2"/>
+<rect class="f-over" x="192" y="46" width="22" height="14" rx="2"/>
+<line class="f-dash" x1="24" y1="112" x2="236" y2="112"/>
+<text class="f-s" x="26" y="104" text-anchor="start">저장 공간의 한계</text>
+<text class="f-s" x="177" y="240" text-anchor="middle">들어온 데이터</text>
+<rect class="f-box" x="283" y="44" width="50" height="40" rx="2"/>
+<rect class="f-soft" x="283" y="44" width="50" height="10" rx="2"/>
+<line class="f-line" x1="299.6" y1="44" x2="299.6" y2="84"/>
+<line class="f-line" x1="316.2" y1="44" x2="316.2" y2="84"/>
+<line class="f-line" x1="283" y1="54" x2="333" y2="54"/>
+<line class="f-line" x1="283" y1="64" x2="333" y2="64"/>
+<line class="f-line" x1="283" y1="74" x2="333" y2="74"/>
+<text class="f-s" x="308" y="102" text-anchor="middle">표</text>
+<rect class="f-box" x="355" y="44" width="50" height="40" rx="2"/>
+<line class="f-ink" x1="362" y1="53" x2="398" y2="53"/>
+<line class="f-ink" x1="362" y1="61" x2="392" y2="61"/>
+<line class="f-ink" x1="362" y1="69" x2="400" y2="69"/>
+<line class="f-ink" x1="362" y1="77" x2="384" y2="77"/>
+<text class="f-s" x="380" y="102" text-anchor="middle">글</text>
+<rect class="f-box" x="427" y="44" width="50" height="40" rx="2"/>
+<circle class="f-fill" cx="464" cy="56" r="5"/>
+<path class="f-soft" d="M429 82 l14 -16 10 10 8 -7 14 13z"/>
+<text class="f-s" x="452" y="102" text-anchor="middle">사진</text>
+<rect class="f-box" x="319" y="140" width="50" height="40" rx="2"/>
+<path class="f-fill" d="M338 152 l14 8 -14 8z"/>
+<text class="f-s" x="344" y="198" text-anchor="middle">영상</text>
+<rect class="f-box" x="391" y="140" width="50" height="40" rx="2"/>
+<line class="f-ink" x1="399.0" y1="157.0" x2="399.0" y2="163.0"/>
+<line class="f-ink" x1="404.7" y1="153.0" x2="404.7" y2="167.0"/>
+<line class="f-ink" x1="410.4" y1="148.0" x2="410.4" y2="172.0"/>
+<line class="f-ink" x1="416.1" y1="155.0" x2="416.1" y2="165.0"/>
+<line class="f-ink" x1="421.8" y1="146.0" x2="421.8" y2="174.0"/>
+<line class="f-ink" x1="427.5" y1="152.0" x2="427.5" y2="168.0"/>
+<line class="f-ink" x1="433.2" y1="156.0" x2="433.2" y2="164.0"/>
+<text class="f-s" x="416" y="198" text-anchor="middle">소리</text>
+<text class="f-s" x="530" y="40" text-anchor="start">예전: 모았다가 한꺼번에</text>
+<line class="f-line" x1="530" y1="78" x2="746" y2="78" marker-end="url(#f-arrow)"/>
+<circle class="f-fill" cx="546" cy="78" r="4"/>
+<circle class="f-fill" cx="568" cy="78" r="4"/>
+<circle class="f-fill" cx="590" cy="78" r="4"/>
+<circle class="f-fill" cx="612" cy="78" r="4"/>
+<circle class="f-fill" cx="634" cy="78" r="4"/>
+<circle class="f-fill" cx="656" cy="78" r="4"/>
+<path class="f-line" d="M546 90 v8 h110 v-8"/>
+<line class="f-line" x1="660" y1="98" x2="686" y2="98" marker-end="url(#f-arrow)"/>
+<rect class="f-soft" x="690" y="86" width="52" height="24" rx="4"/>
+<text class="f-s" x="716" y="103" text-anchor="middle">처리</text>
+<text class="f-s" x="530" y="152" text-anchor="start">지금: 생기는 즉시</text>
+<line class="f-line" x1="530" y1="186" x2="746" y2="186" marker-end="url(#f-arrow)"/>
+<circle class="f-fill" cx="546" cy="186" r="4"/>
+<line class="f-line" x1="546" y1="194" x2="546" y2="206"/>
+<rect class="f-soft" x="541" y="208" width="10" height="10" rx="2"/>
+<circle class="f-fill" cx="568" cy="186" r="4"/>
+<line class="f-line" x1="568" y1="194" x2="568" y2="206"/>
+<rect class="f-soft" x="563" y="208" width="10" height="10" rx="2"/>
+<circle class="f-fill" cx="590" cy="186" r="4"/>
+<line class="f-line" x1="590" y1="194" x2="590" y2="206"/>
+<rect class="f-soft" x="585" y="208" width="10" height="10" rx="2"/>
+<circle class="f-fill" cx="612" cy="186" r="4"/>
+<line class="f-line" x1="612" y1="194" x2="612" y2="206"/>
+<rect class="f-soft" x="607" y="208" width="10" height="10" rx="2"/>
+<circle class="f-fill" cx="634" cy="186" r="4"/>
+<line class="f-line" x1="634" y1="194" x2="634" y2="206"/>
+<rect class="f-soft" x="629" y="208" width="10" height="10" rx="2"/>
+<circle class="f-fill" cx="656" cy="186" r="4"/>
+<line class="f-line" x1="656" y1="194" x2="656" y2="206"/>
+<rect class="f-soft" x="651" y="208" width="10" height="10" rx="2"/>
+<circle class="f-fill" cx="678" cy="186" r="4"/>
+<line class="f-line" x1="678" y1="194" x2="678" y2="206"/>
+<rect class="f-soft" x="673" y="208" width="10" height="10" rx="2"/>
+<circle class="f-fill" cx="700" cy="186" r="4"/>
+<line class="f-line" x1="700" y1="194" x2="700" y2="206"/>
+<rect class="f-soft" x="695" y="208" width="10" height="10" rx="2"/>
+<circle class="f-fill" cx="722" cy="186" r="4"/>
+<line class="f-line" x1="722" y1="194" x2="722" y2="206"/>
+<rect class="f-soft" x="717" y="208" width="10" height="10" rx="2"/>
+<text class="f-s" x="634" y="240" text-anchor="middle">점 하나 = 새로 생긴 데이터</text>
+<text class="f-cap" x="126" y="278" text-anchor="middle">(가) 규모 Volume</text>
+<text class="f-cap" x="380" y="278" text-anchor="middle">(나) 다양성 Variety</text>
+<text class="f-cap" x="634" y="278" text-anchor="middle">(다) 속도 Velocity</text>
+</svg>
+<figcaption>빅데이터의 3V. (가)의 붉은 칸은 저장 공간 한 개의 한계를 넘은 데이터다.</figcaption>
 </figure>
 
 <h3>규모 (Volume) <span class="tag memo">외우기</span></h3>
@@ -143,6 +294,36 @@
 <p><b class="key">가치(Value)</b>는 <b>분석해서 쓸모 있는 결과를 얻을 수 있는가</b>입니다.</p>
 <p>데이터를 모으고 저장하는 데에는 돈이 듭니다. 모으기만 하고 아무 결정에도 쓰지 못하면 비용만 나갑니다. "비 오는 날 어느 매장에서 무엇이 잘 팔리는지 알아내서 미리 채워 둔다"처럼 실제 행동으로 이어질 때 가치가 생깁니다. 그래서 가치를 <b>빅데이터를 다루는 최종 목적</b>이라고 합니다.</p>
 
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 200" role="img" aria-label="5V 도해. 규모, 다양성, 속도를 가진 데이터가 들어온다. 정확성 단계에서 믿을 수 있는지 따져 가짜와 오류를 걸러 내고, 분석을 거쳐 쓸모 있는 결과, 곧 가치를 얻는다.">
+<rect class="f-box" x="20" y="52" width="196" height="92" rx="4"/>
+<text class="f-t f-b" x="118" y="76" text-anchor="middle">들어오는 데이터</text>
+<rect class="f-soft" x="30" y="90" width="50" height="30" rx="4"/>
+<text class="f-s f-ink-t" x="55.0" y="110" text-anchor="middle">규모</text>
+<rect class="f-soft" x="86" y="90" width="62" height="30" rx="4"/>
+<text class="f-s f-ink-t" x="117.0" y="110" text-anchor="middle">다양성</text>
+<rect class="f-soft" x="154" y="90" width="52" height="30" rx="4"/>
+<text class="f-s f-ink-t" x="180.0" y="110" text-anchor="middle">속도</text>
+<text class="f-s" x="118" y="166" text-anchor="middle">3V: 데이터의 모습</text>
+<line class="f-line" x1="216" y1="98" x2="266" y2="98" marker-end="url(#f-arrow)"/>
+<polygon class="f-box" points="270,98 326,52 382,98 326,144"/>
+<text class="f-s f-ink-t" x="326" y="94" text-anchor="middle">믿을 수</text>
+<text class="f-s f-ink-t" x="326" y="110" text-anchor="middle">있는가?</text>
+<text class="f-cap" x="326" y="34" text-anchor="middle">정확성 Veracity</text>
+<line class="f-line" x1="326" y1="144" x2="326" y2="170" marker-end="url(#f-arrow)"/>
+<text class="f-s" x="326" y="190" text-anchor="middle">가짜 · 오류는 걸러 낸다</text>
+<line class="f-line" x1="382" y1="98" x2="432" y2="98" marker-end="url(#f-arrow)"/>
+<rect class="f-box" x="436" y="72" width="86" height="52" rx="4"/>
+<text class="f-t" x="479" y="103" text-anchor="middle">분석</text>
+<line class="f-line" x1="522" y1="98" x2="572" y2="98" marker-end="url(#f-arrow)"/>
+<rect class="f-soft" x="576" y="62" width="164" height="72" rx="4"/>
+<text class="f-t f-b" x="658" y="103" text-anchor="middle">쓸모 있는 결과</text>
+<text class="f-cap" x="658" y="34" text-anchor="middle">가치 Value</text>
+<text class="f-s" x="658" y="156" text-anchor="middle">빅데이터를 다루는 최종 목적</text>
+</svg>
+<figcaption>3V는 데이터의 모습, 정확성은 거르는 단계, 가치는 도착점이다.</figcaption>
+</figure>
+
 <div class="table-wrap">
 <table>
 <tr><th>더해진 2V</th><th>묻는 것</th><th>마트 예시</th></tr>
@@ -165,8 +346,80 @@
 <p>3V 가운데 다양성을 더 자세히 봅니다. 데이터는 <b>미리 정해진 틀이 얼마나 있느냐</b>에 따라 정형, 반정형, 비정형으로 나눕니다. 이 구분은 시험에 자주 나오고, 뒤 과목에서도 계속 쓰입니다.</p>
 
 <figure class="fig">
-<img src="../../img/1-01-types.webp" width="1200" height="800" loading="lazy" decoding="async" alt="데이터의 세 가지 형태. 정형 데이터: 칸이 정해진 표에 딱 들어간다. 반정형 데이터: 표는 아니지만 이름표가 붙어 있다, 예는 JSON, XML, 로그. 비정형 데이터: 정해진 구조가 없다, 글·사진·영상·소리.">
-<figcaption>왼쪽에서 오른쪽으로 갈수록 정해진 틀이 느슨해진다.</figcaption>
+<svg class="fig-svg" viewBox="0 0 760 298" role="img" aria-label="데이터의 세 가지 형태. (가) 정형: 번호, 이름, 나이 칸이 정해진 표에 세 사람의 줄이 들어 있다. (나) 반정형: 주문 아래에 주문번호, 고객, 상품이라는 이름표가 있고 그 아래에 5501, 김하나, 라면과 우유라는 값이 달린 나무 구조. (다) 비정형: 줄글과 사진처럼 칸도 이름표도 없는 자료.">
+<line class="f-dash" x1="253" y1="12" x2="253" y2="258"/>
+<line class="f-dash" x1="507" y1="12" x2="507" y2="258"/>
+<rect class="f-soft" x="27" y="44" width="198" height="28" rx="0"/>
+<rect class="f-none" x="27" y="44" width="198" height="112" rx="0"/>
+<line class="f-line" x1="93" y1="44" x2="93" y2="156"/>
+<line class="f-line" x1="159" y1="44" x2="159" y2="156"/>
+<line class="f-line" x1="27" y1="72" x2="225" y2="72"/>
+<line class="f-line" x1="27" y1="100" x2="225" y2="100"/>
+<line class="f-line" x1="27" y1="128" x2="225" y2="128"/>
+<text class="f-s f-ink-t f-b" x="60.0" y="63" text-anchor="middle">번호</text>
+<text class="f-s f-ink-t f-b" x="126.0" y="63" text-anchor="middle">이름</text>
+<text class="f-s f-ink-t f-b" x="192.0" y="63" text-anchor="middle">나이</text>
+<text class="f-s f-ink-t" x="60.0" y="91" text-anchor="middle">1001</text>
+<text class="f-s f-ink-t" x="126.0" y="91" text-anchor="middle">김하나</text>
+<text class="f-s f-ink-t" x="192.0" y="91" text-anchor="middle">29</text>
+<text class="f-s f-ink-t" x="60.0" y="119" text-anchor="middle">1002</text>
+<text class="f-s f-ink-t" x="126.0" y="119" text-anchor="middle">이두리</text>
+<text class="f-s f-ink-t" x="192.0" y="119" text-anchor="middle">41</text>
+<text class="f-s f-ink-t" x="60.0" y="147" text-anchor="middle">1003</text>
+<text class="f-s f-ink-t" x="126.0" y="147" text-anchor="middle">박세찬</text>
+<text class="f-s f-ink-t" x="192.0" y="147" text-anchor="middle">35</text>
+<line class="f-line" x1="60" y1="30" x2="60" y2="42" marker-end="url(#f-arrow)"/>
+<text class="f-s" x="70" y="30" text-anchor="start">칸(열)이 미리 정해져 있다</text>
+<line class="f-line" x1="126" y1="196" x2="126" y2="160" marker-end="url(#f-arrow)"/>
+<text class="f-s" x="126" y="212" text-anchor="middle">모든 줄(행)이 같은 칸을 가진다</text>
+<rect class="f-soft" x="352.0" y="36" width="56" height="26" rx="4"/>
+<text class="f-s f-ink-t" x="380" y="54" text-anchor="middle">주문</text>
+<line class="f-line" x1="380" y1="62" x2="300" y2="96"/>
+<rect class="f-soft" x="265.0" y="96" width="70" height="26" rx="4"/>
+<text class="f-s f-ink-t" x="300" y="114" text-anchor="middle">주문번호</text>
+<line class="f-line" x1="380" y1="62" x2="380" y2="96"/>
+<rect class="f-soft" x="345.0" y="96" width="70" height="26" rx="4"/>
+<text class="f-s f-ink-t" x="380" y="114" text-anchor="middle">고객</text>
+<line class="f-line" x1="380" y1="62" x2="460" y2="96"/>
+<rect class="f-soft" x="425.0" y="96" width="70" height="26" rx="4"/>
+<text class="f-s f-ink-t" x="460" y="114" text-anchor="middle">상품</text>
+<line class="f-line" x1="300" y1="122" x2="300" y2="156"/>
+<rect class="f-box" x="272.0" y="156" width="56" height="26" rx="4"/>
+<text class="f-s f-ink-t" x="300" y="174" text-anchor="middle">5501</text>
+<line class="f-line" x1="380" y1="122" x2="380" y2="156"/>
+<rect class="f-box" x="352.0" y="156" width="56" height="26" rx="4"/>
+<text class="f-s f-ink-t" x="380" y="174" text-anchor="middle">김하나</text>
+<line class="f-line" x1="460" y1="122" x2="440" y2="156"/>
+<rect class="f-box" x="420.0" y="156" width="40" height="26" rx="4"/>
+<text class="f-s f-ink-t" x="440" y="174" text-anchor="middle">라면</text>
+<line class="f-line" x1="460" y1="122" x2="484" y2="156"/>
+<rect class="f-box" x="464.0" y="156" width="40" height="26" rx="4"/>
+<text class="f-s f-ink-t" x="484" y="174" text-anchor="middle">우유</text>
+<rect class="f-soft" x="292" y="204" width="16" height="14" rx="2"/>
+<text class="f-s" x="314" y="216" text-anchor="start">이름표</text>
+<rect class="f-box" x="392" y="204" width="16" height="14" rx="2"/>
+<text class="f-s" x="414" y="216" text-anchor="start">값</text>
+<text class="f-s" x="380" y="244" text-anchor="middle">표는 아니지만 값마다 이름표가 있다</text>
+<rect class="f-box" x="532" y="40" width="124" height="150" rx="2"/>
+<line class="f-ink" x1="546" y1="58" x2="642" y2="58"/>
+<line class="f-ink" x1="546" y1="72" x2="630" y2="72"/>
+<line class="f-ink" x1="546" y1="86" x2="646" y2="86"/>
+<line class="f-ink" x1="546" y1="100" x2="616" y2="100"/>
+<line class="f-ink" x1="546" y1="114" x2="638" y2="114"/>
+<line class="f-ink" x1="546" y1="128" x2="634" y2="128"/>
+<line class="f-ink" x1="546" y1="142" x2="606" y2="142"/>
+<line class="f-ink" x1="546" y1="156" x2="644" y2="156"/>
+<line class="f-ink" x1="546" y1="170" x2="622" y2="170"/>
+<rect class="f-box" x="640" y="126" width="96" height="76" rx="2"/>
+<circle class="f-fill" cx="712" cy="146" r="7"/>
+<path class="f-soft" d="M642 200 l26 -30 18 16 14 -12 34 26z"/>
+<text class="f-s" x="634" y="228" text-anchor="middle">칸도 이름표도 없다</text>
+<text class="f-s" x="634" y="244" text-anchor="middle">글 · 사진 · 영상 · 음성</text>
+<text class="f-cap" x="126" y="284" text-anchor="middle">(가) 정형 데이터</text>
+<text class="f-cap" x="380" y="284" text-anchor="middle">(나) 반정형 데이터</text>
+<text class="f-cap" x="634" y="284" text-anchor="middle">(다) 비정형 데이터</text>
+</svg>
+<figcaption>데이터의 세 가지 형태. (가)에서 (다)로 갈수록 정해진 틀이 느슨해진다.</figcaption>
 </figure>
 
 <h3>정형 데이터</h3>
@@ -242,13 +495,89 @@
 
 <h3>비트와 바이트</h3>
 <p>컴퓨터는 모든 것을 0과 1로 저장합니다. 0 또는 1 하나를 담는 가장 작은 칸이 <b class="key">비트(bit)</b>입니다. 비트 8개를 묶은 것이 <b class="key">바이트(byte)</b>이고, 줄여서 B라고 씁니다. 영어 글자 하나가 보통 1바이트를 차지합니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 142" role="img" aria-label="칸 여덟 개에 0, 1, 0, 0, 0, 0, 0, 1이 들어 있다. 칸 하나가 1비트이고 여덟 칸이 모여 1바이트가 된다. 이 여덟 칸은 영어 글자 A 한 개를 나타낸다.">
+<rect class="f-box" x="150" y="44" width="42" height="42" rx="3"/>
+<text class="f-cap" x="171" y="72" text-anchor="middle">0</text>
+<rect class="f-soft" x="196" y="44" width="42" height="42" rx="3"/>
+<text class="f-cap" x="217" y="72" text-anchor="middle">1</text>
+<rect class="f-box" x="242" y="44" width="42" height="42" rx="3"/>
+<text class="f-cap" x="263" y="72" text-anchor="middle">0</text>
+<rect class="f-box" x="288" y="44" width="42" height="42" rx="3"/>
+<text class="f-cap" x="309" y="72" text-anchor="middle">0</text>
+<rect class="f-box" x="334" y="44" width="42" height="42" rx="3"/>
+<text class="f-cap" x="355" y="72" text-anchor="middle">0</text>
+<rect class="f-box" x="380" y="44" width="42" height="42" rx="3"/>
+<text class="f-cap" x="401" y="72" text-anchor="middle">0</text>
+<rect class="f-box" x="426" y="44" width="42" height="42" rx="3"/>
+<text class="f-cap" x="447" y="72" text-anchor="middle">0</text>
+<rect class="f-soft" x="472" y="44" width="42" height="42" rx="3"/>
+<text class="f-cap" x="493" y="72" text-anchor="middle">1</text>
+<text class="f-s" x="171" y="22" text-anchor="middle">1비트: 0 또는 1</text>
+<line class="f-line" x1="171" y1="28" x2="171" y2="42" marker-end="url(#f-arrow)"/>
+<path class="f-line" d="M150 96 v10 h364 v-10"/>
+<text class="f-cap" x="332" y="128" text-anchor="middle">1바이트 = 8비트</text>
+<line class="f-line" x1="522" y1="65" x2="576" y2="65" marker-end="url(#f-arrow)"/>
+<text class="f-t" x="586" y="70" text-anchor="start">영어 글자 A 한 개</text>
+</svg>
+<figcaption>비트 8개가 모여 바이트 1개가 된다.</figcaption>
+</figure>
+
 <p>바이트는 너무 작은 단위라서, 그 위로 KB, MB, GB처럼 더 큰 단위를 씁니다.</p>
 
 <h3>단위의 계단 <span class="tag memo">외우기</span></h3>
 
 <figure class="fig">
-<img src="../../img/1-01-units.webp" width="1200" height="800" loading="lazy" decoding="async" alt="데이터 단위 계단. 아래에서 위로 KB 킬로, MB 메가, GB 기가, TB 테라, PB 페타, EB 엑사, ZB 제타, YB 요타 순서이고, 한 칸 올라갈 때마다 1,024배가 된다. KB는 문서 한 장, MB는 사진, GB는 영화, TB는 외장 하드, PB는 데이터 센터 정도의 크기다.">
-<figcaption>한 칸 올라갈 때마다 1,024배.</figcaption>
+<svg class="fig-svg" viewBox="0 0 760 270" role="img" aria-label="데이터 단위 계단. 왼쪽부터 KB 킬로, MB 메가, GB 기가, TB 테라, PB 페타, EB 엑사, ZB 제타, YB 요타 순서로 높아지고, 이웃한 두 단위 사이마다 곱하기 1,024가 적혀 있다. 바이트로는 2의 10제곱부터 80제곱까지 10씩 늘어난다.">
+<rect class="f-soft" x="28" y="192" width="82" height="30" rx="2"/>
+<text class="f-cap" x="69" y="214" text-anchor="middle">KB</text>
+<text class="f-s f-ink-t" x="69" y="242" text-anchor="middle">킬로</text>
+<text class="f-s" x="69" y="262" text-anchor="middle">2<tspan dy="-5" font-size="9">10</tspan><tspan dy="5"> B</tspan></text>
+<text class="f-s" x="113" y="20" text-anchor="middle">×1,024</text>
+<line class="f-line" x1="89" y1="30" x2="137" y2="30" marker-end="url(#f-arrow)"/>
+<rect class="f-soft" x="116" y="172" width="82" height="50" rx="2"/>
+<text class="f-cap" x="157" y="194" text-anchor="middle">MB</text>
+<text class="f-s f-ink-t" x="157" y="242" text-anchor="middle">메가</text>
+<text class="f-s" x="157" y="262" text-anchor="middle">2<tspan dy="-5" font-size="9">20</tspan><tspan dy="5"> B</tspan></text>
+<text class="f-s" x="201" y="20" text-anchor="middle">×1,024</text>
+<line class="f-line" x1="177" y1="30" x2="225" y2="30" marker-end="url(#f-arrow)"/>
+<rect class="f-soft" x="204" y="152" width="82" height="70" rx="2"/>
+<text class="f-cap" x="245" y="174" text-anchor="middle">GB</text>
+<text class="f-s f-ink-t" x="245" y="242" text-anchor="middle">기가</text>
+<text class="f-s" x="245" y="262" text-anchor="middle">2<tspan dy="-5" font-size="9">30</tspan><tspan dy="5"> B</tspan></text>
+<text class="f-s" x="289" y="20" text-anchor="middle">×1,024</text>
+<line class="f-line" x1="265" y1="30" x2="313" y2="30" marker-end="url(#f-arrow)"/>
+<rect class="f-soft" x="292" y="132" width="82" height="90" rx="2"/>
+<text class="f-cap" x="333" y="154" text-anchor="middle">TB</text>
+<text class="f-s f-ink-t" x="333" y="242" text-anchor="middle">테라</text>
+<text class="f-s" x="333" y="262" text-anchor="middle">2<tspan dy="-5" font-size="9">40</tspan><tspan dy="5"> B</tspan></text>
+<text class="f-s" x="377" y="20" text-anchor="middle">×1,024</text>
+<line class="f-line" x1="353" y1="30" x2="401" y2="30" marker-end="url(#f-arrow)"/>
+<rect class="f-soft" x="380" y="112" width="82" height="110" rx="2"/>
+<text class="f-cap" x="421" y="134" text-anchor="middle">PB</text>
+<text class="f-s f-ink-t" x="421" y="242" text-anchor="middle">페타</text>
+<text class="f-s" x="421" y="262" text-anchor="middle">2<tspan dy="-5" font-size="9">50</tspan><tspan dy="5"> B</tspan></text>
+<text class="f-s" x="465" y="20" text-anchor="middle">×1,024</text>
+<line class="f-line" x1="441" y1="30" x2="489" y2="30" marker-end="url(#f-arrow)"/>
+<rect class="f-soft" x="468" y="92" width="82" height="130" rx="2"/>
+<text class="f-cap" x="509" y="114" text-anchor="middle">EB</text>
+<text class="f-s f-ink-t" x="509" y="242" text-anchor="middle">엑사</text>
+<text class="f-s" x="509" y="262" text-anchor="middle">2<tspan dy="-5" font-size="9">60</tspan><tspan dy="5"> B</tspan></text>
+<text class="f-s" x="553" y="20" text-anchor="middle">×1,024</text>
+<line class="f-line" x1="529" y1="30" x2="577" y2="30" marker-end="url(#f-arrow)"/>
+<rect class="f-soft" x="556" y="72" width="82" height="150" rx="2"/>
+<text class="f-cap" x="597" y="94" text-anchor="middle">ZB</text>
+<text class="f-s f-ink-t" x="597" y="242" text-anchor="middle">제타</text>
+<text class="f-s" x="597" y="262" text-anchor="middle">2<tspan dy="-5" font-size="9">70</tspan><tspan dy="5"> B</tspan></text>
+<text class="f-s" x="641" y="20" text-anchor="middle">×1,024</text>
+<line class="f-line" x1="617" y1="30" x2="665" y2="30" marker-end="url(#f-arrow)"/>
+<rect class="f-soft" x="644" y="52" width="82" height="170" rx="2"/>
+<text class="f-cap" x="685" y="74" text-anchor="middle">YB</text>
+<text class="f-s f-ink-t" x="685" y="242" text-anchor="middle">요타</text>
+<text class="f-s" x="685" y="262" text-anchor="middle">2<tspan dy="-5" font-size="9">80</tspan><tspan dy="5"> B</tspan></text>
+<line class="f-ink" x1="20" y1="222" x2="740" y2="222"/>
+</svg>
+<figcaption>한 칸 올라갈 때마다 1,024배. 계단 높이는 실제 비율대로 그린 것이 아니다.</figcaption>
 </figure>
 
 <p>한 단계 올라갈 때마다 <b class="key">1,024배</b>씩 커집니다. 1,000배가 아니라 1,024배인 이유는 컴퓨터가 0과 1, 즉 2를 기준으로 세기 때문입니다. 2를 10번 곱하면 1,024가 되고(2<sup>10</sup> = 1,024), 이것이 1,000에 가장 가까워서 한 단계의 크기로 씁니다.</p>
