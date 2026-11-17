@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>기댓값·분산과 실제 보상 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="PR04-2">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">확률 · 확률변수와 평균 · PR04</p>
+<p class="chap-num">PR04·2</p>
+<h1>기댓값·분산과 실제 보상</h1>
+<p class="lead">고정 선택은 항상 2점입니다. 다른 선택은 자주 0점, 가끔 8점인데 두 선택의 평균은 똑같이 2점입니다. 확률표에서 이 평균을 구하고 한 번에 받는 보상과 얼마나 다른지 계산합니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul>
+<li>확률을 가중치로 써서 기댓값을 계산한다.</li>
+<li>변동하는 보상의 분산과 표준편차를 검산한다.</li>
+<li>모형의 기댓값, 반복해서 얻은 평균, 한 번의 결과를 구별한다.</li>
+</ul></div>
+<h2>확률을 가중치로 평균 내기</h2>
+<p>연습 프로그램에서 과제 하나를 해결할 때 얻는 점수를 보상이라고 하겠습니다. 고정 선택의 보상 S는 항상 2점입니다. 변동 선택의 보상 V는 3/4의 확률로 0점, 1/4의 확률로 8점입니다. 이 숫자는 설명을 위해 정한 모형입니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 263" role="img" aria-label="같은 확률 눈금으로 그린 두 보상 분포. 고정 선택은 2점의 확률이 1. 변동 선택은 0점의 확률이 0.75이고 8점의 확률이 0.25.">
+<text class="f-cap" x="204" y="29" text-anchor="middle">고정 선택 S</text><text class="f-s" x="204" y="51" text-anchor="middle">2점이 매번 나온다</text><line class="f-ink" x1="75" y1="68" x2="75" y2="195"/><line class="f-ink" x1="75" y1="195" x2="337" y2="195"/><line class="f-ink" x1="69" y1="195" x2="75" y2="195"/><text class="f-s" x="64" y="199" text-anchor="end">0</text>
+<line class="f-ink" x1="69" y1="164" x2="75" y2="164"/><text class="f-s" x="64" y="168" text-anchor="end">0.25</text>
+<line class="f-ink" x1="69" y1="102" x2="75" y2="102"/><text class="f-s" x="64" y="106" text-anchor="end">0.75</text>
+<line class="f-ink" x1="69" y1="71" x2="75" y2="71"/><text class="f-s" x="64" y="75" text-anchor="end">1</text><line class="f-ink" x1="94" y1="195" x2="94" y2="202"/><text class="f-s" x="94" y="224" text-anchor="middle">0</text>
+<line class="f-ink" x1="148" y1="195" x2="148" y2="202"/><text class="f-s" x="148" y="224" text-anchor="middle">2</text>
+<line class="f-ink" x1="310" y1="195" x2="310" y2="202"/><text class="f-s" x="310" y="224" text-anchor="middle">8</text><line class="f-line" x1="148" y1="195" x2="148" y2="71"/><circle class="f-fill" cx="148" cy="71" r="5"/><text class="f-s" x="158" y="88" text-anchor="start">1</text><text class="f-cap" x="546" y="29" text-anchor="middle">변동 선택 V</text><text class="f-s" x="546" y="51" text-anchor="middle">0점 또는 8점이 나온다</text><line class="f-ink" x1="417" y1="68" x2="417" y2="195"/><line class="f-ink" x1="417" y1="195" x2="679" y2="195"/><line class="f-ink" x1="411" y1="195" x2="417" y2="195"/><text class="f-s" x="406" y="199" text-anchor="end">0</text>
+<line class="f-ink" x1="411" y1="164" x2="417" y2="164"/><text class="f-s" x="406" y="168" text-anchor="end">0.25</text>
+<line class="f-ink" x1="411" y1="102" x2="417" y2="102"/><text class="f-s" x="406" y="106" text-anchor="end">0.75</text>
+<line class="f-ink" x1="411" y1="71" x2="417" y2="71"/><text class="f-s" x="406" y="75" text-anchor="end">1</text><line class="f-ink" x1="436" y1="195" x2="436" y2="202"/><text class="f-s" x="436" y="224" text-anchor="middle">0</text>
+<line class="f-ink" x1="490" y1="195" x2="490" y2="202"/><text class="f-s" x="490" y="224" text-anchor="middle">2</text>
+<line class="f-ink" x1="652" y1="195" x2="652" y2="202"/><text class="f-s" x="652" y="224" text-anchor="middle">8</text><line class="f-line" x1="436" y1="195" x2="436" y2="102"/><circle class="f-fill" cx="436" cy="102" r="5"/><text class="f-s" x="446" y="94" text-anchor="start">0.75</text>
+<line class="f-line" x1="652" y1="195" x2="652" y2="164"/><circle class="f-fill" cx="652" cy="164" r="5"/><text class="f-s" x="662" y="156" text-anchor="start">0.25</text><text class="f-cap" x="380" y="252" text-anchor="middle">한 번의 보상 (점)</text>
+</svg>
+<figcaption>두 분포의 기댓값은 모두 2점입니다. 변동 선택에서는 실제로 2점이 나오지 않습니다.</figcaption>
+</figure>
+<div class="box"><p class="box-k">정의</p><p>가능한 값이 유한 개일 때 확률변수 X의 <b class="key">기댓값</b> <code>E[X]</code>는 <code>Σ x · p(x)</code>입니다. 각 값에 그 값이 발생할 확률을 곱해 모두 더합니다. 가중치들의 합은 1이므로 다시 값의 종류 수로 나누지 않습니다.</p></div>
+<div class="box ex"><p class="box-k">계산 예제</p><p><code>E[S] = 2 × 1 = 2</code>점입니다. <code>E[V] = 0 × 3/4 + 8 × 1/4 = 2</code>점입니다. 변동 선택 V에서 한 번의 보상은 0점이나 8점뿐이라 2점은 나올 수 없습니다. <b>확률로 평균을 낸 값</b>과 <b>실제 한 번의 결과</b>를 구분합니다.</p></div>
+<p>앞 장의 동전에서도 <code>E[X] = 0 × 1/4 + 1 × 1/2 + 2 × 1/4 = 1</code>입니다. 기댓값이 실제 가능한 값인지는 분포마다 다릅니다. 값이 셀 수 있게 무한히 많다면 합이 잘 정의되는 조건이 중요합니다. 여기서는 유한한 보상표로 계산합니다.</p>
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+<div class="check" data-q="q3"></div>
+
+<h2>평균이 같을 때는 평균에서 벗어난 정도를 본다</h2>
+<p>V에서 보상 0의 편차는 −2점, 보상 8의 편차는 +6점입니다. 확률을 곱해 그냥 더하면 <code>(−2) × 3/4 + 6 × 1/4 = 0</code>입니다. 평균을 기준으로 위와 아래가 상쇄되어 변동을 보여 주지 못합니다. 편차를 제곱한 뒤 그 값을 확률로 평균 내면 퍼짐을 확인할 수 있습니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 178" role="img" aria-label="변동 선택에서 0점은 평균 2점보다 2점 작고, 8점은 평균보다 6점 크다. 거리의 제곱은 4점제곱과 36점제곱이다.">
+<line class="f-line" x1="78" y1="98" x2="677" y2="98" marker-end="url(#f-arrow)"/><circle class="f-fill" cx="118" cy="98" r="5"/><line class="f-ink" x1="118" y1="96" x2="118" y2="75"/><text class="f-cap" x="118" y="67" text-anchor="middle">보상 0</text>
+<circle class="f-fill" cx="248" cy="98" r="5"/><line class="f-ink" x1="248" y1="96" x2="248" y2="75"/><text class="f-cap" x="248" y="67" text-anchor="middle">평균 2</text>
+<circle class="f-fill" cx="638" cy="98" r="5"/><line class="f-ink" x1="638" y1="96" x2="638" y2="75"/><text class="f-cap" x="638" y="67" text-anchor="middle">보상 8</text><line class="f-ink" x1="118" y1="114" x2="248" y2="114"/><text class="f-s" x="183" y="140" text-anchor="middle">편차 −2 → 제곱 4</text><line class="f-ink" x1="248" y1="114" x2="638" y2="114"/><text class="f-s" x="443" y="140" text-anchor="middle">편차 +6 → 제곱 36</text>
+</svg>
+<figcaption>분산을 구할 때 두 제곱 거리에 발생 확률 0.75와 0.25를 곱합니다.</figcaption>
+</figure>
+<div class="box"><p class="box-k">정의</p><p><b class="key">분산</b> <code>Var(X)</code>는 <code>E[(X − μ)²]</code>입니다. 여기서 <code>μ = E[X]</code>입니다. 확률을 이미 아는 모형에서 사용하는 식입니다. 표본으로 모르는 모집단 분산을 추정할 때 배운 <code>n − 1</code>로 다시 나누지 않습니다. <b class="key">표준편차</b>는 분산의 제곱근이며 원래 변수가 가진 단위로 돌아옵니다.</p></div>
+<div class="table-wrap"><table>
+<tr><th scope="col">V가 낸 보상</th><th scope="col">확률</th><th scope="col">평균과의 차이</th><th scope="col">차이의 제곱 × 확률</th></tr>
+<tr><td>0점</td><td>3/4</td><td>−2점</td><td>4 × 3/4 = 3점²</td></tr>
+<tr><td>8점</td><td>1/4</td><td>6점</td><td>36 × 1/4 = 9점²</td></tr>
+</table></div>
+<p>분산은 3 + 9 = 12점², 표준편차는 √12 ≈ 3.46점입니다. S는 항상 평균과 같으므로 편차가 0이고 분산도 0입니다. 계산이 간단할 때는 <code>Var(X) = E[X²] − (E[X])²</code>를 써도 됩니다. 제곱을 풀면 가운데 항의 기댓값은 −2μ·E[X] = −2μ²이고, 마지막 항은 μ²이므로 이 식을 얻습니다. V에 적용하면 <code>E[V²] = 64/4 = 16</code>, <code>16 − 2² = 12</code>로 같은 답입니다.</p>
+<pre data-example="python"><code>from fractions import Fraction
+from math import sqrt
+
+pmf = {0: Fraction(3, 4), 8: Fraction(1, 4)}
+mean = sum(x * p for x, p in pmf.items())
+var = sum((x - mean) ** 2 * p for x, p in pmf.items())
+second_moment = sum(x**2 * p for x, p in pmf.items())
+assert var == second_moment - mean**2
+print(f"기댓값: {mean}점")
+print(f"분산: {var}점²")
+print(f"표준편차: {sqrt(var):.2f}점")</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>기댓값: 2점
+분산: 12점²
+표준편차: 3.46점</code></pre>
+<div class="check" data-q="q4"></div>
+<div class="check" data-q="q5"></div>
+<div class="check" data-q="q6"></div>
+
+<h2>평균 보상을 한 번의 결과와 구별한다</h2>
+<p>각 시행에서 이전 시행이 새 결과에 영향을 주지 않고, 변동 선택 V의 확률이 일정하다고 가정합니다. 그 모형을 코드로 여러 번 반복해 봅니다. <code>rng.random() &lt; 0.25</code>가 참이면 8점, 나머지는 0점으로 기록합니다. 같은 기록에서 처음 1번, 10번, 100번, 10,000번의 평균을 차례로 구합니다.</p>
+<pre data-example="python"><code>from random import Random
+
+rng = Random(14)
+rewards = [8 if rng.random() &lt; 0.25 else 0 for _ in range(10_000)]
+for n in (1, 10, 100, 10_000):
+    first_n = rewards[:n]
+    print(f"{n}: {sum(first_n) / n:.3f}")</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>1: 8.000
+10: 0.800
+100: 2.320
+10000: 1.970</code></pre>
+<p>이 실행에서 처음에는 8점이 나오고 몇 번씩 묶어 평균을 내면 수치가 달라집니다. 시행을 늘렸을 때 평균이 기댓값에 가까워지는 까닭은 추후 다룰 큰수의 법칙과 연결됩니다. 매번 시행을 하나 더 할 때 오차가 줄어드는 보장은 없습니다. 또한 이 결과는 설정한 확률 모형을 확인한 것으로, 현실의 보상 확률이 1/4임을 입증하지 않습니다.</p>
+<div class="box trap"><p class="box-k">평균 목표를 적기</p><p>목표가 한 번에 적어도 1점을 얻는 것이라면 고정 선택은 항상 성공하지만 변동 선택은 1/4만 성공합니다. 같은 모형을 반복할 때 평균 점수만 묻는다면 두 선택의 기댓값은 같습니다. 어느 선택이 나은지 말하기 전에 평균, 목표 달성 확률, 변동 중 무엇을 비교할지 정합니다. 강화학습에서도 주어진 상태에서 어떤 행동을 골랐을 때의 보상 분포와 기댓값을 생각합니다. 상태와 정책이 달라지며 결과가 이어지는 경우에는 이 단순 반복 모형과 다른 구조가 됩니다.</p></div>
+<div class="check" data-q="q7"></div>
+<div class="check" data-q="q8"></div>
+<div class="why"><p class="box-k">왜 그럴까?</p><p>100번째 시행 후의 평균보다 101번째 시행 후의 평균이 기댓값에 더 멀어질 수 있을까요?</p><details><summary>모범 답 보기</summary><p>그럴 수 있습니다. 새 보상 하나가 지금의 평균을 어느 방향으로 바꾸는지는 새 결과에 달려 있습니다. 반복 평균의 장기 성질이 각 단계 오차의 단조 감소를 뜻하지 않습니다.</p></details></div>
+
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table>
+<tr><th scope="col">수치</th><th scope="col">묻는 내용</th></tr>
+<tr><td><b class='key'>E[X]</b></td><td>값을 발생 확률로 가중 평균한 수</td></tr>
+<tr><td><b class='key'>Var(X)</b></td><td>기댓값에서 벗어난 거리의 제곱을 확률로 가중 평균한 수</td></tr>
+<tr><td><b class='key'>표준편차</b></td><td>분산의 제곱근. 단위는 X와 같음</td></tr>
+<tr><td><b class='key'>실제 보상과 경험 평균</b></td><td>한 번 기록된 값과 이미 관측한 값들의 평균. 분포와 관측의 수치를 구별</td></tr>
+</table></div>
+<p class="small">공식 참고 자료 <a href="https://ocw.mit.edu/courses/6-041sc-probabilistic-systems-analysis-and-applied-probability-fall-2013/pages/unit-i/lecture-5/">MIT OpenCourseWare · 기댓값</a> · <a href="https://ocw.mit.edu/courses/6-041sc-probabilistic-systems-analysis-and-applied-probability-fall-2013/pages/unit-i/lecture-6/">MIT OpenCourseWare · 분산</a></p>
+<h2>확인 문제</h2>
+<p>본문에서 풀지 않은 문제가 여기에 나옵니다. 결과를 예측한 뒤 필요하면 코드로 검산합니다.</p>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

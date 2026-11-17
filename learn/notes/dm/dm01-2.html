@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>명제와 논리식: 기준을 코드로 옮기기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="DM01-2">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">논리·이산수학·증명 · DM01 집합과 논리</p>
+<p class="chap-num">DM01·2</p>
+<h1>명제와 논리식: 기준을 코드로 옮기기</h1>
+<p class="lead">‘금액이 3만 원 이상이거나 회원이며 품절이 아니다’는 문장을 읽는 법에 따라 결과가 달라질 수 있습니다. 명제의 참·거짓으로 출발해 AND·OR·NOT을 정확히 묶어 봅니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>참·거짓을 판단할 수 있는 명제와 대상을 지정해야 하는 조건을 구별한다.</li><li>AND·OR·NOT의 진리표를 만들고 집합 연산과 연결한다.</li><li>괄호로 조건을 묶고 부정식이 바르게 바뀌는지 확인한다.</li></ul></div>
+
+<h2>참 또는 거짓을 정할 수 있는 문장</h2>
+<p>“12는 3으로 나누어 떨어진다”는 참입니다. “12는 홀수다”는 거짓입니다. 이렇게 참인지 거짓인지 판정할 수 있는 문장을 <b class="key">명제</b>라고 합니다. “어떤 주문이 3만 원 이상인가?”는 질문입니다. “이 주문은 3만 원 이상이다”의 참·거짓은 어떤 주문인지 정해 줄 때 판단할 수 있습니다.</p>
+<p><code>eligible(order)</code>처럼 주문을 넣으면 참·거짓을 돌려주는 조건을 <b>술어</b>라고 부릅니다. 조건이 참인 행을 모으면 집합이 됩니다. A를 “회원인 주문”의 집합, B를 “재고가 있는 주문”의 집합으로 두면 두 조건이 참인 행의 모음은 A ∩ B입니다.</p>
+<div class="check" data-q="q1"></div>
+<h2>AND, OR, NOT의 진리표</h2>
+<div class="table-wrap"><table><thead><tr><th scope="col">A</th><th scope="col">B</th><th scope="col">A AND B</th><th scope="col">A OR B</th><th scope="col">NOT A</th></tr></thead><tbody><tr><td>참</td><td>참</td><td>참</td><td>참</td><td>거짓</td></tr><tr><td>참</td><td>거짓</td><td>거짓</td><td>참</td><td>거짓</td></tr><tr><td>거짓</td><td>참</td><td>거짓</td><td>참</td><td>참</td></tr><tr><td>거짓</td><td>거짓</td><td>거짓</td><td>거짓</td><td>참</td></tr></tbody></table></div>
+<p>이 장의 <b class="key">OR</b>는 적어도 하나가 참이라는 뜻입니다. 둘 다 참이어도 OR는 참입니다. “둘 중 정확히 하나”가 필요한 경우에는 <code>(A and not B) or (B and not A)</code>처럼 씁니다. <b class="key">NOT</b>은 하나의 참·거짓을 뒤집습니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 160" role="img" aria-label="한 행에 대한 두 조건의 참·거짓을 진리표에 넣어 결합한 조건을 판정한다.">
+<rect class="f-box" x="42" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="135" y="61" text-anchor="middle">행에서 검사</text><text class="f-s" x="135" y="89" text-anchor="middle">회원인가?</text><text class="f-s" x="135" y="110" text-anchor="middle">재고가 있나?</text><line class="f-line" x1="235" y1="84" x2="278" y2="84" marker-end="url(#f-arrow)"/><rect class="f-soft" x="287" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="380" y="61" text-anchor="middle">참·거짓 두 개</text><text class="f-s" x="380" y="89" text-anchor="middle">예: 참과 거짓</text><text class="f-s" x="380" y="110" text-anchor="middle">진리표에서 한 줄 선택</text><line class="f-line" x1="480" y1="84" x2="523" y2="84" marker-end="url(#f-arrow)"/><rect class="f-box" x="532" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="625" y="61" text-anchor="middle">행을 고르기</text><text class="f-s" x="625" y="89" text-anchor="middle">AND는 거짓</text><text class="f-s" x="625" y="110" text-anchor="middle">OR는 참</text>
+</svg><figcaption>참·거짓의 결합은 행 선택과 집합 연산에 쓰인다.</figcaption></figure>
+<div class="check" data-q="q2"></div>
+<div class="check" data-q="q3"></div>
+<h2>괄호가 바꾸는 결과</h2>
+<p>무료 배송 자격을 <em>회원이거나 결제액이 3만 원 이상이고, 배송 가능 상태</em>로 명확히 정합시다. 배송이 불가능하면 누구에게도 적용되지 않습니다. 금액 18,000원, 회원, 배송 불가인 행에서 두 식을 비교합니다.</p>
+<pre data-example="python"><code>member = True
+large_order = 18000 &gt;= 30000
+deliverable = False
+
+print((member or large_order) and deliverable)
+print(member or (large_order and deliverable))</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>False
+True</code></pre>
+<p>첫 식에서는 회원 여부 또는 금액 조건을 먼저 묶고 배송 가능을 추가로 요구합니다. 둘째 식에서는 회원이면 배송 상태에 관계없이 참입니다. 다른 사람이 읽어도 의도가 드러나도록 괄호를 적습니다. Python에서 괄호를 생략하면 <code>not</code>, <code>and</code>, <code>or</code> 순으로 더 강하게 묶입니다. 위 예는 참·거짓 값만 사용합니다. 일반 객체에 적용하면 Python의 <code>and</code>와 <code>or</code>가 피연산자 자체를 반환할 수도 있습니다.</p>
+<div class="check" data-q="q4"></div>
+<h2>묶은 조건을 부정하기</h2>
+<p>“A와 B 둘 다 만족한다”의 부정은 “적어도 하나를 만족하지 않는다”입니다. “A와 B 모두를 만족하지 않는다”라는 말은 둘 다 거짓이라는 뜻으로도 읽히므로 기호를 써서 구분합니다.</p>
+<div class="box "><p class="box-k">드모르간 법칙</p><p class="calc">NOT (A AND B) = (NOT A) OR (NOT B)<br>NOT (A OR B) = (NOT A) AND (NOT B)</p><p>코드에서 진리값이 가능한 네 조합을 각각 넣어 양쪽을 비교합니다.</p></div>
+<pre data-example="python"><code>from itertools import product
+
+rows = list(product([False, True], repeat=2))
+print(all((not (a and b)) == ((not a) or (not b)) for a, b in rows))
+print(all((not (a or b)) == ((not a) and (not b)) for a, b in rows))</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>True
+True</code></pre>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 160" role="img" aria-label="A 또는 B의 부정을 둘 다 거짓인 조건으로 바꾼다.">
+<rect class="f-box" x="42" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="135" y="61" text-anchor="middle">전체 부정</text><text class="f-s" x="135" y="89" text-anchor="middle">NOT(A OR B)</text><text class="f-s" x="135" y="110" text-anchor="middle">하나 이상 참의 반대</text><line class="f-line" x1="235" y1="84" x2="278" y2="84" marker-end="url(#f-arrow)"/><rect class="f-soft" x="287" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="380" y="61" text-anchor="middle">괄호 안으로</text><text class="f-s" x="380" y="89" text-anchor="middle">A와 B를 각각 부정</text><text class="f-s" x="380" y="110" text-anchor="middle">OR를 AND로 바꾼다</text><line class="f-line" x1="480" y1="84" x2="523" y2="84" marker-end="url(#f-arrow)"/><rect class="f-box" x="532" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="625" y="61" text-anchor="middle">말로 검산</text><text class="f-s" x="625" y="89" text-anchor="middle">A도 아니고 B도 아니다</text><text class="f-s" x="625" y="110" text-anchor="middle">둘 다 거짓인 행만</text>
+</svg><figcaption>자격 조건을 반대로 뒤집을 때 AND와 OR도 서로 바뀐다.</figcaption></figure>
+<div class="check" data-q="q5"></div>
+<h2>범위 밖을 따로 읽어 보기</h2>
+<p>“18세 이상 65세 미만”의 조건은 <code>18 &lt;= age &lt; 65</code>입니다. 그 부정은 “18세 미만이거나 65세 이상”입니다. 18과 65를 직접 넣어 경계가 반대로 바뀌었는지 확인하세요. 나이 값이 결측이면 먼저 결측 처리 규칙을 정합니다. TRUE와 FALSE만 있는 표를 세울 수 있는 상황부터 시작합니다.</p>
+<div class="check" data-q="q6"></div>
+
+<h2>참고 자료</h2>
+<ul><li><a href="https://ocw.mit.edu/courses/6-042j-mathematics-for-computer-science-spring-2015/resources/mit6_042js15_textbook/">MIT OCW · Mathematics for Computer Science</a></li><li><a href="https://docs.python.org/3/library/stdtypes.html#boolean-operations-and-or-not">Python 공식 문서 · 불리언 연산</a></li></ul>
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

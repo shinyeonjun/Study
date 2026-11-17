@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>경우의 수를 세는 두 법칙과 순열 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="DM03-1">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">논리·이산수학·증명 · DM03 경우의 수</p>
+<p class="chap-num">DM03·1</p>
+<h1>경우의 수를 세는 두 법칙과 순열</h1>
+<p class="lead">학교 발표회에서 4명 중 발표자 3명을 순서대로 정합니다. 무작정 목록을 늘어놓기보다 한 결과가 무엇이고, 선택이 몇 단계이며, 한 번 고른 대상을 다시 쓸 수 있는지 정리합니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>서로 겹치지 않는 갈래의 수를 더한다.</li><li>선택 단계의 수가 일정할 때 곱셈법칙을 쓴다.</li><li>중복 허용 여부와 순서가 주어진 순열을 계산한다.</li></ul></div>
+
+<h2>무엇을 서로 다른 결과로 볼까</h2>
+<p>A, B, C, D가 있고 세 사람이 순서대로 발표합니다. (A, B, C)와 (B, A, C)는 사람은 같아도 첫 발표가 다릅니다. 따라서 순서를 셉니다. 같은 사람이 두 번 이상 나올 수 있는지를 문제에서 정합니다. 이 발표회에서는 한 사람이 한 자리만 맡습니다.</p>
+<div class="box "><p class="box-k">한 결과의 단위</p><p>경우의 수를 세기 전에 한 결과를 적습니다. 이 장의 한 결과는 <code>(첫째 발표자, 둘째 발표자, 셋째 발표자)</code>와 같은 순서 있는 묶음입니다. ‘발표 가능한 사람의 수’와 ‘발표 순서 전체의 수’는 서로 다른 질문입니다.</p></div>
+<div class="check" data-q="q1"></div>
+<h2>서로 겹치지 않는 선택지를 더하기</h2>
+<p>등록 경로를 온라인 4개, 현장 3개로 분류했고 각 경로는 둘 중 하나에만 속한다고 합시다. 경로 하나를 고르는 경우는 4 + 3 = 7개입니다. 이것이 <b class="key">합의 법칙</b>입니다. 둘 다에 해당하는 경로가 있으면 단순 합은 그 경로를 두 번 셉니다. DM01의 합집합 계산처럼 겹침을 조정해야 합니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 160" role="img" aria-label="온라인 4개와 현장 3개의 겹침이 없으면 한 경로를 고를 방법은 7개.">
+<rect class="f-box" x="42" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="135" y="61" text-anchor="middle">온라인만</text><text class="f-s" x="135" y="89" text-anchor="middle">서로 다른 4개</text><text class="f-s" x="135" y="110" text-anchor="middle">겹치는 경로 없음</text><line class="f-line" x1="235" y1="84" x2="278" y2="84" marker-end="url(#f-arrow)"/><rect class="f-soft" x="287" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="380" y="61" text-anchor="middle">현장만</text><text class="f-s" x="380" y="89" text-anchor="middle">서로 다른 3개</text><text class="f-s" x="380" y="110" text-anchor="middle">한 갈래에서 고른다</text><line class="f-line" x1="480" y1="84" x2="523" y2="84" marker-end="url(#f-arrow)"/><rect class="f-box" x="532" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="625" y="61" text-anchor="middle">등록 경로 하나</text><text class="f-s" x="625" y="89" text-anchor="middle">4 + 3 = 7</text><text class="f-s" x="625" y="110" text-anchor="middle">하나를 선택</text>
+</svg><figcaption>대안이 서로 겹치지 않으면 갈래별 결과 수를 더한다.</figcaption></figure>
+<div class="check" data-q="q2"></div>
+<h2>여러 단계의 선택지를 곱하기</h2>
+<p>오전 시작 시간 3가지 중 하나와 발표실 2개 중 하나를 함께 정합니다. 시작 시간마다 두 방을 모두 쓸 수 있어 결과는 (시간, 방)의 짝 3 × 2 = 6개입니다. 모든 앞 선택에서 다음 선택의 수가 같을 때 선택 단계마다 수를 곱합니다. 나중에 조건부확률에서 다룰 확률의 독립성과는 다른 개념입니다.</p>
+<p>방 사용에 제약이 있어 첫 시간에는 방이 2개이고 나머지 시간에는 각각 방이 하나뿐이면 2 + 1 + 1 = 4개입니다. 선택지 수가 갈래에 따라 달라지면 각 가지의 끝을 세어 더합니다.</p>
+<div class="check" data-q="q3"></div>
+<div class="check" data-q="q4"></div>
+<h2>순열을 계산하기</h2>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 136" role="img" aria-label="4명 중 3개의 발표 자리를 채운다. 첫째 4가지, 둘째 3가지, 셋째 2가지라 곱은 24.">
+<rect class="f-box" x="100" y="50" width="122" height="64" rx="3"/><text class="f-t f-b" x="161" y="73" text-anchor="middle">첫째</text><text class="f-s" x="161" y="96" text-anchor="middle">4명 중 한 명</text><text class="f-t f-b" x="271" y="87" text-anchor="middle">×</text><rect class="f-soft" x="320" y="50" width="122" height="64" rx="3"/><text class="f-t f-b" x="381" y="73" text-anchor="middle">둘째</text><text class="f-s" x="381" y="96" text-anchor="middle">남은 3명</text><text class="f-t f-b" x="491" y="87" text-anchor="middle">×</text><rect class="f-box" x="540" y="50" width="122" height="64" rx="3"/><text class="f-t f-b" x="601" y="73" text-anchor="middle">셋째</text><text class="f-s" x="601" y="96" text-anchor="middle">남은 2명</text>
+</svg><figcaption>앞에서 선택한 사람은 이후 자리에서 제외한다.</figcaption></figure>
+<p>첫 자리는 4명 중 한 명, 두 번째는 남은 3명, 세 번째는 남은 2명입니다. 결과는 4 × 3 × 2 = 24가지입니다. 서로 다른 n개에서 r개를 중복 없이 뽑아 순서대로 놓는 수를 <b class="key">순열</b>이라 부릅니다. 0 ≤ r ≤ n이면</p>
+<p class="calc">P(n, r) = n × (n−1) × … × (n−r+1) = n! ÷ (n−r)!</p>
+<p>입니다. <code>n!</code>은 n부터 1까지 곱한 값입니다. 0!은 1로 둡니다. 아무 자리도 채우지 않는 방법은 빈 순서 하나입니다. 반대로 각 자리에서 같은 사람을 사용할 수 있으면 4 × 4 × 4 = 64입니다. 자리마다 가능한 수가 달라졌는지 다시 확인합니다.</p>
+<pre data-example="python"><code>from itertools import permutations, product
+from math import perm
+
+people = &quot;ABCD&quot;
+orders = list(permutations(people, 3))
+print(len(orders), perm(4, 3))
+print(&quot;&quot;.join(orders[0]), &quot;&quot;.join(orders[-1]))
+print(len(list(product(people, repeat=3))))</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>24 24
+ABC DCB
+64</code></pre>
+<div class="check" data-q="q5"></div>
+<div class="check" data-q="q6"></div>
+<h2>식을 정하기 전 검사할 것</h2>
+<div class="table-wrap"><table><thead><tr><th scope="col">질문</th><th scope="col">선택</th></tr></thead><tbody><tr><td>결과가 여러 갈래 중 하나에만 속하는가?</td><td>갈래 수를 더한다.</td></tr><tr><td>한 결과가 여러 선택 단계의 묶음인가?</td><td>단계별 다음 선택의 수가 일정한지 본다.</td></tr><tr><td>먼저 고른 항목을 다음에도 쓸 수 있는가?</td><td>중복 허용 여부에 맞춰 남은 선택 수를 쓴다.</td></tr><tr><td>순서를 바꿔도 같은 결과로 보는가?</td><td>그렇다면 다음 장의 조합을 써 본다.</td></tr></tbody></table></div>
+<p>이 방법은 실제 개수를 구할 때 원소가 구별된다는 전제를 씁니다. 문자 A가 두 번 들어 있는 목록을 <code>permutations</code>에 넘기면 자리가 다른 두 A를 구별해 같은 글자 배열이 반복될 수 있습니다. 결과의 이름이 같은지, 자리는 구별되는지 정한 뒤 셉니다.</p>
+
+<h2>참고 자료</h2>
+<ul><li><a href="https://ocw.mit.edu/courses/6-042j-mathematics-for-computer-science-spring-2015/resources/mit6_042js15_textbook/">MIT OCW · Mathematics for Computer Science</a></li><li><a href="https://docs.python.org/3/library/itertools.html">Python 공식 문서 · 조합과 순열</a></li></ul>
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

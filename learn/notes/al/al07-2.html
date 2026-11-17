@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>로그: 몇 번 곱했는지 거꾸로 찾기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="AL07-2">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">대수·함수·그래프 · AL07 지수와 로그</p>
+<p class="chap-num">AL07·2</p>
+<h1>로그: 몇 번 곱했는지 거꾸로 찾기</h1>
+<p class="lead">값이 100에서 800이 되었습니다. 매 단계 두 배라면 몇 단계가 지났을까요? 로그를 지수함수의 역함수로 읽고, 곱의 로그와 로그 눈금이 분석에서 왜 쓰이는지 확인합니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>로그 식을 지수 식으로 되돌려 계산한다.</li><li>로그의 정의역과 밑의 조건을 적용한다.</li><li>곱의 로그·밑 변환·로그 축의 비율 해석을 설명한다.</li></ul></div>
+
+<h2>지수와 밑, 로그 식을 읽는 법</h2>
+<p>100에서 800이 되었다면 배수는 800/100 = 8입니다. 밑 2를 몇 제곱해야 8이 되는지 묻는 식 <code>2ᵗ = 8</code>의 답은 3입니다. 이를 <code>log₂(8) = 3</code>으로 씁니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 160" role="img" aria-label="2의 3제곱이 8이라는 사실을 밑 2 로그 8의 답은 3으로 표현한다.">
+<rect class="f-box" x="42" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="135" y="61" text-anchor="middle">지수 식</text><text class="f-s" x="135" y="89" text-anchor="middle">2³ = 8</text><text class="f-s" x="135" y="110" text-anchor="middle">밑을 3제곱한다</text><line class="f-line" x1="235" y1="84" x2="278" y2="84" marker-end="url(#f-arrow)"/><rect class="f-soft" x="287" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="380" y="61" text-anchor="middle">거꾸로 묻기</text><text class="f-s" x="380" y="89" text-anchor="middle">2의 몇 제곱이 8인가</text><text class="f-s" x="380" y="110" text-anchor="middle">알고 싶은 값은 지수</text><line class="f-line" x1="480" y1="84" x2="523" y2="84" marker-end="url(#f-arrow)"/><rect class="f-box" x="532" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="625" y="61" text-anchor="middle">로그 식</text><text class="f-s" x="625" y="89" text-anchor="middle">log₂(8) = 3</text><text class="f-s" x="625" y="110" text-anchor="middle">답은 3</text>
+</svg><figcaption>로그의 결과는 지수다.</figcaption></figure>
+<div class="box "><p class="box-k">정의와 조건</p><p><b class="key">logₐ(x) = y ⇔ aʸ = x</b>입니다. 실수 로그에서 밑 a는 양수이고 1이 아니어야 하며, 입력 x는 양수여야 합니다. 그래야 aʸ가 서로 다른 y마다 다른 양수 값으로 대응합니다. 밑 1이면 항상 1만 나와 거꾸로 y를 하나로 정할 수 없습니다.</p></div>
+<p>예를 들어 log₂(1) = 0, log₂(1/8) = −3입니다. 음수인 로그 <em>출력</em>은 가능합니다. x = 0이나 −1처럼 양수가 아닌 <em>입력</em>에는 실수 로그를 쓸 수 없습니다. 자연로그 <b class="key">ln</b>은 밑이 e인 로그입니다. Python의 <code>math.log(x)</code>는 밑을 생략하면 자연로그를 계산합니다.</p>
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+<h2>곱은 로그에서 합이 된다</h2>
+<p>u = a<sup>r</sup>, v = a<sup>s</sup>라면 uv = a<sup>r+s</sup>이므로 <code>logₐ(uv) = logₐ(u) + logₐ(v)</code>입니다. u와 v가 양수일 때의 법칙입니다. 나눗셈은 뺄셈, 양수 u의 거듭제곱 u<sup>r</sup>은 r을 곱하는 형태가 됩니다.</p>
+<div class="table-wrap"><table><thead><tr><th scope="col">원래 계산</th><th scope="col">로그로 바꾸면</th><th scope="col">밑 2로 확인</th></tr></thead><tbody><tr><td>곱 uv</td><td>logₐ(u)+logₐ(v)</td><td>log₂(8×4)=3+2=5</td></tr><tr><td>몫 u/v</td><td>logₐ(u)−logₐ(v)</td><td>log₂(8/4)=3−2=1</td></tr><tr><td>거듭제곱 uʳ</td><td>r·logₐ(u)</td><td>log₂(8²)=2×3=6</td></tr></tbody></table></div>
+<div class="box trap"><p class="box-k">흔한 오개념</p><p>로그는 합을 나누어 계산하지 않습니다. log₂(4 + 4) = 3이지만 log₂(4) + log₂(4) = 4입니다. 확률 모형에서 로그를 쓰더라도 ‘곱’으로 구성됐는지 먼저 확인합니다.</p></div>
+<div class="check" data-q="q3"></div>
+<div class="check" data-q="q4"></div>
+<h2>배수에서 경과 시간을 구하기</h2>
+<p>시작값 100개가 단계당 1.2배가 되어 200개 이상이 되는 첫 정수 단계를 구합니다. 연속 지수 식 100 × 1.2<sup>t</sup> = 200을 풀면 <code>t = ln(2)/ln(1.2)</code>입니다. 로그 밑 변환은 <code>aʸ = x</code>의 양쪽에 ln을 적용하여 <code>y ln(a) = ln(x)</code>를 얻어서 나옵니다.</p>
+<pre data-example="python"><code>from math import ceil, log
+
+steps = log(2) / log(1.2)
+k = ceil(steps)
+print(f&quot;{steps:.3f}&quot;, k)
+print(f&quot;{100 * 1.2 ** (k - 1):.2f}&quot;)
+print(f&quot;{100 * 1.2 ** k:.2f}&quot;)</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>3.802 4
+172.80
+207.36</code></pre>
+<p>연속 모델에서는 약 3.802단계이지만 단계가 정수일 때 처음 넘는 값은 4단계입니다. 바로 앞인 3단계도 계산해 경계를 확인합니다. <code>ceil</code>은 수 이상인 정수 중 가장 작은 값으로 올립니다.</p>
+<div class="check" data-q="q5"></div>
+<h2>로그 눈금 위에서 배수 읽기</h2>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 231" role="img" aria-label="1, 10, 100, 1000을 밑 10 로그 눈금에 같은 간격으로 표시. 아래 축에 변환값 0, 1, 2, 3이 대응.">
+<line class="f-ink" x1="98" y1="92" x2="682" y2="92"/><line class="f-ink" x1="98" y1="183" x2="682" y2="183"/><text class="f-t f-b" x="95" y="59" text-anchor="start">원래 값 (log₁₀ 눈금)</text><text class="f-t f-b" x="95" y="148" text-anchor="start">변환한 값 log₁₀(x)</text><line class="f-ink" x1="107" y1="83" x2="107" y2="101"/><text class="f-s" x="107" y="122" text-anchor="middle">1</text><line class="f-ink" x1="107" y1="174" x2="107" y2="192"/><text class="f-s" x="107" y="212" text-anchor="middle">0</text><line class="f-ink" x1="287" y1="83" x2="287" y2="101"/><text class="f-s" x="287" y="122" text-anchor="middle">10</text><line class="f-ink" x1="287" y1="174" x2="287" y2="192"/><text class="f-s" x="287" y="212" text-anchor="middle">1</text><line class="f-ink" x1="467" y1="83" x2="467" y2="101"/><text class="f-s" x="467" y="122" text-anchor="middle">100</text><line class="f-ink" x1="467" y1="174" x2="467" y2="192"/><text class="f-s" x="467" y="212" text-anchor="middle">2</text><line class="f-ink" x1="647" y1="83" x2="647" y2="101"/><text class="f-s" x="647" y="122" text-anchor="middle">1000</text><line class="f-ink" x1="647" y1="174" x2="647" y2="192"/><text class="f-s" x="647" y="212" text-anchor="middle">3</text>
+</svg><figcaption>윗 축에서 같은 거리는 같은 차이가 아니라 같은 배수를 뜻한다.</figcaption></figure>
+<p>log₁₀(1000) − log₁₀(100) = 1입니다. log₁₀(10) − log₁₀(1)도 1입니다. 원래 값의 차이는 900과 9로 다르지만 배수는 둘 다 10입니다. 축의 라벨을 원래 값으로 적었는지 변환값으로 적었는지 확인합니다. 로그 축에서는 0을 양의 관측값처럼 찍을 수 없으므로 데이터를 숨기거나 상수를 더하기 전에 왜 그렇게 표현하는지 기록합니다.</p>
+<div class="check" data-q="q6"></div>
+<h2>통계로 이어지는 지점</h2>
+<p>확률을 곱하던 식에 로그를 취하면 양수인 항의 곱이 합으로 바뀝니다. 밑이 e인 로그는 증가함수라 양수 영역에서 큰 값과 작은 값의 순서도 유지합니다. 통계의 우도를 계산할 때 이 두 성질을 함께 씁니다. 값이 0인 확률에 일반적인 실수 로그 함수를 그대로 적용하는 경우는 별도로 다뤄야 합니다.</p>
+
+<h2>참고 자료</h2>
+<ul><li><a href="https://openstax.org/books/algebra-and-trigonometry-2e/pages/6-3-logarithmic-functions">OpenStax · Algebra and Trigonometry 2e, Logarithmic Functions</a></li><li><a href="https://openstax.org/books/algebra-and-trigonometry-2e/pages/6-5-logarithmic-properties">OpenStax · Logarithmic Properties</a></li><li><a href="https://docs.python.org/3/library/math.html#power-and-logarithmic-functions">Python 공식 문서 · 지수와 로그</a></li></ul>
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

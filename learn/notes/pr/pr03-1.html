@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>독립과 배반을 구별하기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e8c'/%3E%3Cpath d='M8 22V10m8 12V14m8 8V6' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="PR03-1">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+
+<header class="chapter">
+<p class="chap-sub">확률 · PR03 독립과 베이즈</p>
+<p class="chap-num">PR03·1</p>
+<h1>독립과 배반을 구별하기</h1>
+<p class="lead">월요일에 실패한 요청은 같은 요청에서 성공할 수 없습니다. 반면 동전 앞면과 별도로 던진 주사위 짝수는 동시에 일어날 수 있습니다. 두 사건이 함께 일어날 수 있는지와, 한쪽 정보가 다른 쪽 확률을 바꾸는지는 서로 다른 질문입니다.</p>
+</header>
+
+<div class="goal">
+<h2>이 장을 읽고 나면</h2>
+<ul>
+<li>곱식과 조건부확률로 두 사건의 독립 여부를 판단한다.</li>
+<li>배반의 정의를 교집합으로 표시하고 독립과 구별한다.</li>
+<li>복원과 비복원 추출에서 둘째 확률을 계산한다.</li>
+<li>관측 자료의 비율을 독립에 관한 확정 결론으로 해석하지 않는다.</li>
+</ul>
+</div>
+
+<h2>한쪽 결과를 알아도 확률이 그대로일 때</h2>
+<p>공정한 동전과 주사위를 한 번씩 던지는 모형을 생각합니다. 여기서는 동전 2가지와 주사위 6가지의 조합 12개가 등가능하다고 명시합니다. H는 ‘동전 앞면’, E는 ‘주사위 짝수’입니다. 두 줄의 전체에서 짝수는 12개 중 6개이므로 <code>P(E) = 1/2</code>입니다. 앞면 줄만 남겨도 짝수 3개가 6개 중에 있으므로 <code>P(E | H) = 1/2</code>입니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 187" role="img" aria-label="동전 결과를 행으로, 주사위 눈을 열로 놓은 2행 6열 표. 두 행 모두 2, 4, 6에 별도 칠을 했다. 앞면 행에서도 짝수는 여섯 중 세 개다.">
+<text class="f-cap" x="405" y="30" text-anchor="middle">주사위 눈</text>
+<rect class="f-box" x="185" y="48" width="73" height="47" rx="3"/><text class="f-t" x="221.5" y="76.5" text-anchor="middle">1</text>
+<rect class="f-soft" x="258" y="48" width="73" height="47" rx="3"/><text class="f-t" x="294.5" y="76.5" text-anchor="middle">2</text>
+<rect class="f-box" x="331" y="48" width="73" height="47" rx="3"/><text class="f-t" x="367.5" y="76.5" text-anchor="middle">3</text>
+<rect class="f-soft" x="404" y="48" width="73" height="47" rx="3"/><text class="f-t" x="440.5" y="76.5" text-anchor="middle">4</text>
+<rect class="f-box" x="477" y="48" width="73" height="47" rx="3"/><text class="f-t" x="513.5" y="76.5" text-anchor="middle">5</text>
+<rect class="f-soft" x="550" y="48" width="73" height="47" rx="3"/><text class="f-t" x="586.5" y="76.5" text-anchor="middle">6</text>
+<rect class="f-box" x="185" y="95" width="73" height="47" rx="3"/><text class="f-t" x="221.5" y="123.5" text-anchor="middle">1</text>
+<rect class="f-soft" x="258" y="95" width="73" height="47" rx="3"/><text class="f-t" x="294.5" y="123.5" text-anchor="middle">2</text>
+<rect class="f-box" x="331" y="95" width="73" height="47" rx="3"/><text class="f-t" x="367.5" y="123.5" text-anchor="middle">3</text>
+<rect class="f-soft" x="404" y="95" width="73" height="47" rx="3"/><text class="f-t" x="440.5" y="123.5" text-anchor="middle">4</text>
+<rect class="f-box" x="477" y="95" width="73" height="47" rx="3"/><text class="f-t" x="513.5" y="123.5" text-anchor="middle">5</text>
+<rect class="f-soft" x="550" y="95" width="73" height="47" rx="3"/><text class="f-t" x="586.5" y="123.5" text-anchor="middle">6</text>
+<text class="f-t" x="162" y="78" text-anchor="end">동전 앞면</text>
+<text class="f-t" x="162" y="125" text-anchor="end">동전 뒷면</text>
+</svg>
+<figcaption>앞면 행만 봐도 짝수의 비율은 3/6이다. 전체에서도 6/12로 같다.</figcaption>
+</figure>
+<div class="box"><p class="box-k">정의</p><p>두 사건 A, B가 <code>P(A ∩ B) = P(A)P(B)</code>를 만족하면 <b class="key">독립</b>이라고 합니다. <code>P(B) &gt; 0</code>이면 이는 <code>P(A | B) = P(A)</code>와 같은 조건입니다. <code>P(A) &gt; 0</code>이면 반대 방향에서도 <code>P(B | A) = P(B)</code>입니다. 한 사건을 알더라도 다른 사건의 확률이 달라지지 않습니다.</p></div>
+<p>동전·주사위의 경우 <code>P(H ∩ E) = 3/12 = 1/4</code>이고 <code>P(H)P(E) = (1/2)(1/2) = 1/4</code>입니다. 기기의 종류가 모바일일 때 실패 확률이 30%이고 전체에서 실패 확률이 20%였던 PR02의 자료와는 다릅니다. 그 표에서 균일하게 한 행을 고르는 실험에서는 모바일과 실패가 독립이 아닙니다.</p>
+<p class="small">실행 예제</p>
+<pre data-example="python"><code>from fractions import Fraction as F
+from itertools import product
+
+space = list(product(("앞", "뒤"), range(1, 7)))
+heads = [(c, d) for c, d in space if c == "앞"]
+even = [(c, d) for c, d in space if d % 2 == 0]
+both = [(c, d) for c, d in heads if d % 2 == 0]
+p_heads, p_even = F(len(heads), len(space)), F(len(even), len(space))
+p_both = F(len(both), len(space))
+print(p_heads, p_even, p_both)
+print(p_both == p_heads * p_even)
+print(F(len(both), len(heads)))</code></pre>
+<pre data-output><code>1/2 1/2 1/4
+True
+1/2</code></pre>
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+<div class="check" data-q="q3"></div>
+
+<h2>배반은 같은 결과에 두 이름을 붙일 수 없는 경우</h2>
+<p>주사위 한 번에서 A를 ‘홀수’, B를 ‘짝수’로 두면 <code>A ∩ B = ∅</code>입니다. 두 사건을 <b class="key">배반</b>(서로 배타적)이라고 합니다. 공정한 주사위에서 각각 확률 1/2이지만, 홀수라고 알게 되면 짝수의 확률은 0입니다. 곱식으로도 <code>0 ≠ (1/2)(1/2)</code>라서 독립이 아닙니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 180" role="img" aria-label="주사위 눈을 홀수 집합 왼쪽 1, 3, 5와 짝수 집합 오른쪽 2, 4, 6으로 나눴다. 두 집합은 겹치지 않는다.">
+<rect class="f-box" x="76" y="31" width="246" height="111" rx="3"/>
+<rect class="f-soft" x="438" y="31" width="246" height="111" rx="3"/>
+<text class="f-cap" x="199" y="63" text-anchor="middle">홀수 A</text>
+<text class="f-t" x="199" y="106" text-anchor="middle">1   3   5</text>
+<text class="f-cap" x="561" y="63" text-anchor="middle">짝수 B</text>
+<text class="f-t" x="561" y="106" text-anchor="middle">2   4   6</text>
+<text class="f-s" x="380" y="96" text-anchor="middle">겹침 없음</text>
+</svg>
+<figcaption>홀수와 짝수는 배반이고, 각각 양수의 확률이 있으므로 독립이 아니다.</figcaption>
+</figure>
+<p><b>확률이 양수인 두 배반 사건은 독립일 수 없습니다.</b> 교사건 확률은 0인데 확률의 곱은 양수이기 때문입니다. 한 사건의 확률이 0이면 곱과 교사건 확률이 모두 0이어서 정의상 독립입니다. 예를 들어 여섯 면 주사위에서 ‘7’은 빈 사건으로 보면 어떤 사건과도 배반이며 곱식도 만족합니다. 다만 <code>P(A | ∅)</code>는 분모가 0이므로 조건부확률의 비율식으로 정의하지 않습니다.</p>
+<p>교집합이 비어 있지 않다는 이유만으로 독립이라고 단정할 수 없습니다. ‘짝수’와 ‘4 이상’은 4·6이 겹칩니다. 확률은 각각 1/2, 1/2이지만 교사건 확률 2/6은 곱 1/4과 달라서 독립이 아닙니다.</p>
+<div class="check" data-q="q4"></div>
+<div class="check" data-q="q5"></div>
+<div class="check" data-q="q6"></div>
+
+<h2>같은 공을 뽑을 때 복원이 하는 일</h2>
+<p>빨간 공 3개와 파란 공 2개를 잘 섞어 하나를 균일하게 고릅니다. 첫 번째가 빨강일 확률은 3/5입니다. 공을 넣고 다시 같은 방식으로 섞어 고르면 둘째 빨강의 조건부확률도 3/5입니다. 첫 번째 결과가 무엇이든 구성과 선택 규칙이 같으므로 이 모형에서 두 ‘빨강을 뽑는다’ 사건은 독립입니다.</p>
+<p>공을 빼놓으면 첫 번째가 빨강이라는 조건에서 빨간 공 2개와 파란 공 2개가 남습니다. 둘째 빨강의 확률은 그 조건에서 2/4입니다. 이 모형에서는 언제나 둘째 위치에 빨간 공이 올 주변확률은 3/5입니다. 첫째 빨강 여부에 따라 둘째 확률이 달라지므로 독립이 아닙니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 222" role="img" aria-label="빨강 공 3개와 파랑 공 2개에서 첫 공이 빨강이다. 복원하면 둘째 직전 빨강 3 파랑 2라서 3/5. 비복원이면 빨강 2 파랑 2라서 2/4.">
+<text class="f-cap" x="251" y="33" text-anchor="middle">복원한 뒤</text>
+<text class="f-cap" x="522" y="33" text-anchor="middle">복원하지 않은 뒤</text>
+<rect class="f-soft" x="146" y="57" width="42" height="47" rx="3"/><text class="f-t" x="167" y="85.5" text-anchor="middle">R</text>
+<rect class="f-soft" x="188" y="57" width="42" height="47" rx="3"/><text class="f-t" x="209" y="85.5" text-anchor="middle">R</text>
+<rect class="f-soft" x="230" y="57" width="42" height="47" rx="3"/><text class="f-t" x="251" y="85.5" text-anchor="middle">R</text>
+<rect class="f-box" x="272" y="57" width="42" height="47" rx="3"/><text class="f-t" x="293" y="85.5" text-anchor="middle">B</text>
+<rect class="f-box" x="314" y="57" width="42" height="47" rx="3"/><text class="f-t" x="335" y="85.5" text-anchor="middle">B</text>
+<rect class="f-soft" x="438" y="57" width="42" height="47" rx="3"/><text class="f-t" x="459" y="85.5" text-anchor="middle">R</text>
+<rect class="f-soft" x="480" y="57" width="42" height="47" rx="3"/><text class="f-t" x="501" y="85.5" text-anchor="middle">R</text>
+<rect class="f-box" x="522" y="57" width="42" height="47" rx="3"/><text class="f-t" x="543" y="85.5" text-anchor="middle">B</text>
+<rect class="f-box" x="564" y="57" width="42" height="47" rx="3"/><text class="f-t" x="585" y="85.5" text-anchor="middle">B</text>
+<line class="f-line" x1="251" y1="114" x2="251" y2="151" marker-end="url(#f-arrow)"/>
+<line class="f-line" x1="522" y1="114" x2="522" y2="151" marker-end="url(#f-arrow)"/>
+<text class="f-t" x="251" y="179" text-anchor="middle">둘째 빨강 3/5</text>
+<text class="f-t" x="522" y="179" text-anchor="middle">둘째 빨강 2/4</text>
+</svg>
+<figcaption>각 칸의 R과 B는 각각 빨간 공과 파란 공을 뜻한다.</figcaption>
+</figure>
+<p class="small">실행 예제</p>
+<pre data-example="python"><code>from fractions import Fraction as F
+
+first_red = F(3, 5)
+second_if_red = {"복원": F(3, 5), "비복원": F(2, 4)}
+for name, prob in second_if_red.items():
+    print(name, "둘째 조건부확률:", prob, "두 번 모두 빨강:", first_red * prob)</code></pre>
+<pre data-output><code>복원 둘째 조건부확률: 3/5 두 번 모두 빨강: 9/25
+비복원 둘째 조건부확률: 1/2 두 번 모두 빨강: 3/10</code></pre>
+<p>레이블로 공을 구별하고 순서가 있는 선택을 생각하면, 비복원 추출의 전체 결과는 <code>5 × 4</code>개이고 빨강·빨강 결과는 <code>3 × 2</code>개입니다. <code>6/20 = 3/10</code>으로 경로를 곱했을 때와 같습니다. 복원 추출이라도 둘째 공을 고르는 규칙을 첫 결과에 따라 바꾸면 독립이 깨질 수 있습니다.</p>
+<div class="check" data-q="q7"></div>
+<div class="check" data-q="q8"></div>
+
+<h2>자료에서 독립을 읽을 때</h2>
+<p>실제 로그에서 두 사건의 비율을 비교할 수 있습니다. 이론상 독립인 시행을 유한 번 반복해도 표의 비율들이 정확히 일치할 필요는 없습니다. 반대로 특정 표에서 우연히 같아도 데이터가 생성된 과정이 반드시 독립이라고 증명되지 않습니다. 실험 설계와 관측 수, 시간 순서 같은 정보를 함께 봅니다.</p>
+<div class="check" data-q="q9"></div>
+
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table><thead><tr><th scope="col">개념</th><th scope="col">판단식</th><th scope="col">질문</th></tr></thead><tbody>
+<tr><th scope="row">독립</th><td>P(A ∩ B) = P(A)P(B)</td><td>한쪽을 알아도 다른 쪽 확률이 그대로인가?</td></tr>
+<tr><th scope="row">배반</th><td>A ∩ B = ∅</td><td>두 사건이 한 결과에서 동시에 일어날 수 있는가?</td></tr></tbody></table></div>
+<div class="box sum"><p class="box-k">다음 장으로</p><p>사건이 독립이라는 근거가 없다면 경로에서 조건부확률을 그대로 사용합니다. <a href="pr03-2.html">다음 장</a>에서는 주어진 조건의 방향을 바꾸는 베이즈 규칙을 공부합니다.</p></div>
+
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://openstax.org/books/introductory-statistics-2e/pages/3-2-independent-and-mutually-exclusive-events">독립, 배반, 복원과 비복원 추출</a></li>
+<li><a href="https://ocw.mit.edu/courses/6-041sc-probabilistic-systems-analysis-and-applied-probability-fall-2013/pages/unit-i/lecture-3/">MIT OCW 확률론: 독립</a></li>
+</ul>
+
+<h2>확인 문제</h2>
+<p>본문에서 다룬 예제를 떠올린 뒤 남은 문제를 직접 풀어 보세요.</p>
+<div id="quiz"></div>
+
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

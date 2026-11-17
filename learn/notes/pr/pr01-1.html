@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>가능한 결과와 그중에 묻는 사건 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e8c'/%3E%3Cpath d='M8 22V10m8 12V14m8 8V6' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="PR01-1">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+
+<header class="chapter">
+<p class="chap-sub">확률 · PR01 확률의 언어</p>
+<p class="chap-num">PR01·1</p>
+<h1>가능한 결과와 그중에 묻는 사건</h1>
+<p class="lead">주사위를 한 번 던질 때 ‘짝수가 나올까’와 ‘4가 나올까’는 같은 질문이 아닙니다. 던지는 일은 같아도 결과를 묶는 방식이 다릅니다. 먼저 가능한 결과를 정하고, 관심 있는 결과만 골라 사건으로 표시합니다.</p>
+</header>
+
+<div class="goal">
+<h2>이 장을 읽고 나면</h2>
+<ul>
+<li>시행·결과·표본공간·사건을 구별한다.</li>
+<li>여사건과 교집합·합집합을 결과 목록으로 적는다.</li>
+<li>등가능성 가정이 있을 때만 결과 수의 비로 확률을 계산한다.</li>
+<li>모형으로 정한 확률과 실제 관측 빈도를 구별한다.</li>
+</ul>
+</div>
+
+<h2>한 번 무엇을 하고, 무엇을 기록하나</h2>
+<p>주사위를 한 번 던져 위쪽 눈을 기록합니다. 던져서 결과 하나를 얻는 일을 <b class="key">시행</b>, 이번에 얻은 눈 4를 <b class="key">결과</b>, 기록할 수 있는 모든 눈의 집합 <code>Ω = {1, 2, 3, 4, 5, 6}</code>을 <b class="key">표본공간</b>이라고 합니다. 기호 Ω는 ‘오메가’라고 읽습니다. 시행에 들어가기 전에 눈이 모서리에 서는 경우를 어떻게 처리할지도 정해야 한 번의 기록이 무엇인지 명확해집니다. 예제에서는 눈 하나가 잘 나오도록 던졌다고 가정합니다.</p>
+<div class="box"><p class="box-k">정의</p><p><b class="key">사건</b>은 표본공간에서 관심 있는 결과들을 모아 놓은 부분집합입니다. 사건 A가 <code>{2, 4, 6}</code>이라면 4가 나왔을 때 A가 일어났다고 합니다. 5가 나왔다면 일어나지 않은 것입니다. <code>P(A)</code>는 사건 A의 확률로, 0에서 1 사이의 값을 가집니다. 전체 사건 Ω의 확률은 1이고, 결과가 하나도 없는 빈 사건 ∅의 확률은 0입니다.</p></div>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 184" role="img" aria-label="표본공간 Ω 안에 주사위 눈 1에서 6까지의 여섯 칸이 있다. A에 드는 2, 4, 6번 칸만 강조했다.">
+<rect class="f-box" x="94" y="20" width="572" height="143" rx="3"/>
+<text class="f-cap" x="380" y="48" text-anchor="middle">표본공간 Ω · 가능한 눈 전체</text>
+<rect class="f-box" x="152" y="67" width="76" height="48" rx="3"/><text class="f-t" x="190" y="96" text-anchor="middle">1</text>
+<rect class="f-soft" x="228" y="67" width="76" height="48" rx="3"/><text class="f-t" x="266" y="96" text-anchor="middle">2</text>
+<rect class="f-box" x="304" y="67" width="76" height="48" rx="3"/><text class="f-t" x="342" y="96" text-anchor="middle">3</text>
+<rect class="f-soft" x="380" y="67" width="76" height="48" rx="3"/><text class="f-t" x="418" y="96" text-anchor="middle">4</text>
+<rect class="f-box" x="456" y="67" width="76" height="48" rx="3"/><text class="f-t" x="494" y="96" text-anchor="middle">5</text>
+<rect class="f-soft" x="532" y="67" width="76" height="48" rx="3"/><text class="f-t" x="570" y="96" text-anchor="middle">6</text>
+<text class="f-s" x="380" y="145" text-anchor="middle">칠한 칸 A = {2, 4, 6}</text>
+</svg>
+<figcaption>한 시행은 여섯 칸 중 하나에 기록된다. A에 든 칸이면 ‘짝수’가 일어났다.</figcaption>
+</figure>
+<p>무엇을 결과로 삼는지는 질문에 따라 달라집니다. 동전을 두 번 던져 순서까지 기록하면 <code>앞앞, 앞뒤, 뒤앞, 뒤뒤</code>가 결과입니다. 앞면 개수만 기록하면 기록값은 0, 1, 2입니다. 기록이 덜 자세해져도 계산에 필요한 가능성 차이는 사라지지 않습니다.</p>
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+
+<h2>여사건, 그리고, 또는</h2>
+<p>같은 주사위에서 A를 ‘짝수’, B를 ‘4 이상’으로 둡니다. A가 아닌 결과들이 <b class="key">여사건</b> <code>Aᶜ = {1, 3, 5}</code>에 속합니다. 한 결과는 A와 Aᶜ 중 정확히 하나에 속합니다. 따라서 <code>P(Aᶜ) = 1 − P(A)</code>입니다.</p>
+<p>‘짝수이면서 4 이상’은 <b class="key">교사건</b> <code>A ∩ B = {4, 6}</code>입니다. ‘짝수이거나 4 이상’은 <b class="key">합사건</b> <code>A ∪ B = {2, 4, 5, 6}</code>입니다. 확률에서 ‘또는’은 둘 다 만족하는 경우도 포함합니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 191" role="img" aria-label="겹치지 않게 나눈 네 칸에 어느 쪽도 아님 1, 3, A에만 속함 2, A와 B 둘 다 4, 6, B에만 속함 5를 배치했다. 합사건은 마지막 세 칸을 포함한다.">
+<text class="f-cap" x="107" y="36" text-anchor="middle">어느 쪽도 아님</text>
+<text class="f-cap" x="289" y="36" text-anchor="middle">A에만 속함</text>
+<text class="f-cap" x="471" y="36" text-anchor="middle">A ∩ B</text>
+<text class="f-cap" x="653" y="36" text-anchor="middle">B에만 속함</text>
+<rect class="f-box" x="22" y="54" width="178" height="58" rx="3"/><text class="f-t" x="111" y="88" text-anchor="middle">{1, 3}</text>
+<rect class="f-soft" x="200" y="54" width="178" height="58" rx="3"/><text class="f-t" x="289" y="88" text-anchor="middle">{2}</text>
+<rect class="f-soft" x="378" y="54" width="178" height="58" rx="3"/><text class="f-t" x="467" y="88" text-anchor="middle">{4, 6}</text>
+<rect class="f-soft" x="556" y="54" width="178" height="58" rx="3"/><text class="f-t" x="645" y="88" text-anchor="middle">{5}</text>
+<line class="f-line" x1="208" y1="137" x2="731" y2="137"/>
+<line class="f-line" x1="208" y1="128" x2="208" y2="137"/>
+<line class="f-line" x1="731" y1="128" x2="731" y2="137"/>
+<text class="f-t" x="470" y="166" text-anchor="middle">A ∪ B = {2, 4, 5, 6}</text>
+</svg>
+<figcaption>어느 쪽에도 속하지 않는 1과 3을 빼면 합사건이 남는다.</figcaption>
+</figure>
+<div class="box ex"><p class="box-k">풀이 예제</p><p>모든 눈이 같은 확률이라고 가정합니다. A의 3개와 B의 3개를 그냥 더하면 4와 6을 두 번 셉니다. 한 번씩 빼면 <code>3 + 3 − 2 = 4</code>개입니다. 그래서 <code>P(A ∪ B) = P(A) + P(B) − P(A ∩ B) = 4/6</code>입니다. 이 덧셈 공식은 눈의 확률이 달라도 성립합니다. 다만 그때는 각 눈의 확률을 더해야 합니다.</p></div>
+<p>아래 Python 예제에서는 <code>Fraction(분자, 분모)</code>으로 분수를 정확하게 계산합니다. <code>sorted</code>는 집합의 결과를 눈으로 비교하기 쉽도록 순서 있는 목록으로 보여 줍니다.</p>
+<p class="small">실행 예제</p>
+<pre data-example="python"><code>from fractions import Fraction
+
+omega = set(range(1, 7))
+a = {2, 4, 6}
+b = {4, 5, 6}
+print(sorted(omega - a))
+print(sorted(a &amp; b))
+print(sorted(a | b))
+print(Fraction(len(a | b), len(omega)))</code></pre>
+<pre data-output><code>[1, 3, 5]
+[4, 6]
+[2, 4, 5, 6]
+2/3</code></pre>
+<div class="check" data-q="q3"></div>
+<div class="check" data-q="q4"></div>
+<div class="check" data-q="q5"></div>
+
+<h2>결과를 세어도 되는 조건</h2>
+<p>가능한 n개 결과 각각의 확률이 같으면 하나당 <code>1/n</code>입니다. 이런 결과들을 <b class="key">등가능</b>하다고 말합니다. 따라서 사건 E의 확률은 <code>P(E) = E에 든 결과 수 / 전체 결과 수</code>로 구합니다. 유한한 결과를 다룰 때 쓰는 계산이고, 단지 결과의 이름을 나열했다고 각 이름의 확률이 같아지는 것은 아닙니다.</p>
+<p>공정한 동전을 같은 조건에서 서로 영향 없이 두 번 던진다고 가정합니다. 순서까지 구별한 네 결과 앞앞·앞뒤·뒤앞·뒤뒤는 각각 1/4입니다. 앞면 개수로 묶으면 0개에는 뒤뒤 하나, 1개에는 앞뒤와 뒤앞 둘, 2개에는 앞앞 하나가 들어갑니다. 그러므로 개수 0·1·2의 확률은 각각 1/4, 1/2, 1/4입니다.</p>
+<p>코드에서 <code>product</code>는 두 번의 결과를 순서 있게 짝지으며, <code>Counter</code>는 앞면 개수별로 몇 조합인지 셉니다.</p>
+<p class="small">실행 예제</p>
+<pre data-example="python"><code>from collections import Counter
+from itertools import product
+
+outcomes = list(product(("앞", "뒤"), repeat=2))
+counts = Counter(pair.count("앞") for pair in outcomes)
+print([counts[k] for k in (0, 1, 2)])</code></pre>
+<pre data-output><code>[1, 2, 1]</code></pre>
+<div class="box trap"><p class="box-k">흔한 실수</p><p>‘앞면 개수의 값은 0, 1, 2 세 종류이니 모두 1/3’이라고 판단하면, 두 순서가 한 값에 합쳐진다는 점을 놓칩니다. 쉽게 셀 수 있는 등가능 결과를 먼저 고릅니다.</p></div>
+<div class="check" data-q="q6"></div>
+<div class="check" data-q="q7"></div>
+
+<h2>관측 빈도와 모형의 확률</h2>
+<p>한 번씩 던져 기록한 눈이 <code>1, 2, 1, 4, 1, 1, 2, 6</code>이라면 1의 <b class="key">도수</b>는 4, <b>상대도수</b>는 4/8 = 0.5입니다. 공정한 주사위 모형에서의 확률 1/6과 같을 필요는 없습니다. 모형은 시행 전 가정에 따른 가능성을 말하고, 관측 빈도는 실제 자료에서 이루어진 횟수를 셉니다.</p>
+<p class="small">실행 예제</p>
+<pre data-example="python"><code>from fractions import Fraction
+
+rolls = [1, 2, 1, 4, 1, 1, 2, 6]
+print(rolls.count(1), len(rolls))
+print(Fraction(rolls.count(1), len(rolls)))
+print(Fraction(1, 6))</code></pre>
+<pre data-output><code>4 8
+1/2
+1/6</code></pre>
+<p>같은 조건에서 서로 영향을 주지 않는 시행을 많이 반복하면 상대도수가 모형 확률에 가까워지는 경향이 있습니다. 표본을 늘릴 때 오차가 매번 줄거나, 작게 관측했다고 바로 모형이 틀렸다고 결론 내릴 수는 없습니다. 실험 전에 시행 조건과 집계 방법을 정하고, 횟수와 조건을 함께 기록합니다.</p>
+<div class="check" data-q="q8"></div>
+
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table><thead><tr><th scope="col">기호·용어</th><th scope="col">읽는 법</th></tr></thead><tbody>
+<tr><td>Ω, A</td><td>전체 기록의 범위, 그 안에서 묻는 <b class="key">사건</b></td></tr>
+<tr><td>Aᶜ, A ∩ B, A ∪ B</td><td>A가 아님, 둘 다, 적어도 하나</td></tr>
+<tr><td>등가능 모형</td><td>좋은 결과 수 ÷ 전체 결과 수</td></tr>
+<tr><td>상대도수</td><td>실제 일어난 횟수 ÷ 시행 수</td></tr></tbody></table></div>
+<div class="box sum"><p class="box-k">다음 장으로</p><p>확률 문제는 어떤 결과들을 분모로 삼는지부터 정합니다. <a href="pr02-1.html">다음 장</a>에서는 어떤 정보가 주어진 경우에 그 분모가 어떻게 바뀌는지 살펴봅니다.</p></div>
+
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://openstax.org/books/introductory-statistics-2e/pages/3-1-terminology">표본공간·사건·등가능성과 빈도</a></li>
+<li><a href="https://openstax.org/books/introductory-statistics-2e/pages/3-3-two-basic-rules-of-probability">합사건의 덧셈 법칙</a></li>
+</ul>
+
+<h2>확인 문제</h2>
+<p>본문에서 다룬 예제를 떠올린 뒤 남은 문제를 직접 풀어 보세요.</p>
+<div id="quiz"></div>
+
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

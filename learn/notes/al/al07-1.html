@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>지수와 지수함수: 같은 양을 더할 때와 같은 배를 곱할 때 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="AL07-1">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">대수·함수·그래프 · AL07 지수와 로그</p>
+<p class="chap-num">AL07·1</p>
+<h1>지수와 지수함수: 같은 양을 더할 때와 같은 배를 곱할 때</h1>
+<p class="lead">한 서버에서 처리할 요청이 매 단계 3건 늘어나는 경우와 매 단계 두 배가 되는 경우를 비교합니다. 지수에 정수만 넣을 때에서 출발해 음수·분수·실수 지수와 자연상수 e까지 연결합니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>고정된 차이와 고정된 배수를 구별한다.</li><li>양수 밑의 음수 지수와 분수 지수를 해석한다.</li><li>증가·감소 지수함수의 정의역과 치역을 말한다.</li></ul></div>
+
+<h2>차이를 비교할까, 비를 비교할까</h2>
+<p>두 시스템의 요청 수가 처음에 3건이고 다음에는 둘 다 6건이라고 합시다. 첫 시스템은 같은 간격마다 3건이 더 생기고, 둘째는 전 단계의 두 배가 됩니다. 세 번째 관측부터 9와 12가 되어 차이가 드러납니다.</p>
+<div class="table-wrap"><table><thead><tr><th scope="col">경과 단계 t</th><th scope="col">같은 양을 더함: 3+3t</th><th scope="col">같은 배를 곱함: 3×2ᵗ</th></tr></thead><tbody><tr><td>0</td><td>3</td><td>3</td></tr><tr><td>1</td><td>6</td><td>6</td></tr><tr><td>2</td><td>9</td><td>12</td></tr><tr><td>3</td><td>12</td><td>24</td></tr><tr><td>4</td><td>15</td><td>48</td></tr></tbody></table></div>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 303" role="img" aria-label="같은 시작값 3에서 한 단계마다 3을 더하는 직선과 두 배가 되는 지수 모델을 비교한다. 네 번째 단계에서 각각 15와 48.">
+<line class="f-ink" x1="104" y1="235" x2="642" y2="235"/><line class="f-ink" x1="104" y1="42" x2="104" y2="235"/><text class="f-t f-b" x="99" y="28" text-anchor="start">관측량</text><text class="f-s" x="390" y="286" text-anchor="middle">같은 시간 간격</text><line class="f-ink" x1="104" y1="235" x2="104" y2="241"/><text class="f-s" x="104" y="257" text-anchor="middle">0</text><line class="f-ink" x1="224" y1="235" x2="224" y2="241"/><text class="f-s" x="224" y="257" text-anchor="middle">1</text><line class="f-ink" x1="344" y1="235" x2="344" y2="241"/><text class="f-s" x="344" y="257" text-anchor="middle">2</text><line class="f-ink" x1="464" y1="235" x2="464" y2="241"/><text class="f-s" x="464" y="257" text-anchor="middle">3</text><line class="f-ink" x1="584" y1="235" x2="584" y2="241"/><text class="f-s" x="584" y="257" text-anchor="middle">4</text><line class="f-dash" x1="104" y1="235" x2="620" y2="235"/><text class="f-s" x="90" y="239" text-anchor="end">0</text><line class="f-dash" x1="104" y1="200" x2="620" y2="200"/><text class="f-s" x="90" y="204" text-anchor="end">10</text><line class="f-dash" x1="104" y1="165" x2="620" y2="165"/><text class="f-s" x="90" y="169" text-anchor="end">20</text><line class="f-dash" x1="104" y1="130" x2="620" y2="130"/><text class="f-s" x="90" y="134" text-anchor="end">30</text><line class="f-dash" x1="104" y1="95" x2="620" y2="95"/><text class="f-s" x="90" y="99" text-anchor="end">40</text><line class="f-dash" x1="104" y1="60" x2="620" y2="60"/><text class="f-s" x="90" y="64" text-anchor="end">50</text><polyline class="f-line" fill="none" points="104,224.5 224,214 344,193 464,151 584,67"/><circle class="f-fill" cx="104" cy="224.5" r="3"/><circle class="f-fill" cx="224" cy="214" r="3"/><circle class="f-fill" cx="344" cy="193" r="3"/><circle class="f-fill" cx="464" cy="151" r="3"/><circle class="f-fill" cx="584" cy="67" r="3"/><polyline class="f-ink" fill="none" points="104,224.5 224,214 344,203.5 464,193 584,182.5"/><circle class="f-fill" cx="104" cy="224.5" r="3"/><circle class="f-fill" cx="224" cy="214" r="3"/><circle class="f-fill" cx="344" cy="203.5" r="3"/><circle class="f-fill" cx="464" cy="193" r="3"/><circle class="f-fill" cx="584" cy="182.5" r="3"/><text class="f-s" x="603" y="61" text-anchor="start">매번 ×2</text><text class="f-s" x="603" y="189" text-anchor="start">매번 +3</text>
+</svg><figcaption>두 선은 같은 축을 쓴다. 점 사이 선분은 관측 단계의 비교를 돕는다.</figcaption></figure>
+<p>두 번째 모델에서는 연속 두 단계의 비가 늘 2입니다. 같은 양을 더하는 모델에서는 연속 두 단계의 차이가 3입니다. 초기값·기간·단위를 함께 적습니다. 실제 요청이 계속 두 배가 될지 여부는 자료와 시스템 조건을 살펴야 합니다.</p>
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+<h2>0·음수·분수 지수</h2>
+<p>양수 a에서 a<sup>0</sup> = 1, a<sup>−1</sup> = 1/a입니다. a<sup>t</sup>에서 t를 1 낮추는 것은 a로 나누는 것이라고 보면 일관됩니다. 예를 들어 4<sup>1</sup> = 4에서 0으로 내리면 1, −1로 내리면 1/4입니다.</p>
+<div class="box "><p class="box-k">분수 지수를 수로 읽기</p><p>4<sup>1/2</sup>는 제곱하면 4가 되는 양수입니다. 값은 2입니다. 일반적으로 a &gt; 0, 정수 m, 양의 정수 n에 대해 a<sup>m/n</sup>은 a의 양의 n제곱근을 구해 m제곱한 값입니다. 따라서 8<sup>2/3</sup> = (∛8)² = 4입니다.</p></div>
+<p>밑이 음수인 식은 지수에 따라 실수에서 계산 가능 여부가 달라집니다. (−8)의 세제곱근은 −2지만 (−8)의 제곱근은 실수가 아닙니다. 실수 t 전체를 받는 함수 <code>aᵗ</code>를 정의할 때는 양수 밑을 사용합니다. 0은 음수 지수에서 0으로 나누게 됩니다.</p>
+<div class="check" data-q="q3"></div>
+<div class="check" data-q="q4"></div>
+<h2>모델에서 증가와 감소 읽기</h2>
+<p>표준적인 지수함수 <b class="key">y = aᵗ</b>는 a &gt; 0, a ≠ 1에서 입력 t에 모든 실수를 받으며 출력은 양수입니다. a &gt; 1이면 증가, 0 &lt; a &lt; 1이면 감소합니다. 실제 경과 시간을 모델로 쓰면 t ≥ 0처럼 정의역을 제한할 수 있습니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 160" role="img" aria-label="값이 단계당 20퍼센트 감소하면 매 단계 0.8을 곱한다. 500은 두 단계 뒤 320.">
+<rect class="f-box" x="42" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="135" y="61" text-anchor="middle">초기값</text><text class="f-s" x="135" y="89" text-anchor="middle">500개</text><text class="f-s" x="135" y="110" text-anchor="middle">t=0일 때 500</text><line class="f-line" x1="235" y1="84" x2="278" y2="84" marker-end="url(#f-arrow)"/><rect class="f-soft" x="287" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="380" y="61" text-anchor="middle">단계당 배수</text><text class="f-s" x="380" y="89" text-anchor="middle">0.8배</text><text class="f-s" x="380" y="110" text-anchor="middle">20%씩 감소</text><line class="f-line" x1="480" y1="84" x2="523" y2="84" marker-end="url(#f-arrow)"/><rect class="f-box" x="532" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="625" y="61" text-anchor="middle">두 단계 후</text><text class="f-s" x="625" y="89" text-anchor="middle">500 × 0.8²</text><text class="f-s" x="625" y="110" text-anchor="middle">320개</text>
+</svg><figcaption>감소율 20%에 대응하는 배수는 0.8이다.</figcaption></figure>
+<pre data-example="python"><code>for step in range(3):
+    print(step, round(500 * (0.8 ** step), 2))</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>0 500.0
+1 400.0
+2 320.0</code></pre>
+<div class="check" data-q="q5"></div>
+<h2>자연상수 e가 쓰이는 자리</h2>
+<p><b class="key">e</b>는 약 2.71828인 양수입니다. 예를 들어 한 기간 안에서 1/n만큼의 증가율을 n번 곱하는 <code>(1 + 1/n)ⁿ</code>은 n을 크게 할수록 e에 가까워집니다. 이 극한과 미분 성질은 미적분에서 설명합니다. e<sup>t</sup>는 <code>exp(t)</code>로도 쓰고, Python에서는 <code>math.exp</code>로 계산합니다.</p>
+<pre data-example="python"><code>from math import exp
+
+print(f&quot;{(1 + 1 / 1000) ** 1000:.5f}&quot;)
+print(f&quot;{exp(1):.5f}&quot;)
+print(f&quot;{exp(0):.5f}&quot;)</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>2.71692
+2.71828
+1.00000</code></pre>
+<p>y = C e<sup>kt</sup> 꼴에서는 t가 1 증가할 때 배수는 e<sup>k</sup>입니다. 초기값 C가 양수일 때 k &gt; 0이면 증가하고 k &lt; 0이면 감소합니다. k가 0일 때는 값이 C로 일정합니다. 다음 장에서는 배수와 시작값·끝값이 주어졌을 때 경과 단계를 거꾸로 구합니다.</p>
+<div class="check" data-q="q6"></div>
+
+<h2>참고 자료</h2>
+<ul><li><a href="https://openstax.org/books/algebra-and-trigonometry-2e/pages/6-1-exponential-functions">OpenStax · Algebra and Trigonometry 2e, Exponential Functions</a></li><li><a href="https://docs.python.org/3/library/math.html#power-and-logarithmic-functions">Python 공식 문서 · 지수와 로그</a></li></ul>
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

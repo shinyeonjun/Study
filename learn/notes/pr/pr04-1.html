@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>확률변수 · 한 값의 확률과 누적확률 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="PR04-1">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">확률 · 확률변수와 평균 · PR04</p>
+<p class="chap-num">PR04·1</p>
+<h1>확률변수 · 한 값의 확률과 누적확률</h1>
+<p class="lead">동전 두 번의 결과 HT와 TH는 순서가 다르지만 앞면 개수는 같습니다. 원래 결과를 수로 바꾸는 규칙을 세운 다음, 정확히 한 값일 확률과 그 값까지 모은 확률을 나란히 읽습니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul>
+<li>원래 결과·확률변수 값·사건을 구별한다.</li>
+<li>이산 확률변수의 확률질량함수와 누적분포함수를 만든다.</li>
+<li>경계가 포함되는지 확인하며 구간의 확률을 계산한다.</li>
+</ul></div>
+<h2>결과를 수로 바꾸는 규칙</h2>
+<p>동전을 두 번 던지고 앞면을 H, 뒷면을 T로 적습니다. 순서를 기록할 때 <a href="../../unit.html?u=PR01">표본공간</a>은 {HH, HT, TH, TT}입니다. 앞면과 뒷면의 확률이 각각 1/2이고 한 번의 결과가 다음 결과의 확률을 바꾸지 않는다고 가정합니다. 이 모형에서는 네 결과의 확률이 각각 1/4입니다.</p>
+<div class="box"><p class="box-k">정의</p><p><b class="key">확률변수</b>는 표본공간의 각 결과에 실수 하나를 붙이는 함수입니다. <code>X</code>를 앞면 개수라고 정하면 <code>X(HT) = 1</code>입니다. 함수 X의 규칙은 정해져 있지만 실제로 어느 결과가 나오느냐에 따라 얻게 될 값이 달라집니다. <code>{X = 1}</code>은 앞면이 하나 나오는 <b>사건</b>이며, HT와 TH를 함께 가리킵니다.</p></div>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 228" role="img" aria-label="공정한 동전 두 번의 결과 네 개를 각각 앞면 개수로 대응한다. TT의 앞면 수는 0, HT와 TH는 1, HH는 2다.">
+<text class="f-cap" x="163" y="31" text-anchor="middle">순서를 기록한 결과 ω</text><text class="f-cap" x="586" y="31" text-anchor="middle">앞면 개수 X(ω)</text><rect class="f-box" x="83" y="50" width="160" height="29"/><text class="f-t" x="163" y="69" text-anchor="middle">TT</text><line class="f-line" x1="252" y1="64" x2="500" y2="69" marker-end="url(#f-arrow)"/>
+<rect class="f-box" x="83" y="89" width="160" height="29"/><text class="f-t" x="163" y="108" text-anchor="middle">HT</text><line class="f-line" x1="252" y1="103" x2="500" y2="124" marker-end="url(#f-arrow)"/>
+<rect class="f-box" x="83" y="128" width="160" height="29"/><text class="f-t" x="163" y="147" text-anchor="middle">TH</text><line class="f-line" x1="252" y1="142" x2="500" y2="124" marker-end="url(#f-arrow)"/>
+<rect class="f-box" x="83" y="167" width="160" height="29"/><text class="f-t" x="163" y="186" text-anchor="middle">HH</text><line class="f-line" x1="252" y1="181" x2="500" y2="179" marker-end="url(#f-arrow)"/><rect class="f-soft" x="513" y="54" width="146" height="33"/><text class="f-cap" x="586" y="74" text-anchor="middle">0</text>
+<rect class="f-soft" x="513" y="109" width="146" height="33"/><text class="f-cap" x="586" y="129" text-anchor="middle">1</text>
+<rect class="f-soft" x="513" y="164" width="146" height="33"/><text class="f-cap" x="586" y="184" text-anchor="middle">2</text>
+</svg>
+<figcaption>두 결과 HT와 TH는 서로 다르지만 같은 값 1로 모입니다.</figcaption>
+</figure>
+<p>이렇게 가능한 값을 유한 개 또는 셀 수 있게 나열할 수 있는 변수를 <b class="key">이산 확률변수</b>라고 합니다. 앞면 개수는 {0, 1, 2}, 작업을 마칠 때까지 시도한 횟수는 {1, 2, 3, …}으로 나열할 수 있습니다. 값이 꼭 정수일 필요는 없습니다. 결과가 0.5점 또는 1.5점 중 하나뿐이면 이산입니다.</p>
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+
+<h2>정확히 그 값일 확률</h2>
+<p>가능한 값마다 확률을 쓰면 <b class="key">확률질량함수</b>(probability mass function, PMF)가 됩니다. 기호를 <code>p(x) = P(X = x)</code>로 씁니다. 대문자 X는 결과를 수로 바꾸는 함수이고, 소문자 x는 지금 묻는 수를 뜻합니다.</p>
+<div class="table-wrap"><table>
+<tr><th scope="col">물어보는 값 x</th><th scope="col">사건 {X = x}</th><th scope="col">확률 p(x)</th></tr>
+<tr><td>0</td><td>{TT}</td><td>1/4</td></tr>
+<tr><td>1</td><td>{HT, TH}</td><td>1/4 + 1/4 = 1/2</td></tr>
+<tr><td>2</td><td>{HH}</td><td>1/4</td></tr>
+</table></div>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 285" role="img" aria-label="앞면 수 0, 1, 2의 확률질량 높이가 각각 0.25, 0.50, 0.25인 줄기 그래프.">
+<text class="f-cap" x="42" y="22" text-anchor="start">확률질량 p(x)</text><line class="f-ink" x1="106" y1="33" x2="106" y2="218"/><line class="f-ink" x1="106" y1="218" x2="683" y2="218"/><line class="f-ink" x1="99" y1="218" x2="106" y2="218"/><text class="f-s" x="89" y="222" text-anchor="end">0.00</text>
+<line class="f-ink" x1="99" y1="178" x2="106" y2="178"/><text class="f-s" x="89" y="182" text-anchor="end">0.25</text><line class="f-dash" x1="108" y1="178" x2="674" y2="178"/>
+<line class="f-ink" x1="99" y1="138" x2="106" y2="138"/><text class="f-s" x="89" y="142" text-anchor="end">0.50</text><line class="f-dash" x1="108" y1="138" x2="674" y2="138"/>
+<line class="f-ink" x1="99" y1="98" x2="106" y2="98"/><text class="f-s" x="89" y="102" text-anchor="end">0.75</text><line class="f-dash" x1="108" y1="98" x2="674" y2="98"/>
+<line class="f-ink" x1="99" y1="58" x2="106" y2="58"/><text class="f-s" x="89" y="62" text-anchor="end">1.00</text><line class="f-dash" x1="108" y1="58" x2="674" y2="58"/><line class="f-ink" x1="208" y1="218" x2="208" y2="225"/><text class="f-t" x="208" y="246" text-anchor="middle">0</text>
+<line class="f-ink" x1="389" y1="218" x2="389" y2="225"/><text class="f-t" x="389" y="246" text-anchor="middle">1</text>
+<line class="f-ink" x1="570" y1="218" x2="570" y2="225"/><text class="f-t" x="570" y="246" text-anchor="middle">2</text><text class="f-cap" x="396" y="270" text-anchor="middle">앞면 수 x (개)</text><line class="f-line" x1="208" y1="218" x2="208" y2="178"/><circle class="f-fill" cx="208" cy="178" r="5"/><text class="f-cap" x="208" y="166" text-anchor="middle">0.25</text>
+<line class="f-line" x1="389" y1="218" x2="389" y2="138"/><circle class="f-fill" cx="389" cy="138" r="5"/><text class="f-cap" x="389" y="126" text-anchor="middle">0.50</text>
+<line class="f-line" x1="570" y1="218" x2="570" y2="178"/><circle class="f-fill" cx="570" cy="178" r="5"/><text class="f-cap" x="570" y="166" text-anchor="middle">0.25</text>
+</svg>
+<figcaption>세 점의 높이를 더하면 1입니다. 값 사이를 선으로 잇지 않습니다.</figcaption>
+</figure>
+<p>어느 값의 확률도 음수가 될 수 없고 전체를 합하면 1입니다. 앞면 1.5개는 가능하지 않아 <code>p(1.5) = 0</code>입니다. 값 0, 1, 2에 똑같이 1/3을 줄 수는 없습니다. 값 1에 대응하는 원래 결과가 둘이기 때문입니다. 원래 결과들의 확률이 다르면 경우의 수를 세는 대신 해당 결과들의 확률을 하나씩 더합니다.</p>
+<div class="check" data-q="q3"></div>
+<div class="check" data-q="q4"></div>
+
+<h2>그 값까지 모은 확률</h2>
+<p><b class="key">누적분포함수</b>(cumulative distribution function, CDF)는 <code>F(x) = P(X ≤ x)</code>입니다. x보다 작거나 <em>같은</em> 값의 확률을 모두 더합니다. <code>F(1)</code>은 <code>p(0) + p(1) = 1/4 + 1/2 = 3/4</code>입니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 285" role="img" aria-label="앞면 수의 누적 확률 계단. 0 미만은 0, 0 이상 1 미만은 0.25, 1 이상 2 미만은 0.75, 2 이상은 1이다. 각 점프에서 높은 쪽 점이 포함된다.">
+<text class="f-cap" x="42" y="22" text-anchor="start">누적확률 F(x)</text><line class="f-ink" x1="106" y1="33" x2="106" y2="218"/><line class="f-ink" x1="106" y1="218" x2="683" y2="218"/><line class="f-ink" x1="99" y1="218" x2="106" y2="218"/><text class="f-s" x="89" y="222" text-anchor="end">0.00</text>
+<line class="f-ink" x1="99" y1="178" x2="106" y2="178"/><text class="f-s" x="89" y="182" text-anchor="end">0.25</text><line class="f-dash" x1="108" y1="178" x2="674" y2="178"/>
+<line class="f-ink" x1="99" y1="138" x2="106" y2="138"/><text class="f-s" x="89" y="142" text-anchor="end">0.50</text><line class="f-dash" x1="108" y1="138" x2="674" y2="138"/>
+<line class="f-ink" x1="99" y1="98" x2="106" y2="98"/><text class="f-s" x="89" y="102" text-anchor="end">0.75</text><line class="f-dash" x1="108" y1="98" x2="674" y2="98"/>
+<line class="f-ink" x1="99" y1="58" x2="106" y2="58"/><text class="f-s" x="89" y="62" text-anchor="end">1.00</text><line class="f-dash" x1="108" y1="58" x2="674" y2="58"/><line class="f-ink" x1="208" y1="218" x2="208" y2="225"/><text class="f-t" x="208" y="246" text-anchor="middle">0</text>
+<line class="f-ink" x1="389" y1="218" x2="389" y2="225"/><text class="f-t" x="389" y="246" text-anchor="middle">1</text>
+<line class="f-ink" x1="570" y1="218" x2="570" y2="225"/><text class="f-t" x="570" y="246" text-anchor="middle">2</text><text class="f-cap" x="396" y="270" text-anchor="middle">앞면 수 x (개)</text><line class="f-line" x1="120" y1="218" x2="208" y2="218"/>
+<line class="f-line" x1="208" y1="178" x2="389" y2="178"/>
+<line class="f-line" x1="389" y1="98" x2="570" y2="98"/>
+<line class="f-line" x1="570" y1="58" x2="673" y2="58"/><circle class="f-box" cx="208" cy="218" r="5"/><circle class="f-fill" cx="208" cy="178" r="5"/>
+<circle class="f-box" cx="389" cy="178" r="5"/><circle class="f-fill" cx="389" cy="98" r="5"/>
+<circle class="f-box" cx="570" cy="98" r="5"/><circle class="f-fill" cx="570" cy="58" r="5"/>
+</svg>
+<figcaption>빈 점은 포함되지 않습니다. x가 정수에 도달하면 그 값의 확률이 즉시 포함됩니다.</figcaption>
+</figure>
+<p><code>F(1.5)</code>에도 값 0과 1이 포함되므로 역시 3/4입니다. x를 키워도 전에 더한 값을 빼지 않으므로 누적확률은 줄어들지 않습니다. 이 예에서는 2에 도달하면 가능한 값을 전부 포함해 1이 됩니다. 점마다 뛰어오르는 높이는 그 점의 PMF와 같습니다. 그래프에서 1의 바로 왼쪽은 1/4이고, 1에서 3/4가 되므로 점프 높이 1/2가 바로 <code>P(X = 1)</code>입니다.</p>
+<div class="box ex"><p class="box-k">이어지는 구간의 확률</p><p><code>P(0 &lt; X ≤ 2) = F(2) − F(0) = 1 − 1/4 = 3/4</code>입니다. F(0)을 빼면 값 0도 빠집니다. 일반적으로 <code>P(a &lt; X ≤ b) = F(b) − F(a)</code>이고, 양 끝을 어느 쪽에서 포함하는지 먼저 읽습니다.</p></div>
+<pre data-example="python"><code>from collections import Counter
+from fractions import Fraction
+from itertools import product
+
+outcomes = list(product("HT", repeat=2))
+counts = Counter(outcome.count("H") for outcome in outcomes)
+pmf = {x: Fraction(n, len(outcomes)) for x, n in sorted(counts.items())}
+assert sum(pmf.values()) == 1
+
+for x in (0, 1, 1.5, 2):
+    exact = pmf.get(x, 0)
+    cumulative = sum(p for value, p in pmf.items() if value &lt;= x)
+    print(f"x={x}: p(x)={exact}, F(x)={cumulative}")</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>x=0: p(x)=1/4, F(x)=1/4
+x=1: p(x)=1/2, F(x)=3/4
+x=1.5: p(x)=0, F(x)=3/4
+x=2: p(x)=1/4, F(x)=1</code></pre>
+<p><code>product</code>는 두 자리의 가능한 순서쌍을 모두 만듭니다. <code>Fraction</code>으로 분수를 정확하게 계산합니다. 이 코드는 공정하다는 가정 아래의 확률을 계산한 것입니다. 실제 동전을 던져 얻은 횟수나 비율은 실험마다 달라질 수 있습니다.</p>
+<div class="check" data-q="q5"></div>
+<div class="check" data-q="q6"></div>
+<div class="check" data-q="q7"></div>
+<div class="check" data-q="q8"></div>
+
+<div class="why"><p class="box-k">왜 그럴까?</p><p><code>p(1.5) = 0</code>과 <code>F(1.5) = 3/4</code>가 동시에 맞는 이유를 설명해 보세요.</p><details><summary>모범 답 보기</summary><p>앞면이 1.5개 나오는 결과는 없지만, 앞면이 1.5개 이하인 경우는 세 결과 TT, HT, TH입니다. 질문 하나는 정확히 같은 값, 다른 하나는 그 값까지 얻는 사건을 묻습니다.</p></details></div>
+
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table>
+<tr><th scope="col">표현</th><th scope="col">읽는 방법</th></tr>
+<tr><td><b class='key'>X(HT) = 1</b></td><td>결과 HT에 붙은 수는 1</td></tr>
+<tr><td><b class='key'>{X = 1}</b></td><td>수 1을 얻는 원래 결과 전체의 사건</td></tr>
+<tr><td><b class='key'>p(x)</b></td><td>정확히 x가 나올 확률</td></tr>
+<tr><td><b class='key'>F(x)</b></td><td>x까지 포함한 누적확률</td></tr>
+</table></div>
+<p>다음 장에서는 이 확률표를 가중치로 써서 평균과 분산을 계산합니다.</p>
+<p class="small">공식 참고 자료 <a href="https://ocw.mit.edu/courses/6-041sc-probabilistic-systems-analysis-and-applied-probability-fall-2013/pages/unit-i/lecture-5/">MIT OpenCourseWare · 이산 확률변수와 PMF</a> · <a href="https://ocw.mit.edu/courses/6-041-probabilistic-systems-analysis-and-applied-probability-fall-2010/38d3b9902b014854fb64736d8829c3d0_mHfn_7ym6to.pdf">MIT OpenCourseWare · CDF 강의록</a></p>
+<h2>확인 문제</h2>
+<p>본문에서 풀지 않은 문제가 여기에 나옵니다. 결과를 예측한 뒤 필요하면 코드로 검산합니다.</p>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

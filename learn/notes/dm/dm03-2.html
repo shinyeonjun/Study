@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>순서를 빼고 세기: 조합과 이항계수 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="DM03-2">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">논리·이산수학·증명 · DM03 경우의 수</p>
+<p class="chap-num">DM03·2</p>
+<h1>순서를 빼고 세기: 조합과 이항계수</h1>
+<p class="lead">발표 순서를 정하는 대신 4명에서 3명의 팀을 뽑습니다. 같은 팀에서 순서를 바꿔 쓴 목록을 한 번으로 세는 법을 배우고, 두 결과가 있는 반복 시행의 경우의 수로 연결합니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>조합 공식을 순열의 중복을 제거하는 방식으로 설명한다.</li><li>이항계수를 같은 수의 선택 위치를 세는 데 사용한다.</li><li>중복 허용과 순서 포함 여부를 나누어 모델을 고른다.</li></ul></div>
+
+<h2>순열 안에 같은 팀이 여러 번 있다</h2>
+<p>4명 중 3명의 발표 순서를 정하면 24가지였습니다. 순서를 무시하고 팀만 정할 때는 (A, B, C)와 (B, C, A)가 같은 결과입니다. 사람 A, B, C로 만들 수 있는 순서는 여섯 가지입니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 152" role="img" aria-label="A, B, C로 이루어진 팀에는 ABC, ACB, BAC, BCA, CAB, CBA 여섯 순서가 대응한다.">
+<text class="f-t f-b" x="380" y="30" text-anchor="middle">세 사람이 있는 집합 {A, B, C}</text><rect class="f-soft" x="56" y="58" width="76" height="48" rx="3"/><text class="f-t" x="94" y="88" text-anchor="middle">ABC</text><rect class="f-soft" x="170" y="58" width="76" height="48" rx="3"/><text class="f-t" x="208" y="88" text-anchor="middle">ACB</text><rect class="f-soft" x="284" y="58" width="76" height="48" rx="3"/><text class="f-t" x="322" y="88" text-anchor="middle">BAC</text><rect class="f-soft" x="398" y="58" width="76" height="48" rx="3"/><text class="f-t" x="436" y="88" text-anchor="middle">BCA</text><rect class="f-soft" x="512" y="58" width="76" height="48" rx="3"/><text class="f-t" x="550" y="88" text-anchor="middle">CAB</text><rect class="f-soft" x="626" y="58" width="76" height="48" rx="3"/><text class="f-t" x="664" y="88" text-anchor="middle">CBA</text><text class="f-s" x="379" y="138" text-anchor="middle">이 순서들은 같은 세 사람을 고른 결과다</text>
+</svg><figcaption>선택된 팀 하나마다 서로 다른 발표 순서가 정확히 3!개다.</figcaption></figure>
+<p>같은 24가지 순서 안에서 모든 팀은 똑같이 3!번 등장합니다. 따라서 팀의 수는 24 ÷ 6 = 4입니다. n개에서 r개를 중복 없이 고르고 순서를 무시하는 수를 <b class="key">조합</b>이라고 합니다.</p>
+<p class="calc">C(n, r) = P(n, r) ÷ r! = n! ÷ (r! (n−r)!)</p>
+<p>0 ≤ r ≤ n을 가정합니다. <code>C(n, r)</code>를 “n개 중 r개”라고 읽고 <b>이항계수</b>라고도 부릅니다. 고르는 것과 남겨 두는 것은 일대일 대응이므로 C(n, r) = C(n, n−r)입니다.</p>
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+<h2>두 종류 결과가 나오는 자리 정하기</h2>
+<p>세 번 검사해서 각 검사 결과를 성공 S 또는 실패 F로 적습니다. 정확히 한 번 성공하는 기록은 SFF, FSF, FFS입니다. 성공 자리를 3개 중 1개 고르면 남은 자리는 실패로 확정됩니다. C(3, 1) = 3입니다.</p>
+<div class="box ex"><p class="box-k">풀이 예제</p><p>5번 검사 중 정확히 2번 성공인 기록의 수를 구합니다.</p><p class="calc">① 5개 자리에서 성공할 위치 두 개를 고른다.<br>② 어떤 위치를 먼저 골랐는지는 기록에 남지 않는다.<br>③ C(5, 2) = 5×4 ÷ (2×1) = 10.</p><p>이 계산은 기록의 개수입니다. 각 기록이 나올 확률을 계산하려면 성공 확률과 시행 사이의 관계를 더 알아야 합니다.</p></div>
+<div class="check" data-q="q3"></div>
+<pre data-example="python"><code>from itertools import combinations, product
+from math import comb
+
+teams = [&quot;&quot;.join(team) for team in combinations(&quot;ABCD&quot;, 3)]
+records = [row for row in product(&quot;SF&quot;, repeat=5) if row.count(&quot;S&quot;) == 2]
+print(teams)
+print(len(records), comb(5, 2))</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>['ABC', 'ABD', 'ACD', 'BCD']
+10 10</code></pre>
+<h2>한 대상을 포함하는지 나누면 파스칼 관계</h2>
+<p>5명에서 두 사람을 고르는 팀을 A가 들어간 팀과 A가 빠진 팀으로 나눕니다. A가 들어가면 4명 중 1명만 더 고릅니다. A가 빠지면 나머지 4명에서 2명을 고릅니다. 두 갈래는 겹치지 않습니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 160" role="img" aria-label="A를 포함하는 팀 4개와 제외한 팀 6개로 나누면 5명 중 두 사람을 고르는 10팀이 된다.">
+<rect class="f-box" x="42" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="135" y="61" text-anchor="middle">A 포함</text><text class="f-s" x="135" y="89" text-anchor="middle">A를 한 자리로 고정</text><text class="f-s" x="135" y="110" text-anchor="middle">C(4,1) = 4</text><line class="f-line" x1="235" y1="84" x2="278" y2="84" marker-end="url(#f-arrow)"/><rect class="f-soft" x="287" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="380" y="61" text-anchor="middle">A 제외</text><text class="f-s" x="380" y="89" text-anchor="middle">다른 네 명만 사용</text><text class="f-s" x="380" y="110" text-anchor="middle">C(4,2) = 6</text><line class="f-line" x1="480" y1="84" x2="523" y2="84" marker-end="url(#f-arrow)"/><rect class="f-box" x="532" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="625" y="61" text-anchor="middle">두 갈래 합</text><text class="f-s" x="625" y="89" text-anchor="middle">4 + 6 = 10</text><text class="f-s" x="625" y="110" text-anchor="middle">C(5,2) 검산</text>
+</svg><figcaption>기준 대상 하나를 정해 포함 여부로 나누면 두 합을 쉽게 셀 수 있다.</figcaption></figure>
+<p>이를 일반화하면 1 ≤ r &lt; n에서 C(n, r) = C(n−1, r−1) + C(n−1, r)입니다. 같은 수가 (a + b)<sup>n</sup>을 전개할 때도 나옵니다. 각 괄호에서 b를 고르는 위치를 r개 정하면 a<sup>n−r</sup>b<sup>r</sup> 항이 생깁니다.</p>
+<div class="check" data-q="q4"></div>
+<div class="check" data-q="q5"></div>
+<h2>중복이 허용되면 한 팀의 순서 수가 같지 않다</h2>
+<p>맛 A, B, C 중 아이스크림 두 스쿱을 사되 맛이 같아도 되고 순서는 무시한다고 합시다. AA, AB, AC, BB, BC, CC 여섯 선택입니다. 순서 있는 (A,B)와 (B,A)는 같은 선택이지만 AA는 순서를 바꾸어도 새로운 배열이 나오지 않습니다. 3²를 무조건 2!로 나누면 틀립니다.</p>
+<div class="table-wrap"><table><thead><tr><th scope="col">두 자리를 고르는 조건</th><th scope="col">A·B·C일 때 개수</th></tr></thead><tbody><tr><td>중복 불가, 순서 중요</td><td>3 × 2 = 6</td></tr><tr><td>중복 불가, 순서 무시</td><td>C(3, 2) = 3</td></tr><tr><td>중복 가능, 순서 중요</td><td>3 × 3 = 9</td></tr><tr><td>중복 가능, 순서 무시</td><td>AA, AB, AC, BB, BC, CC → 6</td></tr></tbody></table></div>
+<pre data-example="python"><code>from itertools import combinations_with_replacement
+
+choices = [&quot;&quot;.join(row) for row in combinations_with_replacement(&quot;ABC&quot;, 2)]
+print(choices)
+print(len(choices))</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>['AA', 'AB', 'AC', 'BB', 'BC', 'CC']
+6</code></pre>
+<p>같은 종류를 여러 번 골라도 되는 순서 없는 경우는 종류별 개수를 정하는 문제로 바꿀 수 있습니다. 두 스쿱이라면 각 맛의 개수는 0 이상이고 세 개의 합이 2입니다. 다음에는 가능한 기록을 셀 뿐 아니라 그 기록이 나올 확률도 계산합니다.</p>
+<div class="check" data-q="q6"></div>
+
+<h2>참고 자료</h2>
+<ul><li><a href="https://ocw.mit.edu/courses/6-042j-mathematics-for-computer-science-spring-2015/resources/mit6_042js15_textbook/">MIT OCW · Mathematics for Computer Science</a></li><li><a href="https://docs.python.org/3/library/itertools.html">Python 공식 문서 · 조합과 순열</a></li></ul>
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

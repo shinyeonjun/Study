@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>모든·어떤, 조건과 결론을 정확히 읽기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="DM02-1">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">논리·이산수학·증명 · DM02 정확한 주장</p>
+<p class="chap-num">DM02·1</p>
+<h1>모든·어떤, 조건과 결론을 정확히 읽기</h1>
+<p class="lead">“통과한 요청은 모두 검사를 받았다”는 말과 “검사를 받은 요청은 모두 통과했다”는 말은 방향이 다릅니다. 누구에 대한 주장인지, 어떤 경우에 거짓이 되는지 표시하면 코드와 논문의 조건을 더 정확히 읽을 수 있습니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>전체·존재 명제와 각각의 부정을 쓴다.</li><li>충분조건·필요조건과 역·대우를 구별한다.</li><li>원래 주장 또는 그 역을 깨는 반례를 찾는다.</li></ul></div>
+
+<h2>주장의 범위부터 표시한다</h2>
+<p>처리한 요청의 집합 U가 있고, <code>P(x)</code>가 “요청 x를 검사했다”라는 뜻이라고 합시다. “모든 요청을 검사했다”에는 범위 U와 조건 P가 들어 있습니다. U를 오늘만으로 정하는지 한 달 전체로 정하는지에 따라 같은 말의 참·거짓이 달라집니다.</p>
+<div class="table-wrap"><table><thead><tr><th scope="col">말</th><th scope="col">표기</th><th scope="col">참이라고 말하려면</th></tr></thead><tbody><tr><td><b class="key">모든</b> x가 P</td><td>∀x ∈ U, P(x)</td><td>U 안의 모든 x에서 P가 참이다.</td></tr><tr><td><b class="key">어떤</b> x가 P</td><td>∃x ∈ U, P(x)</td><td>P가 참인 x가 적어도 하나 있다. 여러 개여도 된다.</td></tr></tbody></table></div>
+<p>∀는 <b>전칭</b>, ∃는 <b>존재</b>를 나타냅니다. “모두가 참”을 부정하면 “거짓인 것이 하나 이상 있다”입니다. “하나 이상 참”을 부정하면 “모두가 거짓이다”입니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 160" role="img" aria-label="모든 x가 P라는 명제의 부정은 P가 거짓인 x가 적어도 하나 있다는 명제.">
+<rect class="f-box" x="42" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="135" y="61" text-anchor="middle">원래 주장</text><text class="f-s" x="135" y="89" text-anchor="middle">모든 x는 P다</text><text class="f-s" x="135" y="110" text-anchor="middle">∀x, P(x)</text><line class="f-line" x1="235" y1="84" x2="278" y2="84" marker-end="url(#f-arrow)"/><rect class="f-soft" x="287" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="380" y="61" text-anchor="middle">거짓임을 보이려면</text><text class="f-s" x="380" y="89" text-anchor="middle">P가 거짓인 x 하나</text><text class="f-s" x="380" y="110" text-anchor="middle">범위 U 안에서 찾는다</text><line class="f-line" x1="480" y1="84" x2="523" y2="84" marker-end="url(#f-arrow)"/><rect class="f-box" x="532" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="625" y="61" text-anchor="middle">부정</text><text class="f-s" x="625" y="89" text-anchor="middle">어떤 x는 P가 아니다</text><text class="f-s" x="625" y="110" text-anchor="middle">∃x, NOT P(x)</text>
+</svg><figcaption>전칭 명제를 깨는 한 사례를 반례라고 한다.</figcaption></figure>
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+<h2>입력 검사에 적용하기</h2>
+<p>자동 검사를 예로 들면 “모든 행이 유효하다”는 <code>all(valid)</code>, “유효하지 않은 행이 하나 이상 있다”는 <code>any(not ok for ok in valid)</code>로 쓸 수 있습니다.</p>
+<pre data-example="python"><code>status = [True, True, False, True]
+print(all(status))
+print(any(not ok for ok in status))
+print([i for i, ok in enumerate(status, start=1) if not ok])</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>False
+True
+[3]</code></pre>
+<p>빈 목록에서 <code>all([])</code>은 참이고 <code>any([])</code>는 거짓입니다. 첫 식은 주장을 깨는 행이 없고 둘째 식은 주장을 보여 줄 행이 없기 때문입니다. 실제 절차에서 “자료가 반드시 한 행 이상 있어야 한다”는 조건이 있으면 행 개수도 검사해야 합니다.</p>
+<div class="check" data-q="q3"></div>
+<h2>조건이 참일 때 무엇이 따라오나</h2>
+<p><code>P → Q</code>는 “P이면 Q”입니다. “입력한 비밀번호가 규칙 P를 만족하면 통과한다(Q)”라고 할 때 이 주장이 거짓이 되는 경우는 P가 참인데 Q가 거짓인 경우입니다. P가 거짓인 입력에서는 이 문장만으로 Q가 참인지 거짓인지 주장하지 않습니다.</p>
+<div class="table-wrap"><table><thead><tr><th scope="col">조건 P</th><th scope="col">결론 Q</th><th scope="col">P → Q</th></tr></thead><tbody><tr><td>참</td><td>참</td><td>참</td></tr><tr><td>참</td><td>거짓</td><td>거짓</td></tr><tr><td>거짓</td><td>참</td><td>참</td></tr><tr><td>거짓</td><td>거짓</td><td>참</td></tr></tbody></table></div>
+<div class="box "><p class="box-k">필요와 충분</p><p><code>P → Q</code>가 성립하면 P는 Q의 <b class="key">충분조건</b>입니다. P를 만족하면 Q까지 얻기 때문입니다. Q는 P의 <b class="key">필요조건</b>입니다. P가 성립하려면 Q가 빠질 수 없기 때문입니다. 서로 양쪽 방향이 성립할 때만 필요충분조건입니다.</p></div>
+<p>정수에서 “4의 배수이면 짝수다”가 참입니다. 4의 배수라는 조건은 짝수이기에 충분하고, 짝수라는 조건은 4의 배수이기에 필요합니다. 짝수 6은 4의 배수가 아닙니다. 따라서 “짝수이면 4의 배수다”까지 따라오지는 않습니다.</p>
+<div class="check" data-q="q4"></div>
+<div class="check" data-q="q5"></div>
+<h2>역과 대우</h2>
+<div class="table-wrap"><table><thead><tr><th scope="col">이름</th><th scope="col">형태</th><th scope="col">4의 배수 예</th></tr></thead><tbody><tr><td>원래 명제</td><td>P → Q</td><td>4의 배수이면 짝수다.</td></tr><tr><td>역</td><td>Q → P</td><td>짝수이면 4의 배수다.</td></tr><tr><td>대우</td><td>NOT Q → NOT P</td><td>짝수가 아니면 4의 배수가 아니다.</td></tr></tbody></table></div>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 160" role="img" aria-label="P→Q와 대우는 같은 실패 조건을 가지며 역은 다른 조건이다.">
+<rect class="f-box" x="42" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="135" y="61" text-anchor="middle">원래 명제</text><text class="f-s" x="135" y="89" text-anchor="middle">P → Q</text><text class="f-s" x="135" y="110" text-anchor="middle">P만 참이면 반례</text><line class="f-line" x1="235" y1="84" x2="278" y2="84" marker-end="url(#f-arrow)"/><rect class="f-soft" x="287" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="380" y="61" text-anchor="middle">같이 확인할 대우</text><text class="f-s" x="380" y="89" text-anchor="middle">NOT Q → NOT P</text><text class="f-s" x="380" y="110" text-anchor="middle">두 조건을 부정하고 순서 교환</text><line class="f-line" x1="480" y1="84" x2="523" y2="84" marker-end="url(#f-arrow)"/><rect class="f-box" x="532" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="625" y="61" text-anchor="middle">별도로 확인할 역</text><text class="f-s" x="625" y="89" text-anchor="middle">Q → P</text><text class="f-s" x="625" y="110" text-anchor="middle">6에서 거짓</text>
+</svg><figcaption>원래 명제와 대우에 대한 반례는 P는 참이고 Q는 거짓인 경우다.</figcaption></figure>
+<p>원래 명제가 거짓일 때는 P가 참, Q가 거짓입니다. 대우가 거짓이 되려면 NOT Q가 참, NOT P가 거짓이어야 하므로 바로 같은 조합입니다. 따라서 원래 명제와 대우는 항상 진리값이 같습니다. 역은 따로 살펴야 합니다.</p>
+<div class="check" data-q="q6"></div>
+<h2>주장을 한 번 써 보기</h2>
+<p>“성공한 모든 작업에는 로그가 있다”를 “작업 성공 → 로그 있음”으로 적습니다. 이를 부정하는 한 작업은 무엇인가요? 로그는 있지만 실패한 작업은 역만 반박합니다. 원래 주장을 깨려면 성공했고 로그가 없는 작업을 찾아야 합니다.</p>
+
+<h2>참고 자료</h2>
+<ul><li><a href="https://ocw.mit.edu/courses/6-042j-mathematics-for-computer-science-spring-2015/resources/mit6_042js15_textbook/">MIT OCW · Mathematics for Computer Science</a></li></ul>
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

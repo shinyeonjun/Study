@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>추정량의 편향과 변동: 한 번의 오차와 반복의 성질 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="ST02-2">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">통계와 실험 설계 · ST02 모수와 추정</p>
+<p class="chap-num">ST02·2</p>
+<h1>추정량의 편향과 변동: 한 번의 오차와 반복의 성질</h1>
+<p class="lead">같은 검사를 네 번씩 반복하면 p̂는 한 번에 0.75, 다음번에 0.5가 나올 수 있습니다. 한 번 틀린 정도와 표집을 반복했을 때 생기는 체계적 오차를 구분하고, 편향과 분산을 함께 계산합니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>편향과 추정량의 분산을 각각 정의한다.</li><li>추정량의 평균제곱오차를 편향 제곱과 분산으로 나눈다.</li><li>작은 베르누이 모형에서 두 추정 규칙을 비교한다.</li></ul></div>
+
+<h2>반복하면 추정값도 확률변수</h2>
+<p>성공확률 p인 검사를 n번 하고 성공 비율 p̂을 계산합니다. 실제 데이터가 들어오기 전에는 p̂이 어느 값일지 확정되지 않습니다. p=0.75, n=4로 고정해도 성공 횟수에 따라 p̂은 0, 0.25, 0.5, 0.75, 1 중 하나입니다.</p>
+<div class="box "><p class="box-k">정의</p><p>추정량 T의 <b class="key">편향</b>은 E[T] − θ입니다. 반복해서 평균을 내면 목표 모수 θ에 비해 얼마나 높거나 낮은지를 뜻합니다. <b class="key">분산</b> Var(T)는 매 표본에서 달라지는 T가 자신의 기대값을 중심으로 얼마나 흔들리는지를 제곱 단위로 나타냅니다.</p></div>
+<p>모형에서 가능한 모든 θ에 대해 편향이 0인 추정량을 <b>불편 추정량</b>이라고 부릅니다. 불편한 추정량도 개별 표본에서는 참값과 크게 다를 수 있습니다. 한 번 참값과 일치하는 추정값만 보고 편향이 0이라고 판단할 수도 없습니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 160" role="img" aria-label="모수는 고정되고 표본을 다시 뽑을 때 추정량의 중심과 산포를 평가한다.">
+<rect class="f-box" x="42" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="135" y="61" text-anchor="middle">모두에게 같은 모형</text><text class="f-s" x="135" y="89" text-anchor="middle">참값 θ는 고정</text><text class="f-s" x="135" y="110" text-anchor="middle">표본마다 자료가 달라진다</text><line class="f-line" x1="235" y1="84" x2="278" y2="84" marker-end="url(#f-arrow)"/><rect class="f-soft" x="287" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="380" y="61" text-anchor="middle">기대값 E[T]</text><text class="f-s" x="380" y="89" text-anchor="middle">표본을 반복한 중심</text><text class="f-s" x="380" y="110" text-anchor="middle">θ와의 차이가 편향</text><line class="f-line" x1="480" y1="84" x2="523" y2="84" marker-end="url(#f-arrow)"/><rect class="f-box" x="532" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="625" y="61" text-anchor="middle">변동 Var(T)</text><text class="f-s" x="625" y="89" text-anchor="middle">E[T] 주변의 산포</text><text class="f-s" x="625" y="110" text-anchor="middle">표본마다 흔들림</text>
+</svg><figcaption>편향은 반복 평균의 위치이고, 분산은 그 평균 주변의 퍼짐이다.</figcaption></figure>
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+<h2>베르누이 표본성공률</h2>
+<p>독립이고 성공확률 p가 같은 0·1 기록에서 E[Xᵢ] = p, Var(Xᵢ) = p(1−p)입니다. 기댓값의 선형성을 써서 E[p̂] = p입니다. 서로 독립이므로 합의 분산은 각 분산의 합입니다. 합에 1/n을 곱하는 데서 분산은 (1/n)²을 곱하므로 Var(p̂) = p(1−p)/n입니다.</p>
+<div class="box ex"><p class="box-k">풀이 예제</p><p>p=0.75, n=4일 때 p̂의 편향은 0, 분산은 0.75 × 0.25 ÷ 4 = 0.046875입니다. n=8이면 편향은 그대로 0이고 분산은 0.0234375가 됩니다. 같은 p와 독립이라는 가정에서 비교한 값입니다.</p></div>
+<div class="check" data-q="q3"></div>
+<div class="check" data-q="q4"></div>
+<h2>편향과 분산을 함께 계산하기</h2>
+<p>목표에서 떨어진 제곱 오차의 평균을 <b class="key">평균제곱오차</b>(MSE)라고 합니다.</p>
+<p class="calc">MSE(T) = E[(T − θ)²] = Var(T) + (E[T] − θ)²</p>
+<p>T − θ를 (T − E[T]) + (E[T] − θ)로 나누어 제곱합니다. 첫 항의 제곱 평균은 분산이고, 둘째는 편향의 제곱입니다. 가운데 교차항은 T − E[T]의 평균이 0이라 사라집니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 160" role="img" aria-label="평균제곱오차는 분산과 편향의 제곱의 합이다.">
+<rect class="f-box" x="42" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="135" y="61" text-anchor="middle">제곱오차 평균</text><text class="f-s" x="135" y="89" text-anchor="middle">E[(T−θ)²]</text><text class="f-s" x="135" y="110" text-anchor="middle">목표점 θ를 기준</text><line class="f-line" x1="235" y1="84" x2="278" y2="84" marker-end="url(#f-arrow)"/><rect class="f-soft" x="287" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="380" y="61" text-anchor="middle">분산 항</text><text class="f-s" x="380" y="89" text-anchor="middle">Var(T)</text><text class="f-s" x="380" y="110" text-anchor="middle">추정값 자체의 흔들림</text><line class="f-line" x1="480" y1="84" x2="523" y2="84" marker-end="url(#f-arrow)"/><rect class="f-box" x="532" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="625" y="61" text-anchor="middle">편향² 항</text><text class="f-s" x="625" y="89" text-anchor="middle">(E[T]−θ)²</text><text class="f-s" x="625" y="110" text-anchor="middle">반복 평균의 거리 제곱</text>
+</svg><figcaption>분산을 줄이면 편향이 생길 수도 있어 둘을 함께 비교한다.</figcaption></figure>
+<p>이번에는 T = (p̂ + 0.5)/2로 0.5 쪽에 당기는 규칙을 만들어 봅시다. p=0.75일 때 E[T]=0.625여서 편향 −0.125입니다. 분산은 p̂의 1/4인 0.01171875입니다. 편향의 제곱을 더하면 MSE는 0.02734375입니다. 이 p에서는 p̂보다 MSE가 작지만, p=1이면 p̂은 항상 1이고 T는 항상 0.75이므로 p̂이 맞습니다.</p>
+<div class="check" data-q="q5"></div>
+<div class="check" data-q="q6"></div>
+<h2>가능한 표본을 열거해 검산하기</h2>
+<pre data-example="python"><code>from fractions import Fraction
+from math import comb
+
+p = Fraction(3, 4)
+n = 4
+weights = [comb(n, k) * p**k * (1-p)**(n-k) for k in range(n+1)]
+raw = [Fraction(k, n) for k in range(n+1)]
+shrunk = [(v + Fraction(1, 2)) / 2 for v in raw]
+for name, values in ((&quot;p_hat&quot;, raw), (&quot;T&quot;, shrunk)):
+    center = sum(w*v for w, v in zip(weights, values))
+    variance = sum(w*(v-center)**2 for w, v in zip(weights, values))
+    mse = sum(w*(v-p)**2 for w, v in zip(weights, values))
+    print(name, float(center-p), float(variance), float(mse))</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>p_hat 0.0 0.046875 0.046875
+T -0.125 0.01171875 0.02734375</code></pre>
+<p>성공 횟수 0~4 각각에 대응하는 확률을 이항분포로 구하고, 확률을 가중치로 써 직접 평균 냈습니다. <code>Fraction</code>으로 분수를 정확히 다룬 뒤 출력할 때만 소수로 바꿨습니다. 실전의 p는 모르는 값이므로, 하나의 p에서 유리했다는 결과를 다른 모든 모수 값에서 유리하다고 해석하지 않습니다.</p>
+<h2>어떤 오차인지 먼저 말한다</h2>
+<p>추정량의 편향은 지정한 표집·모형 아래에서의 반복 특성입니다. 조사 대상이 원래 모집단과 다르거나 센서가 체계적으로 다르게 읽히면, 수식 안에서 좋은 성질을 가진 추정량도 실제 질문에 틀린 답을 낼 수 있습니다. 추정 규칙을 고치기 전에 자료 수집 구조도 확인합니다.</p>
+
+<h2>참고 자료</h2>
+<ul><li><a href="https://online.stat.psu.edu/stat415/Lesson02">Penn State STAT 415 · Estimation</a></li></ul>
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

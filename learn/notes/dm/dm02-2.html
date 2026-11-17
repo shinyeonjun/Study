@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>반례와 증명: 예시에서 일반 주장으로 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="DM02-2">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">논리·이산수학·증명 · DM02 정확한 주장</p>
+<p class="chap-num">DM02·2</p>
+<h1>반례와 증명: 예시에서 일반 주장으로</h1>
+<p class="lead">코드를 열 번 실행해 모두 맞았어도 모든 입력에서 맞는다는 결론은 아직 남아 있습니다. 반례로 틀린 주장을 가려내고, 직접증명·대우·귀류법이 각각 어떤 논리로 작동하는지 비교합니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>예와 반례의 역할을 구별한다.</li><li>정의로부터 직접증명과 대우 증명을 구성한다.</li><li>귀류법에서 어떤 가정을 모순으로 이끄는지 표시한다.</li></ul></div>
+
+<h2>반례에는 조건과 실패를 둘 다 보여야 한다</h2>
+<p>“두 홀수의 합은 홀수다”라는 주장을 봅시다. 3과 5를 택하면 둘 다 홀수이고 합 8은 짝수입니다. 범위와 조건을 만족하지만 결론이 거짓이므로 반례입니다. 2 + 5 = 7은 첫 수가 홀수가 아니어서 이 주장에 대한 반례가 될 수 없습니다.</p>
+<p>반대로 “두 홀수의 합은 짝수다”를 3 + 5, 1 + 7, 9 + 11로 확인하면 사례는 쌓입니다. 그런데 정수 전체를 보려면 모두에 공통으로 적용되는 이유를 찾아야 합니다.</p>
+<div class="check" data-q="q1"></div>
+<h2>정의를 풀어 써서 직접증명하기</h2>
+<div class="box ex"><p class="box-k">직접증명</p><p>홀수인 정수 a, b를 아무거나 택합니다. 홀수의 정의로 a = 2m + 1, b = 2n + 1인 정수 m, n이 있습니다.</p><p class="calc">a + b = (2m + 1) + (2n + 1)<br>= 2(m + n + 1)</p><p>괄호 안은 정수이므로 합은 2의 배수, 곧 짝수입니다. 처음에 a, b를 특정 숫자로 고정하지 않았으므로 홀수 두 개 모두에 적용됩니다.</p></div>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 160" role="img" aria-label="두 홀수를 각각 2m+1과 2n+1로 쓰고 합에서 2를 묶어 짝수임을 보인다.">
+<rect class="f-box" x="42" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="135" y="61" text-anchor="middle">조건을 가정</text><text class="f-s" x="135" y="89" text-anchor="middle">a, b가 홀수</text><text class="f-s" x="135" y="110" text-anchor="middle">정의로 2m+1, 2n+1</text><line class="f-line" x1="235" y1="84" x2="278" y2="84" marker-end="url(#f-arrow)"/><rect class="f-soft" x="287" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="380" y="61" text-anchor="middle">중간 식을 바꾼다</text><text class="f-s" x="380" y="89" text-anchor="middle">합을 2로 묶는다</text><text class="f-s" x="380" y="110" text-anchor="middle">2(m+n+1)</text><line class="f-line" x1="480" y1="84" x2="523" y2="84" marker-end="url(#f-arrow)"/><rect class="f-box" x="532" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="625" y="61" text-anchor="middle">결론의 정의</text><text class="f-s" x="625" y="89" text-anchor="middle">괄호 안이 정수</text><text class="f-s" x="625" y="110" text-anchor="middle">합이 짝수</text>
+</svg><figcaption>조건의 정의에서 시작해 결론의 정의를 만족시키면 된다.</figcaption></figure>
+<div class="check" data-q="q2"></div>
+<h2>대우로 방향을 돌리기</h2>
+<p>“n²이 짝수이면 n은 짝수”를 증명합니다. 제곱에서 n으로 거슬러 올라가기보다 대우 “n이 짝수가 아니면 n²도 짝수가 아니다”를 봅니다. 정수 n이 홀수라면 n = 2k + 1이므로</p>
+<p class="calc">n² = 4k² + 4k + 1 = 2(2k² + 2k) + 1</p>
+<p>입니다. 제곱도 홀수입니다. 대우가 원래 명제와 같은 진리값을 가지므로 증명이 끝납니다. “n이 짝수이면 n²이 짝수” 역시 참이지만 이것은 원래 명제의 역이며, 이를 보인 것만으로 원래 명제를 얻을 수 없습니다.</p>
+<div class="check" data-q="q3"></div>
+<div class="check" data-q="q4"></div>
+<h2>반대편을 가정하고 모순으로 가기</h2>
+<p>정수 전체에 가장 큰 정수가 없음을 보입니다. 반대로 가장 큰 정수 M이 있다고 가정합니다. M + 1도 정수이며 M + 1 &gt; M입니다. 가장 큰 정수라는 가정과 이를 넘어서는 정수를 얻은 사실이 서로 맞지 않습니다. 따라서 가장 큰 정수가 있다는 가정을 버립니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 160" role="img" aria-label="가장 큰 정수 M이 있다고 가정하면 정수 M+1이 더 커서 모순이 생긴다.">
+<rect class="f-box" x="42" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="135" y="61" text-anchor="middle">결론을 부정</text><text class="f-s" x="135" y="89" text-anchor="middle">가장 큰 정수 M이 있다</text><text class="f-s" x="135" y="110" text-anchor="middle">반대로 가정한다</text><line class="f-line" x1="235" y1="84" x2="278" y2="84" marker-end="url(#f-arrow)"/><rect class="f-soft" x="287" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="380" y="61" text-anchor="middle">가정에서 진행</text><text class="f-s" x="380" y="89" text-anchor="middle">M + 1도 정수</text><text class="f-s" x="380" y="110" text-anchor="middle">M보다 크다</text><line class="f-line" x1="480" y1="84" x2="523" y2="84" marker-end="url(#f-arrow)"/><rect class="f-box" x="532" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="625" y="61" text-anchor="middle">모순</text><text class="f-s" x="625" y="89" text-anchor="middle">M이 최대라는 말과 충돌</text><text class="f-s" x="625" y="110" text-anchor="middle">가정이 거짓</text>
+</svg><figcaption>정수 전체라는 범위를 유지해야 M+1을 쓸 수 있다.</figcaption></figure>
+<p>범위를 “1 이상 10 이하인 정수”로 바꾸면 최대가 10입니다. 이때 M + 1은 여전히 정수이지만 지정한 범위 밖입니다. 논리 자체가 아닌 주장 범위가 달라진 것입니다.</p>
+<div class="check" data-q="q5"></div>
+<h2>코드로 오류 찾기와 증명 구별하기</h2>
+<pre data-example="python"><code>def claim(n):
+    return n ** 2 &gt; n
+
+failures = [n for n in range(-3, 4) if not claim(n)]
+print(failures)
+print(all(claim(n) for n in range(2, 8)))</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>[0, 1]
+True</code></pre>
+<p>정수 0과 1에서 부등식이 실패하므로 “모든 정수 n에서 n² &gt; n”은 거짓입니다. 2부터 7까지 성공했다는 두 번째 출력은 그 범위의 검사입니다. “모든 n ≥ 2”를 보이려면 n(n − 1) &gt; 0을 이용하면 됩니다. n ≥ 2이면 n도, n − 1도 양수이기 때문입니다.</p>
+<div class="check" data-q="q6"></div>
+<h2>쓴 증명을 검토하는 질문</h2>
+<p>첫째 범위와 조건을 적었는가. 둘째 각 등호와 논리 방향을 설명할 수 있는가. 셋째 결론 자체를 중간에 슬쩍 가정하지 않았는가. 마지막으로 반례를 찾을 때는 범위 밖 값을 고르지 않았는가. 다른 사람이 한 줄씩 따라갈 수 있도록 적으면 빠진 전제를 찾기 쉽습니다.</p>
+
+<h2>참고 자료</h2>
+<ul><li><a href="https://ocw.mit.edu/courses/6-042j-mathematics-for-computer-science-spring-2015/resources/mit6_042js15_textbook/">MIT OCW · Mathematics for Computer Science</a></li></ul>
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

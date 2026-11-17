@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>모수·통계량·우도: 관측을 잘 설명하는 값을 찾기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="ST02-1">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">통계와 실험 설계 · ST02 모수와 추정</p>
+<p class="chap-num">ST02·1</p>
+<h1>모수·통계량·우도: 관측을 잘 설명하는 값을 찾기</h1>
+<p class="lead">같은 장비를 네 번 검사해 성공, 성공, 실패, 성공을 기록했습니다. 이 네 건의 성공 비율은 0.75입니다. 성공확률이 실제로 얼마인지 추정하려면 데이터의 요약값, 자료가 생성되는 모형, 그 모형 아래에서 관측된 기록이 얼마나 자연스러운지를 구분합니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>모수·통계량·추정량·추정값을 구별한다.</li><li>독립 베르누이 관측의 우도를 후보별로 계산한다.</li><li>최대우도가 어떤 가정에 기대는지 설명한다.</li></ul></div>
+
+<h2>알고 싶은 값과 손에 든 값</h2>
+<p>검사 환경이 일정해서 매번 성공할 확률을 같은 p라고 가정합니다. p는 모형이 설명하고자 하는 양이며 그 실제 값은 모릅니다. 지금 손에 있는 것은 1, 1, 0, 1이라는 네 결과뿐입니다.</p>
+<div class="table-wrap"><table><thead><tr><th scope="col">용어</th><th scope="col">검사 예제</th></tr></thead><tbody><tr><td><b class="key">모수</b></td><td>모형의 미지 성공확률 p.</td></tr><tr><td>통계량</td><td>표본에서만 계산하는 양. 성공 횟수나 표본성공률.</td></tr><tr><td><b class="key">추정량</b></td><td>모수를 추정하는 데 쓰는 규칙. 예: 표본성공률 p̂ = (X₁+…+Xₙ)/n.</td></tr><tr><td>추정값</td><td>관측 데이터를 규칙에 넣은 결과. 여기서는 3/4 = 0.75.</td></tr></tbody></table></div>
+<p>표본이 바뀌면 통계량과 추정값이 바뀔 수 있습니다. 같은 장비와 조건에서 성공확률이 유지된다는 모형에서는 그때마다 p가 바뀌었다고 결론 내리지 않습니다. 어떤 시간대의 장비 기록인지, 매번 같은 조건인지부터 확인합니다.</p>
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+<h2>데이터를 고정하고 p만 바꾸기</h2>
+<p>먼저 p = 0.5일 때 순서까지 지정한 기록 (1, 1, 0, 1)이 나올 확률은 0.5 × 0.5 × (1−0.5) × 0.5 = 0.0625입니다. 독립 시행이라는 가정으로 네 기록의 확률을 곱했습니다.</p>
+<p>이제 실제 본 기록은 하나로 고정하고 p를 바꿉니다. 이때 각 후보 p에 대응해 얻는 함수를 <b class="key">우도</b>(가능도)라고 합니다.</p>
+<p class="calc">L(p) = Pₚ(X₁=1, X₂=1, X₃=0, X₄=1) = p³(1−p)</p>
+<p>가능한 데이터들을 확률로 비교할 때에는 p를 고정합니다. 우도로 후보를 비교할 때에는 데이터가 고정되고 p가 변합니다. 예를 들어 L(0.75)는 “p가 0.75일 확률”이 아니라 그 후보 아래에서 관측된 기록의 확률입니다. 그래서 후보 전체에 대한 우도의 합이 1일 필요가 없습니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 160" role="img" aria-label="기록을 고정하고 p의 후보를 하나씩 바꾸어 관측 기록의 확률을 비교한다.">
+<rect class="f-box" x="42" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="135" y="61" text-anchor="middle">기록 고정</text><text class="f-s" x="135" y="89" text-anchor="middle">1, 1, 0, 1</text><text class="f-s" x="135" y="110" text-anchor="middle">순서 있는 관측</text><line class="f-line" x1="235" y1="84" x2="278" y2="84" marker-end="url(#f-arrow)"/><rect class="f-soft" x="287" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="380" y="61" text-anchor="middle">후보 선택</text><text class="f-s" x="380" y="89" text-anchor="middle">p = 0.25 · 0.5 · 0.75</text><text class="f-s" x="380" y="110" text-anchor="middle">확률들을 곱한다</text><line class="f-line" x1="480" y1="84" x2="523" y2="84" marker-end="url(#f-arrow)"/><rect class="f-box" x="532" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="625" y="61" text-anchor="middle">우도로 비교</text><text class="f-s" x="625" y="89" text-anchor="middle">같은 기록의 L(p)</text><text class="f-s" x="625" y="110" text-anchor="middle">p의 확률을 뜻하지 않음</text>
+</svg><figcaption>후보 사이에는 같은 데이터와 같은 관측 정의를 쓴다.</figcaption></figure>
+<div class="check" data-q="q3"></div>
+<div class="check" data-q="q4"></div>
+<h2>최대우도 추정</h2>
+<pre data-example="python"><code>for p in (0, 0.25, 0.5, 0.75, 1):
+    likelihood = p ** 3 * (1 - p)
+    print(f&quot;{p:.2f} {likelihood:.6f}&quot;)</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>0.00 0.000000
+0.25 0.011719
+0.50 0.062500
+0.75 0.105469
+1.00 0.000000</code></pre>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 265" role="img" aria-label="p³(1−p)의 그래프. p가 0 또는 1이면 0이고 p가 0.75일 때 최대.">
+<line class="f-ink" x1="107" y1="200" x2="664" y2="200"/><line class="f-ink" x1="107" y1="35" x2="107" y2="200"/><text class="f-t f-b" x="96" y="25" text-anchor="start">가능도 L(p)</text><line class="f-ink" x1="107" y1="200" x2="107" y2="205"/><text class="f-s" x="107" y="222" text-anchor="middle">0</text><line class="f-ink" x1="244.5" y1="200" x2="244.5" y2="205"/><text class="f-s" x="244.5" y="222" text-anchor="middle">0.25</text><line class="f-ink" x1="382" y1="200" x2="382" y2="205"/><text class="f-s" x="382" y="222" text-anchor="middle">0.5</text><line class="f-ink" x1="519.5" y1="200" x2="519.5" y2="205"/><text class="f-s" x="519.5" y="222" text-anchor="middle">0.75</text><line class="f-ink" x1="657" y1="200" x2="657" y2="205"/><text class="f-s" x="657" y="222" text-anchor="middle">1</text><line class="f-dash" x1="107" y1="150" x2="657" y2="150"/><text class="f-s" x="97" y="154" text-anchor="end">0.04</text><line class="f-dash" x1="107" y1="100" x2="657" y2="100"/><text class="f-s" x="97" y="104" text-anchor="end">0.08</text><line class="f-dash" x1="107" y1="50" x2="657" y2="50"/><text class="f-s" x="97" y="54" text-anchor="end">0.12</text><polyline class="f-line" fill="none" points="107,200 115.59375,199.99530613422394 124.1875,199.96304512023926 132.78125,199.87728893756866 141.375,199.71389770507812 149.96875,199.45051968097687 158.5625,199.06659126281738 167.15625,198.54333698749542 175.75,197.86376953125 184.34375,197.0126897096634 192.9375,195.97668647766113 201.53125,194.74413692951202 210.125,193.30520629882812 218.71875,191.65184795856476 227.3125,189.7778034210205 235.90625,187.67860233783722 244.5,185.3515625 253.09375,182.79578983783722 261.6875,180.0121784210205 270.28125,177.00341045856476 278.875,173.77395629882812 287.46875,170.33007442951202 296.0625,166.67981147766113 304.65625,162.8330022096634 313.25,158.80126953125 321.84375,154.59802448749542 330.4375,150.23846626281738 339.03125,145.73958218097687 347.625,141.12014770507812 356.21875,136.40072643756866 364.8125,131.60367012023926 373.40625,126.75311863422394 382,121.875 390.59375,116.997030377388 399.1875,112.14871406555176 407.78125,107.36134350299835 416.375,102.66799926757812 424.96875,98.10355007648468 433.5625,93.70465278625488 442.15625,89.50975239276886 450.75,85.55908203125 459.34375,81.89466297626495 467.9375,78.56030464172363 476.53125,75.60160458087921 485.125,73.06594848632812 493.71875,71.00251019001007 502.3125,69.46225166320801 510.90625,68.49792301654816 519.5,68.1640625 528.09375,68.51699650287628 536.6875,69.61483955383301 545.28125,71.51749432086945 553.875,74.28665161132812 562.46875,77.98579037189484 571.0625,82.68017768859863 579.65625,88.43686878681183 588.25,95.32470703125 596.84375,103.41432392597198 605.4375,112.77813911437988 614.03125,123.49036037921906 622.625,135.62698364257812 631.21875,149.26579296588898 639.8125,164.48636054992676 648.40625,181.37004673480988 657,200"/><circle class="f-fill" cx="519.5" cy="68.1640625" r="4"/><text class="f-t f-b" x="513" y="47" text-anchor="middle">최대 p = 0.75</text><text class="f-s" x="382" y="249" text-anchor="middle">성공확률 후보 p</text>
+</svg><figcaption>곡선은 0과 1 사이의 p 후보 모두를 비교한 결과다.</figcaption></figure>
+<p>살펴본 후보 중 0.75의 우도가 가장 큽니다. 일반적으로 p의 범위를 [0, 1]로 두고, 독립이며 같은 p를 가진 베르누이 시행 n번에서 성공 k번이면, 최대우도 추정값은 <b class="key">p̂ = k/n</b>입니다. 양쪽 결과가 모두 있으면 (0, 1)에서 로그우도 <code>k·ln p + (n−k)·ln(1−p)</code>를 최대로 만드는 p입니다. 성공만 또는 실패만 관측했다면 각각 p=1, p=0의 경계가 최대입니다.</p>
+<div class="more"><p class="box-k">미분을 배운 뒤 검산</p><p>0 &lt; k &lt; n이면 로그우도를 p로 미분했을 때 <code>k/p − (n−k)/(1−p) = (k−np)/(p(1−p))</code>가 됩니다. 분모는 양수이고 p &lt; k/n에서 양, p &gt; k/n에서 음이므로 p=k/n이 최대입니다. 로그는 양수에서 증가하므로 같은 p가 우도도 최대화합니다.</p></div>
+<div class="check" data-q="q5"></div>
+<h2>순서를 세는 기록과 횟수만 세는 기록</h2>
+<p>이번에는 네 검사 중 정확히 세 번 성공했다는 것만 보관했다고 합시다. 가능한 실패 위치가 네 곳이므로 이 경우 우도는 <code>4·p³(1−p)</code>입니다. 계수 4는 후보 p에 따라 변하지 않아 최대가 되는 p는 그대로입니다. 왜 이전 식에 4가 없었는지 설명해 봅니다.</p>
+<div class="check" data-q="q6"></div>
+<h2>답에 모형 가정을 함께 적는다</h2>
+<p>검사 결과가 연속 시점에서 서로 강하게 관련되거나 기기 설정을 중간에 바꿨다면, 한 가지 p로 독립 시행을 묘사한 우도식을 다시 살펴야 합니다. 네 번 중 세 번의 성공은 관측 사실입니다. p = 0.75라는 최대우도 추정은 모형 아래에서 얻은 결과이고, 데이터가 달라질 때 얼마나 움직일지는 다음 장에서 봅니다.</p>
+
+<h2>참고 자료</h2>
+<ul><li><a href="https://online.stat.psu.edu/stat415/Lesson04">Penn State STAT 415 · Maximum Likelihood Estimation</a></li><li><a href="https://online.stat.psu.edu/stat415/Lesson02">Penn State STAT 415 · Estimation</a></li></ul>
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

@@ -58,6 +58,10 @@ window.BDA_CHAPTERS = {
   AL05: [
     {"id": "AL05-1", "title": "직선과 변화율: 기울기, 일차함수, 잔차", "href": "notes/al/al05-1.html"}
   ],
+  AL07: [
+    {"id": "AL07-1", "title": "지수와 지수함수: 같은 양을 더할 때와 같은 배를 곱할 때", "href": "notes/al/al07-1.html"},
+    {"id": "AL07-2", "title": "로그: 몇 번 곱했는지 거꾸로 찾기", "href": "notes/al/al07-2.html"}
+  ],
   PY01: [
     {"id": "PY01-1", "title": "print와 변수", "href": "notes/py/py01-1.html"},
     {"id": "PY01-2", "title": "값의 종류: int, float, str, bool", "href": "notes/py/py01-2.html"},
@@ -139,6 +143,46 @@ window.BDA_CHAPTERS = {
   DA08: [
     {"id": "DA08-1", "title": "모집단·표본·선택 편향: 결과를 어디까지 말할 수 있나", "href": "notes/da/da08-1.html"},
     {"id": "DA08-2", "title": "표본을 반복해서 뽑아 보면: 정확한 계산과 시뮬레이션", "href": "notes/da/da08-2.html"}
+  ],
+  DM01: [
+    {"id": "DM01-1", "title": "집합과 연산: 조건을 만족하는 행 모으기", "href": "notes/dm/dm01-1.html"},
+    {"id": "DM01-2", "title": "명제와 논리식: 기준을 코드로 옮기기", "href": "notes/dm/dm01-2.html"}
+  ],
+  DM02: [
+    {"id": "DM02-1", "title": "모든·어떤, 조건과 결론을 정확히 읽기", "href": "notes/dm/dm02-1.html"},
+    {"id": "DM02-2", "title": "반례와 증명: 예시에서 일반 주장으로", "href": "notes/dm/dm02-2.html"}
+  ],
+  DM03: [
+    {"id": "DM03-1", "title": "경우의 수를 세는 두 법칙과 순열", "href": "notes/dm/dm03-1.html"},
+    {"id": "DM03-2", "title": "순서를 빼고 세기: 조합과 이항계수", "href": "notes/dm/dm03-2.html"}
+  ],
+  PR01: [
+    {"id": "PR01-1", "title": "가능한 결과와 그중에 묻는 사건", "href": "notes/pr/pr01-1.html"}
+  ],
+  PR02: [
+    {"id": "PR02-1", "title": "조건이 주어지면 분모가 달라진다", "href": "notes/pr/pr02-1.html"},
+    {"id": "PR02-2", "title": "확률나무에서 경로를 곱하고 더하기", "href": "notes/pr/pr02-2.html"}
+  ],
+  PR03: [
+    {"id": "PR03-1", "title": "독립과 배반을 구별하기", "href": "notes/pr/pr03-1.html"},
+    {"id": "PR03-2", "title": "경고를 받은 뒤 이상일 확률", "href": "notes/pr/pr03-2.html"}
+  ],
+  PR04: [
+    {"id": "PR04-1", "title": "확률변수 · 한 값의 확률과 누적확률", "href": "notes/pr/pr04-1.html"},
+    {"id": "PR04-2", "title": "기댓값·분산과 실제 보상", "href": "notes/pr/pr04-2.html"}
+  ],
+  PR05: [
+    {"id": "PR05-1", "title": "베르누이와 이항분포: 정해진 시행에서 성공 횟수 세기", "href": "notes/pr/pr05-1.html"},
+    {"id": "PR05-2", "title": "기하분포: 첫 성공을 만날 때까지 몇 번인가", "href": "notes/pr/pr05-2.html"},
+    {"id": "PR05-3", "title": "포아송분포: 정해진 구간 안에서 몇 건인가", "href": "notes/pr/pr05-3.html"}
+  ],
+  ST01: [
+    {"id": "ST01-1", "title": "기술과 추론 · 어떤 평균을 추정하는가", "href": "notes/st/st01-1.html"},
+    {"id": "ST01-2", "title": "반복 관측·표집 편향·측정 편향", "href": "notes/st/st01-2.html"}
+  ],
+  ST02: [
+    {"id": "ST02-1", "title": "모수·통계량·우도: 관측을 잘 설명하는 값을 찾기", "href": "notes/st/st02-1.html"},
+    {"id": "ST02-2", "title": "추정량의 편향과 변동: 한 번의 오차와 반복의 성질", "href": "notes/st/st02-2.html"}
   ],
   RS01: [
     {"id": "RS01-1", "title": "질문에서 가설로: 조작적 정의와 측정", "href": "notes/rs/rs01-1.html"},
