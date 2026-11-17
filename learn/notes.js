@@ -11,13 +11,13 @@
 
 window.BDA_CHAPTERS = {
   U01: [
-    { id: "U01-1", title: "궁금함을 질문으로 바꾸기", href: "notes/u/u01-1.html" }
+    {"id": "U01-1", "title": "궁금함을 질문으로 바꾸기", "href": "notes/u/u01-1.html"}
   ],
   U03: [
-    { id: "U03-1", title: "입력·처리·출력·저장", href: "notes/u/u03-1.html" }
+    {"id": "U03-1", "title": "입력·처리·출력·저장", "href": "notes/u/u03-1.html"}
   ],
   AR01: [
-    { id: "AR01-1", title: "자연수와 0, 자리값", href: "notes/ar/ar01-1.html" }
+    {"id": "AR01-1", "title": "자연수와 0, 자리값", "href": "notes/ar/ar01-1.html"}
   ]
 };
 
