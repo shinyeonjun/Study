@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>반복 측정의 단위를 정하고 묶음으로 재표집하기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e8c'/%3E%3Cpath d='M8 22V10m8 12V14m8 8V6' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="ST10-2">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+
+<header class="chapter">
+<p class="chap-sub">통계 · ST10 시간·반복 자료</p>
+<p class="chap-num">ST10·2</p>
+<h1>반복 측정의 단위를 정하고 묶음으로 재표집하기</h1>
+<p class="lead">같은 장비의 기록이 여러 줄이어도 어떤 단위에 같은 비중을 줄지가 남습니다. 장비 전체를 다시 뽑는 방법과 시간 구간을 이어 붙이는 방법을 비교합니다.</p>
+</header>
+
+<div class="goal">
+<h2>이 장을 읽고 나면</h2>
+<ul>
+<li>같은 개체에서 얻은 여러 측정을 어떤 단위로 비교할지 정한다.</li>
+<li>개체에 같은 비중을 주는 평균과 측정별 평균을 계산한다.</li>
+<li>개체를 통째로 다시 뽑는 방법과 연속 시간 블록을 다시 뽑는 방법을 구별한다.</li>
+</ul>
+</div>
+
+<h2>시간이 다른 두 기록이 같은 장비에서 나올 수 있다</h2>
+<p>업데이트 전후의 같은 시간대에서 장비의 처리 지연을 여러 번 잽니다. 한 장비에서 나온 값은 다른 장비의 값과 같은 구조를 갖지 않을 수 있습니다. 같은 장비의 기본 처리 속도나 가까운 시간대의 부하가 여러 기록에 함께 반영됩니다. 이를 <b class="key">반복 측정</b>이라 합니다.</p>
+<p>변화량은 각 짝의 업데이트 이후 지연에서 업데이트 이전 지연을 뺍니다. A의 짝별 변화가 [−2,−2]분, B는 [−1,−1,−1,−1]분, C는 [−3,−3]분이라고 합시다. 장비마다 변화의 평균을 만들면 −2, −1, −3분입니다. 흔히 한 행을 개체 한 개로 세는 분석부터 시작할 수 있지만, 먼저 보고 싶은 효과가 장비당 비교인지 작업당 비교인지 정합니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 228" role="img" aria-label="A는 두 짝 평균 -2분, B는 네 짝 평균 -1분, C는 두 짝 평균 -3분이다.">
+<rect class="f-box" x="61" y="61" width="185" height="115" rx="3"/>
+<text class="f-cap" x="154" y="91" text-anchor="middle">장비 A</text>
+<circle class="f-fill" cx="124" cy="124" r="4"/>
+<circle class="f-fill" cx="144" cy="124" r="4"/>
+<text class="f-s" x="154" y="156" text-anchor="middle">변화 2개 · 평균 −2분</text>
+<rect class="f-soft" x="289" y="61" width="185" height="115" rx="3"/>
+<text class="f-cap" x="382" y="91" text-anchor="middle">장비 B</text>
+<circle class="f-fill" cx="352" cy="124" r="4"/>
+<circle class="f-fill" cx="372" cy="124" r="4"/>
+<circle class="f-fill" cx="392" cy="124" r="4"/>
+<circle class="f-fill" cx="412" cy="124" r="4"/>
+<text class="f-s" x="382" y="156" text-anchor="middle">변화 4개 · 평균 −1분</text>
+<rect class="f-box" x="517" y="61" width="185" height="115" rx="3"/>
+<text class="f-cap" x="610" y="91" text-anchor="middle">장비 C</text>
+<circle class="f-fill" cx="580" cy="124" r="4"/>
+<circle class="f-fill" cx="600" cy="124" r="4"/>
+<text class="f-s" x="610" y="156" text-anchor="middle">변화 2개 · 평균 −3분</text>
+<text class="f-s" x="381" y="205" text-anchor="middle">개체의 평균을 비교할 때 장비는 각각 한 값씩 기여한다.</text>
+</svg>
+<figcaption>점 하나는 전후의 짝으로부터 만든 변화량 하나다. 같은 카드의 점은 같은 장비에 속한다.</figcaption>
+</figure>
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+
+<h2>같은 수를 써도 묻는 평균이 다르면 비중이 달라진다</h2>
+<p>세 장비에 같은 비중이면 평균 변화는 (−2−1−3)/3=−2분입니다. 짝별 측정 여덟 개에 각각 같은 비중이면 (2×(−2)+4×(−1)+2×(−3))/8=−7/4=−1.75분입니다. B가 더 자주 측정됐기 때문에 둘째 결과에서 더 큰 비중을 얻습니다.</p>
+<p>개체의 평균이 대상이라면 많은 관측을 가진 개체가 결과를 지배하지 않게 계산합니다. 그렇다고 장비마다 시간을 나눠 잰 횟수를 지울 필요는 없습니다. 서로 다른 시점의 추세가 중요하다면 개체와 시간 정보를 함께 표시합니다. 단순한 전후 관찰의 변화가 업데이트의 인과효과인지는 시간대, 부하 등 다른 변화도 살펴야 합니다.</p>
+<p>같은 장비의 여러 기록을 서로 독립인 새 장비들처럼 세면, 효과의 불확실성을 실제보다 작게 추정할 수 있습니다. 장비를 동일한 모집단에서 같은 방식으로 서로 독립되게 표집했고 목표가 장비 평균이라면, <b class="key">개체 단위 부트스트랩</b>으로 장비 번호를 복원추출해 그 장비의 모든 기록을 함께 가져옵니다. 각 재표본에서 같은 평균을 다시 계산합니다. 한 장비가 두 번 뽑히면 그 장비의 전체 묶음도 두 번 들어갑니다.</p>
+<div class="check" data-q="q3"></div>
+<div class="check" data-q="q4"></div>
+
+<h2>하나의 시간열에서는 이웃한 값의 묶음을 다시 뽑는다</h2>
+<p>여러 독립 장비 대신 한 장비의 시간열 [2,3,3,5,4,6]만 있다고 합시다. 관측을 한 줄씩 복원추출하면 실제 이웃 관계가 흩어집니다. 같은 간격으로 관측된 시계열에서 <b class="key">이동 블록 부트스트랩</b>은 연속한 길이 L의 구간을 후보로 만들고, 그 구간들을 복원추출해 이어 붙입니다. 길이 6에서 L=3이면 시작 위치는 1,2,3,4입니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 242" role="img" aria-label="원래의 값 2,3,3,5,4,6에서 길이 세 칸짜리 3,5,4 블록과 2,3,3 블록을 뽑아 순서대로 연결한다.">
+<text class="f-s" x="138" y="35" text-anchor="end">원래 순서</text>
+<text class="f-s" x="138" y="168" text-anchor="end">다시 뽑음</text>
+<rect class="f-box" x="157" y="49" width="74" height="36" rx="3"/>
+<text class="f-t" x="194" y="72" text-anchor="middle">2</text>
+<rect class="f-box" x="237" y="49" width="74" height="36" rx="3"/>
+<text class="f-t" x="274" y="72" text-anchor="middle">3</text>
+<rect class="f-box" x="317" y="49" width="74" height="36" rx="3"/>
+<text class="f-t" x="354" y="72" text-anchor="middle">3</text>
+<rect class="f-box" x="397" y="49" width="74" height="36" rx="3"/>
+<text class="f-t" x="434" y="72" text-anchor="middle">5</text>
+<rect class="f-box" x="477" y="49" width="74" height="36" rx="3"/>
+<text class="f-t" x="514" y="72" text-anchor="middle">4</text>
+<rect class="f-box" x="557" y="49" width="74" height="36" rx="3"/>
+<text class="f-t" x="594" y="72" text-anchor="middle">6</text>
+<text class="f-s" x="439" y="108" text-anchor="middle">세 번째 칸부터 세 값 → 앞쪽 블록</text>
+<text class="f-s" x="269" y="135" text-anchor="middle">첫 번째 칸부터 세 값 → 뒤쪽 블록</text>
+<rect class="f-soft" x="157" y="145" width="74" height="36" rx="3"/>
+<text class="f-t" x="194" y="168" text-anchor="middle">3</text>
+<rect class="f-soft" x="237" y="145" width="74" height="36" rx="3"/>
+<text class="f-t" x="274" y="168" text-anchor="middle">5</text>
+<rect class="f-soft" x="317" y="145" width="74" height="36" rx="3"/>
+<text class="f-t" x="354" y="168" text-anchor="middle">4</text>
+<rect class="f-box" x="397" y="145" width="74" height="36" rx="3"/>
+<text class="f-t" x="434" y="168" text-anchor="middle">2</text>
+<rect class="f-box" x="477" y="145" width="74" height="36" rx="3"/>
+<text class="f-t" x="514" y="168" text-anchor="middle">3</text>
+<rect class="f-box" x="557" y="145" width="74" height="36" rx="3"/>
+<text class="f-t" x="594" y="168" text-anchor="middle">3</text>
+<line class="f-dash" x1="393" y1="138" x2="393" y2="193"/>
+<text class="f-s" x="396" y="222" text-anchor="middle">블록 안의 순서는 유지되고 두 블록의 접합부는 달라진다.</text>
+</svg>
+<figcaption>새로 뽑을 때 각 블록 안의 시간 순서를 유지한다. 블록 사이의 연결까지 원래와 같지는 않다.</figcaption>
+</figure>
+<p>그림처럼 시작 3의 [3,5,4]와 시작 1의 [2,3,3]을 뽑으면 재표본은 [3,5,4,2,3,3]입니다. 원하는 길이를 넘으면 끝을 잘라 맞출 수 있습니다. 짧은 블록은 먼 시차의 연결을 덜 보존합니다. 너무 긴 블록은 뽑을 서로 다른 후보와 이어지는 묶음 수가 작아집니다. 이 계산은 원래 시계열이나 모형의 잔차가 해당 방법의 정상성·의존 조건에 맞을 때 사용합니다. 원자료에 강한 추세가 있으면 추세를 함께 다루는 방법을 검토합니다.</p>
+<p><a href="st08-1.html">실험의 블록</a>은 배정 전에 비교를 맞추는 방법입니다. 시간의 블록 재표집은 이미 있는 관측에서 의존성을 일부 보존하며 불확실성을 계산하는 방법입니다. 미래 예측의 적합·검증 구간을 만드는 작업은 앞 장의 시간순 절차를 사용합니다.</p>
+<div class="check" data-q="q5"></div>
+<div class="check" data-q="q6"></div>
+
+<h2>두 평균과 두 종류의 재표집 단위를 비교한다</h2>
+<pre data-example="python"><code>from fractions import Fraction
+from itertools import product
+from statistics import mean
+
+changes = [[-2, -2], [-1, -1, -1, -1], [-3, -3]]
+device_means = [mean(values) for values in changes]
+all_changes = [value for values in changes for value in values]
+print(&quot;device means:&quot;, device_means)
+print(&quot;equal devices:&quot;, mean(device_means))
+print(&quot;equal measurements:&quot;, Fraction(sum(all_changes), len(all_changes)))
+
+resampled = list(product(device_means, repeat=len(device_means)))
+means = [mean(draw) for draw in resampled]
+print(&quot;device resamples:&quot;, len(means), &quot;range:&quot;, min(means), max(means))
+
+series = [2, 3, 3, 5, 4, 6]
+length = 3
+possible = [series[i : i + length] for i in range(len(series) - length + 1)]
+drawn = possible[2] + possible[0]
+print(&quot;moving blocks:&quot;, len(possible), &quot;example:&quot;, drawn)</code></pre>
+<pre data-output><code>device means: [-2, -1, -3]
+equal devices: -2
+equal measurements: -7/4
+device resamples: 27 range: -3 -1
+moving blocks: 4 example: [3, 5, 4, 2, 3, 3]</code></pre>
+<p>세 장비에서 세 장비를 복원추출하는 순서 있는 경우를 전부 세면 27가지입니다. 마지막의 장비 평균 범위는 이 작은 예의 가능한 결과값을 본 것입니다. 실제 모집단에 대한 신뢰구간을 보고하기에는 이 예의 독립 장비 수가 적습니다.</p>
+
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table>
+<thead><tr><th scope="col">자료 구조</th><th scope="col">재표집이나 평균에 필요한 단위</th></tr></thead>
+<tbody>
+<tr><td>독립 개체와 개체 내 반복</td><td>개체를 다시 뽑고 그 개체의 자료를 함께 움직인다.</td></tr>
+<tr><td>한 개의 시간 과정</td><td>목적과 정상성 등을 확인하고 연속하는 구간 단위로 다시 뽑을 수 있다.</td></tr>
+<tr><td>개체별 또는 활동별 평균</td><td>어느 대상에 같은 비중을 주었는지 기록한다.</td></tr>
+</tbody>
+</table></div>
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://doi.org/10.1111/j.1467-9868.2007.00593.x">Field·Welsh (2007) · 군집 자료의 부트스트랩</a></li>
+<li><a href="https://doi.org/10.1214/aos/1176347265">Künsch (1989) · 정상 시간 자료의 블록 재표집</a></li>
+</ul>
+
+
+<h2>확인 문제</h2>
+<p>아직 풀지 않은 문제입니다. 먼저 식이나 근거를 적어 보고 해설을 확인합니다.</p>
+<div id="quiz"></div>
+
+<section class="work" id="tools"></section>
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

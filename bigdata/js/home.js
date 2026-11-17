@@ -74,7 +74,7 @@
     wrap.textContent = "";
     B.SUBJECTS.forEach(function (sub, si) {
       var blk = el("section", "area-block"), head = el("div", "area-head");
-      head.appendChild(el("span", "acode", String(si + 1)));
+      head.appendChild(el("span", "acode", sub.code || String(si + 1)));
       head.appendChild(el("h3", "", sub.title || sub.name));
       var prog = el("span", "adepth");
       head.appendChild(prog);

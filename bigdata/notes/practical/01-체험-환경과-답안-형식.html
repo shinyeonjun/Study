@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>문제를 풀기 전에 제출할 답을 확인한다 · 빅분기 노트</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="5-01">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">빅분기 노트</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">빅분기 실기 · 시험 환경과 답안</p>
+<p class="chap-num">5-01</p>
+<h1>문제를 풀기 전에 제출할 답을 확인한다</h1>
+<p class="lead">계산이 맞아도 다른 칸에 쓰거나, 파일이 요구한 모양과 다르면 답을 전달하지 못합니다. 공식 체험을 열면 무엇을 어디에 적는지부터 구별합니다.</p>
+</header>
+
+<div class="goal">
+<h2>이 장을 읽고 나면</h2>
+<ul>
+<li>공식 체험에서 풀이 화면과 제출 화면의 역할을 찾는다.</li>
+<li>유형별로 제출하는 것이 숫자 답인지 CSV 생성 코드인지 구별한다.</li>
+<li>계산값을 마지막에 제출 형식으로 바꾸고 자릿수를 확인한다.</li>
+</ul>
+</div>
+
+<h2>공식 체험은 절차를 한 번 직접 실행하는 곳이다</h2>
+<p>한국데이터산업진흥원의 실기 체험에는 문제를 읽는 곳, 코드를 쓰는 곳, 실행한 결과를 확인하는 곳이 있습니다. 처음 열면 문제에서 제공한 데이터 이름과 열 설명, 언어 선택, 실행과 제출 위치를 차례로 찾습니다. 체험의 예시는 코드 작성과 실행, 제출을 연습하기 위한 자료라 본시험의 출제 경향을 보장하지 않습니다. 체험에는 저장 기능이 제공되지 않으므로 여러 화면을 오갈 때 작성한 코드를 잃을 수 있습니다.</p>
+<p>사용할 수 있는 패키지는 회차별로 달라질 수 있습니다. 공식 체험의 언어별 기본 코드로 설치 목록을 확인해 보고, 실제 응시 전에 데이터자격검정 공지의 이용 안내를 확인합니다. 이 책은 Python으로 풉니다. 이 장 아래의 연습은 모두 새로 만든 합성 값이라 체험 화면에 보이는 원문 문제와 별도로 풀 수 있습니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 190" role="img" aria-label="제1·3유형은 풀이 화면에서 코드를 실행해 확인한 뒤 별도 답안 화면에 소문항 답을 입력한다. 제2유형은 CSV를 생성하는 코드를 제출한다.">
+<rect class="f-box" x="65" y="43" width="166" height="96" rx="3"/>
+<text class="f-cap" x="148" y="74" text-anchor="middle">풀이 화면</text>
+<text class="f-s" x="148" y="102" text-anchor="middle">코드 실행</text>
+<text class="f-s" x="148" y="123" text-anchor="middle">결과 · 에러 확인</text>
+<line class="f-line" x1="235" y1="75" x2="354" y2="59" marker-end="url(#f-arrow)"/>
+<line class="f-line" x1="235" y1="112" x2="354" y2="136" marker-end="url(#f-arrow)"/>
+<text class="f-s" x="298" y="53" text-anchor="middle">제1·3유형</text>
+<text class="f-s" x="298" y="143" text-anchor="middle">제2유형</text>
+<rect class="f-soft" x="360" y="31" width="333" height="56" rx="3"/>
+<text class="f-cap" x="526.5" y="55" text-anchor="middle">별도 답안 화면</text>
+<text class="f-s" x="526.5" y="76" text-anchor="middle">소문항 답을 순서대로 입력</text>
+<rect class="f-box" x="360" y="108" width="333" height="56" rx="3"/>
+<text class="f-cap" x="526.5" y="132" text-anchor="middle">풀이 화면에서 코드 제출</text>
+<text class="f-s" x="526.5" y="153" text-anchor="middle">코드가 지정한 CSV를 생성</text>
+</svg>
+<figcaption>콘솔에서 값을 보았다는 사실과 그 값이 제출되었다는 사실을 구별한다.</figcaption>
+</figure>
+<h2>답이 들어갈 칸과 파일을 먼저 적어 둔다</h2>
+<div class="table-wrap"><table>
+<thead><tr><th scope="col">유형</th><th scope="col">공식 체험에서 확인할 점</th><th scope="col">이 책에서 해 볼 일</th></tr></thead>
+<tbody>
+<tr><td>제1유형</td><td>데이터를 가공해 각 계산 결과를 지시한 형식으로 별도 화면에 입력</td><td>결측 처리 → 그룹 집계 → 정수·소수 답</td></tr>
+<tr><td>제2유형</td><td>학습용 자료로 적합하고 평가용 데이터의 결과를 CSV로 만드는 코드를 제출</td><td>분류 확률과 회귀 예측을 각각 만들고 열·순서·행 수 검사</td></tr>
+<tr><td>제3유형</td><td>검정통계량이나 p값 등의 소문항 답을 지시 순서대로 별도 화면에 입력</td><td>독립표본 t·χ² 검정과 회귀 해석</td></tr>
+</tbody></table></div>
+<p>공식 제2유형 체험은 특정 평가 지표와 제출 파일명, 예측 열 이름, 예측 행 수를 문제 문장에 제시합니다. 본문에서 실습할 때에는 그 장이 정한 이름을 사용하고 실제 문제에 들어가면 해당 지시로 바꿉니다. 평가용 자료에 있는 식별자는 원본 순서를 확인하는 데 쓸 수 있지만, 지시가 예측 열 하나라면 그 식별자를 제출 파일에 추가하지 않습니다.</p>
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+<h2>버릴 위치와 반올림할 위치를 구별한다</h2>
+<p>계산기에서 4.761095를 얻었다고 합시다. 소수 셋째 자리까지 반올림해 적으라면 4.761입니다. 답이 0.1이어도 같은 서식으로 쓰면 <code>0.100</code>입니다. 수학적으로 같은 크기여도 답안 칸이 자릿수를 검사할 수 있습니다. 문제 문장에 정수나 소수 자리 조건이 있으면 화면에 넣기 직전에 적용합니다.</p>
+<p>예를 들어 이 장의 연습에서 ‘소수부를 버려 정수로 적는다’는 것은 0 방향으로 버린다는 뜻으로 정했습니다. −3.9는 −3입니다. ‘바닥값을 취한다’면 원래 수보다 작거나 같은 가장 큰 정수인 −4입니다. 양수에서는 둘이 같아 보이므로 음수 자료에서 특히 구분해야 합니다. 여기서는 반올림의 정확한 중간값은 절댓값이 큰 쪽으로 보내는 규칙도 따로 명시합니다. Python의 <code>round</code>는 정확한 중간값에서 짝수 쪽을 택할 수 있고, 일반 <code>float</code>는 모든 소수를 정확히 표현하지 않습니다.</p>
+<div class="check" data-q="q3"></div>
+<div class="check" data-q="q4"></div>
+<h2>계산값과 답안 문자열을 각각 출력한다</h2>
+<pre data-example="python"><code>from decimal import Decimal, ROUND_HALF_UP
+from math import floor, trunc
+
+number = Decimal(&quot;4.761095&quot;)
+exact_half = Decimal(&quot;2.345&quot;)
+print(&quot;numeric form:&quot;, number.quantize(Decimal(&quot;0.001&quot;), rounding=ROUND_HALF_UP))
+print(&quot;pad zeros:&quot;, Decimal(&quot;0.1&quot;).quantize(Decimal(&quot;0.001&quot;), rounding=ROUND_HALF_UP))
+print(&quot;tie practice:&quot;, exact_half.quantize(Decimal(&quot;0.01&quot;), rounding=ROUND_HALF_UP))
+print(&quot;negative:&quot;, trunc(-3.9), floor(-3.9))</code></pre>
+<pre data-output><code>numeric form: 4.761
+pad zeros: 0.100
+tie practice: 2.35
+negative: -3 -4</code></pre>
+<p>데이터와 검정을 계산하는 동안에는 충분한 자릿수를 유지합니다. 예를 들어 첫 소문항이 분산, 둘째가 분산으로 만든 검정통계량을 묻는다면, 둘째 계산에 넣는 값에는 원래 분산을 사용하고 제출할 때 각각 반올림합니다. 소문항에서 이미 반올림한 값을 쓰라고 명시했으면 그 지시를 따릅니다.</p>
+<div class="check" data-q="q5"></div>
+<div class="check" data-q="q6"></div>
+
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table>
+<thead><tr><th scope="col">핵심어</th><th scope="col">기억할 기준</th></tr></thead>
+<tbody>
+<tr><td><b class="key">별도 답안 화면</b></td><td>공식 체험의 제1·3유형에서 소문항 답을 입력한다.</td></tr>
+<tr><td><b class="key">CSV 생성 코드</b></td><td>공식 체험의 제2유형에서 제출한다.</td></tr>
+<tr><td><b class="key">답안 자릿수</b></td><td>중간 계산은 유지하고 지정한 형식을 마지막에 적용한다.</td></tr>
+</tbody></table></div>
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>화면을 열면 데이터 이름과 함께 마지막에 제출할 답의 모양과 위치를 적어 둔다.</p></div>
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://dataq.goorm.io/exam/3/%EC%8B%9C%ED%97%98/quiz/1">한국데이터산업진흥원 · 실기 체험 안내</a></li>
+<li><a href="https://dataq.goorm.io/exam/3/%EC%8B%9C%ED%97%98/quiz/2">한국데이터산업진흥원 · 제1유형 풀이용 체험</a></li>
+<li><a href="https://dataq.goorm.io/exam/3/%EC%8B%9C%ED%97%98/quiz/4">한국데이터산업진흥원 · 제2유형 제출용 체험</a></li>
+<li><a href="https://dataq.goorm.io/exam/3/%EC%8B%9C%ED%97%98/quiz/5">한국데이터산업진흥원 · 제3유형 풀이용 체험</a></li>
+<li><a href="https://docs.python.org/3/library/decimal.html#rounding-modes">Python 공식 문서 · Decimal의 반올림 규칙</a></li>
+</ul>
+
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"><a href="../../index.html">← 빅분기 홈</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

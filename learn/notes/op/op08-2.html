@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>중요도 추출과 가중치의 쏠림 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="OP08-2">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">수치계산·최적화·정보이론 · OP08 표본으로 계산하기</p>
+<p class="chap-num">OP08·2</p>
+<h1>중요도 추출과 가중치의 쏠림</h1>
+<p class="lead">확률이 작은 사건을 평소보다 자주 보도록 표본을 뽑고, 늘어난 빈도를 가중치로 보정합니다. 가중치를 붙여도 계산이 불안정해지는 경우를 두 상태 예제로 확인합니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul>
+<li>목표 분포와 제안 분포를 구분하고 가중치 p/q를 계산한다.</li>
+<li>제안 분포의 지지 조건이 깨지거나 가중 함수값의 분산이 커지는 경우를 구별한다.</li>
+<li>보통 중요도 추정량, 자기정규화 추정량, 가중치 기반 ESS를 구분한다.</li>
+</ul></div>
+
+<h2>다른 분포에서 뽑는 이유</h2>
+<p>장치의 고장 상태를 1, 정상 상태를 0으로 두겠습니다. 설명에 쓸 간단한 모형에서는 목표 확률 <var>p</var>에서 고장이 0.1, 정상이 0.9입니다. 고장을 세는 함수 <var>f(x)=1{x=1}</var>의 기대값은 고장 확률 0.1입니다. 목표 분포에서 바로 뽑을 수 있다면 이 함수의 평균을 계산할 수 있지만, 드문 사건이면 많은 표본이 0만 줄 수 있습니다.</p>
+<p>고장을 더 자주 내는 <b class="key">제안 분포</b> <var>q</var>에서 뽑고, 이때의 함수값에 <b class="key">중요도 가중치</b> <var>w(x)=p(x)/q(x)</var>를 곱합니다. 연속형이면 같은 위치에서의 확률밀도 비를 씁니다. 이산형에서 제안 분포가 필요한 상태를 덮으면 항마다 <var>q(x) · p(x)/q(x)=p(x)</var>이므로 다음과 같습니다.</p>
+<div class="formula">μ = Σₓ p(x)f(x) = Σₓ q(x)w(x)f(x) = E<sub>q</sub>[w(X)f(X)]</div>
+<p><var>p</var>가 정규화되어 있고 <var>q</var>에서 독립 표본을 뽑았을 때는 표본마다 먼저 곱한 <var>wᵢf(xᵢ)</var>를 합해 <var>n</var>으로 나눕니다. 이 평균의 기대값은 목표 <var>μ</var>입니다. 가중치와 함수값을 따로 평균한 뒤 곱하면 두 값이 같은 상태 <var>xᵢ</var>에서 나왔다는 정보가 사라집니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 235" role="img" aria-label="x=0,1에서 목표 p가 0.9,0.1이고 q가 0.5,0.5이면 중요도 가중치는 1.8,0.2, 지시함수는 0,1이고 가중한 기여는 0,0.2이다.">
+<rect class="f-soft" x="55" y="36" width="210" height="34"/>
+<text class="f-t" x="160" y="58" text-anchor="middle">값의 역할</text>
+<rect class="f-soft" x="265" y="36" width="220" height="34"/>
+<text class="f-t" x="375" y="58" text-anchor="middle">x = 0</text>
+<rect class="f-soft" x="485" y="36" width="220" height="34"/>
+<text class="f-t" x="595" y="58" text-anchor="middle">x = 1</text>
+<rect class="f-box" x="55" y="70" width="210" height="34"/>
+<text class="f-s" x="160" y="92" text-anchor="middle">목표 확률 p(x)</text>
+<rect class="f-box" x="265" y="70" width="220" height="34"/>
+<text class="f-s" x="375" y="92" text-anchor="middle">0.9</text>
+<rect class="f-box" x="485" y="70" width="220" height="34"/>
+<text class="f-s" x="595" y="92" text-anchor="middle">0.1</text>
+<rect class="f-box" x="55" y="104" width="210" height="34"/>
+<text class="f-s" x="160" y="126" text-anchor="middle">제안 확률 q(x)</text>
+<rect class="f-box" x="265" y="104" width="220" height="34"/>
+<text class="f-s" x="375" y="126" text-anchor="middle">0.5</text>
+<rect class="f-box" x="485" y="104" width="220" height="34"/>
+<text class="f-s" x="595" y="126" text-anchor="middle">0.5</text>
+<rect class="f-box" x="55" y="138" width="210" height="34"/>
+<text class="f-s" x="160" y="160" text-anchor="middle">가중치 w = p/q</text>
+<rect class="f-box" x="265" y="138" width="220" height="34"/>
+<text class="f-s" x="375" y="160" text-anchor="middle">1.8</text>
+<rect class="f-box" x="485" y="138" width="220" height="34"/>
+<text class="f-s" x="595" y="160" text-anchor="middle">0.2</text>
+<rect class="f-soft" x="55" y="172" width="210" height="34"/>
+<text class="f-t" x="160" y="194" text-anchor="middle">평균에 들어가는 w·f</text>
+<rect class="f-soft" x="265" y="172" width="220" height="34"/>
+<text class="f-t" x="375" y="194" text-anchor="middle">0</text>
+<rect class="f-soft" x="485" y="172" width="220" height="34"/>
+<text class="f-t" x="595" y="194" text-anchor="middle">0.2</text>
+</svg>
+<figcaption>지시함수 f는 x=1에서만 1입니다. x=0에서 큰 가중치를 받더라도 f(0)=0이라 평균에 0을 더합니다.</figcaption>
+</figure>
+<div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
+
+<h2>지지 범위와 분산을 확인하기</h2>
+<p><var>q</var>가 고장을 한 번도 제안하지 않으면 <var>p(1)f(1)=0.1</var>인 항을 되찾지 못합니다. <b class="key">지지 조건</b>은 계산하려는 합에 기여하는 곳에서 <var>q(x)&gt;0</var>이어야 한다는 조건입니다. 연속형에서는 <var>p(x)f(x)</var>의 적분에 기여하는 영역에 대해 같은 원칙을 씁니다. 다양한 함수 또는 자기정규화 추정량의 분모까지 추정하려면 <var>p(x)&gt;0</var>인 영역을 모두 덮는 조건을 사용합니다.</p>
+<p>고장을 절반씩 제안하면 <var>H=w(X)f(X)</var>의 값은 확률 1/2씩 0 또는 0.2입니다. <var>E[H]=0.1</var>, <var>E[H²]=0.02</var>이므로 분산은 <var>0.02−0.01=0.01</var>입니다. 목표에서 직접 추출한 지시함수의 분산은 <var>0.1(1−0.1)=0.09</var>입니다.</p>
+<p>반대로 <var>q(1)=0.01</var>이면 고장을 실제보다 덜 제안합니다. 고장이 나오면 가중치가 10이라 드문 한 표본의 기여가 큽니다. 이때에도 기대값은 <var>0.01·10=0.1</var>이지만 분산은 <var>0.01·10²−0.1²=0.99</var>입니다. 도해는 표본 한 개로 얻는 가중 함수값의 분산입니다. 모두 동일한 <var>n</var>개의 독립 표본으로 계산하면 <var>n</var>으로 나눈 값이 각 추정 평균의 분산입니다. 유한 분산이 있는 경우 <var>H</var>의 표본 표준편차로 평균의 표준오차를 추정할 수 있습니다. 연속 분포에서 제안이 꼬리를 지나치게 가볍게 덮으면 가중 함수값의 분산이 무한할 수도 있습니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 262" role="img" aria-label="막대는 한 표본에서 계산한 값의 분산이다. 직접 추출 0.09, 절반씩 제안 0.01, x=1을 0.01로 제안 0.99.">
+<text class="f-cap" x="257" y="31" text-anchor="start">한 표본의 가중 함수값 분산</text>
+<text class="f-s" x="230" y="74" text-anchor="end">직접 추출</text>
+<rect class="f-soft" x="257" y="50" width="35.1" height="34"/>
+<text class="f-s" x="309.1" y="74" text-anchor="start">0.09</text>
+<text class="f-s" x="230" y="129" text-anchor="end">x=1을 0.5로 제안</text>
+<rect class="f-soft" x="257" y="105" width="3.9" height="34"/>
+<text class="f-s" x="277.9" y="129" text-anchor="start">0.01</text>
+<text class="f-s" x="230" y="184" text-anchor="end">x=1을 0.01로 제안</text>
+<rect class="f-soft" x="257" y="160" width="386.1" height="34"/>
+<text class="f-s" x="660.1" y="184" text-anchor="start">0.99</text>
+<line class="f-ink" x1="257" y1="226" x2="647" y2="226"/>
+<line class="f-ink" x1="257" y1="226" x2="257" y2="232"/>
+<text class="f-s" x="257" y="250" text-anchor="middle">0</text>
+<line class="f-ink" x1="354.5" y1="226" x2="354.5" y2="232"/>
+<text class="f-s" x="354.5" y="250" text-anchor="middle">0.25</text>
+<line class="f-ink" x1="452" y1="226" x2="452" y2="232"/>
+<text class="f-s" x="452" y="250" text-anchor="middle">0.5</text>
+<line class="f-ink" x1="549.5" y1="226" x2="549.5" y2="232"/>
+<text class="f-s" x="549.5" y="250" text-anchor="middle">0.75</text>
+<line class="f-ink" x1="647" y1="226" x2="647" y2="232"/>
+<text class="f-s" x="647" y="250" text-anchor="middle">1</text>
+</svg>
+<figcaption>절반씩 제안하는 방식과 드물게 제안하는 방식은 같은 기대값을 갖지만, 적은 횟수로 계산했을 때의 산포가 다릅니다.</figcaption>
+</figure>
+<div class="check" data-q="q3"></div><div class="check" data-q="q4"></div>
+
+<h2>정규화 상수를 모를 때</h2>
+<p>사후분포처럼 <var>p</var>에 비례하는 양 <var>p̃</var>만 아는 상황이 있습니다. 이때 <var>vᵢ=p̃(xᵢ)/q(xᵢ)</var>를 써서 분자와 분모를 각각 추정합니다. 양쪽에서 같은 미지의 상수가 곱해져 있으므로 비율에서 사라집니다.</p>
+<div class="formula">자기정규화 추정량 = Σᵢ vᵢf(xᵢ) / Σᵢ vᵢ</div>
+<p>가중치 합이 양수인 경우에 정의합니다. 충분한 지지와 유한한 기댓값이 있으면 표본 수가 커질 때 목표 기대값에 가까워지지만, 유한 표본에서는 일반적으로 편향이 있습니다. 예를 들어 표본이 하나뿐이고 가중치가 양수라면 이 추정량은 그 표본의 <var>f</var>에 불과합니다. <var>q(1)=0.5</var>라면 한 표본 자기정규화 값의 기대값은 0.5입니다.</p>
+<div class="check" data-q="q5"></div><div class="check" data-q="q6"></div>
+
+<h2>유효표본크기로 가중치의 집중을 설명하기</h2>
+<p>가중치 네 개가 1.8, 1.8, 0.2, 0.2이면 정규화한 가중치는 0.45, 0.45, 0.05, 0.05입니다. 두 점의 비중이 대다수입니다. <b class="key">가중치 기반 ESS</b>는 <var>(Σᵢwᵢ)²/Σᵢwᵢ²</var>로, 이때 16/6.56 ≈ 2.439입니다. 모두 같으면 기록 수 <var>n</var>이고, 한 점에 거의 모든 가중치가 있으면 1에 가까워집니다.</p>
+<p>이 수치는 관측된 가중치의 쏠림을 요약합니다. 함수 <var>f</var>의 값이나 관측되지 않은 꼬리는 식에 없으므로, 표준오차 또는 제안 분포의 적합성을 이 값 하나로 판단할 수 없습니다. MCMC의 유효표본크기는 연쇄의 자기상관을 반영하는 다른 진단입니다.</p>
+<p class="small">실행 예제</p>
+<pre data-example="python"><code>from fractions import Fraction as F
+
+p = [F(9, 10), F(1, 10)]
+f = [0, 1]
+proposals = [p, [F(1, 2), F(1, 2)], [F(99, 100), F(1, 100)]]
+
+print(&quot;q1 mean variance&quot;)
+for q in proposals:
+    values = [p[x] / q[x] * f[x] for x in range(2)]
+    mean = sum(q[x] * values[x] for x in range(2))
+    var = sum(q[x] * (values[x] - mean) ** 2 for x in range(2))
+    print(f&quot;{float(q[1]):.2f} {float(mean):.2f} {float(var):.2f}&quot;)
+
+q = proposals[1]
+sample = [0, 0, 1, 1]
+weights = [p[x] / q[x] for x in sample]
+sum_weight = sum(weights)
+ordinary = sum(w * f[x] for w, x in zip(weights, sample)) / len(sample)
+ratio = sum(w * f[x] for w, x in zip(weights, sample)) / sum_weight
+ess = sum_weight ** 2 / sum(w ** 2 for w in weights)
+print(f&quot;ordinary={float(ordinary):.3f}, ratio={float(ratio):.3f}, ESS={float(ess):.3f}&quot;)</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>q1 mean variance
+0.10 0.10 0.09
+0.50 0.10 0.01
+0.01 0.10 0.99
+ordinary=0.100, ratio=0.100, ESS=2.439</code></pre>
+<p>첫 세 줄은 추출의 결과를 반복해서 얻는 대신 두 상태를 전부 열거한 이론값입니다. 마지막 줄은 제안 분포의 표본으로 가정한 네 기록에서 계산했습니다. 이번 표본에서 가중치 합과 표본 수가 우연히 같아 두 추정량도 일치합니다.</p>
+<div class="check" data-q="q7"></div><div class="check" data-q="q8"></div>
+
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table><thead><tr><th scope="col">개념</th><th scope="col">확인할 것</th></tr></thead><tbody>
+<tr><th scope="row"><b class="key">지지 조건</b></th><td>목표 합에 필요한 곳에서 제안 확률도 양수여야 한다.</td></tr>
+<tr><th scope="row"><b class="key">분산</b></th><td>같은 기대값도 제안 분포에 따라 다른 계산 오차를 가질 수 있다.</td></tr>
+<tr><th scope="row"><b class="key">자기정규화</b></th><td>정규화 상수를 가중합의 비로 없앤다. 가중치 ESS로 집중도를 볼 수 있다.</td></tr>
+</tbody></table></div><div class="box sum"><p class="box-k">다음 장으로</p><p><a href="op08-3.html">다음 장</a>에서는 사후 기대값을 계산하는 대신 사후분포 자체를 간단한 분포로 근사하는 목표를 살펴봅니다.</p></div>
+
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://www.deeplearningbook.org/contents/monte_carlo.html">Goodfellow·Bengio·Courville · Monte Carlo Methods</a></li>
+<li><a href="https://www.jmlr.org/papers/v25/19-556.html">Vehtari 외(2024) · 중요도 가중치와 진단</a></li>
+<li><a href="https://arxiv.org/abs/1809.04129">Elvira·Martino·Robert · 중요도추출 ESS 근사의 한계</a></li>
+</ul>
+<h2>확인 문제</h2>
+<p>직접 계산하거나 설명을 먼저 적고 답을 확인해 보세요.</p>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

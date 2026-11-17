@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>회귀 예측의 오차와 결정계수 계산하기 · 빅분기 노트</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="4-03">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">빅분기 노트</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">4과목 · 빅데이터 결과 해석</p>
+<p class="chap-num">03</p>
+<h1>회귀 예측의 오차와 결정계수 계산하기</h1>
+<p class="lead">시험 주문 세 건의 실제 처리 시간과 두 모형의 예측을 비교한다. 같은 데이터에서도 큰 오차의 영향과 비교 기준에 따라 지표가 다른 결론을 줄 수 있다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>MAE·MSE·RMSE의 값과 단위를 구한다.</li><li>R²의 분모와 음수의 의미를 해석한다.</li><li>평가용 평균과 현장에서 만들 수 있는 기준선을 분리한다.</li></ul></div>
+
+<h2>절대값과 제곱이 다른 차이를 보여 준다</h2>
+<p>시험 주문 세 건의 실제 시간은 4, 6, 8분이다. 비교할 두 후보의 예측은 아래 표와 같다. 잔차는 실제−예측으로 잡았다.</p>
+<div class="table-wrap"><table><thead><tr><th scope="col">주문</th><th scope="col">실제(분)</th><th scope="col">예측 A</th><th scope="col">잔차 A</th><th scope="col">예측 B</th><th scope="col">잔차 B</th></tr></thead><tbody><tr><td>1</td><td>4</td><td>3</td><td>1</td><td>4</td><td>0</td></tr><tr><td>2</td><td>6</td><td>9</td><td>−3</td><td>8</td><td>−2</td></tr><tr><td>3</td><td>8</td><td>8</td><td>0</td><td>6</td><td>2</td></tr></tbody></table></div>
+<p>평균절대오차(MAE)는 잔차 절대값의 평균이다. 두 후보 모두 4/3분이다. 평균제곱오차(MSE)는 A에서 (1²+3²+0²)/3=10/3분², B에서 (0²+2²+2²)/3=8/3분²이다. 제곱하면 같은 절대오차 합이어도 큰 오차가 한 건에 몰린 A의 합이 더 커진다. RMSE는 MSE의 제곱근이어서 A에서 약 1.8257분, B에서 약 1.6330분이다.</p>
+<div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 160" role="img" aria-label="회귀 잔차에서 절대오차·제곱오차와 각 단위로 진행">
+<rect class="f-box" x="42" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="135" y="61" text-anchor="middle">오차</text><text class="f-s" x="135" y="89" text-anchor="middle">실제 − 예측</text><text class="f-s" x="135" y="110" text-anchor="middle">방향과 크기</text><line class="f-line" x1="235" y1="84" x2="278" y2="84" marker-end="url(#f-arrow)"/><rect class="f-soft" x="287" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="380" y="61" text-anchor="middle">집계</text><text class="f-s" x="380" y="89" text-anchor="middle">|오차| 평균: MAE</text><text class="f-s" x="380" y="110" text-anchor="middle">오차² 평균: MSE</text><line class="f-line" x1="480" y1="84" x2="523" y2="84" marker-end="url(#f-arrow)"/><rect class="f-box" x="532" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="625" y="61" text-anchor="middle">단위</text><text class="f-s" x="625" y="89" text-anchor="middle">MAE와 RMSE: 분</text><text class="f-s" x="625" y="110" text-anchor="middle">MSE: 분²</text>
+</svg><figcaption>평균을 내면 체계적인 과대·과소 예측이 가려질 수 있어 잔차의 부호도 확인한다.</figcaption></figure>
+<h2>R²의 비교 대상은 평가 표의 평균이다</h2>
+<p>표준적인 R²는 1−(잔차 제곱합)/(평가값의 평균 주위 제곱합)이다. 평가값 4, 6, 8의 평균은 6이므로 분모는 4+0+4=8이다. A는 1−10/8=−0.25이고 B는 1−8/8=0이다. 음수면 평가 표의 평균으로 모든 행을 예측했을 때보다 잔차 제곱합이 더 크다는 뜻이다. 평가의 실제값이 모두 같으면 이 식의 분모는 0이므로 도구가 유한한 값을 대입하도록 정했는지도 확인한다.</p>
+<div class="check" data-q="q3"></div><div class="check" data-q="q4"></div>
+<p>시험 표의 평균 6은 시험 결과를 본 뒤에 구했다. 현장 배포 전에 만들 상수 기준선으로 학습 평균 5를 쓴다면, 시험의 제곱오차 합은 (4−5)²+(6−5)²+(8−5)²=11이다. 이 기준선에서는 A의 10이 더 작다. R²가 음수인 것과 배포 가능한 기준선에서 개선한 것은 함께 성립할 수 있다.</p>
+<pre data-example="python"><code>from fractions import Fraction as F
+from math import sqrt
+from statistics import mean
+
+actual = [4, 6, 8]
+sst = sum((y - mean(actual))**2 for y in actual)
+for name, model in ((&quot;A&quot;, [3, 9, 8]), (&quot;B&quot;, [4, 8, 6])):
+    errors = [y - p for y, p in zip(actual, model)]
+    sse = sum(e**2 for e in errors)
+    mae = F(sum(map(abs, errors)), len(errors))
+    mse = F(sse, len(errors))
+    r2 = 1 - F(sse, sst)
+    print(name, &quot;MAE&quot;, mae, &quot;MSE&quot;, mse, &quot;RMSE&quot;, f&quot;{sqrt(mse):.4f}&quot;, &quot;R²&quot;, r2)
+print(&quot;학습 평균 5의 SSE:&quot;, sum((y - 5)**2 for y in actual))</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>A MAE 4/3 MSE 10/3 RMSE 1.8257 R² -1/4
+B MAE 4/3 MSE 8/3 RMSE 1.6330 R² 0
+학습 평균 5의 SSE: 11</code></pre>
+<div class="check" data-q="q5"></div>
+<h2>상대 오차가 필요한 상황</h2>
+<p>MAPE는 보통 각 관측의 절대오차를 실제값의 절대값으로 나눈 뒤 평균해 백분율로 표시한다. 실제값이 0일 때는 수식이 정의되지 않고, 실제가 0에 아주 가까워도 특정 행이 지표를 지배할 수 있다. 요청 건수가 0인 날이 많은 표라면 MAE처럼 분모에 실제값을 쓰지 않는 지표를 함께 고려한다.</p>
+<div class="check" data-q="q6"></div>
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>평가 지표와 단위를 함께 적고, R²의 평균과 운영에서 쓸 기준선의 출처를 구분한다.</p></div>
+
+<h2>참고 자료</h2>
+<ul><li><a href="https://www.dataq.or.kr/www/dataq_brochure_2022.pdf">한국데이터산업진흥원 · 빅데이터분석기사 과목 안내</a></li><li><a href="https://scikit-learn.org/stable/modules/model_evaluation.html">scikit-learn · 모형 평가의 지표</a></li><li><a href="../3-modeling/03-선형회귀와-잔차.html">빅분기 교재 · 선형회귀식과 잔차</a></li><li><a href="../../../learn/notes/bd/bd03-2.html">공부 교재 · 실제 CO₂ 자료의 기준선</a></li></ul>
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"><a href="../../index.html">← 빅분기 홈</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

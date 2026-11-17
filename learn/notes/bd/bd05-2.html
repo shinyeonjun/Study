@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>시험 행 순서를 보존하며 예측 CSV 만들기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="BD05-2">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">빅데이터분석기사 연결</p>
+<p class="chap-num">BD05·2</p>
+<h1>시험 행 순서를 보존하며 예측 CSV 만들기</h1>
+<p class="lead">간단한 회귀 기준선을 적합하고, 처음 보는 범주까지 포함된 시험 표에 적용합니다. 시간 제한 연습에서는 점수 개선 전에 제출 파일을 읽어 검산하는 습관을 들입니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>그룹 평균 예측과 미등록 그룹의 대체값을 계산한다.</li><li>시험 표의 원래 행 순서와 요구 열을 보존한다.</li><li>CSV를 다시 읽어 구조와 유한한 값을 검사한다.</li></ul></div>
+
+<h2>먼저 항상 실행되는 기준선을 만든다</h2>
+<p>훈련 자료에서 서부의 처리 시간이 5, 9분이고 동부가 2, 4분이라고 합시다. 회귀의 예측값으로 각 구역의 훈련 평균을 씁니다. 서부는 7, 동부는 3입니다. 처음 보는 구역은 훈련의 전체 평균 5를 씁니다. 기준선은 이 계획을 그대로 실행한 뒤 검증 결과를 측정할 수 있는 시작점입니다.</p>
+<div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
+<div class="table-wrap"><table><thead><tr><th scope="col">시험 행 순서</th><th scope="col">주문 ID</th><th scope="col">구역</th><th scope="col">기준 예측</th></tr></thead><tbody><tr><td>1</td><td>301</td><td>서부</td><td>7</td></tr><tr><td>2</td><td>105</td><td>동부</td><td>3</td></tr><tr><td>3</td><td>220</td><td>중부</td><td>5</td></tr></tbody></table></div>
+<p>이 연습의 제출 규칙은 시험 원래 순서대로 <code>pred</code>라는 예측 열 하나와 헤더를 기록하는 것입니다. 시험 표에서 주문 ID를 정렬하면 105가 먼저 나오지만, 제출에는 그 순서를 쓰지 않습니다. ID는 예측이 어느 행에 속하는지 검증할 때만 사용합니다. 실제 문제에서 ID 열을 제출하라고 요청한다면 그 문제의 열 이름과 순서를 따릅니다.</p>
+<div class="check" data-q="q3"></div>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 160" role="img" aria-label="그룹별 회귀 기준선을 적합하고 시험 행 순서를 유지해 CSV 제출">
+<rect class="f-box" x="42" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="135" y="61" text-anchor="middle">적합</text><text class="f-s" x="135" y="89" text-anchor="middle">훈련 표로 구역별 평균</text><text class="f-s" x="135" y="110" text-anchor="middle">없는 구역은 전체 평균</text><line class="f-line" x1="235" y1="84" x2="278" y2="84" marker-end="url(#f-arrow)"/><rect class="f-soft" x="287" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="380" y="61" text-anchor="middle">예측</text><text class="f-s" x="380" y="89" text-anchor="middle">시험 표에 순서 그대로</text><text class="f-s" x="380" y="110" text-anchor="middle">dtype과 결측 확인</text><line class="f-line" x1="480" y1="84" x2="523" y2="84" marker-end="url(#f-arrow)"/><rect class="f-box" x="532" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="625" y="61" text-anchor="middle">제출 확인</text><text class="f-s" x="625" y="89" text-anchor="middle">파일을 한 번 더 읽기</text><text class="f-s" x="625" y="110" text-anchor="middle">헤더·행 수·값 대조</text>
+</svg><figcaption>평가용 행을 섞거나 배열과 행의 대응을 다른 순서로 만들면 정답을 다른 주문에 붙입니다.</figcaption></figure>
+<pre data-example="python"><code>from pathlib import Path
+from tempfile import TemporaryDirectory
+import numpy as np
+import pandas as pd
+
+train = pd.DataFrame({&quot;region&quot;: [&quot;서부&quot;, &quot;서부&quot;, &quot;동부&quot;, &quot;동부&quot;],
+                      &quot;minutes&quot;: [5, 9, 2, 4]})
+test = pd.DataFrame({&quot;order_id&quot;: [301, 105, 220],
+                     &quot;region&quot;: [&quot;서부&quot;, &quot;동부&quot;, &quot;중부&quot;]})
+regional = train.groupby(&quot;region&quot;)[&quot;minutes&quot;].mean()
+predictions = test[&quot;region&quot;].map(regional).fillna(train[&quot;minutes&quot;].mean())
+result = pd.DataFrame({&quot;pred&quot;: predictions})
+
+with TemporaryDirectory() as folder:
+    path = Path(folder) / &quot;result.csv&quot;
+    result.to_csv(path, index=False)
+    saved = pd.read_csv(path)
+    assert saved.columns.tolist() == [&quot;pred&quot;]
+    assert len(saved) == len(test)
+    assert np.isfinite(saved[&quot;pred&quot;]).all()
+    assert np.array_equal(saved[&quot;pred&quot;], predictions)
+    assert list(zip(test[&quot;order_id&quot;], saved[&quot;pred&quot;])) == [(301, 7), (105, 3), (220, 5)]
+    print(path.read_text(encoding=&quot;utf-8&quot;), end=&quot;&quot;)</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>pred
+7.0
+3.0
+5.0</code></pre>
+<div class="check" data-q="q4"></div><div class="check" data-q="q5"></div>
+<h2>시간을 재고 모형과 파일을 둘 다 확인한다</h2>
+<p>연습을 시작할 때 모형을 개선하는 시간과 마지막 제출을 점검하는 시간을 나눕니다. 시험에서는 문제에 명시한 위치에 파일을 씁니다. 이 교재 코드는 연습 중 기존 파일을 덮어쓰지 않도록 임시 폴더에 저장합니다. 새 특성을 쓰거나 모형을 교체할 때는 검증용 행에서 원래의 기준선과 같은 지표로 비교하고, 제출 직전에 전체 훈련 자료로 다시 적합할지 절차를 정리합니다. 시험 행은 예측 순서와 파일 구조를 검증하는 데 쓸 수 있지만 정답을 사용해 설정을 고르는 자료는 아닙니다.</p>
+<div class="check" data-q="q6"></div>
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>훈련으로 기준선을 만들고, 시험 행과 예측의 대응을 보존한 채 지정 형식의 CSV를 쓰고 확인합니다.</p></div>
+
+<h2>참고 자료</h2>
+<ul><li><a href="../../../bigdata/notes/practical/04-회귀-검증과-예측-CSV.html">빅분기 실기 · 회귀 검증과 예측 파일</a></li><li><a href="../../../bigdata/notes/practical/03-분류-확률-예측과-CSV.html">빅분기 실기 · 분류 확률과 예측 파일</a></li><li><a href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.to_csv.html">pandas · to_csv</a></li></ul>
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

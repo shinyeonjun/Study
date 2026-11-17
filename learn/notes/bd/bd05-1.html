@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>실측 CSV에서 조건에 맞는 값을 계산해 제출하기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="BD05-1">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">빅데이터분석기사 연결</p>
+<p class="chap-num">BD05·1</p>
+<h1>실측 CSV에서 조건에 맞는 값을 계산해 제출하기</h1>
+<p class="lead">제1유형 형식으로 마우나로아 CO₂ 표를 푸는 연습입니다. ‘2005~2014년의 전년 대비 증가량 중 큰 두 값의 평균’을 구하면서 연산 순서와 최종 출력의 차이를 확인합니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>정렬·차분·행 선택의 순서가 결과에 미치는 영향을 설명한다.</li><li>실수 조건을 원자료의 소수 자릿수에 맞춰 계산한다.</li><li>중간 검산 결과와 제출 답의 형식을 구분한다.</li></ul></div>
+
+<h2>문장에서 범위, 단위, 순서를 찾는다</h2>
+<p><a href="../../labs/mauna-loa/annual_co2.csv" download>마우나로아 연평균 CSV</a>를 코드와 같은 폴더에 둡니다. 연습 과제는 “2005~2014년 각 해의 CO₂ 연평균에서 직전 해의 연평균을 뺀다. 차이가 큰 두 해의 차이 평균을 소수 둘째 자리까지 출력한다”입니다. 이 기간에 전년보다 2.00ppm 이상 늘어난 해의 수도 중간에 확인합니다. 한 행은 한 연도이고 단위는 ppm입니다.</p>
+<p>2005년의 증가량에는 2004년 값이 필요합니다. 먼저 전체를 연도순으로 정렬해 차이를 만들고, 그 다음에 2005~2014년을 고릅니다. 원본 파일에서 첫 행만 차이를 계산할 이웃이 없습니다. 이 실습의 대상 기간에는 그 행이 들어가지 않습니다.</p>
+<div class="check" data-q="q1"></div>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 160" role="img" aria-label="2005년 증가량에 필요한 2004년 행을 보존한 다음 기간 필터 적용">
+<rect class="f-box" x="42" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="135" y="61" text-anchor="middle">정렬</text><text class="f-s" x="135" y="89" text-anchor="middle">year 오름차순</text><text class="f-s" x="135" y="110" text-anchor="middle">연도 누락·중복 확인</text><line class="f-line" x1="235" y1="84" x2="278" y2="84" marker-end="url(#f-arrow)"/><rect class="f-soft" x="287" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="380" y="61" text-anchor="middle">차분</text><text class="f-s" x="380" y="89" text-anchor="middle">현재 − 직전 해</text><text class="f-s" x="380" y="110" text-anchor="middle">2004년 값을 보존</text><line class="f-line" x1="480" y1="84" x2="523" y2="84" marker-end="url(#f-arrow)"/><rect class="f-box" x="532" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="625" y="61" text-anchor="middle">선택·집계</text><text class="f-s" x="625" y="89" text-anchor="middle">2005년부터 2014년</text><text class="f-s" x="625" y="110" text-anchor="middle">큰 두 값의 평균</text>
+</svg><figcaption>기간을 먼저 잘라 버리면 pandas의 diff에서 2005년 값이 비어 버립니다.</figcaption></figure>
+<h2>두 자리 소수는 정수 눈금으로 비교한다</h2>
+<p>농도는 소수 둘째 자리까지 기록됐습니다. 0.01ppm을 1단위로 세면 2.00ppm 이상이라는 조건을 정수 200 이상으로 비교할 수 있습니다. 텍스트를 읽을 때 <code>dtype</code>으로 농도 열을 문자열로 받은 뒤 <code>Decimal</code>로 읽어 100배 합니다. 기대한 자릿수와 값의 형식이 맞는지 검산합니다.</p>
+<div class="table-wrap"><table><thead><tr><th scope="col">경계에 필요한 기록</th><th scope="col">연평균</th><th scope="col">차이</th></tr></thead><tbody><tr><td>2004년</td><td>377.70ppm</td><td>—</td></tr><tr><td>2005년</td><td>379.98ppm</td><td>2.28ppm</td></tr><tr><td>2010년</td><td>390.10ppm</td><td>2.46ppm</td></tr><tr><td>2013년</td><td>396.74ppm</td><td>2.68ppm</td></tr></tbody></table></div>
+<div class="check" data-q="q2"></div><div class="check" data-q="q3"></div>
+<pre data-example="python"><code>from decimal import Decimal
+import pandas as pd
+
+data = pd.read_csv(&quot;annual_co2.csv&quot;, dtype={&quot;mean_ppm&quot;: str}).sort_values(&quot;year&quot;)
+assert data[&quot;year&quot;].tolist() == list(range(1990, 2020))
+
+def hundredths(text):
+    scaled = Decimal(text) * 100
+    assert scaled.is_finite() and scaled == scaled.to_integral_value()
+    return int(scaled)
+
+data[&quot;change&quot;] = data[&quot;mean_ppm&quot;].map(hundredths).astype(&quot;Int64&quot;).diff()
+window = data.loc[data[&quot;year&quot;].between(2005, 2014)]
+assert len(window) == 10 and window[&quot;change&quot;].notna().all()
+top = window.sort_values([&quot;change&quot;, &quot;year&quot;], ascending=[False, True]).head(2)
+answer = Decimal(int(top[&quot;change&quot;].sum())) / (100 * len(top))
+print(&quot;2005년 차이:&quot;, int(window[&quot;change&quot;].iloc[0]))
+print(&quot;2.00ppm 이상:&quot;, int(window[&quot;change&quot;].ge(200).sum()))
+print(&quot;상위 두 해:&quot;, *top[&quot;year&quot;])
+print(f&quot;{answer:.2f}&quot;)</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>2005년 차이: 228
+2.00ppm 이상: 6
+상위 두 해: 2013 2010
+2.57</code></pre>
+<div class="check" data-q="q4"></div>
+<h2>중간 출력으로 검산하고 제출 칸에는 필요한 값만 적는다</h2>
+<p>상위 차이는 2.68ppm과 2.46ppm입니다. 평균은 2.57ppm입니다. 지정된 답안이 숫자 하나라면 최종 칸에는 <code>2.57</code>만 넣습니다. 문제에서 동점 해의 순서를 요구할 때는 그 규칙을 적용합니다. 여기서는 차이가 같으면 연도가 먼저인 자료를 앞에 뒀습니다. 순서나 자릿수의 기준은 실제 문제 지시를 따릅니다.</p>
+<div class="check" data-q="q5"></div><div class="check" data-q="q6"></div>
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>필요한 이웃을 확보해 차이를 만들고, 범위를 선택한 다음 집계해 답의 형식을 맞춥니다.</p></div>
+
+<h2>참고 자료</h2>
+<ul><li><a href="../../../bigdata/notes/practical/01-체험-환경과-답안-형식.html">빅분기 실기 · 답안 제출 형식</a></li><li><a href="../../../bigdata/notes/practical/02-가공과-그룹-집계.html">빅분기 실기 · 제1유형 가공과 집계</a></li><li><a href="https://gml.noaa.gov/ccgg/trends/data.html">NOAA GML · 마우나로아 연평균 원자료</a></li></ul>
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

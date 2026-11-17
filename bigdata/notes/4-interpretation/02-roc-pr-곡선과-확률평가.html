@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ROC·PR 곡선과 확률의 오차 읽기 · 빅분기 노트</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="4-02">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">빅분기 노트</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">4과목 · 빅데이터 결과 해석</p>
+<p class="chap-num">02</p>
+<h1>ROC·PR 곡선과 확률의 오차 읽기</h1>
+<p class="lead">판정 임계값을 여러 곳에 두면 하나의 혼동행렬에서 곡선으로 넘어갈 수 있다. 점수를 순위로 보는 평가와 숫자를 확률로 보는 평가를 구분한다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>임계값을 바꾸며 ROC와 PR 좌표를 계산한다.</li><li>동점이 있는 점수의 ROC-AUC를 손으로 구한다.</li><li>확률 예측의 보정과 제곱오차를 설명한다.</li></ul></div>
+
+<h2>점수 하나에서 좌표 하나 만들기</h2>
+<p>여섯 주문의 모형 점수와 실제 지연 상태를 확인했다. 값이 클수록 지연이 의심된다고 하자. 점수가 임계값 이상이면 알린다. 0.8에서는 점수 0.9와 두 개의 0.8이 모두 알림 대상이다. 점수가 같은 두 주문을 임의 순서로 잘라 한 건만 넣는 기준은 이 임계값 규칙에 없다.</p>
+<div class="table-wrap"><table><thead><tr><th scope="col">주문</th><th scope="col">1</th><th scope="col">2</th><th scope="col">3</th><th scope="col">4</th><th scope="col">5</th><th scope="col">6</th></tr></thead><tbody><tr><td>점수</td><td>0.9</td><td>0.8</td><td>0.8</td><td>0.4</td><td>0.3</td><td>0.1</td></tr><tr><td>실제 지연</td><td>1</td><td>0</td><td>1</td><td>0</td><td>1</td><td>0</td></tr></tbody></table></div>
+<p>0.8에서 실제 지연 세 건 중 두 건에 알리므로 참양성률(TPR)은 2/3이다. 실제 정상 세 건 중 하나에 잘못 알리므로 거짓양성률(FPR)은 1/3이다. ROC의 가로가 FPR, 세로가 TPR이므로 이 점은 (1/3, 2/3)이다. PR은 가로가 재현율, 세로가 정밀도다. 알림 세 건 중 실제 지연이 두 건이므로 PR 좌표는 (2/3, 2/3)이다.</p>
+<div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 231" role="img" aria-label="ROC 곡선이 FPR, TPR 순으로 (0,0), (0,1/3), (1/3,2/3), (2/3,2/3), (2/3,1), (1,1)을 지남">
+<line class="f-ink" x1="125" y1="174" x2="569" y2="174"/><line class="f-ink" x1="125" y1="174" x2="125" y2="45"/><line class="f-dash" x1="125" y1="174" x2="569" y2="45"/><circle cx="125" cy="174" r="5" class="f-fill"/><line class="f-line" x1="125" y1="174" x2="125" y2="131"/><circle cx="125" cy="131" r="5" class="f-fill"/><line class="f-line" x1="125" y1="131" x2="273" y2="88"/><circle cx="273" cy="88" r="5" class="f-fill"/><line class="f-line" x1="273" y1="88" x2="421" y2="88"/><circle cx="421" cy="88" r="5" class="f-fill"/><line class="f-line" x1="421" y1="88" x2="421" y2="45"/><circle cx="421" cy="45" r="5" class="f-fill"/><line class="f-line" x1="421" y1="45" x2="569" y2="45"/><circle cx="569" cy="45" r="5" class="f-fill"/><text class="f-t" x="129" y="24" text-anchor="middle">참양성률 TPR</text><text class="f-t" x="347" y="214" text-anchor="middle">거짓양성률 FPR</text><text class="f-s" x="125" y="194" text-anchor="middle">0</text><text class="f-s" x="273" y="194" text-anchor="middle">1/3</text><text class="f-s" x="100" y="135" text-anchor="middle">1/3</text><text class="f-s" x="421" y="194" text-anchor="middle">2/3</text><text class="f-s" x="100" y="92" text-anchor="middle">2/3</text><text class="f-s" x="569" y="194" text-anchor="middle">1</text><text class="f-s" x="100" y="49" text-anchor="middle">1</text><text class="f-s" x="291" y="66" text-anchor="middle">임계값 0.8</text>
+</svg><figcaption>임계값 0.8의 점은 FPR=1/3, TPR=2/3이다. 점선은 무작위 순위의 기준 대각선이다.</figcaption></figure>
+<h2>두 주문씩 비교하는 ROC-AUC</h2>
+<p>양성 한 건과 음성 한 건을 뽑는 조합은 3×3=9개다. 양성 점수가 높으면 1점, 같으면 0.5점, 낮으면 0점이다. 양성 점수 0.9, 0.8, 0.3은 각각 3점, 2.5점, 1점을 얻는다. ROC-AUC는 6.5/9=13/18≈0.7222다. 이는 위 ROC 선분 아래의 사다리꼴 면적과 같다.</p>
+<div class="check" data-q="q3"></div><div class="check" data-q="q4"></div>
+<p>PR을 그리면 목표인 재현율에 도달하는 데 알림이 얼마나 정확해야 하는지 보기 쉽다. 이 자료에서 무작위 순위의 정밀도 기준은 양성 비율 3/6=0.5다. 다른 자료의 양성 비율이 더 낮으면 같은 TPR·FPR에서 정밀도도 더 낮아질 수 있다. PR 곡선의 선형 면적과 평균정밀도(AP)는 도구에 따라 서로 다르게 계산된다.</p>
+<div class="check" data-q="q5"></div>
+<h2>순위와 별도로 확률에 점수를 매긴다</h2>
+<p>이제 같은 0~1 점수가 실제 발생 확률로 제시됐다고 가정한다. 이진 브라이어 점수는 (예측 확률−관측값)²의 평균이고 낮을수록 좋다. 곧바로 틀린 경보를 세는 점수가 아니라 확률 하나하나에 제곱오차를 매긴다. 점수를 순서를 보존하도록 바꿔도 ROC-AUC는 같으나 확률의 브라이어 점수는 달라질 수 있다. 비슷한 확률을 낸 묶음의 실제 양성률을 보는 보정 그래프도 도움이 된다.</p>
+<pre data-example="python"><code>from fractions import Fraction as F
+
+scores = [F(x, 10) for x in (9, 8, 8, 4, 3, 1)]
+labels = [1, 0, 1, 0, 1, 0]
+pos = [s for s, y in zip(scores, labels) if y == 1]
+neg = [s for s, y in zip(scores, labels) if y == 0]
+auc = sum(F(int(p &gt; n)) + F(int(p == n), 2) for p in pos for n in neg)
+auc /= len(pos)*len(neg)
+brier = sum((s-y)**2 for s, y in zip(scores, labels))/len(labels)
+print(&quot;ROC-AUC:&quot;, auc, f&quot;{float(auc):.4f}&quot;)
+print(&quot;브라이어:&quot;, brier, f&quot;{float(brier):.4f}&quot;)</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>ROC-AUC: 13/18 0.7222
+브라이어: 9/40 0.2250</code></pre>
+<div class="check" data-q="q6"></div>
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>ROC·PR로 임계값에 따른 판정을 보고, 실제 발생 확률로 쓸 점수에는 확률 오차와 보정도 확인한다.</p></div>
+
+<h2>참고 자료</h2>
+<ul><li><a href="https://www.dataq.or.kr/www/dataq_brochure_2022.pdf">한국데이터산업진흥원 · 빅데이터분석기사 과목 안내</a></li><li><a href="https://scikit-learn.org/stable/modules/model_evaluation.html">scikit-learn · 모형 평가의 지표</a></li><li><a href="https://scikit-learn.org/stable/modules/calibration.html">scikit-learn · 확률 보정</a></li><li><a href="../../../learn/notes/ml/ml03-3.html">공부 교재 · ROC와 PR 곡선</a></li></ul>
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"><a href="../../index.html">← 빅분기 홈</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

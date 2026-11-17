@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>기울기와 결정계수, p값이 답하는 질문을 나눈다 · 빅분기 노트</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="5-06">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">빅분기 노트</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">빅분기 실기 · 제3유형 회귀 연습</p>
+<p class="chap-num">5-06</p>
+<h1>기울기와 결정계수, p값이 답하는 질문을 나눈다</h1>
+<p class="lead">작업 강도가 커질 때 작업 시간이 얼마나 달라지는지 묻습니다. 같은 회귀 결과에서도 기울기, 결정계수, p값을 지시한 자리와 단위에 맞춰 따로 읽습니다.</p>
+</header>
+
+<div class="goal">
+<h2>이 장을 읽고 나면</h2>
+<ul>
+<li>절편을 포함한 단순 선형회귀의 절편과 기울기를 구한다.</li>
+<li>잔차 제곱합과 결정계수의 뜻을 설명한다.</li>
+<li>기울기의 양측 p값을 효과의 크기와 구별해 제출한다.</li>
+</ul>
+</div>
+
+<h2>문제의 출력이 예측 파일인지 회귀 숫자인지 확인한다</h2>
+<p>이 장은 공식 제3유형 체험의 숫자 답안 절차를 회귀에 적용한 자체 연습입니다. 공식 체험에 이 회귀 예제가 출제되었다는 뜻은 아닙니다. 작업 강도 x가 [1,2,3,4,5]일 때 걸린 시간 y가 [2,4,4,5,5]분인 합성 표본을 씁니다. 절편이 있는 최소제곱 회귀에서 ① 기울기, ② 결정계수, ③ 기울기가 0이라는 가설의 양측 p값을 구해 각 숫자를 소수 셋째 자리까지 작성합니다.</p>
+<p>최소제곱식은 y의 관측치와 같은 x에서의 예측치 차이를 제곱해 더한 값을 가장 작게 만듭니다. x와 y의 평균은 3과 4입니다. 중심을 뺀 x의 제곱합은 10, x와 y 중심 편차의 곱은 합쳐 7입니다. 기울기는 7÷10=0.7, 절편은 4−0.7×3=1.9입니다. 강도가 한 단위 커질 때 이 모형의 예측 시간은 평균 관계로 0.7분 늘어납니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 241" role="img" aria-label="작업 강도가 1부터 5까지일 때 관측값은 2,4,4,5,5이고 회귀 예측은 2.6,3.3,4.0,4.7,5.4다. 회귀선과 관측 사이의 잔차를 세로로 잇는다.">
+<line class="f-ink" x1="99" y1="193" x2="686" y2="193" marker-end="url(#f-arrow)"/>
+<line class="f-ink" x1="130" y1="194" x2="130" y2="35" marker-end="url(#f-arrow)"/>
+<line class="f-ink" x1="124" y1="193" x2="130" y2="193"/>
+<text class="f-s" x="108" y="197" text-anchor="middle">0</text>
+<line class="f-ink" x1="124" y1="147" x2="130" y2="147"/>
+<text class="f-s" x="108" y="151" text-anchor="middle">2</text>
+<line class="f-ink" x1="124" y1="101" x2="130" y2="101"/>
+<text class="f-s" x="108" y="105" text-anchor="middle">4</text>
+<line class="f-ink" x1="124" y1="55" x2="130" y2="55"/>
+<text class="f-s" x="108" y="59" text-anchor="middle">6</text>
+<line class="f-ink" x1="226" y1="189" x2="226" y2="198"/>
+<text class="f-s" x="226" y="219" text-anchor="middle">1</text>
+<line class="f-ink" x1="322" y1="189" x2="322" y2="198"/>
+<text class="f-s" x="322" y="219" text-anchor="middle">2</text>
+<line class="f-ink" x1="418" y1="189" x2="418" y2="198"/>
+<text class="f-s" x="418" y="219" text-anchor="middle">3</text>
+<line class="f-ink" x1="514" y1="189" x2="514" y2="198"/>
+<text class="f-s" x="514" y="219" text-anchor="middle">4</text>
+<line class="f-ink" x1="610" y1="189" x2="610" y2="198"/>
+<text class="f-s" x="610" y="219" text-anchor="middle">5</text>
+<line class="f-line" x1="130" y1="149.3" x2="648.4000000000001" y2="62.360000000000014"/>
+<line class="f-dash" x1="226" y1="147" x2="226" y2="133.20000000000002"/>
+<circle class="f-fill" cx="226" cy="147" r="4"/>
+<line class="f-dash" x1="322" y1="101" x2="322" y2="117.10000000000001"/>
+<circle class="f-fill" cx="322" cy="101" r="4"/>
+<line class="f-dash" x1="418" y1="101" x2="418" y2="101.00000000000001"/>
+<circle class="f-fill" cx="418" cy="101" r="4"/>
+<line class="f-dash" x1="514" y1="78" x2="514" y2="84.90000000000002"/>
+<circle class="f-fill" cx="514" cy="78" r="4"/>
+<line class="f-dash" x1="610" y1="78" x2="610" y2="68.8"/>
+<circle class="f-fill" cx="610" cy="78" r="4"/>
+<text class="f-s" x="129" y="23" text-anchor="middle">시간(분)</text>
+<text class="f-s" x="639" y="226" text-anchor="middle">작업 강도</text>
+</svg>
+<figcaption>회귀선까지 세로 차이는 관측−예측 잔차다. 강도 3의 관측은 회귀선에 올라 있다.</figcaption>
+</figure>
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+<h2>잔차 제곱합과 전체 변동에서 결정계수를 구한다</h2>
+<p>예측은 [2.6,3.3,4.0,4.7,5.4]이고 관측−예측 잔차는 [−0.6,+0.7,0,+0.3,−0.4]입니다. 잔차 제곱합 <code>SSE=0.36+0.49+0+0.09+0.16=1.10</code>입니다. 전체 변동은 평균 4를 모두의 예측값으로 썼을 때의 제곱합 <code>SST=4+0+0+1+1=6</code>입니다. 이 절편 포함 모형에서 결정계수 R²는 <code>1−SSE/SST = 1−1.1/6 = 49/60≈0.8167</code>입니다.</p>
+<p>R²는 이 표본에서 평균으로 늘 같은 값을 내는 모형에 비해, 선형식이 제곱편차를 줄인 비율을 나타냅니다. 이 값을 관측 다섯 건 중 얼마나 많이 맞았는지의 비율로 읽으면 안 됩니다. 같은 식을 나중 자료에 넣었을 때의 오차도 별도로 확인해야 합니다.</p>
+<div class="check" data-q="q3"></div>
+<div class="check" data-q="q4"></div>
+<h2>표본에서 얻은 기울기의 불확실성을 계산한다</h2>
+<p>설명변수 값이 주어졌을 때 오차가 독립이고, 평균이 0이며 분산이 일정한 정규 오차를 가정합니다. 여기서 잔차 제곱합의 자유도는 표본 5개에서 절편·기울기 두 개를 뺀 3입니다. 기울기의 표준오차는 <code>√[(1.1/3)/10]≈0.1915</code>입니다. 기울기 0이 귀무가설이면 <code>t=0.7/0.1915…≈3.656</code>이고, t분포 양쪽 꼬리 p값은 약 0.03535입니다. 제출값은 <code>0.035</code>입니다.</p>
+<p>0.05에서 기각하더라도 자료에서 연관을 관측했다는 정도로 해석합니다. 작업 강도가 높은 경우 장비나 담당자가 다르게 배정됐다면 단순회귀 하나로 강도의 효과를 분리하기 어렵습니다. 과제에서 기울기를 묻는 칸에 p값을 넣으면 뜻이 바뀝니다. 범위를 벗어난 강도의 예측에는 선형 관계가 계속된다는 가정도 추가됩니다.</p>
+<div class="check" data-q="q5"></div>
+<div class="check" data-q="q6"></div>
+<h2>SciPy 기울기와 수동 잔차 계산을 대조한다</h2>
+<pre data-example="python"><code>from scipy.stats import linregress
+
+x = [1, 2, 3, 4, 5]
+y = [2, 4, 4, 5, 5]
+fit = linregress(x, y, alternative=&quot;two-sided&quot;)
+y_mean = sum(y) / len(y)
+prediction = [fit.intercept + fit.slope * xi for xi in x]
+sse = sum((o - p) ** 2 for o, p in zip(y, prediction, strict=True))
+sst = sum((o - y_mean) ** 2 for o in y)
+r_squared = 1 - sse / sst
+assert abs(r_squared - fit.rvalue**2) &lt; 1e-12
+
+print(f&quot;1. slope = {fit.slope:.3f}&quot;)
+print(f&quot;2. R2 = {r_squared:.3f}&quot;)
+print(f&quot;3. p = {fit.pvalue:.3f}&quot;)
+print(f&quot;check: intercept={fit.intercept:.3f}, SSE={sse:.3f}, SE={fit.stderr:.4f}&quot;)</code></pre>
+<pre data-output><code>1. slope = 0.700
+2. R2 = 0.817
+3. p = 0.035
+check: intercept=1.900, SSE=1.100, SE=0.1915</code></pre>
+<p><code>linregress</code>가 제공하는 <code>rvalue</code>의 제곱은 이 절편 있는 단순회귀에서 R²와 같습니다. 다중회귀에서는 각 특징과 정답의 상관계수를 제곱한 값 하나로 전체 모형의 R²를 대체할 수 없습니다.</p>
+
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table>
+<thead><tr><th scope="col">핵심어</th><th scope="col">기억할 기준</th></tr></thead>
+<tbody>
+<tr><td><b class="key">기울기</b></td><td>x가 한 단위 변할 때 예측 y가 달라지는 양이다.</td></tr>
+<tr><td><b class="key">결정계수 R²</b></td><td>이 절편 포함 회귀에서 평균 기준 대비 감소한 제곱합의 비율이다.</td></tr>
+<tr><td><b class="key">기울기의 p값</b></td><td>귀무모형과 오차 가정에서 관측한 기울기의 표준화된 극단성을 평가한다.</td></tr>
+</tbody></table></div>
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>효과의 크기에 해당하는 기울기, 적합의 정도, 가설검정 결과를 별도 값으로 적는다.</p></div>
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://dataq.goorm.io/exam/3/%EC%8B%9C%ED%97%98/quiz/5">한국데이터산업진흥원 · 제3유형 풀이용 체험</a></li>
+<li><a href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.linregress.html">SciPy 공식 문서 · 단순 선형회귀</a></li>
+<li><a href="../3-modeling/03-선형회귀와-잔차.html">빅분기 필기 · 선형회귀와 잔차</a></li>
+</ul>
+
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"><a href="../../index.html">← 빅분기 홈</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

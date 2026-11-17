@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>모형의 예측 근거와 특징 중요도 해석하기 · 빅분기 노트</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="4-06">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">빅분기 노트</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">4과목 · 빅데이터 결과 해석</p>
+<p class="chap-num">06</p>
+<h1>모형의 예측 근거와 특징 중요도 해석하기</h1>
+<p class="lead">어떤 입력을 바꾸면 모형의 점수가 변하는지 확인한다. 한 주문의 예측 근거와 여러 주문에서의 중요도, 실제 업무를 바꿨을 때의 효과를 따로 읽는다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>개별 예측의 항별 기여를 계산한다.</li><li>특징 순열 전후의 예측 오차 차이를 구한다.</li><li>상관된 특징과 인과 효과에 관한 해석 한계를 설명한다.</li></ul></div>
+
+<h2>한 주문의 예측을 항별로 읽기</h2>
+<p>모형이 예상 소요 시간을 ŷ=10+3x+2z로 계산한다고 하자. x는 묶음 수, z는 별도 확인이 필요하면 1, 아니면 0이다. 주문의 x=2, z=1이면 기본 10분에 6분과 2분을 더해 18분이다. ‘3분/묶음’은 이 모형에서 z를 고정했을 때의 예측 변화다. 실제 작업 방식을 변경했을 때의 효과를 추정하려면 개입과 비교 방법이 추가로 필요하다.</p>
+<div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 160" role="img" aria-label="정해 둔 모형에 특징 하나만 섞어 넣고 예측 오류 비교">
+<rect class="f-box" x="42" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="135" y="61" text-anchor="middle">고정 모형</text><text class="f-s" x="135" y="89" text-anchor="middle">ŷ=10+3x+2z</text><text class="f-s" x="135" y="110" text-anchor="middle">같은 검증 표</text><line class="f-line" x1="235" y1="84" x2="278" y2="84" marker-end="url(#f-arrow)"/><rect class="f-soft" x="287" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="380" y="61" text-anchor="middle">특징 하나 섞기</text><text class="f-s" x="380" y="89" text-anchor="middle">x만 다른 행과 교환</text><text class="f-s" x="380" y="110" text-anchor="middle">다른 열의 순서는 그대로</text><line class="f-line" x1="480" y1="84" x2="523" y2="84" marker-end="url(#f-arrow)"/><rect class="f-box" x="532" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="625" y="61" text-anchor="middle">오차 비교</text><text class="f-s" x="625" y="89" text-anchor="middle">원본 MAE와 비교</text><text class="f-s" x="625" y="110" text-anchor="middle">큰 증가: 이 평가에서 의존</text>
+</svg><figcaption>학습해 둔 식을 그대로 둔 채 검증 입력을 바꾼다. 특징을 제외하고 모형을 다시 적합하는 실험은 다른 질문이다.</figcaption></figure>
+<h2>한 특징을 섞었을 때 오차 증가를 본다</h2>
+<p>검증 표의 x는 [0, 1, 2, 3], z는 [0, 1, 0, 1]이고 실제값은 [10, 15, 16, 21]이다. 설명용으로 이 모형이 네 원본 행을 정확히 맞춘다. 순열 중요도에서는 한 열의 순서를 바꾸어 그 값과 원래 행의 관계를 섞은 뒤 같은 모형을 평가한다. 원본 오차를 빼서 증가분이 얼마인지 본다.</p>
+<div class="table-wrap"><table><thead><tr><th scope="col">평가 입력</th><th scope="col">예측</th><th scope="col">실제와의 절대오차</th><th scope="col">MAE</th></tr></thead><tbody><tr><td>원본</td><td>10, 15, 16, 21</td><td>0, 0, 0, 0</td><td>0</td></tr><tr><td>x 순서를 반대로</td><td>19, 18, 13, 12</td><td>9, 3, 3, 9</td><td>6</td></tr><tr><td>z 순서를 반대로</td><td>12, 13, 18, 19</td><td>2, 2, 2, 2</td><td>2</td></tr></tbody></table></div>
+<p>이 특정 순열에선 묶음 수를 섞었을 때 오차가 6분, 확인 여부를 섞었을 때 2분 커졌다. 실제 순열 중요도는 여러 번 섞고 증가의 평균과 변동을 기록한다. 평가 지표나 기간을 바꾸면 어떤 특징이 중요한지도 바뀔 수 있다.</p>
+<div class="check" data-q="q3"></div><div class="check" data-q="q4"></div>
+<pre data-example="python"><code>from statistics import mean
+
+x, z = [0, 1, 2, 3], [0, 1, 0, 1]
+actual = [10, 15, 16, 21]
+
+def mae(groups, checks):
+    predictions = [10 + 3*a + 2*b for a, b in zip(groups, checks)]
+    return mean(abs(y - p) for y, p in zip(actual, predictions))
+
+baseline = mae(x, z)
+print(&quot;원본 MAE:&quot;, baseline)
+print(&quot;x를 섞은 증가분:&quot;, mae(x[::-1], z) - baseline)
+print(&quot;z를 섞은 증가분:&quot;, mae(x, z[::-1]) - baseline)</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>원본 MAE: 0
+x를 섞은 증가분: 6
+z를 섞은 증가분: 2</code></pre>
+<h2>함께 움직이는 특징에 주의한다</h2>
+<p>입력에 묶음 수와 묶음에서 계산한 부피가 함께 들어가면 두 열이 같은 정보를 공유할 수 있다. 중요도가 어느 열에 높게 나타나는지는 모형이 이 정보를 어디에서 이용하는지에 따라 달라진다. 한 열씩만 섞으면 실제로 거의 없는 묶음 수와 부피의 조합이 생길 수도 있다. 같이 움직이는 열을 묶으면 질문은 ‘이 입력 묶음에 얼마나 의존하는가’로 바뀐다.</p>
+<div class="check" data-q="q5"></div>
+<p>업무 보고에서는 입력 시점, 집계한 표본, 성능 지표와 설명 방법을 적는다. 중요도가 높은 특징이 우연히 결과를 겪은 뒤 추가된 열이라면 설명의 의미를 넓히기 전에 누출부터 점검한다.</p>
+<div class="check" data-q="q6"></div>
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>특징을 섞어서 잰 값은 선택한 모형이 그 특징에 의존하는 정도를 보여 준다. 개입 효과에는 별도 근거가 필요하다.</p></div>
+
+<h2>참고 자료</h2>
+<ul><li><a href="https://www.dataq.or.kr/www/dataq_brochure_2022.pdf">한국데이터산업진흥원 · 빅데이터분석기사 과목 안내</a></li><li><a href="https://scikit-learn.org/stable/modules/permutation_importance.html">scikit-learn · Permutation feature importance</a></li><li><a href="../3-modeling/03-선형회귀와-잔차.html">빅분기 교재 · 다중 회귀 계수</a></li></ul>
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"><a href="../../index.html">← 빅분기 홈</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

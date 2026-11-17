@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>필터와 결측 대체를 순서대로 적용한다 · 빅분기 노트</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="5-02">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">빅분기 노트</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">빅분기 실기 · 제1유형</p>
+<p class="chap-num">5-02</p>
+<h1>필터와 결측 대체를 순서대로 적용한다</h1>
+<p class="lead">지점별 처리시간의 평균을 구하려면, 어떤 주문을 남기고 어느 값으로 빈칸을 채웠는지부터 설명할 수 있어야 합니다. 행 수가 바뀌는 지점마다 손계산과 코드를 대조합니다.</p>
+</header>
+
+<div class="goal">
+<h2>이 장을 읽고 나면</h2>
+<ul>
+<li>읽은 표에서 빈칸과 범위 밖 수치를 구분한다.</li>
+<li>필터를 적용하고 그룹별 중앙값으로 결측을 채운다.</li>
+<li>그룹 집계의 분모와 정렬 동률 기준을 확인한다.</li>
+</ul>
+</div>
+
+<h2>문제의 연산 순서를 표에 옮긴다</h2>
+<p>공식 제1유형 체험처럼, 여러 가공 결과를 관리한 뒤 각 답을 별도 화면에 입력하는 연습입니다. 출고 준비 한 건을 한 행으로 만든 여덟 건의 합성 자료를 사용합니다. <code>order_id</code>는 주문, <code>site</code>는 지점, <code>minutes</code>는 처리시간(분)입니다. 지시 순서는 다음과 같습니다.</p>
+<ol><li>기록된 처리시간이 0분 미만 또는 30분 초과라면 그 행을 제외합니다. 빈칸인 행은 따로 남깁니다.</li><li>남은 행에서 지점별 중앙값을 계산해 같은 지점의 빈칸을 채웁니다.</li><li>지점별로 채운 뒤의 행 수와 처리시간 합·평균을 구합니다. 전체 평균의 분모는 대체까지 마친 전체 주문 수입니다.</li><li>채운 뒤 처리시간이 가장 긴 주문을 찾습니다. 시간이 같은 경우 주문 번호가 작은 것이 앞섭니다.</li></ol>
+<div class="table-wrap"><table>
+<thead><tr><th scope="col">지점</th><th scope="col">원래 주문과 처리시간</th><th scope="col">제외 이후의 중앙값</th><th scope="col">빈칸을 채운 값</th></tr></thead>
+<tbody>
+<tr><td>A</td><td>101: 8, 102: 12, 103: 빈칸, 104: 60</td><td>(8+12)÷2=10</td><td>8, 12, 10</td></tr>
+<tr><td>B</td><td>105: 12, 106: 20, 107: 16, 108: 빈칸</td><td>12, 16, 20의 중앙인 16</td><td>12, 20, 16, 16</td></tr>
+</tbody></table></div>
+<p>30분은 남기는 범위의 끝이고, 60분은 제외합니다. 빈칸은 아직 값이 없는 상태입니다. 조건이 <code>between(0,30)</code> 하나라면 빈칸에도 거짓이 나와 빈칸 행이 사라질 수 있습니다. <code>isna()</code>로 만든 조건을 <code>|</code>로 합치면 빈칸을 그대로 남길 수 있습니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 183" role="img" aria-label="원래 8행에서 60분 행 하나를 제외한다. A의 남은 3행과 B의 남은 4행에서 해당 지점 중앙값으로 빈칸을 채워 7행을 유지한다.">
+<rect class="f-box" x="50" y="49" width="192" height="63" rx="3"/>
+<text class="f-cap" x="146" y="74" text-anchor="middle">원래 8행</text>
+<text class="f-s" x="146" y="100" text-anchor="middle">빈칸 포함</text>
+<rect class="f-box" x="284" y="49" width="192" height="63" rx="3"/>
+<text class="f-cap" x="380" y="74" text-anchor="middle">범위 검사 후 7행</text>
+<text class="f-s" x="380" y="100" text-anchor="middle">60분 주문 제외</text>
+<rect class="f-soft" x="518" y="49" width="192" height="63" rx="3"/>
+<text class="f-cap" x="614" y="74" text-anchor="middle">대체 후 7행</text>
+<text class="f-s" x="614" y="100" text-anchor="middle">A 3행 · B 4행</text>
+<line class="f-line" x1="244" y1="80" x2="279" y2="80" marker-end="url(#f-arrow)"/>
+<line class="f-line" x1="478" y1="80" x2="513" y2="80" marker-end="url(#f-arrow)"/>
+<text class="f-s" x="380" y="152" text-anchor="middle">중앙값 대체는 새 행을 만들지 않는다.</text>
+</svg>
+<figcaption>제외 단계에서 남긴 빈칸을 대체한다. 순서를 바꾸면 중앙값의 입력부터 바뀐다.</figcaption>
+</figure>
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+<h2>지점별 중앙값과 행별 대체 값을 계산한다</h2>
+<p><code>groupby("site")["minutes"].median()</code>은 지점 수만큼 줄어든 결과를 만듭니다. 반면 <code>transform("median")</code>은 각 주문이 속한 지점의 중앙값을 그 주문 위치에 돌려주므로 원래 행과 길이·인덱스가 맞습니다. 이를 <code>fillna</code>에 넣으면 결측만 바꿉니다. 지점에 남은 관측이 모두 결측이면 중앙값도 결측이므로, 문제에서 지시한 대체나 제외 규칙이 있는지 확인합니다. 연습 데이터에서는 두 지점 모두 관측값이 남았습니다.</p>
+<p>A는 합 8+12+10=30, 평균 10분, 행 수 3입니다. B는 합 12+20+16+16=64, 평균 16분, 행 수 4입니다. 전체 평균은 <code>94÷7≈13.429</code>분입니다. (10+16)÷2=13은 지점마다 같은 가중치를 준 수이므로 질문의 전체 주문 평균과 다릅니다.</p>
+<div class="check" data-q="q3"></div>
+<div class="check" data-q="q4"></div>
+<h2>결과에 들어가는 행과 분모를 코드로 점검한다</h2>
+<pre data-example="python"><code>from io import StringIO
+import pandas as pd
+
+raw = StringIO(&quot;&quot;&quot;order_id,site,minutes
+101,A,8
+102,A,12
+103,A,
+104,A,60
+105,B,12
+106,B,20
+107,B,16
+108,B,
+&quot;&quot;&quot;)
+orders = pd.read_csv(raw)
+time = orders[&quot;minutes&quot;]
+clean = orders.loc[time.isna() | time.between(0, 30)].copy()
+by_site = clean.groupby(&quot;site&quot;)[&quot;minutes&quot;]
+clean[&quot;minutes&quot;] = clean[&quot;minutes&quot;].fillna(by_site.transform(&quot;median&quot;))
+assert clean[&quot;minutes&quot;].notna().all()
+
+summary = clean.groupby(&quot;site&quot;)[&quot;minutes&quot;].agg([&quot;size&quot;, &quot;sum&quot;, &quot;mean&quot;])
+for site, row in summary.iterrows():
+    print(site, int(row[&quot;size&quot;]), int(row[&quot;sum&quot;]), f'{row[&quot;mean&quot;]:.1f}')
+first = clean.sort_values([&quot;minutes&quot;, &quot;order_id&quot;], ascending=[False, True]).iloc[0]
+print(f&quot;overall: {clean['minutes'].mean():.3f}&quot;)
+print(&quot;first order:&quot;, int(first[&quot;order_id&quot;]))</code></pre>
+<pre data-output><code>A 3 30 10.0
+B 4 64 16.0
+overall: 13.429
+first order: 106</code></pre>
+<p>지점별로 다 모여 있어도 전체를 다시 정렬할 때는 정렬 열의 우선순위를 분명히 둡니다. 가장 긴 시간은 내림차순이고 동률 주문 번호는 오름차순입니다. 열 선택과 집계 문법은 <a href="../../../learn/unit.html?u=PY11">pandas 기초</a>에서 이어서 볼 수 있습니다.</p>
+<div class="check" data-q="q5"></div>
+<div class="check" data-q="q6"></div>
+
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table>
+<thead><tr><th scope="col">핵심어</th><th scope="col">기억할 기준</th></tr></thead>
+<tbody>
+<tr><td><b class="key">범위 검사</b></td><td>범위 밖 숫자와 빈칸을 다르게 처리한다.</td></tr>
+<tr><td><b class="key">그룹 변환</b></td><td>그룹 중앙값을 해당 그룹의 원래 행 자리로 돌려준다.</td></tr>
+<tr><td><b class="key">전체 평균</b></td><td>합계로 더하고 대상 전체의 행 수로 나눈다.</td></tr>
+</tbody></table></div>
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>작업 순서를 정한 뒤 행 수, 결측 빈칸, 그룹 합계로 계산의 영향을 확인한다.</p></div>
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://dataq.goorm.io/exam/3/%EC%8B%9C%ED%97%98/quiz/2">한국데이터산업진흥원 · 제1유형 풀이용 체험</a></li>
+<li><a href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.groupby.html">pandas 공식 문서 · groupby</a></li>
+</ul>
+
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"><a href="../../index.html">← 빅분기 홈</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>잔차 진단과 모수·적합도 검정을 구분하기 · 빅분기 노트</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="4-04">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">빅분기 노트</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">4과목 · 빅데이터 결과 해석</p>
+<p class="chap-num">04</p>
+<h1>잔차 진단과 모수·적합도 검정을 구분하기</h1>
+<p class="lead">회귀 모형에서 무엇을 점검하는지 작은 자료로 나눠 본다. 잔차 그림, 기울기의 유의성, 전체 모형 비교, 새 자료의 오차는 서로 다른 질문에 답한다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>잔차 그림에서 가정에 어긋날 수 있는 모양을 찾는다.</li><li>회귀 F 통계량을 두 제곱합으로 계산한다.</li><li>모수 검정, 적합도 검정, 예측 평가의 질문을 구분한다.</li></ul></div>
+
+<h2>평균이 0이어도 잔차를 그리는 이유</h2>
+<p>작업량 0, 1, 2, 3묶음의 실제 소요 시간은 2, 5, 5, 8분이다. 선형식 ŷ=2.3+1.8x의 잔차는 −0.3, 0.9, −0.9, 0.3분이었다. 합은 0이다. 특정 구간에서 양·음의 잔차가 모이거나 예측값이 커질수록 흩어지는 폭이 커져도 전체 합은 0일 수 있다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 191" role="img" aria-label="예측값 2.3, 4.1, 5.9, 7.7의 잔차가 각각 −0.3, 0.9, −0.9, 0.3인 산점도">
+<line class="f-line" x1="90" y1="156" x2="647" y2="156"/><line class="f-ink" x1="90" y1="156" x2="90" y2="32"/><line class="f-dash" x1="90" y1="93" x2="647" y2="93"/><text class="f-t" x="95" y="24" text-anchor="middle">잔차(분)</text><text class="f-t" x="666" y="173" text-anchor="middle">예측값(분)</text><text class="f-s" x="70" y="45" text-anchor="middle">1</text><text class="f-s" x="70" y="97" text-anchor="middle">0</text><text class="f-s" x="70" y="150" text-anchor="middle">−1</text><circle cx="135" cy="108.6" r="5" class="f-fill"/><text class="f-s" x="135" y="175" text-anchor="middle">2.3</text><circle cx="289" cy="46.199999999999996" r="5" class="f-fill"/><text class="f-s" x="289" y="175" text-anchor="middle">4.1</text><circle cx="443" cy="139.8" r="5" class="f-fill"/><text class="f-s" x="443" y="175" text-anchor="middle">5.9</text><circle cx="597" cy="77.4" r="5" class="f-fill"/><text class="f-s" x="597" y="175" text-anchor="middle">7.7</text>
+</svg><figcaption>가로축에 예측값을, 세로축에 실제−예측의 잔차를 두었다. 이 네 점만으로 오차 가정을 확정할 수는 없다.</figcaption></figure>
+<div class="check" data-q="q1"></div>
+<p>곡선의 모양은 선형식이 평균의 구조를 충분히 잡지 못했을 가능성, 부채꼴은 오차 분산이 달라질 가능성, 시간 순서에서 같은 부호의 묶음은 오차 의존이 남았을 가능성을 시사한다. 잔차에는 추정 과정도 반영되므로 각 모양만으로 원인을 확정하기 어렵다. 어떤 가정이 깨졌는지는 자료의 수집 방식과 함께 조사한다.</p>
+<div class="check" data-q="q2"></div>
+<h2>기울기를 넣어서 줄인 오차가 큰가</h2>
+<p>절편만 둔 모형은 학습 평균 5를 예측해 잔차 제곱합을 18로 만든다. 기울기를 추가하면 잔차 제곱합은 1.8로 줄어든다. 기울기를 포함한 모형에서 기울기를 0으로 고정하면 절편만 둔 모형이 된다. 이처럼 작은 모형을 큰 모형의 제약으로 얻을 수 있을 때 중첩 모형이라고 한다. 각 제곱합을 적절한 자유도로 나눠 비교한다.</p>
+<div class="table-wrap"><table><thead><tr><th scope="col">항</th><th scope="col">제곱합</th><th scope="col">자유도</th><th scope="col">자유도당 제곱합</th></tr></thead><tbody><tr><td>기울기를 추가하며 줄어든 값</td><td>18−1.8=16.2</td><td>1</td><td>16.2</td></tr><tr><td>큰 모형의 잔차</td><td>1.8</td><td>4−2=2</td><td>0.9</td></tr></tbody></table></div>
+<p>두 값을 나누면 F=16.2/0.9=18이다. 고전적인 독립·등분산 정규오차의 선형모형을 가정하면 기울기가 0이라는 귀무가설에서 F(1, 2) 분포를 쓰고, 오른쪽 확률은 약 0.0513이다. 유의수준 0.05에서 기각할 근거가 부족하다. 네 관측인 상황에서는 높은 설명 비율과 이 결론이 함께 성립할 수 있다.</p>
+<div class="check" data-q="q3"></div><div class="check" data-q="q4"></div>
+<pre data-example="python"><code>from math import sqrt
+from scipy.stats import f, t
+
+small_sse, full_sse = 18.0, 1.8
+df_added, df_error = 1, 2
+stat = ((small_sse - full_sse) / df_added) / (full_sse / df_error)
+p_f = f.sf(stat, df_added, df_error)
+p_t = 2*t.sf(sqrt(stat), df_error)
+assert abs(p_f - p_t) &lt; 1e-12
+print(&quot;F:&quot;, f&quot;{stat:.4f}&quot;)
+print(&quot;p값:&quot;, f&quot;{p_f:.6f}&quot;)</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>F: 18.0000
+p값: 0.051317</code></pre>
+<h2>어떤 근거를 요구하는지 확인한다</h2>
+<p>다른 설명변수를 고정했을 때 특정 계수가 0인지 묻는 검정과, 여러 계수를 함께 추가했을 때의 중첩 모형 검정은 질문이 다르다. 이 예처럼 추가 계수가 하나이면 두 검정의 관계는 F=t²다. 새 주문에서 예측이 얼마나 맞는지는 별도 시험 자료의 오차로 확인한다.</p>
+<p>범주별 관측 건수가 미리 지정한 비율에 들어맞는지를 묻는 카이제곱 적합도 검정도 있다. 예로 고정 비율 0.5, 0.5의 두 범주에서 30명 중 18명과 12명이 관측되면 기대도수는 15, 15다. 통계량은 9/15+9/15=1.2다. 가설을 정할 때 자료로 추정한 모수가 있다면 자유도가 달라질 수 있다.</p>
+<div class="check" data-q="q5"></div><div class="check" data-q="q6"></div>
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>잔차에서 모형이 놓친 구조를 보고, 검정이 겨냥한 가설과 평가 자료의 예측 오차를 따로 읽는다.</p></div>
+
+<h2>참고 자료</h2>
+<ul><li><a href="https://www.dataq.or.kr/www/dataq_brochure_2022.pdf">한국데이터산업진흥원 · 빅데이터분석기사 과목 안내</a></li><li><a href="https://www.itl.nist.gov/div898/handbook/pmd/section4/pmd44.htm">NIST · 회귀 잔차의 그림과 해석</a></li><li><a href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.f.html">SciPy · F 분포</a></li><li><a href="../3-modeling/03-선형회귀와-잔차.html">빅분기 교재 · 선형회귀</a></li><li><a href="../../../learn/notes/st/st07-3.html">공부 교재 · 잔차 진단</a></li></ul>
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"><a href="../../index.html">← 빅분기 홈</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

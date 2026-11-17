@@ -2,6 +2,7 @@
    홈 목차, 진행 표시, 노트의 과목 이름, 이전·다음 링크가 모두 이 목록에서 만들어진다.
 
    과목
+     code  : 번호 대신 표시할 구분(실기). 필기는 목차 순서의 번호를 쓴다.
      name  : 과목 전체 이름 (복습 화면 등)
      short : 노트 위쪽에 보이는 짧은 이름
      title : 홈 지도 카드의 제목
@@ -65,6 +66,30 @@ window.BDA_SUBJECTS = [
     name: "4과목 · 빅데이터 결과 해석", short: "4과목 · 결과 해석", title: "빅데이터 결과 해석",
     desc: "모형을 평가하고, 결과를 해석하고, 보여 주는 법",
     plan: ["분석모형 평가 및 개선", "분석결과 해석 및 활용"],
-    notes: []
+    notes: [
+      { id: "4-01", title: "혼동행렬에서 어떤 오류를 줄일지 결정하기", href: "notes/4-interpretation/01-혼동행렬과-분류지표.html", area: 0 },
+      { id: "4-02", title: "ROC·PR 곡선과 확률의 오차 읽기", href: "notes/4-interpretation/02-roc-pr-곡선과-확률평가.html", area: 0 },
+      { id: "4-03", title: "회귀 예측의 오차와 결정계수 계산하기", href: "notes/4-interpretation/03-회귀평가와-결정계수.html", area: 0 },
+      { id: "4-04", title: "잔차 진단과 모수·적합도 검정을 구분하기", href: "notes/4-interpretation/04-잔차-진단과-모형-검정.html", area: 0 },
+      { id: "4-05", title: "교차검증 오차로 과적합을 진단하고 모형 개선하기", href: "notes/4-interpretation/05-과적합-진단과-모형-개선.html", area: 0 },
+      { id: "4-06", title: "모형의 예측 근거와 특징 중요도 해석하기", href: "notes/4-interpretation/06-예측-해석과-특징-중요도.html", area: 1 },
+      { id: "4-07", title: "효과 크기·불확실성을 그림과 보고서에 담기", href: "notes/4-interpretation/07-결과-시각화와-보고.html", area: 1 },
+      { id: "4-08", title: "모형 배포 뒤에 자료와 성능을 감시하기", href: "notes/4-interpretation/08-모형-전개와-운영-모니터링.html", area: 1 }
+    ]
+  },
+  {
+    code: "실기", name: "실기 · 빅데이터 분석 실무", short: "실기 · 분석 실무",
+    title: "빅데이터 분석 실무",
+    desc: "표를 가공하고 모형을 평가해 답안과 예측 파일을 제출하는 연습",
+    plan: ["시험 환경과 답안 형식", "제1유형 · 데이터 가공", "제2유형 · 모형과 예측 파일", "제3유형 · 통계 분석", "세 유형 통합 연습"],
+    notes: [
+      { id: "5-01", title: "문제를 풀기 전에 제출할 답을 확인한다", href: "notes/practical/01-체험-환경과-답안-형식.html", area: 0 },
+      { id: "5-02", title: "필터와 결측 대체를 순서대로 적용한다", href: "notes/practical/02-가공과-그룹-집계.html", area: 1 },
+      { id: "5-03", title: "양성 확률을 만들어 평가 행 순서로 제출한다", href: "notes/practical/03-분류-확률-예측과-CSV.html", area: 2 },
+      { id: "5-04", title: "시간을 지켜 회귀 검증을 하고 예측 CSV를 만든다", href: "notes/practical/04-회귀-검증과-예측-CSV.html", area: 2 },
+      { id: "5-05", title: "분산비, 합동분산, 양측 p값을 차례로 구한다", href: "notes/practical/05-합동분산과-독립표본-t-검정.html", area: 3 },
+      { id: "5-06", title: "기울기와 결정계수, p값이 답하는 질문을 나눈다", href: "notes/practical/06-회귀계수와-검정-해석.html", area: 3 },
+      { id: "5-07", title: "계산 결과, 예측 파일, 검정 답안을 한 번씩 완성한다", href: "notes/practical/07-세-유형-통합-실전-연습.html", area: 4 }
+    ]
   }
 ];

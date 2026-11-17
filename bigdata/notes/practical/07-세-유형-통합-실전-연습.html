@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>계산 결과, 예측 파일, 검정 답안을 한 번씩 완성한다 · 빅분기 노트</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="5-07">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">빅분기 노트</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">빅분기 실기 · 통합 연습</p>
+<p class="chap-num">5-07</p>
+<h1>계산 결과, 예측 파일, 검정 답안을 한 번씩 완성한다</h1>
+<p class="lead">하루 작업의 기록 세 묶음을 받았습니다. 어느 유형인지 알아보는 데서 멈추지 않고, 서로 다른 세 가지 종류의 답을 끝까지 만들어 봅니다.</p>
+</header>
+
+<div class="goal">
+<h2>이 장을 읽고 나면</h2>
+<ul>
+<li>주어진 조건으로 남긴 값의 개수와 평균을 계산한다.</li>
+<li>평가 표 순서에 맞춰 예측 파일을 생성하고 다시 읽는다.</li>
+<li>분할표의 독립성 검정과 보고할 차이를 구별한다.</li>
+</ul>
+</div>
+
+<h2>아래 세 지시를 먼저 답안 메모에 옮긴다</h2>
+<p>이 장의 데이터와 요구 조건은 연습용입니다. 한 번은 전체 흐름을 읽고, 다음에는 스스로 정한 연습 시간 안에 문제만 보고 다시 풉니다. 공식 체험에서는 유형마다 실제 화면에 명시된 제출 위치와 형식을 따릅니다. 아래에서는 세 가지가 섞이지 않도록 계산값, 파일, 검정 결과를 각각 확인합니다.</p>
+<div class="table-wrap"><table>
+<thead><tr><th scope="col">구분</th><th scope="col">연습 문제</th><th scope="col">제출할 것</th></tr></thead>
+<tbody>
+<tr><td>제1유형</td><td>시간 기록 [8,14,빈칸,26,10,18,31,22]분에서 빈칸과 범위 [0,20] 밖을 제외. 남은 값의 개수와 평균을 계산</td><td>개수는 정수, 평균은 소수 첫째 자리</td></tr>
+<tr><td>제2유형</td><td>이미 적합한 예측 규칙 ŷ=3+3x를 평가 행 (31,3),(12,4),(28,2)에 적용. 각 쌍은 (주문 ID, 작업량)</td><td>원본 순서로 result.csv에 pred 한 열</td></tr>
+<tr><td>제3유형</td><td>지점 A의 지연·정시 [10,10], B의 지연·정시 [4,16]. Pearson χ² 독립성 검정 실시. 이 연습에서는 연속성 보정 미적용</td><td>χ² 통계량과 p값을 소수 셋째 자리까지</td></tr>
+</tbody></table></div>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 182" role="img" aria-label="시간 기록은 남은 네 값의 개수와 평균, 평가 세 행은 예측 파일, 두 지점 분할표는 통계량과 p값을 별도로 낸다.">
+<rect class="f-box" x="55" y="42" width="180" height="42" rx="3"/>
+<text class="f-cap" x="145" y="69" text-anchor="middle">시간 기록</text>
+<rect class="f-soft" x="290" y="42" width="180" height="42" rx="3"/>
+<text class="f-cap" x="380" y="69" text-anchor="middle">평가 데이터</text>
+<rect class="f-box" x="525" y="42" width="180" height="42" rx="3"/>
+<text class="f-cap" x="615" y="69" text-anchor="middle">분할표</text>
+<line class="f-line" x1="145" y1="87" x2="145" y2="107" marker-end="url(#f-arrow)"/>
+<text class="f-t" x="145" y="136" text-anchor="middle">개수와 평균</text>
+<line class="f-line" x1="380" y1="87" x2="380" y2="107" marker-end="url(#f-arrow)"/>
+<text class="f-t" x="380" y="136" text-anchor="middle">pred CSV</text>
+<line class="f-line" x1="615" y1="87" x2="615" y2="107" marker-end="url(#f-arrow)"/>
+<text class="f-t" x="615" y="136" text-anchor="middle">χ²와 p값</text>
+<text class="f-s" x="380" y="163" text-anchor="middle">제출 위치를 확인한 후 각 결과를 개별로 구분한다.</text>
+</svg>
+<figcaption>한 코드 예제에서 세 결과를 모두 출력하지만, 공식 화면에서 제출하는 대상은 유형별로 다르다.</figcaption>
+</figure>
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+<h2>가공과 예측에서 입력과 출력의 짝을 확인한다</h2>
+<p>시간 숫자 중 0~20 안에 있는 것은 8,14,10,18입니다. 모두 4개이고 합은 50, 평균은 12.5입니다. 빈칸은 0분이라는 기록이 없으므로 분모에 넣지 않았습니다. 자료가 정해 준 범위 안 값을 남겼고, 다른 문제라면 범위 검사나 결측 대체 규칙이 달라질 수 있습니다.</p>
+<p>평가 데이터는 ID 31, 12, 28의 순서입니다. 작업량 3,4,2를 정해진 식에 넣으면 예측은 12,15,9입니다. 제출 파일에는 ID가 빠지지만 파일 속 <em>행의 위치</em>가 원본 평가 대상과의 짝을 나타냅니다. 출력의 처음 두 행을 손계산한 순서와 비교합니다.</p>
+<div class="check" data-q="q3"></div>
+<div class="check" data-q="q4"></div>
+<h2>도수가 다른 원인을 말하기 전에 관측과 기대를 비교한다</h2>
+<p>지점별 한 행의 합은 20입니다. 지연 열 합계는 14, 정시 열 합계는 26입니다. 독립을 가정한 A의 기대 지연은 <code>20×14÷40=7</code>이고 기대 정시는 13입니다. B에서도 각각 7, 13입니다. 각 셀의 관측−기대 크기는 3이라 <code>χ²=2×(9/7+9/13)=360/91≈3.956</code>입니다. 자유도는 (2−1)(2−1)=1이고 p값은 약 0.046703입니다.</p>
+<p>연습에서는 각 방문이 한 셀에만 들어가며 서로 독립이라고 둡니다. 표본이 희소하거나 같은 사람이 시점마다 반복해서 들어가면 이 근사와 독립 가정을 다시 확인해야 합니다. 계산값은 0.05보다 작습니다. 지연 비율 차이로 보면 A 50% 대 B 20%, 30퍼센트포인트입니다. 관측된 연관을 확인해도 지점의 업무량 차이 같은 다른 조건을 확인하기 전에는 원인까지 판단하기 어렵습니다.</p>
+<div class="check" data-q="q5"></div>
+<div class="check" data-q="q6"></div>
+<h2>세 답을 코드에서 만들고 파일은 다시 읽는다</h2>
+<pre data-example="python"><code>from pathlib import Path
+from tempfile import TemporaryDirectory
+
+import pandas as pd
+from scipy.stats import chi2_contingency
+
+time = pd.Series([8, 14, None, 26, 10, 18, 31, 22])
+eligible = time[time.between(0, 20)]
+print(&quot;type 1:&quot;, len(eligible), f&quot;{eligible.mean():.1f}&quot;)
+
+evaluation = pd.DataFrame({&quot;id&quot;: [31, 12, 28], &quot;volume&quot;: [3, 4, 2]})
+predicted = 3 + 3 * evaluation[&quot;volume&quot;]
+submission = pd.DataFrame({&quot;pred&quot;: predicted})
+
+def export(frame, path=&quot;result.csv&quot;):
+    frame.to_csv(path, index=False)
+    return pd.read_csv(path)
+
+with TemporaryDirectory() as folder:
+    saved = export(submission, Path(folder) / &quot;result.csv&quot;)
+    assert list(saved.columns) == [&quot;pred&quot;] and len(saved) == len(evaluation)
+    assert saved[&quot;pred&quot;].tolist() == predicted.tolist()
+    print(&quot;type 2:&quot;, saved.columns.tolist(), saved[&quot;pred&quot;].tolist())
+
+counts = [[10, 10], [4, 16]]
+outcome = chi2_contingency(counts, correction=False)
+assert outcome.expected_freq.tolist() == [[7.0, 13.0], [7.0, 13.0]]
+print(&quot;type 3:&quot;, f&quot;{outcome.statistic:.3f}&quot;, f&quot;{outcome.pvalue:.3f}&quot;)</code></pre>
+<pre data-output><code>type 1: 4 12.5
+type 2: ['pred'] [12, 15, 9]
+type 3: 3.956 0.047</code></pre>
+<p>위 출력은 검산용입니다. 연습용 임시 경로는 실제로 파일을 만들어 다시 읽되 작업이 끝나면 정리합니다. 실제 제2유형 제출에서는 지시한 파일명으로 예측 파일을 생성하도록 <code>export(submission)</code>처럼 명시해야 합니다. 제1·3유형에서는 계산기에 나온 말이나 목록 전체를 붙이지 않고 각 소문항 값만 적습니다.</p>
+
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table>
+<thead><tr><th scope="col">핵심어</th><th scope="col">기억할 기준</th></tr></thead>
+<tbody>
+<tr><td><b class="key">숫자 답</b></td><td>가공 조건 이후 분모와 지정 자릿수를 확인한다.</td></tr>
+<tr><td><b class="key">예측 파일</b></td><td>열 이름과 수, 행의 수와 순서를 확인한다.</td></tr>
+<tr><td><b class="key">검정 결과</b></td><td>검정통계량, p값, 실제로 관측한 효과를 따로 설명한다.</td></tr>
+</tbody></table></div>
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>제출하기 전에 각 답이 원래 질문의 단위와 형식에 맞는지 확인한다.</p></div>
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://dataq.goorm.io/exam/3/%EC%8B%9C%ED%97%98/quiz/1">한국데이터산업진흥원 · 실기 체험 안내</a></li>
+<li><a href="https://dataq.goorm.io/exam/3/%EC%8B%9C%ED%97%98/quiz/2">한국데이터산업진흥원 · 제1유형 풀이용 체험</a></li>
+<li><a href="https://dataq.goorm.io/exam/3/%EC%8B%9C%ED%97%98/quiz/4">한국데이터산업진흥원 · 제2유형 제출용 체험</a></li>
+<li><a href="https://dataq.goorm.io/exam/3/%EC%8B%9C%ED%97%98/quiz/5">한국데이터산업진흥원 · 제3유형 풀이용 체험</a></li>
+<li><a href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.chi2_contingency.html">SciPy 공식 문서 · 분할표 카이제곱 검정</a></li>
+<li><a href="../2-exploration/08-검정-선택과-분할표.html">빅분기 필기 · 분할표의 독립성 검정</a></li>
+</ul>
+
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"><a href="../../index.html">← 빅분기 홈</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

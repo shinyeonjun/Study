@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>마르코프 연쇄와 수락·거절 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="ST09-3">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">통계와 실험 설계 · ST09 베이즈 통계</p>
+<p class="chap-num">ST09·3</p>
+<h1>마르코프 연쇄와 수락·거절</h1>
+<p class="lead">사후분포의 모양과 비례하는 값만 계산할 수 있어도, 그 분포를 방문 비율로 근사하는 방법이 있습니다. 상태가 세 개뿐인 예제로 제안, 수락, 거절이 어떻게 목표 비율을 만드는지 확인합니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul>
+<li>마르코프 연쇄의 한 단계와 그 연쇄가 겨냥하는 분포를 구분한다.</li>
+<li>세 상태 예시에서 Metropolis–Hastings 수락률과 전이 확률을 손으로 구한다.</li>
+<li>연쇄 표본의 자기상관과 다중 연쇄 진단의 역할을 말한다.</li>
+</ul></div>
+
+<h2>정규화 상수를 모르는 상황</h2>
+<p>베이즈 모형에서 사후확률의 분자는 각 상태의 사전확률과 우도를 곱한 값입니다. 상태가 많거나 연속이면 분모인 증거를 계산하기 어려울 수 있습니다. 분포의 모양을 결정하는 양의 값 <var>w(x)</var>를 알 때 목표 확률 또는 밀도를 <var>π(x) ∝ w(x)</var>로 씁니다.</p>
+<p><b class="key">마르코프 연쇄</b>는 현재 상태를 바탕으로 난수를 써서 다음 상태를 정합니다. 이 장의 전이 규칙은 직전 상태만 필요하고 시간에 따라 고정됩니다. <b class="key">MCMC</b>는 이렇게 얻은 연쇄의 상태들로 목표 분포의 확률이나 기대값을 계산합니다. 목표 분포에서 독립적으로 한 점씩 뽑는 경우와 달리, 연쇄의 이웃한 기록은 서로 영향을 받습니다.</p>
+<p>손계산에 쓰는 상태는 A, B, C입니다. 정규화 전 값이 1, 3, 2이므로 목표 확률은 1/6, 1/2, 1/3입니다. 합이 6인 것을 아는 예시이므로 연쇄가 이 비율을 향하는지도 검사할 수 있습니다.</p>
+<div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
+
+<h2>Metropolis–Hastings 한 단계</h2>
+<p>현재 상태를 <var>x</var>, 후보를 <var>y</var>, 후보를 내는 제안 확률을 <var>q(y|x)</var>라 합니다. 후보가 나오면 수락 확률 <var>a(x,y)</var>를 구합니다. 균등 난수 <var>u</var>가 <var>a</var>보다 작으면 후보로 이동하고, 그 밖에는 현재 상태를 유지합니다. 양방향 제안 확률이 양수인 후보 쌍에서 수락 확률은 다음과 같습니다.</p>
+<div class="formula">a(x,y) = min(1, w(y)q(x|y) / [w(x)q(y|x)])</div>
+<p>정규화 상수는 같은 분포에서 구한 두 값의 비율에서 소거됩니다. A, B, C의 예는 나머지 두 상태를 각각 1/2의 확률로 제안하므로 어느 쪽으로 움직일 때나 제안 확률이 같습니다. 따라서 <var>a(x,y)=min(1,w(y)/w(x))</var>입니다. B에서 C를 제안했을 때 수락 확률은 2/3이고, B에서 한 번 갱신한 결과가 C일 확률은 (1/2)(2/3)=1/3입니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 290" role="img" aria-label="전이 확률 표. A 행은 0, 1/2, 1/2. B 행은 1/6, 1/2, 1/3. C 행은 1/4, 1/2, 1/4.">
+<text class="f-cap" x="380" y="30" text-anchor="middle">갱신 뒤 상태</text>
+<rect class="f-soft" x="96" y="47" width="142" height="40"/>
+<text class="f-t" x="167" y="72" text-anchor="middle">현재 상태</text>
+<rect class="f-soft" x="238" y="47" width="142" height="40"/>
+<text class="f-t" x="309" y="72" text-anchor="middle">A</text>
+<rect class="f-soft" x="380" y="47" width="142" height="40"/>
+<text class="f-t" x="451" y="72" text-anchor="middle">B</text>
+<rect class="f-soft" x="522" y="47" width="142" height="40"/>
+<text class="f-t" x="593" y="72" text-anchor="middle">C</text>
+<rect class="f-soft" x="96" y="87" width="142" height="40"/>
+<text class="f-t" x="167" y="112" text-anchor="middle">A</text>
+<rect class="f-ghost" x="238" y="87" width="142" height="40"/>
+<text class="f-t" x="309" y="112" text-anchor="middle">0</text>
+<rect class="f-box" x="380" y="87" width="142" height="40"/>
+<text class="f-t" x="451" y="112" text-anchor="middle">1/2</text>
+<rect class="f-box" x="522" y="87" width="142" height="40"/>
+<text class="f-t" x="593" y="112" text-anchor="middle">1/2</text>
+<rect class="f-soft" x="96" y="127" width="142" height="40"/>
+<text class="f-t" x="167" y="152" text-anchor="middle">B</text>
+<rect class="f-box" x="238" y="127" width="142" height="40"/>
+<text class="f-t" x="309" y="152" text-anchor="middle">1/6</text>
+<rect class="f-ghost" x="380" y="127" width="142" height="40"/>
+<text class="f-t" x="451" y="152" text-anchor="middle">1/2</text>
+<rect class="f-box" x="522" y="127" width="142" height="40"/>
+<text class="f-t" x="593" y="152" text-anchor="middle">1/3</text>
+<rect class="f-soft" x="96" y="167" width="142" height="40"/>
+<text class="f-t" x="167" y="192" text-anchor="middle">C</text>
+<rect class="f-box" x="238" y="167" width="142" height="40"/>
+<text class="f-t" x="309" y="192" text-anchor="middle">1/4</text>
+<rect class="f-box" x="380" y="167" width="142" height="40"/>
+<text class="f-t" x="451" y="192" text-anchor="middle">1/2</text>
+<rect class="f-ghost" x="522" y="167" width="142" height="40"/>
+<text class="f-t" x="593" y="192" text-anchor="middle">1/4</text>
+<text class="f-s" x="380" y="246" text-anchor="middle">각 행의 합은 1이다. 대각선은 제안이 거절되어 현재 상태에 남을 확률이다.</text>
+</svg>
+<figcaption>후보를 내는 확률과 수락 확률을 곱해야 실제 다음 상태의 확률을 얻습니다.</figcaption>
+</figure>
+<p>행렬의 <var>P(x,y)</var>는 최종 이동 확률입니다. A와 B 사이의 두 방향을 비교하면 <var>π(A)P(A,B)=(1/6)(1/2)=1/12</var>이고 <var>π(B)P(B,A)=(1/2)(1/6)=1/12</var>입니다. 각 상태 쌍의 이런 균형을 <strong>상세 균형</strong>이라 부릅니다. 모든 쌍에서 성립하므로 처음에 목표 분포를 따르면 한 번 갱신한 뒤에도 같은 분포입니다. 이 예에서는 모든 상태로 건너갈 수 있고 제자리 전이도 있어서, A에서 시작한 뒤 여러 번 갱신한 분포도 목표 확률에 가까워집니다.</p>
+<div class="check" data-q="q3"></div><div class="check" data-q="q4"></div>
+
+<h2>상태를 남기는 규칙</h2>
+<p>B에서 C를 제안했을 때 <var>u=0.8</var>이면 <var>0.8 &gt; 2/3</var>이므로 갱신 뒤의 상태는 B입니다. 기록을 건너뛰면 거절된 시간 동안 머물렀던 상태의 방문 빈도가 사라집니다. 이 예에서 B는 가중치가 가장 크고, B에서 밖으로 나가는 제안은 종종 거절됩니다. 따라서 머문 시간도 목표 확률에 기여합니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 280" role="img" aria-label="초기 A 이후 B 수락, C 거절로 B 유지, A 수락, C 수락, A 거절로 C 유지">
+<text class="f-cap" x="380" y="28" text-anchor="middle">현재 상태를 매 단계 기록한 결과</text>
+<rect class="f-soft" x="50" y="63" width="110" height="40"/>
+<text class="f-s" x="105" y="88" text-anchor="middle">초기</text>
+<rect class="f-soft" x="160" y="63" width="110" height="40"/>
+<text class="f-s" x="215" y="88" text-anchor="middle">1회 뒤</text>
+<rect class="f-soft" x="270" y="63" width="110" height="40"/>
+<text class="f-s" x="325" y="88" text-anchor="middle">2회 뒤</text>
+<rect class="f-soft" x="380" y="63" width="110" height="40"/>
+<text class="f-s" x="435" y="88" text-anchor="middle">3회 뒤</text>
+<rect class="f-soft" x="490" y="63" width="110" height="40"/>
+<text class="f-s" x="545" y="88" text-anchor="middle">4회 뒤</text>
+<rect class="f-soft" x="600" y="63" width="110" height="40"/>
+<text class="f-s" x="655" y="88" text-anchor="middle">5회 뒤</text>
+<rect class="f-box" x="50" y="103" width="110" height="40"/>
+<text class="f-t" x="105" y="128" text-anchor="middle">A</text>
+<rect class="f-box" x="160" y="103" width="110" height="40"/>
+<text class="f-t" x="215" y="128" text-anchor="middle">B</text>
+<rect class="f-ghost" x="270" y="103" width="110" height="40"/>
+<text class="f-t" x="325" y="128" text-anchor="middle">B</text>
+<rect class="f-box" x="380" y="103" width="110" height="40"/>
+<text class="f-t" x="435" y="128" text-anchor="middle">A</text>
+<rect class="f-box" x="490" y="103" width="110" height="40"/>
+<text class="f-t" x="545" y="128" text-anchor="middle">C</text>
+<rect class="f-ghost" x="600" y="103" width="110" height="40"/>
+<text class="f-t" x="655" y="128" text-anchor="middle">C</text>
+<rect class="f-box" x="50" y="157" width="110" height="40"/>
+<text class="f-s" x="105" y="182" text-anchor="middle">시작</text>
+<rect class="f-box" x="160" y="157" width="110" height="40"/>
+<text class="f-s" x="215" y="182" text-anchor="middle">B 수락</text>
+<rect class="f-box" x="270" y="157" width="110" height="40"/>
+<text class="f-s" x="325" y="182" text-anchor="middle">C 거절</text>
+<rect class="f-box" x="380" y="157" width="110" height="40"/>
+<text class="f-s" x="435" y="182" text-anchor="middle">A 수락</text>
+<rect class="f-box" x="490" y="157" width="110" height="40"/>
+<text class="f-s" x="545" y="182" text-anchor="middle">C 수락</text>
+<rect class="f-box" x="600" y="157" width="110" height="40"/>
+<text class="f-s" x="655" y="182" text-anchor="middle">A 거절</text>
+<rect class="f-soft" x="50" y="197" width="110" height="40"/>
+<text class="f-s" x="105" y="222" text-anchor="middle">—</text>
+<rect class="f-soft" x="160" y="197" width="110" height="40"/>
+<text class="f-s" x="215" y="222" text-anchor="middle">u=.9</text>
+<rect class="f-soft" x="270" y="197" width="110" height="40"/>
+<text class="f-s" x="325" y="222" text-anchor="middle">u=.8</text>
+<rect class="f-soft" x="380" y="197" width="110" height="40"/>
+<text class="f-s" x="435" y="222" text-anchor="middle">u=.2</text>
+<rect class="f-soft" x="490" y="197" width="110" height="40"/>
+<text class="f-s" x="545" y="222" text-anchor="middle">u=.7</text>
+<rect class="f-soft" x="600" y="197" width="110" height="40"/>
+<text class="f-s" x="655" y="222" text-anchor="middle">u=.6</text>
+</svg>
+<figcaption>후보와 균등 난수 u를 고정한 다섯 번의 갱신입니다. 거절된 단계에도 상태 하나를 기록합니다.</figcaption>
+</figure>
+<p>다음 코드는 A에서 시작하고, 처음 500회의 상태를 빈도에서 뺀 뒤 20,000회를 기록합니다. 첫 500회라는 선택은 이 예의 설정입니다. 상태의 빈도를 세는 위치가 수락 여부를 판단하는 <code>if</code> 바깥에 있습니다.</p>
+<p class="small">실행 예제</p>
+<pre data-example="python"><code>from random import Random
+
+rng = Random(37)
+weights = [1, 3, 2]
+current = 0
+frequency = [0, 0, 0]
+warmup = 500
+kept = 20_000
+
+for t in range(warmup + kept):
+    choices = [j for j in range(3) if j != current]
+    candidate = rng.choice(choices)
+    acceptance = min(1.0, weights[candidate] / weights[current])
+    if rng.random() &lt; acceptance:
+        current = candidate
+    if t &gt;= warmup:
+        frequency[current] += 1
+
+print(&quot;state count estimate target&quot;)
+for state, count, weight in zip(&quot;ABC&quot;, frequency, weights):
+    print(f&quot;{state} {count} {count / kept:.3f} {weight / sum(weights):.3f}&quot;)</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>state count estimate target
+A 3279 0.164 0.167
+B 10064 0.503 0.500
+C 6657 0.333 0.333</code></pre>
+<div class="check" data-q="q5"></div><div class="check" data-q="q6"></div>
+
+<h2>모형, 수렴, 계산 오차는 서로 다른 질문</h2>
+<p>실제 사후분포는 정답 비율을 모르므로 도해처럼 직접 비교할 방법이 없을 때가 많습니다. 시도할 때는 서로 떨어진 시작점에서 연쇄를 여러 개 돌린 뒤 궤적의 한쪽 고착과 <strong>연쇄별 요약이 일치하는지</strong>를 확인합니다. <var>R̂</var>는 한 연쇄 안에서의 변동과 여러 연쇄 사이의 변동을 함께 쓰는 진단입니다. 예를 들어 모든 연쇄가 같은 영역만 방문하면 다른 영역에 큰 확률이 있어도 놓칠 수 있습니다.</p>
+<p>하나의 사후 평균을 구할 때는 해당 수치의 자기상관을 반영하는 <b class="key">유효표본크기</b>도 봅니다. 비슷한 값이 길게 이어지면 기록 2,000개가 주는 정보는 독립 기록 2,000개보다 적을 수 있습니다. 원소 수만 넣어 독립 표본 공식으로 계산한 표준오차가 실제 계산 오차를 과소평가할 수 있습니다. 첫 부분을 버리거나 수락 횟수만 세는 것으로는 좋은 탐색을 확인하기 어렵습니다. 연쇄가 목표 분포를 잘 계산했더라도 사전과 우도의 가정이 자료에 맞는지는 별도로 점검합니다.</p>
+<div class="why"><p class="box-k">왜 그럴까?</p><p>모든 후보를 거절해서 A에만 남는 연쇄에도 목표 분포의 상세 균형이 성립할까?</p><details><summary>모범 답 보기</summary><p>성립합니다. 다른 상태로 가는 양방향 확률이 모두 0이라 쌍마다 양쪽이 같고, 처음 상태가 목표 확률에 따라 선택됐다면 전체 분포는 유지됩니다. 다만 A 하나에서 시작한 연쇄는 다른 상태를 방문할 수 없으므로 목표 확률을 표본 빈도로 복구하지 못합니다.</p></details></div>
+<div class="check" data-q="q7"></div><div class="check" data-q="q8"></div>
+
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table><thead><tr><th scope="col">개념</th><th scope="col">확인할 것</th></tr></thead><tbody>
+<tr><th scope="row"><b class="key">목표 분포</b></th><td>상태가 방문해야 할 비율을 정한다.</td></tr>
+<tr><th scope="row"><b class="key">제안과 수락</b></th><td>후보를 낸 뒤 목표와 제안 분포의 비율로 이동을 결정한다.</td></tr>
+<tr><th scope="row"><b class="key">MCMC 진단</b></th><td>연쇄의 탐색과 계산 정밀도를 여러 정보로 살핀다.</td></tr>
+</tbody></table></div><div class="box sum"><p class="box-k">다음 장으로</p><p><a href="../../unit.html?u=OP08">다음 장</a>에서는 독립 표본부터 시작해 표본 평균의 수치 오차를 계산합니다.</p></div>
+
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://probability.ca/hastings/hastings.pdf">Hastings(1970) · Metropolis–Hastings 계산</a></li>
+<li><a href="https://mc-stan.org/docs/reference-manual/analysis.html">Stan 공식 매뉴얼 · MCMC 사후 분석</a></li>
+</ul>
+<h2>확인 문제</h2>
+<p>직접 계산하거나 설명을 먼저 적고 답을 확인해 보세요.</p>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

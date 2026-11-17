@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>실패까지 읽히는 그림과 캡션 쓰기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e8c'/%3E%3Cpath d='M8 22V10m8 12V14m8 8V6' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="RS06-2">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+
+<header class="chapter">
+<p class="chap-sub">연구 · RS06 결과를 표현하기</p>
+<p class="chap-num">RS06·2</p>
+<h1>실패까지 읽히는 그림과 캡션 쓰기</h1>
+<p class="lead">평균이 나아진 경우에도 각 실행에서 같은 일이 있었는지 확인합니다. 그림에 단위와 분모를 붙이고, 다른 사람이 수치를 다시 계산할 수 있게 기록을 남깁니다.</p>
+</header>
+
+<div class="goal">
+<h2>이 장을 읽고 나면</h2>
+<ul>
+<li>평균 그림에 가려진 실행별 결과와 실패 사례를 확인한다.</li>
+<li>축, 단위, 분모, 분석 단위를 그림과 캡션에 담는다.</li>
+<li>그림의 숫자와 실험을 다시 만들 수 있도록 최소한의 기록을 남긴다.</li>
+</ul>
+</div>
+
+<h2>같은 예산의 평균 아래에 무엇이 있었나</h2>
+<p>두 정책 A와 B가 동일한 합성 큐 환경에서 각각 1,000번 상호작용하며 학습했다고 합시다. 설정을 고정한 뒤 정책을 바꾸지 않고 실행당 평가 작업 10개를 수행합니다. 네 개의 시작 조건을 사용하고, 각 번호의 A와 B는 같은 평가 작업에 답합니다. 예시의 수는 직접 만든 합성 기록입니다.</p>
+<p>A의 성공 완료 건수는 6,6,6,6, B는 9,9,9,1입니다. 평균 완료율은 A 60%, B 70%이므로 평균 차이는 10%p입니다. 시드 번호를 같은 평가 조건의 표시로 사용했습니다. 여기서 두 정책을 비교하는 단위는 같은 번호의 실행 쌍 네 개입니다. 한 실행 안에서 시도한 작업 10개를 독립으로 학습한 실행 10개로 세지 않습니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 350" role="img" aria-label="시드 10,11,12,13에서 A는 모두 6건 완료다. B는 앞 세 시드에서 9건이고 마지막은 1건이다.">
+<text class="f-cap" x="382" y="35" text-anchor="middle">실행별 평가 · 10건 중 완료한 건수</text>
+<line class="f-ink" x1="142" y1="272" x2="672" y2="272" marker-end="url(#f-arrow)"/>
+<line class="f-ink" x1="147" y1="267" x2="147" y2="278"/>
+<text class="f-s" x="147" y="299" text-anchor="middle">0</text>
+<line class="f-ink" x1="247" y1="267" x2="247" y2="278"/>
+<text class="f-s" x="247" y="299" text-anchor="middle">2</text>
+<line class="f-ink" x1="347" y1="267" x2="347" y2="278"/>
+<text class="f-s" x="347" y="299" text-anchor="middle">4</text>
+<line class="f-ink" x1="447" y1="267" x2="447" y2="278"/>
+<text class="f-s" x="447" y="299" text-anchor="middle">6</text>
+<line class="f-ink" x1="547" y1="267" x2="547" y2="278"/>
+<text class="f-s" x="547" y="299" text-anchor="middle">8</text>
+<line class="f-ink" x1="647" y1="267" x2="647" y2="278"/>
+<text class="f-s" x="647" y="299" text-anchor="middle">10</text>
+<text class="f-s" x="134" y="83" text-anchor="end">10</text>
+<line class="f-dash" x1="447" y1="78" x2="597" y2="78"/>
+<circle class="f-box" cx="447" cy="78" r="6"/>
+<circle class="f-fill" cx="597" cy="78" r="5"/>
+<text class="f-s" x="134" y="135" text-anchor="end">11</text>
+<line class="f-dash" x1="447" y1="130" x2="597" y2="130"/>
+<circle class="f-box" cx="447" cy="130" r="6"/>
+<circle class="f-fill" cx="597" cy="130" r="5"/>
+<text class="f-s" x="134" y="187" text-anchor="end">12</text>
+<line class="f-dash" x1="447" y1="182" x2="597" y2="182"/>
+<circle class="f-box" cx="447" cy="182" r="6"/>
+<circle class="f-fill" cx="597" cy="182" r="5"/>
+<text class="f-s" x="134" y="239" text-anchor="end">13</text>
+<line class="f-dash" x1="197" y1="234" x2="447" y2="234"/>
+<circle class="f-box" cx="447" cy="234" r="6"/>
+<circle class="f-fill" cx="197" cy="234" r="5"/>
+<text class="f-s" x="97" y="57" text-anchor="middle">시드</text>
+<text class="f-s" x="209" y="238" text-anchor="start">B 실패</text>
+<circle class="f-box" cx="229" cy="326" r="6"/>
+<text class="f-s" x="244" y="331" text-anchor="start">A</text>
+<circle class="f-fill" cx="515" cy="326" r="5"/>
+<text class="f-s" x="530" y="331" text-anchor="start">B</text>
+</svg>
+<figcaption>빈 원은 A, 채운 점은 B다. 같은 줄의 두 점은 같은 평가 조건의 두 실행이다.</figcaption>
+</figure>
+<p>실패는 사전에 10개 중 2개 이하 완료로 정의했다고 합시다. A는 네 실행 모두 기준을 넘고 B는 시드 13에서 1건만 완료해 네 실행 중 하나가 실패했습니다. 기록만으로 실패 원인을 단정할 수는 없습니다. 해당 실행의 입력 조건, 실패 단계와 종료 원인을 확인할 수 있도록 남깁니다. 실제 보고에서는 실패를 제외한 평균만 제시하는 대신, 실패 수와 어떤 이유로 빠진 결과가 있는지도 함께 씁니다.</p>
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+
+<h2>막대와 점의 의미가 유지되는 축을 고른다</h2>
+<p>비율 막대에서 길이로 크기를 읽으면 0을 기준으로 합니다. 완료율 60%와 70%의 막대를 55%에서 시작하면 그려진 길이는 각각 5와 15가 되어, 원래 비율의 크기를 비교한 길이와 다릅니다. 작은 차이의 범위를 보고 싶으면 축을 명시한 점과 구간으로 확대하고, 선택한 범위를 적습니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 271" role="img" aria-label="평균 완료율을 0부터 100퍼센트 축에서 나타낸다. A가 60퍼센트, B가 70퍼센트다.">
+<text class="f-cap" x="387" y="33" text-anchor="middle">실행 4개의 평균 완료율</text>
+<line class="f-ink" x1="121" y1="222" x2="672" y2="222" marker-end="url(#f-arrow)"/>
+<line class="f-ink" x1="136" y1="238" x2="136" y2="49" marker-end="url(#f-arrow)"/>
+<line class="f-ink" x1="130" y1="222" x2="136" y2="222"/>
+<text class="f-s" x="119" y="228" text-anchor="end">0</text>
+<line class="f-ink" x1="130" y1="147" x2="136" y2="147"/>
+<text class="f-s" x="119" y="153" text-anchor="end">50</text>
+<line class="f-ink" x1="130" y1="72" x2="136" y2="72"/>
+<text class="f-s" x="119" y="78" text-anchor="end">100</text>
+<rect class="f-box" x="263" y="132" width="100" height="90" rx="3"/>
+<rect class="f-soft" x="454" y="117" width="100" height="105" rx="3"/>
+<text class="f-t" x="313" y="121" text-anchor="middle">60%</text>
+<text class="f-t" x="504" y="106" text-anchor="middle">70%</text>
+<text class="f-t" x="313" y="251" text-anchor="middle">A</text>
+<text class="f-t" x="504" y="251" text-anchor="middle">B</text>
+<text class="f-s" x="147" y="61" text-anchor="start">%</text>
+</svg>
+<figcaption>평균의 높이만으로는 앞 그림의 실패 사례를 찾을 수 없다. 실행별 결과와 같이 읽는다.</figcaption>
+</figure>
+<p>시간의 순서를 잇는 선은 중간 위치에서 새 관측을 만들어내지 않습니다. 단위가 다른 수치를 한 축에 넣거나, 분모가 다른 비율을 같은 빈도처럼 읽기 쉽다면 축 제목과 분모를 직접 적습니다. 10%p 차이를 %로 잘못 읽지 않도록 축에도 단위를 넣습니다. 두 조건을 색만으로 가르기보다 이름, 모양 또는 선종을 같이 사용합니다.</p>
+<div class="check" data-q="q3"></div>
+<div class="check" data-q="q4"></div>
+
+<h2>캡션만 읽어도 분모와 비교 기준을 알 수 있게 한다</h2>
+<div class="box ex"><p class="box-k">보고용 캡션 예</p>
+<p>합성 큐 환경의 완료 결과. 두 정책은 1,000회의 동일한 학습 상호작용 예산을 사용했고, 정책을 고정한 뒤 각 실행에서 동일한 10개 평가 작업을 수행했다. 점은 실행 하나의 완료 수다. 네 실행 쌍의 시드 번호는 10~13이다. 완료 수 ≤2를 실패로 정했을 때 A는 0/4, B는 1/4다. 막대는 실행별 완료율의 평균을 표시한다.</p>
+</div>
+<p>그림에 구간이 들어간다면 계산 방법과 반복 단위도 추가합니다. 예로 “독립 실행 쌍을 단위로 한 평균 차이의 95% 부트스트랩 구간”처럼 씁니다. 이 예에서는 실행 결과 네 쌍을 그대로 제시합니다. 시험을 하며 설정을 고른 경우에는 그 자료를 최종 평가와 구분합니다.</p>
+<p>다시 확인할 수 있게 어떤 원자료·입력 필터에서 수치가 나왔는지, 코드와 환경 버전, 설정과 시드를 기록합니다. 관측 단위, 제외·탈락 건수, 그림을 만든 집계식도 함께 보관합니다. 그림만 남기는 것보다 같은 입력으로 다시 계산할 수 있는 작은 표나 실행 명령을 같이 두는 편이 확인하기 쉽습니다.</p>
+<div class="check" data-q="q5"></div>
+<div class="check" data-q="q6"></div>
+
+<h2>공통 조건의 평균차와 실패 집계를 확인한다</h2>
+<pre data-example="python"><code>from statistics import mean
+
+seed_ids = (10, 11, 12, 13)
+completed_a = (6, 6, 6, 6)
+completed_b = (9, 9, 9, 1)
+cases_per_run = 10
+failure_limit = 2
+
+paired = [b - a for _, a, b in zip(seed_ids, completed_a, completed_b, strict=True)]
+print(f&quot;mean completion: A={mean(completed_a) / cases_per_run:.0%}, B={mean(completed_b) / cases_per_run:.0%}&quot;)
+print(&quot;paired differences (count):&quot;, paired)
+print(&quot;effect (percentage points):&quot;, 100 * mean(paired) / cases_per_run)
+for label, completed in ((&quot;A&quot;, completed_a), (&quot;B&quot;, completed_b)):
+    failing = [s for s, n in zip(seed_ids, completed, strict=True) if n &lt;= failure_limit]
+    print(f&quot;{label} failed: {len(failing)}/{len(seed_ids)}, seeds={failing}&quot;)</code></pre>
+<pre data-output><code>mean completion: A=60%, B=70%
+paired differences (count): [3, 3, 3, -5]
+effect (percentage points): 10.0
+A failed: 0/4, seeds=[]
+B failed: 1/4, seeds=[13]</code></pre>
+<p>차이는 단위별로 B−A입니다. 마지막 두 줄은 사전에 정의한 기준을 충족하지 못한 실행이 몇 개였는지와 그 번호입니다.</p>
+
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table>
+<thead><tr><th scope="col">그림에서</th><th scope="col">캡션과 기록에서</th></tr></thead>
+<tbody>
+<tr><td>읽을 단위와 축</td><td>무엇을 세고 무엇으로 나눈 수인지.</td></tr>
+<tr><td>평균과 실행별 결과</td><td>평균의 대상, 실패 조건과 실패 건수.</td></tr>
+<tr><td>비교 기준과 반복</td><td>환경·입력·버전·예산·설정·시드 등 재계산에 필요한 정보.</td></tr>
+</tbody>
+</table></div>
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://journals.plos.org/ploscompbiol/article?id=10.1371%2Fjournal.pcbi.1003833">Rougier·Droettboom·Bourne (2014) · 읽을 수 있는 연구 그림의 원칙</a></li>
+<li><a href="../da/da03-2.html">학습 교재 DA03 · 선 그래프와 축, 표본 분모</a></li>
+<li><a href="../rl/rl12-2.html">학습 교재 RL12 · 독립 실행의 불확실성과 실패 사례</a></li>
+</ul>
+
+
+<h2>확인 문제</h2>
+<p>아직 풀지 않은 문제입니다. 먼저 식이나 근거를 적어 보고 해설을 확인합니다.</p>
+<div id="quiz"></div>
+
+<section class="work" id="tools"></section>
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

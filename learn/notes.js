@@ -324,6 +324,19 @@ window.BDA_CHAPTERS = {
     {"id": "ST07-2", "title": "다중회귀와 상호작용: 같은 조건에서 무엇이 달라지나", "href": "notes/st/st07-2.html"},
     {"id": "ST07-3", "title": "잔차 진단과 예측의 불확실성: 관측 범위 안에서 말하기", "href": "notes/st/st07-3.html"}
   ],
+  ST08: [
+    {"id": "ST08-1", "title": "표집과 배정을 구별하고 블록 안에서 비교하기", "href": "notes/st/st08-1.html"},
+    {"id": "ST08-2", "title": "인과효과와 배정 이후의 탈락을 읽기", "href": "notes/st/st08-2.html"}
+  ],
+  ST09: [
+    {"id": "ST09-1", "title": "Beta–Bernoulli의 사전·우도·사후와 신용구간", "href": "notes/st/st09-1.html"},
+    {"id": "ST09-2", "title": "사후예측 분산과 사전·모형 민감도", "href": "notes/st/st09-2.html"},
+    {"id": "ST09-3", "title": "마르코프 연쇄와 수락·거절", "href": "notes/st/st09-3.html"}
+  ],
+  ST10: [
+    {"id": "ST10-1", "title": "시간의 순서, 자기상관과 과거만 쓴 검증", "href": "notes/st/st10-1.html"},
+    {"id": "ST10-2", "title": "반복 측정의 단위를 정하고 묶음으로 재표집하기", "href": "notes/st/st10-2.html"}
+  ],
   OP03: [
     {"id": "OP03-1", "title": "최솟값을 정의하고 한 변수에서 내려가기", "href": "notes/op/op03-1.html"},
     {"id": "OP03-2", "title": "두 매개변수에서 기울기를 계산하고 멈추기", "href": "notes/op/op03-2.html"}
@@ -332,6 +345,11 @@ window.BDA_CHAPTERS = {
     {"id": "OP07-1", "title": "드문 결과의 자기정보량과 평균 부호 길이", "href": "notes/op/op07-1.html"},
     {"id": "OP07-2", "title": "교차엔트로피와 KL, 실제와 다른 확률의 비용", "href": "notes/op/op07-2.html"},
     {"id": "OP07-3", "title": "결합분포가 알려 주는 상호정보량", "href": "notes/op/op07-3.html"}
+  ],
+  OP08: [
+    {"id": "OP08-1", "title": "몬테카를로 평균과 계산 오차", "href": "notes/op/op08-1.html"},
+    {"id": "OP08-2", "title": "중요도 추출과 가중치의 쏠림", "href": "notes/op/op08-2.html"},
+    {"id": "OP08-3", "title": "사후분포를 최적화로 근사하기", "href": "notes/op/op08-3.html"}
   ],
   AI01: [
     {"id": "AI01-1", "title": "인공지능이 푸는 문제와 출력 읽기", "href": "notes/ai/ai01-1.html"},
@@ -459,6 +477,10 @@ window.BDA_CHAPTERS = {
     {"id": "RS01-1", "title": "질문에서 가설로: 조작적 정의와 측정", "href": "notes/rs/rs01-1.html"},
     {"id": "RS01-2", "title": "큰 질문을 작은 비교로: 가정과 반례", "href": "notes/rs/rs01-2.html"}
   ],
+  RS06: [
+    {"id": "RS06-1", "title": "효과의 크기와 추정의 불확실성을 함께 보여 주기", "href": "notes/rs/rs06-1.html"},
+    {"id": "RS06-2", "title": "실패까지 읽히는 그림과 캡션 쓰기", "href": "notes/rs/rs06-2.html"}
+  ],
   RS10: [
     {"id": "RS10-1", "title": "연구 자료의 이용 조건과 식별 위험 확인하기", "href": "notes/rs/rs10-1.html"},
     {"id": "RS10-2", "title": "집단별 영향과 연구 기여·AI 도움 기록하기", "href": "notes/rs/rs10-2.html"}
@@ -474,6 +496,14 @@ window.BDA_CHAPTERS = {
   BD03: [
     {"id": "BD03-1", "title": "주문 지연을 예측할 때 모형을 고르는 순서", "href": "notes/bd/bd03-1.html"},
     {"id": "BD03-2", "title": "실제 CO₂ 자료로 기준선과 선형 예측 비교하기", "href": "notes/bd/bd03-2.html"}
+  ],
+  BD04: [
+    {"id": "BD04-1", "title": "평균 점수 뒤에 가려진 집단별 오류 찾기", "href": "notes/bd/bd04-1.html"},
+    {"id": "BD04-2", "title": "모형 평가 결과를 운영 결정으로 바꾸기", "href": "notes/bd/bd04-2.html"}
+  ],
+  BD05: [
+    {"id": "BD05-1", "title": "실측 CSV에서 조건에 맞는 값을 계산해 제출하기", "href": "notes/bd/bd05-1.html"},
+    {"id": "BD05-2", "title": "시험 행 순서를 보존하며 예측 CSV 만들기", "href": "notes/bd/bd05-2.html"}
   ]
 };
 

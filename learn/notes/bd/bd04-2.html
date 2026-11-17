@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>모형 평가 결과를 운영 결정으로 바꾸기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="BD04-2">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">빅데이터분석기사 연결</p>
+<p class="chap-num">BD04·2</p>
+<h1>모형 평가 결과를 운영 결정으로 바꾸기</h1>
+<p class="lead">후보 알림이 비용을 줄였는지와 담당자가 처리할 수 있는지를 같은 시험 기록에서 확인합니다. 결과 표를 실제 도입 계획과 연결합니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>평가 표에서 예상 손실과 검토량을 계산한다.</li><li>성능 비교와 사용 가능 조건을 함께 판단한다.</li><li>파일럿 이후 확인할 지표와 이전 절차로 돌아갈 기준을 적는다.</li></ul></div>
+
+<h2>같은 시험 주문에 두 규칙을 적용한다</h2>
+<p>확정 라벨이 있는 주문 200건을 같은 하루 조건의 연습 표로 둡니다. 실제 지연 20건에 대해 현재 규칙과 후보 규칙의 판정을 비교합니다. 미탐은 4점, 오탐은 1점이고, 업무팀은 주문을 최대 20건까지 추가 검토할 수 있습니다. 예측이 양성인 건을 모두 검토한다고 둡니다.</p>
+<div class="table-wrap"><table><thead><tr><th scope="col">규칙</th><th scope="col">TP</th><th scope="col">FN</th><th scope="col">FP</th><th scope="col">TN</th></tr></thead><tbody><tr><td>현재</td><td>10</td><td>10</td><td>5</td><td>175</td></tr><tr><td>후보</td><td>16</td><td>4</td><td>10</td><td>170</td></tr></tbody></table></div>
+<p>현재 규칙의 예상 비용은 4×10+5=45점이고 검토 요청은 10+5=15건입니다. 후보는 4×4+10=26점으로 비용이 19점 줄지만, 요청이 16+10=26건이어서 처리 한도보다 6건 많습니다. 오탐 비용에 담당 인원의 추가 업무를 포함하더라도, 한도를 넘기는 경우는 별도의 제약으로 처리합니다.</p>
+<div class="check" data-q="q1"></div><div class="check" data-q="q2"></div><div class="check" data-q="q3"></div>
+<pre data-example="python"><code>rules = {&quot;현재&quot;: (10, 10, 5), &quot;후보&quot;: (16, 4, 10)}
+for name, (tp, fn, fp) in rules.items():
+    cost = 4*fn + fp
+    reviews = tp + fp
+    print(name, &quot;비용&quot;, cost, &quot;검토&quot;, reviews, &quot;한도 충족&quot;, reviews &lt;= 20)</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>현재 비용 45 검토 15 한도 충족 True
+후보 비용 26 검토 26 한도 충족 False</code></pre>
+<h2>제약 안에서 다시 시도하고 별도로 평가한다</h2>
+<p>후보의 임계값을 높이거나 매일 상위 20건까지 확인하는 규칙을 검토할 수 있습니다. 두 규칙은 같은 알림 건수를 따르지 않을 수 있습니다. 임계값은 점수 기준이고 상위 20건 규칙은 당일 순위와 물량을 기준으로 삼습니다. 선택 규칙을 바꾸면 미탐 비용도 변할 수 있으므로 한도만 확인하고 결과를 이전과 동일하다고 볼 수 없습니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 160" role="img" aria-label="검증 구간에서 운영 규칙을 골라 새 시험과 제한적 도입으로 진행">
+<rect class="f-box" x="42" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="135" y="61" text-anchor="middle">검증 구간</text><text class="f-s" x="135" y="89" text-anchor="middle">한도 충족 규칙 고르기</text><text class="f-s" x="135" y="110" text-anchor="middle">임계값이나 일일 순위</text><line class="f-line" x1="235" y1="84" x2="278" y2="84" marker-end="url(#f-arrow)"/><rect class="f-soft" x="287" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="380" y="61" text-anchor="middle">새 시험 구간</text><text class="f-s" x="380" y="89" text-anchor="middle">비용·검토량·누락 비교</text><text class="f-s" x="380" y="110" text-anchor="middle">업무 한도 함께 확인</text><line class="f-line" x1="480" y1="84" x2="523" y2="84" marker-end="url(#f-arrow)"/><rect class="f-box" x="532" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="625" y="61" text-anchor="middle">제한된 도입</text><text class="f-s" x="625" y="89" text-anchor="middle">확정 라벨까지 기다림</text><text class="f-s" x="625" y="110" text-anchor="middle">운영 지표와 전환 조건</text>
+</svg><figcaption>제약을 새로 반영한 규칙은 기존 후보의 점수로 대신 평가할 수 없습니다.</figcaption></figure>
+<div class="check" data-q="q4"></div><div class="check" data-q="q5"></div>
+<h2>팀이 나중에 판단을 다시 내릴 수 있도록 적는다</h2>
+<p>보고는 예측 시점, 비용의 산정 근거, 사용한 기간과 지연 주문 분모, 후보의 예상 비용과 알림 수로 시작합니다. 현재 조건의 예시라면 “비용은 45→26점으로 낮았으나 하루 20건 한도를 넘겼습니다. 한도 안의 규칙을 검증에서 선택해 별도 기간에 평가하겠습니다”라고 쓸 수 있습니다. 도입 뒤에는 확정 라벨 기준 비용과 검토 대기 누적을 함께 봅니다. 한도 위반 또는 입력 오류가 반복될 때 기본 절차로 돌아갈 조건과 책임자를 정합니다.</p>
+<div class="check" data-q="q6"></div>
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>업무 비용과 처리 능력을 동시에 만족할 수 있는 예측 규칙을 다시 평가합니다.</p></div>
+
+<h2>참고 자료</h2>
+<ul><li><a href="../../../bigdata/notes/4-interpretation/08-모형-전개와-운영-모니터링.html">빅분기 교재 · 운영 모니터링</a></li><li><a href="../../../bigdata/notes/4-interpretation/05-과적합-진단과-모형-개선.html">빅분기 교재 · 모형 평가와 개선</a></li></ul>
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

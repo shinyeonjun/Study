@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>분산비, 합동분산, 양측 p값을 차례로 구한다 · 빅분기 노트</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="5-05">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">빅분기 노트</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">빅분기 실기 · 제3유형 가설검정 연습</p>
+<p class="chap-num">5-05</p>
+<h1>분산비, 합동분산, 양측 p값을 차례로 구한다</h1>
+<p class="lead">두 장비의 평균 처리시간이 다른지 확인합니다. 같은 두 표본이라도 분산을 비교하는 질문과 평균을 비교하는 질문에서 필요한 통계량이 다릅니다.</p>
+</header>
+
+<div class="goal">
+<h2>이 장을 읽고 나면</h2>
+<ul>
+<li>분산비를 계산할 때 분자로 둘 집단과 자유도를 정한다.</li>
+<li>합동분산과 독립표본 t 통계량을 원래 정밀도로 계산한다.</li>
+<li>양측 p값과 효과의 크기를 따로 해석한다.</li>
+</ul>
+</div>
+
+<h2>먼저 비교 단위와 가설을 읽는다</h2>
+<p>공식 제3유형 체험에는 두 집단의 분산비, 합동분산, 합동분산을 이용한 독립표본 t 검정의 p값을 구해 각각 제출하는 예가 있습니다. 이 장은 장비 A와 B의 합성 처리시간으로 같은 계산 순서를 연습합니다. A의 관측은 [8,9,10,11,12]분이고 B는 [6,7,8]분입니다. 각 그룹은 서로 다른 작업에서 관측했습니다. 계산에서는 관측은 그룹 안팎에서 서로 독립이고, 각 그룹의 모집단은 정규분포를 따른다고 가정합니다. 합동 t 단계에서는 추가로 두 모집단 분산이 같다고 가정합니다.</p>
+<p>이 장의 ①은 두 모집단 분산이 같다는 귀무가설 아래 F 검정에 쓰는 통계량을 구합니다. 분자에 자유도가 더 큰 집단의 분산을 넣으라고 정했습니다. ②는 합동분산을, ③은 ‘두 모집단의 평균이 서로 다르다’가 대립가설인 양측 t 검정의 p값을 묻습니다. 계산은 충분한 정밀도로 진행하고 각 답은 소수 셋째 자리까지 적습니다.</p>
+<div class="table-wrap"><table>
+<thead><tr><th scope="col">항목</th><th scope="col">A</th><th scope="col">B</th></tr></thead>
+<tbody>
+<tr><td>관측 수</td><td>5</td><td>3</td></tr>
+<tr><td>평균</td><td>10분</td><td>7분</td></tr>
+<tr><td>평균으로부터의 제곱편차 합</td><td>10분²</td><td>2분²</td></tr>
+<tr><td>표본분산</td><td>10÷4=2.5분²</td><td>2÷2=1분²</td></tr>
+<tr><td>표본분산의 자유도</td><td>4</td><td>2</td></tr>
+</tbody></table></div>
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+<h2>분산비의 순서를 놓치지 않고 합동분산을 만든다</h2>
+<p>표본분산을 구할 때에는 평균을 이미 표본에서 추정했으므로 각각 n−1로 나눕니다. 이번 지시에서는 자유도가 더 큰 A가 분자입니다. <code>F=2.5÷1=2.5</code>이고 자유도는 (4,2)입니다. 분산이 큰 그룹을 분자로 두라는 지시였다면 문제의 조건에 맞춰 다시 결정해야 합니다. 분자가 어떤 그룹인지에 따라 F 기준 분포의 자유도 쌍도 따라갑니다. 이 소문항은 분산비만 묻습니다.</p>
+<p><b class="key">합동분산</b>은 그룹별 분산을 단순 평균하지 않습니다. 각 그룹의 제곱편차 합을 합쳐 자유도의 합으로 나눕니다. 이 경우 <code>sₚ²=(4×2.5+2×1)/(4+2)=2</code>분²입니다. 표본분산 2.5와 1이 같지 않다는 사실만으로 두 모집단 분산이 반드시 다르다고 볼 수 없습니다. 이 연습에서 합동 t를 쓰는 이유는 소문항이 그 계산을 지시했기 때문입니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 192" role="img" aria-label="A의 제곱편차 합 10과 자유도 4, B의 제곱편차 합 2와 자유도 2가 가운데 합동분산 (10+2)/(4+2)=2로 합쳐진다.">
+<rect class="f-box" x="52" y="51" width="175" height="72" rx="3"/>
+<text class="f-cap" x="139.5" y="79" text-anchor="middle">A · 분산 2.5</text>
+<text class="f-s" x="139.5" y="104" text-anchor="middle">자유도 4 · 제곱합 10</text>
+<rect class="f-box" x="531" y="51" width="175" height="72" rx="3"/>
+<text class="f-cap" x="618.5" y="79" text-anchor="middle">B · 분산 1</text>
+<text class="f-s" x="618.5" y="104" text-anchor="middle">자유도 2 · 제곱합 2</text>
+<line class="f-line" x1="231" y1="87" x2="263" y2="87" marker-end="url(#f-arrow)"/>
+<line class="f-line" x1="527" y1="87" x2="495" y2="87" marker-end="url(#f-arrow)"/>
+<rect class="f-soft" x="267" y="43" width="224" height="88" rx="3"/>
+<text class="f-cap" x="379" y="74" text-anchor="middle">합동분산</text>
+<text class="f-t" x="379" y="107" text-anchor="middle">(10 + 2) ÷ (4 + 2) = 2</text>
+<text class="f-s" x="380" y="163" text-anchor="middle">분산을 더하기 전에 각각의 자유도를 곱한다.</text>
+</svg>
+<figcaption>분산의 단위는 분²이다. t 통계량의 분모에는 이 값으로 구한 평균 차이의 표준오차를 쓴다.</figcaption>
+</figure>
+<div class="check" data-q="q3"></div>
+<div class="check" data-q="q4"></div>
+<h2>평균 차이를 표준오차로 나눈 뒤 양쪽 꼬리를 센다</h2>
+<p>A−B의 관측 평균 차이는 3분입니다. 합동분산을 써 평균 차이의 표준오차를 <code>√[2(1/5+1/3)]≈1.0328</code>분으로 구합니다. 통계량은 <code>t=3/√[2(1/5+1/3)]≈2.9047</code>이고 자유도는 5+3−2=6입니다. 이 양측 p값은 평균이 같다는 가정 아래 지금 관측한 절댓값 이상의 t를 얻을 확률입니다. 약 0.027166이므로, 소수 셋째 자리까지 쓰는 답은 <code>0.027</code>입니다.</p>
+<p>유의수준을 0.05로 정했다면 합동 t 가정에서 평균이 같다는 귀무가설을 기각합니다. p값은 실제로 몇 분 차이인지 말해 주지 않습니다. 해석에서 관측 평균 차이 3분, 장비에 배정한 방식과 독립성, 표본이 아주 작다는 제약을 함께 살핍니다. 짝지은 작업이라면 작업별 차이를 분석해야 하고, 두 독립 그룹에서 등분산을 가정하지 않는다면 Welch t를 고려할 수 있습니다.</p>
+<div class="check" data-q="q5"></div>
+<div class="check" data-q="q6"></div>
+<h2>분산과 통계량을 직접 계산하고 SciPy 결과와 맞춘다</h2>
+<pre data-example="python"><code>from math import sqrt
+from statistics import mean, variance
+from scipy.stats import ttest_ind
+
+a = [8, 9, 10, 11, 12]
+b = [6, 7, 8]
+df_a, df_b = len(a) - 1, len(b) - 1
+var_a, var_b = variance(a), variance(b)
+f_value = var_a / var_b
+pooled = (df_a * var_a + df_b * var_b) / (df_a + df_b)
+se = sqrt(pooled * (1 / len(a) + 1 / len(b)))
+t_value = (mean(a) - mean(b)) / se
+result = ttest_ind(a, b, equal_var=True, alternative=&quot;two-sided&quot;)
+assert abs(t_value - result.statistic) &lt; 1e-12
+
+print(f&quot;1. F = {f_value:.3f}&quot;)
+print(f&quot;2. pooled = {pooled:.3f}&quot;)
+print(f&quot;3. p = {result.pvalue:.3f}&quot;)
+print(f&quot;check: t={t_value:.4f}, df={df_a + df_b}&quot;)</code></pre>
+<pre data-output><code>1. F = 2.500
+2. pooled = 2.000
+3. p = 0.027
+check: t=2.9047, df=6</code></pre>
+<p>마지막 확인 줄은 계산을 검산하는 값입니다. 별도 답안에는 각 소문항이 요구하는 값만 넣습니다. 예를 들어 ③이 p값을 묻는다면 확인 줄의 t가 아니라 0.027을 적습니다.</p>
+
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table>
+<thead><tr><th scope="col">핵심어</th><th scope="col">기억할 기준</th></tr></thead>
+<tbody>
+<tr><td><b class="key">분산비 F</b></td><td>문제에서 정한 분자·분모 순서와 자유도를 유지한다.</td></tr>
+<tr><td><b class="key">합동분산</b></td><td>그룹 내 제곱편차 합을 전체 자유도로 나눈다.</td></tr>
+<tr><td><b class="key">양측 t 검정</b></td><td>부호가 다른 양쪽에서 관측값 이상의 극단성을 합한다.</td></tr>
+</tbody></table></div>
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>구할 통계량과 제출할 값을 소문항마다 구별하고 반올림은 마지막에 한다.</p></div>
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://dataq.goorm.io/exam/3/%EC%8B%9C%ED%97%98/quiz/5">한국데이터산업진흥원 · 제3유형 풀이용 체험</a></li>
+<li><a href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.ttest_ind.html">SciPy 공식 문서 · 독립표본 t 검정</a></li>
+<li><a href="../2-exploration/08-검정-선택과-분할표.html">빅분기 필기 · 검정 선택과 분할표</a></li>
+</ul>
+
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"><a href="../../index.html">← 빅분기 홈</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

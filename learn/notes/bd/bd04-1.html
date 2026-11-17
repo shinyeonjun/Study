@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>평균 점수 뒤에 가려진 집단별 오류 찾기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="BD04-1">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">빅데이터분석기사 연결</p>
+<p class="chap-num">BD04·1</p>
+<h1>평균 점수 뒤에 가려진 집단별 오류 찾기</h1>
+<p class="lead">두 처리 경로의 지연 알림을 따로 평가합니다. 전체 재현율이 그대로인데 작은 경로의 결과는 나빠질 수 있는 이유를 계산하고, 보고할 지표를 정합니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>경로별 재현율을 실제 양성 수와 함께 계산한다.</li><li>양성 수에 가중한 전체 지표와 집단 평균을 비교한다.</li><li>오류를 줄이기 위한 검증 자료를 정의한다.</li></ul></div>
+
+<h2>전체 재현율이 같으면 모두 같아졌을까</h2>
+<p>출고 주문을 직접 접수와 연동 접수로 나눕니다. 별도 시험 기간의 실제 지연 주문은 직접 접수 40건과 연동 접수 10건입니다. 같은 시험 표본에서 현재 모형과 후보를 비교하고 각 모형이 찾아낸 지연 주문을 셉니다.</p>
+<div class="table-wrap"><table><thead><tr><th scope="col">접수 경로</th><th scope="col">실제 지연</th><th scope="col">현재 모형이 찾음</th><th scope="col">후보가 찾음</th></tr></thead><tbody><tr><td>직접 접수</td><td>40</td><td>32</td><td>36</td></tr><tr><td>연동 접수</td><td>10</td><td>8</td><td>4</td></tr><tr><td>전체</td><td>50</td><td>40</td><td>40</td></tr></tbody></table></div>
+<p>직접 접수의 재현율은 현재 0.8, 후보 0.9입니다. 연동 접수에서는 현재 0.8, 후보 0.4입니다. 전체 재현율은 둘 다 40/50=0.8이지만 후보의 연동 접수 미탐은 2건에서 6건으로 늘었습니다.</p>
+<div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 228" role="img" aria-label="재현율 비교, 직접 접수 현재 .8 후보 .9, 연동 접수 현재 .8 후보 .4">
+<line class="f-line" x1="153" y1="165" x2="651" y2="165"/><line class="f-line" x1="153" y1="165" x2="153" y2="51"/><line class="f-dash" x1="153" y1="165" x2="630" y2="165"/><text class="f-s" x="136" y="169" text-anchor="middle">0</text><line class="f-dash" x1="153" y1="115" x2="630" y2="115"/><text class="f-s" x="136" y="119" text-anchor="middle">0.5</text><line class="f-dash" x1="153" y1="65" x2="630" y2="65"/><text class="f-s" x="136" y="69" text-anchor="middle">1</text><text class="f-t" x="156" y="39" text-anchor="middle">재현율</text><rect x="261" y="85" width="45" height="80" class="f-soft"/><rect x="316" y="75" width="45" height="90" class="f-box"/><rect x="456" y="85" width="45" height="80" class="f-soft"/><rect x="511" y="125" width="45" height="40" class="f-box"/><text class="f-t" x="315" y="188" text-anchor="middle">직접 접수</text><text class="f-t" x="510" y="188" text-anchor="middle">연동 접수</text><text class="f-s" x="413" y="213" text-anchor="middle">왼쪽 현재 · 오른쪽 후보</text>
+</svg><figcaption>두 경로에서 각각 실제 지연을 분모로 씁니다. 집단별 실제 지연 수는 40건과 10건입니다.</figcaption></figure>
+<h2>합쳐서 셀 때와 각 집단을 똑같이 볼 때</h2>
+<p>전체의 0.8은 예측 결과를 모두 합쳐 50건을 분모로 계산했습니다. 같은 값을 후보의 경로별 재현율에 40/50과 10/50을 곱해 더해도 얻습니다. 각 경로에 같은 비중을 주는 집단 평균은 (0.9+0.4)/2=0.65입니다. 집계 방식은 무엇을 같은 비중으로 볼지 결정합니다.</p>
+<div class="check" data-q="q3"></div><div class="check" data-q="q4"></div>
+<pre data-example="python"><code>from fractions import Fraction as F
+from statistics import mean
+
+totals = [40, 10]
+for model, found in ((&quot;현재&quot;, [32, 8]), (&quot;후보&quot;, [36, 4])):
+    recalls = [F(tp, total) for tp, total in zip(found, totals)]
+    micro = F(sum(found), sum(totals))
+    macro = mean(recalls)
+    print(model, &quot;경로별&quot;, *(f&quot;{float(v):.2f}&quot; for v in recalls))
+    print(&quot;전체&quot;, f&quot;{float(micro):.2f}&quot;, &quot;경로 평균&quot;, f&quot;{float(macro):.2f}&quot;)</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>현재 경로별 0.80 0.80
+전체 0.80 경로 평균 0.80
+후보 경로별 0.90 0.40
+전체 0.80 경로 평균 0.65</code></pre>
+<h2>다음 평가에서 무엇을 수집할까</h2>
+<p>연동 접수는 실제 지연이 10건뿐이므로 재현율의 변동이 클 수 있습니다. 후보를 채택하기 전에 이후 기간을 추가로 확인하고, 연동 접수의 누락 신호와 늦게 들어오는 정보가 있는지 살핍니다. 각 경로의 정상 주문에서도 불필요 경보를 세어 업무 부담을 비교합니다. 이 표에는 실제 정상의 수와 모형의 오탐 수가 없어 정밀도까지 계산할 수 없습니다.</p>
+<div class="check" data-q="q5"></div><div class="check" data-q="q6"></div>
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>모형 결과를 전체 값으로만 보지 말고 집단의 수, 평가 지표, 오류 방향을 함께 기록합니다.</p></div>
+
+<h2>참고 자료</h2>
+<ul><li><a href="../../../bigdata/notes/4-interpretation/01-혼동행렬과-분류지표.html">빅분기 교재 · 혼동행렬과 분류 지표</a></li><li><a href="../../../bigdata/notes/4-interpretation/08-모형-전개와-운영-모니터링.html">빅분기 교재 · 운영 모니터링</a></li><li><a href="https://scikit-learn.org/stable/modules/model_evaluation.html#classification-metrics">scikit-learn · 평균 방식과 분류 지표</a></li></ul>
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

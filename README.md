@@ -6,7 +6,7 @@
 | --- | --- | --- |
 | `index.html` | 전체 홈 (자격증 고르기) | 파일 안에 직접 |
 | `jcg/` | 정보처리기사 실기 코드 노트 | `jcg/css/`, `jcg/js/` |
-| `bigdata/` | 빅데이터분석기사 필기 + 기초 수학. 노트, 확인 문제, 간격 복습, 오답 모음, 메모 | `bigdata/style.css`, `bigdata/js/` |
+| `bigdata/` | 빅데이터분석기사 필기와 실기. 노트, 확인 문제, 간격 복습, 오답 모음, 메모 | `bigdata/style.css`, `bigdata/js/` |
 
 - 여는 법: 루트 `index.html`을 브라우저로 연다.
 - 배포: GitHub Pages(브랜치 `main`, 폴더 `/`)로 올리면 `https://<계정>.github.io/Study/`에서 열린다. `.nojekyll`은 Pages가 파일을 그대로 내보내게 하는 빈 파일이다.

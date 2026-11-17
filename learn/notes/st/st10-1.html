@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>시간의 순서, 자기상관과 과거만 쓴 검증 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e8c'/%3E%3Cpath d='M8 22V10m8 12V14m8 8V6' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="ST10-1">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+
+<header class="chapter">
+<p class="chap-sub">통계 · ST10 시간·반복 자료</p>
+<p class="chap-num">ST10·1</p>
+<h1>시간의 순서, 자기상관과 과거만 쓴 검증</h1>
+<p class="lead">시간을 따라 반복되는 모양을 읽고, 떨어진 값의 상관을 작은 표에서 계산합니다. 운영에서 알 수 있었던 자료만으로 예측을 검증합니다.</p>
+</header>
+
+<div class="goal">
+<h2>이 장을 읽고 나면</h2>
+<ul>
+<li>시간에 따른 추세와 반복 주기, 약한 정상성의 뜻을 구분한다.</li>
+<li>시간 간격이 같은 작은 자료에서 시차별 표본 자기상관을 계산한다.</li>
+<li>미래 값을 가리지 않은 적합과 과거만으로 검증하는 예측을 구분한다.</li>
+</ul>
+</div>
+
+<h2>시간 표시를 붙이면 값 외에 순서가 보인다</h2>
+<p>하루 주문 수가 1일부터 8일까지 10,16,14,20,18,24,22,28입니다. 시간에 맞춰 그리면, 짝수 날에서 홀수 날보다 값이 높게 반복되면서 전체 수준도 올라갑니다. 오래 지속되는 수준의 변화를 <b class="key">추세</b>, 달력이나 일정한 주기와 함께 반복되는 움직임을 <b class="key">계절성</b>이라고 합니다. 여기서는 설명을 위해 2일 주기를 만들어 놓았습니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 286" role="img" aria-label="1일부터 8일까지 관측이 10,16,14,20,18,24,22,28이다. 2일마다 비슷한 위치의 주문 건수가 4씩 늘어난다.">
+<line class="f-ink" x1="114" y1="242" x2="660" y2="242" marker-end="url(#f-arrow)"/>
+<line class="f-ink" x1="125" y1="249" x2="125" y2="62" marker-end="url(#f-arrow)"/>
+<text class="f-cap" x="138" y="48" text-anchor="start">하루 주문 건수</text>
+<line class="f-ink" x1="120" y1="242" x2="125" y2="242"/>
+<text class="f-s" x="110" y="246" text-anchor="end">8</text>
+<line class="f-ink" x1="120" y1="186" x2="125" y2="186"/>
+<text class="f-s" x="110" y="190" text-anchor="end">16</text>
+<line class="f-ink" x1="120" y1="130" x2="125" y2="130"/>
+<text class="f-s" x="110" y="134" text-anchor="end">24</text>
+<line class="f-ink" x1="120" y1="74" x2="125" y2="74"/>
+<text class="f-s" x="110" y="78" text-anchor="end">32</text>
+<polyline class="f-line" points="155,228 220,186 285,200 350,158 415,172 480,130 545,144 610,102"/>
+<circle class="f-fill" cx="155" cy="228" r="4"/>
+<text class="f-s" x="155" y="267" text-anchor="middle">1</text>
+<circle class="f-fill" cx="220" cy="186" r="4"/>
+<text class="f-s" x="220" y="267" text-anchor="middle">2</text>
+<circle class="f-fill" cx="285" cy="200" r="4"/>
+<text class="f-s" x="285" y="267" text-anchor="middle">3</text>
+<circle class="f-fill" cx="350" cy="158" r="4"/>
+<text class="f-s" x="350" y="267" text-anchor="middle">4</text>
+<circle class="f-fill" cx="415" cy="172" r="4"/>
+<text class="f-s" x="415" y="267" text-anchor="middle">5</text>
+<circle class="f-fill" cx="480" cy="130" r="4"/>
+<text class="f-s" x="480" y="267" text-anchor="middle">6</text>
+<circle class="f-fill" cx="545" cy="144" r="4"/>
+<text class="f-s" x="545" y="267" text-anchor="middle">7</text>
+<circle class="f-fill" cx="610" cy="102" r="4"/>
+<text class="f-s" x="610" y="267" text-anchor="middle">8</text>
+<text class="f-s" x="673" y="246" text-anchor="start">일</text>
+</svg>
+<figcaption>1,3,5,7일과 2,4,6,8일을 각각 따라가면 두 줄 모두 오른다.</figcaption>
+</figure>
+<p>평균과 분산이 시각에 따라 같고, 두 시각 사이의 공분산이 시각 자체가 아니라 간격에만 의존한다면 <b class="key">약한 정상성</b>을 갖습니다. 정상성은 서로 다른 시각의 값이 독립이라는 뜻은 아닙니다. 추세나 반복되는 평균 차가 있다면 원자료를 그대로 두고 정상성을 가정하기 어렵습니다. 한두 그래프가 고르게 보인다는 이유만으로 정상성을 확정할 수도 없습니다.</p>
+<p>같은 주기의 값을 빼는 <b>계절 차분</b>은 반복 모양의 영향을 줄일 수 있습니다. 위 자료에서 2일 전을 빼면 5일의 값은 18−14=4이고, 6일의 값은 24−20=4입니다. 차분은 예측 시점에서 이전에 관측한 값만 사용합니다.</p>
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+
+<h2>시차를 고정하고 떨어진 값끼리 비교한다</h2>
+<p>매일 한 번씩 잰 자료에서 시차 1은 바로 전날, 시차 2는 이틀 전과 짝짓는 것입니다. 시각이 일정한 간격으로 있는지 먼저 확인합니다. 하루 기록이 비어 있다면 다음 줄이라고 해서 하루 뒤로 세면 안 됩니다.</p>
+<p><b class="key">자기상관</b>은 같은 변수의 시간적으로 떨어진 값들이 같이 움직이는 정도입니다. 이 장에서는 전체 평균을 빼 얻은 값 d를 놓고, 시차 k에 대해 떨어진 항의 곱 Σdₜdₜ₋ₖ를 전체 제곱합 Σdₜ²로 나누는 표본 자기상관을 씁니다. 시차가 바뀌면 곱하는 쌍 수는 바뀝니다. 전체 제곱합은 그대로입니다.</p>
+<p>작은 자료 [2,2,4,4]의 평균은 3이고 d는 [−1,−1,1,1]입니다. 시차 1의 분자는 1−1+1=1, 시차 2는 −1−1=−2입니다. 분모는 4이므로 각각 0.25와 −0.5입니다. 이것은 두 조각의 평균을 따로 구하는 피어슨 상관과 계산이 다릅니다. 모든 값이 같아 분모가 0이면 이 식을 사용할 수 없습니다. 추세나 계절성도 자기상관을 크게 만들 수 있으므로 그 값 하나로 원인을 단정하지 않습니다.</p>
+<div class="check" data-q="q3"></div>
+<div class="check" data-q="q4"></div>
+
+<h2>예측 기준 시각을 앞으로 옮겨 검증한다</h2>
+<p>4일까지 본 상태에서 5일을 예측하고, 5일 주문이 실제로 확인된 뒤에는 6일을 예측합니다. 이 <b class="key">이동 원점 검증</b>에서 평가할 값은 각 적합의 뒤에 있습니다. 자료를 바꾸는 평균·척도도 해당 학습 구간에서 정하고, 나중에 확정된 값을 이전 시점의 입력으로 붙이지 않습니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 256" role="img" aria-label="1에서 4일까지 사용해 5일, 1에서 5일까지 사용해 6일, 1에서 6일까지 사용해 7일을 차례로 예측한다. 최종 시험은 1에서 7일까지 사용하여 8일을 예측한다.">
+<text class="f-s" x="209" y="47" text-anchor="middle">1</text>
+<text class="f-s" x="271" y="47" text-anchor="middle">2</text>
+<text class="f-s" x="333" y="47" text-anchor="middle">3</text>
+<text class="f-s" x="395" y="47" text-anchor="middle">4</text>
+<text class="f-s" x="457" y="47" text-anchor="middle">5</text>
+<text class="f-s" x="519" y="47" text-anchor="middle">6</text>
+<text class="f-s" x="581" y="47" text-anchor="middle">7</text>
+<text class="f-s" x="643" y="47" text-anchor="middle">8</text>
+<text class="f-s" x="150" y="46" text-anchor="end">시각(일)</text>
+<text class="f-s" x="150" y="84" text-anchor="end">검증 1</text>
+<rect class="f-box" x="182" y="63" width="54" height="28" rx="3"/>
+<rect class="f-box" x="244" y="63" width="54" height="28" rx="3"/>
+<rect class="f-box" x="306" y="63" width="54" height="28" rx="3"/>
+<rect class="f-box" x="368" y="63" width="54" height="28" rx="3"/>
+<rect class="f-soft" x="430" y="63" width="54" height="28" rx="3"/>
+<rect class="f-dash" x="492" y="63" width="54" height="28" rx="3"/>
+<rect class="f-dash" x="554" y="63" width="54" height="28" rx="3"/>
+<rect class="f-dash" x="616" y="63" width="54" height="28" rx="3"/>
+<text class="f-s" x="457" y="84" text-anchor="middle">평가</text>
+<text class="f-s" x="150" y="125" text-anchor="end">검증 2</text>
+<rect class="f-box" x="182" y="104" width="54" height="28" rx="3"/>
+<rect class="f-box" x="244" y="104" width="54" height="28" rx="3"/>
+<rect class="f-box" x="306" y="104" width="54" height="28" rx="3"/>
+<rect class="f-box" x="368" y="104" width="54" height="28" rx="3"/>
+<rect class="f-box" x="430" y="104" width="54" height="28" rx="3"/>
+<rect class="f-soft" x="492" y="104" width="54" height="28" rx="3"/>
+<rect class="f-dash" x="554" y="104" width="54" height="28" rx="3"/>
+<rect class="f-dash" x="616" y="104" width="54" height="28" rx="3"/>
+<text class="f-s" x="519" y="125" text-anchor="middle">평가</text>
+<text class="f-s" x="150" y="166" text-anchor="end">검증 3</text>
+<rect class="f-box" x="182" y="145" width="54" height="28" rx="3"/>
+<rect class="f-box" x="244" y="145" width="54" height="28" rx="3"/>
+<rect class="f-box" x="306" y="145" width="54" height="28" rx="3"/>
+<rect class="f-box" x="368" y="145" width="54" height="28" rx="3"/>
+<rect class="f-box" x="430" y="145" width="54" height="28" rx="3"/>
+<rect class="f-box" x="492" y="145" width="54" height="28" rx="3"/>
+<rect class="f-soft" x="554" y="145" width="54" height="28" rx="3"/>
+<rect class="f-dash" x="616" y="145" width="54" height="28" rx="3"/>
+<text class="f-s" x="581" y="166" text-anchor="middle">평가</text>
+<text class="f-s" x="150" y="207" text-anchor="end">최종 시험</text>
+<rect class="f-box" x="182" y="186" width="54" height="28" rx="3"/>
+<rect class="f-box" x="244" y="186" width="54" height="28" rx="3"/>
+<rect class="f-box" x="306" y="186" width="54" height="28" rx="3"/>
+<rect class="f-box" x="368" y="186" width="54" height="28" rx="3"/>
+<rect class="f-box" x="430" y="186" width="54" height="28" rx="3"/>
+<rect class="f-box" x="492" y="186" width="54" height="28" rx="3"/>
+<rect class="f-box" x="554" y="186" width="54" height="28" rx="3"/>
+<rect class="f-soft" x="616" y="186" width="54" height="28" rx="3"/>
+<text class="f-s" x="643" y="207" text-anchor="middle">평가</text>
+<text class="f-s" x="381" y="239" text-anchor="middle">칠한 칸의 결과는 그 칸을 예측할 때 쓰지 않는다.</text>
+</svg>
+<figcaption>각 줄에서 ‘평가’ 칸 앞은 그 예측에 쓸 수 있는 구간이다. 마지막 시험 전까지 비교 규칙을 고정한다.</figcaption>
+</figure>
+<p>5일의 직전값 기준은 4일의 20이고, 같은 주기의 값은 3일의 14입니다. 실제 5일은 18이므로 절대오차는 2와 4입니다. 5~7일의 검증에서 직전값 기준은 평균 10/3, 같은 주기는 4입니다. 이 결과로 직전값 기준을 고른 뒤, 남겨 둔 8일에는 직전 7일의 값인 22를 예측으로 사용합니다. 8일의 실제값 28과의 절대오차는 6입니다.</p>
+<p>하루씩 새 관측을 받아 다시 예측하는 경우와, 기준 시각 한 번에서 앞으로 여러 날을 한꺼번에 예측하는 경우는 정보가 다릅니다. 며칠 뒤의 순서까지 중요하다면 운영에서 필요한 예측 거리와 같도록 검증합니다. 라벨 확인이 늦어지는 문제에서는 예측 시점에 이미 확인된 학습 라벨만 쓸 수 있습니다.</p>
+<div class="check" data-q="q5"></div>
+<div class="check" data-q="q6"></div>
+
+<h2>시차 계산과 이동 원점 예측을 실행한다</h2>
+<pre data-example="python"><code>from statistics import mean
+
+def acf(values, lag):
+    center = mean(values)
+    deviations = [x - center for x in values]
+    numerator = sum(a * b for a, b in zip(deviations[lag:], deviations[:-lag]))
+    denominator = sum(d * d for d in deviations)
+    return numerator / denominator
+
+small = [2, 2, 4, 4]
+print(f&quot;acf: lag 1={acf(small, 1):.2f}, lag 2={acf(small, 2):.2f}&quot;)
+
+orders = [10, 16, 14, 20, 18, 24, 22, 28]
+last_errors = []
+season_errors = []
+for end in (4, 5, 6):
+    past = orders[:end]
+    actual = orders[end]
+    last_errors.append(abs(actual - past[-1]))
+    season_errors.append(abs(actual - past[-2]))
+    print(f&quot;day {end + 1}: latest {past[-1]}, seasonal {past[-2]}, actual {actual}&quot;)
+print(f&quot;validation MAE: latest {mean(last_errors):.4f}, seasonal {mean(season_errors):.4f}&quot;)
+print(&quot;test day 8 error:&quot;, abs(orders[7] - orders[6]))</code></pre>
+<pre data-output><code>acf: lag 1=0.25, lag 2=-0.50
+day 5: latest 20, seasonal 14, actual 18
+day 6: latest 18, seasonal 20, actual 24
+day 7: latest 24, seasonal 18, actual 22
+validation MAE: latest 3.3333, seasonal 4.0000
+test day 8 error: 6</code></pre>
+<p>위의 자기상관 함수는 양의 시차가 자료 길이보다 짧고 분모가 양수인 경우에 사용합니다. 예측 오차는 그날의 실제값이 확인된 뒤 기록합니다. 시간순 자료를 다시 뽑는 방법은 다음 장에서 다룹니다.</p>
+
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table>
+<thead><tr><th scope="col">문제</th><th scope="col">확인할 것</th></tr></thead>
+<tbody>
+<tr><td>시간 흐름</td><td>추세·계절성과 상관이 시간에 따라 어떻게 보이나.</td></tr>
+<tr><td>시차</td><td>어떤 실제 시간 간격의 쌍을 계산했나.</td></tr>
+<tr><td>시간순 평가</td><td>학습·변환과 예측 기준 시각, 최종 시험의 사용 범위를 맞춘다.</td></tr>
+</tbody>
+</table></div>
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://otexts.com/fpp3/acf.html">Hyndman·Athanasopoulos, Forecasting: Principles and Practice · 자기상관</a></li>
+<li><a href="https://otexts.com/fpp3/stationarity.html">Forecasting: Principles and Practice · 정상성과 차분</a></li>
+<li><a href="https://otexts.com/fpp3/tscv.html">Forecasting: Principles and Practice · 시간순 교차검증</a></li>
+</ul>
+
+
+<h2>확인 문제</h2>
+<p>아직 풀지 않은 문제입니다. 먼저 식이나 근거를 적어 보고 해설을 확인합니다.</p>
+<div id="quiz"></div>
+
+<section class="work" id="tools"></section>
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

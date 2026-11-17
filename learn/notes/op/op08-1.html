@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>몬테카를로 평균과 계산 오차 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="OP08-1">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">수치계산·최적화·정보이론 · OP08 표본으로 계산하기</p>
+<p class="chap-num">OP08·1</p>
+<h1>몬테카를로 평균과 계산 오차</h1>
+<p class="lead">곡선 아래 면적을 함수값 몇 개의 평균으로 근사해 봅니다. 같은 계산을 난수로 여러 번 다시 했을 때 결과가 어느 정도 움직이는지도 수치로 나타냅니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul>
+<li>적분을 균등 난수에서의 기대값으로 바꾸어 계산한다.</li>
+<li>독립 표본 평균의 몬테카를로 표준오차를 추정한다.</li>
+<li>난수열 재현, 표본 수 비교, 실제 근사 오차의 차이를 설명한다.</li>
+</ul></div>
+
+<h2>면적을 기대값으로 나타내기</h2>
+<p><var>U</var>가 0과 1 사이의 균등분포를 따른다고 합시다. 구간 안의 밀도가 1이므로 <var>U</var>에서 함수값을 읽어 평균 내는 이론적 기대값은 <var>E[f(U)] = ∫₀¹ f(u) du</var>입니다. 구간 길이가 1인 덕분에 평균 높이와 면적의 수치가 같습니다. <var>[a,b]</var>에서 균등 난수를 쓴다면 밀도가 <var>1/(b−a)</var>이므로 면적을 얻으려면 평균 높이에 구간 길이 <var>b−a</var>를 곱합니다.</p>
+<p>이번에는 <var>f(u)=u²</var>를 씁니다. 정확한 기대값은 적분으로 계산하면 <var>1/3</var>입니다. 이 값으로 실제 계산의 오차를 비교할 수 있습니다. 손계산용으로 <var>u</var>를 0.1, 0.4, 0.6, 0.9에 고정하면 높이는 0.01, 0.16, 0.36, 0.81입니다. 합이 1.34이므로 네 높이의 평균은 0.335입니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 302" role="img" aria-label="0에서 1까지 제곱함수. 네 표본의 좌표는 (0.1,0.01), (0.4,0.16), (0.6,0.36), (0.9,0.81).">
+<text class="f-cap" x="120" y="31" text-anchor="start">함수값 u²</text>
+<line class="f-ink" x1="120" y1="238" x2="640" y2="238"/>
+<line class="f-ink" x1="120" y1="238" x2="120" y2="58"/>
+<line class="f-dash" x1="120" y1="58" x2="640" y2="58"/>
+<text class="f-s" x="105" y="63" text-anchor="end">1</text>
+<polygon class="f-soft" points="120,238 120,238 133,237.89 146,237.55 159,236.99 172,236.2 185,235.19 198,233.95 211,232.49 224,230.8 237,228.89 250,226.75 263,224.39 276,221.8 289,218.99 302,215.95 315,212.69 328,209.2 341,205.49 354,201.55 367,197.39 380,193 393,188.39 406,183.55 419,178.49 432,173.2 445,167.69 458,161.95 471,155.99 484,149.8 497,143.39 510,136.75 523,129.89 536,122.8 549,115.49 562,107.95 575,100.19 588,92.2 601,83.99 614,75.55 627,66.89 640,58 640,238"/>
+<polyline class="f-line" points="120,238 133,237.89 146,237.55 159,236.99 172,236.2 185,235.19 198,233.95 211,232.49 224,230.8 237,228.89 250,226.75 263,224.39 276,221.8 289,218.99 302,215.95 315,212.69 328,209.2 341,205.49 354,201.55 367,197.39 380,193 393,188.39 406,183.55 419,178.49 432,173.2 445,167.69 458,161.95 471,155.99 484,149.8 497,143.39 510,136.75 523,129.89 536,122.8 549,115.49 562,107.95 575,100.19 588,92.2 601,83.99 614,75.55 627,66.89 640,58"/>
+<line class="f-dash" x1="172" y1="238" x2="172" y2="236.2"/>
+<circle class="f-fill" cx="172" cy="236.2" r="5"/>
+<text class="f-s" x="172" y="264" text-anchor="middle">0.1</text>
+<line class="f-dash" x1="328" y1="238" x2="328" y2="209.2"/>
+<circle class="f-fill" cx="328" cy="209.2" r="5"/>
+<text class="f-s" x="328" y="264" text-anchor="middle">0.4</text>
+<line class="f-dash" x1="432" y1="238" x2="432" y2="173.2"/>
+<circle class="f-fill" cx="432" cy="173.2" r="5"/>
+<text class="f-s" x="432" y="264" text-anchor="middle">0.6</text>
+<line class="f-dash" x1="588" y1="238" x2="588" y2="92.2"/>
+<circle class="f-fill" cx="588" cy="92.2" r="5"/>
+<text class="f-s" x="588" y="264" text-anchor="middle">0.9</text>
+<text class="f-s" x="120" y="264" text-anchor="middle">0</text>
+<text class="f-s" x="640" y="264" text-anchor="middle">1</text>
+<text class="f-cap" x="660" y="264" text-anchor="start">u</text>
+</svg>
+<figcaption>곡선 아래 면적은 1/3입니다. 표시한 네 점에서 높이를 읽어 평균하면 면적을 0.335로 근사합니다.</figcaption>
+</figure>
+<p><b class="key">몬테카를로 적분</b>에서는 미리 고른 점 대신 분포에서 점을 뽑아 같은 평균을 계산합니다. 표준오차를 논할 때의 표본은 난수 자체 <var>uᵢ</var>가 아니라 목표 함수의 값 <var>zᵢ=f(uᵢ)</var>입니다. 예를 들어 실행에서 <var>uᵢ</var>가 0.9였다면 평균에 들어가는 값은 0.81입니다.</p>
+<div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
+
+<h2>반복해서 평균을 내면 얼마나 움직일까?</h2>
+<p>고정된 분포에서 추출한 독립인 <var>Zᵢ</var>의 평균이 <var>μ</var>, 분산이 <var>σ²</var>라고 합시다. <var>n</var>개 표본 평균 <var>z̄</var>의 기대값은 <var>μ</var>입니다. 독립인 값들의 합의 분산은 <var>nσ²</var>이고 평균은 합을 <var>n</var>으로 나누므로 분산은 <var>σ²/n</var>입니다. 이처럼 평균의 표집분포에 있는 표준편차를 <strong>몬테카를로 표준오차</strong>라고 부릅니다.</p>
+<div class="formula">SE(z̄) = σ/√n, &nbsp; 추정 SE(z̄) = s/√n</div>
+<p>분산을 모르고 표본 값만 있다면 <var>n≥2</var>에서 <var>n−1</var>을 분모로 한 표본 표준편차 <var>s</var>로 바꿉니다. 이번 문제에서는 <var>E[Z²] = E[U⁴] = 1/5</var>이므로 <var>Var(Z)=1/5−(1/3)²=4/45</var>를 알고 있습니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 261" role="img" aria-label="독립 제곱값의 평균에서 n 100, 400, 1600의 이론적 표준오차는 각각 0.029814, 0.014907, 0.007454.">
+<text class="f-cap" x="160" y="31" text-anchor="middle">표본 수 n</text>
+<text class="f-cap" x="276" y="31" text-anchor="start">평균 추정치의 이론적 표준오차</text>
+<text class="f-t" x="160" y="76" text-anchor="middle">100</text>
+<rect class="f-soft" x="276" y="52" width="337.89" height="33"/>
+<text class="f-s" x="626.89" y="76" text-anchor="start">0.029814</text>
+<text class="f-t" x="160" y="130" text-anchor="middle">400</text>
+<rect class="f-soft" x="276" y="106" width="168.95" height="33"/>
+<text class="f-s" x="457.95" y="130" text-anchor="start">0.014907</text>
+<text class="f-t" x="160" y="184" text-anchor="middle">1600</text>
+<rect class="f-soft" x="276" y="160" width="84.47" height="33"/>
+<text class="f-s" x="373.47" y="184" text-anchor="start">0.007454</text>
+<line class="f-ink" x1="276" y1="219" x2="616" y2="219"/>
+<line class="f-ink" x1="276" y1="219" x2="276" y2="225"/>
+<text class="f-s" x="276" y="244" text-anchor="middle">0.00</text>
+<line class="f-ink" x1="389.33" y1="219" x2="389.33" y2="225"/>
+<text class="f-s" x="389.33" y="244" text-anchor="middle">0.01</text>
+<line class="f-ink" x1="502.67" y1="219" x2="502.67" y2="225"/>
+<text class="f-s" x="502.67" y="244" text-anchor="middle">0.02</text>
+<line class="f-ink" x1="616" y1="219" x2="616" y2="225"/>
+<text class="f-s" x="616" y="244" text-anchor="middle">0.03</text>
+</svg>
+<figcaption>시작점은 0입니다. 표본 수가 네 배가 될 때마다 표준오차의 막대 길이가 절반이 됩니다.</figcaption>
+</figure>
+<p><var>n</var>을 네 배로 하면 <var>√n</var>은 두 배가 됩니다. 한 번 실행에서 나타난 오차 <var>z̄−μ</var>의 크기는 표준오차와 다른 값입니다. 표준오차가 줄어드는 경우에도 우연히 오차가 더 커지는 실행 결과가 나올 수 있습니다. 독립 표본의 평균에 쓰는 공식이므로, <a href="../st/st09-3.html">마르코프 연쇄</a>에서 연속한 기록을 사용하면 자기상관을 함께 봅니다.</p>
+<div class="check" data-q="q3"></div><div class="check" data-q="q4"></div><div class="check" data-q="q5"></div>
+
+<h2>난수열을 기록하고 표본 수를 바꾸기</h2>
+<p>첫 예제는 시드 27로 균등 난수 1,600개를 생성합니다. 100개와 400개 결과는 같은 배열에서 앞부분만 사용해 계산하므로 서로 표본을 공유합니다. 각 평균 내부의 표본은 독립 추출을 모방하지만 세 평균을 세 번의 독립 실험으로 해석할 수는 없습니다.</p>
+<p class="small">실행 예제</p>
+<pre data-example="python"><code>import numpy as np
+
+rng = np.random.default_rng(27)
+u = rng.random(1_600)
+z = u ** 2
+
+print(&quot;n mean estimated_se exact_se&quot;)
+for n in (100, 400, 1_600):
+    sample = z[:n]
+    se = sample.std(ddof=1) / np.sqrt(n)
+    exact_se = np.sqrt(4 / (45 * n))
+    print(f&quot;{n} {sample.mean():.6f} {se:.6f} {exact_se:.6f}&quot;)</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>n mean estimated_se exact_se
+100 0.359016 0.031659 0.029814
+400 0.370119 0.015340 0.014907
+1600 0.340547 0.007473 0.007454</code></pre>
+<p>100개보다 400개에서 추정 표준오차는 작지만, 1/3과의 차이는 이 실행에서 400개가 더 큽니다. 표준오차는 독립 실행을 반복했을 때 평균이 보통 얼마나 퍼지는지 나타냅니다. 같은 시드를 고정하는 건 특정 결과를 재현하는 방법입니다. 난수 생성기의 종류, 라이브러리 버전과 호출 순서도 기록하면 난수열 차이를 진단하기 쉽습니다. 시뮬레이션을 독립적으로 여러 번 비교하려면 같은 시드를 루프 안에서 새로 설정하지 말고 독립 난수열을 사용합니다.</p>
+<div class="check" data-q="q6"></div><div class="check" data-q="q7"></div>
+
+<h2>계산을 더 하면 줄어드는 오차</h2>
+<p>같은 확률 모형에서 난수를 더 많이 뽑으면 계산한 평균이 그 모형의 기대값에 더 가까워집니다. 예를 들어 <strong>이미 관측한 자료를 고정하고</strong> 사후분포의 평균을 표본으로 구할 때, 시뮬레이션 횟수는 평균의 계산 오차에 영향을 줍니다. 관측 자료가 그만큼 새로 추가되지는 않으므로 자료에 의해 정해진 사후분포의 폭에 이 변화를 적용할 수 없습니다.</p>
+<p>유한 분산을 가진 독립 표본에서 평균의 정규근사가 적절하다면, 계산 오차의 크기를 보는 한 방법은 <var>z̄ ± 1.96·s/√n</var>입니다. 사건이 매우 드물거나 분산이 큰 상황에서는 표본 수가 작을 때 이 근사가 잘 맞지 않을 수 있습니다.</p>
+<div class="why"><p class="box-k">왜 그럴까?</p><p>확률이 0.001인 사건의 비율을 100번의 독립 시뮬레이션으로 추정한다. 한 번도 발생하지 않아 추정 표준오차가 0이라면 확률도 0일까?</p><details><summary>모범 답 보기</summary><p>100번 모두 실패할 확률은 0.999¹⁰⁰ ≈ 0.905입니다. 표본에서는 모두 같은 값이라 표준편차가 0이지만, 유한 표본이 드문 사건을 한 번도 보지 못했다는 사실만으로 실제 확률을 0으로 결정할 수 없습니다.</p></details></div>
+<div class="check" data-q="q8"></div>
+
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table><thead><tr><th scope="col">개념</th><th scope="col">확인할 것</th></tr></thead><tbody>
+<tr><th scope="row"><b class="key">몬테카를로 평균</b></th><td>난수에서 목표 함수값을 계산한 뒤 평균 낸다.</td></tr>
+<tr><th scope="row"><b class="key">표준오차</b></th><td>같은 계산을 다시 할 때 평균이 얼마나 움직이는지 나타낸다.</td></tr>
+<tr><th scope="row"><b class="key">재현</b></th><td>난수열과 실행 환경을 기록한다.</td></tr>
+</tbody></table></div><div class="box sum"><p class="box-k">다음 장으로</p><p><a href="op08-2.html">다음 장</a>에서는 중요한 값이 드문 경우, 다른 분포에서 뽑고 가중치를 붙여 같은 기대값을 계산합니다.</p></div>
+
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://openstax.org/books/introductory-statistics-2e/pages/7-1-the-central-limit-theorem-for-sample-means-averages">OpenStax · 표본평균의 표집분포와 표준오차</a></li>
+<li><a href="https://numpy.org/doc/stable/reference/random/compatibility.html">NumPy · 난수열과 재현 조건</a></li>
+</ul>
+<h2>확인 문제</h2>
+<p>직접 계산하거나 설명을 먼저 적고 답을 확인해 보세요.</p>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

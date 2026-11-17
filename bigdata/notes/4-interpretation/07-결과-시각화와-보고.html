@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>효과 크기·불확실성을 그림과 보고서에 담기 · 빅분기 노트</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="4-07">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">빅분기 노트</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">4과목 · 빅데이터 결과 해석</p>
+<p class="chap-num">07</p>
+<h1>효과 크기·불확실성을 그림과 보고서에 담기</h1>
+<p class="lead">‘평균이 줄었다’라는 한 문장에는 대상, 단위, 비교 기준, 불확실성이 빠지기 쉽다. 같은 사람이 절차를 바꾸기 전후에 기록한 다섯 쌍으로 필요한 정보를 보여 준다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>쌍별 평균 차이의 부호와 단위를 설명한다.</li><li>점 추정치와 구간을 읽고 운영 기준과 비교한다.</li><li>자료 형태와 메시지에 맞는 그림과 캡션을 선택한다.</li></ul></div>
+
+<h2>무엇에서 무엇을 뺐는지 먼저 적는다</h2>
+<p>절차를 바꾼 전후로 이용자 다섯 명의 대기 시간을 한 번씩 측정했다. 단위는 분이고, 같은 사람에서 ‘후−전’을 계산한다. 설명용 표에서 차이는 −1, −2, 0, −1, −2이고 평균은 −1.2분이다. 음수는 변경 뒤의 대기가 더 짧았다는 뜻이다.</p>
+<div class="table-wrap"><table><thead><tr><th scope="col">이용자</th><th scope="col">전(분)</th><th scope="col">후(분)</th><th scope="col">후−전(분)</th></tr></thead><tbody><tr><td>1</td><td>8</td><td>7</td><td>−1</td></tr><tr><td>2</td><td>7</td><td>5</td><td>−2</td></tr><tr><td>3</td><td>10</td><td>10</td><td>0</td></tr><tr><td>4</td><td>5</td><td>4</td><td>−1</td></tr><tr><td>5</td><td>9</td><td>7</td><td>−2</td></tr></tbody></table></div>
+<div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
+<p>다섯 사람이 독립적으로 표집되었고 차이의 정규 모형을 사용할 수 있다고 가정한다. 차이의 표본 표준편차는 √0.7≈0.8367분, 평균의 표준오차는 약 0.3742분이다. 자유도 4의 t 구간은 −1.2 ± 2.7764×0.3742 ≈ [−2.24, −0.16]분이다. 표본 다섯 명 모두가 그 범위 안에서 바뀌었다는 뜻은 아니다. 차이 평균을 추정한 구간이다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 199" role="img" aria-label="후−전 평균 −1.2분, 95% t 신뢰구간 −2.24부터 −0.16, 업무 목표 −1, 변화 없음 0">
+<line class="f-line" x1="96" y1="135" x2="608" y2="135"/><line class="f-dash" x1="480" y1="39" x2="480" y2="134"/><line class="f-dash" x1="352" y1="39" x2="352" y2="134"/><line class="f-ink" x1="193.42720000000003" y1="83" x2="459.3728" y2="83"/><line class="f-ink" x1="193.42720000000003" y1="73" x2="193.42720000000003" y2="93"/><line class="f-ink" x1="459.3728" y1="73" x2="459.3728" y2="93"/><circle cx="326.4" cy="83" r="7" class="f-fill"/><text class="f-s" x="352" y="30" text-anchor="middle">운영 목표</text><text class="f-s" x="480" y="30" text-anchor="middle">변화 없음</text><text class="f-s" x="326.4" y="65" text-anchor="middle">평균 −1.2</text><line class="f-line" x1="96" y1="135" x2="96" y2="141"/><text class="f-s" x="96" y="160" text-anchor="middle">-3</text><line class="f-line" x1="224" y1="135" x2="224" y2="141"/><text class="f-s" x="224" y="160" text-anchor="middle">-2</text><line class="f-line" x1="352" y1="135" x2="352" y2="141"/><text class="f-s" x="352" y="160" text-anchor="middle">-1</text><line class="f-line" x1="480" y1="135" x2="480" y2="141"/><text class="f-s" x="480" y="160" text-anchor="middle">0</text><line class="f-line" x1="608" y1="135" x2="608" y2="141"/><text class="f-s" x="608" y="160" text-anchor="middle">1</text><text class="f-t" x="370" y="184" text-anchor="middle">대기 시간 변화(분)</text>
+</svg><figcaption>점은 표본의 평균 차이, 양쪽 끝은 95% t 신뢰구간이다. 업무 목표 −1분은 구간 안에 있다.</figcaption></figure>
+<div class="check" data-q="q3"></div>
+<p>보고서 예시는 “같은 이용자 5명의 평균 대기 변화는 후−전 −1.2분이었다(95% 대응 차이 t 구간 −2.24~−0.16분). 운영 목표인 1분 단축보다 작은 변화도 추정과 양립한다. 같은 시기에 인력 배치가 바뀌었는지는 이 비교만으로 구분할 수 없다”이다.</p>
+<div class="check" data-q="q4"></div>
+<pre data-example="python"><code>from math import sqrt
+from statistics import mean, stdev
+from scipy.stats import t
+
+before = [8, 7, 10, 5, 9]
+after = [7, 5, 10, 4, 7]
+change = [b - a for a, b in zip(before, after)]
+center = mean(change)
+se = stdev(change) / sqrt(len(change))
+margin = t.ppf(0.975, df=len(change)-1) * se
+print(&quot;변화:&quot;, change)
+print(&quot;평균과 표준오차:&quot;, f&quot;{center:.1f}&quot;, f&quot;{se:.4f}&quot;)
+print(&quot;95% 구간:&quot;, f&quot;{center-margin:.2f}&quot;, f&quot;{center+margin:.2f}&quot;)</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>변화: [-1, -2, 0, -1, -2]
+평균과 표준오차: -1.2 0.3742
+95% 구간: -2.24 -0.16</code></pre>
+<h2>질문이 달라지면 그림도 바꾼다</h2>
+<div class="table-wrap"><table><thead><tr><th scope="col">질문</th><th scope="col">그림 후보</th><th scope="col">확인할 것</th></tr></thead><tbody><tr><td>범주별 건수를 길이로 비교</td><td>막대</td><td>0 기준과 행의 분모</td></tr><tr><td>시간에 따라 지표가 어떻게 움직였나</td><td>시계열 선</td><td>간격을 시간 비율대로 표시하고 공백 명시</td></tr><tr><td>두 연속 변수가 어떤 관계인가</td><td>산점도</td><td>축 단위, 겹쳐 보이는 점, 주요 집단</td></tr><tr><td>값의 분포·치우침을 보려면</td><td>히스토그램 또는 상자그림</td><td>구간 경계나 사분위수 정의</td></tr></tbody></table></div>
+<p>오차 막대를 쓸 때는 신뢰구간인지, 표본 표준편차인지, 범위인지 캡션에 적는다. 범주별 막대의 길이로 크기를 비교할 때는 보통 0에서 시작한다. 색을 구별하기 어려운 독자를 위해 레이블이나 선 모양도 사용한다.</p>
+<div class="check" data-q="q5"></div><div class="check" data-q="q6"></div>
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>관측 단위, 비교의 방향, 효과 크기, 구간, 적용 범위를 한 그림과 문장에 연결한다.</p></div>
+
+<h2>참고 자료</h2>
+<ul><li><a href="https://www.dataq.or.kr/www/dataq_brochure_2022.pdf">한국데이터산업진흥원 · 빅데이터분석기사 과목 안내</a></li><li><a href="https://www.itl.nist.gov/div898/handbook/eda/section3/eda352.htm">NIST · 평균의 신뢰구간</a></li><li><a href="../2-exploration/07-추정과-가설검정.html">빅분기 교재 · 추정과 검정</a></li><li><a href="../../../learn/notes/bd/bd02-2.html">공부 교재 · 짝지은 자료의 변화</a></li></ul>
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"><a href="../../index.html">← 빅분기 홈</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

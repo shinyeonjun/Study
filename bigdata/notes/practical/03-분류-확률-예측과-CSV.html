@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>양성 확률을 만들어 평가 행 순서로 제출한다 · 빅분기 노트</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="5-03">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">빅분기 노트</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">빅분기 실기 · 제2유형 분류 연습</p>
+<p class="chap-num">5-03</p>
+<h1>양성 확률을 만들어 평가 행 순서로 제출한다</h1>
+<p class="lead">고장 알림을 내는 0과 1을 제출할 때도 있고, 고장일 확률을 제출해야 할 때도 있습니다. 이번 연습은 확률을 요구하는 지시를 읽고 점수·예측 열·원본 순서를 확인합니다.</p>
+</header>
+
+<div class="goal">
+<h2>이 장을 읽고 나면</h2>
+<ul>
+<li>확률 점수와 임계값으로 고른 분류 라벨을 구별한다.</li>
+<li>검증 자료의 ROC AUC와 기준선을 비교한다.</li>
+<li>평가용 자료 위치와 같은 순서의 예측 CSV를 생성한다.</li>
+</ul>
+</div>
+
+<h2>연습 문제에서 요구할 출력부터 고른다</h2>
+<p>공식 제2유형 체험은 회귀 예측을 CSV로 만드는 예시입니다. 이 장은 같은 제출 구조를 이진 분류에 적용한 합성 연습입니다. 설비 점검 전 센서값 하나로 고장 라벨 <code>fault</code>가 1일 점수를 예측합니다. 연습 요구사항은 <code>result.csv</code>에 <code>pred</code> 한 열로 양성 확률 추정치만 쓰고, 원본 평가 행의 순서와 행 수를 유지하는 것입니다. 내부 검증 지표는 <b class="key">ROC AUC</b>로 정합니다.</p>
+<p>양성의 확률 추정치가 0.66이라면 임계값 0.5에서 분류 라벨 1을 고를 수 있습니다. 하지만 파일에 넣을 값은 여기서 0.66에 해당하는 연속 점수입니다. 라벨을 넣으면 0.51과 0.99의 순서 정보가 사라집니다. AUC는 양성에 음성보다 높은 점수를 매기는 능력을 비교합니다. AUC가 높다고 확률 수치의 보정이 자동으로 잘 되었다는 뜻은 아닙니다.</p>
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+<h2>세 가까운 학습 사례에 들어 있는 양성 비율을 쓴다</h2>
+<p>간단히 센서값의 차가 작은 학습 사례 세 개를 고릅니다. 세 사례에서 양성 수를 3으로 나눠 양성 확률 추정치로 씁니다. 훈련 센서값은 0,2,4,6,8,10이고 라벨은 [0,0,1,0,1,1]입니다. 거리가 같으면 앞쪽에 있던 학습 행을 먼저 선택합니다. 입력을 여러 특성으로 바꾸어 이 방법을 쓸 경우, 큰 단위의 열이 거리를 차지하지 않게 학습 부분에서 척도 변환을 적합하는 방법을 함께 고려합니다.</p>
+<div class="table-wrap"><table>
+<thead><tr><th scope="col">검증 센서값</th><th scope="col">실제 라벨</th><th scope="col">가까운 세 사례의 라벨</th><th scope="col">양성 비율</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>0</td><td>0, 0, 1</td><td>1/3</td></tr>
+<tr><td>3</td><td>1</td><td>0, 1, 0</td><td>1/3</td></tr>
+<tr><td>7</td><td>1</td><td>0, 1, 1</td><td>2/3</td></tr>
+<tr><td>9</td><td>1</td><td>1, 1, 0</td><td>2/3</td></tr>
+</tbody></table></div>
+<p>이 검증에는 음성이 한 개이고 양성이 세 개입니다. 양성의 두 점수는 음성보다 높고 나머지 하나는 동점입니다. 더 크면 1, 같으면 0.5씩 더해 가능한 세 쌍으로 나누면 AUC는 (1+1+0.5)÷3=5/6입니다. 양성과 음성에 모두 같은 점수를 주는 기준선은 모든 쌍이 동점이라 0.5입니다. 양성과 음성 중 한 종류만 있는 검증에서는 이 정의로 AUC를 구할 쌍이 없습니다. 큰 자료에서는 모든 쌍을 직접 만들기보다 검증된 지표 함수로 계산합니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 190" role="img" aria-label="검증 음성의 점수 1/3. 양성 점수는 1/3, 2/3, 2/3이라 동점 1개와 앞선 점수 2개다.">
+<line class="f-ink" x1="115" y1="145" x2="666" y2="145" marker-end="url(#f-arrow)"/>
+<line class="f-ink" x1="117" y1="139" x2="117" y2="151"/>
+<text class="f-s" x="117" y="174" text-anchor="middle">0</text>
+<line class="f-ink" x1="287" y1="139" x2="287" y2="151"/>
+<text class="f-s" x="287" y="174" text-anchor="middle">1/3</text>
+<line class="f-ink" x1="457" y1="139" x2="457" y2="151"/>
+<text class="f-s" x="457" y="174" text-anchor="middle">2/3</text>
+<line class="f-ink" x1="627" y1="139" x2="627" y2="151"/>
+<text class="f-s" x="627" y="174" text-anchor="middle">1</text>
+<line class="f-dash" x1="287" y1="30" x2="287" y2="144"/>
+<line class="f-dash" x1="457" y1="70" x2="457" y2="144"/>
+<rect class="f-box" x="249" y="29" width="76" height="27" rx="3"/>
+<text class="f-s" x="287" y="48" text-anchor="middle">음성</text>
+<rect class="f-soft" x="249" y="101" width="76" height="27" rx="3"/>
+<text class="f-s" x="287" y="120" text-anchor="middle">양성</text>
+<rect class="f-soft" x="419" y="63" width="76" height="27" rx="3"/>
+<text class="f-s" x="457" y="82" text-anchor="middle">양성</text>
+<rect class="f-soft" x="419" y="101" width="76" height="27" rx="3"/>
+<text class="f-s" x="457" y="120" text-anchor="middle">양성</text>
+</svg>
+<figcaption>점수의 범위는 0부터 1이다. 동점 한 쌍에는 순위 승리의 절반을 준다.</figcaption>
+</figure>
+<div class="check" data-q="q3"></div>
+<div class="check" data-q="q4"></div>
+<h2>검증에서 규칙을 고른 뒤 쓰이는 순서를 확인한다</h2>
+<p>예시는 검증 점수가 높았던 세 이웃 방법을 전체 라벨 있는 자료에 다시 적용합니다. 평가 행의 라벨은 쓰지 않습니다. 이웃 방법의 경우에는 기존 훈련 데이터와 검증 데이터를 합쳐 비교 대상 사례를 늘립니다. 실제 과제의 후보를 고를 때 검증 자료가 시간이나 고객 그룹을 넘나들지 않게 제출 환경과 비슷한 분할을 먼저 정합니다. 검증에서 본 수치는 최종 평가 점수와 구별합니다.</p>
+<p>평가 순서의 설비 ID는 912, 901, 930입니다. 숫자순으로 정렬하지 않습니다. 양성 클래스가 무엇인지 문제에서 확인합니다. 예를 들어 <code>predict_proba</code>를 쓰는 분류기에서는 반환 배열의 열 번호에 대응하는 클래스가 <code>classes_</code>에 있습니다. 이 장의 코드는 라벨 1의 빈도를 직접 계산합니다.</p>
+<div class="check" data-q="q5"></div>
+<div class="check" data-q="q6"></div>
+<h2>검증과 파일 검사까지 연속으로 실행한다</h2>
+<pre data-example="python"><code>from pathlib import Path
+from tempfile import TemporaryDirectory
+
+import numpy as np
+import pandas as pd
+
+train_x = np.array([0, 2, 4, 6, 8, 10])
+train_y = np.array([0, 0, 1, 0, 1, 1])
+valid_x = np.array([1, 3, 7, 9])
+valid_y = np.array([0, 1, 1, 1])
+
+def positive_score(query, x, y, k=3):
+    distance = np.abs(query[:, None] - x[None, :])
+    near = np.argsort(distance, axis=1, kind=&quot;stable&quot;)[:, :k]
+    return y[near].mean(axis=1)
+
+def auc_small(y, score):
+    pos, neg = score[y == 1], score[y == 0]
+    assert len(pos) and len(neg)
+    difference = pos[:, None] - neg[None, :]
+    return ((difference &gt; 0) + 0.5 * (difference == 0)).mean()
+
+valid_score = positive_score(valid_x, train_x, train_y)
+print(f&quot;AUC constant: {auc_small(valid_y, np.full(len(valid_y), 0.5)):.3f}&quot;)
+print(f&quot;AUC neighbors: {auc_small(valid_y, valid_score):.3f}&quot;)
+
+test = pd.DataFrame({&quot;unit_id&quot;: [912, 901, 930], &quot;sensor&quot;: [8.5, 0.5, 4.5]})
+all_x = np.concatenate([train_x, valid_x])
+all_y = np.concatenate([train_y, valid_y])
+pred = positive_score(test[&quot;sensor&quot;].to_numpy(), all_x, all_y)
+submission = pd.DataFrame({&quot;pred&quot;: pred})
+
+def write_checked(frame, path=&quot;result.csv&quot;):
+    frame.to_csv(path, index=False)
+    saved = pd.read_csv(path)
+    assert list(saved.columns) == [&quot;pred&quot;] and len(saved) == len(test)
+    assert np.isfinite(saved[&quot;pred&quot;]).all() and saved[&quot;pred&quot;].between(0, 1).all()
+    assert np.allclose(saved[&quot;pred&quot;], pred)
+    return saved
+
+with TemporaryDirectory() as folder:
+    saved = write_checked(submission, Path(folder) / &quot;result.csv&quot;)
+    for unit, value in zip(test[&quot;unit_id&quot;], saved[&quot;pred&quot;], strict=True):
+        print(f&quot;{unit}: {value:.3f}&quot;)</code></pre>
+<pre data-output><code>AUC constant: 0.500
+AUC neighbors: 0.833
+912: 1.000
+901: 0.000
+930: 0.667</code></pre>
+<p>코드는 연습 파일을 임시 폴더에 저장해 읽은 다음 지웁니다. 시험 지시가 파일명을 <code>result.csv</code>로 요구하면 실제 제출 코드에서는 <code>write_checked(submission)</code>처럼 경로 없이 그 이름을 씁니다. 출력에서만 세 자리까지 표시했고 파일의 예측은 반올림하지 않았습니다. ID는 출력에서 순서를 확인하는 용도로만 이용했습니다.</p>
+
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table>
+<thead><tr><th scope="col">핵심어</th><th scope="col">기억할 기준</th></tr></thead>
+<tbody>
+<tr><td><b class="key">양성 확률 추정치</b></td><td>임계값을 적용해 0·1 라벨로 바꾸기 전의 점수다.</td></tr>
+<tr><td><b class="key">ROC AUC</b></td><td>양성 점수가 음성보다 높은 쌍을 평가하며 동점은 절반으로 센다.</td></tr>
+<tr><td><b class="key">분류 CSV</b></td><td>양성 클래스와 범위, 열 이름·행 수·원본 순서를 점검한다.</td></tr>
+</tbody></table></div>
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>문제가 확률을 요구하면 점수를 저장하고, 검증 지표와 파일 형식을 따로 확인한다.</p></div>
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://dataq.goorm.io/exam/3/%EC%8B%9C%ED%97%98/quiz/4">한국데이터산업진흥원 · 제2유형 제출용 체험</a></li>
+<li><a href="https://scikit-learn.org/stable/modules/neighbors.html">scikit-learn 공식 문서 · 이웃 기반 분류</a></li>
+<li><a href="https://scikit-learn.org/stable/modules/generated/sklearn.metrics.roc_auc_score.html">scikit-learn 공식 문서 · ROC AUC에 사용하는 점수</a></li>
+<li><a href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.to_csv.html">pandas 공식 문서 · CSV 쓰기</a></li>
+<li><a href="../3-modeling/04-로지스틱-회귀와-분류기.html">빅분기 필기 · 확률과 분류</a></li>
+</ul>
+
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"><a href="../../index.html">← 빅분기 홈</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

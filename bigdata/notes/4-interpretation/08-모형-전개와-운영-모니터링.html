@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>모형 배포 뒤에 자료와 성능을 감시하기 · 빅분기 노트</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="4-08">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">빅분기 노트</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">4과목 · 빅데이터 결과 해석</p>
+<p class="chap-num">08</p>
+<h1>모형 배포 뒤에 자료와 성능을 감시하기</h1>
+<p class="lead">교재에서 검증한 주문 알림을 실제 업무에 붙였다고 가정한다. 오늘 바로 볼 수 있는 입력 문제와 기간이 지난 뒤에 판단할 모형 성능을 구분해 대응한다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>입력·예측·실제 결과의 확인 시점을 정한다.</li><li>입력 분포 변화와 예측 성능 저하를 구분한다.</li><li>조사·대체·재학습·재평가 순서를 운영 예로 설명한다.</li></ul></div>
+
+<h2>모형은 어떤 시점에 어떤 결정을 돕는가</h2>
+<p>접수 시점에 지연 가능성이 높다고 판정하면 담당자에게 확인 목록을 준다. 알림이 누락되거나 서비스가 멈추면 시간 순으로 모든 주문을 보는 기본 운영 방식이 있다. 실제 지연 라벨은 다음 날 출고 기한이 지난 뒤에야 확정된다. 어느 버전으로 어떤 주문을 언제 평가했는지 예측과 함께 기록하면 나중에 같은 주문의 실제 라벨을 연결할 수 있다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 160" role="img" aria-label="모형을 전개한 뒤 입력을 점검하고 지연 라벨이 확정되면 성능 평가">
+<rect class="f-box" x="42" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="135" y="61" text-anchor="middle">실시간 입력 점검</text><text class="f-s" x="135" y="89" text-anchor="middle">결측률·형식·열 범위</text><text class="f-s" x="135" y="110" text-anchor="middle">배포 버전과 예측 시각</text><line class="f-line" x1="235" y1="84" x2="278" y2="84" marker-end="url(#f-arrow)"/><rect class="f-soft" x="287" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="380" y="61" text-anchor="middle">라벨 확정 뒤 평가</text><text class="f-s" x="380" y="89" text-anchor="middle">같은 주문 키로 결합</text><text class="f-s" x="380" y="110" text-anchor="middle">미탐·오탐·비용</text><line class="f-line" x1="480" y1="84" x2="523" y2="84" marker-end="url(#f-arrow)"/><rect class="f-box" x="532" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="625" y="61" text-anchor="middle">대응과 재평가</text><text class="f-s" x="625" y="89" text-anchor="middle">자료 품질부터 점검</text><text class="f-s" x="625" y="110" text-anchor="middle">같은 기간에 후보 비교</text>
+</svg><figcaption>현재 주문의 실제 지연을 아직 모르는 동안에는 입력 지표와 알림 비율을 먼저 본다.</figcaption></figure>
+<div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
+<h2>두 기간의 경보 표</h2>
+<div class="table-wrap"><table><thead><tr><th scope="col">지표</th><th scope="col">기준 기간</th><th scope="col">최근 기간</th><th scope="col">확인 가능한 시점</th></tr></thead><tbody><tr><td>결측 주문 / 전체 주문</td><td>2 / 100</td><td>12 / 100</td><td>접수 시점</td></tr><tr><td>찾은 지연 / 실제 지연</td><td>16 / 20</td><td>12 / 20</td><td>기간의 라벨 확정 뒤</td></tr><tr><td>결측률</td><td>0.02</td><td>0.12</td><td>접수 시점</td></tr><tr><td>재현율</td><td>0.80</td><td>0.60</td><td>기간의 라벨 확정 뒤</td></tr></tbody></table></div>
+<p>이 시설의 연습 규칙은 결측률이 0.08 이상이면 입력 경보, 확정 라벨의 재현율이 0.70 이하이면 성능 경보다. 최근 기간에는 두 경보 모두 조건에 해당한다. 표본 수가 적으면 우연한 변동도 있으므로, 기간별 건수와 집계 조건을 같이 표시한다. 아직 답이 없는 주문을 정상으로 계산하면 둘을 공정하게 비교하기 어렵다.</p>
+<div class="check" data-q="q3"></div><div class="check" data-q="q4"></div>
+<pre data-example="python"><code>from fractions import Fraction as F
+
+for label, missing, found in ((&quot;기준&quot;, 2, 16), (&quot;최근&quot;, 12, 12)):
+    missing_rate = F(missing, 100)
+    recall = F(found, 20)
+    print(label, f&quot;결측 {float(missing_rate):.2f}&quot;,
+          f&quot;재현율 {float(recall):.2f}&quot;,
+          &quot;입력 경보&quot;, missing_rate &gt;= F(8, 100),
+          &quot;성능 경보&quot;, recall &lt;= F(7, 10))</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>기준 결측 0.02 재현율 0.80 입력 경보 False 성능 경보 False
+최근 결측 0.12 재현율 0.60 입력 경보 True 성능 경보 True</code></pre>
+<h2>무엇이 바뀌었는지 확인한 뒤 대응한다</h2>
+<p>입력 분포가 바뀌는 현상은 데이터 드리프트로 부를 수 있다. 입력과 결과의 조건부 관계가 바뀌는 현상은 개념 드리프트라고 한다. 입력 결측률이 늘었다고 조건부 관계의 변화를 바로 알 수는 없다. 최근 상품군 구성, 접수 경로, 로그 전환 시점, 누락이 특정 열과 업체에 모여 있는지부터 살핀다.</p>
+<div class="check" data-q="q5"></div>
+<p>열의 수집이 멈췄다면 연결을 복구하고 안정될 때까지 기본 운영 절차를 쓸 수 있다. 실제 업무 환경이 바뀌었다면 모형 입력·설정·학습 기간을 다시 검토한다. 고친 후보와 현재 모형은 같은 추후 기간에 비교하고, 담당자가 보는 알림 건수와 처리 가능량도 확인한다. 새 버전으로 넘기기 전에 이전 상태로 돌아갈 절차와 다시 평가할 날짜를 정한다.</p>
+<div class="check" data-q="q6"></div>
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>입력은 지금 관측하고, 예측 성능은 라벨이 확정된 뒤 같은 주문 기준으로 비교한다. 조치는 조사 결과에 맞춘다.</p></div>
+
+<h2>참고 자료</h2>
+<ul><li><a href="https://www.dataq.or.kr/www/dataq_brochure_2022.pdf">한국데이터산업진흥원 · 빅데이터분석기사 과목 안내</a></li><li><a href="https://airc.nist.gov/airmf-resources/playbook/measure/">NIST · AI RMF Measure</a></li><li><a href="../1-planning/06-데이터-수집과-시간기준.html">빅분기 교재 · 데이터 수집과 시점</a></li><li><a href="../3-modeling/02-검증-분할과-판정-기준.html">빅분기 교재 · 검증과 임계값</a></li></ul>
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"><a href="../../index.html">← 빅분기 홈</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>
