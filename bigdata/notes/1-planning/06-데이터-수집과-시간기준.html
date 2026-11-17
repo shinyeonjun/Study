@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>데이터를 수집하고 시간·중복 기준 정하기 · 빅분기 노트</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="1-06">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">빅분기 노트</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">1과목 · 빅데이터 분석 기획</p>
+<p class="chap-num">06</p>
+<h1>데이터를 수집하고 시간·중복 기준 정하기</h1>
+<p class="lead">센서에서 기록을 받았다는 말에는 언제 발생한 것인지, 누가 만든 것인지, 몇 번째 전달인지가 빠져 있습니다. 실제로 집계를 다시 계산할 수 있도록 수집 방법과 기록의 뜻을 먼저 정합니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>수집 원천과 전달 방식을 목적에 맞춰 선택한다.</li><li>발생 시각과 수집 시각을 구별하고 늦은 기록을 다룬다.</li><li>재전송 중복과 잘못된 자료를 따로 세어 검증한다.</li></ul></div>
+
+<h2>어떤 기록을 어느 곳에서 얻는가</h2>
+<p>혼잡을 파악하려면 출입 센서 기록, 좌석 예약 표, 창구 대기 기록 등 서로 다른 원천을 모을 수 있습니다. 센서는 입장을 세고, 예약 표는 방문을 계획한 사람의 수를 보여 줍니다. 둘은 같은 사람 수를 측정하는 값이 아닐 수 있습니다. 기록마다 생성 원천과 자료 한 행의 뜻, 측정 단위, 갱신 주기를 먼저 확인합니다.</p>
+<div class="table-wrap"><table><thead><tr><th scope="col">수집 방식</th><th scope="col">쓰는 경우</th><th scope="col">정할 기준</th></tr></thead><tbody><tr><td>파일 일괄 제공</td><td>매일 정리한 예약 파일을 한 번에 받는다</td><td>파일 생성일, 날짜 범위, 형식과 받아야 할 시각</td></tr><tr><td>데이터베이스 조회</td><td>허가된 업무 시스템에서 새 주문이나 변경 건을 가져온다</td><td>키, 변경 시각, 조회 범위와 접근 권한</td></tr><tr><td>API</td><td>문서화된 요청으로 필요한 항목을 가져온다</td><td>요청 입력과 응답 형태, 이용 조건과 갱신 주기</td></tr><tr><td>이벤트·스트림</td><td>기록이 계속 들어올 때 도착하는 대로 처리한다</td><td>어느 시간이 기준인지, 늦은 도착과 중복 처리</td></tr></tbody></table></div>
+<p><b class="key">배치 처리</b>에서는 묶음을 만들어 정해진 시각에 처리합니다. <b>스트림 처리</b>에서는 새 이벤트가 계속 들어오는 상황을 다룹니다. 스트림이라고 지연이 0이 되는 것은 아닙니다. 15분 이내에 안내가 필요한지, 하루 뒤 다시 계산해도 되는지에 따라 수집과 제공의 시간 목표를 정합니다.</p>
+<div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
+<h2>발생한 시간과 시스템에 도착한 시간을 따로 남긴다</h2>
+<p>입장 센서가 10:12에 기록한 이벤트 e2는 통신을 거쳐 10:19에 서버에 도착했습니다. 구간의 실제 입장을 알고 싶은 분석에서는 <b class="key">발생 시각</b>을 기준으로 10:00 이상 10:15 미만 구간에 넣습니다. 수집 처리율을 살피는 보고서라면 수집 시각을 볼 수 있습니다. 시간대 정보도 남겨 다른 지역의 기록과 비교할 때 같은 기준으로 바꿀 수 있게 합니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 220" role="img" aria-label="e2는 10시 12분에 발생하고 10시 19분에 수집된다. 발생 기준으로는 10시 00분에서 15분 사이 구간에 속한다.">
+<text class="f-cap" x="382" y="40" text-anchor="middle">발생한 시간으로 구간을 정한다</text><rect class="f-box" x="102" y="74" width="420" height="119" rx="3"/><rect class="f-soft" x="522" y="74" width="139" height="119" rx="3"/><line class="f-ink" x1="102" y1="155" x2="690" y2="155" marker-end="url(#f-arrow)"/><line class="f-ink" x1="102" y1="148" x2="102" y2="161"/><text class="f-s" x="102" y="183" text-anchor="middle">10:00</text><line class="f-ink" x1="438" y1="148" x2="438" y2="161"/><text class="f-s" x="438" y="183" text-anchor="middle">10:12</text><line class="f-ink" x1="522" y1="148" x2="522" y2="161"/><text class="f-s" x="522" y="183" text-anchor="middle">10:15</text><line class="f-ink" x1="634" y1="148" x2="634" y2="161"/><text class="f-s" x="634" y="183" text-anchor="middle">10:19</text><circle class="f-fill" cx="438" cy="155" r="4"/><circle class="f-fill" cx="634" cy="155" r="4"/><text class="f-t" x="438" y="102" text-anchor="middle">e2 발생</text><text class="f-t" x="634" y="102" text-anchor="middle">e2 수신</text><line class="f-line" x1="450" y1="121" x2="621" y2="121" marker-end="url(#f-arrow)"/>
+</svg><figcaption>수집 시각을 따로 남겨야 늦게 들어온 기록을 찾아, 어느 구간에 반영할지 결정할 수 있다.</figcaption></figure>
+<p>10:15 직후에 첫 화면을 보여 주면 e2가 아직 없으므로 10:00 구간의 합은 잠정치입니다. 뒤늦게 도착한 자료를 허용 범위 안에서 반영할지, 나중에 정정해 게시할지 계획합니다. 집계의 갱신 상태를 사용자가 알아야 수치가 바뀐 이유를 설명할 수 있습니다.</p>
+<div class="check" data-q="q3"></div><div class="check" data-q="q4"></div>
+<h2>재전송을 통합하고 품질 오류를 남긴다</h2>
+<p>센서는 응답을 받지 못하면 같은 이벤트를 다시 보낼 수 있습니다. 아래 예는 센서 한 대에서 온 기록입니다. 같은 이벤트 ID를 다시 보낸 경우는 정확한 재전송이라고 가정합니다. 사람 수가 같다는 이유로 다른 이벤트를 하나로 합치면 손실이 됩니다. 같은 ID라도 정정 기록이 있는 원천이라면 버전이나 수정 규칙도 고려합니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 160" role="img" aria-label="같은 자료를 먼저 원본으로 기록하고 검사한 뒤 분석에 쓰는 시간 구간 표를 만든다.">
+<rect class="f-box" x="42" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="135" y="61" text-anchor="middle">원본 기록</text><text class="f-s" x="135" y="89" text-anchor="middle">발생값·시간·출처</text><text class="f-s" x="135" y="110" text-anchor="middle">원본과 수신 이력 보존</text><line class="f-line" x1="235" y1="84" x2="278" y2="84" marker-end="url(#f-arrow)"/><rect class="f-soft" x="287" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="380" y="61" text-anchor="middle">검사</text><text class="f-s" x="380" y="89" text-anchor="middle">필수 항목·형식·키 확인</text><text class="f-s" x="380" y="110" text-anchor="middle">중복이나 오류 구별</text><line class="f-line" x1="480" y1="84" x2="523" y2="84" marker-end="url(#f-arrow)"/><rect class="f-box" x="532" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="625" y="61" text-anchor="middle">분석용 표</text><text class="f-s" x="625" y="89" text-anchor="middle">구간 기준으로 묶음</text><text class="f-s" x="625" y="110" text-anchor="middle">재계산 근거 남김</text>
+</svg><figcaption>원본과 검사를 거친 표의 목적이 다르다. 다시 계산할 때 원본과 처리 기준을 함께 찾을 수 있게 한다.</figcaption></figure>
+<pre data-example="python"><code>from collections import Counter
+from datetime import datetime
+
+rows = [
+    (&quot;e1&quot;, &quot;10:04&quot;, 7),
+    (&quot;e1&quot;, &quot;10:04&quot;, 7),
+    (&quot;e2&quot;, &quot;10:12&quot;, 9),
+    (&quot;e3&quot;, &quot;10:18&quot;, 4),
+    (&quot;e4&quot;, &quot;10:20&quot;, -1),
+]
+seen = set()
+totals = Counter()
+duplicate = invalid = 0
+for event_id, time, visitors in rows:
+    if visitors &lt; 0:
+        invalid += 1
+        continue
+    if event_id in seen:
+        duplicate += 1
+        continue
+    seen.add(event_id)
+    hour = datetime.strptime(time, &quot;%H:%M&quot;)
+    start = hour.replace(minute=(hour.minute // 15) * 15)
+    totals[start.strftime(&quot;%H:%M&quot;)] += visitors
+
+for start, total in sorted(totals.items()):
+    print(start, total)
+print(&quot;duplicate&quot;, duplicate, &quot;invalid&quot;, invalid)</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>10:00 16
+10:15 4
+duplicate 1 invalid 1</code></pre>
+<p>날짜와 시간대가 같은 작은 예라 코드에서 시와 분만 사용했습니다. 원래는 들어온 다섯 줄을 그대로 보관하고, 중복 한 줄과 음수 한 줄이 제외됐다고 기록합니다. 외부 수집은 필요한 항목으로 범위를 좁히고 제공자, 이용 조건, 인가받은 방식, 갱신일을 함께 남깁니다.</p>
+<div class="check" data-q="q5"></div><div class="check" data-q="q6"></div>
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table><thead><tr><th scope="col">핵심어</th><th scope="col">기억할 뜻</th></tr></thead><tbody><tr><td><b class='key'>원천과 수집 방식</b></td><td>한 건의 의미, 제공된 방식, 시간·권한을 먼저 확인</td></tr><tr><td><b class='key'>발생 시각·수집 시각</b></td><td>업무 사건이 있었던 때와 시스템이 그 기록을 안 때</td></tr><tr><td><b class='key'>중복 제거 기준</b></td><td>값만 비교하는 대신 같은 이벤트인지 식별할 키와 정책을 확인</td></tr></tbody></table></div>
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>다시 집계할 수 있는 자료에는 출처, 한 행의 의미, 시간 기준과 중복 처리 기준이 함께 있다.</p></div>
+<p>JSON과 API의 역할은 <a href="../../../learn/notes/nw/nw02-2.html">웹 요청과 API</a>에서 살펴볼 수 있습니다.</p>
+
+<h2>참고 자료</h2>
+<ul><li><a href="https://www.dataq.or.kr/www/dataq_brochure_2022.pdf">한국데이터산업진흥원 · 빅데이터분석기사 과목 안내</a></li><li><a href="https://doi.org/10.6028/NIST.SP.1500-6r2">NIST SP 1500-6r2 · 빅데이터 참조 아키텍처</a></li><li><a href="https://beam.apache.org/documentation/basics/#watermark">Apache Beam · 이벤트 시각과 처리 시각</a></li></ul>
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"><a href="../../index.html">← 빅분기 홈</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

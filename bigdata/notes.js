@@ -18,7 +18,14 @@ window.BDA_SUBJECTS = [
     desc: "빅데이터가 무엇이고, 분석을 어떻게 계획하고, 데이터를 어떻게 모으고 저장하는지",
     plan: ["빅데이터의 이해", "데이터 분석 계획", "데이터 수집 및 저장 계획"],
     notes: [
-      { id: "1-01", title: "빅데이터란 무엇인가", href: "notes/1-planning/01-빅데이터란.html", area: 0 }
+      { id: "1-01", title: "빅데이터란 무엇인가", href: "notes/1-planning/01-빅데이터란.html", area: 0 },
+      { id: "1-02", title: "빅데이터의 가치와 활용에서 생기는 위험", href: "notes/1-planning/02-빅데이터의-가치와-활용.html", area: 0 },
+      { id: "1-03", title: "분석 과제의 목표·성공 기준·우선순위 정하기", href: "notes/1-planning/03-분석-과제-정의와-우선순위.html", area: 1 },
+      { id: "1-04", title: "CRISP-DM과 분석 방법론의 단계 구분하기", href: "notes/1-planning/04-분석-방법론.html", area: 1 },
+      { id: "1-05", title: "분석 프로젝트의 작업·일정·위험 계획하기", href: "notes/1-planning/05-분석-프로젝트-일정과-위험.html", area: 1 },
+      { id: "1-06", title: "데이터를 수집하고 시간·중복 기준 정하기", href: "notes/1-planning/06-데이터-수집과-시간기준.html", area: 2 },
+      { id: "1-07", title: "저장소 역할을 나누고 용량과 조회 범위 계산하기", href: "notes/1-planning/07-저장소-선택과-용량.html", area: 2 },
+      { id: "1-08", title: "데이터 품질·거버넌스·개인정보를 관리하기", href: "notes/1-planning/08-데이터-품질과-거버넌스.html", area: 2 }
     ]
   },
   {

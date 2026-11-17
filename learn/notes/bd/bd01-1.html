@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>분석 기획 실습에서 업무 결정과 평가 기준 맞추기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="BD01-1">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">빅데이터분석기사 연결</p>
+<p class="chap-num">BD01·1</p>
+<h1>분석 기획 실습에서 업무 결정과 평가 기준 맞추기</h1>
+<p class="lead">버스 출발 전에 추가 점검이 필요한지 판단하려 합니다. 분석의 이름만 정하는 대신, 현장에서 내리는 결정과 그 결정에 드는 비용을 작은 숫자로 비교합니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>관측 단위와 예측 순간, 라벨이 결정되는 순간을 명시한다.</li><li>기준 정책과 후보 규칙을 같은 사례에서 비교한다.</li><li>손실과 인력 제약을 함께 보고 평가 결론을 적는다.</li></ul></div>
+
+<h2>운행 한 건마다 어떤 결정을 내리는가</h2>
+<p>버스 한 대의 운행을 시작하기 전, 검사 담당자가 추가 점검이 필요한지 고릅니다. 연구 목표는 큰 지연이 생길 운행을 더 잘 찾아 제한된 인력으로 대응하는 것입니다. 이 가상 자료에서 한 행은 한 운행입니다. 차량의 이전 운행, 당일 예약 검사, 출발 전에 아는 정보는 입력 후보입니다. 지연이 어느 정도 발생했는지는 운행이 끝난 뒤 정답으로 붙입니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 191" role="img" aria-label="운행마다 출발 전에 점검 여부를 결정한다. 실제 지연 여부는 운행이 끝난 뒤 알 수 있다.">
+<line class="f-line" x1="99" y1="139" x2="678" y2="139" marker-end="url(#f-arrow)"/><rect class="f-box" x="90" y="53" width="158" height="54" rx="3"/><text class="f-t f-b" x="169" y="85" text-anchor="middle">운행 정보 집계</text><line class="f-ink" x1="169" y1="108" x2="169" y2="132" marker-end="url(#f-arrow)"/><rect class="f-soft" x="295" y="53" width="158" height="54" rx="3"/><text class="f-t f-b" x="374" y="85" text-anchor="middle">점검 결정</text><line class="f-ink" x1="374" y1="108" x2="374" y2="132" marker-end="url(#f-arrow)"/><rect class="f-box" x="500" y="53" width="158" height="54" rx="3"/><text class="f-t f-b" x="579" y="85" text-anchor="middle">도착 후 지연 확인</text><line class="f-ink" x1="579" y1="108" x2="579" y2="132" marker-end="url(#f-arrow)"/><text class="f-s" x="676" y="166" text-anchor="middle">시간</text>
+</svg><figcaption>평가용 정답이 뒤에 만들어지는 건 괜찮다. 점검할 때 쓰는 입력은 결정 시각에 이미 얻을 수 있어야 한다.</figcaption></figure>
+<p>‘지연’은 이 실습에서 예정 도착보다 600초 이상 늦었는지로 정합니다. 이 실습에서는 실제 큰 지연 여부를 추가 점검 필요성을 대신하는 대리 라벨로 씁니다. 지연이 컸다는 사실만으로 점검이 그 지연을 막을 수 있었는지는 알 수 없습니다. 출발 전 판단을 평가하면서 실제 도착 시각을 입력에 넣으면 실제 상황보다 정확한 평가가 될 수 있습니다. <a href="../../unit.html?u=ML01">학습 문제 정의</a>와 데이터 누출을 함께 복습할 수 있습니다.</p>
+<p><a href="../../unit.html?u=ML02">공정한 비교와 데이터 누출</a> · <a href="../../../bigdata/notes/1-planning/03-분석-과제-정의와-우선순위.html">빅분기 노트의 과제 정의와 우선순위</a></p>
+<div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
+<h2>같은 운행에서 세 후보를 평가한다</h2>
+<p>같은 검증 구간 60건 중 실제 큰 지연은 12건입니다. 점검을 아무도 하지 않는 대조안을 두고 규칙 A, B를 비교해 봅니다. 필요한 점검을 놓치면 5점, 필요 없는 점검을 하면 2점의 비교 손실을 부여합니다. 이 점수는 수업용 비용 모형입니다. 검증 구간에서 점검할 수 있는 운행은 모두 합해 10건 이하입니다.</p>
+<div class="table-wrap"><table><thead><tr><th scope="col">후보</th><th scope="col">찾은 지연</th><th scope="col">놓친 지연</th><th scope="col">불필요한 점검</th><th scope="col">전체 점검</th></tr></thead><tbody><tr><td>대조안</td><td>0</td><td>12</td><td>0</td><td>0</td></tr><tr><td>A</td><td>9</td><td>3</td><td>6</td><td>15</td></tr><tr><td>B</td><td>8</td><td>4</td><td>2</td><td>10</td></tr></tbody></table></div>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 238" role="img" aria-label="대조안은 0건을 점검하고 비교 손실 60. 규칙 A는 15건을 점검하고 27. 규칙 B는 10건을 점검하고 24.">
+<text class="f-t" x="149" y="85" text-anchor="end">대조안</text><rect class="f-box" x="172" y="66" width="420" height="33" rx="3"/><text class="f-s" x="608" y="86" text-anchor="middle">60</text><text class="f-s" x="700" y="86" text-anchor="end">점검 0건</text><text class="f-t" x="149" y="141" text-anchor="end">규칙 A</text><rect class="f-box" x="172" y="122" width="189" height="33" rx="3"/><text class="f-s" x="377" y="142" text-anchor="middle">27</text><text class="f-s" x="700" y="142" text-anchor="end">점검 15건</text><text class="f-t" x="149" y="197" text-anchor="end">규칙 B</text><rect class="f-soft" x="172" y="178" width="168" height="33" rx="3"/><text class="f-s" x="356" y="198" text-anchor="middle">24</text><text class="f-s" x="700" y="198" text-anchor="end">점검 10건</text><text class="f-cap" x="361" y="35" text-anchor="middle">예시 손실 점수</text>
+</svg><figcaption>막대는 예시 손실 점수다. 오른쪽의 점검 건수는 별도의 인력 제약에 쓰인다.</figcaption></figure>
+<p>A는 찾아낸 지연이 더 많지만, 불필요한 점검도 많습니다. A는 3×5+6×2=27점이고, B는 4×5+2×2=24점입니다. B는 가정한 인력 제약도 만족합니다. 이미 평가한 이 자료에 기준을 맞췄다면, 최종 평가는 같은 방식으로 수집한 별도 기간에서 수행합니다.</p>
+<div class="check" data-q="q3"></div><div class="check" data-q="q4"></div><div class="check" data-q="q5"></div>
+<pre data-example="python"><code>observed_late = 12
+capacity = 10
+candidates = [(&quot;baseline&quot;, 0, 0), (&quot;A&quot;, 9, 6), (&quot;B&quot;, 8, 2)]
+for name, found, false_alerts in candidates:
+    missed = observed_late - found
+    inspections = found + false_alerts
+    loss = 5 * missed + 2 * false_alerts
+    print(name, inspections, loss, inspections &lt;= capacity)</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>baseline 0 60 True
+A 15 27 False
+B 10 24 True</code></pre>
+<h2>평가 숫자를 실제 업무 결과와 연결한다</h2>
+<p>이 표에서는 과거 기록의 실제 지연과 경보만 비교했습니다. 담당자의 점검이 정말 지연을 줄였는지는 여기서 확인하지 못합니다. 업무에 적용할 때에는 지연 외에도 점검에 걸린 시간과 담당자 부담, 어느 노선의 데이터가 빠졌는지 기록합니다. 서로 다른 시범 운영안을 공정하게 비교해야 배치에 따른 효과를 읽을 수 있습니다.</p>
+<div class="check" data-q="q6"></div>
+<h2>한눈에 정리</h2>
+<ul><li>현장에서 선택할 조치를 정해 관측 단위와 예측 시점을 적는다.</li><li>같은 자료에서 대조안과 후보를 비교하고 모든 점검 건수를 제약에 넣는다.</li><li>과거 자료의 분류 성능과 현장 도입의 효과는 다른 근거로 확인한다.</li></ul>
+
+<h2>참고 자료</h2>
+<ul><li><a href="https://www.dataq.or.kr/www/dataq_brochure_2022.pdf">한국데이터산업진흥원 · 빅데이터분석기사 과목 안내</a></li><li><a href="https://doi.org/10.6028/NIST.SP.1500-6r2">NIST SP 1500-6r2 · 빅데이터 참조 아키텍처</a></li></ul>
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

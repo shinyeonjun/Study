@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>최소제곱 해를 푸는 방법과 해가 여럿인 경우 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="ML04-2">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">머신러닝 · ML04 선형 회귀의 원리</p>
+<p class="chap-num">ML04·2</p>
+<h1>최소제곱 해를 푸는 방법과 해가 여럿인 경우</h1>
+<p class="lead">후보 직선을 몇 개 그려 보는 대신 가장 작은 오차를 주는 계수를 계산할 수 있습니다. 행렬을 분해해 직접 구하는 방법과, 손실이 줄어드는 방향으로 조금씩 움직이는 방법을 같은 자료로 비교합니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul>
+<li>정규방정식의 뜻과 최소제곱 해의 잔차 조건을 읽는다.</li>
+<li>QR 분해와 lstsq, 경사하강이 해를 얻는 방식을 구별한다.</li>
+<li>열이 중복되면 여러 계수가 같은 예측을 낼 수 있음을 계산한다.</li>
+</ul></div>
+
+<h2>최소에서 잔차가 설계행렬의 모든 열과 직교한다</h2>
+<p>대기 건수 <code>x=[0,1,2]</code>인 주문의 실제 처리 시간이 <code>y=[2,2,5]</code>분입니다. 설계행렬의 열은 1과 대기 건수입니다. <code>r=y−Xβ</code>, <code>J(β)=Σrᵢ²/(2n)</code>으로 두면 한 계수의 기울기는 <code>∂J/∂βⱼ=−ΣXᵢⱼrᵢ/n</code>입니다. 제곱을 미분해 나온 2가 식의 2와 지워집니다. 벡터로 묶으면 <code>∇J=−Xᵀr/n</code>입니다.</p>
+<p>최소에서 <code>Xᵀr=0</code>이므로 잔차와 X의 각 열을 내적한 값이 0입니다. 예제의 <code>β=[1.5,1.5]</code>는 잔차 <code>[0.5,−1,0.5]</code>를 냅니다. 잔차를 더하면 0이며, 대기 건수를 곱해 더해도 <code>0·0.5+1·(−1)+2·0.5=0</code>입니다. 이 조건에서 계수를 <code>δ</code>만큼 바꿀 때 SSE 증가량은 <code>‖Xδ‖²</code>입니다. 두 벡터가 직교해 교차항이 0이기 때문입니다. 그래서 이 조건을 만족한 계수는 최소제곱 해입니다.</p>
+<p><code>Xᵀ(y−Xβ)=0</code>을 정리한 <code>(XᵀX)β=Xᵀy</code>를 <b class="key">정규방정식</b>이라고 합니다. 이 이름은 정규분포 가정을 뜻하지 않습니다. 이 예에서는 왼쪽 행렬이 <code>[[3,3],[3,5]]</code>, 오른쪽이 <code>[9,12]</code>입니다. <code>3b+3w=9</code>를 <code>3b+5w=12</code>에서 빼면 <code>2w=3</code>이고 <code>b=w=1.5</code>입니다.</p>
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+
+<h2>직접 풀거나, 손실을 줄이는 방향으로 이동한다</h2>
+<p>직접 계산하는 한 방법은 X의 열들이 독립일 때 <code>X=QR</code>로 <b class="key">QR 분해</b>하는 것입니다. Q의 열은 서로 직교하고 길이가 1이며 R은 아래쪽이 0인 삼각행렬입니다. 목표 벡터 y를 X의 열공간에 투영한 성분에 대해 <code>Rβ=Qᵀy</code>를 풀면 최소제곱 해를 얻습니다. 여기서 투영하는 대상은 목표 벡터 <code>y</code>입니다. 열이 거의 중복된다면 <code>XᵀX</code>를 만든 뒤 역행렬을 계산하면 수치 오차가 커질 수 있습니다. NumPy의 <code>lstsq</code>는 최소제곱과 유효 랭크를 함께 구할 수 있습니다.</p>
+<p><b class="key">경사하강</b>에서는 <code>β ← β−η∇J</code>를 반복합니다. 양수 η가 한 번의 이동 크기를 조절하는 학습률입니다. 시작을 <code>[0,0]</code>으로 두면 잔차는 y와 같고 기울기는 <code>−[9,12]/3=[−3,−4]</code>입니다. η가 0.1일 때 첫 갱신 결과는 <code>[0.3,0.4]</code>입니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 237" role="img" aria-label="시작 계수는 (0,0), 기울기는 (−3,−4)이다. 학습률 0.1을 써 기울기의 반대 방향으로 이동하면 첫 계수는 (0.3,0.4)가 된다.">
+<rect class="f-box" x="53" y="49" width="191" height="57"/>
+<text class="f-s" x="148.5" y="82.5" text-anchor="middle">시작 β = (0, 0)</text>
+<line class="f-line" x1="253" y1="78" x2="280" y2="78" marker-end="url(#f-arrow)"/>
+<rect class="f-soft" x="291" y="49" width="187" height="57"/>
+<text class="f-s" x="384.5" y="82.5" text-anchor="middle">기울기 (−3, −4)</text>
+<line class="f-line" x1="487" y1="78" x2="515" y2="78" marker-end="url(#f-arrow)"/>
+<rect class="f-box" x="526" y="49" width="179" height="57"/>
+<text class="f-s" x="615.5" y="82.5" text-anchor="middle">β = (0.3, 0.4)</text>
+<text class="f-cap" x="379" y="154" text-anchor="middle">다음 계수 = 현재 계수 − 0.1 × 기울기</text>
+<text class="f-s" x="379" y="189" text-anchor="middle">손실 J는 5.5000에서 3.2983으로 감소</text>
+</svg>
+<figcaption>첫 한 번의 갱신이다. 다음 번에는 바뀐 계수에서 잔차와 기울기를 다시 계산한다.</figcaption>
+</figure>
+<p>작고 조밀한 행렬은 직접 최소제곱을 푸는 방법이 편리합니다. 경사하강은 기울기 계산과 갱신을 반복하며, 모든 행을 한 번에 처리하기 어렵다면 일부 행으로 기울기를 어림하는 방법도 있습니다. 학습률이 지나치게 크면 오히려 손실이 커질 수 있고, 너무 작으면 가까운 해까지 오래 걸립니다.</p>
+<div class="check" data-q="q3"></div>
+<div class="check" data-q="q4"></div>
+
+<h2>설계행렬의 열이 중복되면 계수 해가 하나로 정해지지 않는다</h2>
+<p>원래 열 <code>x</code>에 <code>2x</code>를 새 특성으로 추가합니다. 세 열 가운데 <code>2x</code>는 기존 열의 배수이므로 독립인 열은 2개입니다. 열 수 3보다 랭크가 작아진 상태를 <b class="key">랭크 부족</b>이라고 합니다.</p>
+<p>예측은 <code>b+w₁x+w₂(2x)=b+(w₁+2w₂)x</code>입니다. <code>b=1.5</code>와 <code>w₁+2w₂=1.5</code>를 지키면 같은 적합값을 냅니다. 예를 들어 <code>(w₁,w₂)=(1.5,0),(0,0.75),(0.3,0.6)</code> 모두 가능합니다. <code>lstsq</code>는 그중 계수 벡터의 길이가 최소인 해를 반환합니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 284" role="img" aria-label="절편이 1.5일 때 w₁ + 2w₂가 1.5인 모든 좌표의 예측은 같다. (1.5,0), (0.3,0.6), (0,0.75)가 모두 같은 직선 위에 있고, 최소 노름의 해는 (0.3,0.6)이다.">
+<line class="f-ink" x1="142" y1="44" x2="142" y2="205"/>
+<line class="f-ink" x1="142" y1="205" x2="606.4" y2="205"/>
+<line class="f-ink" x1="142" y1="205" x2="142" y2="212"/>
+<text class="f-s" x="142" y="232" text-anchor="middle">0</text>
+<line class="f-ink" x1="271" y1="205" x2="271" y2="212"/>
+<text class="f-s" x="271" y="232" text-anchor="middle">0.5</text>
+<line class="f-ink" x1="400" y1="205" x2="400" y2="212"/>
+<text class="f-s" x="400" y="232" text-anchor="middle">1</text>
+<line class="f-ink" x1="529" y1="205" x2="529" y2="212"/>
+<text class="f-s" x="529" y="232" text-anchor="middle">1.5</text>
+<line class="f-ink" x1="136" y1="158.75" x2="142" y2="158.75"/>
+<text class="f-s" x="130" y="162.75" text-anchor="end">0.25</text>
+<line class="f-ink" x1="136" y1="112.5" x2="142" y2="112.5"/>
+<text class="f-s" x="130" y="116.5" text-anchor="end">0.5</text>
+<line class="f-ink" x1="136" y1="66.25" x2="142" y2="66.25"/>
+<text class="f-s" x="130" y="70.25" text-anchor="end">0.75</text>
+<line class="f-line" x1="142" y1="66.25" x2="529" y2="205"/>
+<line class="f-dash" x1="142" y1="205" x2="219.4" y2="94"/>
+<circle class="f-box" cx="142" cy="66.25" r="5"/>
+<circle class="f-fill" cx="219.4" cy="94" r="5"/>
+<circle class="f-box" cx="529" cy="205" r="5"/>
+<text class="f-s" x="153" y="51" text-anchor="start">(0, 0.75)</text>
+<text class="f-s" x="252.4" y="86" text-anchor="start">최소 노름 해 (0.3, 0.6)</text>
+<text class="f-s" x="544" y="192" text-anchor="start">(1.5, 0)</text>
+<text class="f-s" x="142" y="33" text-anchor="start">계수 w₂</text>
+<text class="f-s" x="422" y="263" text-anchor="middle">계수 w₁</text>
+</svg>
+<figcaption>축의 척도가 달라 그림의 픽셀 거리는 계수의 노름과 비례하지 않는다. 점선은 어떤 계수에서 최소 노름이 되는지 표시한다.</figcaption>
+</figure>
+<p class="small">실행 예제</p>
+<pre data-example="python"><code>import numpy as np
+
+x = np.arange(3, dtype=float)
+X = np.column_stack((np.ones(x.size), x))
+y = np.array([2.0, 2.0, 5.0])
+
+least_squares, _, rank, _ = np.linalg.lstsq(X, y, rcond=None)
+Q, R = np.linalg.qr(X)
+direct = np.linalg.solve(R, Q.T @ y)
+beta = np.zeros(2)
+beta += 0.1 * (X.T @ (y - X @ beta)) / y.size
+print(f&quot;first GD: {beta.round(6).tolist()}&quot;)
+for _ in range(499):
+    beta += 0.1 * (X.T @ (y - X @ beta)) / y.size
+print(f&quot;rank={rank}, lstsq={least_squares.round(6).tolist()}&quot;)
+print(f&quot;QR={direct.round(6).tolist()}, GD={beta.round(6).tolist()}&quot;)
+
+wide = np.column_stack((X, 2 * x))
+alternative, _, rank, _ = np.linalg.lstsq(wide, y, rcond=None)
+print(f&quot;dependent rank={rank}, beta={alternative.round(6).tolist()}&quot;)
+print(f&quot;same fitted values: {np.allclose(wide @ alternative, X @ least_squares)}&quot;)</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>first GD: [0.3, 0.4]
+rank=2, lstsq=[1.5, 1.5]
+QR=[1.5, 1.5], GD=[1.5, 1.5]
+dependent rank=2, beta=[1.5, 0.3, 0.6]
+same fitted values: True</code></pre>
+<div class="why"><p class="box-k">왜 그럴까?</p><p>같은 적합값을 낸다면 중복 특성의 계수를 해석해도 될까요?</p><details><summary>모범 답 보기</summary><p>자료가 구별하는 것은 w₁+2w₂의 합입니다. 여러 계수 쌍이 같은 예측을 내므로 각 계수의 기여를 유일하게 정할 수 없습니다. 변수 구성이 왜 겹쳤는지부터 확인합니다.</p></details></div>
+<div class="check" data-q="q5"></div>
+<div class="check" data-q="q6"></div>
+<div class="check" data-q="q7"></div>
+
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table><thead><tr><th scope="col">개념</th><th scope="col">확인할 것</th></tr></thead><tbody>
+<tr><th scope="row"><b class="key">정규방정식</b></th><td>최소에서 Xᵀr=0</td></tr>
+<tr><th scope="row"><b class="key">QR</b></th><td>열이 독립이면 Rβ=Qᵀy를 직접 계산</td></tr>
+<tr><th scope="row"><b class="key">경사하강</b></th><td>현재 계수에서 기울기를 구하고 조금씩 이동</td></tr>
+<tr><th scope="row"><b class="key">랭크 부족</b></th><td>예측이 같아도 계수가 여러 개 가능</td></tr>
+</tbody></table></div>
+<div class="box sum"><p class="box-k">다음 장으로</p><p><a href="../../unit.html?u=ML05">다음 장</a>에서는 범주를 맞히는 다른 선형 모델을 살펴봅니다.</p></div>
+
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://numpy.org/doc/stable/reference/generated/numpy.linalg.lstsq.html">NumPy · 최소제곱과 최소 노름 해</a></li>
+<li><a href="https://numpy.org/doc/stable/reference/generated/numpy.linalg.qr.html">NumPy · QR 분해</a></li>
+</ul>
+<h2>확인 문제</h2>
+<p>직접 계산하거나 설명을 먼저 적고 답을 확인해 보세요.</p>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

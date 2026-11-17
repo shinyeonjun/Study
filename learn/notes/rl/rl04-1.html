@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>마르코프 결정 과정: 상태와 전이를 표에 담기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e8c'/%3E%3Cpath d='M8 22V10m8 12V14m8 8V6' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="RL04-1">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+
+<header class="chapter">
+<p class="chap-sub">강화학습 · RL04 MDP와 가치</p>
+<p class="chap-num">RL04·1</p>
+<h1>마르코프 결정 과정: 상태와 전이를 표에 담기</h1>
+<p class="lead">자료 한 건을 빠르게 끝낼지, 확인대를 거쳐 처리할지 고릅니다. 작은 표에 현재 상태와 행동을 넣으면 어떤 다음 상태와 보상을 받을 수 있는지 확률까지 읽을 수 있습니다.</p>
+</header>
+
+<div class="goal">
+<h2>이 장을 읽고 나면</h2>
+<ul>
+<li>마르코프 성질을 과거 기록, 현재 상태, 다음 결과의 관계로 설명한다.</li>
+<li>전이와 보상의 결합확률 P(s′,r | s,a)를 표에서 읽는다.</li>
+<li>환경의 결과 확률과 정책의 행동 확률을 구분한다.</li>
+</ul>
+</div>
+
+<h2>같은 위치에 다시 와도 무엇이 그대로여야 하나</h2>
+<p>연습용 자료 처리 환경에서 S는 시작, C는 확인대, T는 완료입니다. S와 C 각각에서 ‘직행’과 ‘확인’ 중 하나를 고릅니다. 같은 위치와 행동을 줬을 때, 이전에 몇 번 확인했는지와 관계없이 다음 상태와 보상의 확률 규칙이 같다고 가정합니다. 그 규칙은 표와 그림으로 모두 적을 수 있습니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 285" role="img" aria-label="시작 S의 직행은 확실히 완료 T로 가며 보상 2, 확인은 확인대 C에 보상 0으로 간다. 확인대의 직행은 완료 보상 6, 확인은 확률 1/2로 완료 보상 3, 나머지 1/2로 C에 머물고 보상 -1이다.">
+<rect class="f-box" x="36" y="106" width="164" height="66" rx="4"/><text class="f-cap" x="118" y="131" text-anchor="middle">S · 시작</text><text class="f-s" x="118" y="155" text-anchor="middle">선택 두 가지</text>
+<rect class="f-soft" x="300" y="106" width="164" height="66" rx="4"/><text class="f-cap" x="382" y="131" text-anchor="middle">C · 확인대</text><text class="f-s" x="382" y="155" text-anchor="middle">선택 두 가지</text>
+<rect class="f-box" x="560" y="106" width="164" height="66" rx="4"/><text class="f-cap" x="642" y="131" text-anchor="middle">T · 완료</text><text class="f-s" x="642" y="155" text-anchor="middle">여기서 끝</text>
+<line class="f-line" x1="202" y1="138" x2="296" y2="138" marker-end="url(#f-arrow)"/>
+<text class="f-s" x="248" y="125" text-anchor="middle">확인 · 0</text>
+<line class="f-line" x1="465" y1="128" x2="555" y2="128" marker-end="url(#f-arrow)"/>
+<text class="f-s" x="509" y="116" text-anchor="middle">직행 · 6</text>
+<line class="f-ink" x1="465" y1="153" x2="555" y2="153" marker-end="url(#f-arrow)"/>
+<text class="f-s" x="510" y="176" text-anchor="middle">확인 · 1/2, +3</text>
+<path class="f-line" d="M118 105 V56 H632 V102" marker-end="url(#f-arrow)"/>
+<text class="f-s" x="383" y="40" text-anchor="middle">S에서 직행 · 확률 1, 보상 +2</text>
+<path class="f-ink" d="M415 174 V228 H344 V176" marker-end="url(#f-arrow)"/>
+<text class="f-s" x="380" y="251" text-anchor="middle">C에서 확인 · 확률 1/2, 보상 −1</text>
+</svg>
+<figcaption>확률을 생략한 화살표는 각각 확률 1이다. C에서 ‘확인’하는 두 분기의 확률 합은 1이다.</figcaption>
+</figure>
+<p><b class="key">마르코프 성질</b>은 현재 상태와 지금 선택한 행동을 알면, 과거에 어떤 경로를 거쳤는지 추가로 알아도 다음 상태와 보상의 확률이 달라지지 않는다는 뜻입니다. 다음 결과가 항상 같다는 뜻은 아닙니다. C에서 확인을 누르면 원래부터 두 결과 가운데 하나가 무작위로 나옵니다. 앞선 결과에 따른 별도의 규칙 변경이 없다는 가정입니다.</p>
+<p><b class="key">마르코프 결정 과정</b>(MDP)은 이렇게 상태를 정하고, 상태별 행동, 행동 뒤의 다음 상태·보상 규칙, 비교에 쓸 할인율 등을 함께 명시한 모형입니다. 이 책에서는 유한 개의 상태와 행동을 먼저 다룹니다. T는 에피소드가 끝나는 곳입니다. 이후에 받을 보상은 0으로 두고, T에서 행동을 고르지 않습니다.</p>
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+<h2>한 행동 뒤에 일어나는 결과를 두 값으로 묶는다</h2>
+<p><code>P(s′,r | s,a)</code>는 현재 상태 s에서 행동 a를 했을 때, 다음 상태가 s′이고 동시에 보상이 r일 확률입니다. 예를 들어 <code>P(C, −1 | C, 확인)=1/2</code>입니다. 오른쪽 조건은 고정하고 왼쪽의 가능한 모든 쌍을 더하면 1입니다.</p>
+<div class="table-wrap"><table>
+<tr><th scope="col">현재 상태</th><th scope="col">행동</th><th scope="col">다음 상태</th><th scope="col">즉시 보상</th><th scope="col">확률</th></tr>
+<tr><td>S · 시작</td><td>직행</td><td>T · 완료</td><td>2</td><td>1</td></tr>
+<tr><td>S · 시작</td><td>확인</td><td>C · 확인대</td><td>0</td><td>1</td></tr>
+<tr><td>C · 확인대</td><td>직행</td><td>T · 완료</td><td>6</td><td>1</td></tr>
+<tr><td>C · 확인대</td><td>확인</td><td>T · 완료</td><td>3</td><td>1/2</td></tr>
+<tr><td>C · 확인대</td><td>확인</td><td>C · 확인대</td><td>−1</td><td>1/2</td></tr>
+</table></div>
+<p>한 결과의 보상과 도착 상태가 함께 정해질 수 있습니다. C에서 확인한 뒤 T에 가면 이번 보상은 3이고, C에 남으면 −1입니다. 두 값이 서로 독립이라는 가정을 넣지 않습니다. 다음 상태만 알 필요가 있으면 보상을 모두 합해 <code>P(s′ | s,a)=ΣᵣP(s′,r | s,a)</code>를 얻습니다. 반대로 즉시 보상의 기댓값은 가능한 쌍마다 <code>P×r</code>을 더합니다. C에서 확인하는 경우 <code>(1/2)×3+(1/2)×(−1)=1</code>점입니다. 실제 원자료에는 3 또는 −1이 기록됩니다.</p>
+<div class="check" data-q="q3"></div>
+<div class="check" data-q="q4"></div>
+<h2>현재 위치가 충분한 상태 표현인지 확인한다</h2>
+<p>우리는 환경에서 받은 관측이 S, C, T라는 상태를 그대로 보여 준다고 놓았습니다. 과제에 ‘이동을 정확히 제한 횟수 안에 끝낸다’는 규칙을 추가하면, 위치만으로는 충분하지 않을 수 있습니다. S에서 확인하기를 눌렀는데 기회가 바로 소진되는 경우와, 확인대에서 한 번 더 행동할 수 있는 경우를 구별해야 합니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 220" role="img" aria-label="같은 보이는 위치 S와 행동 확인이라도 과제의 기한까지 1번 남으면 바로 T에서 끝나며, 2번 남으면 C로 갈 수 있는 다른 모형이다.">
+<rect class="f-box" x="43" y="40" width="223" height="61" rx="4"/><text class="f-cap" x="154.5" y="65" text-anchor="middle">관측: 위치 S</text><text class="f-s" x="154.5" y="89" text-anchor="middle">숨은 기한 · 1회 남음</text>
+<rect class="f-box" x="43" y="132" width="223" height="61" rx="4"/><text class="f-cap" x="154.5" y="157" text-anchor="middle">관측: 위치 S</text><text class="f-s" x="154.5" y="181" text-anchor="middle">숨은 기한 · 2회 남음</text>
+<line class="f-line" x1="269" y1="70" x2="473" y2="70" marker-end="url(#f-arrow)"/>
+<text class="f-s" x="369" y="57" text-anchor="middle">같은 행동 · 확인</text>
+<line class="f-line" x1="269" y1="163" x2="473" y2="163" marker-end="url(#f-arrow)"/>
+<text class="f-s" x="369" y="150" text-anchor="middle">같은 행동 · 확인</text>
+<rect class="f-box" x="480" y="40" width="221" height="61" rx="4"/><text class="f-cap" x="590.5" y="65" text-anchor="middle">T에서 종료</text><text class="f-s" x="590.5" y="89" text-anchor="middle">마지막 기회가 끝남</text>
+<rect class="f-soft" x="480" y="132" width="221" height="61" rx="4"/><text class="f-cap" x="590.5" y="157" text-anchor="middle">C에서 계속</text><text class="f-s" x="590.5" y="181" text-anchor="middle">다음 행동을 할 수 있음</text>
+</svg>
+<figcaption>과제 정의에 기한을 추가한 변형이다. 위치와 남은 횟수를 묶으면 두 상황을 구별할 수 있다.</figcaption>
+</figure>
+<p>환경의 상태를 <code>(위치, 남은 횟수)</code>로 확대하면 달라진 결과 규칙을 나타낼 수 있습니다. 에이전트가 여전히 위치만 받는다면 부분관측 상태입니다. 과거에는 상태를 구별할 필요가 없던 센서라도, 과제 규칙이 바뀌면 충분성이 달라질 수 있습니다. 상태에 무엇을 넣는지는 무엇을 계산하거나 예측해야 하는지에 달려 있습니다.</p>
+<h2>행동의 확률과 행동 뒤 결과의 확률</h2>
+<p><code>π(a | s)</code>는 s에서 행동 a를 고를 <b class="key">정책</b>의 확률입니다. C에서 확인을 확률 1/4로, 직행을 확률 3/4로 고르는 정책을 생각합니다. C에 머물려면 확인을 골라야 하고 그 뒤 다시 C가 나와야 하므로 <code>(1/4)×(1/2)=1/8</code>입니다. 1/4는 에이전트가 어떤 행동을 택하는지, 1/2는 선택 뒤 환경에서 어떤 결과가 나오는지를 말합니다.</p>
+<div class="check" data-q="q5"></div>
+<div class="check" data-q="q6"></div>
+<h2>가능한 쌍을 정확한 분수로 합한다</h2>
+<pre data-example="python"><code>from fractions import Fraction as F
+
+transitions = {
+    ("S", "직행"): [(F(1), "T", 2)],
+    ("S", "확인"): [(F(1), "C", 0)],
+    ("C", "직행"): [(F(1), "T", 6)],
+    ("C", "확인"): [(F(1, 2), "T", 3), (F(1, 2), "C", -1)],
+}
+for outcomes in transitions.values():
+    assert sum(prob for prob, _, _ in outcomes) == 1
+
+outcomes = transitions[("C", "확인")]
+retry = sum(prob for prob, dest, _ in outcomes if dest == "C")
+immediate = sum(prob * reward for prob, _, reward in outcomes)
+print("C에서 확인 뒤 다시 C:", retry)
+print("C에서 확인의 즉시 보상 평균:", immediate)
+print("확인 확률 1/4인 정책에서 다음 상태가 C:", F(1, 4) * retry)</code></pre>
+<pre data-output><code>C에서 확인 뒤 다시 C: 1/2
+C에서 확인의 즉시 보상 평균: 1
+확인 확률 1/4인 정책에서 다음 상태가 C: 1/8</code></pre>
+<p>여기서는 학습이나 모의실험으로 확률을 어림잡지 않고, 작성자가 정해 둔 모형을 그대로 사용했습니다. 다음 장부터 이 자료 처리 환경에서 전이 뒤에 이어지는 보상까지 계산합니다.</p>
+<h2>참고 자료</h2>
+<ul><li><a href="https://www2.imm.dtu.dk/courses/02465/pensum/sutton2018.pdf">Sutton·Barto, Reinforcement Learning 2판 · §3.1, §3.5 유한 MDP와 정책</a></li></ul>
+
+<h2>확인 문제</h2>
+<p>본문에서 푼 것 말고 남은 문제입니다. 먼저 답을 정한 뒤 해설을 확인합니다.</p>
+<div id="quiz"></div>
+
+<section class="work" id="tools"></section>
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

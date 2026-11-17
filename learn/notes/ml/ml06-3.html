@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>나무의 깊이를 제한하고 가지를 치기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="ML06-3">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">머신러닝 · ML06 거리와 나무</p>
+<p class="chap-num">ML06·3</p>
+<h1>나무의 깊이를 제한하고 가지를 치기</h1>
+<p class="lead">훈련 주문 하나까지 정확히 맞히도록 질문을 계속 추가할 수 있습니다. 새 주문에서도 그 질문이 도움이 될지는 별개입니다. 잎을 늘려 얻는 훈련 불순도 감소가 잎을 하나 더 유지하는 비용을 정당화하는지 살펴봅니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul>
+<li>깊이·최소 잎 크기와 과적합의 관계를 설명한다.</li>
+<li>가중 잎 불순도와 잎 수의 비용으로 가지치기를 계산한다.</li>
+<li>훈련에서 낼 후보와 검증에서 고를 설정을 구별한다.</li>
+</ul></div>
+
+<h2>깊이는 질문을 몇 번 이어 가는지 나타낸다</h2>
+<p>합성 훈련 자료의 대기 건수 <code>x=[1,2,3,4,5,6]</code>이고 지연 라벨은 <code>[0,0,1,0,1,1]</code>입니다. 뿌리에서 <code>x≤2.5</code>로 가른 뒤 오른쪽 가지의 <code>3,4,5,6</code>을 <code>x≤4.5</code>로 나눕니다. 오른쪽 끝 두 행은 지연입니다. 가운데 <code>x=3,4</code>의 라벨은 서로 달라, <code>x≤3.5</code> 질문을 추가하면 두 행을 따로 맞힐 수 있습니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 377" role="img" aria-label="뿌리 깊이 0에서 x≤2.5를 물어 왼쪽 두 정상은 종료한다. 오른쪽은 x≤4.5를 물어 x=5,6의 두 지연을 잎으로 둔다. 나머지 x=3,4는 마지막 x≤3.5에서 갈라져 깊이 3의 잎이 된다.">
+<rect class="f-box" x="296" y="17" width="168" height="41"/>
+<text class="f-cap" x="380" y="42.5" text-anchor="middle">x ≤ 2.5?</text>
+<line class="f-line" x1="331" y1="59" x2="160" y2="94" marker-end="url(#f-arrow)"/>
+<line class="f-line" x1="429" y1="59" x2="504" y2="94" marker-end="url(#f-arrow)"/>
+<rect class="f-soft" x="79" y="100" width="158" height="42"/>
+<text class="f-s" x="158" y="126" text-anchor="middle">x=1,2 · 정상 2</text>
+<rect class="f-box" x="426" y="100" width="159" height="42"/>
+<text class="f-cap" x="505.5" y="126" text-anchor="middle">x ≤ 4.5?</text>
+<line class="f-line" x1="483" y1="145" x2="403" y2="177" marker-end="url(#f-arrow)"/>
+<line class="f-line" x1="545" y1="145" x2="614" y2="177" marker-end="url(#f-arrow)"/>
+<rect class="f-over" x="326" y="183" width="156" height="42"/>
+<text class="f-cap" x="404" y="209" text-anchor="middle">x ≤ 3.5?</text>
+<rect class="f-soft" x="540" y="183" width="159" height="42"/>
+<text class="f-s" x="619.5" y="209" text-anchor="middle">x=5,6 · 지연 2</text>
+<line class="f-line" x1="381" y1="228" x2="320" y2="260" marker-end="url(#f-arrow)"/>
+<line class="f-line" x1="428" y1="228" x2="495" y2="260" marker-end="url(#f-arrow)"/>
+<rect class="f-soft" x="242" y="266" width="155" height="42"/>
+<text class="f-s" x="319.5" y="292" text-anchor="middle">x=3 · 지연 1</text>
+<rect class="f-soft" x="415" y="266" width="156" height="42"/>
+<text class="f-s" x="493" y="292" text-anchor="middle">x=4 · 정상 1</text>
+<text class="f-s" x="69" y="41" text-anchor="middle">깊이 0</text>
+<text class="f-s" x="69" y="124" text-anchor="middle">깊이 1</text>
+<text class="f-s" x="69" y="207" text-anchor="middle">깊이 2</text>
+<text class="f-s" x="69" y="290" text-anchor="middle">깊이 3</text>
+<text class="f-cap" x="396" y="347" text-anchor="middle">잎 4개 · 가장 긴 경로의 깊이 3</text>
+</svg>
+<figcaption>왼쪽 가지는 조건을 만족하는 경우다. 깊이 3에 있는 마지막 두 잎에는 각각 훈련 주문 한 건만 들어간다.</figcaption>
+</figure>
+<p>뿌리는 깊이 0, 자식으로 내려갈 때마다 깊이는 1씩 늘어납니다. <b class="key">최대 깊이</b>를 2로 설정하면 그림의 깊이 3 질문 결과인 두 잎까지 내려가지 않습니다. 각 잎에 최소 2행을 요구하는 <code>min_samples_leaf=2</code> 같은 조건도 그림의 마지막 분할을 막습니다. 이렇게 나무가 커지기 전에 멈추도록 조건을 두는 방법을 <b>사전 가지치기</b>라고 부릅니다.</p>
+<p>훈련의 모든 라벨이 잎에서 하나로 모이면 학습 불순도는 0입니다. 한 행짜리 잎은 그 행의 우연한 특성에도 맞출 수 있습니다. 훈련 결과가 좋지만 새 자료에서 좋아지지 않는 것을 <b class="key">과적합</b>이라고 합니다.</p>
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+
+<h2>작은 나무의 불순도와 잎의 비용을 더한다</h2>
+<p>먼저 충분히 큰 나무를 만든 뒤 일부 가지를 지우는 방법이 <b>사후 가지치기</b>입니다. scikit-learn의 <b class="key">비용-복잡도 가지치기</b>에서 <code>R(T)</code>는 각 잎의 Gini에 그 잎이 전체 훈련에서 차지하는 비율을 곱해 합한 값입니다. 잎 수를 <code>L</code>이라 두면 평가는 <code>R(T)+αL</code>입니다. α는 잎 하나당 부과하는 0 이상의 비용입니다.</p>
+<p>4잎 나무는 모든 잎이 한 라벨이어서 <code>R=0</code>입니다. 마지막 두 잎만 합친 3잎 나무는 2행짜리 섞인 잎 하나에 Gini 1/2가 있으므로 <code>R=(2/6)×(1/2)=1/6</code>입니다. 오른쪽 가지 전체를 잎 하나로 합친 2잎 나무는 <code>R=1/4</code>입니다. 뿌리만 남으면 전체 라벨이 3건씩 섞여 <code>R=1/2</code>입니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 275" role="img" aria-label="알파가 0.10이면 4잎의 비용 0.400이 최소다. 0.15이면 2잎의 비용 0.550이 최소다. 0.30이면 1잎의 비용 0.800이 최소다.">
+<rect class="f-box" x="57" y="21" width="158" height="40"/>
+<text class="f-s" x="136" y="46" text-anchor="middle">잎의 수</text>
+<rect class="f-box" x="215" y="21" width="131" height="40"/>
+<text class="f-s" x="280.5" y="46" text-anchor="middle">훈련 불순도 R</text>
+<rect class="f-box" x="346" y="21" width="118" height="40"/>
+<text class="f-s" x="405" y="46" text-anchor="middle">α=0.10</text>
+<rect class="f-box" x="464" y="21" width="118" height="40"/>
+<text class="f-s" x="523" y="46" text-anchor="middle">α=0.15</text>
+<rect class="f-box" x="582" y="21" width="118" height="40"/>
+<text class="f-s" x="641" y="46" text-anchor="middle">α=0.30</text>
+<rect class="f-box" x="57" y="61" width="158" height="40"/>
+<text class="f-s" x="136" y="86" text-anchor="middle">4</text>
+<rect class="f-box" x="215" y="61" width="131" height="40"/>
+<text class="f-s" x="280.5" y="86" text-anchor="middle">0</text>
+<rect class="f-soft" x="346" y="61" width="118" height="40"/>
+<text class="f-s" x="405" y="86" text-anchor="middle">0.400</text>
+<rect class="f-box" x="464" y="61" width="118" height="40"/>
+<text class="f-s" x="523" y="86" text-anchor="middle">0.600</text>
+<rect class="f-box" x="582" y="61" width="118" height="40"/>
+<text class="f-s" x="641" y="86" text-anchor="middle">1.200</text>
+<rect class="f-box" x="57" y="101" width="158" height="40"/>
+<text class="f-s" x="136" y="126" text-anchor="middle">3</text>
+<rect class="f-box" x="215" y="101" width="131" height="40"/>
+<text class="f-s" x="280.5" y="126" text-anchor="middle">1/6</text>
+<rect class="f-box" x="346" y="101" width="118" height="40"/>
+<text class="f-s" x="405" y="126" text-anchor="middle">0.467</text>
+<rect class="f-box" x="464" y="101" width="118" height="40"/>
+<text class="f-s" x="523" y="126" text-anchor="middle">0.617</text>
+<rect class="f-box" x="582" y="101" width="118" height="40"/>
+<text class="f-s" x="641" y="126" text-anchor="middle">1.067</text>
+<rect class="f-box" x="57" y="141" width="158" height="40"/>
+<text class="f-s" x="136" y="166" text-anchor="middle">2</text>
+<rect class="f-box" x="215" y="141" width="131" height="40"/>
+<text class="f-s" x="280.5" y="166" text-anchor="middle">1/4</text>
+<rect class="f-box" x="346" y="141" width="118" height="40"/>
+<text class="f-s" x="405" y="166" text-anchor="middle">0.450</text>
+<rect class="f-soft" x="464" y="141" width="118" height="40"/>
+<text class="f-s" x="523" y="166" text-anchor="middle">0.550</text>
+<rect class="f-box" x="582" y="141" width="118" height="40"/>
+<text class="f-s" x="641" y="166" text-anchor="middle">0.850</text>
+<rect class="f-box" x="57" y="181" width="158" height="40"/>
+<text class="f-s" x="136" y="206" text-anchor="middle">1</text>
+<rect class="f-box" x="215" y="181" width="131" height="40"/>
+<text class="f-s" x="280.5" y="206" text-anchor="middle">1/2</text>
+<rect class="f-box" x="346" y="181" width="118" height="40"/>
+<text class="f-s" x="405" y="206" text-anchor="middle">0.600</text>
+<rect class="f-box" x="464" y="181" width="118" height="40"/>
+<text class="f-s" x="523" y="206" text-anchor="middle">0.650</text>
+<rect class="f-soft" x="582" y="181" width="118" height="40"/>
+<text class="f-s" x="641" y="206" text-anchor="middle">0.800</text>
+<text class="f-cap" x="380" y="252" text-anchor="middle">비용 = 가중 불순도 R + α × 잎 수</text>
+</svg>
+<figcaption>색 칸은 각 α에서 비용이 최소인 후보를 표시한다. α가 커질수록 잎을 유지하려면 더 큰 불순도 감소가 필요하다.</figcaption>
+</figure>
+<p>α=0.15에서 4잎 나무의 비용은 <code>0+0.15×4=0.60</code>입니다. 2잎 나무는 <code>0.25+0.15×2=0.55</code>라서 더 낮습니다. 주어진 후보 가운데 α=0.30에서는 잎 하나만 남긴 나무가 가장 비용이 작습니다.</p>
+<div class="check" data-q="q3"></div>
+<div class="check" data-q="q4"></div>
+<div class="check" data-q="q5"></div>
+
+<h2>어느 가지가 잎 하나당 적은 불순도를 줄이는지 본다</h2>
+<p>가지 하나를 잎 하나로 합치면 훈련 불순도는 늘 수 있지만 잎 수가 줄어듭니다. 두 비용이 같아지는 α는 <code>(불순도 증가량)/(없어진 잎 수)</code>입니다. 전체 훈련에서의 가중치로 계산합니다.</p>
+<p>오른쪽 가지 전체를 합칠 때 불순도는 <code>0.25</code> 증가하고 잎은 3개에서 1개로 줄므로 경계 α는 <code>0.25/(3−1)=0.125</code>입니다. 마지막 두 잎만 합칠 때는 <code>(1/6)/(2−1)=1/6</code>입니다. 뿌리에 대해 처음 계산한 경계는 <code>0.50/(4−1)=1/6</code>입니다. 처음에는 경계가 가장 낮은 오른쪽 가지 전체가 먼저 합쳐집니다. 그 뒤 남은 나무에서 다시 계산합니다. 그래서 예제의 3잎 후보는 비교할 수 있어도 이 가지치기 순서에서는 건너뜁니다.</p>
+<p class="small">실행 예제</p>
+<pre data-example="python"><code>from fractions import Fraction as F
+
+impurity = {4: F(0), 3: F(1, 6), 2: F(1, 4), 1: F(1, 2)}
+print(f&quot;right branch effective alpha: {float((impurity[2] - impurity[4]) / 2):.3f}&quot;)
+
+for alpha in [F(1, 10), F(3, 20), F(3, 10)]:
+    cost = {leaves: impurity[leaves] + alpha * leaves for leaves in impurity}
+    best = min(cost, key=cost.get)
+    print(f&quot;alpha={float(alpha):.2f}: leaves={best}, cost={float(cost[best]):.3f}&quot;)</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>right branch effective alpha: 0.125
+alpha=0.10: leaves=4, cost=0.400
+alpha=0.15: leaves=2, cost=0.550
+alpha=0.30: leaves=1, cost=0.800</code></pre>
+<p>가지 후보와 훈련 불순도는 훈련 자료에서 얻습니다. α와 최대 깊이 등을 비교해 선택하는 단계는 검증 자료에서 합니다. 작은 합성 자료의 계산에서는 α와 비용의 관계를 볼 수 있습니다. 좋은 새 주문 성능을 확인하려면 선택한 설정을 고정하고 따로 남겨 둔 자료에서 평가합니다.</p>
+<div class="why"><p class="box-k">왜 그럴까?</p><p>잎이 가장 많은 나무가 훈련 불순도가 낮아도 반드시 고르지 않는 이유는?</p><details><summary>모범 답 보기</summary><p>더 많은 잎은 훈련의 작은 묶음에 예측을 맞춥니다. 훈련 불순도의 개선이 새 자료에서도 나타나는지 알기 위해 검증하고, 각 잎을 유지하는 비용을 설정합니다.</p></details></div>
+<div class="check" data-q="q6"></div>
+<div class="check" data-q="q7"></div>
+
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table><thead><tr><th scope="col">방법</th><th scope="col">무엇을 조절하나</th></tr></thead><tbody>
+<tr><th scope="row"><b class="key">최대 깊이</b></th><td>뿌리에서 잎까지 내려갈 수 있는 단계 수</td></tr>
+<tr><th scope="row">최소 잎 크기</th><td>잎을 만들 때 필요한 최소 훈련 건수</td></tr>
+<tr><th scope="row"><b class="key">가지치기</b></th><td>잎을 줄여 얻는 복잡도 감소와 훈련 불순도 증가를 비교</td></tr>
+<tr><th scope="row">설정 선택</th><td>훈련에서 후보를 만들고 검증에서 고름</td></tr>
+</tbody></table></div>
+<div class="box sum"><p class="box-k">다음 장으로</p><p><a href="../../unit.html?u=ML07">다음 장</a>에서는 여러 모델을 함께 사용하는 방법을 봅니다.</p></div>
+
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://scikit-learn.org/stable/modules/tree.html">scikit-learn · 결정나무와 불순도</a></li>
+<li><a href="https://scikit-learn.org/stable/modules/tree.html#minimal-cost-complexity-pruning">scikit-learn · 비용-복잡도 가지치기</a></li>
+</ul>
+<h2>확인 문제</h2>
+<p>직접 계산하거나 설명을 먼저 적고 답을 확인해 보세요.</p>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

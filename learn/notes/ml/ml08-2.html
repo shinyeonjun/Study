@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>숫자의 척도, 로그, 특성의 상호작용 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="ML08-2">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">머신러닝 · ML08 전처리와 특징</p>
+<p class="chap-num">ML08·2</p>
+<h1>숫자의 척도, 로그, 특성의 상호작용</h1>
+<p class="lead">배송 거리와 상자 수는 단위가 다릅니다. 어떤 모델은 수치 크기에 영향을 받고, 큰 값이 드문 숫자 열은 로그로 간격을 바꿔 볼 수 있습니다. 거리의 효과가 상자 수에 따라 달라진다고 표현하는 방법도 함께 봅니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul>
+<li>훈련 평균과 표준편차로 표준화하고 새 값에 적용한다.</li>
+<li>로그 변환이 값의 간격과 해석을 어떻게 바꾸는지 확인한다.</li>
+<li>곱으로 만든 상호작용 특성을 손으로 계산한다.</li>
+</ul></div>
+
+<h2>평균을 빼고 훈련에서 얻은 나눗셈 기준을 적용한다</h2>
+<p>합성 훈련에서 거리 열의 값이 <code>[10,20,30]</code>입니다. 평균은 20이고, 여기서는 세 편차의 제곱합 200을 훈련 행 수 3으로 나눕니다. 그 제곱근 <code>√(200/3)≈8.165</code>가 표준편차입니다. <b class="key">표준화</b>는 열마다 <code>z=(x−훈련 평균)/훈련 표준편차</code>를 계산합니다. 30은 약 1.225, 새 입력 40은 약 2.449입니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 298" role="img" aria-label="훈련 값 10, 20, 30의 평균은 20, 표준편차는 약 8.165다. 각각의 표준화 값은 약 −1.225, 0, 1.225이며 이후 관측한 40은 약 2.449이다.">
+<text class="f-cap" x="85" y="24" text-anchor="start">원래 값</text>
+<line class="f-ink" x1="85" y1="72" x2="696" y2="72"/>
+<line class="f-ink" x1="85" y1="72" x2="85" y2="80"/>
+<text class="f-s" x="85" y="102" text-anchor="middle">0</text>
+<line class="f-ink" x1="215" y1="72" x2="215" y2="80"/>
+<text class="f-s" x="215" y="102" text-anchor="middle">10</text>
+<line class="f-ink" x1="345" y1="72" x2="345" y2="80"/>
+<text class="f-s" x="345" y="102" text-anchor="middle">20</text>
+<line class="f-ink" x1="475" y1="72" x2="475" y2="80"/>
+<text class="f-s" x="475" y="102" text-anchor="middle">30</text>
+<line class="f-ink" x1="605" y1="72" x2="605" y2="80"/>
+<text class="f-s" x="605" y="102" text-anchor="middle">40</text>
+<circle class="f-fill" cx="215" cy="72" r="5"/>
+<line class="f-dash" x1="215" y1="115" x2="215" y2="176"/>
+<circle class="f-fill" cx="345" cy="72" r="5"/>
+<line class="f-dash" x1="345" y1="115" x2="345" y2="176"/>
+<circle class="f-fill" cx="475" cy="72" r="5"/>
+<line class="f-dash" x1="475" y1="115" x2="475" y2="176"/>
+<circle class="f-box" cx="605" cy="72" r="5"/>
+<line class="f-dash" x1="605" y1="115" x2="605" y2="176"/>
+<text class="f-cap" x="85" y="148" text-anchor="start">표준화 값</text>
+<line class="f-ink" x1="85" y1="193" x2="696" y2="193"/>
+<circle class="f-fill" cx="215" cy="193" r="5"/>
+<text class="f-s" x="215" y="220" text-anchor="middle">-1.225</text>
+<circle class="f-fill" cx="345" cy="193" r="5"/>
+<text class="f-s" x="345" y="220" text-anchor="middle">0.000</text>
+<circle class="f-fill" cx="475" cy="193" r="5"/>
+<text class="f-s" x="475" y="220" text-anchor="middle">1.225</text>
+<circle class="f-box" cx="605" cy="193" r="5"/>
+<text class="f-s" x="605" y="220" text-anchor="middle">2.449</text>
+<circle class="f-fill" cx="280" cy="256" r="5"/>
+<text class="f-s" x="294" y="261" text-anchor="start">훈련에서 본 값</text>
+<circle class="f-box" cx="464" cy="256" r="5"/>
+<text class="f-s" x="478" y="261" text-anchor="start">어느 새 입력의 값</text>
+</svg>
+<figcaption>같은 평균과 표준편차로 계산하므로 새 입력 40도 훈련에서 배운 좌표로 옮긴다.</figcaption>
+</figure>
+<p>scikit-learn의 <code>StandardScaler</code>는 이처럼 분산에 <code>ddof=0</code>을 사용하는 표준편차를 씁니다. 훈련 열이 상수라면 원래 분산이 0이므로 <code>scale_=1</code>을 사용합니다. 평균을 빼면 훈련의 그 열은 모두 0입니다. 표준화는 좌표의 중심과 척도를 바꾸며 분포를 자동으로 정규분포로 만들지는 않습니다.</p>
+<p>또 하나의 방법은 <code>(x−훈련 최솟값)/(훈련 최댓값−훈련 최솟값)</code>으로 훈련 범위를 0~1로 옮기는 <b>최소-최대 스케일링</b>입니다. 10과 30으로 변환한 새 입력 40은 1.5입니다. 새 값이 훈련 범위를 벗어날 때의 처리 정책을 정하고 검증합니다. k-NN처럼 거리를 쓰거나 기울기를 따라 최적화하는 모델은 이런 척도에 영향을 받을 수 있습니다.</p>
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+
+<h2>로그로 큰 값 사이의 간격을 바꾼다</h2>
+<p>어떤 기간의 문의 수가 <code>0,9,99</code>입니다. 큰 값 쪽이 길게 뻗은 수치에 자연로그 변환 <b class="key">log1p</b>를 적용하면 <code>log(1+x)</code>이므로 세 값은 <code>0, log(10), log(100)</code>, 약 <code>0, 2.303, 4.605</code>입니다. 원래 차이 9와 90이 변환 후 같아집니다. 로그 차이는 <code>1+x</code>의 비율을 로그로 읽는다는 뜻입니다.</p>
+<p>자연로그 <code>log(x)</code>는 양수인 x만 실수 범위에서 다룹니다. <code>log1p(x)</code>는 <code>x&gt;−1</code>에서 정의되어 0도 계산합니다. 음수가 의미를 가지는 열에서 편의상 값을 더하기 전에, 업무상 해석과 새 입력의 범위를 확인합니다. 목표 y 자체에 로그를 씌웠다면 모델 출력도 로그 척도입니다. 원래 단위로 돌린 예측의 성능이 궁금하면 역변환 후 지표를 계산합니다. 예측의 평균을 해석할 때는 로그의 역변환과 평균 계산의 순서에도 주의합니다.</p>
+<div class="check" data-q="q3"></div>
+<div class="check" data-q="q4"></div>
+
+<h2>두 특성을 곱해 하나의 효과가 다른 곳에서 달라지게 한다</h2>
+<p>거리 <code>d</code>와 상자 수 <code>b</code>를 사용하는 선형 모델에서 <code>2d+3b</code>는 b가 달라도 거리가 1 km 늘 때 예측이 2분 늘어납니다. <code>d×b</code>라는 새 특성을 넣으면 거리의 기울기에 상자 수를 반영할 수 있습니다. 그 곱의 항을 <b class="key">상호작용 항</b>이라고 합니다.</p>
+<p>예제의 <code>ŷ=10+2d+3b+db</code>에서 b=1을 고정하면 <code>ŷ=13+3d</code>, b=3을 고정하면 <code>ŷ=19+5d</code>입니다. 거리 변화에 따라 예측 시간이 각각 km당 3분과 5분씩 늘어납니다. 이 식에서 d와 b의 효과는 모형에서의 예측 관계이며 인과효과를 바로 뜻하지 않습니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 292" role="img" aria-label="예측 모형 10+2d+3b+db에서 상자 수 b=1인 선의 기울기는 3, b=3인 선의 기울기는 5이다. 거리 d가 1에서 2로 늘 때 각각 16분에서 19분, 24분에서 29분으로 늘어난다.">
+<line class="f-ink" x1="122" y1="13" x2="122" y2="221"/>
+<line class="f-ink" x1="122" y1="221" x2="637.16" y2="221"/>
+<line class="f-ink" x1="122" y1="221" x2="122" y2="229"/>
+<text class="f-s" x="122" y="250" text-anchor="middle">0</text>
+<line class="f-ink" x1="284" y1="221" x2="284" y2="229"/>
+<text class="f-s" x="284" y="250" text-anchor="middle">1</text>
+<line class="f-ink" x1="446" y1="221" x2="446" y2="229"/>
+<text class="f-s" x="446" y="250" text-anchor="middle">2</text>
+<line class="f-ink" x1="608" y1="221" x2="608" y2="229"/>
+<text class="f-s" x="608" y="250" text-anchor="middle">3</text>
+<line class="f-dash" x1="115" y1="161" x2="624.2" y2="161"/>
+<text class="f-s" x="112" y="165" text-anchor="end">10</text>
+<line class="f-dash" x1="115" y1="101" x2="624.2" y2="101"/>
+<text class="f-s" x="112" y="105" text-anchor="end">20</text>
+<line class="f-dash" x1="115" y1="41" x2="624.2" y2="41"/>
+<text class="f-s" x="112" y="45" text-anchor="end">30</text>
+<line class="f-ink" x1="122" y1="143" x2="608" y2="89"/>
+<circle class="f-box" cx="284" cy="125" r="5"/>
+<text class="f-s" x="269" y="118" text-anchor="end">16</text>
+<circle class="f-box" cx="446" cy="107" r="5"/>
+<text class="f-s" x="431" y="100" text-anchor="end">19</text>
+<line class="f-line" x1="122" y1="107" x2="608" y2="17"/>
+<circle class="f-fill" cx="284" cy="77" r="5"/>
+<text class="f-s" x="269" y="70" text-anchor="end">24</text>
+<circle class="f-fill" cx="446" cy="47" r="5"/>
+<text class="f-s" x="431" y="40" text-anchor="end">29</text>
+<text class="f-s" x="621" y="93" text-anchor="start">상자 1개</text>
+<text class="f-s" x="621" y="21" text-anchor="start">상자 3개</text>
+<text class="f-s" x="132" y="36" text-anchor="start">분</text>
+<text class="f-s" x="367" y="277" text-anchor="middle">거리 d (km)</text>
+</svg>
+<figcaption>상자 수가 다르면 거리 1 km가 늘 때 예측 시간이 변하는 크기도 달라진다.</figcaption>
+</figure>
+<p class="small">실행 예제</p>
+<pre data-example="python"><code>import numpy as np
+
+train = np.array([10.0, 20.0, 30.0])
+center = train.mean()
+scale = train.std(ddof=0)
+print(f&quot;mean={center:.3f}, scale={scale:.3f}, new z={(40 - center) / scale:.3f}&quot;)
+print(&quot;log1p:&quot;, &quot;, &quot;.join(f&quot;{v:.3f}&quot; for v in np.log1p([0, 9, 99])))
+
+for boxes in [1, 3]:
+    designs = np.array([[1, d, boxes, d * boxes] for d in [1, 2]])
+    times = designs @ np.array([10, 2, 3, 1])
+    print(f&quot;boxes={boxes}: predictions={times.tolist()}, change={times[1] - times[0]}&quot;)</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>mean=20.000, scale=8.165, new z=2.449
+log1p: 0.000, 2.303, 4.605
+boxes=1: predictions=[16, 19], change=3
+boxes=3: predictions=[24, 29], change=5</code></pre>
+<div class="why"><p class="box-k">왜 그럴까?</p><p>거리 d와 상자 수 b를 각각 바꾼 뒤 곱하는 것과 원래 값을 먼저 곱한 뒤 그 열을 바꾸는 것은 항상 같을까요?</p><details><summary>모범 답 보기</summary><p>변환 순서에 따라 다른 특성 열이 만들어질 수 있습니다. 예를 들어 d의 평균을 뺀 뒤 b를 곱하면 원래 곱 db에서 평균×b까지 빼게 됩니다. 훈련과 추론에서 같은 수식과 순서를 저장해 적용합니다.</p></details></div>
+<div class="check" data-q="q5"></div>
+<div class="check" data-q="q6"></div>
+<div class="check" data-q="q7"></div>
+
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table><thead><tr><th scope="col">변환</th><th scope="col">무엇을 바꾸나</th></tr></thead><tbody>
+<tr><th scope="row"><b class="key">표준화</b></th><td>훈련 평균을 빼고 훈련 표준편차 단위로 바꿈</td></tr>
+<tr><th scope="row">최소-최대</th><td>훈련 구간의 왼끝과 오른끝을 0, 1로 맞춤</td></tr>
+<tr><th scope="row"><b class="key">로그</b></th><td>큰 값의 간격을 압축하고 비율 변화로 읽음</td></tr>
+<tr><th scope="row"><b class="key">상호작용</b></th><td>특성 곱으로 한 특성의 기울기가 다른 특성에 따라 달라지도록 표현</td></tr>
+</tbody></table></div>
+<div class="box sum"><p class="box-k">다음 장으로</p><p><a href="ml08-3.html">다음 장</a>에서는 여러 변환의 순서와 검증 안에서 설정을 구하는 규칙을 한 파이프라인으로 묶습니다.</p></div>
+
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://scikit-learn.org/stable/modules/preprocessing.html">scikit-learn · 스케일과 특성 변환</a></li>
+<li><a href="https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.StandardScaler.html">scikit-learn · StandardScaler의 평균과 표준편차</a></li>
+</ul>
+<h2>확인 문제</h2>
+<p>직접 계산하거나 설명을 먼저 적고 답을 확인해 보세요.</p>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

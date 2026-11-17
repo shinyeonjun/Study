@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>분석 과제의 목표·성공 기준·우선순위 정하기 · 빅분기 노트</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="1-03">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">빅분기 노트</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">1과목 · 빅데이터 분석 기획</p>
+<p class="chap-num">03</p>
+<h1>분석 과제의 목표·성공 기준·우선순위 정하기</h1>
+<p class="lead">‘데이터로 운영을 개선하자’라는 목표를 바로 구현하기는 어렵습니다. 무엇을 바꿀지, 어떤 순간에 어떤 정보를 사용할지, 어떤 결과면 성공인지 결정해야 과제가 됩니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>현장 목표를 관측 단위·입력·출력이 있는 분석 질문으로 옮긴다.</li><li>하향식과 상향식 과제 발굴을 비교한다.</li><li>효과와 실행 가능성, 권한을 구별하여 우선순위를 정한다.</li></ul></div>
+
+<h2>업무 문제를 정확히 적는다</h2>
+<p>현장의 목표는 ‘도서관 이용 대기를 줄인다’입니다. 이 문장만으로 어느 자료에 모형을 맞출지 정할 수 없습니다. 운영자가 직전에 할 수 있는 결정 하나를 골라 ‘다음 15분이 혼잡할 때 보조 창구를 열지 결정한다’고 적습니다. 이제 자료가 어떤 순간에 필요하고, 틀린 예측 때문에 어떤 일이 생길지 생각할 수 있습니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 160" role="img" aria-label="도서관의 현장 목표를 다음 15분 혼잡 예측으로 좁힌 뒤, 보조 창구를 열 때의 지표와 비용을 정한다.">
+<rect class="f-box" x="42" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="135" y="61" text-anchor="middle">현장의 목표</text><text class="f-s" x="135" y="89" text-anchor="middle">입장 대기를 줄이기</text><text class="f-s" x="135" y="110" text-anchor="middle">담당자가 결정할 일</text><line class="f-line" x1="235" y1="84" x2="278" y2="84" marker-end="url(#f-arrow)"/><rect class="f-soft" x="287" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="380" y="61" text-anchor="middle">분석 질문</text><text class="f-s" x="380" y="89" text-anchor="middle">다음 15분이 혼잡한가</text><text class="f-s" x="380" y="110" text-anchor="middle">쓸 수 있는 정보와 정답</text><line class="f-line" x1="480" y1="84" x2="523" y2="84" marker-end="url(#f-arrow)"/><rect class="f-box" x="532" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="625" y="61" text-anchor="middle">운영 조건</text><text class="f-s" x="625" y="89" text-anchor="middle">창구 인원 추가 여부</text><text class="f-s" x="625" y="110" text-anchor="middle">지표와 오경보 비용</text>
+</svg><figcaption>분석 결과를 받을 사람과 그 결과로 달라지는 행동을 연결한다.</figcaption></figure>
+<div class="table-wrap"><table><thead><tr><th scope="col">정할 것</th><th scope="col">예</th></tr></thead><tbody><tr><td>관측 단위</td><td>한 지점의 연속된 15분 구간 하나</td></tr><tr><td>예측 시점</td><td>그 구간이 시작되기 직전</td></tr><tr><td>입력 후보</td><td>직전 15분 입장 수, 예약 수, 요일</td></tr><tr><td>정답</td><td>다음 15분 안에 대기열이 12명을 넘으면 혼잡</td></tr><tr><td>업무 조치</td><td>당직 인원이 있는 경우 보조 창구를 열지 검토</td></tr><tr><td>확인할 값</td><td>혼잡을 놓친 비율, 불필요한 인력 투입 횟수, 실제 평균 대기시간</td></tr></tbody></table></div>
+<p>예측 기준과 업무 결과는 따로 기록합니다. 혼잡 분류를 잘해도 대응이 늦으면 대기시간이 줄지 않을 수 있습니다. 또 평가에 쓸 미래 15분의 실제 입장 수를 예측 입력으로 넣으면 실행할 때 그 값이 아직 없습니다. 정확해 보이는 모델이 만들어져도 실제로 사용할 수 없게 됩니다.</p>
+<div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
+<h2>과제를 찾는 두 방향</h2>
+<p><b class="key">하향식</b>(top-down)은 현장의 목표나 문제에서 출발합니다. ‘어떤 때 창구를 더 열어야 하는가’처럼 의사결정을 먼저 정하고 그 결정을 돕는 분석 문제와 필요한 자료를 찾습니다. 필요한 자료를 실제로 구할 수 있는지, 결과를 맡을 사람이 있는지도 점검합니다.</p>
+<p><b class="key">상향식</b>(bottom-up)은 모은 자료를 먼저 살펴 반복되는 모습이나 예상과 다른 값을 발견합니다. 예를 들어 달력의 휴일만으로 설명되지 않는 계단식 방문 패턴을 발견하고, 특정 행사 시간에 혼잡 안내가 필요하다는 과제를 세울 수 있습니다. 처음 발견에 쓴 기간과 새 기간을 구별해 같은 패턴이 나타나는지 확인합니다.</p>
+<div class="check" data-q="q3"></div><div class="check" data-q="q4"></div>
+<h2>점수와 반드시 확인할 제약을 구별한다</h2>
+<p>팀에서 예시용으로 효과와 실행 가능성을 각각 1~5점으로 매기고 효과에 두 배의 무게를 줍니다. 이 수식은 이 사례를 위한 가정입니다. 효과는 개선을 기대하는 정도, 실행 가능성은 자료·담당 인력·일정이 갖추어진 정도를 뜻합니다. 점수는 후보끼리 같은 방식으로 비교할 때 의미가 있습니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 242" role="img" aria-label="과제 A는 효과 4, 가능성 3이라 계산값 11. 과제 B는 효과 3, 가능성 4라 10. 과제 C는 효과 5, 가능성 1이라 11이지만 필요한 권한이 확보되지 않았다.">
+<text class="f-t" x="231" y="65" text-anchor="end">A 혼잡 구간 안내</text><rect class="f-soft" x="247" y="44" width="253" height="33" rx="3"/><text class="f-t" x="518" y="65" text-anchor="middle">11</text><text class="f-s" x="686" y="65" text-anchor="end">검토 대상</text><text class="f-t" x="231" y="120" text-anchor="end">B 시간대별 통계</text><rect class="f-soft" x="247" y="99" width="230" height="33" rx="3"/><text class="f-t" x="495" y="120" text-anchor="middle">10</text><text class="f-s" x="686" y="120" text-anchor="end">검토 대상</text><text class="f-t" x="231" y="175" text-anchor="end">C 개인별 이동 예측</text><rect class="f-over" x="247" y="154" width="253" height="33" rx="3"/><text class="f-t" x="518" y="175" text-anchor="middle">11</text><text class="f-s" x="686" y="175" text-anchor="end">수집 권한 미확보</text><text class="f-cap" x="408" y="222" text-anchor="middle">비교값 = 2 × 효과 + 가능성</text>
+</svg><figcaption>점수는 같은 기준으로 정한 과제끼리 비교하는 데 쓴다. 수집 권한과 같은 필수 조건은 별도로 검토한다.</figcaption></figure>
+<pre data-example="python"><code>candidates = [
+    (&quot;A&quot;, 4, 3, True),
+    (&quot;B&quot;, 3, 4, True),
+    (&quot;C&quot;, 5, 1, False),
+]
+eligible = []
+for name, impact, feasibility, permission in candidates:
+    score = 2 * impact + feasibility
+    decision = &quot;비교 대상&quot; if permission else &quot;보류&quot;
+    print(name, score, decision)
+    if permission:
+        eligible.append((score, name))
+print(&quot;먼저 검토&quot;, max(eligible)[1])</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>A 11 비교 대상
+B 10 비교 대상
+C 11 보류
+먼저 검토 A</code></pre>
+<p>C는 점수가 높더라도 실제 수집 권한이 확인되지 않았습니다. 별도 제약을 만족할 방법이 정해진 뒤 점수를 다시 비교합니다. 가중치를 바꾸면 순위도 바뀔 수 있으므로 선택 근거를 남기고, 아주 작은 시범으로 가장 불확실한 가정을 먼저 확인하는 것이 좋습니다.</p>
+<div class="check" data-q="q5"></div><div class="check" data-q="q6"></div>
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table><thead><tr><th scope="col">핵심어</th><th scope="col">기억할 뜻</th></tr></thead><tbody><tr><td><b class='key'>분석 과제</b></td><td>결정 시점, 관측 단위, 입력, 평가와 업무 결과를 명시</td></tr><tr><td><b class='key'>하향식·상향식</b></td><td>업무 문제에서 필요한 데이터를 찾음, 자료에서 가능성을 발견해 문제를 정함</td></tr><tr><td><b class='key'>우선순위</b></td><td>효과와 가능성을 같은 기준으로 비교하고 필수 제약은 별도로 확인</td></tr></tbody></table></div>
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>누가 어느 때 무엇을 결정하고, 어떤 자료로 대답하며, 성공을 어떻게 확인할지 적으면 분석 과제가 구체화된다.</p></div>
+<p>입력과 정답의 자세한 예는 <a href="../../../learn/unit.html?u=ML01">학습 문제 정의</a>와 이어집니다.</p>
+
+<h2>참고 자료</h2>
+<ul><li><a href="https://www.dataq.or.kr/www/dataq_brochure_2022.pdf">한국데이터산업진흥원 · 빅데이터분석기사 과목 안내</a></li><li><a href="https://www.ibm.com/docs/en/ws-and-kc?topic=modeler-understanding-preparing-data">IBM SPSS Modeler · CRISP-DM 단계</a></li></ul>
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"><a href="../../index.html">← 빅분기 홈</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

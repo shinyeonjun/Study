@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>데이터 품질·거버넌스·개인정보를 관리하기 · 빅분기 노트</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="1-08">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">빅분기 노트</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">1과목 · 빅데이터 분석 기획</p>
+<p class="chap-num">08</p>
+<h1>데이터 품질·거버넌스·개인정보를 관리하기</h1>
+<p class="lead">빠진 값 없는 표라도 잘못 측정된 숫자가 들어갈 수 있습니다. 어떤 품질을 검사하는지 구별하고, 누가 정의를 정하며 어떤 자료를 사용할지 결정하는 과정으로 연결합니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>완전성·유일성·일관성·적시성·유효성·정확성을 구별한다.</li><li>검사마다 관측 대상과 분모를 명시한다.</li><li>데이터의 책임·권한·보존과 가명처리의 의미를 설명한다.</li></ul></div>
+
+<h2>좋은 품질의 뜻은 사용 목적에 따라 달라진다</h2>
+<p>도서관 혼잡을 안내하려면 최근 기록이 필요합니다. 월말 보고에는 누락을 모두 정정한 자료가 중요합니다. 이처럼 같은 표도 사용 목적에 따라 품질 기준이 달라집니다. 품질을 숫자로 계산하기 전에 어떤 기록과 시각을 세는지 정합니다.</p>
+<div class="table-wrap"><table><thead><tr><th scope="col">품질 관점</th><th scope="col">무엇을 검사하는가</th><th scope="col">예</th></tr></thead><tbody><tr><td><b class='key'>완전성</b></td><td>기대하는 행이나 필수 항목이 들어 있는가?</td><td>예정된 센서 구간이 빠져 있음</td></tr><tr><td><b class='key'>유일성</b></td><td>서로 달라야 하는 단위가 중복되지 않는가?</td><td>같은 이벤트 ID가 다시 수신됨</td></tr><tr><td><b class='key'>일관성</b></td><td>합의한 정의와 관련 자료의 값이 충돌하지 않는가?</td><td>두 집계에서 같은 지점 코드와 시간 기준 사용</td></tr><tr><td><b class='key'>적시성</b></td><td>필요한 판단 시점까지 최신 자료인가?</td><td>10:12에 난 사건을 10:19에 알게 됨</td></tr><tr><td><b class='key'>유효성</b></td><td>형식과 허용 범위를 지키는가?</td><td>입장 인원은 0 이상의 정수</td></tr><tr><td><b class='key'>정확성</b></td><td>실제 현상과 일치하는가?</td><td>기록은 12명이지만 직접 관측한 사람은 10명</td></tr></tbody></table></div>
+<p>12라는 값은 인원 범위에 맞지만 실제 10명이었다면 정확하지 않습니다. 또 필수 값이 빈칸 없이 모두 들어 있어도 모두 맞았다고 볼 근거는 없습니다. 검사의 대상에 맞는 자료나 업무 검증으로 각각 확인합니다.</p>
+<div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
+<h2>같은 표에서 품질 지표를 따로 계산한다</h2>
+<p>ID 다섯 개가 올 것으로 예상했는데 아래처럼 기록됐습니다. e2는 정확한 재전송으로 두 번 들어왔고, e3은 아직 전혀 오지 않았습니다. e4와 e5는 도착했지만 필수 인원 조건을 만족하지 않습니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 214" role="img" aria-label="기대 이벤트 ID는 e1,e2,e3,e4,e5. e3은 도착하지 않았다. 도착한 e4는 인원이 음수이고 e5는 인원 항목이 비었다.">
+<text class="f-cap" x="118" y="47" text-anchor="start">기대 이벤트 5개</text><rect class="f-soft" x="55" y="67" width="117" height="89" rx="3"/><text class="f-t f-b" x="113.5" y="105" text-anchor="middle">e1</text><text class="f-s" x="113.5" y="131" text-anchor="middle">12명</text><rect class="f-soft" x="188" y="67" width="117" height="89" rx="3"/><text class="f-t f-b" x="246.5" y="105" text-anchor="middle">e2</text><text class="f-s" x="246.5" y="131" text-anchor="middle">9명</text><rect class="f-over" x="321" y="67" width="117" height="89" rx="3"/><text class="f-t f-b" x="379.5" y="105" text-anchor="middle">e3</text><text class="f-s" x="379.5" y="131" text-anchor="middle">미수신</text><rect class="f-over" x="454" y="67" width="117" height="89" rx="3"/><text class="f-t f-b" x="512.5" y="105" text-anchor="middle">e4</text><text class="f-s" x="512.5" y="131" text-anchor="middle">−1 · 범위 위반</text><rect class="f-over" x="587" y="67" width="117" height="89" rx="3"/><text class="f-t f-b" x="645.5" y="105" text-anchor="middle">e5</text><text class="f-s" x="645.5" y="131" text-anchor="middle">값 없음</text><text class="f-cap" x="380" y="192" text-anchor="middle">e2는 원시 입력에서 두 번 도착했다.</text>
+</svg><figcaption>ID가 도착했는지, 값이 채워졌는지, 범위를 지켰는지는 각각 다른 검사다.</figcaption></figure>
+<pre data-example="python"><code>expected_ids = {&quot;e1&quot;, &quot;e2&quot;, &quot;e3&quot;, &quot;e4&quot;, &quot;e5&quot;}
+raw = [(&quot;e1&quot;, 12), (&quot;e2&quot;, 9), (&quot;e2&quot;, 9), (&quot;e4&quot;, -1), (&quot;e5&quot;, None)]
+seen_ids = {event for event, count in raw}
+present = sum(count is not None for event, count in raw)
+valid_ids = {event for event, count in raw
+             if type(count) is int and count &gt;= 0}
+print(f&quot;ID delivery {len(seen_ids &amp; expected_ids)}/{len(expected_ids)}&quot;)
+print(f&quot;filled field among received rows {present}/{len(raw)}&quot;)
+print(f&quot;valid IDs among expected {len(valid_ids &amp; expected_ids)}/{len(expected_ids)}&quot;)</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>ID delivery 4/5
+filled field among received rows 4/5
+valid IDs among expected 2/5</code></pre>
+<p>첫 줄은 <b>기대 ID가 도착했는지</b>, 둘째 줄은 <b>수신한 행에 값이 들어 있는지</b>를 봅니다. 원시 행에는 중복이 있어 두 비율의 4가 세는 대상이 서로 다릅니다. 마지막은 기대 이벤트 중 허용 값까지 확인한 ID를 셉니다. 기준과 분모를 함께 적어, 숫자가 우연히 같아도 뜻을 구별할 수 있게 합니다.</p>
+<div class="check" data-q="q3"></div><div class="check" data-q="q4"></div>
+<h2>누가 기준과 변경을 승인하는가</h2>
+<p><b class="key">데이터 거버넌스</b>는 데이터의 의미, 품질, 권한과 수명에 관해 누가 결정하고 누가 책임질지를 정하는 운영 체계입니다. 예를 들어 ‘하루’의 경계와 입장 수의 정의를 합의하고, 변경 담당자를 정하고, 적용된 도구와 산출물을 연결해 기록합니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 160" role="img" aria-label="책임자가 의미와 이용 범위를 정하고, 관리 담당자가 품질을 확인하며, 이용자는 용도에 맞춰 사용하고 문제를 알린다.">
+<rect class="f-box" x="42" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="135" y="61" text-anchor="middle">정의 책임자</text><text class="f-s" x="135" y="89" text-anchor="middle">한 행·분모·승인 범위</text><text class="f-s" x="135" y="110" text-anchor="middle">변경 승인·공개 여부</text><line class="f-line" x1="235" y1="84" x2="278" y2="84" marker-end="url(#f-arrow)"/><rect class="f-soft" x="287" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="380" y="61" text-anchor="middle">관리 담당자</text><text class="f-s" x="380" y="89" text-anchor="middle">수집과 검증 이력</text><text class="f-s" x="380" y="110" text-anchor="middle">오류 발견·수정 기록</text><line class="f-line" x1="480" y1="84" x2="523" y2="84" marker-end="url(#f-arrow)"/><rect class="f-box" x="532" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="625" y="61" text-anchor="middle">데이터 이용자</text><text class="f-s" x="625" y="89" text-anchor="middle">정해진 목적에 사용</text><text class="f-s" x="625" y="110" text-anchor="middle">의미 확인·문제 보고</text>
+</svg><figcaption>누가 결정하고 누가 기록하며 누가 검토하는지를 분명히 하면, 지표 정의가 바뀌었을 때의 근거를 찾을 수 있다.</figcaption></figure>
+<p>용어와 데이터 항목의 뜻을 모아 찾을 수 있게 한 목록은 <b>데이터 카탈로그</b>에 둘 수 있습니다. 집계가 어느 원본과 어떤 변환에서 왔는지 추적하는 <b>데이터 계보</b>는 수치가 달라진 원인을 찾을 때 쓰입니다. 검사 프로그램이 오류를 표시할 수는 있어도 어떤 사용을 승인하고 어느 기준을 채택할지까지 혼자 정하는 것은 아닙니다.</p>
+<div class="check" data-q="q5"></div>
+<h2>목적과 권한을 확인하고 필요한 범위만 사용한다</h2>
+<p>요일별 입장 수를 집계하는 데 개인 이름과 연락처가 필요하지 않다면, 처음부터 그 항목을 요청하지 않는 방식이 가능합니다. 보관할 기간과 접근할 역할을 정해 두고, 외부에 제공할 때에는 원본과 집계 표 각각의 이용 조건을 확인합니다. 개인의 이용 기록이 매우 드문 조합을 포함하면 이름을 뺀 자료에서도 개인이 드러날 가능성이 있습니다.</p>
+<p><b class="key">가명처리</b>는 개인정보의 일부를 지우거나 다른 값으로 바꾸는 등, 추가 정보 없이 특정 개인을 알아볼 수 없도록 하는 처리입니다. 원본 식별정보를 다른 코드로 바꾸고 대응 정보를 별도로 관리하는 경우가 예입니다. <b>익명정보</b>인지 판단하려면 다른 자료를 합칠 가능성, 식별에 드는 시간과 비용, 현재 기술을 합리적으로 고려해 개인이 드러날 가능성을 살핍니다. 단순히 이름 칸을 지운 것만으로 익명이라고 할 수는 없습니다. 한국의 가명정보 처리는 적용 목적과 안전조치 등을 별도로 검토하며, 상세한 절차는 공식 안내와 법령에서 확인합니다.</p>
+<div class="check" data-q="q6"></div>
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table><thead><tr><th scope="col">핵심어</th><th scope="col">기억할 뜻</th></tr></thead><tbody><tr><td><b class='key'>자료 품질</b></td><td>완전성·유일성·일관성·적시성·유효성·정확성은 검사 목적이 다름</td></tr><tr><td><b class='key'>거버넌스</b></td><td>정의·품질·권한·보존에서 의사결정·책임을 정하는 운영</td></tr><tr><td><b class='key'>가명처리</b></td><td>식별 위험을 낮추면서 남는 위험과 접근·관리 조건을 확인</td></tr></tbody></table></div>
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>자료의 품질을 계산하고, 올바른 사람이 올바른 목적에서 쓸 수 있는 기준까지 정해 둔다.</p></div>
+<p>중복, 누락, 단위 점검의 좀 더 긴 예는 <a href="../../../learn/unit.html?u=DA02">데이터 구조와 품질을 살피는 공부 교재</a>에서 읽습니다.</p>
+
+<h2>참고 자료</h2>
+<ul><li><a href="https://www.dataq.or.kr/www/dataq_brochure_2022.pdf">한국데이터산업진흥원 · 빅데이터분석기사 과목 안내</a></li><li><a href="https://doi.org/10.6028/NIST.SP.1500-6r2">NIST SP 1500-6r2 · 빅데이터 참조 아키텍처</a></li><li><a href="https://www.gov.uk/government/publications/the-government-data-quality-framework/the-government-data-quality-framework-guidance">영국 정부 · 데이터 품질 관리 지침</a></li><li><a href="https://www.privacy.go.kr/front/bbs/bbsView.do?bbsNo=BBSMSTR_000000000049&bbscttNo=20877">개인정보 포털 · 가명정보 처리 가이드라인(2026년 3월)</a></li><li><a href="https://www.law.go.kr/LSW/lsInfoP.do?ancYnChk=0&amp;chrClsCd=010202&amp;efYd=20260911&amp;lsiSeq=283839">국가법령정보센터 · 개인정보 보호법 제2조, 제28조의2~제28조의5, 제58조의2</a></li></ul>
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"><a href="../../index.html">← 빅분기 홈</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

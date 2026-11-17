@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>계획한 데이터의 품질과 집계 근거를 검증하기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="BD01-2">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">빅데이터분석기사 연결</p>
+<p class="chap-num">BD01·2</p>
+<h1>계획한 데이터의 품질과 집계 근거를 검증하기</h1>
+<p class="lead">기대 자료가 도착한 것과 분석할 수 있게 값이 준비된 것은 다릅니다. 운행 지연 사례의 수집 계획을 실제 기록 세 건에 적용해 보고, 정합성·완전성과 지연 판정의 분모를 따로 보고합니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>자료 항목의 뜻·단위·기록 시점·키를 문서화한다.</li><li>재전송과 누락을 확인하고 유효한 관측 수를 계산한다.</li><li>데이터가 평가 기준을 만족하며 사용하기에 적합한지 보고한다.</li></ul></div>
+
+<h2>원천과 산출물 사이의 약속을 적는다</h2>
+<p>기대 운행은 r01, r02, r03 세 건입니다. 원본 운행 시스템에서 <code>run_id</code>는 이 파일의 운행 식별자입니다. <code>seconds_late</code>는 초 단위의 지연 시간이고, 운영 시스템이 운행을 마친 뒤에 기록합니다. 이 예에서는 일찍 도착하거나 제시간에 도착하면 0을 저장한다고 합시다. 값 없음은 아직 지연이 확인되지 않은 상태입니다.</p>
+<div class="table-wrap"><table><thead><tr><th scope="col">남길 정보</th><th scope="col">이 예에서 정한 방법</th></tr></thead><tbody><tr><td>키</td><td>운행 ID, 재전송에는 같은 ID와 값</td></tr><tr><td>시간</td><td>원본 마감 시점과 수신 시각을 함께 기록</td></tr><tr><td>단위와 유효 범위</td><td>음이 아닌 정수 초</td></tr><tr><td>이용·저장</td><td>분석에서 필요한 열만 추출하고 원본 열람 범위를 기록</td></tr><tr><td>라벨</td><td>확인된 지연이 600초 이상이면 큰 지연</td></tr></tbody></table></div>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 200" role="img" aria-label="세 개 운행 ID r01, r02, r03이 기대된다. r02는 원시 로그에서 두 번 들어왔고 r03에는 지연 값이 없었다.">
+<rect class="f-soft" x="81" y="55" width="188" height="92" rx="3"/><text class="f-t f-b" x="175" y="92" text-anchor="middle">r01</text><text class="f-s" x="175" y="119" text-anchor="middle">740초</text><rect class="f-soft" x="282" y="55" width="188" height="92" rx="3"/><text class="f-t f-b" x="376" y="92" text-anchor="middle">r02</text><text class="f-s" x="376" y="119" text-anchor="middle">0초</text><rect class="f-over" x="483" y="55" width="188" height="92" rx="3"/><text class="f-t f-b" x="577" y="92" text-anchor="middle">r03</text><text class="f-s" x="577" y="119" text-anchor="middle">값 없음</text><text class="f-s" x="379" y="173" text-anchor="middle">r02는 재전송이어서 검증 뒤 한 번만 센다.</text>
+</svg><figcaption>0초는 정상 기록이다. 자료를 받았지만 값이 없는 건을 따로 세어야 한다.</figcaption></figure>
+<p>모든 식별자가 도착해도 사용할 값이 빠져 있을 수 있습니다. 같은 ID의 값이 다르면 정정 버전이나 오류인지 확인해야 합니다. 이 실습에서는 중복이 정확히 같은 재전송이고 정정은 없다고 가정합니다. 수집 방식과 보존은 <a href="../../../bigdata/notes/1-planning/06-데이터-수집과-시간기준.html">빅분기 노트의 수집 기준</a>과 <a href="../../../bigdata/notes/1-planning/08-데이터-품질과-거버넌스.html">품질·거버넌스</a>에서 이어집니다.</p>
+<div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
+<h2>받은 자료, 유효 자료, 결과의 분모를 각각 구한다</h2>
+<p>수신한 원시 줄은 r01(740), r02(0), r02(0), r03(값 없음)의 네 줄입니다. 기대 목록의 세 ID를 모두 받았습니다. r02를 하나로 통합하고 r03의 지연 값이 없음을 표시하면 큰 지연인지 판정할 수 있는 운행은 두 건입니다. 740초는 600초 이상이라 두 건 중 한 건입니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 160" role="img" aria-label="원본의 의미를 기록하고 검증과 변환을 한 뒤, 수신 수와 유효 수를 나누어 보고한다.">
+<rect class="f-box" x="42" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="135" y="61" text-anchor="middle">원본과 계약</text><text class="f-s" x="135" y="89" text-anchor="middle">시점·키·단위를 명시</text><text class="f-s" x="135" y="110" text-anchor="middle">기대 식별자 목록</text><line class="f-line" x1="235" y1="84" x2="278" y2="84" marker-end="url(#f-arrow)"/><rect class="f-soft" x="287" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="380" y="61" text-anchor="middle">검증과 변환</text><text class="f-s" x="380" y="89" text-anchor="middle">중복·누락·도메인 검사</text><text class="f-s" x="380" y="110" text-anchor="middle">정수 초 단위 검증</text><line class="f-line" x1="480" y1="84" x2="523" y2="84" marker-end="url(#f-arrow)"/><rect class="f-box" x="532" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="625" y="61" text-anchor="middle">업무용 산출물</text><text class="f-s" x="625" y="89" text-anchor="middle">받은 수와 유효 수 보고</text><text class="f-s" x="625" y="110" text-anchor="middle">조건이 되면 모델 평가</text>
+</svg><figcaption>실험 중 수치 기준을 바꾸면 언제 무엇이 바뀌었는지 결과와 함께 남긴다.</figcaption></figure>
+<pre data-example="python"><code>expected = {&quot;r01&quot;, &quot;r02&quot;, &quot;r03&quot;}
+raw = [(&quot;r01&quot;, 740), (&quot;r02&quot;, 0), (&quot;r02&quot;, 0), (&quot;r03&quot;, None)]
+
+events = {}
+for run, delay in raw:
+    if run in events and events[run] != delay:
+        raise ValueError(f&quot;conflicting records for {run}&quot;)
+    events[run] = delay
+valid = {
+    run: delay for run, delay in events.items()
+    if run in expected and type(delay) is int and delay &gt;= 0
+}
+high = sum(delay &gt;= 600 for delay in valid.values())
+print(&quot;received&quot;, len(expected.intersection(events)), &quot;/&quot;, len(expected))
+print(&quot;usable&quot;, len(valid), &quot;/&quot;, len(expected))
+print(&quot;confirmed high delay&quot;, high, &quot;/&quot;, len(valid))</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>received 3 / 3
+usable 2 / 3
+confirmed high delay 1 / 2</code></pre>
+<div class="check" data-q="q3"></div><div class="check" data-q="q4"></div><div class="check" data-q="q5"></div>
+<p>1/2는 확인된 두 운행에 대한 큰 지연 비율입니다. 전체 세 운행의 실제 큰 지연 비율을 확정할 수 없습니다. r03이 큰 지연이 아니면 전체는 1/3이고, 큰 지연이면 2/3입니다. 값 없음이 업무에 중요한 경우에 집중되면 확인된 자료만 계산한 수치가 그 전체를 대표하지 못할 수 있습니다.</p>
+<h2>다음 평가에 쓸지 기준에 따라 결정한다</h2>
+<p>예를 들어 목표 라벨이 90% 이상 붙은 날만 평가하기로 정했다면, 이 실습의 2/3은 기준을 만족하지 못합니다. 누락이 일어난 이유와 범위를 살피고 원천 시스템이 지연을 확정하는 데 얼마나 걸리는지 확인합니다. 오류를 고친 뒤 재검증하려면 처음 받은 기록, 적용한 검사와 결과를 함께 찾아갈 수 있어야 합니다.</p>
+<div class="check" data-q="q6"></div>
+<h2>한눈에 정리</h2>
+<ul><li>한 행의 뜻과 키, 단위, 갱신 시점, 라벨의 기준을 함께 정한다.</li><li>도착 여부·사용 가능 여부·사건 비율은 분자와 분모가 다를 수 있다.</li><li>라벨 부족과 누락의 원인을 확인하고 품질 검증이 필요한 때를 기록한다.</li></ul>
+
+<h2>참고 자료</h2>
+<ul><li><a href="https://www.dataq.or.kr/www/dataq_brochure_2022.pdf">한국데이터산업진흥원 · 빅데이터분석기사 과목 안내</a></li><li><a href="https://doi.org/10.6028/NIST.SP.1500-6r2">NIST SP 1500-6r2 · 빅데이터 참조 아키텍처</a></li><li><a href="https://www.gov.uk/government/publications/the-government-data-quality-framework/the-government-data-quality-framework-guidance">영국 정부 · 데이터 품질 관리 지침</a></li></ul>
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

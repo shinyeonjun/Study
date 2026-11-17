@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>전처리 순서와 교차검증에서의 파이프라인 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="ML08-3">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">머신러닝 · ML08 전처리와 특징</p>
+<p class="chap-num">ML08·3</p>
+<h1>전처리 순서와 교차검증에서의 파이프라인</h1>
+<p class="lead">한 회차에는 거리 결측을 4로 채웠는데, 다음 회차에는 9로 채웁니다. 회차마다 훈련 그룹이 바뀌기 때문입니다. 전처리와 모델을 한 순서로 묶으면 어느 자료에서 무엇을 배웠는지 확인할 수 있습니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul>
+<li>훈련과 추론의 변환 순서와 fit·transform을 구별한다.</li>
+<li>교차검증의 각 회차에서 전처리를 새로 학습한다.</li>
+<li>테스트 전에 파이프라인을 고르고 평가 규칙을 고정한다.</li>
+</ul></div>
+
+<h2>입력의 종류마다 처리 순서를 정한다</h2>
+<p>배송 거리와 배송 유형을 함께 사용하는 모델을 생각합니다. 거리는 훈련에서 정한 중앙값으로 채우고, 채운 훈련 거리의 평균과 표준편차로 표준화합니다. 유형은 빈칸의 뜻을 정해 결측 범주로 바꾼 뒤 원-핫 열을 만듭니다. 두 경로의 열을 옆으로 붙여 모델 입력 <code>X</code>를 만듭니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 279" role="img" aria-label="수치 거리 열은 값 대치와 표준화를 순서대로 거친다. 유형 열은 결측을 별도 범주로 바꾸고 원-핫 인코딩한다. 두 결과를 열 방향으로 붙인 뒤 모델에 보낸다.">
+<text class="f-cap" x="61" y="29" text-anchor="start">수치 열</text>
+<text class="f-cap" x="61" y="131" text-anchor="start">범주 열</text>
+<rect class="f-box" x="60" y="47" width="109" height="49"/>
+<text class="f-s" x="114.5" y="76.5" text-anchor="middle">거리</text>
+<line class="f-line" x1="175" y1="71" x2="201" y2="71" marker-end="url(#f-arrow)"/>
+<rect class="f-soft" x="209" y="47" width="126" height="49"/>
+<text class="f-s" x="272" y="76.5" text-anchor="middle">중앙값 채움</text>
+<line class="f-line" x1="341" y1="71" x2="365" y2="71" marker-end="url(#f-arrow)"/>
+<rect class="f-soft" x="373" y="47" width="119" height="49"/>
+<text class="f-s" x="432.5" y="76.5" text-anchor="middle">표준화</text>
+<rect class="f-box" x="60" y="151" width="109" height="49"/>
+<text class="f-s" x="114.5" y="180.5" text-anchor="middle">유형</text>
+<line class="f-line" x1="175" y1="175" x2="201" y2="175" marker-end="url(#f-arrow)"/>
+<rect class="f-soft" x="209" y="151" width="126" height="49"/>
+<text class="f-s" x="272" y="180.5" text-anchor="middle">결측 범주</text>
+<line class="f-line" x1="341" y1="175" x2="365" y2="175" marker-end="url(#f-arrow)"/>
+<rect class="f-soft" x="373" y="151" width="119" height="49"/>
+<text class="f-s" x="432.5" y="180.5" text-anchor="middle">원-핫 변환</text>
+<line class="f-line" x1="500" y1="72" x2="545" y2="115" marker-end="url(#f-arrow)"/>
+<line class="f-line" x1="500" y1="176" x2="545" y2="135" marker-end="url(#f-arrow)"/>
+<rect class="f-box" x="554" y="99" width="149" height="53"/>
+<text class="f-s" x="628.5" y="130.5" text-anchor="middle">열을 붙인 X</text>
+<line class="f-line" x1="628.5" y1="158" x2="628.5" y2="189" marker-end="url(#f-arrow)"/>
+<rect class="f-box" x="554" y="197" width="149" height="49"/>
+<text class="f-s" x="628.5" y="226.5" text-anchor="middle">예측 모형</text>
+<text class="f-s" x="61" y="240" text-anchor="start">숫자와 범주는 각자의 변환 순서를 따른다.</text>
+</svg>
+<figcaption>변환에 필요한 값은 훈련에서 얻는다. 검증과 새 입력도 같은 열 순서와 저장한 값으로 통과시킨다.</figcaption>
+</figure>
+<p>여기서 <b class="key">fit</b>은 변환 규칙에 필요한 값이나 모델의 계수를 자료에서 배우는 과정입니다. <b class="key">transform</b>은 배운 규칙을 자료에 적용합니다. 결측 대치가 표준화보다 앞에 있는 이 파이프라인에서는 표준화가 <em>대치한 훈련 자료</em>의 평균과 표준편차를 배웁니다. 순서를 바꾸면 어느 숫자에서 평균을 냈는지 달라지므로 예측에 들어가는 열도 달라질 수 있습니다.</p>
+<p>scikit-learn의 <code>ColumnTransformer</code>는 열 종류마다 다른 전처리를 적용하고 결과를 합칠 때 씁니다. <code>Pipeline</code>은 전처리와 모델을 정한 순서로 연결해 훈련과 예측을 같은 구조에서 실행합니다. 훈련 때는 변환을 배우며 적용하고, 예측에서는 변환으로 배운 값을 그대로 적용합니다.</p>
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+
+<h2>각 회차를 별도 예측 문제처럼 구성한다</h2>
+<p>교차검증으로 전처리와 모델의 조합을 비교합니다. 연습용 주문의 거리 열을 두 묶음 A와 B에 담습니다. A의 거리 <code>[2, 결측, 6]</code>, B의 거리 <code>[결측, 8, 10]</code>이고 두 묶음 각각의 정답은 <code>[0,0,1]</code>과 <code>[0,1,1]</code>입니다. 접수 시 거리를 이용해 지연 여부를 추정합니다. 이 연습에서는 두 묶음을 서로 바꾸어 훈련과 검증을 하기에 알맞다고 둡니다. 같은 거점이나 미래 시각을 분리해야 하는 자료는 먼저 그 평가 설계를 따릅니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 290" role="img" aria-label="회차 1은 A에서 결측 중앙값 4를 학습하고 B에 적용한다. 회차 2는 B에서 중앙값 9를 학습하고 A에 적용한다. 테스트는 두 회차 모두 사용하지 않는다.">
+<rect class="f-box" x="57" y="29" width="106" height="40"/>
+<text class="f-s" x="110" y="54" text-anchor="middle">회차</text>
+<rect class="f-box" x="163" y="29" width="149" height="40"/>
+<text class="f-s" x="237.5" y="54" text-anchor="middle">훈련</text>
+<rect class="f-box" x="312" y="29" width="155" height="40"/>
+<text class="f-s" x="389.5" y="54" text-anchor="middle">결측 대치값</text>
+<rect class="f-box" x="467" y="29" width="149" height="40"/>
+<text class="f-s" x="541.5" y="54" text-anchor="middle">검증</text>
+<rect class="f-box" x="616" y="29" width="125" height="40"/>
+<text class="f-s" x="678.5" y="54" text-anchor="middle">테스트</text>
+<rect class="f-box" x="57" y="81" width="106" height="50"/>
+<text class="f-s" x="110" y="111" text-anchor="middle">1</text>
+<rect class="f-soft" x="163" y="81" width="149" height="50"/>
+<text class="f-s" x="237.5" y="111" text-anchor="middle">A</text>
+<rect class="f-soft" x="312" y="81" width="155" height="50"/>
+<text class="f-s" x="389.5" y="111" text-anchor="middle">4</text>
+<rect class="f-box" x="467" y="81" width="149" height="50"/>
+<text class="f-s" x="541.5" y="111" text-anchor="middle">B</text>
+<rect class="f-box" x="616" y="81" width="125" height="50"/>
+<text class="f-s" x="678.5" y="111" text-anchor="middle">따로 보류</text>
+<rect class="f-box" x="57" y="143" width="106" height="50"/>
+<text class="f-s" x="110" y="173" text-anchor="middle">2</text>
+<rect class="f-soft" x="163" y="143" width="149" height="50"/>
+<text class="f-s" x="237.5" y="173" text-anchor="middle">B</text>
+<rect class="f-soft" x="312" y="143" width="155" height="50"/>
+<text class="f-s" x="389.5" y="173" text-anchor="middle">9</text>
+<rect class="f-box" x="467" y="143" width="149" height="50"/>
+<text class="f-s" x="541.5" y="173" text-anchor="middle">A</text>
+<rect class="f-box" x="616" y="143" width="125" height="50"/>
+<text class="f-s" x="678.5" y="173" text-anchor="middle">따로 보류</text>
+<text class="f-cap" x="387" y="230" text-anchor="middle">A = [2, 결측, 6]  ·  B = [결측, 8, 10]</text>
+<text class="f-s" x="387" y="263" text-anchor="middle">다음 회차로 넘어갈 때 배운 설정을 초기화한다.</text>
+</svg>
+<figcaption>검증 그룹을 미리 변환해 저장하지 않는다. 같은 행도 어느 회차에서 검증에 들어가느냐에 따라 다른 훈련 설정으로 변환된다.</figcaption>
+</figure>
+<p>첫 회차에 A로 훈련하면 결측을 4로 채웁니다. 채운 A의 거리 <code>[2,4,6]</code>에서 평균 4와 표준편차 <code>√(8/3)</code>을 배웁니다. B의 첫 행은 값이 없으므로 4로 채워 표준화 값 0을 얻습니다. 둘째 회차는 B를 훈련에 써 관측값 8과 10의 중앙값 9, 대치 후의 평균 9와 표준편차 <code>√(2/3)</code>을 얻습니다.</p>
+<p>전체 개발 자료의 값 <code>[2,6,8,10]</code>에서 중앙값 7을 먼저 계산해 두 회차에 쓰면 검증 쪽 자료가 훈련 변환에 섞입니다. 검증 점수가 높아지는지 낮아지는지는 예마다 다를 수 있습니다. 어떤 행에서 설정을 배웠는지가 누출을 판단하는 기준입니다.</p>
+<div class="check" data-q="q3"></div>
+<div class="check" data-q="q4"></div>
+<div class="check" data-q="q5"></div>
+
+<h2>회차별 점수로 방법을 평가하고 테스트를 끝에 사용한다</h2>
+<p>예제는 숫자 열 하나에서 대치와 표준화 뒤 1-NN을 적용합니다. 회차 1은 B의 세 행을 모두 맞혀 정확도 1, 회차 2는 A의 첫 행을 틀려 2/3입니다. 두 회차의 검증 크기는 같아서 각 정확도의 평균 <code>(1+2/3)/2=5/6</code>은 합친 검증 정답률과 같습니다. 크기가 다를 때 회차별 평균을 쓸지 관측을 모아 평가할지 평가 목적에 맞춰 정합니다.</p>
+<p class="small">실행 예제</p>
+<pre data-example="python"><code>from statistics import median, mean, pstdev
+
+a = [(2, 0), (None, 0), (6, 1)]
+b = [(None, 0), (8, 1), (10, 1)]
+test = [(None, 1), (12, 1)]
+
+def fit(rows):
+    fill = median(x for x, y in rows if x is not None)
+    values = [fill if x is None else x for x, y in rows]
+    center = mean(values)
+    scale = pstdev(values) or 1
+    neighbors = [((value - center) / scale, y) for value, (_, y) in zip(values, rows, strict=True)]
+    return fill, center, scale, neighbors
+
+def predict(x, state):
+    fill, center, scale, neighbors = state
+    z = ((fill if x is None else x) - center) / scale
+    # 거리가 같으면 먼저 저장한 훈련 관측을 선택한다.
+    return min(neighbors, key=lambda row: abs(row[0] - z))[1]
+
+def evaluate(state, rows):
+    guesses = [predict(x, state) for x, y in rows]
+    return guesses, mean(y == pred for (_, y), pred in zip(rows, guesses, strict=True))
+
+scores = []
+for i, (training, validation) in enumerate([(a, b), (b, a)], start=1):
+    state = fit(training)
+    guesses, score = evaluate(state, validation)
+    scores.append(score)
+    print(f&quot;fold={i}: fill={state[0]:.1f}, predicted={guesses}, accuracy={score:.3f}&quot;)
+print(f&quot;validation average={mean(scores):.3f}&quot;)
+
+state = fit(a + b)
+guesses, score = evaluate(state, test)
+print(f&quot;test: fill={state[0]:.1f}, predicted={guesses}, accuracy={score:.3f}&quot;)</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>fold=1: fill=4.0, predicted=[0, 1, 1], accuracy=1.000
+fold=2: fill=9.0, predicted=[1, 0, 1], accuracy=0.667
+validation average=0.833
+test: fill=7.0, predicted=[0, 1], accuracy=0.500</code></pre>
+<p>이 합성 예의 수치 열 하나에서는 양의 표준편차로 나눠도 거리의 순서는 그대로입니다. 코드에서 보여 주는 것은 평가 회차마다 변환값을 다시 구하는 절차입니다. 이미 정한 방식으로 A와 B를 합쳐 재학습한 뒤, 이 절차에 참여하지 않은 테스트에서 한 번 평가합니다. 테스트 두 건의 50%는 그 자료에 대한 결과로만 읽습니다.</p>
+<div class="why"><p class="box-k">왜 그럴까?</p><p>검증에서 다른 결측 대치와 거리 변환을 고른 뒤 테스트 점수에 맞춰 한 번 더 바꾸면 무엇이 달라질까요?</p><details><summary>모범 답 보기</summary><p>테스트가 후보를 고르는 자료가 됩니다. 검증으로 방법을 고르고, 선택과 학습에 사용하지 않은 자료에서 마지막 점수를 얻어야 합니다.</p></details></div>
+<div class="check" data-q="q6"></div>
+<div class="check" data-q="q7"></div>
+
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table><thead><tr><th scope="col">단계</th><th scope="col">무엇을 하나</th></tr></thead><tbody>
+<tr><th scope="row"><b class="key">fit</b></th><td>현재 회차의 훈련에서 값과 열의 구성을 학습</td></tr>
+<tr><th scope="row"><b class="key">transform</b></th><td>다른 자료에 저장한 값과 순서만 적용</td></tr>
+<tr><th scope="row"><b class="key">교차검증</b></th><td>회차의 훈련·검증 경계를 지키며 처음부터 다시 적합</td></tr>
+<tr><th scope="row">마지막 평가</th><td>정해진 방법과 지표로 따로 남긴 테스트에서 평가</td></tr>
+</tbody></table></div>
+<div class="box sum"><p class="box-k">다음 장으로</p><p><a href="../../unit.html?u=ML09">다음 장</a>에서는 정답 라벨 없이 군집을 찾고 여러 특성을 적은 수의 축으로 표현합니다.</p></div>
+
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://scikit-learn.org/stable/modules/compose.html">scikit-learn · Pipeline과 ColumnTransformer</a></li>
+<li><a href="https://scikit-learn.org/stable/common_pitfalls.html#data-leakage">scikit-learn · 전처리와 데이터 누출</a></li>
+<li><a href="https://scikit-learn.org/stable/modules/cross_validation.html">scikit-learn · 검증, 그룹 분할, 시간 분할</a></li>
+</ul>
+<h2>확인 문제</h2>
+<p>직접 계산하거나 설명을 먼저 적고 답을 확인해 보세요.</p>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

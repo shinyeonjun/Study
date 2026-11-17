@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>온폴리시 몬테카를로 제어: 탐험하면서 행동 규칙 바꾸기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e8c'/%3E%3Cpath d='M8 22V10m8 12V14m8 8V6' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="RL06-2">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+
+<header class="chapter">
+<p class="chap-sub">강화학습 · RL06 경험으로 가치 추정</p>
+<p class="chap-num">RL06·2</p>
+<h1>온폴리시 몬테카를로 제어: 탐험하면서 행동 규칙 바꾸기</h1>
+<p class="lead">상태가 얼마나 좋은지만 알아서는 다음 행동을 바로 고르기 어렵습니다. 실제로 고른 행동부터 어떤 반환을 받았는지 기록하고, 그 평균을 바탕으로 다음 에피소드의 선택을 바꿔 봅니다.</p>
+</header>
+
+<div class="goal">
+<h2>이 장을 읽고 나면</h2>
+<ul>
+<li>첫 방문 상태·행동쌍의 반환을 평균해 Q를 갱신한다.</li>
+<li>온폴리시 ε-soft 제어에서 탐험 정책 자체를 학습하는 이유를 설명한다.</li>
+<li>학습과 고정 정책 평가를 나누고 외부 중단이 결과에 주는 영향을 점검한다.</li>
+</ul>
+</div>
+
+<h2>상태와 행동을 함께 기록한다</h2>
+<p>앞에서 몬테카를로 예측은 고정 정책의 상태별 반환을 평균했습니다. 한 환경에서 더 나은 행동 규칙을 찾아가는 일을 <b class="key">제어</b>라고 합니다. 지금 모형의 전이 확률은 에이전트에게 보이지 않습니다. 상태마다 어떤 행동이 더 나은지 비교하려면 상태 이름만이 아니라 <code>(상태, 행동)</code> 쌍도 같이 기록해야 합니다.</p>
+<p>예를 들어 에피소드에서 <code>(C, 확인)</code>을 먼저 하고 다시 C에서 <code>(C, 직행)</code>을 골랐다면 두 쌍 모두 처음 나타났으므로 각각 한 표본을 얻습니다. <code>(C, 확인)</code>이 한 실행에 두 번 있었다면 첫 방문 방식은 시간순 첫 쌍만 사용합니다. 새로 모은 반환 1개를 기존 평균과 비교해 <code>Q ← Q+(G−Q)/N</code>으로 갱신합니다. N은 그 쌍에서 지금까지 실제 갱신에 사용한 표본 개수입니다.</p>
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+<h2>경험을 만든 정책을 평가하면서 그 정책을 개선한다</h2>
+<p>항상 현재 Q에서 최댓값 하나만 고르면 아직 시험해 보지 않은 행동을 배울 기회가 없을 수 있습니다. <b class="key">ε-soft 정책</b>은 각 상태의 모든 행동에 적어도 <code>ε/행동 수</code>만큼 확률을 주는 정책입니다. ε-greedy는 그 가운데, ε의 전체 균등 선택 확률을 남기고 나머지 1−ε을 최대값 후보에 주는 방식입니다. 이 장에서는 여러 후보가 동률이면 최대 후보 안에서 균등 선택합니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 237" role="img" aria-label="행동은 직행과 확인 두 개, ε=0.2다. S에서는 확인이 최고라 직행 0.1, 확인 0.9. C에서는 직행이 최고라 직행 0.9, 확인 0.1이다.">
+<text class="f-cap" x="178" y="42" text-anchor="start">직행</text>
+<text class="f-cap" x="580" y="42" text-anchor="end">확인</text>
+<text class="f-t" x="151" y="86" text-anchor="end">S</text>
+<rect class="f-box" x="179" y="63" width="40" height="35" rx="4"/>
+<rect class="f-soft" x="219" y="63" width="360" height="35" rx="4"/>
+<text class="f-s" x="199" y="86" text-anchor="middle">0.1</text>
+<text class="f-s" x="399" y="86" text-anchor="middle">0.9</text>
+<text class="f-s" x="600" y="86" text-anchor="start">최대 · 확인</text>
+<text class="f-t" x="151" y="153" text-anchor="end">C</text>
+<rect class="f-soft" x="179" y="130" width="360" height="35" rx="4"/>
+<rect class="f-box" x="539" y="130" width="39.99999999999999" height="35" rx="4"/>
+<text class="f-s" x="359" y="153" text-anchor="middle">0.9</text>
+<text class="f-s" x="559" y="153" text-anchor="middle">0.1</text>
+<text class="f-s" x="600" y="153" text-anchor="start">최대 · 직행</text>
+<text class="f-t" x="380" y="204" text-anchor="middle">최대 후보는 활용 0.8 + 균등 탐험 0.1</text>
+</svg>
+<figcaption>나머지 행동도 0.1로 고른다. 두 행동 중 하나만 선택하는 탐욕 정책과 평가 기준이 다르다.</figcaption>
+</figure>
+<p>예를 들어 행동 둘 중 S에서 확인이 유일한 최대이고 ε=0.2라면, 확인은 0.8+0.1=0.9, 직행은 0.1입니다. C에서는 직행이 최대라고 하면 반대로 됩니다. 이 확률로 에피소드를 모아 반환을 평균하고, 그 자료로 같은 탐험 계열의 정책을 갱신합니다. 경험을 내는 정책과 그 자료로 평가하려는 정책이 같은 방식을 <b class="key">온폴리시</b>(on-policy)라고 합니다. 제어에서는 한 에피소드 안의 정책을 고정하고, 그 경험을 사용한 뒤 다음 에피소드의 정책을 바꿉니다.</p>
+<div class="check" data-q="q3"></div>
+<div class="check" data-q="q4"></div>
+<h2>탐험을 계속하는 정책과 평가용 탐욕 정책의 성과</h2>
+<p>이 모형에서 최적 탐욕 정책은 S에서 확인, C에서 직행입니다. 그 정책은 S에서 시작하면 0+0.5×6=3을 얻습니다. 최댓값 행동이 같아도 확률 0.1로 다른 행동을 섞는 ε=0.2 정책은 반환이 달라집니다. 모형이 알려진 사람은 C의 가치가 <code>0.9×6+0.1×(1+0.25v(C))=5.5+0.025v(C)</code>라는 식을 풀어 <code>v(C)=220/39</code>를 얻습니다. S는 <code>0.1×2+0.9×0.5×v(C)=178/65 ≈ 2.738</code>입니다. 이 값들은 제어 코드가 사용하는 입력이 아니라 두 정책을 비교하는 검산 기준입니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 275" role="img" aria-label="한 에피소드에서 정책에 따라 행동하고 반환을 뽑아 처음 나타난 상태-행동쌍의 Q를 갱신한다. 다음 에피소드에서 새 Q 기반 ε-greedy를 쓴다. 최종 Q는 고정한 뒤 탐험 포함 정책과 탐욕 정책을 별도로 평가한다.">
+<rect class="f-box" x="42" y="71" width="197" height="69" rx="4"/><text class="f-cap" x="140.5" y="96" text-anchor="middle">한 에피소드 수집</text><text class="f-s" x="140.5" y="120" text-anchor="middle">현재 ε-greedy를 실행</text>
+<rect class="f-soft" x="281" y="71" width="197" height="69" rx="4"/><text class="f-cap" x="379.5" y="96" text-anchor="middle">반환으로 Q 갱신</text><text class="f-s" x="379.5" y="120" text-anchor="middle">첫 상태·행동쌍만 사용</text>
+<rect class="f-box" x="521" y="71" width="197" height="69" rx="4"/><text class="f-cap" x="619.5" y="96" text-anchor="middle">다음 정책 선택</text><text class="f-s" x="619.5" y="120" text-anchor="middle">다시 ε-greedy</text>
+<line class="f-line" x1="241" y1="105" x2="277" y2="105" marker-end="url(#f-arrow)"/>
+<line class="f-line" x1="480" y1="105" x2="517" y2="105" marker-end="url(#f-arrow)"/>
+<path class="f-ink" d="M620 143 V167 H140 V145" marker-end="url(#f-arrow)"/>
+<text class="f-s" x="380" y="188" text-anchor="middle">학습 반복</text>
+<rect class="f-soft" x="138" y="211" width="486" height="42" rx="4"/>
+<text class="f-t" x="380" y="237" text-anchor="middle">평가 · 최종 Q 고정 → 탐험 포함 / 탐욕을 따로 실행</text>
+</svg>
+<figcaption>학습 중의 보상은 계속 바뀌는 정책에서 얻는다. 고정한 정책의 성능은 새 실행으로 추정한다.</figcaption>
+</figure>
+<p>실험 결과를 보고할 때는 학습 뒤의 Q를 고정하고 두 정책을 별도로 실행할 수 있습니다. ε=0.2 평가 결과는 탐험도 하는 정책의 성과이고, ε=0 평가 결과는 학습된 Q에서 가장 좋아 보이는 행동만 따르는 새 정책의 성과입니다. 학습에 모았던 반환 평균을 두 평가의 성과처럼 쓸 수 없습니다. 초기 학습 중 예측값이 계속 바뀌어 서로 다른 정책의 기록이 섞였습니다.</p>
+<div class="check" data-q="q5"></div>
+<div class="check" data-q="q6"></div>
+<h2>완주 조건과 탐험 범위를 확인한다</h2>
+<p>예제의 C에서 어떤 행동을 선택해도 매 단계 종료 확률은 적어도 1/2이므로 에피소드는 거의 확실히 끝나며 기대 길이도 유한합니다. ε가 양수면 도달한 상태에서 모든 행동을 다시 시험할 기회가 있습니다. 그러나 시작점과 환경의 연결 때문에 절대로 도달할 수 없는 상태나 변한 규칙의 결과까지 보장하지는 않습니다. 작은 시행 횟수로 정책의 수렴을 증명할 수도 없습니다.</p>
+<p>실제 기록이 외부 제한에서 끊기면 같은 제어 코드를 그대로 쓰기 전에 무엇을 최적화할지 정합니다. ‘제한 횟수 자체가 과제의 끝’이면 남은 횟수를 상태에 넣고 정상 종료로 반환을 닫을 수 있습니다. 본래 과제는 계속되는데 기록만 중단했다면 그 부분 반환을 완주 반환으로 취급하지 않습니다. 에피소드 길이에 따라 완주 표본만 고르는 편향을 점검하고, 필요하면 다음 단원의 TD처럼 이어지는 값의 추정을 포함하는 방법을 고려합니다.</p>
+<h2>완료 에피소드 600개로 두 행동을 비교한다</h2>
+<p>환경의 규칙은 <code>episode</code> 안에서만 보상을 만들어 줍니다. 에이전트의 갱신은 반환과 횟수만 사용합니다. Q의 두 열은 ‘직행, 확인’ 순서이고 처음은 둘 다 0입니다. 학습 뒤에는 Q를 바꾸지 않고 각각 300번 실행하여 별도 평가합니다.</p>
+<pre data-example="python"><code>from fractions import Fraction as F
+from random import Random
+
+states = ("S", "C")
+actions = ("직행", "확인")
+gamma = F(1, 2)
+estimate = {(s, a): F(0) for s in states for a in actions}
+counts = {key: 0 for key in estimate}
+
+def choose(state, epsilon, rng):
+    maximum = max(estimate[(state, a)] for a in actions)
+    best = [a for a in actions if estimate[(state, a)] == maximum]
+    if rng.random() &lt; epsilon:
+        return rng.choice(actions)
+    return rng.choice(best)
+
+def episode(epsilon, policy_rng, env_rng):
+    state = "S"
+    records = []
+    while state != "T":
+        action = choose(state, epsilon, policy_rng)
+        if action == "직행":
+            dest, reward = "T", (2 if state == "S" else 6)
+        elif state == "S":
+            dest, reward = "C", 0
+        elif env_rng.random() &lt; 0.5:
+            dest, reward = "T", 3
+        else:
+            dest, reward = "C", -1
+        records.append(((state, action), reward))
+        state = dest
+    return records
+
+def returns(records):
+    value = F(0)
+    rows = []
+    for key, reward in reversed(records):
+        value = reward + gamma * value
+        rows.append((key, value))
+    return list(reversed(rows))
+
+policy_rng, env_rng = Random(9), Random(13)
+for _ in range(600):
+    records = episode(0.2, policy_rng, env_rng)
+    seen = set()
+    for key, value in returns(records):
+        if key in seen:
+            continue
+        seen.add(key)
+        counts[key] += 1
+        estimate[key] += (value - estimate[key]) / counts[key]
+
+for state in states:
+    q = [float(estimate[(state, a)]) for a in actions]
+    print(f"{state}: {q[0]:.3f}, {q[1]:.3f} | 탐욕 {choose(state, 0, Random(0))}")
+
+def evaluate(epsilon):
+    policy_rng, env_rng = Random(23), Random(31)
+    values = [returns(episode(epsilon, policy_rng, env_rng))[0][1] for _ in range(300)]
+    return float(sum(values) / len(values))
+
+print(f"별도 300회 평가: ε=0.2 {evaluate(0.2):.3f}, ε=0 {evaluate(0):.3f}")</code></pre>
+<pre data-output><code>S: 2.000, 2.821 | 탐욕 확인
+C: 6.000, 2.464 | 탐욕 직행
+별도 300회 평가: ε=0.2 2.760, ε=0 3.000</code></pre>
+<p>이 숫자는 정해 둔 난수 시드에서의 결과입니다. ε=0.2 평가값 2.760이 모형의 기대값 약 2.738과 조금 다른 것은 유한한 표본의 변화입니다. 탐욕 정책 평가값 3.000은 이번에 배운 탐욕 행동이 이 모형에서 확정적으로 3을 얻는 경로와 같아서입니다. 다음에는 에피소드의 끝을 기다리지 않고 한 전이에서 값을 갱신하는 방법을 배웁니다.</p>
+<h2>참고 자료</h2>
+<ul><li><a href="https://www2.imm.dtu.dk/courses/02465/pensum/sutton2018.pdf">Sutton·Barto, Reinforcement Learning 2판 · §5.2–5.4 행동가치와 온폴리시 ε-soft 제어</a></li></ul>
+
+<h2>확인 문제</h2>
+<p>본문에서 푼 것 말고 남은 문제입니다. 먼저 답을 정한 뒤 해설을 확인합니다.</p>
+<div id="quiz"></div>
+
+<section class="work" id="tools"></section>
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

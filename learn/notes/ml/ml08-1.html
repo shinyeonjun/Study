@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>빈 값과 이름을 모델이 쓸 수 있는 입력으로 바꾸기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="ML08-1">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">머신러닝 · ML08 전처리와 특징</p>
+<p class="chap-num">ML08·1</p>
+<h1>빈 값과 이름을 모델이 쓸 수 있는 입력으로 바꾸기</h1>
+<p class="lead">거리 기록이 비어 있는 주문과 배송 유형이 ‘방문’인 주문을 생각합니다. 숫자가 필요한 모델에 넣으려면 비어 있는 이유와 수집 시점을 확인하고, 채울 기준과 범주별 열의 뜻을 정해야 합니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul>
+<li>숫자 결측을 채우고 결측 여부를 별도 열로 남긴다.</li>
+<li>범주 원-핫 인코딩의 열을 만들고 새 범주를 처리한다.</li>
+<li>기준 범주를 뺄 때 0으로만 된 행의 의미를 확인한다.</li>
+</ul></div>
+
+<h2>비어 있는 이유를 보고 채울 값을 정한다</h2>
+<p>연습용 배송 표의 거리 열에 <code>[4, 비어 있음, 8, 비어 있음]</code>이 있습니다. <b class="key">결측값</b>은 필요한 값이 관측되지 않았다는 뜻입니다. 비어 있거나 기록되지 않은 거리와 실제 거리 0은 다른 상태입니다. 수집 실패인지, 아직 기록할 시간이 아닌지, 항목 자체가 맞지 않는지 확인합니다. 학습에 필요한 목표 라벨이 빠진 상황은 입력 특성의 빈칸과 따로 처리합니다.</p>
+<p>모델이 수치 결측을 직접 다룰 수 없다면 훈련에서 관측한 값으로 채울 기준을 구할 수 있습니다. 값을 대신 채우는 일을 <b class="key">결측값 대치</b>라고 합니다. 값 4와 8의 중앙값으로 채우면 6입니다. 데이터가 없는 행을 통째로 제외할 수도 있지만 특정 집단에서 결측이 많다면 남는 자료의 범위가 바뀝니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 298" role="img" aria-label="훈련 거리 4, 결측, 8, 결측에서 관측한 두 수의 중앙값은 6이다. 빠진 값을 6으로 채우고 그 행의 결측 표시를 1로 둔다.">
+<rect class="f-box" x="53" y="35" width="104" height="40"/>
+<text class="f-s" x="105" y="60" text-anchor="middle">훈련 주문</text>
+<rect class="f-box" x="157" y="35" width="144" height="40"/>
+<text class="f-s" x="229" y="60" text-anchor="middle">원래 거리</text>
+<rect class="f-box" x="301" y="35" width="144" height="40"/>
+<text class="f-s" x="373" y="60" text-anchor="middle">채운 거리</text>
+<rect class="f-box" x="445" y="35" width="125" height="40"/>
+<text class="f-s" x="507.5" y="60" text-anchor="middle">결측 표시</text>
+<rect class="f-box" x="53" y="75" width="104" height="40"/>
+<text class="f-s" x="105" y="100" text-anchor="middle">A</text>
+<rect class="f-box" x="157" y="75" width="144" height="40"/>
+<text class="f-s" x="229" y="100" text-anchor="middle">4</text>
+<rect class="f-box" x="301" y="75" width="144" height="40"/>
+<text class="f-s" x="373" y="100" text-anchor="middle">4</text>
+<rect class="f-box" x="445" y="75" width="125" height="40"/>
+<text class="f-s" x="507.5" y="100" text-anchor="middle">0</text>
+<rect class="f-box" x="53" y="115" width="104" height="40"/>
+<text class="f-s" x="105" y="140" text-anchor="middle">B</text>
+<rect class="f-over" x="157" y="115" width="144" height="40"/>
+<text class="f-s" x="229" y="140" text-anchor="middle">비어 있음</text>
+<rect class="f-soft" x="301" y="115" width="144" height="40"/>
+<text class="f-s" x="373" y="140" text-anchor="middle">6</text>
+<rect class="f-soft" x="445" y="115" width="125" height="40"/>
+<text class="f-s" x="507.5" y="140" text-anchor="middle">1</text>
+<rect class="f-box" x="53" y="155" width="104" height="40"/>
+<text class="f-s" x="105" y="180" text-anchor="middle">C</text>
+<rect class="f-box" x="157" y="155" width="144" height="40"/>
+<text class="f-s" x="229" y="180" text-anchor="middle">8</text>
+<rect class="f-box" x="301" y="155" width="144" height="40"/>
+<text class="f-s" x="373" y="180" text-anchor="middle">8</text>
+<rect class="f-box" x="445" y="155" width="125" height="40"/>
+<text class="f-s" x="507.5" y="180" text-anchor="middle">0</text>
+<rect class="f-box" x="53" y="195" width="104" height="40"/>
+<text class="f-s" x="105" y="220" text-anchor="middle">D</text>
+<rect class="f-over" x="157" y="195" width="144" height="40"/>
+<text class="f-s" x="229" y="220" text-anchor="middle">비어 있음</text>
+<rect class="f-soft" x="301" y="195" width="144" height="40"/>
+<text class="f-s" x="373" y="220" text-anchor="middle">6</text>
+<rect class="f-soft" x="445" y="195" width="125" height="40"/>
+<text class="f-s" x="507.5" y="220" text-anchor="middle">1</text>
+<text class="f-s" x="665" y="108" text-anchor="middle">중앙값</text>
+<text class="f-t" x="665" y="141" text-anchor="middle">(4+8)/2</text>
+<text class="f-cap" x="665" y="174" text-anchor="middle">= 6</text>
+<text class="f-s" x="306" y="269" text-anchor="middle">새 주문의 거리도 비어 있으면 저장한 6을 쓴다.</text>
+</svg>
+<figcaption>채운 거리와 결측 표시의 역할을 나누면 실제로 거리가 6인 행과 보충한 행을 구분할 수 있다.</figcaption>
+</figure>
+<p>거리가 비었는지를 별도 열 <code>distance_missing</code>에 두면, 보충한 6과 원래부터 거리 6인 주문을 구별할 수 있습니다. 결측 여부도 접수 시점에 알 수 있을 때 특성으로 쓸 수 있습니다. 훈련에서 관측을 하나도 못 한 열에는 중앙값이 없으므로 수집을 보완하거나 빼거나, 업무상 의미 있는 미리 지정한 값으로 처리합니다.</p>
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+
+<h2>범주마다 자리 하나를 정해 0 또는 1을 쓴다</h2>
+<p>배송 유형이 보관함·방문이라면 서로 다른 이름일 뿐입니다. 명목 범주에 아무 번호나 주어 거리 계산에 쓰면 번호 사이의 순서와 간격이 입력에 들어갑니다. <b class="key">원-핫 인코딩</b>은 범주마다 한 열을 두고 이번 행에 해당하는 범주의 열에만 1을 씁니다.</p>
+<p>이번에는 유형의 결측을 별도의 <code>결측</code> 범주로 기록합니다. 훈련에서 보관함·결측·방문이 나왔으므로 새 행에도 그 세 열만 같은 순서로 만듭니다. 운영에서 처음 등장한 <code>점포</code>는 기존 열 가운데 해당되는 것이 없습니다. 새 범주를 만나면 오류로 알려 주거나, 미리 정한 기타 범주에 보내거나, 예시처럼 해당 범주 쪽 열을 모두 0으로 만들 수 있습니다. 마지막 방식은 scikit-learn의 <code>handle_unknown="ignore"</code>와 같은 원리입니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 284" role="img" aria-label="열 순서를 보관함, 결측, 방문으로 고정한다. 각 학습 범주는 해당 열에만 1을 쓴다. 새 유형 점포는 무시 설정에서 세 열이 모두 0이다.">
+<rect class="f-box" x="83" y="31" width="208" height="40"/>
+<text class="f-s" x="187" y="56" text-anchor="middle">배송 유형</text>
+<rect class="f-box" x="291" y="31" width="118" height="40"/>
+<text class="f-s" x="350" y="56" text-anchor="middle">보관함</text>
+<rect class="f-box" x="409" y="31" width="118" height="40"/>
+<text class="f-s" x="468" y="56" text-anchor="middle">결측</text>
+<rect class="f-box" x="527" y="31" width="118" height="40"/>
+<text class="f-s" x="586" y="56" text-anchor="middle">방문</text>
+<rect class="f-box" x="83" y="71" width="208" height="40"/>
+<text class="f-s" x="187" y="96" text-anchor="middle">보관함</text>
+<rect class="f-soft" x="291" y="71" width="118" height="40"/>
+<text class="f-s" x="350" y="96" text-anchor="middle">1</text>
+<rect class="f-box" x="409" y="71" width="118" height="40"/>
+<text class="f-s" x="468" y="96" text-anchor="middle">0</text>
+<rect class="f-box" x="527" y="71" width="118" height="40"/>
+<text class="f-s" x="586" y="96" text-anchor="middle">0</text>
+<rect class="f-box" x="83" y="111" width="208" height="40"/>
+<text class="f-s" x="187" y="136" text-anchor="middle">결측</text>
+<rect class="f-box" x="291" y="111" width="118" height="40"/>
+<text class="f-s" x="350" y="136" text-anchor="middle">0</text>
+<rect class="f-soft" x="409" y="111" width="118" height="40"/>
+<text class="f-s" x="468" y="136" text-anchor="middle">1</text>
+<rect class="f-box" x="527" y="111" width="118" height="40"/>
+<text class="f-s" x="586" y="136" text-anchor="middle">0</text>
+<rect class="f-box" x="83" y="151" width="208" height="40"/>
+<text class="f-s" x="187" y="176" text-anchor="middle">방문</text>
+<rect class="f-box" x="291" y="151" width="118" height="40"/>
+<text class="f-s" x="350" y="176" text-anchor="middle">0</text>
+<rect class="f-box" x="409" y="151" width="118" height="40"/>
+<text class="f-s" x="468" y="176" text-anchor="middle">0</text>
+<rect class="f-soft" x="527" y="151" width="118" height="40"/>
+<text class="f-s" x="586" y="176" text-anchor="middle">1</text>
+<rect class="f-over" x="83" y="191" width="208" height="40"/>
+<text class="f-s" x="187" y="216" text-anchor="middle">점포 · 새 유형</text>
+<rect class="f-box" x="291" y="191" width="118" height="40"/>
+<text class="f-s" x="350" y="216" text-anchor="middle">0</text>
+<rect class="f-box" x="409" y="191" width="118" height="40"/>
+<text class="f-s" x="468" y="216" text-anchor="middle">0</text>
+<rect class="f-box" x="527" y="191" width="118" height="40"/>
+<text class="f-s" x="586" y="216" text-anchor="middle">0</text>
+<text class="f-s" x="377" y="259" text-anchor="middle">새 유형은 예시에서 모든 기존 범주 열을 0으로 둔다.</text>
+</svg>
+<figcaption>훈련에서 저장한 열 이름과 순서는 새 입력을 변환할 때도 같은 의미를 가진다.</figcaption>
+</figure>
+<p>훈련에서 나타난 범주와 빈칸을 구별하는 규칙을 먼저 저장합니다. 학습·검증·테스트를 각각 독립적으로 원-핫 변환하면 각 표에 생기는 열과 순서가 다를 수 있습니다. 예를 들어 검증에 방문이 없으면 방문 열이 사라질 수 있습니다.</p>
+<div class="check" data-q="q3"></div>
+<div class="check" data-q="q4"></div>
+<div class="check" data-q="q5"></div>
+
+<h2>기준 범주와 새 범주를 어떻게 표현했는지 확인한다</h2>
+<p>모든 범주의 열을 쓰면 기존 범주의 한 행에서 세 열의 합은 1입니다. 기존 범주로만 이루어진 훈련 자료에서는 이 열의 합이 절편을 나타내는 1의 열과 똑같습니다. 절편이 있는 비정규화 선형 회귀에서 각 계수를 식별하려면 기준 범주의 열 하나를 빼는 방식이 있습니다. 예를 들어 <b>보관함</b>을 빼면 남은 <code>(결측,방문)</code>이 <code>(0,0)</code>인 기존 행은 보관함을 가리킵니다.</p>
+<p>여기에 새 범주를 모두 0으로 처리하는 방식까지 쓰면 점포와 보관함이 다 같은 벡터가 됩니다. 구별이 업무에 중요하다면 새 범주 정책을 처음부터 별도로 정해야 합니다. 모든 모델에서 기준 범주를 빼야 하는 것은 아니며, 나무처럼 절편과 선형 독립을 요구하지 않는 모델은 세 열을 그대로 쓸 수 있습니다.</p>
+<p class="small">실행 예제</p>
+<pre data-example="python"><code>from statistics import median
+
+train_distances = [4, None, 8, None]
+train_types = [&quot;visit&quot;, &quot;locker&quot;, None, &quot;visit&quot;]
+fill = median(value for value in train_distances if value is not None)
+
+def category(value):
+    return &quot;missing&quot; if value is None else value
+
+columns = sorted({category(value) for value in train_types})
+
+def transform(distance, kind):
+    observed = fill if distance is None else distance
+    indicator = int(distance is None)
+    one_hot = [int(category(kind) == label) for label in columns]
+    return [float(observed), indicator, *one_hot]
+
+print(&quot;columns:&quot;, [&quot;distance&quot;, &quot;distance_missing&quot;, *columns])
+print(&quot;train blank:&quot;, transform(None, None))
+print(&quot;new known type:&quot;, transform(10, &quot;visit&quot;))
+print(&quot;new unknown type:&quot;, transform(None, &quot;store&quot;))</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>columns: ['distance', 'distance_missing', 'locker', 'missing', 'visit']
+train blank: [6.0, 1, 0, 1, 0]
+new known type: [10.0, 0, 0, 0, 1]
+new unknown type: [6.0, 1, 0, 0, 0]</code></pre>
+<div class="why"><p class="box-k">왜 그럴까?</p><p>결측을 평균이나 중앙값으로 채우면 빠진 값이 실제로 복구됐다고 말할 수 있을까요?</p><details><summary>모범 답 보기</summary><p>채운 값은 훈련에서 정해 둔 대표값입니다. 관측되지 않은 값이나 결측 원인이 확인된 것은 아니므로, 실제 관측과 구별하고 평가에서 영향을 살펴야 합니다.</p></details></div>
+<div class="check" data-q="q6"></div>
+<div class="check" data-q="q7"></div>
+
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table><thead><tr><th scope="col">개념</th><th scope="col">확인할 점</th></tr></thead><tbody>
+<tr><th scope="row"><b class="key">결측값 대치</b></th><td>훈련에서 정한 중앙값 등으로 입력 빈칸을 처리</td></tr>
+<tr><th scope="row"><b class="key">원-핫 인코딩</b></th><td>정한 범주 순서로 0/1 열을 만듦</td></tr>
+<tr><th scope="row">새 범주</th><td>오류, 기타 범주, 또는 기존 열을 모두 0 등 규칙 선택</td></tr>
+<tr><th scope="row">기준 범주</th><td>제거한 열이 무엇이며 0 벡터가 무엇을 뜻하는지 기록</td></tr>
+</tbody></table></div>
+<div class="box sum"><p class="box-k">다음 장으로</p><p><a href="ml08-2.html">다음 장</a>에서는 숫자 열의 단위와 비대칭, 특성끼리의 결합을 다룹니다.</p></div>
+
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://scikit-learn.org/stable/modules/impute.html">scikit-learn · 결측값 대치</a></li>
+<li><a href="https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.OneHotEncoder.html">scikit-learn · OneHotEncoder의 새 범주·기준 범주</a></li>
+</ul>
+<h2>확인 문제</h2>
+<p>직접 계산하거나 설명을 먼저 적고 답을 확인해 보세요.</p>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

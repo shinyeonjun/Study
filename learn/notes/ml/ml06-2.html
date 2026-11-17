@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>결정나무의 질문과 Gini 불순도 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="ML06-2">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">머신러닝 · ML06 거리와 나무</p>
+<p class="chap-num">ML06·2</p>
+<h1>결정나무의 질문과 Gini 불순도</h1>
+<p class="lead">대기 주문이 몇 건일 때부터 지연이 많아질까요? 결정나무는 한 특성에 관한 질문으로 자료를 두 묶음으로 나눕니다. 정상이 많은 쪽과 지연이 많은 쪽으로 얼마나 잘 나뉘었는지 건수를 세어 비교합니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul>
+<li>결정나무의 뿌리·가지·잎과 예측 규칙을 설명한다.</li>
+<li>Gini 불순도를 계산해 여러 분할을 가중 비교한다.</li>
+<li>한 단계에서 좋은 질문을 고르는 방식과 전역 최적의 차이를 설명한다.</li>
+</ul></div>
+
+<h2>한 질문의 응답으로 다음 칸을 고른다</h2>
+<p>합성 자료에서 접수 직전 대기 건수는 <code>1,2,3,4,5,6</code>이고 대응하는 지연 라벨은 <code>0,0,1,0,1,1</code>입니다. <b class="key">결정나무</b>는 <code>x ≤ 2.5?</code> 같은 질문을 순서대로 묻습니다. 처음 질문은 뿌리 노드, 두 갈래는 가지, 더 묻지 않고 예측하는 칸은 잎 노드입니다. 이진 CART 방식은 내부 노드에서 자료를 두 자식으로 나눕니다.</p>
+<p>숫자가 서로 다른 이웃 관측값 사이의 중간값은, 훈련 행의 소속이 달라질 수 있는 후보를 한 번씩 나타냅니다. 같은 관측값을 가진 두 행은 이 한 특성만으로 서로 다른 쪽에 놓을 수 없습니다. 여러 특성이 있으면 각 특성의 후보를 검토합니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 273" role="img" aria-label="정렬된 대기 건수 1부터 6까지 라벨은 0,0,1,0,1,1이다. 서로 다른 이웃 값 사이에서 임계값 1.5,2.5,3.5,4.5,5.5를 검사한다.">
+<line class="f-ink" x1="154.85" y1="190" x2="657.7" y2="190"/>
+<line class="f-ink" x1="186" y1="190" x2="186" y2="197"/>
+<text class="f-s" x="186" y="219" text-anchor="middle">1</text>
+<line class="f-ink" x1="275" y1="190" x2="275" y2="197"/>
+<text class="f-s" x="275" y="219" text-anchor="middle">2</text>
+<line class="f-ink" x1="364" y1="190" x2="364" y2="197"/>
+<text class="f-s" x="364" y="219" text-anchor="middle">3</text>
+<line class="f-ink" x1="453" y1="190" x2="453" y2="197"/>
+<text class="f-s" x="453" y="219" text-anchor="middle">4</text>
+<line class="f-ink" x1="542" y1="190" x2="542" y2="197"/>
+<text class="f-s" x="542" y="219" text-anchor="middle">5</text>
+<line class="f-ink" x1="631" y1="190" x2="631" y2="197"/>
+<text class="f-s" x="631" y="219" text-anchor="middle">6</text>
+<line class="f-dash" x1="230.5" y1="69" x2="230.5" y2="190"/>
+<text class="f-s" x="230.5" y="52" text-anchor="middle">1.5</text>
+<line class="f-dash" x1="319.5" y1="69" x2="319.5" y2="190"/>
+<text class="f-s" x="319.5" y="52" text-anchor="middle">2.5</text>
+<line class="f-dash" x1="408.5" y1="69" x2="408.5" y2="190"/>
+<text class="f-s" x="408.5" y="52" text-anchor="middle">3.5</text>
+<line class="f-dash" x1="497.5" y1="69" x2="497.5" y2="190"/>
+<text class="f-s" x="497.5" y="52" text-anchor="middle">4.5</text>
+<line class="f-dash" x1="586.5" y1="69" x2="586.5" y2="190"/>
+<text class="f-s" x="586.5" y="52" text-anchor="middle">5.5</text>
+<circle class="f-box" cx="186" cy="122" r="7"/>
+<text class="f-s" x="186" y="154" text-anchor="middle">0</text>
+<circle class="f-box" cx="275" cy="122" r="7"/>
+<text class="f-s" x="275" y="154" text-anchor="middle">0</text>
+<circle class="f-fill" cx="364" cy="122" r="7"/>
+<text class="f-s" x="364" y="154" text-anchor="middle">1</text>
+<circle class="f-box" cx="453" cy="122" r="7"/>
+<text class="f-s" x="453" y="154" text-anchor="middle">0</text>
+<circle class="f-fill" cx="542" cy="122" r="7"/>
+<text class="f-s" x="542" y="154" text-anchor="middle">1</text>
+<circle class="f-fill" cx="631" cy="122" r="7"/>
+<text class="f-s" x="631" y="154" text-anchor="middle">1</text>
+<text class="f-cap" x="154.85" y="29" text-anchor="start">후보 임계값</text>
+<text class="f-s" x="403" y="249" text-anchor="middle">대기 건수 x</text>
+</svg>
+<figcaption>라벨을 표시한 점 사이의 중간값이 후보가 된다. 값이 같은 두 행은 이 방식으로 서로 가를 수 없다.</figcaption>
+</figure>
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+
+<h2>같은 쪽에 라벨을 더 모았는지 계산한다</h2>
+<p><b class="key">Gini 불순도</b>는 노드에 여러 라벨이 얼마나 섞여 있는지 나타냅니다. 클래스별 비율이 <code>p₁,…,pₖ</code>이면 <code>G=1−Σpⱼ²</code>입니다. 표본을 복원해 두 번 뽑을 때 라벨이 다를 확률로 해석할 수 있습니다. 지연과 정상이 3건씩이면 G는 <code>1−(3/6)²−(3/6)²=0.50</code>입니다. 한 라벨만 있는 노드는 G가 0입니다.</p>
+<p>임계값 2.5가 왼쪽의 정상 2건과 오른쪽의 정상 1건·지연 3건을 나눕니다. 오른쪽의 G는 <code>1−(1/4)²−(3/4)²=0.375</code>입니다. 자식 두 개의 G는 행 수 비율을 곱해 더합니다. 자식 가중 불순도는 <code>(2/6)×0+(4/6)×0.375=0.25</code>, 부모의 불순도에서 이를 뺀 감소량은 <code>0.50−0.25=0.25</code>입니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 284" role="img" aria-label="부모에는 정상 3건과 지연 3건이 있다. 대기 2.5건 이하를 가르면 왼쪽은 정상 2건, 오른쪽은 정상 1건과 지연 3건이다. 자식 가중 불순도는 0.25다.">
+<rect class="f-box" x="269" y="19" width="222" height="64"/>
+<text class="f-s" x="380" y="56" text-anchor="middle">x ≤ 2.5?  ·  G = 0.50</text>
+<line class="f-line" x1="335" y1="84" x2="213" y2="133" marker-end="url(#f-arrow)"/>
+<line class="f-line" x1="425" y1="84" x2="548" y2="133" marker-end="url(#f-arrow)"/>
+<text class="f-s" x="234" y="100" text-anchor="middle">예 · 2건</text>
+<text class="f-s" x="527" y="100" text-anchor="middle">아니오 · 4건</text>
+<rect class="f-soft" x="77" y="143" width="226" height="56"/>
+<text class="f-s" x="190" y="176" text-anchor="middle">정상 2 · 지연 0 · G = 0</text>
+<rect class="f-box" x="457" y="143" width="226" height="56"/>
+<text class="f-s" x="570" y="176" text-anchor="middle">정상 1 · 지연 3 · G = 0.375</text>
+<text class="f-cap" x="380" y="248" text-anchor="middle">(2/6)×0 + (4/6)×0.375 = 0.25</text>
+</svg>
+<figcaption>2.5 이하로 가르면 왼쪽 잎은 정상으로, 오른쪽 잎은 그 안에서 더 흔한 지연으로 예측한다.</figcaption>
+</figure>
+<p>임계값 3.5에서는 좌우가 각각 세 건이고 지연이 한 건과 두 건입니다. 두 자식의 G가 모두 <code>4/9</code>이므로 가중한 값도 <code>4/9≈0.444</code>입니다. 후보 2.5가 3.5보다 덜 섞인 두 묶음을 만듭니다.</p>
+<div class="why"><p class="box-k">왜 그럴까?</p><p>자식 노드 두 개의 Gini를 단순히 반반 평균하면 어떤 정보가 빠질까요?</p><details><summary>모범 답 보기</summary><p>두 자식 크기가 다르면 큰 쪽에 든 표본이 더 많습니다. 이 예에서 오른쪽의 Gini는 4/6만큼 반영되므로, 자식의 크기를 쓰지 않으면 분할을 다른 기준으로 비교하게 됩니다.</p></details></div>
+<div class="check" data-q="q3"></div>
+<div class="check" data-q="q4"></div>
+<div class="check" data-q="q5"></div>
+
+<h2>가장 좋은 후보를 고르고 같은 일을 반복한다</h2>
+<p>이 노드에서 후보마다 자식 가중 불순도를 비교합니다. 2.5와 4.5가 모두 0.25로 최소입니다. 예제 구현에서는 동률일 때 더 작은 임계값을 선택합니다. 나눈 자식 노드에서 다시 후보를 평가합니다. 매번 현재 노드에서 감소량이 큰 쪽을 고르는 <b>탐욕적 선택</b>을 하므로 전체 나무의 모든 조합을 비교한 결과와 다를 수 있습니다.</p>
+<p class="small">실행 예제</p>
+<pre data-example="python"><code>from fractions import Fraction as F
+from collections import Counter
+
+values = [1, 2, 3, 4, 5, 6]
+labels = [0, 0, 1, 0, 1, 1]
+
+def gini(targets):
+    return 1 - sum(F(n, len(targets))**2 for n in Counter(targets).values())
+
+def weighted(left, right):
+    total = len(left) + len(right)
+    return F(len(left), total) * gini(left) + F(len(right), total) * gini(right)
+
+scores = []
+for i in range(1, len(values)):
+    threshold = (values[i - 1] + values[i]) / 2
+    loss = weighted(labels[:i], labels[i:])
+    scores.append((loss, threshold))
+    print(f&quot;threshold={threshold:.1f}: weighted Gini={float(loss):.3f}&quot;)
+
+score, threshold = min(scores)
+print(f&quot;chosen={threshold:.1f}, decrease={float(gini(labels) - score):.3f}&quot;)</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>threshold=1.5: weighted Gini=0.400
+threshold=2.5: weighted Gini=0.250
+threshold=3.5: weighted Gini=0.444
+threshold=4.5: weighted Gini=0.250
+threshold=5.5: weighted Gini=0.400
+chosen=2.5, decrease=0.250</code></pre>
+<p>이 코드는 정렬돼 있고 값이 모두 다른 특성 하나를 예로 듭니다. 두 자식이 비어 있지 않은 분할만 봅니다. 새 주문의 대기 건수가 5라면 2.5를 초과하므로 오른쪽 잎에 가서 지연을 예측합니다. 분류 잎에는 라벨별 비율을 저장할 수도 있습니다. 회귀용 나무는 수치 목표로부터 제곱오차처럼 그 문제에 맞는 분할 기준을 사용하고, 제곱오차 기준의 잎은 목표 평균을 예측합니다.</p>
+<div class="check" data-q="q6"></div>
+<div class="check" data-q="q7"></div>
+
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table><thead><tr><th scope="col">개념</th><th scope="col">계산</th></tr></thead><tbody>
+<tr><th scope="row"><b class="key">결정나무</b></th><td>질문에 따라 가지를 내려가 마지막 잎의 예측을 사용</td></tr>
+<tr><th scope="row"><b class="key">Gini</b></th><td>1에서 클래스 비율 제곱의 합을 뺀 값</td></tr>
+<tr><th scope="row">분할</th><td>자식 Gini를 자식 크기 비율로 가중해 합침</td></tr>
+<tr><th scope="row">학습</th><td>현재 노드에서 가중 불순도가 작은 유효 분할을 고름</td></tr>
+</tbody></table></div>
+<div class="box sum"><p class="box-k">다음 장으로</p><p><a href="ml06-3.html">다음 장</a>에서는 나무 깊이와 잎의 수를 제한하는 이유를 살펴봅니다.</p></div>
+
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://scikit-learn.org/stable/modules/tree.html">scikit-learn · 결정나무와 불순도</a></li>
+</ul>
+<h2>확인 문제</h2>
+<p>직접 계산하거나 설명을 먼저 적고 답을 확인해 보세요.</p>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

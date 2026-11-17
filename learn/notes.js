@@ -164,6 +164,10 @@ window.BDA_CHAPTERS = {
     {"id": "DM03-1", "title": "경우의 수를 세는 두 법칙과 순열", "href": "notes/dm/dm03-1.html"},
     {"id": "DM03-2", "title": "순서를 빼고 세기: 조합과 이항계수", "href": "notes/dm/dm03-2.html"}
   ],
+  DM05: [
+    {"id": "DM05-1", "title": "정점·간선·경로를 읽기", "href": "notes/dm/dm05-1.html"},
+    {"id": "DM05-2", "title": "트리와 인접 리스트·행렬", "href": "notes/dm/dm05-2.html"}
+  ],
   NW01: [
     {"id": "NW01-1", "title": "호스트가 어떻게 역할을 나눠 통신하는가", "href": "notes/nw/nw01-1.html"},
     {"id": "NW01-2", "title": "집의 LAN에서 여러 네트워크로 건너가기", "href": "notes/nw/nw01-2.html"}
@@ -175,6 +179,19 @@ window.BDA_CHAPTERS = {
   NW03: [
     {"id": "NW03-1", "title": "패킷으로 나눠 보내고 계층을 따라 다시 읽기", "href": "notes/nw/nw03-1.html"},
     {"id": "NW03-2", "title": "지연·용량·처리량·손실을 단위로 계산하기", "href": "notes/nw/nw03-2.html"}
+  ],
+  NW04: [
+    {"id": "NW04-1", "title": "DNS 이름을 주소로 찾고 캐시하기", "href": "notes/nw/nw04-1.html"},
+    {"id": "NW04-2", "title": "전송의 종점을 구별하고 주소를 임대받기", "href": "notes/nw/nw04-2.html"}
+  ],
+  NW05: [
+    {"id": "NW05-1", "title": "IPv4·IPv6 주소와 접두사 범위", "href": "notes/nw/nw05-1.html"},
+    {"id": "NW05-2", "title": "서브넷을 넘고 주소·포트를 변환하기", "href": "notes/nw/nw05-2.html"},
+    {"id": "NW05-3", "title": "최장 접두사로 전달하고 최단 비용으로 길을 구하기", "href": "notes/nw/nw05-3.html"}
+  ],
+  NW06: [
+    {"id": "NW06-1", "title": "TCP 바이트 스트림과 UDP 데이터그램", "href": "notes/nw/nw06-1.html"},
+    {"id": "NW06-2", "title": "흐름 제어와 혼잡 제어의 두 윈도우", "href": "notes/nw/nw06-2.html"}
   ],
   LA01: [
     {"id": "LA01-1", "title": "벡터와 성분: 한 관측을 숫자 여러 개로 나타내기", "href": "notes/la/la01-1.html"},
@@ -304,6 +321,20 @@ window.BDA_CHAPTERS = {
     {"id": "ML03-2", "title": "혼동행렬로 보고 정밀도·재현율 계산하기", "href": "notes/ml/ml03-2.html"},
     {"id": "ML03-3", "title": "ROC와 PR 곡선, AP와 면적 읽기", "href": "notes/ml/ml03-3.html"}
   ],
+  ML04: [
+    {"id": "ML04-1", "title": "잔차와 설계행렬로 선형 회귀 읽기", "href": "notes/ml/ml04-1.html"},
+    {"id": "ML04-2", "title": "최소제곱 해를 푸는 방법과 해가 여럿인 경우", "href": "notes/ml/ml04-2.html"}
+  ],
+  ML06: [
+    {"id": "ML06-1", "title": "k-NN: 거리를 재고 가까운 답을 모으기", "href": "notes/ml/ml06-1.html"},
+    {"id": "ML06-2", "title": "결정나무의 질문과 Gini 불순도", "href": "notes/ml/ml06-2.html"},
+    {"id": "ML06-3", "title": "나무의 깊이를 제한하고 가지를 치기", "href": "notes/ml/ml06-3.html"}
+  ],
+  ML08: [
+    {"id": "ML08-1", "title": "빈 값과 이름을 모델이 쓸 수 있는 입력으로 바꾸기", "href": "notes/ml/ml08-1.html"},
+    {"id": "ML08-2", "title": "숫자의 척도, 로그, 특성의 상호작용", "href": "notes/ml/ml08-2.html"},
+    {"id": "ML08-3", "title": "전처리 순서와 교차검증에서의 파이프라인", "href": "notes/ml/ml08-3.html"}
+  ],
   RL01: [
     {"id": "RL01-1", "title": "에이전트와 환경: 무엇을 보고 무엇을 바꾸나", "href": "notes/rl/rl01-1.html"},
     {"id": "RL01-2", "title": "정책을 따라 경험 한 줄씩 기록하기", "href": "notes/rl/rl01-2.html"}
@@ -316,9 +347,29 @@ window.BDA_CHAPTERS = {
     {"id": "RL03-1", "title": "반환과 할인: 나중의 보상을 지금 비교하기", "href": "notes/rl/rl03-1.html"},
     {"id": "RL03-2", "title": "에피소드의 종료와 기록의 중단을 가려내기", "href": "notes/rl/rl03-2.html"}
   ],
+  RL04: [
+    {"id": "RL04-1", "title": "마르코프 결정 과정: 상태와 전이를 표에 담기", "href": "notes/rl/rl04-1.html"},
+    {"id": "RL04-2", "title": "상태 가치와 행동 가치: Bellman 식으로 한 단계씩 읽기", "href": "notes/rl/rl04-2.html"}
+  ],
+  RL05: [
+    {"id": "RL05-1", "title": "정책 평가와 개선: 행동 규칙을 한 번씩 바꾸기", "href": "notes/rl/rl05-1.html"},
+    {"id": "RL05-2", "title": "가치반복: 최대 행동값을 바로 다음 표에 넣기", "href": "notes/rl/rl05-2.html"}
+  ],
+  RL06: [
+    {"id": "RL06-1", "title": "몬테카를로 예측: 에피소드의 끝에서 가치 추정하기", "href": "notes/rl/rl06-1.html"},
+    {"id": "RL06-2", "title": "온폴리시 몬테카를로 제어: 탐험하면서 행동 규칙 바꾸기", "href": "notes/rl/rl06-2.html"}
+  ],
   RS01: [
     {"id": "RS01-1", "title": "질문에서 가설로: 조작적 정의와 측정", "href": "notes/rs/rs01-1.html"},
     {"id": "RS01-2", "title": "큰 질문을 작은 비교로: 가정과 반례", "href": "notes/rs/rs01-2.html"}
+  ],
+  RS10: [
+    {"id": "RS10-1", "title": "연구 자료의 이용 조건과 식별 위험 확인하기", "href": "notes/rs/rs10-1.html"},
+    {"id": "RS10-2", "title": "집단별 영향과 연구 기여·AI 도움 기록하기", "href": "notes/rs/rs10-2.html"}
+  ],
+  BD01: [
+    {"id": "BD01-1", "title": "분석 기획 실습에서 업무 결정과 평가 기준 맞추기", "href": "notes/bd/bd01-1.html"},
+    {"id": "BD01-2", "title": "계획한 데이터의 품질과 집계 근거를 검증하기", "href": "notes/bd/bd01-2.html"}
   ]
 };
 

@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>집단별 영향과 연구 기여·AI 도움 기록하기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="RS10-2">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">연구 방법</p>
+<p class="chap-num">RS10·2</p>
+<h1>집단별 영향과 연구 기여·AI 도움 기록하기</h1>
+<p class="lead">전체 성능 숫자가 좋은 모델이라도 어느 집단에서는 쉽게 실패할 수 있습니다. 어떤 사람이 영향을 받는지 읽고, 결과를 만든 사람과 도구의 역할을 독자가 확인할 수 있게 기록합니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>전체 지표와 집단별 지표를 다른 분모로 계산한다.</li><li>자료 누락과 운영 영향, 평가 규모를 고려한다.</li><li>공동 기여와 저자 책임, AI 사용 공개의 역할을 구분한다.</li></ul></div>
+
+<h2>전체 비율이 같아도 영향을 받는 집단은 다를 수 있다</h2>
+<p>도서관이 혼잡인 경우를 감지하려고 경보 모형을 씁니다. 두 지점 중 A에서는 실제 혼잡 80건 중 72건을 찾아냈습니다. B에서는 실제 혼잡 20건 중 10건을 찾아냈습니다. 재현율은 실제 혼잡 중 알아챈 비율입니다. 이는 지점의 자료 수 · 이용 상황 · 센서 상태에 따라 달라질 수 있습니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 238" role="img" aria-label="A 집단의 실제 혼잡 80건 중 72건을 탐지해 90%, B 집단의 실제 혼잡 20건 중 10건을 탐지해 50%다. 전체는 100건 중 82건으로 82%다.">
+<text class="f-t" x="223" y="98" text-anchor="end">A · 72/80</text><rect class="f-box" x="247" y="78" width="410" height="31" rx="3"/><rect class="f-soft" x="247" y="78" width="369" height="31" rx="3"/><text class="f-s" x="609" y="99" text-anchor="end">90%</text><text class="f-t" x="223" y="145" text-anchor="end">B · 10/20</text><rect class="f-box" x="247" y="125" width="410" height="31" rx="3"/><rect class="f-soft" x="247" y="125" width="205" height="31" rx="3"/><text class="f-s" x="445" y="146" text-anchor="end">50%</text><text class="f-t" x="223" y="192" text-anchor="end">전체 · 82/100</text><rect class="f-box" x="247" y="172" width="410" height="31" rx="3"/><rect class="f-soft" x="247" y="172" width="336.2" height="31" rx="3"/><text class="f-s" x="576.2" y="193" text-anchor="end">82%</text>
+</svg><figcaption>전체 재현율은 지점마다 실제 혼잡 건수가 다른 영향을 받는다. 지점별 수치와 함께 읽는다.</figcaption></figure>
+<pre data-example="python"><code>sites = {&quot;A&quot;: (72, 80), &quot;B&quot;: (10, 20)}
+for site, (detected, actual) in sites.items():
+    print(site, detected, actual, f&quot;{detected / actual:.0%}&quot;)
+detected = sum(hit for hit, actual in sites.values())
+actual = sum(n for hit, n in sites.values())
+print(&quot;all&quot;, detected, actual, f&quot;{detected / actual:.0%}&quot;)</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>A 72 80 90%
+B 10 20 50%
+all 82 100 82%</code></pre>
+<p>두 비율 90%와 50%의 평균은 70%입니다. 이를 전체 100건의 재현율로 쓰면 틀립니다. 전체의 82%는 탐지 82건을 전체 혼잡 100건으로 나눈 값입니다. 반대로 두 지점에 같은 중요도를 주고 싶다면 각 지점 지표의 단순평균을 별도로 보고할 수 있습니다. 어떤 분모를 비교하고 무엇에 대해 결론을 내리는지 함께 씁니다.</p>
+<div class="check" data-q="q1"></div><div class="check" data-q="q2"></div><div class="check" data-q="q3"></div>
+<h2>오류의 차이가 어디에서 생겼는지 살핀다</h2>
+<p>B는 야간에 센서가 끊겨 훈련 자료에서 드물게 등장했을 수 있습니다. 정답을 만들 때도 어떤 지점은 수시로 세고 다른 지점은 큰 행사만 확인했다면 목록의 뜻이 달라집니다. 지점별 표본 수, 누락과 라벨 기준, 평가에 사용한 시간을 나란히 확인합니다. 자료가 적으면 비율의 변동이 더 크므로 관측 건수와 함께 읽습니다.</p>
+<p>누구에게 불이익이 가는지도 별도로 봅니다. 혼잡을 놓치면 필요한 도움을 늦게 받을 수 있고, 잘못 울린 경보가 많으면 담당자가 중요한 경보를 더 이상 신뢰하지 않을 수 있습니다. 지표 차이 하나는 원인을 단독으로 설명하지 않습니다. 새로운 표본과 업무에서 실제로 생기는 결과를 비교합니다.</p>
+<div class="check" data-q="q4"></div><div class="check" data-q="q5"></div>
+<h2>기여한 역할과 책임을 함께 적는다</h2>
+<p>어떤 사람은 연구 질문을 만들고 다른 사람은 데이터를 정리하거나 실험을 검증할 수 있습니다. <b class="key">CRediT</b>은 이런 기여를 표준화해 기록하는 역할 목록입니다. 누구를 저자로 표기할지는 학술지나 학회, 기관의 기준을 따릅니다. 기여 역할을 기록하고, 저자 표시는 적용할 저자 자격 기준과 함께 판단합니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 160" role="img" aria-label="자료에 기여한 역할과 결과를 확인한 사람, 이용한 도구를 기록한 뒤 제출 규칙을 적용한다.">
+<rect class="f-box" x="42" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="135" y="61" text-anchor="middle">수집·분석 도움</text><text class="f-s" x="135" y="89" text-anchor="middle">자료 정리, 식과 코드</text><text class="f-s" x="135" y="110" text-anchor="middle">실제로 맡은 역할 기록</text><line class="f-line" x1="235" y1="84" x2="278" y2="84" marker-end="url(#f-arrow)"/><rect class="f-soft" x="287" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="380" y="61" text-anchor="middle">사람의 검증</text><text class="f-s" x="380" y="89" text-anchor="middle">수치·인용·결론 확인</text><text class="f-s" x="380" y="110" text-anchor="middle">검증 담당과 책임 확인</text><line class="f-line" x1="480" y1="84" x2="523" y2="84" marker-end="url(#f-arrow)"/><rect class="f-box" x="532" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="625" y="61" text-anchor="middle">제출 기록</text><text class="f-s" x="625" y="89" text-anchor="middle">기여와 사용 도구 공개</text><text class="f-s" x="625" y="110" text-anchor="middle">학술지나 기관 기준 확인</text>
+</svg><figcaption>AI 도움을 공개할 때에는 바뀐 연구 단계와 사람이 검증한 범위를 구체적으로 적는다.</figcaption></figure>
+<p>검증 담당자가 수치·출처·결론을 확인하고, 공동저자는 적용되는 기관이나 학술지의 저자 기준에 따라 발표 내용에 책임집니다. 생성형 AI를 활용했을 때 코드·수식·인용·해석을 검증하는 일도 이 책임에 포함됩니다. 학술지나 학회 정책에서 어떤 사용을 공개할지 확인합니다. 도움을 받아 가설을 다듬었는지, 코드 초안을 작성했는지, 문장을 다듬었는지에 따라 설명할 범위가 달라집니다. 공유가 제한된 자료를 외부 도구에 보낼 수 있는지 또한 별개의 판단입니다.</p>
+<div class="check" data-q="q6"></div>
+<h2>한눈에 정리</h2>
+<ul><li>전체 지표와 집단별 지표를 건수, 조건과 함께 보고한다.</li><li>편향의 원인이 자료 수집, 목표 정의, 모형, 운영 어디에 있는지 검토한다.</li><li>기여한 역할과 책임지는 사람, AI의 사용 범위와 검증 기록을 남긴다.</li></ul>
+
+<h2>참고 자료</h2>
+<ul><li><a href="https://www.nist.gov/itl/ai-risk-management-framework">NIST · AI 위험 관리 프레임워크</a></li><li><a href="https://credit.niso.org/contributor-roles-defined/">NISO CRediT · 기여 역할 정의</a></li><li><a href="https://www.acm.org/publications/policies/new-acm-policy-on-authorship">ACM · 저자와 생성형 AI 사용 관련 정책</a></li></ul>
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>
