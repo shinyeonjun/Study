@@ -1,0 +1,283 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>가중평균과 평균의 평균 함정 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e8c'/%3E%3Cpath d='M8 22V10m8 12V14m8 8V6' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="AR10-2">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+
+<header class="chapter">
+<p class="chap-sub">산술과 수 감각 · AR10 합과 평균</p>
+<p class="chap-num">AR10·2</p>
+<h1>가중평균과 평균의 평균 함정</h1>
+<p class="lead">A반 10명의 시험 평균은 60점, B반 30명의 평균은 80점입니다. 두 반 40명 전체의 평균은 몇 점일까요? (60 + 80) ÷ 2 = 70점이라고 답하기 쉽지만, 실제로는 75점입니다. 이 장에서는 크기가 다른 묶음을 합칠 때 쓰는 가중평균과, 평균을 다시 평균 내면 왜 틀리는지를 실제 숫자로 다룹니다.</p>
+</header>
+
+<div class="goal">
+<h2>이 장을 읽고 나면</h2>
+<ul>
+<li>묶음별 평균과 인원에서 전체 평균을 합을 거쳐 계산할 수 있다.</li>
+<li>가중치와 가중평균의 뜻을 설명하고, 가중평균을 Σ로 적을 수 있다.</li>
+<li>두 묶음의 평균을 그냥 평균 내면 틀리는 이유와, 괜찮은 경우(크기가 같을 때)를 구분할 수 있다.</li>
+<li>학점 평균, 비율의 평균, 속력의 평균에서 무엇이 가중치인지 찾아 계산할 수 있다.</li>
+</ul>
+</div>
+
+<h2>평균을 평균 내면 왜 틀릴까</h2>
+
+<p>앞 장(AR10-1)의 요령을 떠올립니다. <b>평균끼리 바로 계산하지 말고 합으로 바꾼다.</b> 두 반을 합친 40명의 평균은 정의대로 "40명 점수의 합 ÷ 40"입니다.</p>
+
+<div class="box ex">
+<p class="box-k">풀이 예제</p>
+<p>A반 10명 평균 60점, B반 30명 평균 80점. 40명 전체 평균을 구합니다.</p>
+<p class="calc">① A반 점수의 합 = 평균 × 인원 = 60 × 10 = 600<br>
+② B반 점수의 합 = 80 × 30 = 2,400<br>
+③ 전체 합 = 600 + 2,400 = 3,000<br>
+④ 전체 인원 = 10 + 30 = 40<br>
+⑤ 전체 평균 = 3,000 ÷ 40 = 75점</p>
+</div>
+
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 196" role="img" aria-label="학생 40명을 칸 40개로 그렸다. 앞의 10칸은 A반 60점, 뒤의 30칸은 B반 80점. 반 평균 두 개를 그냥 평균 내면 60과 80의 가운데인 70이 나오지만, 학생 40명 모두를 똑같이 한 번씩 세면 3000 나누기 40은 75다.">
+<text class="f-s f-ink-t f-b" x="155" y="48" text-anchor="middle">A반 10명 · 60점</text>
+<text class="f-s f-ink-t f-b" x="455" y="48" text-anchor="middle">B반 30명 · 80점</text>
+<rect class="f-soft" x="80" y="60" width="150" height="40"/>
+<rect class="f-box" x="230" y="60" width="450" height="40"/>
+<path class="f-ink" d="M95 60V100M110 60V100M125 60V100M140 60V100M155 60V100M170 60V100M185 60V100M200 60V100M215 60V100M245 60V100M260 60V100M275 60V100M290 60V100M305 60V100M320 60V100M335 60V100M350 60V100M365 60V100M380 60V100M395 60V100M410 60V100M425 60V100M440 60V100M455 60V100M470 60V100M485 60V100M500 60V100M515 60V100M530 60V100M545 60V100M560 60V100M575 60V100M590 60V100M605 60V100M620 60V100M635 60V100M650 60V100M665 60V100"/>
+<line class="f-line" x1="230" y1="56" x2="230" y2="104"/>
+<text class="f-s" x="680" y="120" text-anchor="end">한 칸 = 학생 1명</text>
+<text class="f-t" x="80" y="150">(가) 반 평균 두 개를 평균: (60 + 80) ÷ 2 = 70 ✗</text>
+<text class="f-t" x="80" y="178">(나) 40명을 한 번씩: (10×60 + 30×80) ÷ 40 = 3,000 ÷ 40 = 75 ✓</text>
+</svg>
+<figcaption>(가)는 10칸짜리 A반과 30칸짜리 B반을 같은 무게로 셌다. (나)는 칸 하나하나를 같은 무게로 셌다.</figcaption>
+</figure>
+
+<p>(60 + 80) ÷ 2 = 70이 틀린 이유는 그림에서 보입니다. 이 계산은 A반 전체와 B반 전체를 <b>똑같이 한 표씩</b> 센 것입니다. 그러면 A반 학생 한 명은 1/20표, B반 학생 한 명은 1/60표를 가진 셈이 되어, 인원이 적은 A반 학생의 점수가 3배 더 크게 반영됩니다. 전체 평균은 <b>학생 한 명 한 명을 똑같이</b> 세어야 하므로, 인원이 많은 B반 쪽으로 끌려간 75가 맞습니다.</p>
+
+<div class="box trap">
+<p class="box-k">시험 함정</p>
+<p><b>묶음 크기가 다른데 묶음 평균을 그냥 평균 내는 실수.</b> "지점별 평균 매출의 평균", "반별 평균의 평균", "월별 평균의 평균"은 묶음 크기가 같을 때만 전체 평균과 같습니다. 크기가 다르면 반드시 <b>합으로 바꿔서</b> 다시 나눕니다.</p>
+</div>
+
+<h3>그냥 평균 내도 되는 경우</h3>
+
+<p>두 반이 모두 20명이라면 어떨까요? 합은 60 × 20 + 80 × 20 = 1,200 + 1,600 = 2,800, 인원은 40명이니 2,800 ÷ 40 = 70점입니다. 이번에는 (60 + 80) ÷ 2 = 70과 같습니다. <b>묶음의 크기가 모두 같을 때만</b> 평균의 평균이 전체 평균과 같습니다. 각 묶음이 같은 수의 사람을 대표하므로 한 표씩 세어도 공정하기 때문입니다.</p>
+
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+
+<h2>가중평균 <span class="tag memo">외우기</span></h2>
+
+<h3>가중치라는 생각</h3>
+
+<p>앞 예제의 ⑤를 한 줄로 적으면 (10 × 60 + 30 × 80) ÷ (10 + 30)입니다. 각 평균(60, 80)에 그 평균이 대표하는 인원(10, 30)을 곱해서 더하고, 인원의 합으로 나눴습니다. 여기서 인원 10과 30은 "그 값을 얼마나 무겁게 셀지"를 정하는 수입니다. 이런 수를 <b class="key">가중치</b>(weight, 무게)라고 합니다.</p>
+
+<div class="box">
+<p class="box-k">정의 <span class="tag memo">외우기</span></p>
+<p>값 x<sub>1</sub>, x<sub>2</sub>, …, x<sub>n</sub>에 가중치 w<sub>1</sub>, w<sub>2</sub>, …, w<sub>n</sub>을 붙였을 때 <b class="key">가중평균</b>(weighted mean)은</p>
+<p class="calc">가중평균 = (w<sub>1</sub>x<sub>1</sub> + w<sub>2</sub>x<sub>2</sub> + … + w<sub>n</sub>x<sub>n</sub>) ÷ (w<sub>1</sub> + w<sub>2</sub> + … + w<sub>n</sub>)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= Σ w<sub>i</sub>x<sub>i</sub> ÷ Σ w<sub>i</sub></p>
+<p>"값 × 가중치를 모두 더하고, 가중치의 합으로 나눈다."</p>
+</div>
+
+<p>Σ로 쓴 식을 앞 장에서 배운 대로 펼쳐서 숫자를 넣어 봅니다. x<sub>1</sub> = 60, x<sub>2</sub> = 80, w<sub>1</sub> = 10, w<sub>2</sub> = 30입니다.</p>
+
+<p class="calc">Σ<sub>i=1</sub><sup>2</sup> w<sub>i</sub>x<sub>i</sub> = w<sub>1</sub>x<sub>1</sub> + w<sub>2</sub>x<sub>2</sub> = 10×60 + 30×80 = 600 + 2,400 = 3,000<br>
+Σ<sub>i=1</sub><sup>2</sup> w<sub>i</sub> = 10 + 30 = 40<br>
+가중평균 = 3,000 ÷ 40 = 75</p>
+
+<p>앞 장의 보통 평균은 <b>가중치가 모두 1인 가중평균</b>입니다. 모든 w<sub>i</sub>가 1이면 Σ w<sub>i</sub>x<sub>i</sub> = Σ x<sub>i</sub>(합), Σ w<sub>i</sub> = n(개수)이 되어 "합 ÷ 개수"로 돌아갑니다. 가중치가 모두 같기만 하면(모두 20이어도) 결과는 보통 평균과 같습니다. 앞 절의 "같은 크기면 그냥 평균 내도 된다"가 이 말입니다.</p>
+
+<h3>비율로 쓴 가중치</h3>
+
+<p>가중치를 전체에 대한 비율로 바꿔도 됩니다. 10명은 40명의 10/40 = 0.25, 30명은 30/40 = 0.75입니다. 비율 가중치는 합이 1이므로 나눌 필요가 없습니다.</p>
+
+<p class="calc">0.25 × 60 + 0.75 × 80 = 15 + 60 = 75</p>
+
+<p>"B반이 전체의 75%를 차지하니 B반 평균이 75%만큼 반영된다"고 읽을 수 있습니다. 성적에서 "중간고사 40%, 기말고사 60%"처럼 반영 비율을 정해 두는 것이 바로 이 꼴의 가중평균입니다.</p>
+
+<h3>저울로 보기 <span class="tag grasp">이해하기</span></h3>
+
+<p>앞 장에서 평균을 저울의 균형점으로 보았습니다. 가중평균은 <b>추의 무게가 서로 다른</b> 저울의 균형점입니다.</p>
+
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 216" role="img" aria-label="55부터 85까지의 수직선. 60 자리에 10명 무게의 추 하나, 80 자리에 같은 크기의 추 세 개(30명)를 쌓았다. 받침점은 75에 있다. 75에서 60까지 거리 15, 80까지 거리 5. 10 곱하기 15는 150, 30 곱하기 5도 150으로 같아 75에서 균형을 이룬다. 70 자리의 점선은 두 평균의 단순 평균으로, 균형점이 아니다.">
+<text class="f-t" x="380" y="24" text-anchor="middle">10 × 15 = 150 = 30 × 5 → 75에서 균형</text>
+<line class="f-line" x1="480" y1="62" x2="182" y2="62" marker-end="url(#f-arrow)"/>
+<text class="f-s f-ink-t" x="330" y="54" text-anchor="middle">거리 15</text>
+<line class="f-line" x1="480" y1="62" x2="578" y2="62" marker-end="url(#f-arrow)"/>
+<text class="f-s f-ink-t" x="530" y="54" text-anchor="middle">거리 5</text>
+<line class="f-dash" x1="480" y1="40" x2="480" y2="150"/>
+<rect class="f-soft" x="170" y="130" width="20" height="20"/>
+<text class="f-s f-ink-t" x="180" y="122" text-anchor="middle">10명</text>
+<rect class="f-soft" x="570" y="130" width="20" height="20"/>
+<rect class="f-soft" x="570" y="110" width="20" height="20"/>
+<rect class="f-soft" x="570" y="90" width="20" height="20"/>
+<text class="f-s f-ink-t" x="580" y="82" text-anchor="middle">30명</text>
+<line class="f-dash" x1="380" y1="104" x2="380" y2="150"/>
+<text class="f-s" x="380" y="96" text-anchor="middle">70 (두 평균의 평균)</text>
+<line class="f-ink" x1="60" y1="150" x2="700" y2="150"/>
+<path class="f-fill" d="M480 150L466 178H494Z"/>
+<path class="f-ink" d="M80 150v5M180 150v5M280 150v5M380 150v5M480 150v5M580 150v5M680 150v5"/>
+<text class="f-s" x="80" y="198" text-anchor="middle">55</text>
+<text class="f-s f-ink-t f-b" x="180" y="198" text-anchor="middle">60</text>
+<text class="f-s" x="280" y="198" text-anchor="middle">65</text>
+<text class="f-s" x="380" y="198" text-anchor="middle">70</text>
+<text class="f-s f-ink-t f-b" x="480" y="198" text-anchor="middle">75</text>
+<text class="f-s f-ink-t f-b" x="580" y="198" text-anchor="middle">80</text>
+<text class="f-s" x="680" y="198" text-anchor="middle">85</text>
+</svg>
+<figcaption>눈금 간격은 일정하다(한 칸 = 5점). 작은 정사각형 하나 = 10명.</figcaption>
+</figure>
+
+<p>무거운 쪽(30명)은 받침점에 가깝게, 가벼운 쪽(10명)은 멀리 있어야 균형이 맞습니다. 무게 × 거리가 양쪽에서 같아지는 자리가 75입니다. 이 그림에서 가중평균의 두 성질을 읽을 수 있습니다.</p>
+
+<ul>
+<li>가중평균은 언제나 <b>가장 작은 값과 가장 큰 값 사이</b>(여기서는 60과 80 사이)에 있습니다. 인원·학점·시간처럼 가중치가 음수가 아닐 때의 이야기이고, 이 교재에서 다루는 가중치는 모두 그렇습니다.</li>
+<li>가중치가 큰 쪽의 값에 <b>더 가깝습니다.</b> 거리의 비 15 : 5 = 3 : 1은 무게의 비 30 : 10 = 3 : 1을 뒤집은 것입니다.</li>
+</ul>
+
+<div class="check" data-q="q3"></div>
+<div class="check" data-q="q4"></div>
+
+<h2>여러 곳의 가중평균</h2>
+
+<p>"이 평균에서 가중치는 무엇인가?"를 물을 줄 알면 생활과 데이터의 많은 평균이 같은 계산임을 알게 됩니다. 세 가지를 봅니다.</p>
+
+<h3>학점 평균</h3>
+
+<p>대학의 평균 평점은 과목마다 학점(수업 시간의 크기)이 다르므로 학점을 가중치로 씁니다. 3학점 과목에서 4.0, 1학점 과목에서 2.0을 받았다고 합시다(평점 환산과 계산 규칙은 학교마다 다르니 실제로는 자기 학교 규정을 확인합니다).</p>
+
+<p class="calc">① 값 × 가중치: 3 × 4.0 + 1 × 2.0 = 12 + 2 = 14<br>
+② 가중치의 합: 3 + 1 = 4<br>
+③ 가중평균: 14 ÷ 4 = 3.5 &nbsp;&nbsp;(그냥 평균 (4.0 + 2.0) ÷ 2 = 3.0과 다르다)</p>
+
+<h3>비율의 평균</h3>
+
+<p>두 가게의 구매 전환율(방문한 사람 가운데 산 사람의 비율, AR07의 퍼센트)을 합쳐 봅니다. A 가게는 100명 방문에 10명 구매(10%), B 가게는 900명 방문에 270명 구매(30%)입니다. 두 가게를 합친 전환율은 (10% + 30%) ÷ 2 = 20%일까요?</p>
+
+<div class="box ex">
+<p class="box-k">풀이 예제</p>
+<p class="calc">① 합으로 바꾼다. 구매 10 + 270 = 280명, 방문 100 + 900 = 1,000명<br>
+② 전체 전환율 = 280 ÷ 1,000 = 0.28 → 28%<br>
+③ 가중평균으로 검산: 가중치는 방문자 수. (100 × 10% + 900 × 30%) ÷ 1,000 = (10 + 270) ÷ 1,000 = 28%<br>
+④ 비율 가중치로: 0.1 × 10% + 0.9 × 30% = 1% + 27% = 28%</p>
+<p>비율(퍼센트)도 평균의 일종입니다. "구매하면 1, 안 하면 0"이라고 적은 자료의 평균이 곧 구매 비율이기 때문입니다. 그래서 비율을 합칠 때도 <b>분모(방문자 수)가 가중치</b>가 됩니다. 20%는 100명짜리 가게와 900명짜리 가게를 같은 무게로 센 틀린 값입니다.</p>
+</div>
+
+<h3>속력의 평균</h3>
+
+<p>120 km 떨어진 곳에 갈 때는 60 km/h, 올 때는 40 km/h로 달렸습니다. 왕복 평균 속력은 (60 + 40) ÷ 2 = 50 km/h일까요? 평균 속력의 정의(AR06)는 "전체 거리 ÷ 전체 시간"입니다.</p>
+
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 206" role="img" aria-label="0시간부터 5시간까지의 시간 축. 갈 때 60 km/h로 120 km를 가는 데 2시간, 올 때 40 km/h로 120 km를 오는 데 3시간이 걸린다. 전체 240 km를 5시간에 갔으므로 평균 속력은 48 km/h.">
+<rect class="f-soft" x="80" y="50" width="240" height="40"/>
+<rect class="f-box" x="320" y="50" width="360" height="40"/>
+<text class="f-s f-ink-t" x="200" y="75" text-anchor="middle">갈 때 60 km/h · 120 km</text>
+<text class="f-s f-ink-t" x="500" y="75" text-anchor="middle">올 때 40 km/h · 120 km</text>
+<line class="f-ink" x1="80" y1="104" x2="680" y2="104"/>
+<path class="f-ink" d="M80 104v6M200 104v6M320 104v6M440 104v6M560 104v6M680 104v6"/>
+<text class="f-s" x="80" y="126" text-anchor="middle">0 h</text>
+<text class="f-s" x="200" y="126" text-anchor="middle">1 h</text>
+<text class="f-s" x="320" y="126" text-anchor="middle">2 h</text>
+<text class="f-s" x="440" y="126" text-anchor="middle">3 h</text>
+<text class="f-s" x="560" y="126" text-anchor="middle">4 h</text>
+<text class="f-s" x="680" y="126" text-anchor="middle">5 h</text>
+<text class="f-s" x="200" y="38" text-anchor="middle">2시간</text>
+<text class="f-s" x="500" y="38" text-anchor="middle">3시간</text>
+<text class="f-t f-b" x="380" y="162" text-anchor="middle">전체: 240 km ÷ 5 h = 48 km/h</text>
+<text class="f-s" x="380" y="188" text-anchor="middle">느린 구간(40 km/h)에 더 오래 머물러서 그쪽 가중치가 크다</text>
+</svg>
+<figcaption>띠의 길이는 걸린 시간에 비례한다(1시간 = 120 px).</figcaption>
+</figure>
+
+<div class="box ex">
+<p class="box-k">풀이 예제</p>
+<p class="calc">① 갈 때 시간 = 120 km ÷ 60 km/h = 2 h<br>
+② 올 때 시간 = 120 km ÷ 40 km/h = 3 h<br>
+③ 전체 거리 240 km, 전체 시간 5 h<br>
+④ 평균 속력 = 240 ÷ 5 = 48 km/h<br>
+⑤ 가중평균으로 검산: 가중치는 시간. (2 × 60 + 3 × 40) ÷ (2 + 3) = (120 + 120) ÷ 5 = 48</p>
+<p>50이 아니라 48인 이유는 느린 속력으로 달린 시간이 더 길기 때문입니다. 같은 <b>거리</b>를 달렸어도 같은 <b>시간</b>을 달린 것이 아니므로, 속력을 시간으로 가중해야 합니다. 갈 때와 올 때 같은 시간(예: 각각 2시간)을 달렸다면 그때는 그냥 평균 50 km/h가 맞습니다.</p>
+</div>
+
+<div class="table-wrap">
+<table>
+<tr><th>평균</th><th>값</th><th>가중치</th><th>틀리기 쉬운 답 → 맞는 답</th></tr>
+<tr><td>두 반의 전체 평균</td><td>반 평균</td><td>인원</td><td>70 → 75</td></tr>
+<tr><td>학점 평균</td><td>과목 평점</td><td>학점</td><td>3.0 → 3.5</td></tr>
+<tr><td>합친 전환율</td><td>가게별 비율</td><td>방문자 수 (분모)</td><td>20% → 28%</td></tr>
+<tr><td>왕복 평균 속력</td><td>구간 속력</td><td>걸린 시간</td><td>50 → 48 km/h</td></tr>
+</table>
+</div>
+
+<div class="why">
+<p class="box-k">왜 그럴까?</p>
+<p>어느 회사가 "우리 회사 직원의 평균 월급은 부서별 평균 월급을 평균 낸 값"이라고 발표했습니다. 임원 3명으로 된 부서와 직원 300명으로 된 부서가 있다면 이 발표값은 실제 직원 평균보다 클까요, 작을까요?</p>
+<details><summary>모범 답 보기</summary><p>대개 클 것입니다. 부서 평균을 그냥 평균 내면 3명짜리 임원 부서가 300명짜리 부서와 같은 무게로 셈해집니다. 임원 부서의 평균 월급이 높다면, 그 높은 값이 실제 인원 비율(3 : 300)보다 훨씬 크게 반영되어 결과가 부풀려집니다. 실제 직원 평균은 각 부서 월급 합을 모두 더해 전체 인원 303명으로 나눠야 합니다.</p></details>
+</div>
+
+<div class="check" data-q="q6"></div>
+<div class="check" data-q="q7"></div>
+
+<div class="more">
+<p class="box-k">더 알아보기 · 부분마다 이겨도 전체에서 질 수 있다</p>
+<p>가중치가 다르면 더 놀라운 일도 생깁니다. 두 학원 X, Y에 쉬운 반과 어려운 반이 있습니다.</p>
+<div class="table-wrap">
+<table>
+<tr><th></th><th>쉬운 반</th><th>어려운 반</th><th>전체</th></tr>
+<tr><td>X 학원</td><td>90명 · 평균 80</td><td>10명 · 평균 50</td><td>(7,200 + 500) ÷ 100 = 77</td></tr>
+<tr><td>Y 학원</td><td>10명 · 평균 85</td><td>90명 · 평균 55</td><td>(850 + 4,950) ÷ 100 = 58</td></tr>
+</table>
+</div>
+<p>Y는 쉬운 반(85 &gt; 80)에서도, 어려운 반(55 &gt; 50)에서도 X보다 평균이 높습니다. 그런데 전체 평균은 X가 77, Y가 58로 X가 훨씬 높습니다. Y 학생 대부분이 점수가 낮게 나오는 어려운 반에 있어서, 전체 평균에서 어려운 반의 가중치가 크기 때문입니다. 이렇게 묶어서 보면 결론이 뒤집히는 현상을 <b>심프슨의 역설</b>(Simpson's paradox)이라고 합니다. 데이터를 묶고 나눌 때 "각 묶음의 크기(가중치)가 어떻게 다른가"를 꼭 확인해야 하는 이유입니다. 통계·확률 단원(DA, PR)에서 다시 다룹니다.</p>
+</div>
+
+<p>가중평균은 뒤에서 아주 자주 나옵니다. 확률에서 기댓값(PR04)은 "값 × 확률"을 더한 가중평균이고, 머신러닝에서 여러 결과를 합치거나 데이터 불균형을 보정할 때(ML03)도 가중치를 붙여 평균을 냅니다.</p>
+
+<h2>한눈에 정리</h2>
+
+<div class="table-wrap">
+<table>
+<tr><th>묻는 것</th><th>답</th></tr>
+<tr><td>묶음을 합친 평균</td><td>묶음마다 <b class="key">합 = 평균 × 인원</b>으로 바꿔 더한 뒤 전체 인원으로 나눈다</td></tr>
+<tr><td>평균의 평균</td><td>묶음 크기가 <b class="key">모두 같을 때만</b> 전체 평균과 같다</td></tr>
+<tr><td><b class="key">가중평균</b></td><td>Σ w<sub>i</sub>x<sub>i</sub> ÷ Σ w<sub>i</sub>. 값 × 가중치의 합을 가중치의 합으로 나눈다</td></tr>
+<tr><td><b class="key">가중치</b></td><td>각 값을 얼마나 무겁게 셀지. 인원, 학점, 방문자 수(분모), 시간</td></tr>
+<tr><td>보통 평균</td><td>가중치가 모두 같은 가중평균</td></tr>
+<tr><td>가중평균의 위치</td><td>최솟값과 최댓값 사이, <b class="key">가중치가 큰 값 쪽</b>에 가깝다</td></tr>
+<tr><td>왕복 평균 속력</td><td>전체 거리 ÷ 전체 시간. 구간 속력을 시간으로 가중</td></tr>
+</table>
+</div>
+
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>크기가 다른 묶음의 평균은 그냥 평균 내지 말고 합으로 바꿔 다시 나누어야 하며, 그것이 묶음 크기를 가중치로 쓰는 가중평균이다.</p></div>
+
+<h2>확인 문제</h2>
+<p>본문 중간에서 푼 문제 말고 남은 문제입니다. 보기를 누르면 바로 정답과 해설이 나옵니다.</p>
+<div id="quiz"></div>
+
+<section class="work" id="tools"></section>
+
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

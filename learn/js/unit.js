@@ -44,6 +44,10 @@
           ol.appendChild(li);
         });
         page.appendChild(ol);
+      } else if (G.skipped(id)) {
+        var sk = el("div", "box");
+        sk.appendChild(el("p", "", "이미 아는 기초라서 이 교재에서는 건너뛰는 단원입니다. 본문은 쓰지 않습니다."));
+        page.appendChild(sk);
       } else if (u.area === "BD") {
         var bd = el("div", "box");
         var bp = el("p", "", "빅분기 시험 내용은 따로 있는 책 ");
@@ -66,7 +70,7 @@
         ids.forEach(function (x) { blk.appendChild(G.row(x, s, { tag: x.slice(0, 2) === u.area ? "" : G.area(G.unit(x).area).name })); });
         page.appendChild(blk);
       }
-      rows("먼저 볼 단원", u.pre, "없음. 바로 시작할 수 있습니다.");
+      rows("먼저 볼 단원", u.pre.filter(function (x) { return !G.skipped(x); }), "없음. 바로 시작할 수 있습니다.");
       rows("이어지는 단원", G.next(id), "이 단원을 직접 앞내용으로 쓰는 단원은 없습니다.");
 
       page.appendChild(el("h2", "", "들어 있는 경로"));

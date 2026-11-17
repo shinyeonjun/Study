@@ -1,6 +1,8 @@
 /* 지식 지도 도우미: 단원 찾기, 선수관계 펼치기, 경로 순서, 단원·장 상태. 홈과 단원 안내가 같이 쓴다. */
 (function () {
   var B = window.BDA, M = window.BDA_MAP, C = window.BDA_CHAPTERS || {};
+  var SKIP = {};
+  (window.BDA_SKIP || []).forEach(function (id) { SKIP[id] = true; });
   var byId = {}, areaBy = {}, next = {};
   M.units.forEach(function (u, i) { u.order = i; byId[u.id] = u; next[u.id] = []; });
   M.areas.forEach(function (a) { areaBy[a.code] = a; });
@@ -8,6 +10,7 @@
 
   var G = (B.G = {});
   G.unit = function (id) { return byId[id] || null; };
+  G.skipped = function (id) { return !!SKIP[id]; };
   G.area = function (code) { return areaBy[code] || null; };
   G.chapters = function (id) { return C[id] || []; };
   G.next = function (id) { return next[id] || []; };
@@ -17,7 +20,7 @@
   G.expand = function (targets) {
     var seen = {}, out = [];
     function visit(id) {
-      if (seen[id]) return;
+      if (seen[id] || SKIP[id]) return;
       seen[id] = true;
       byId[id].pre.slice().sort(function (a, b) { return byId[a].order - byId[b].order; }).forEach(visit);
       out.push(id);
@@ -35,7 +38,7 @@
 
   // 단원 하나의 상태: 장이 없으면 none. 있으면 장들의 문제 기록을 모아 본다
   G.unitStatus = function (id, s) {
-    var chs = G.chapters(id), r = { chapters: chs.length, total: 0, tried: 0, due: 0, open: 0, state: "none" };
+    var chs = G.chapters(id), r = { chapters: chs.length, total: 0, tried: 0, due: 0, open: 0, state: SKIP[id] ? "skip" : "none" };
     if (!chs.length) return r;
     var states = chs.map(function (ch) {
       var x = B.noteStatus(ch.id, s);
@@ -58,12 +61,12 @@
     }).map(function (u) { return u.id; });
   };
 
-  var LABEL = { none: "준비 전", "new": "새 단원", ing: "읽는 중", due: "복습할 때", ok: "읽음" };
+  var LABEL = { skip: "건너뜀", none: "준비 전", "new": "새 단원", ing: "읽는 중", due: "복습할 때", ok: "읽음" };
   G.label = function (st) { return LABEL[st]; };
 
   // 목차의 한 줄: 단원 ID · 제목(단원 안내로) · 장 번호 칸들 · 상태
   G.row = function (id, s, opt) {
-    var el = B.el, u = byId[id], r = G.unitStatus(id, s), row = el("div", "urow " + (r.state === "none" ? "off" : "on"));
+    var el = B.el, u = byId[id], r = G.unitStatus(id, s), row = el("div", "urow " + (r.state === "none" || r.state === "skip" ? "off" : "on") + (r.state === "skip" ? " skip" : ""));
     opt = opt || {};
     row.appendChild(el("span", "uid", u.id));
     var t = el("a", "ut", u.title);
@@ -71,7 +74,7 @@
     row.appendChild(t);
     if (opt.tag) row.appendChild(el("span", "utag", opt.tag));
     var right = el("span", "uright");
-    if (r.state === "none") right.appendChild(el("span", "ust", "준비 전"));
+    if (r.state === "none" || r.state === "skip") right.appendChild(el("span", "ust", LABEL[r.state]));
     else {
       var chips = el("span", "chs");
       G.chapters(id).forEach(function (ch, i) {

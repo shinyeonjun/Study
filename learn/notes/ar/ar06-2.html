@@ -1,0 +1,323 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>단위 환산과 속도·처리량 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e8c'/%3E%3Cpath d='M8 22V10m8 12V14m8 8V6' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="AR06-2">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+
+<header class="chapter">
+<p class="chap-sub">산술과 수 감각 · AR06 비와 단위</p>
+<p class="chap-num">AR06·2</p>
+<h1>단위 환산과 속도·처리량</h1>
+<p class="lead">인터넷 요금제 광고에는 "100 Mbps"라고 적혀 있는데, 파일을 내려받는 창에는 "12 MB/s" 정도가 찍힙니다. 속도가 광고의 8분의 1밖에 안 나오는 걸까요? 이 장에서는 단위를 바꾸는 방법(1을 곱하기), 속도와 데이터 처리량 계산, 그리고 계산 결과의 단위가 맞는지 확인하는 차원 확인을 다룹니다.</p>
+</header>
+
+<div class="goal">
+<h2>이 장을 읽고 나면</h2>
+<ul>
+<li>환산 인수(1과 같은 분수)를 곱해 km를 m로, km/h를 m/s로 바꿀 수 있다.</li>
+<li>거리·속력·시간 가운데 둘을 알 때 나머지 하나를 구하고, 소수 시간을 분으로 바꿀 수 있다.</li>
+<li>Mbps와 MB/s의 차이를 설명하고, 파일 전송 시간을 계산할 수 있다.</li>
+<li>초당 요청 수 같은 처리량을 시간·하루 단위로 바꿀 수 있다.</li>
+<li>식의 단위를 따라가서 답의 단위가 맞는지(차원 확인) 검사할 수 있다.</li>
+</ul>
+</div>
+
+<h2>단위는 수의 일부다</h2>
+
+<p>"3"과 "3 km"와 "3시간"은 다른 것입니다. 측정해서 얻은 값은 언제나 <b>수와 단위의 곱</b>입니다. 3 km는 "1 km가 3개"라는 뜻이고, 3시간은 "1시간이 3개"라는 뜻입니다. 단위를 떼고 수만 들고 다니면 계산 도중에 무엇을 계산하고 있었는지 잃어버립니다.</p>
+
+<p>그래서 이 장에서는 계산할 때 <b>단위를 수처럼 적어 두고 같이 계산</b>합니다. 단위도 곱하고, 나누고, 분수처럼 약분합니다. 처음에는 번거로워 보이지만 이 방법 하나로 단위 환산, 속도 계산, 오류 찾기가 모두 해결됩니다.</p>
+
+<p>단위 기호(m, km, s, h, bit, byte 등)를 읽는 법과 bit·byte의 기본은 U04 "기호와 단위 읽기"에서 다룹니다. 여기서 쓰는 기호만 짧게 적어 둡니다. m(미터), km(킬로미터, 1000 m), s(초, second), min(분), h(시간, hour).</p>
+
+<h2>1을 곱하는 환산 <span class="tag grasp">이해하기</span></h2>
+
+<h3>환산 인수</h3>
+
+<p>1 km와 1000 m는 같은 길이입니다. 같은 것을 같은 것으로 나누면 1이므로, 다음 분수는 둘 다 값이 1입니다.</p>
+
+<p class="calc">1000 m / 1 km = 1 &nbsp;&nbsp;&nbsp; 1 km / 1000 m = 1</p>
+
+<p>어떤 수에 1을 곱해도 값은 바뀌지 않습니다. 그래서 측정값에 이런 분수를 곱하면 <b>길이는 그대로 두고 단위만 바꿀</b> 수 있습니다. 이렇게 값이 1인, 단위를 바꾸는 분수를 <b class="key">환산 인수</b>(conversion factor)라고 합니다.</p>
+
+<div class="box">
+<p class="box-k">정의 <span class="tag memo">외우기</span></p>
+<p><b>단위 환산</b>은 측정값에 환산 인수(값이 1인 분수)를 곱해, 없애고 싶은 단위가 분자와 분모에서 약분되게 하는 것입니다. 없앨 단위가 <b>위에 있으면 아래에 오는</b> 인수를, 아래에 있으면 위에 오는 인수를 고릅니다.</p>
+</div>
+
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 262" role="img" aria-label="(가) 2.5 km 곱하기 1000 m 분의 1 km. km가 위와 아래에서 지워져 2500 m가 된다. 분수 1000 m 분의 1 km는 값이 1이다. (나) 72 km/h를 72 km 나누기 1 h로 적고, 1000 m 나누기 1 km와 1 h 나누기 3600 s를 곱한다. km와 h가 지워져 72000 m 나누기 3600 s, 곧 20 m/s가 된다.">
+<text class="f-cap" x="20" y="80">(가)</text>
+<text class="f-t" x="96" y="80" text-anchor="end">2.5</text>
+<text class="f-t" x="100" y="80">km</text>
+<line class="f-line" x1="97" y1="75" x2="122" y2="75"/>
+<text class="f-t" x="150" y="80" text-anchor="middle">×</text>
+<text class="f-t" x="220" y="62" text-anchor="middle">1000 m</text>
+<line class="f-ink" x1="180" y1="70" x2="260" y2="70"/>
+<text class="f-t" x="216" y="94" text-anchor="end">1</text>
+<text class="f-t" x="220" y="94">km</text>
+<line class="f-line" x1="217" y1="89" x2="242" y2="89"/>
+<text class="f-t" x="290" y="80" text-anchor="middle">=</text>
+<text class="f-t f-b" x="320" y="80">2500 m</text>
+<text class="f-s" x="220" y="126" text-anchor="middle">1 km = 1000 m 이므로 이 분수의 값은 1</text>
+<line class="f-dash" x1="20" y1="146" x2="740" y2="146"/>
+<text class="f-cap" x="20" y="204">(나)</text>
+<text class="f-t" x="86" y="186" text-anchor="end">72</text>
+<text class="f-t" x="90" y="186">km</text>
+<line class="f-line" x1="87" y1="181" x2="112" y2="181"/>
+<line class="f-ink" x1="55" y1="194" x2="125" y2="194"/>
+<text class="f-t" x="86" y="214" text-anchor="end">1</text>
+<text class="f-t" x="90" y="214">h</text>
+<line class="f-line" x1="87" y1="209" x2="102" y2="209"/>
+<text class="f-t" x="148" y="204" text-anchor="middle">×</text>
+<text class="f-t" x="210" y="186" text-anchor="middle">1000 m</text>
+<line class="f-ink" x1="170" y1="194" x2="250" y2="194"/>
+<text class="f-t" x="206" y="214" text-anchor="end">1</text>
+<text class="f-t" x="210" y="214">km</text>
+<line class="f-line" x1="207" y1="209" x2="232" y2="209"/>
+<text class="f-t" x="270" y="204" text-anchor="middle">×</text>
+<text class="f-t" x="326" y="186" text-anchor="end">1</text>
+<text class="f-t" x="330" y="186">h</text>
+<line class="f-line" x1="327" y1="181" x2="342" y2="181"/>
+<line class="f-ink" x1="290" y1="194" x2="370" y2="194"/>
+<text class="f-t" x="330" y="214" text-anchor="middle">3600 s</text>
+<text class="f-t" x="400" y="204" text-anchor="middle">=</text>
+<text class="f-t" x="470" y="186" text-anchor="middle">72000 m</text>
+<line class="f-ink" x1="425" y1="194" x2="515" y2="194"/>
+<text class="f-t" x="470" y="214" text-anchor="middle">3600 s</text>
+<text class="f-t" x="545" y="204" text-anchor="middle">=</text>
+<text class="f-t f-b" x="575" y="204">20 m/s</text>
+<text class="f-s" x="330" y="248" text-anchor="middle">km와 h가 위아래에서 하나씩 지워지고 m/s만 남는다</text>
+</svg>
+<figcaption>줄을 그은 단위는 분자와 분모에서 약분되어 사라진 것이다.</figcaption>
+</figure>
+
+<div class="box ex">
+<p class="box-k">풀이 예제</p>
+<p>자동차가 시속 72 km(72 km/h)로 달립니다. 1초에 몇 m를 가는지(m/s) 구합니다.</p>
+<p class="calc">① 단위를 분수로 적는다. 72 km/h = 72 km / 1 h<br>
+② km를 없애야 한다. km가 위에 있으므로 km가 아래에 오는 인수 1000 m / 1 km를 곱한다.<br>
+③ h를 없애야 한다. h가 아래에 있으므로 h가 위에 오는 인수 1 h / 3600 s를 곱한다. (1 h = 60 min = 60 × 60 s = 3600 s)<br>
+④ 수끼리 계산한다. 72 × 1000 × 1 = 72000, 1 × 1 × 3600 = 3600<br>
+⑤ 남은 단위는 m / s. 72000 ÷ 3600 = 20 → 20 m/s</p>
+<p>결과를 그럴듯한지 확인합니다. 1초에 20 m면 1시간(3600초)에 72,000 m = 72 km. 처음 값과 같으므로 맞습니다.</p>
+</div>
+
+<div class="box trap">
+<p class="box-k">흔한 실수</p>
+<p><b>환산 인수를 거꾸로 곱하는 실수.</b> 2.5 km에 1 km / 1000 m를 곱하면 2.5 × 1 ÷ 1000 = 0.0025가 나오고, 단위는 km × km / m라는 이상한 꼴이 됩니다. 수만 보고 계산하면 놓치지만, 단위를 같이 적으면 "km가 지워지지 않았다"는 것이 바로 보입니다. <b>지우고 싶은 단위가 약분되었는지</b>를 매번 확인합니다.</p>
+<p><b>"큰 단위로 바꾸면 수가 작아지고, 작은 단위로 바꾸면 수가 커진다."</b> km → m는 작은 단위로 가므로 수가 커져야(2.5 → 2500) 합니다. 반대로 나왔다면 인수가 뒤집힌 것입니다.</p>
+</div>
+
+<h3>자주 쓰는 환산</h3>
+
+<div class="table-wrap">
+<table>
+<tr><th>같은 양</th><th>환산 인수 (값 = 1)</th><th>메모</th></tr>
+<tr><td>1 km = 1000 m</td><td>1000 m / 1 km</td><td>k(킬로) = 1000배</td></tr>
+<tr><td>1 m = 100 cm</td><td>100 cm / 1 m</td><td>c(센티) = 100분의 1</td></tr>
+<tr><td>1 h = 60 min</td><td>60 min / 1 h</td><td>시간은 10진법이 아니다</td></tr>
+<tr><td>1 h = 3600 s</td><td>3600 s / 1 h</td><td>60 × 60</td></tr>
+<tr><td>1일 = 86,400 s</td><td>86400 s / 1일</td><td>24 × 3600</td></tr>
+<tr><td>1 byte = 8 bit</td><td>8 bit / 1 byte</td><td>아래 처리량 절에서 사용</td></tr>
+</table>
+</div>
+
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+
+<h2>속도: 거리 ÷ 시간</h2>
+
+<p>속도(정확히는 속력, speed)는 앞 장에서 본 단위당 양의 대표입니다. <b>1시간(또는 1초) 동안 간 거리</b>입니다.</p>
+
+<div class="box">
+<p class="box-k">정의 <span class="tag memo">외우기</span></p>
+<p class="calc">속력 = 거리 ÷ 시간 &nbsp;&nbsp; 거리 = 속력 × 시간 &nbsp;&nbsp; 시간 = 거리 ÷ 속력</p>
+<p>세 식은 같은 관계를 셋으로 적은 것입니다. 하나만 기억하고 나머지는 단위로 확인하면 됩니다. 예를 들어 km/h × h = km이므로 "거리 = 속력 × 시간"이 맞습니다.</p>
+</div>
+
+<p>여기서 속력은 대개 <b>평균</b>입니다. 실제 차는 빨라졌다 느려졌다 하지만, 전체 거리를 전체 시간으로 나누면 "내내 같은 빠르기로 갔다면 얼마였을까"가 나옵니다. 평균은 AR10에서 자세히 다룹니다.</p>
+
+<div class="box ex">
+<p class="box-k">풀이 예제</p>
+<p>150 km를 평균 60 km/h로 가면 몇 시간 몇 분이 걸릴까요?</p>
+<p class="calc">① 시간 = 거리 ÷ 속력 = 150 km ÷ 60 km/h<br>
+② 단위: km ÷ (km/h) = km × (h/km) = h. 시간이 나오므로 식이 맞다.<br>
+③ 수: 150 ÷ 60 = 2.5 → 2.5 h<br>
+④ 2.5 h = 2 h + 0.5 h. 0.5 h × 60 min/h = 30 min<br>
+⑤ 답: 2시간 30분</p>
+</div>
+
+<div class="box trap">
+<p class="box-k">흔한 실수</p>
+<p><b>2.5시간을 "2시간 50분"으로 읽는 실수.</b> 시간은 60분이 1시간인 60진법이라, 소수점 아래 .5는 50분이 아니라 0.5 × 60 = 30분입니다. 마찬가지로 1.25시간은 1시간 15분, 0.1시간은 6분입니다. 소수 시간은 반드시 60을 곱해 분으로 바꿉니다.</p>
+</div>
+
+<div class="check" data-q="q4"></div>
+<div class="check" data-q="q5"></div>
+
+<h2>처리량: 데이터와 요청의 속도</h2>
+
+<p>컴퓨터와 네트워크에서는 "1초에 얼마나 많이 처리하는가"를 <b class="key">처리량</b>(throughput, 스루풋)이라고 부릅니다. 이것도 단위당 양입니다. 무엇을 세느냐에 따라 단위가 달라집니다.</p>
+
+<h3>Mbps와 MB/s <span class="tag memo">외우기</span></h3>
+
+<div class="side"><b>읽는 법</b> Mbps = mega<b>b</b>it per second, "메가비트 퍼 세컨드". MB/s = mega<b>B</b>yte per second, "메가바이트 퍼 세컨드". 소문자 b는 비트, 대문자 B는 바이트입니다.</div>
+
+<p>데이터의 가장 작은 단위는 <b>비트</b>(bit, 0 또는 1 하나)이고, 비트 8개를 묶은 것이 <b>바이트</b>(byte)입니다. 인터넷 회선 속도는 관례적으로 <b>비트</b>로 적고(Mbps), 파일 크기와 내려받기 창의 속도는 보통 <b>바이트</b>로 적습니다(MB, MB/s). 앞의 M(메가)은 둘 다 100만입니다.</p>
+
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 206" role="img" aria-label="1초 동안 지나가는 100 메가비트를 긴 띠로 그렸다. 8 메가비트씩 한 칸으로 나누면 12칸과 반 칸이 나온다. 8 메가비트는 1 메가바이트이므로 100 Mbps는 12.5 MB/s다.">
+<text class="f-t" x="380" y="40" text-anchor="middle">1초 동안 지나가는 100 Mb (메가비트)</text>
+<rect class="f-box" x="60" y="56" width="640" height="40"/>
+<rect class="f-soft" x="60" y="56" width="51.2" height="40"/>
+<rect class="f-dash" x="674.4" y="56" width="25.6" height="40"/>
+<path class="f-line" d="M111.2 56V96M162.4 56V96M213.6 56V96M264.8 56V96M316 56V96M367.2 56V96M418.4 56V96M469.6 56V96M520.8 56V96M572 56V96M623.2 56V96M674.4 56V96"/>
+<path class="f-ink" d="M60 104v6h51.2v-6"/>
+<text class="f-s f-ink-t" x="60" y="128">8 Mb = 1 MB</text>
+<path class="f-ink" d="M674.4 104v6h25.6v-6"/>
+<text class="f-s f-ink-t" x="700" y="128" text-anchor="end">반 칸</text>
+<text class="f-t" x="380" y="160" text-anchor="middle">8 Mb씩 묶으면 12칸 + 반 칸 = 12.5 MB</text>
+<text class="f-t f-b" x="380" y="190" text-anchor="middle">100 Mbps = 12.5 MB/s</text>
+</svg>
+<figcaption>한 칸 = 8 Mb = 1 MB. 띠는 실제 비율대로 나누었다(640 ÷ 12.5 = 51.2).</figcaption>
+</figure>
+
+<div class="box ex">
+<p class="box-k">풀이 예제</p>
+<p>100 Mbps 회선으로 500 MB 파일을 내려받으면 이론상 몇 초 걸릴까요?</p>
+<p class="calc">① 회선 속도를 바이트로 바꾼다. 100 Mb/s × (1 MB / 8 Mb) = 100 ÷ 8 MB/s = 12.5 MB/s<br>
+② 시간 = 크기 ÷ 속도 = 500 MB ÷ 12.5 MB/s<br>
+③ 단위: MB ÷ (MB/s) = s<br>
+④ 수: 500 ÷ 12.5 = 40 → 40초</p>
+<p>다른 길로 검산합니다. 파일을 비트로 바꾸면 500 MB × 8 Mb/MB = 4000 Mb. 4000 Mb ÷ 100 Mb/s = 40 s. 같습니다.</p>
+</div>
+
+<p>그래서 장 처음의 질문에 답할 수 있습니다. 100 Mbps 회선에서 내려받기 창에 12 MB/s 언저리가 찍히는 것은 대부분 <b>단위가 다를 뿐</b>입니다. 이론값 12.5 MB/s에 가깝습니다. 실제 속도가 이론값보다 조금 낮은 것은 보통입니다. 데이터에 붙는 주소·확인용 정보, 회선을 나눠 쓰는 다른 사용자, 서버 쪽 속도 같은 것이 영향을 줍니다(네트워크 단원 NW03에서 자세히 봅니다).</p>
+
+<div class="more">
+<p class="box-k">더 알아보기 · MB와 MiB</p>
+<p>국제 표준(SI)에서 M(메가)은 10<sup>6</sup> = 1,000,000이고, 1 kB = 1000 B입니다. 2의 거듭제곱을 쓰는 단위는 따로 이름이 있어서 1 KiB(키비바이트) = 1024 B, 1 MiB = 1024 × 1024 B입니다(국제 전기 기술 위원회 IEC 표준). 회선 속도의 Mbps는 SI(100만 비트)를 씁니다. 그런데 운영체제나 프로그램 가운데는 MiB 값을 "MB"라고 표시하는 것도 있어서 숫자가 몇 퍼센트 어긋날 수 있습니다. 빅분기 노트 1-01에서는 시험 관례에 따라 KB = 1,024 B로 계산했습니다. 어느 쪽인지 헷갈리면 그 문서가 무엇을 기준으로 삼았는지 먼저 확인합니다.</p>
+</div>
+
+<div class="check" data-q="q6"></div>
+<div class="check" data-q="q7"></div>
+
+<h3>초당 요청 수</h3>
+
+<p>웹 서버의 처리량은 흔히 <b>초당 요청 수</b>(requests per second, rps)로 적습니다. "이 서버는 250 rps를 처리한다"는 1초에 요청 250개를 처리한다는 뜻입니다. 이것도 환산 인수로 다른 시간 단위로 바꿉니다.</p>
+
+<div class="box ex">
+<p class="box-k">풀이 예제</p>
+<p>250 rps를 처리하는 서버는 1시간에, 하루에 요청을 몇 개 처리할 수 있을까요? (쉬지 않고 같은 속도라고 가정)</p>
+<p class="calc">① 1시간: 250 요청/s × 3600 s/h = 900,000 요청/h<br>
+② 하루: 900,000 요청/h × 24 h/일 = 21,600,000 요청/일<br>
+③ 검산: 250 × 86,400 = 21,600,000. 같다.</p>
+<p>거꾸로 "하루 요청 4,320,000개"를 초당으로 바꾸면 4,320,000 ÷ 86,400 = 50 rps입니다. 다만 이것은 <b>하루 평균</b>입니다. 실제 요청은 낮에 몰리고 밤에 줄어서, 바쁜 시간에는 평균보다 훨씬 많은 요청이 들어올 수 있습니다. 평균 하나로 전체 모습을 말하기 어렵다는 이야기는 통계 단원(DA04)에서 다시 나옵니다.</p>
+</div>
+
+<div class="check" data-q="q8"></div>
+
+<h2>차원 확인: 단위로 식을 검사한다 <span class="tag grasp">이해하기</span></h2>
+
+<div class="side"><b>용어</b> <b>차원</b>은 양의 종류입니다. m, km, cm는 단위는 달라도 모두 "길이" 차원이고, s, h는 "시간" 차원입니다.</div>
+
+<p>단위를 같이 계산하는 습관에는 큰 덤이 있습니다. 식이 맞는지 <b>값을 몰라도</b> 검사할 수 있다는 점입니다. 이를 <b class="key">차원 확인</b>(dimensional analysis, 차원 분석)이라고 합니다. 규칙은 두 가지입니다.</p>
+
+<ol>
+<li><b>더하기·빼기는 같은 차원끼리만</b> 할 수 있습니다. 길이 + 길이는 되지만 길이 + 시간은 뜻이 없습니다. 같은 차원이라도 단위가 다르면 먼저 맞춥니다. 3 m + 20 cm = 3 m + 0.2 m = 3.2 m (23이 아닙니다).</li>
+<li><b>곱하기·나누기는 단위도 곱하고 나눕니다.</b> 그래서 종류가 다른 양끼리도 곱하고 나눌 수 있고, 결과에 새 단위(km/h, 원/개)가 생깁니다.</li>
+</ol>
+
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 222" role="img" aria-label="(가) 60 km/h 곱하기 2 h. 단위는 km/h 곱하기 h는 km. 120 km, 거리가 나와 맞다. (나) 120 km 나누기 40 km/h. 단위는 km 나누기 km/h는 h. 3 h, 시간이 나와 맞다. (다) 5 m 더하기 3 s. 길이와 시간은 더할 수 없으므로 식이 잘못되었다.">
+<line class="f-dash" x1="253" y1="14" x2="253" y2="180"/>
+<line class="f-dash" x1="507" y1="14" x2="507" y2="180"/>
+<rect class="f-soft" x="47" y="38" width="160" height="34" rx="4"/>
+<text class="f-t" x="127" y="60" text-anchor="middle">60 km/h × 2 h</text>
+<text class="f-s" x="127" y="100" text-anchor="middle">단위: km/h × h</text>
+<text class="f-s" x="127" y="124" text-anchor="middle">h가 약분 → km</text>
+<text class="f-t f-b" x="127" y="160" text-anchor="middle">120 km (거리) ✓</text>
+<rect class="f-soft" x="295" y="38" width="170" height="34" rx="4"/>
+<text class="f-t" x="380" y="60" text-anchor="middle">120 km ÷ 40 km/h</text>
+<text class="f-s" x="380" y="100" text-anchor="middle">단위: km × h/km</text>
+<text class="f-s" x="380" y="124" text-anchor="middle">km가 약분 → h</text>
+<text class="f-t f-b" x="380" y="160" text-anchor="middle">3 h (시간) ✓</text>
+<rect class="f-over" x="573" y="38" width="120" height="34" rx="4"/>
+<text class="f-t" x="633" y="60" text-anchor="middle">5 m + 3 s</text>
+<text class="f-s" x="633" y="100" text-anchor="middle">길이 + 시간</text>
+<text class="f-s" x="633" y="124" text-anchor="middle">더할 수 없다</text>
+<text class="f-t f-b" x="633" y="160" text-anchor="middle">식이 잘못됨 ✗</text>
+<text class="f-cap" x="127" y="206" text-anchor="middle">(가) 곱하기</text>
+<text class="f-cap" x="380" y="206" text-anchor="middle">(나) 나누기</text>
+<text class="f-cap" x="633" y="206" text-anchor="middle">(다) 더하기</text>
+</svg>
+<figcaption>답의 단위가 묻는 양의 단위와 같은지만 봐도 많은 실수를 잡는다.</figcaption>
+</figure>
+
+<div class="box ex">
+<p class="box-k">풀이 예제 · 차원 확인으로 틀린 식 찾기</p>
+<p>누군가 "500 MB 파일을 12.5 MB/s로 받는 시간 = 500 × 12.5"라고 계산했습니다. 값을 계산하기 전에 단위로 검사합니다.</p>
+<p class="calc">① MB × (MB/s) = MB²/s<br>
+② 시간이라면 단위가 s여야 하는데 MB²/s가 나왔다. → 식이 틀렸다.<br>
+③ s가 나오려면 MB를 MB/s로 나눠야 한다. MB ÷ (MB/s) = s → 500 ÷ 12.5 = 40 s</p>
+</div>
+
+<p>차원 확인은 "맞다"를 보장하지는 않습니다. 단위는 맞지만 수를 잘못 넣을 수도 있으니까요. 하지만 단위가 틀리면 <b>반드시 틀린 식</b>입니다. 그래서 검산의 첫 단계로 씁니다. 뒤의 행렬 단원(LA04)에서 "행렬의 크기가 맞아야 곱할 수 있다"는 것을 확인하는 것도 같은 생각입니다.</p>
+
+<div class="why">
+<p class="box-k">왜 그럴까?</p>
+<p>3 m + 20 cm를 계산하는데 단위를 떼고 3 + 20 = 23이라고 했습니다. 이 계산이 틀린 것을 단위로 어떻게 설명할 수 있을까요?</p>
+<details><summary>모범 답 보기</summary><p>더하기는 "같은 것의 개수"끼리만 합칠 수 있습니다. 3 m는 "1 m가 3개", 20 cm는 "1 cm가 20개"라서 세는 단위가 다릅니다. 사과 3개와 귤 20개를 더해 "23"이라고 하면 무엇이 23개인지 말할 수 없는 것과 같습니다. 먼저 20 cm × (1 m / 100 cm) = 0.2 m로 단위를 맞추면 3 m + 0.2 m = 3.2 m입니다.</p></details>
+</div>
+
+<div class="check" data-q="q9"></div>
+
+<h2>한눈에 정리</h2>
+
+<div class="table-wrap">
+<table>
+<tr><th>묻는 것</th><th>답</th></tr>
+<tr><td>측정값</td><td>수 × 단위. 단위를 같이 적고 같이 계산한다</td></tr>
+<tr><td>단위 환산</td><td>값이 1인 분수, <b class="key">환산 인수</b>를 곱해 지울 단위를 약분한다</td></tr>
+<tr><td>시간 환산</td><td>1 h = 60 min = <b class="key">3600 s</b>, 1일 = 86,400 s. 소수 시간 × 60 = 분</td></tr>
+<tr><td>속력</td><td>거리 ÷ 시간. 거리 = 속력 × 시간, 시간 = 거리 ÷ 속력</td></tr>
+<tr><td>Mbps와 MB/s</td><td>b = 비트, B = 바이트, <b class="key">1 B = 8 b</b>. 100 Mbps = 12.5 MB/s</td></tr>
+<tr><td>처리량</td><td>1초당 처리하는 양 (MB/s, 초당 요청 수 rps)</td></tr>
+<tr><td><b class="key">차원 확인</b></td><td>더하기·빼기는 같은 차원끼리, 곱하기·나누기는 단위도 곱·나눔. 답의 단위가 맞는지 검사</td></tr>
+</table>
+</div>
+
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>단위를 수처럼 들고 다니며 1과 같은 환산 인수를 곱하면, 단위 바꾸기와 속도·처리량 계산과 식 검사가 한 가지 방법으로 해결된다.</p></div>
+
+<h2>확인 문제</h2>
+<p>본문 중간에서 푼 문제 말고 남은 문제입니다. 보기를 누르면 바로 정답과 해설이 나옵니다.</p>
+<div id="quiz"></div>
+
+<section class="work" id="tools"></section>
+
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

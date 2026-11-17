@@ -1,0 +1,405 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>변수·첨자·단위 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e8c'/%3E%3Cpath d='M8 22V10m8 12V14m8 8V6' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="U04-2">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+
+<header class="chapter">
+<p class="chap-sub">공부·컴퓨터의 출발점 · U04 기호와 단위 읽기</p>
+<p class="chap-num">U04·2</p>
+<h1>변수·첨자·단위</h1>
+<p class="lead">통계 책을 펴면 첫 쪽부터 "x<sub>1</sub>, x<sub>2</sub>, …, x<sub>n</sub>"이 나오고, 과학 기사에는 "60 km/h", "5 m<sup>2</sup>"가 나옵니다. 글자 옆 아래에 붙은 작은 숫자와 위에 붙은 작은 숫자는 뜻이 완전히 다르고, 같은 글자 m이 어떤 때는 수를 대신하고 어떤 때는 단위입니다. 이 장에서는 변수, 아래첨자, 위첨자, 측정 단위를 읽는 법과 구분하는 법을 익힙니다.</p>
+</header>
+
+<div class="goal">
+<h2>이 장을 읽고 나면</h2>
+<ul>
+<li>변수가 무엇인지 설명하고, 2x 같은 식에 수를 넣어 계산할 수 있다.</li>
+<li>x<sub>1</sub>, x<sub>i</sub>, x<sub>n</sub>을 소리 내어 읽고, 표의 어느 칸을 가리키는지 찾을 수 있다.</li>
+<li>x<sup>2</sup>, 2x, x<sub>2</sub>를 구분해서 각각 값을 구할 수 있다.</li>
+<li>수와 단위를 함께 계산하고(120 km ÷ 2 h = 60 km/h), 단위를 바꿀 수 있다.</li>
+<li>k, M, G, m 같은 접두어가 몇 배를 뜻하는지 말할 수 있다.</li>
+</ul>
+</div>
+
+<h2>변수: 수를 대신하는 글자 <span class="tag grasp">이해하기</span></h2>
+
+<p>"한 사람당 입장료 x원"이라는 말을 생각해 봅시다. 어른이면 x = 10,000, 아이면 x = 5,000처럼 상황마다 값이 달라집니다. 값이 정해지기 전에도 계산식을 세울 수 있도록 수 자리에 글자를 넣어 두는 것입니다.</p>
+
+<div class="box">
+<p class="box-k">정의</p>
+<p><b class="key">변수(variable)</b>: 여러 값을 가질 수 있는 수를 대신 적는 글자. x, y, n, a 같은 글자를 씁니다.<br>
+<b class="key">상수(constant)</b>: 값이 정해져 바뀌지 않는 수. 3, 100 같은 수입니다.</p>
+</div>
+
+<p>변수를 쓴 식에는 두 가지 생략 규칙이 있습니다.</p>
+<ul>
+<li><b>곱하기 기호를 생략한다.</b> 2 × x 는 <b>2x</b>로, x × y 는 <b>xy</b>로 씁니다. 숫자를 글자 앞에 둡니다.</li>
+<li><b>1은 생략한다.</b> 1 × x 는 그냥 x로 씁니다.</li>
+</ul>
+
+<div class="box ex">
+<p class="box-k">풀이 예제</p>
+<p>x = 3 일 때 2x + 5 의 값을 구합니다.</p>
+<p class="calc">① 2x 는 2 × x 이므로, x 자리에 3을 넣으면 2 × 3<br>
+② 2 × 3 = 6<br>
+③ 6 + 5 = 11</p>
+<p>x 자리에 수를 넣는 것을 <b>대입</b>이라고 합니다. 대입할 때는 생략했던 곱하기 기호를 되살려 2 × 3 으로 적으면 실수가 줄어듭니다.</p>
+</div>
+
+<div class="box trap">
+<p class="box-k">흔한 실수</p>
+<p>x = 3 일 때 2x 를 <b>23</b>이라고 읽는 실수가 있습니다. 2x 의 2와 x 사이에는 보이지 않는 곱하기가 있으므로 2 × 3 = 6 입니다. 반대로 숫자끼리는 생략하지 않습니다. 2 × 3 을 23 으로 쓰면 이십삼이 되어 버리기 때문입니다.</p>
+</div>
+
+<div class="check" data-q="q1"></div>
+
+<h2>아래첨자: 몇 번째인가 <span class="tag memo">외우기</span></h2>
+
+<p>학생 세 명의 점수를 변수로 적으려면 글자가 세 개 필요합니다. a, b, c로 써도 되지만, 학생이 1,000명이면 글자가 모자랍니다. 그래서 <b>같은 글자에 번호를 붙입니다.</b></p>
+
+<div class="box">
+<p class="box-k">정의</p>
+<p><b class="key">아래첨자(subscript)</b>: 글자 오른쪽 아래에 작게 붙여 <b>몇 번째 것인지</b> 나타내는 표시.<br>
+x<sub>1</sub> (읽기: "엑스 일"): 첫 번째 x, x<sub>2</sub> ("엑스 이"): 두 번째 x.<br>
+x<sub>i</sub> ("엑스 아이"): i번째 x. i 자리에 어떤 번호든 들어갈 수 있습니다.<br>
+x<sub>n</sub> ("엑스 엔"): 마지막 x. n은 보통 <b>전체 개수</b>를 뜻합니다.</p>
+</div>
+
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 200" role="img" aria-label="학생 1번, 2번, 3번의 점수 칸이 나란히 있다. 점수는 80, 90, 70이다. 칸 아래에 각각 x1, x2, x3 이름표가 붙어 있다. 세 칸 전체를 묶는 괄호 아래에 n = 3, 곧 개수라고 적혀 있다. 오른쪽에는 i = 2이면 x_i = x_2 = 90이라고 적혀 있고 2번 칸이 강조되어 있다.">
+<text class="f-s" x="220" y="36" text-anchor="middle">학생 1번</text>
+<text class="f-s" x="340" y="36" text-anchor="middle">학생 2번</text>
+<text class="f-s" x="460" y="36" text-anchor="middle">학생 3번</text>
+<text class="f-cap" x="120" y="81" text-anchor="end">점수</text>
+<rect class="f-box" x="160" y="50" width="120" height="50" rx="3"/>
+<rect class="f-soft" x="280" y="50" width="120" height="50" rx="3"/>
+<rect class="f-box" x="400" y="50" width="120" height="50" rx="3"/>
+<text class="f-t" x="220" y="81" text-anchor="middle">80</text>
+<text class="f-t f-b" x="340" y="81" text-anchor="middle">90</text>
+<text class="f-t" x="460" y="81" text-anchor="middle">70</text>
+<line class="f-ink" x1="220" y1="100" x2="220" y2="114"/>
+<line class="f-ink" x1="340" y1="100" x2="340" y2="114"/>
+<line class="f-ink" x1="460" y1="100" x2="460" y2="114"/>
+<text class="f-t" x="216" y="132" text-anchor="middle">x<tspan dy="4" font-size="10">1</tspan></text>
+<text class="f-t" x="336" y="132" text-anchor="middle">x<tspan dy="4" font-size="10">2</tspan></text>
+<text class="f-t" x="456" y="132" text-anchor="middle">x<tspan dy="4" font-size="10">3</tspan></text>
+<line class="f-ink" x1="160" y1="150" x2="520" y2="150"/>
+<line class="f-ink" x1="160" y1="144" x2="160" y2="150"/>
+<line class="f-ink" x1="520" y1="144" x2="520" y2="150"/>
+<line class="f-ink" x1="340" y1="150" x2="340" y2="158"/>
+<text class="f-s f-ink-t" x="340" y="178" text-anchor="middle">n = 3 (값의 개수)</text>
+<text class="f-t" x="560" y="72" text-anchor="start">i = 2 이면</text>
+<text class="f-t" x="560" y="100" text-anchor="start">x<tspan dy="4" font-size="10">i</tspan><tspan dy="-4"> = x</tspan><tspan dy="4" font-size="10">2</tspan><tspan dy="-4"> = 90</tspan></text>
+</svg>
+<figcaption>아래첨자는 값이 아니라 자리 번호다. x<sub>2</sub>의 값은 2가 아니라 90이다.</figcaption>
+</figure>
+
+<p>위 그림처럼 x<sub>1</sub> = 80, x<sub>2</sub> = 90, x<sub>3</sub> = 70 입니다. 값이 몇 개 있는지는 n으로 적어 n = 3 입니다. 값이 많을 때는 가운데를 줄임표(…)로 줄여 <b>x<sub>1</sub>, x<sub>2</sub>, …, x<sub>n</sub></b>이라고 씁니다. "엑스 일, 엑스 이, 쭉 가서 엑스 엔"이라고 읽고, "첫 번째부터 n번째까지 n개의 값"이라는 뜻입니다.</p>
+
+<div class="box ex">
+<p class="box-k">풀이 예제</p>
+<p>x<sub>1</sub> = 80, x<sub>2</sub> = 90, x<sub>3</sub> = 70 일 때 (x<sub>1</sub> + x<sub>2</sub> + x<sub>3</sub>) ÷ n 을 구합니다.</p>
+<p class="calc">① 값의 개수: 값이 세 개이므로 n = 3<br>
+② 더하기: x<sub>1</sub> + x<sub>2</sub> + x<sub>3</sub> = 80 + 90 + 70 = 240<br>
+③ 나누기: 240 ÷ 3 = 80</p>
+<p>이것이 평균입니다. U03·1에서 말로 구했던 평균을 이제 기호로 적을 수 있게 되었습니다. 학생이 몇 명이든 같은 식을 쓸 수 있다는 것이 아래첨자의 힘입니다.</p>
+</div>
+
+<div class="check" data-q="q2"></div>
+<div class="check" data-q="q3"></div>
+
+<div class="more">
+<p class="box-k">더 알아보기 · 시그마와 두 개짜리 아래첨자</p>
+<p>x<sub>1</sub> + x<sub>2</sub> + … + x<sub>n</sub> 을 짧게 쓰려고 그리스 글자 <b>Σ</b>(시그마, "모두 더하라")를 씁니다. 통계 단원에서 처음부터 다시 설명합니다. 또 표의 칸을 가리킬 때는 x<sub>23</sub>처럼 아래첨자를 두 개 붙여 "2행 3열"을 나타내기도 합니다(x<sub>ij</sub>는 i행 j열). 행렬 단원에서 다시 봅니다.</p>
+<p>Python은 번호를 <b>0부터</b> 셉니다. 실제로 실행하면 이렇습니다.</p>
+<pre><code>scores = [80, 90, 70]
+print(scores[0])
+print(scores[1])</code></pre>
+<pre><code>80
+90</code></pre>
+<p>수학의 x<sub>1</sub>(첫 번째)이 Python에서는 <code>scores[0]</code>입니다. 수학 책과 코드를 오갈 때 번호가 하나씩 어긋나니 조심합니다. 자세한 것은 Python 단원에서 다룹니다.</p>
+</div>
+
+<h2>위첨자: 거듭제곱 <span class="tag memo">외우기</span></h2>
+
+<p>오른쪽 <b>위</b>에 붙는 작은 수는 전혀 다른 뜻입니다.</p>
+
+<div class="box">
+<p class="box-k">정의</p>
+<p><b class="key">거듭제곱</b>: 같은 수를 여러 번 곱한 것. 오른쪽 위에 작게 붙인 수(<b>지수</b>, 위첨자)가 곱하는 횟수입니다.<br>
+2<sup>3</sup> (읽기: "2의 세제곱"): 2 × 2 × 2 = 8<br>
+x<sup>2</sup> (읽기: "엑스 제곱"): x × x<br>
+10<sup>3</sup> ("10의 세제곱"): 10 × 10 × 10 = 1,000</p>
+</div>
+
+<p>10의 거듭제곱은 <b>지수가 0의 개수</b>와 같아서 큰 수를 짧게 쓸 때 편합니다. 10<sup>3</sup> = 1,000(0이 3개), 10<sup>6</sup> = 1,000,000(0이 6개), 10<sup>9</sup> = 1,000,000,000(0이 9개)입니다. 거꾸로 작은 수는 지수에 빼기를 붙여 씁니다. 10<sup>−3</sup>("10의 마이너스 세제곱")은 1 ÷ 10<sup>3</sup> = 1 ÷ 1,000 = 0.001 입니다. 지수의 규칙은 AR 단원에서 자세히 다룹니다.</p>
+
+<div class="box trap">
+<p class="box-k">흔한 실수</p>
+<p><b>2<sup>3</sup>을 2 × 3 = 6으로 계산하는 실수</b>가 가장 흔합니다. 지수 3은 "3을 곱하라"가 아니라 "2를 3번 곱하라"입니다. 2<sup>3</sup> = 2 × 2 × 2 = 8 입니다. 또 하나, 코드나 메신저에서 위첨자를 쓸 수 없어 2^3 처럼 적는 경우가 있는데, <b>Python에서 ^는 거듭제곱이 아닙니다.</b> Python의 거듭제곱은 <code>**</code>입니다.</p>
+<pre><code>print(2 ** 3)
+print(2 ^ 3)</code></pre>
+<pre><code>8
+1</code></pre>
+<p>2 ^ 3 은 오류 없이 1을 내놓습니다. 다른 계산(비트 단위 연산)으로 처리되기 때문인데, 오류가 나지 않으니 더 찾기 어려운 실수가 됩니다.</p>
+</div>
+
+<h3>x<sup>2</sup>, 2x, x<sub>2</sub> 구분하기</h3>
+
+<p>세 표기는 생김새가 비슷해서 자주 섞입니다. 숫자 2의 <b>자리</b>가 뜻을 정합니다.</p>
+
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 210" role="img" aria-label="x = 3일 때 세 가지를 비교한다. (가) x² 은 3 × 3 = 9: 한 변이 3칸인 정사각형 9칸. (나) 2x 는 2 × 3 = 6: 3칸짜리 줄이 2개, 6칸. (다) x₂ 는 두 번째 값: x1 = 4, x2 = 7, x3 = 1 세 칸 중 둘째 칸 7을 가리킨다. 계산이 아니라 자리 번호다.">
+<g>
+<rect class="f-soft" x="80" y="30" width="30" height="30"/><rect class="f-soft" x="110" y="30" width="30" height="30"/><rect class="f-soft" x="140" y="30" width="30" height="30"/>
+<rect class="f-soft" x="80" y="60" width="30" height="30"/><rect class="f-soft" x="110" y="60" width="30" height="30"/><rect class="f-soft" x="140" y="60" width="30" height="30"/>
+<rect class="f-soft" x="80" y="90" width="30" height="30"/><rect class="f-soft" x="110" y="90" width="30" height="30"/><rect class="f-soft" x="140" y="90" width="30" height="30"/>
+</g>
+<text class="f-s" x="125" y="140" text-anchor="middle">3칸</text>
+<text class="f-s" x="186" y="80" text-anchor="start">3칸</text>
+<g>
+<rect class="f-soft" x="335" y="60" width="30" height="30"/><rect class="f-soft" x="365" y="60" width="30" height="30"/><rect class="f-soft" x="395" y="60" width="30" height="30"/>
+<rect class="f-soft" x="335" y="90" width="30" height="30"/><rect class="f-soft" x="365" y="90" width="30" height="30"/><rect class="f-soft" x="395" y="90" width="30" height="30"/>
+</g>
+<text class="f-s" x="380" y="140" text-anchor="middle">3칸</text>
+<text class="f-s" x="441" y="95" text-anchor="start">2줄</text>
+<rect class="f-box" x="555" y="60" width="50" height="40" rx="3"/>
+<rect class="f-soft" x="605" y="60" width="50" height="40" rx="3"/>
+<rect class="f-box" x="655" y="60" width="50" height="40" rx="3"/>
+<text class="f-t" x="580" y="86" text-anchor="middle">4</text>
+<text class="f-t f-b" x="630" y="86" text-anchor="middle">7</text>
+<text class="f-t" x="680" y="86" text-anchor="middle">1</text>
+<text class="f-t" x="576" y="124" text-anchor="middle">x<tspan dy="4" font-size="10">1</tspan></text>
+<text class="f-t" x="626" y="124" text-anchor="middle">x<tspan dy="4" font-size="10">2</tspan></text>
+<text class="f-t" x="676" y="124" text-anchor="middle">x<tspan dy="4" font-size="10">3</tspan></text>
+<text class="f-s" x="630" y="146" text-anchor="middle">계산이 아니라 자리 번호</text>
+<text class="f-cap" x="125" y="190" text-anchor="middle">(가) x<tspan dy="-6" font-size="10">2</tspan><tspan dy="6"> = 3 × 3 = 9</tspan></text>
+<text class="f-cap" x="380" y="190" text-anchor="middle">(나) 2x = 2 × 3 = 6</text>
+<text class="f-cap" x="630" y="190" text-anchor="middle">(다) x<tspan dy="4" font-size="10">2</tspan><tspan dy="-4"> = 7 (두 번째 값)</tspan></text>
+</svg>
+<figcaption>(가)와 (나)는 x = 3을 넣은 경우. (다)는 x<sub>1</sub>, x<sub>2</sub>, x<sub>3</sub>이 4, 7, 1인 경우다.</figcaption>
+</figure>
+
+<div class="table-wrap">
+<table>
+<tr><th>표기</th><th>읽기</th><th>뜻</th><th>x = 3 일 때</th></tr>
+<tr><td>x<sup>2</sup></td><td>엑스 제곱</td><td>x × x</td><td>3 × 3 = 9</td></tr>
+<tr><td>2x</td><td>이 엑스</td><td>2 × x</td><td>2 × 3 = 6</td></tr>
+<tr><td>x<sub>2</sub></td><td>엑스 이</td><td>두 번째 x (자리 번호)</td><td>x = 3 만으로는 알 수 없다. 두 번째 값이 무엇인지 따로 주어져야 한다</td></tr>
+</table>
+</div>
+
+<div class="check" data-q="q4"></div>
+<div class="check" data-q="q5"></div>
+
+<h2>측정 단위: 수 뒤에 붙는 이름표</h2>
+
+<p>"거리가 3이다"라고만 하면 3 m인지 3 km인지 알 수 없습니다. 측정한 값은 <b>수와 단위가 한 쌍</b>입니다.</p>
+
+<div class="box">
+<p class="box-k">정의</p>
+<p><b class="key">단위(unit)</b>: 무엇을 1로 삼아 쟀는지 나타내는 이름. 측정값 = 수 × 단위.<br>
+3 m 는 "1 m짜리가 3개만큼"이라는 뜻입니다.</p>
+</div>
+
+<div class="table-wrap">
+<table>
+<tr><th>기호</th><th>읽기</th><th>재는 것</th></tr>
+<tr><td>m</td><td>미터</td><td>길이</td></tr>
+<tr><td>km</td><td>킬로미터 (= 1,000 m)</td><td>길이</td></tr>
+<tr><td>s</td><td>초 (second)</td><td>시간</td></tr>
+<tr><td>min</td><td>분 (= 60 s)</td><td>시간</td></tr>
+<tr><td>h</td><td>시간 (hour, = 60 min = 3,600 s)</td><td>시간</td></tr>
+<tr><td>kg</td><td>킬로그램</td><td>질량</td></tr>
+<tr><td>m<sup>2</sup></td><td>제곱미터</td><td>넓이 (1 m × 1 m 정사각형 하나)</td></tr>
+</table>
+</div>
+
+<p>국제 표준(SI)의 쓰기 규칙은 이렇습니다. ① 수와 단위 사이를 한 칸 띄운다(3 m). ② 단위 기호는 마침표를 찍지 않고, 복수형 s를 붙이지 않는다(3 ms가 아니라 3 m; ms는 밀리초라는 다른 단위다). ③ 대문자와 소문자를 바꾸지 않는다. 일상 글에서는 3m처럼 붙여 쓰는 경우도 많지만, 이 교재는 표준을 따릅니다.</p>
+
+<h3>변수인 m과 단위인 m</h3>
+<p>같은 글자가 두 가지로 쓰이기도 합니다. 물리 책에서 m은 질량을 나타내는 <b>변수</b>로도 쓰입니다. "m = 3 kg"이라는 줄에서 왼쪽 m은 변수(어떤 물체의 질량), 오른쪽 kg은 단위입니다. 인쇄된 책에서는 둘을 구분하려고 <b>변수는 기울인 글씨(<i>m</i>)</b>, <b>단위는 바로 선 글씨(m)</b>로 쓰는 것이 표준입니다. 손글씨나 화면에서는 이 구분이 사라지므로, <b>수 바로 뒤에 붙어 있으면 단위, 등호의 한쪽에 홀로 있으면 변수</b>일 가능성이 큽니다.</p>
+
+<div class="check" data-q="q6"></div>
+
+<h3>단위도 계산에 따라간다 <span class="tag grasp">이해하기</span></h3>
+
+<p>단위는 수와 함께 곱해지고 나눠집니다. 자동차가 2시간 동안 120 km를 갔다면, 한 시간마다 간 거리(속력)는 거리를 시간으로 나눠 구합니다.</p>
+
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 150" role="img" aria-label="0 km에서 120 km까지의 선. 가운데 60 km에 눈금이 있다. 앞의 절반 위에는 첫 1시간 60 km, 뒤의 절반 위에는 둘째 1시간 60 km라고 적혀 있다. 아래에 120 km 나누기 2 h는 60 km/h라고 적혀 있다.">
+<line class="f-line" x1="80" y1="70" x2="680" y2="70"/>
+<line class="f-ink" x1="80" y1="62" x2="80" y2="78"/>
+<line class="f-ink" x1="380" y1="62" x2="380" y2="78"/>
+<line class="f-ink" x1="680" y1="62" x2="680" y2="78"/>
+<text class="f-s" x="80" y="96" text-anchor="middle">0 km</text>
+<text class="f-s" x="380" y="96" text-anchor="middle">60 km</text>
+<text class="f-s" x="680" y="96" text-anchor="middle">120 km</text>
+<line class="f-ink" x1="84" y1="46" x2="376" y2="46"/>
+<line class="f-ink" x1="384" y1="46" x2="676" y2="46"/>
+<text class="f-t" x="230" y="36" text-anchor="middle">첫 1시간: 60 km</text>
+<text class="f-t" x="530" y="36" text-anchor="middle">둘째 1시간: 60 km</text>
+<text class="f-cap" x="380" y="132" text-anchor="middle">120 km ÷ 2 h = 60 km/h</text>
+</svg>
+<figcaption>120 km를 2시간으로 고르게 나누면 한 시간에 60 km씩이다. 선의 길이는 거리에 비례해 그렸다.</figcaption>
+</figure>
+
+<div class="box ex">
+<p class="box-k">풀이 예제</p>
+<p>(1) 2 h 동안 120 km를 간 차의 속력은?</p>
+<p class="calc">① 수끼리: 120 ÷ 2 = 60<br>
+② 단위끼리: km ÷ h = km/h<br>
+③ 합치기: 60 km/h</p>
+<p><b>km/h</b>는 "킬로미터 매 시" 또는 "시속 킬로미터"라고 읽습니다. 빗금 /는 "나누기", 곧 "1 h 당"이라는 뜻입니다. 60 km/h 는 "한 시간당 60 km"입니다.</p>
+<p>(2) 60 km/h 를 m/s(초속 미터)로 바꾸면?</p>
+<p class="calc">① 거리를 m로: 60 km = 60 × 1,000 m = 60,000 m<br>
+② 시간을 s로: 1 h = 60 min = 60 × 60 s = 3,600 s<br>
+③ 나누기: 60,000 m ÷ 3,600 s = 16.666… m/s<br>
+④ 어림: ≈ 16.7 m/s (소수 둘째 자리에서 반올림)</p>
+<p>④에서 = 대신 ≈를 쓴 것에 주목하세요(U04·1). 16.666…을 16.7로 줄였기 때문입니다.</p>
+</div>
+
+<div class="box trap">
+<p class="box-k">흔한 실수</p>
+<p><b>단위가 다른 것끼리 더하는 실수.</b> 3 m + 5 s 는 계산할 수 없습니다. 길이와 시간은 서로 다른 것을 잰 값이기 때문입니다. 같은 길이라도 2 km + 300 m 를 302로 쓰면 틀립니다. 먼저 단위를 맞춰 2,000 m + 300 m = 2,300 m 로 계산합니다. 계산이 끝났을 때 단위가 예상과 다르게 나오면(속력을 구했는데 km·h가 나왔다면) 어딘가에서 곱하기와 나누기를 바꾼 것입니다. 이 단위 확인은 AR06 "비와 단위"에서 더 연습합니다.</p>
+</div>
+
+<div class="check" data-q="q7"></div>
+
+<h2>접두어: k, M, G, m <span class="tag memo">외우기</span></h2>
+
+<p>km의 k처럼 단위 앞에 붙어 크기를 바꾸는 글자를 <b class="key">접두어(prefix)</b>라고 합니다. 국제 단위계(SI)의 접두어는 1,000배(10<sup>3</sup>)씩 계단을 이룹니다.</p>
+
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 180" role="img" aria-label="SI 접두어 계단. 왼쪽부터 μ 마이크로 10의 -6제곱, m 밀리 10의 -3제곱, 접두어 없음 1, k 킬로 10의 3제곱, M 메가 10의 6제곱, G 기가 10의 9제곱. 이웃한 칸 사이마다 곱하기 1,000.">
+<rect class="f-box" x="20" y="50" width="100" height="60" rx="4"/>
+<text class="f-cap" x="70" y="74" text-anchor="middle">μ</text>
+<text class="f-s" x="70" y="96" text-anchor="middle">마이크로</text>
+<rect class="f-box" x="142" y="50" width="100" height="60" rx="4"/>
+<text class="f-cap" x="192" y="74" text-anchor="middle">m</text>
+<text class="f-s" x="192" y="96" text-anchor="middle">밀리</text>
+<rect class="f-soft" x="264" y="50" width="100" height="60" rx="4"/>
+<text class="f-cap" x="314" y="74" text-anchor="middle">(없음)</text>
+<text class="f-s f-ink-t" x="314" y="96" text-anchor="middle">기본 단위</text>
+<rect class="f-box" x="386" y="50" width="100" height="60" rx="4"/>
+<text class="f-cap" x="436" y="74" text-anchor="middle">k</text>
+<text class="f-s" x="436" y="96" text-anchor="middle">킬로</text>
+<rect class="f-box" x="508" y="50" width="100" height="60" rx="4"/>
+<text class="f-cap" x="558" y="74" text-anchor="middle">M</text>
+<text class="f-s" x="558" y="96" text-anchor="middle">메가</text>
+<rect class="f-box" x="630" y="50" width="100" height="60" rx="4"/>
+<text class="f-cap" x="680" y="74" text-anchor="middle">G</text>
+<text class="f-s" x="680" y="96" text-anchor="middle">기가</text>
+<line class="f-line" x1="120" y1="80" x2="140" y2="80" marker-end="url(#f-arrow)"/>
+<line class="f-line" x1="242" y1="80" x2="262" y2="80" marker-end="url(#f-arrow)"/>
+<line class="f-line" x1="364" y1="80" x2="384" y2="80" marker-end="url(#f-arrow)"/>
+<line class="f-line" x1="486" y1="80" x2="506" y2="80" marker-end="url(#f-arrow)"/>
+<line class="f-line" x1="608" y1="80" x2="628" y2="80" marker-end="url(#f-arrow)"/>
+<text class="f-s" x="131" y="38" text-anchor="middle">×1,000</text>
+<text class="f-s" x="253" y="38" text-anchor="middle">×1,000</text>
+<text class="f-s" x="375" y="38" text-anchor="middle">×1,000</text>
+<text class="f-s" x="497" y="38" text-anchor="middle">×1,000</text>
+<text class="f-s" x="619" y="38" text-anchor="middle">×1,000</text>
+<text class="f-t" x="70" y="136" text-anchor="middle">10<tspan dy="-6" font-size="10">−6</tspan></text>
+<text class="f-t" x="192" y="136" text-anchor="middle">10<tspan dy="-6" font-size="10">−3</tspan></text>
+<text class="f-t" x="314" y="136" text-anchor="middle">1</text>
+<text class="f-t" x="436" y="136" text-anchor="middle">10<tspan dy="-6" font-size="10">3</tspan></text>
+<text class="f-t" x="558" y="136" text-anchor="middle">10<tspan dy="-6" font-size="10">6</tspan></text>
+<text class="f-t" x="680" y="136" text-anchor="middle">10<tspan dy="-6" font-size="10">9</tspan></text>
+<text class="f-s" x="380" y="168" text-anchor="middle">칸의 간격은 같게 그렸지만 실제로는 한 칸마다 1,000배씩 커진다</text>
+</svg>
+<figcaption>오른쪽으로 한 칸 갈 때마다 1,000배. 대문자 M(메가)과 소문자 m(밀리)은 10<sup>9</sup>배 차이다.</figcaption>
+</figure>
+
+<div class="table-wrap">
+<table>
+<tr><th>접두어</th><th>읽기</th><th>배수</th><th>예</th></tr>
+<tr><td>G</td><td>기가</td><td>10<sup>9</sup> = 1,000,000,000</td><td>1 GB = 1,000,000,000 B (U04·3)</td></tr>
+<tr><td>M</td><td>메가</td><td>10<sup>6</sup> = 1,000,000</td><td>1 MB = 1,000,000 B</td></tr>
+<tr><td>k</td><td>킬로</td><td>10<sup>3</sup> = 1,000</td><td>1 km = 1,000 m, 1 kg = 1,000 g</td></tr>
+<tr><td>m</td><td>밀리</td><td>10<sup>−3</sup> = 0.001</td><td>1 mm = 0.001 m, 1 ms = 0.001 s</td></tr>
+<tr><td>μ</td><td>마이크로</td><td>10<sup>−6</sup> = 0.000001</td><td>1 μm = 0.000001 m</td></tr>
+</table>
+</div>
+
+<div class="box memo">
+<p class="box-k">외우는 법</p>
+<p><b>큰 쪽은 대문자(M, G), 작은 쪽은 소문자(m, μ)</b>입니다. 이 표에서는 킬로 k만 예외로 소문자입니다(SI 규칙으로는 10<sup>6</sup>(M) 이상이 대문자이고, k를 포함해 그보다 작은 접두어는 소문자입니다). "km는 소문자 k"라고 따로 기억해 두면 다음 장에서 kB와 KiB를 구분할 때 도움이 됩니다.</p>
+</div>
+
+<div class="check" data-q="q8"></div>
+
+<div class="why">
+<p class="box-k">왜 그럴까?</p>
+<p>"5 m"와 "5m"는 화면에서 거의 같아 보입니다. 그런데 수학 식 "y = 5m"에서 5m은 무슨 뜻일 가능성이 클까요?</p>
+<details><summary>모범 답 보기</summary><p>변수 m에 5를 곱한 것(5 × m)일 가능성이 큽니다. 식 안에서 숫자와 글자가 붙어 있으면 곱하기를 생략한 것이기 때문입니다. 측정값 5 미터라면 표준대로 "5 m"로 띄어 쓰고, 보통 등호로 다른 변수와 엮기보다 "길이 = 5 m"처럼 씁니다. 결국 글자만 보고는 가를 수 없고, 앞뒤 문맥(식인가, 측정값인가)을 봐야 합니다.</p></details>
+</div>
+
+<h2>기호 읽기 표</h2>
+
+<div class="table-wrap">
+<table>
+<tr><th>표기</th><th>읽기</th><th>뜻</th></tr>
+<tr><td>x, y, n</td><td>엑스, 와이, 엔</td><td>변수. 여러 값을 가질 수 있는 수를 대신하는 글자</td></tr>
+<tr><td>2x</td><td>이 엑스</td><td>2 × x (곱하기 생략)</td></tr>
+<tr><td>x<sub>1</sub>, x<sub>2</sub></td><td>엑스 일, 엑스 이</td><td>첫 번째 x, 두 번째 x</td></tr>
+<tr><td>x<sub>i</sub></td><td>엑스 아이</td><td>i번째 x</td></tr>
+<tr><td>x<sub>1</sub>, …, x<sub>n</sub></td><td>엑스 일부터 엑스 엔까지</td><td>n개의 값</td></tr>
+<tr><td>x<sup>2</sup></td><td>엑스 제곱</td><td>x × x</td></tr>
+<tr><td>2<sup>3</sup></td><td>2의 세제곱</td><td>2 × 2 × 2 = 8</td></tr>
+<tr><td>10<sup>−3</sup></td><td>10의 마이너스 세제곱</td><td>1 ÷ 1,000 = 0.001</td></tr>
+<tr><td>3 m</td><td>3 미터</td><td>측정값 (수 + 단위)</td></tr>
+<tr><td>km/h</td><td>킬로미터 매 시, 시속</td><td>1시간당 킬로미터</td></tr>
+<tr><td>m<sup>2</sup></td><td>제곱미터</td><td>넓이 단위</td></tr>
+<tr><td>Python <code>**</code></td><td>거듭제곱</td><td><code>2 ** 3</code>은 8. <code>^</code>는 거듭제곱이 아니다</td></tr>
+</table>
+</div>
+
+<h2>한눈에 정리</h2>
+
+<div class="table-wrap">
+<table>
+<tr><th>주제</th><th>꼭 기억할 것</th></tr>
+<tr><td>변수</td><td>수를 대신하는 글자. <b class="key">2x = 2 × x</b> (23이 아니다)</td></tr>
+<tr><td>아래첨자</td><td><b class="key">x<sub>i</sub> = i번째 값</b>. 자리 번호일 뿐 값이 아니다. <b class="key">n = 개수</b></td></tr>
+<tr><td>위첨자(지수)</td><td><b class="key">2<sup>3</sup> = 2 × 2 × 2 = 8</b> (6이 아니다). 10<sup>k</sup>는 0이 k개</td></tr>
+<tr><td>측정값</td><td><b class="key">수 + 단위</b>가 한 쌍. 단위도 곱하고 나눈다. 다른 단위끼리 더하지 않는다</td></tr>
+<tr><td>km/h</td><td>/ 는 "당". 120 km ÷ 2 h = 60 km/h</td></tr>
+<tr><td>SI 접두어</td><td><b class="key">k = 10<sup>3</sup>, M = 10<sup>6</sup>, G = 10<sup>9</sup>, m = 10<sup>−3</sup></b>. 대소문자 구분</td></tr>
+</table>
+</div>
+
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>아래첨자는 몇 번째인지, 위첨자는 몇 번 곱하는지를 나타내고, 측정값은 수와 단위가 한 쌍이라 단위도 함께 계산한다.</p></div>
+
+<h2>확인 문제</h2>
+<p>본문 중간에서 푼 문제 말고 남은 문제입니다. 보기를 누르면 바로 정답과 해설이 나옵니다.</p>
+<div id="quiz"></div>
+
+<section class="work" id="tools"></section>
+
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

@@ -1,0 +1,322 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>합과 평균, 합 기호 Σ · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e8c'/%3E%3Cpath d='M8 22V10m8 12V14m8 8V6' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="AR10-1">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+
+<header class="chapter">
+<p class="chap-sub">산술과 수 감각 · AR10 합과 평균</p>
+<p class="chap-num">AR10·1</p>
+<h1>합과 평균, 합 기호 Σ</h1>
+<p class="lead">세 친구가 사탕을 2개, 4개, 9개 가지고 있습니다. 똑같이 나눠 가지면 한 사람이 몇 개씩 가질까요? 이 장에서는 이 질문에서 출발해 합·개수·평균의 관계, 평균을 "균형점"으로 보는 그림, 그리고 데이터 분석 책마다 나오는 합 기호 Σ를 읽고 고쳐 쓰는 법을 다룹니다.</p>
+</header>
+
+<div class="goal">
+<h2>이 장을 읽고 나면</h2>
+<ul>
+<li>자료의 합·개수·평균을 계산하고, 평균과 개수에서 합을 거꾸로 구할 수 있다.</li>
+<li>평균을 "고르게 나누기"와 "균형점" 두 그림으로 설명할 수 있다.</li>
+<li>Σ 식을 보고 첨자·시작값·끝값·더할 항을 짚어 소리 내어 읽고 펼쳐 쓸 수 있다.</li>
+<li>Σ 식을 같은 값의 다른 꼴로 고쳐 쓰고, 고쳐 쓸 수 없는 경우(제곱의 합 등)를 숫자로 보일 수 있다.</li>
+</ul>
+</div>
+
+<h2>합과 개수</h2>
+
+<div class="side"><b>용어</b> <b>자료</b>(데이터, data)는 관찰하거나 잰 값들의 모음입니다. 그 안의 값 하나하나를 <b>관측값</b>이라고 합니다.</div>
+
+<p>세 친구의 사탕 수 2, 4, 9를 하나의 자료로 봅시다. 자료를 요약하는 가장 기본적인 수 두 개는 <b class="key">합</b>과 <b>개수</b>입니다.</p>
+
+<ul>
+<li><b>합</b>(sum): 모든 값을 더한 것. 2 + 4 + 9 = 15</li>
+<li><b>개수</b>(count): 값이 몇 개인지. 3개. 흔히 글자 <b>n</b>으로 적습니다.</li>
+</ul>
+
+<p>개수는 "값의 크기"와 상관없이 "몇 개인가"만 셉니다. 자료가 0, 0, 0이어도 개수는 3입니다. 당연해 보이지만, 표에서 빈칸과 0을 구분하지 않으면 개수가 틀려지고 평균도 따라 틀립니다. 뒤의 데이터 정리 단원에서 다시 만날 문제입니다.</p>
+
+<h2>평균: 합 ÷ 개수</h2>
+
+<h3>고르게 나누기</h3>
+
+<p>사탕 15개를 3명이 똑같이 나누면 15 ÷ 3 = 5개씩입니다. 이 5가 2, 4, 9의 평균입니다. 그림으로 보면, 많이 가진 사람이 적게 가진 사람에게 나눠 주어 모두 같은 높이로 맞추는 일입니다.</p>
+
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 262" role="img" aria-label="(가) 블록 2개, 4개, 9개를 쌓은 세 기둥. 9개 기둥의 위쪽 4개를 색칠했다. (나) 색칠한 4개 블록을 옮겨 첫째 기둥에 3개, 둘째 기둥에 1개를 얹어 세 기둥이 모두 5개가 되었다. 점선으로 높이 5를 표시했다.">
+<line class="f-ink" x1="40" y1="210" x2="260" y2="210"/>
+<rect class="f-box" x="60" y="192" width="40" height="18"/><rect class="f-box" x="60" y="174" width="40" height="18"/>
+<rect class="f-box" x="130" y="192" width="40" height="18"/><rect class="f-box" x="130" y="174" width="40" height="18"/><rect class="f-box" x="130" y="156" width="40" height="18"/><rect class="f-box" x="130" y="138" width="40" height="18"/>
+<rect class="f-box" x="200" y="192" width="40" height="18"/><rect class="f-box" x="200" y="174" width="40" height="18"/><rect class="f-box" x="200" y="156" width="40" height="18"/><rect class="f-box" x="200" y="138" width="40" height="18"/><rect class="f-box" x="200" y="120" width="40" height="18"/>
+<rect class="f-soft" x="200" y="102" width="40" height="18"/><rect class="f-soft" x="200" y="84" width="40" height="18"/><rect class="f-soft" x="200" y="66" width="40" height="18"/><rect class="f-soft" x="200" y="48" width="40" height="18"/>
+<text class="f-t" x="80" y="230" text-anchor="middle">2</text>
+<text class="f-t" x="150" y="230" text-anchor="middle">4</text>
+<text class="f-t" x="220" y="230" text-anchor="middle">9</text>
+<line class="f-line" x1="280" y1="130" x2="400" y2="130" marker-end="url(#f-arrow)"/>
+<text class="f-s" x="340" y="118" text-anchor="middle">4개를 옮긴다</text>
+<line class="f-ink" x1="420" y1="210" x2="640" y2="210"/>
+<rect class="f-box" x="440" y="192" width="40" height="18"/><rect class="f-box" x="440" y="174" width="40" height="18"/>
+<rect class="f-soft" x="440" y="156" width="40" height="18"/><rect class="f-soft" x="440" y="138" width="40" height="18"/><rect class="f-soft" x="440" y="120" width="40" height="18"/>
+<rect class="f-box" x="510" y="192" width="40" height="18"/><rect class="f-box" x="510" y="174" width="40" height="18"/><rect class="f-box" x="510" y="156" width="40" height="18"/><rect class="f-box" x="510" y="138" width="40" height="18"/>
+<rect class="f-soft" x="510" y="120" width="40" height="18"/>
+<rect class="f-box" x="580" y="192" width="40" height="18"/><rect class="f-box" x="580" y="174" width="40" height="18"/><rect class="f-box" x="580" y="156" width="40" height="18"/><rect class="f-box" x="580" y="138" width="40" height="18"/><rect class="f-box" x="580" y="120" width="40" height="18"/>
+<line class="f-dash" x1="425" y1="120" x2="640" y2="120"/>
+<text class="f-s f-ink-t" x="648" y="124">평균 5</text>
+<text class="f-t" x="460" y="230" text-anchor="middle">5</text>
+<text class="f-t" x="530" y="230" text-anchor="middle">5</text>
+<text class="f-t" x="600" y="230" text-anchor="middle">5</text>
+<text class="f-cap" x="150" y="254" text-anchor="middle">(가) 2, 4, 9</text>
+<text class="f-cap" x="530" y="254" text-anchor="middle">(나) 고르게 맞추면 5, 5, 5</text>
+</svg>
+<figcaption>블록 하나 = 사탕 1개. 블록을 옮기기만 하고 새로 만들거나 버리지 않으므로 합 15는 그대로다.</figcaption>
+</figure>
+
+<div class="box">
+<p class="box-k">정의 <span class="tag memo">외우기</span></p>
+<p>자료의 <b class="key">평균</b>(산술평균, mean)은 모든 값의 합을 개수로 나눈 값입니다.</p>
+<p class="calc">평균 = 합 ÷ 개수 &nbsp;&nbsp;&nbsp; 거꾸로, 합 = 평균 × 개수</p>
+</div>
+
+<p>"산술평균"이라고 굳이 부르는 이유는 다른 종류의 평균도 있기 때문입니다(다음 장의 가중평균, AR07-2 "더 알아보기"의 곱해서 이어지는 변화의 평균). 그냥 "평균"이라고 하면 보통 산술평균입니다. 모든 값을 똑같은 무게로 세는 이 평균을 다음 장의 가중평균과 구별해 <b>단순평균</b>이라고도 부릅니다.</p>
+
+<p>평균은 <b>자료 안에 없는 값일 수 있습니다.</b> 2, 4, 9 가운데 5는 없습니다. 사람 수 평균이 2.4명처럼 소수가 나오기도 합니다. 평균은 "실제로 있는 어떤 값"이 아니라 "모두 같았다면 얼마였을까"를 말하는 요약값이기 때문입니다.</p>
+
+<h3>합 = 평균 × 개수 활용</h3>
+
+<div class="box ex">
+<p class="box-k">풀이 예제</p>
+<p>네 과목 평균이 80점입니다. 다섯째 과목에서 몇 점을 받아야 다섯 과목 평균이 82점이 될까요?</p>
+<p class="calc">① 네 과목의 합 = 평균 × 개수 = 80 × 4 = 320<br>
+② 다섯 과목 평균이 82가 되려면 합 = 82 × 5 = 410<br>
+③ 다섯째 과목 점수 = 410 − 320 = 90점<br>
+④ 검산: (320 + 90) ÷ 5 = 410 ÷ 5 = 82</p>
+<p>평균끼리는 바로 더하고 빼기 어렵지만 <b>합으로 바꾸면</b> 더하고 뺄 수 있습니다. 평균 문제가 막히면 먼저 합으로 바꿔 보세요. 다음 장의 가중평균도 이 요령 하나로 풉니다.</p>
+</div>
+
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q3"></div>
+
+<h3>균형점으로 보기 <span class="tag grasp">이해하기</span></h3>
+
+<p>평균을 보는 둘째 그림은 저울입니다. 수직선을 가벼운 막대로 보고, 각 값의 자리에 같은 무게의 추를 올려놓습니다. 그러면 막대가 수평을 이루는 받침점의 자리가 바로 평균입니다.</p>
+
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 206" role="img" aria-label="0부터 10까지의 수직선 위 2, 4, 9 자리에 같은 무게의 추를 올렸다. 받침점은 5에 있다. 5에서 각 추까지의 거리는 2는 왼쪽으로 3, 4는 왼쪽으로 1, 9는 오른쪽으로 4. 부호를 붙여 더하면 −3 + −1 + 4 = 0이므로 5에서 균형을 이룬다.">
+<text class="f-t" x="380" y="24" text-anchor="middle">(−3) + (−1) + (+4) = 0 → 5에서 균형</text>
+<line class="f-dash" x1="360" y1="38" x2="360" y2="130"/>
+<line class="f-line" x1="360" y1="86" x2="182" y2="86" marker-end="url(#f-arrow)"/>
+<text class="f-s f-ink-t" x="262" y="80" text-anchor="middle">−3</text>
+<line class="f-line" x1="360" y1="62" x2="302" y2="62" marker-end="url(#f-arrow)"/>
+<text class="f-s f-ink-t" x="331" y="56" text-anchor="middle">−1</text>
+<line class="f-line" x1="360" y1="86" x2="598" y2="86" marker-end="url(#f-arrow)"/>
+<text class="f-s f-ink-t" x="480" y="80" text-anchor="middle">+4</text>
+<rect class="f-soft" x="165" y="100" width="30" height="30"/>
+<rect class="f-soft" x="285" y="100" width="30" height="30"/>
+<rect class="f-soft" x="585" y="100" width="30" height="30"/>
+<line class="f-ink" x1="40" y1="130" x2="690" y2="130"/>
+<path class="f-fill" d="M360 130L346 158H374Z"/>
+<text class="f-s f-ink-t" x="382" y="154">받침점 = 평균</text>
+<path class="f-ink" d="M60 130v5M120 130v5M180 130v5M240 130v5M300 130v5M360 130v5M420 130v5M480 130v5M540 130v5M600 130v5M660 130v5"/>
+<text class="f-s" x="60" y="182" text-anchor="middle">0</text><text class="f-s" x="120" y="182" text-anchor="middle">1</text><text class="f-s f-ink-t f-b" x="180" y="182" text-anchor="middle">2</text><text class="f-s" x="240" y="182" text-anchor="middle">3</text><text class="f-s f-ink-t f-b" x="300" y="182" text-anchor="middle">4</text><text class="f-s f-ink-t f-b" x="360" y="182" text-anchor="middle">5</text><text class="f-s" x="420" y="182" text-anchor="middle">6</text><text class="f-s" x="480" y="182" text-anchor="middle">7</text><text class="f-s" x="540" y="182" text-anchor="middle">8</text><text class="f-s f-ink-t f-b" x="600" y="182" text-anchor="middle">9</text><text class="f-s" x="660" y="182" text-anchor="middle">10</text>
+</svg>
+<figcaption>수직선 눈금은 일정한 간격(한 칸 = 1)으로 그렸다. 추는 모두 같은 무게다.</figcaption>
+</figure>
+
+<p>저울이 균형을 이루려면 막대를 왼쪽으로 기울이는 정도와 오른쪽으로 기울이는 정도가 같아야 합니다. 추가 막대를 기울이는 정도(물리에서는 돌림힘이라고 합니다)는 무게 × 받침점까지의 거리이므로, 같은 무게의 추라면 거리에 비례합니다. 평균 5에서 각 값까지의 거리를 부호를 붙여 적으면(왼쪽은 −, 오른쪽은 +) 다음과 같습니다.</p>
+
+<p class="calc">2 − 5 = −3 &nbsp;&nbsp; 4 − 5 = −1 &nbsp;&nbsp; 9 − 5 = +4 &nbsp;&nbsp;&nbsp; 합: (−3) + (−1) + (+4) = 0</p>
+
+<div class="side"><b>용어</b> <b>편차</b>(deviation)는 값에서 평균을 뺀 것입니다. 평균보다 크면 +, 작으면 −입니다.</div>
+
+<p>값에서 평균을 뺀 것을 <b class="key">편차</b>라고 합니다. <b>편차의 합은 언제나 0</b>입니다. 이것이 "평균은 균형점"이라는 말의 정확한 뜻입니다. 왜 언제나 0인지는 이 장 마지막 절에서 Σ로 보입니다. 이 편차는 뒤의 분산·표준편차(DA05)에서 "얼마나 흩어져 있는가"를 재는 재료가 됩니다.</p>
+
+<p>균형 그림은 평균의 약점도 보여 줍니다. 자료에 아주 큰 값 하나(예를 들어 100)를 더하면 2, 4, 9, 100의 평균은 115 ÷ 4 = 28.75로 확 끌려갑니다. 멀리 있는 추 하나가 저울을 크게 기울이기 때문입니다. 이렇게 다른 값들과 동떨어진 값을 <b>이상값</b>이라 하고, 이럴 때 중앙값 같은 다른 대푯값을 함께 보는 이야기는 DA04에서 다룹니다.</p>
+
+<div class="box trap">
+<p class="box-k">흔한 실수</p>
+<p><b>"평균보다 큰 값과 작은 값의 개수가 같다"는 생각.</b> 2, 4, 9에서 평균 5보다 작은 값은 2개, 큰 값은 1개입니다. 균형을 맞추는 것은 개수가 아니라 <b>거리의 합</b>입니다. 9 하나가 멀리(+4) 있어서 가까운 두 값(−3, −1)과 균형을 이룹니다. 개수로 가운데를 잡는 것은 중앙값입니다.</p>
+</div>
+
+<div class="check" data-q="q5"></div>
+
+<h2>합 기호 Σ 읽기 <span class="tag memo">외우기</span></h2>
+
+<h3>값에 번호 붙이기</h3>
+
+<p>자료가 세 개면 "2 + 4 + 9"라고 쓰면 됩니다. 하지만 자료가 1,000개라면, 또는 아직 값이 정해지지 않은 자료에 대해 말하고 싶다면 하나하나 적을 수 없습니다. 그래서 값에 <b>번호</b>를 붙입니다.</p>
+
+<p>자료의 첫째 값을 x<sub>1</sub>, 둘째 값을 x<sub>2</sub>, 셋째 값을 x<sub>3</sub>이라고 적습니다. "엑스 일, 엑스 이, 엑스 삼"이라고 읽습니다. 글자 오른쪽 아래의 작은 수를 <b class="key">첨자</b>(아래첨자, index)라고 하며, "몇 번째 값인가"를 가리킵니다(아래첨자 표기는 U04에서 보았습니다). 우리 자료라면 x<sub>1</sub> = 2, x<sub>2</sub> = 4, x<sub>3</sub> = 9입니다. 번호를 정하지 않은 "i번째 값"은 x<sub>i</sub>(엑스 아이)라고 씁니다.</p>
+
+<h3>Σ의 네 부분</h3>
+
+<p>값들을 모두 더하라는 명령을 짧게 적는 기호가 <b class="key">Σ</b>입니다. 그리스 문자 시그마(sigma)의 대문자이고, 영어 Sum의 S에 해당합니다. Σ 둘레에 네 가지 정보를 붙입니다.</p>
+
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 236" role="img" aria-label="큰 시그마 기호 위에 n, 아래에 i = 1, 오른쪽에 x 아래첨자 i가 있다. 지시선: 시그마는 모두 더한다는 뜻. 위의 n은 끝값, i를 n까지 키운다. 아래의 i = 1에서 i는 첨자로 차례를 가리키는 번호이고, 1은 시작값. 오른쪽 x i는 더할 것, i번째 값.">
+<path class="f-line" style="stroke-width:3" d="M372 74H300L340 122L300 170H372"/>
+<text class="f-cap" x="336" y="60" text-anchor="middle">n</text>
+<text class="f-cap" x="336" y="196" text-anchor="middle">i = 1</text>
+<text class="f-cap" x="392" y="130">x</text>
+<text class="f-s f-ink-t f-b" x="403" y="136">i</text>
+<line class="f-ink" x1="210" y1="118" x2="294" y2="118"/>
+<text class="f-s f-ink-t" x="40" y="122">Σ (시그마): 모두 더한다</text>
+<line class="f-ink" x1="514" y1="50" x2="348" y2="54"/>
+<text class="f-s f-ink-t" x="520" y="54">끝값 n: 여기까지 더한다</text>
+<line class="f-ink" x1="514" y1="126" x2="414" y2="128"/>
+<text class="f-s f-ink-t" x="520" y="130">더할 것: i번째 값 xᵢ</text>
+<line class="f-ink" x1="514" y1="196" x2="372" y2="192"/>
+<text class="f-s f-ink-t" x="520" y="200">시작값: i = 1부터</text>
+<line class="f-ink" x1="230" y1="214" x2="318" y2="196"/>
+<text class="f-s f-ink-t" x="40" y="218">첨자 i: 차례를 가리키는 번호</text>
+</svg>
+<figcaption>위·아래·오른쪽의 세 자리가 "무엇을, 몇 번째부터 몇 번째까지" 더할지 정한다.</figcaption>
+</figure>
+
+<p>이 식을 줄 안에 적을 때는 Σ<sub>i=1</sub><sup>n</sup> x<sub>i</sub>처럼 시작값을 아래에, 끝값을 위에 작게 붙입니다. 소리 내어 읽으면 이렇습니다.</p>
+
+<div class="sample">
+<p class="sample-k">Σ<sub>i=1</sub><sup>n</sup> x<sub>i</sub> 읽기</p>
+<blockquote>"i가 1부터 n까지 변할 때, x<sub>i</sub>를 모두 더한다." 줄여서 "시그마 i는 1부터 n까지 x 아이".</blockquote>
+</div>
+
+<p>첨자 i는 1, 2, 3, …으로 <b>1씩 커지며</b> 시작값부터 끝값까지 돌고, 그때마다 오른쪽 항에 i 값을 넣어 나온 수를 더합니다. 컴퓨터로 말하면 "i를 1부터 n까지 바꿔 가며 반복해서 더하는" 반복문입니다. Python의 반복(PY04)을 배우면 이 기호가 코드 몇 줄로 그대로 옮겨지는 것을 보게 됩니다.</p>
+
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 196" role="img" aria-label="i = 1일 때 x1 = 2, i = 2일 때 x2 = 4, i = 3일 때 x3 = 9를 꺼내 아래 상자로 모은다. 상자 안에 2 + 4 + 9 = 15.">
+
+<rect class="f-box" x="140" y="30" width="120" height="54" rx="4"/>
+<rect class="f-box" x="320" y="30" width="120" height="54" rx="4"/>
+<rect class="f-box" x="500" y="30" width="120" height="54" rx="4"/>
+<text class="f-s" x="200" y="50" text-anchor="middle">i = 1</text>
+<text class="f-s" x="380" y="50" text-anchor="middle">i = 2</text>
+<text class="f-s" x="560" y="50" text-anchor="middle">i = 3</text>
+<text class="f-t" x="200" y="74" text-anchor="middle">x<tspan class="f-s f-ink-t" dy="4">1</tspan><tspan dy="-4"> = 2</tspan></text>
+<text class="f-t" x="380" y="74" text-anchor="middle">x<tspan class="f-s f-ink-t" dy="4">2</tspan><tspan dy="-4"> = 4</tspan></text>
+<text class="f-t" x="560" y="74" text-anchor="middle">x<tspan class="f-s f-ink-t" dy="4">3</tspan><tspan dy="-4"> = 9</tspan></text>
+<line class="f-line" x1="200" y1="86" x2="300" y2="126" marker-end="url(#f-arrow)"/>
+<line class="f-line" x1="380" y1="86" x2="380" y2="126" marker-end="url(#f-arrow)"/>
+<line class="f-line" x1="560" y1="86" x2="460" y2="126" marker-end="url(#f-arrow)"/>
+<rect class="f-soft" x="240" y="130" width="280" height="44" rx="4"/>
+<text class="f-t f-b" x="380" y="158" text-anchor="middle">2 + 4 + 9 = 15</text>
+<text class="f-s" x="640" y="66">→ 1씩 커진다</text>
+</svg>
+<figcaption>Σ<sub>i=1</sub><sup>3</sup> x<sub>i</sub>를 펼친 모습. 첨자 i가 차례로 1, 2, 3이 되며 값을 하나씩 꺼낸다.</figcaption>
+</figure>
+
+<h3>여러 가지 Σ 펼쳐 보기</h3>
+
+<p>계속 x<sub>1</sub> = 2, x<sub>2</sub> = 4, x<sub>3</sub> = 9를 씁니다. Σ 식은 먼저 <b>펼쳐 쓰고</b>(+로 늘어놓고) 그다음 계산하면 틀리지 않습니다.</p>
+
+<div class="table-wrap">
+<table>
+<tr><th>Σ 식</th><th>읽기</th><th>펼쳐 쓰기</th><th>값</th></tr>
+<tr><td>Σ<sub>i=1</sub><sup>3</sup> x<sub>i</sub></td><td>i는 1부터 3까지 x<sub>i</sub></td><td>x<sub>1</sub> + x<sub>2</sub> + x<sub>3</sub> = 2 + 4 + 9</td><td>15</td></tr>
+<tr><td>Σ<sub>i=2</sub><sup>3</sup> x<sub>i</sub></td><td>i는 2부터 3까지 x<sub>i</sub></td><td>x<sub>2</sub> + x<sub>3</sub> = 4 + 9</td><td>13</td></tr>
+<tr><td>Σ<sub>i=1</sub><sup>4</sup> i</td><td>i는 1부터 4까지 i</td><td>1 + 2 + 3 + 4</td><td>10</td></tr>
+<tr><td>Σ<sub>i=1</sub><sup>3</sup> 2i</td><td>i는 1부터 3까지 2i</td><td>2×1 + 2×2 + 2×3 = 2 + 4 + 6</td><td>12</td></tr>
+<tr><td>Σ<sub>i=1</sub><sup>3</sup> 5</td><td>i는 1부터 3까지 5</td><td>5 + 5 + 5 (i가 없어도 세 번 더한다)</td><td>15</td></tr>
+</table>
+</div>
+
+<p>셋째·넷째 줄처럼 더할 항이 자료 값이 아니라 i 자체의 식일 수도 있습니다. 마지막 줄처럼 항에 i가 없으면 같은 수를 (끝값 − 시작값 + 1)번 더합니다. 시작값이 1, 끝값이 3이면 3 − 1 + 1 = 3번입니다. "+1"을 빼먹기 쉽습니다. Σ<sub>i=2</sub><sup>3</sup>은 i = 2, 3으로 두 번입니다.</p>
+
+<p>이제 평균도 Σ로 적을 수 있습니다. 평균은 흔히 x 위에 줄을 그은 <b>x̄</b>(엑스 바)로 적습니다.</p>
+
+<p class="calc">x̄ = (1/n) × Σ<sub>i=1</sub><sup>n</sup> x<sub>i</sub> &nbsp;&nbsp;&nbsp; = 합 ÷ 개수</p>
+
+<p>우리 자료라면 x̄ = (1/3) × 15 = 5입니다. 통계 교재에서 이 식을 보면 "합을 개수로 나눴다"고 읽으면 됩니다.</p>
+
+<div class="check" data-q="q6"></div>
+<div class="check" data-q="q7"></div>
+
+<h2>Σ 고쳐 쓰기: 같은 값의 다른 표현 <span class="tag grasp">이해하기</span></h2>
+
+<p>Σ는 덧셈을 줄여 적은 것일 뿐이므로, 덧셈에서 성립하는 성질이 그대로 성립합니다. 아래 규칙은 외울 필요 없이 <b>펼쳐 보면 왜 맞는지</b> 바로 보입니다. 둘째 자료로 y<sub>1</sub> = 1, y<sub>2</sub> = 0, y<sub>3</sub> = 5를 함께 씁니다(Σy<sub>i</sub> = 6).</p>
+
+<div class="table-wrap">
+<table>
+<tr><th>규칙</th><th>식</th><th>숫자로 확인 (n = 3)</th></tr>
+<tr><td>(가) 상수배는 밖으로</td><td>Σ c·x<sub>i</sub> = c · Σ x<sub>i</sub></td><td>3×2 + 3×4 + 3×9 = 6 + 12 + 27 = 45 = 3 × 15</td></tr>
+<tr><td>(나) 합은 나눠서</td><td>Σ (x<sub>i</sub> + y<sub>i</sub>) = Σ x<sub>i</sub> + Σ y<sub>i</sub></td><td>(2+1) + (4+0) + (9+5) = 3 + 4 + 14 = 21 = 15 + 6</td></tr>
+<tr><td>(다) 상수의 합</td><td>Σ<sub>i=1</sub><sup>n</sup> c = n · c</td><td>5 + 5 + 5 = 15 = 3 × 5</td></tr>
+<tr><td>(라) 범위 나누기</td><td>Σ<sub>i=1</sub><sup>3</sup> = Σ<sub>i=1</sub><sup>1</sup> + Σ<sub>i=2</sub><sup>3</sup></td><td>15 = 2 + 13</td></tr>
+<tr><td>(마) 첨자 이름은 상관없다</td><td>Σ<sub>i=1</sub><sup>3</sup> x<sub>i</sub> = Σ<sub>k=1</sub><sup>3</sup> x<sub>k</sub></td><td>둘 다 x<sub>1</sub> + x<sub>2</sub> + x<sub>3</sub> = 15</td></tr>
+</table>
+</div>
+
+<p>(가)는 공통으로 곱해진 수를 묶어 내는 곱셈의 분배법칙(3×2 + 3×4 = 3×(2+4))이고, (나)는 더하는 순서를 바꿔도 된다는 성질입니다. (마)의 첨자는 반복할 때 잠깐 쓰는 이름이라 i든 k든 j든 결과가 같습니다. 그래서 책마다 첨자 글자가 달라도 놀랄 필요가 없습니다.</p>
+
+<div class="box trap">
+<p class="box-k">흔한 실수</p>
+<p><b>제곱의 합과 합의 제곱은 다르다.</b> Σ x<sub>i</sub><sup>2</sup>는 "각각 제곱해서 더한 것", (Σ x<sub>i</sub>)<sup>2</sup>는 "다 더한 뒤 제곱한 것"입니다.</p>
+<p class="calc">Σ x<sub>i</sub><sup>2</sup> = 2<sup>2</sup> + 4<sup>2</sup> + 9<sup>2</sup> = 4 + 16 + 81 = 101<br>
+(Σ x<sub>i</sub>)<sup>2</sup> = 15<sup>2</sup> = 225</p>
+<p><b>곱의 합과 합의 곱도 다르다.</b> Σ x<sub>i</sub>y<sub>i</sub> = 2×1 + 4×0 + 9×5 = 2 + 0 + 45 = 47이지만 (Σ x<sub>i</sub>)(Σ y<sub>i</sub>) = 15 × 6 = 90입니다. 상수(c)는 밖으로 뺄 수 있지만, i에 따라 바뀌는 값은 빼낼 수 없습니다. 제곱(x<sup>2</sup> = x × x)은 AR08에서 자세히 다룹니다.</p>
+</div>
+
+<div class="box ex">
+<p class="box-k">풀이 예제 · 편차의 합이 언제나 0인 이유</p>
+<p>규칙 (나)와 (다)를 쓰면 앞 절의 "편차의 합 = 0"을 어떤 자료에서든 보일 수 있습니다.</p>
+<p class="calc">① 편차의 합 = Σ<sub>i=1</sub><sup>n</sup> (x<sub>i</sub> − x̄)<br>
+② (나)로 나눈다 = Σ x<sub>i</sub> − Σ x̄<br>
+③ x̄는 i에 따라 바뀌지 않는 상수이므로 (다)에 따라 Σ x̄ = n · x̄<br>
+④ 평균의 정의에서 x̄ = (Σ x<sub>i</sub>) ÷ n 이므로 n · x̄ = Σ x<sub>i</sub><br>
+⑤ 따라서 Σ x<sub>i</sub> − Σ x<sub>i</sub> = 0</p>
+<p>숫자로 따라가면: 15 − 3 × 5 = 15 − 15 = 0. 이렇게 Σ를 고쳐 쓰는 연습은 뒤의 분산 공식(DA05), 행렬 곱(LA04), 손실 함수(ML03)를 읽을 때 그대로 쓰입니다.</p>
+</div>
+
+<div class="why">
+<p class="box-k">왜 그럴까?</p>
+<p>Σ<sub>i=1</sub><sup>3</sup> (x<sub>i</sub> + 1)과 (Σ<sub>i=1</sub><sup>3</sup> x<sub>i</sub>) + 1은 같을까요? x = 2, 4, 9로 계산해 보고 이유를 말해 보세요.</p>
+<details><summary>모범 답 보기</summary><p>다릅니다. 앞의 것은 (2+1) + (4+1) + (9+1) = 18로, 1이 i마다 한 번씩 세 번 더해집니다. 규칙 (나)와 (다)로 고쳐 쓰면 Σx<sub>i</sub> + Σ1 = 15 + 3 = 18입니다. 뒤의 것은 다 더한 15에 1을 한 번만 더해 16입니다. Σ가 괄호 안 전체에 걸리는지, 일부에만 걸리는지를 괄호로 확인해야 합니다.</p></details>
+</div>
+
+<div class="check" data-q="q10"></div>
+<div class="check" data-q="q11"></div>
+
+<h2>한눈에 정리</h2>
+
+<div class="table-wrap">
+<table>
+<tr><th>묻는 것</th><th>답</th></tr>
+<tr><td>합, 개수</td><td>모든 값을 더한 것, 값이 몇 개인지(n)</td></tr>
+<tr><td><b class="key">평균</b></td><td>합 ÷ 개수. 거꾸로 <b class="key">합 = 평균 × 개수</b>. 자료 안에 없는 값일 수 있다</td></tr>
+<tr><td>균형점</td><td>평균에서 각 값까지의 거리(<b class="key">편차</b>)를 부호와 함께 더하면 0</td></tr>
+<tr><td>이상값</td><td>멀리 떨어진 값 하나가 평균을 크게 끌어당긴다</td></tr>
+<tr><td><b class="key">Σ</b></td><td>시그마. 모두 더하라. 아래 = 첨자와 <b class="key">시작값</b>, 위 = <b class="key">끝값</b>, 오른쪽 = 더할 항</td></tr>
+<tr><td>평균의 Σ 표기</td><td>x̄ = (1/n) Σ x<sub>i</sub></td></tr>
+<tr><td>고쳐 쓰기</td><td>상수배는 밖으로, 합은 나눠서, 상수의 합 = n·c. 단 Σx<sub>i</sub><sup>2</sup> ≠ (Σx<sub>i</sub>)<sup>2</sup></td></tr>
+</table>
+</div>
+
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>평균은 합을 개수로 나눠 모두를 같은 높이로 맞춘 균형점이고, Σ는 "첨자를 시작값부터 끝값까지 바꿔 가며 더하라"를 줄여 쓴 기호다.</p></div>
+
+<h2>확인 문제</h2>
+<p>본문 중간에서 푼 문제 말고 남은 문제입니다. 보기를 누르면 바로 정답과 해설이 나옵니다.</p>
+<div id="quiz"></div>
+
+<section class="work" id="tools"></section>
+
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

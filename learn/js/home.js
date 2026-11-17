@@ -33,7 +33,7 @@
         name.appendChild(el("b", "nv-code", code));
         name.appendChild(document.createTextNode(ar.name));
         a.appendChild(name);
-        var n = M.units.filter(function (u) { return u.area === code; }), ready = n.filter(function (u) { return G.chapters(u.id).length; }).length;
+        var n = M.units.filter(function (u) { return u.area === code && !G.skipped(u.id); }), ready = n.filter(function (u) { return G.chapters(u.id).length; }).length;
         a.appendChild(el("span", "cnt", ready ? ready + " / " + n.length : n.length + ""));
         areas.appendChild(a);
       });
@@ -174,7 +174,8 @@
 
   function drawAll(view) {
     var ready = M.units.filter(function (u) { return G.chapters(u.id).length; }).length;
-    view.appendChild(head("전체 목차", "분야 22 · 단원 " + M.units.length + " · 본문 있는 단원 " + ready));
+    var skipN = M.units.filter(function (u) { return G.skipped(u.id); }).length;
+    view.appendChild(head("전체 목차", "분야 22 · 단원 " + (M.units.length - skipN) + " · 본문 있는 단원 " + ready + (skipN ? " · 건너뜀 " + skipN : "")));
     M.groups.forEach(function (g) {
       view.appendChild(el("p", "grp", g.name));
       g.areas.forEach(function (code) {

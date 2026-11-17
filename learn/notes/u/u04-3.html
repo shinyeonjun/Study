@@ -1,0 +1,412 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>비트·바이트와 kB·KiB · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e8c'/%3E%3Cpath d='M8 22V10m8 12V14m8 8V6' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="U04-3">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+
+<header class="chapter">
+<p class="chap-sub">공부·컴퓨터의 출발점 · U04 기호와 단위 읽기</p>
+<p class="chap-num">U04·3</p>
+<h1>비트·바이트와 kB·KiB</h1>
+<p class="lead">상자에 "SSD 500GB"라고 적힌 저장 장치를 사서 Windows 컴퓨터에 달면, 파일 탐색기에는 465GB쯤으로 보입니다. 35GB는 어디로 갔을까요? 아무것도 사라지지 않았습니다. 같은 양을 서로 다른 자로 쟀을 뿐입니다. 이 장에서는 데이터의 가장 작은 단위인 비트와 바이트에서 시작해, kB와 KiB처럼 비슷해 보이는 두 단위 체계를 정확히 가르는 법을 익힙니다.</p>
+</header>
+
+<div class="goal">
+<h2>이 장을 읽고 나면</h2>
+<ul>
+<li>비트와 바이트를 설명하고, n비트로 만들 수 있는 모양의 수 2<sup>n</sup>을 계산할 수 있다.</li>
+<li>b(비트)와 B(바이트)를 구분해 100 Mbps를 MB/s로 바꿀 수 있다.</li>
+<li>kB(1,000 B)와 KiB(1,024 B)를 구분하고, 어느 표준에서 온 것인지 말할 수 있다.</li>
+<li>500 GB가 왜 약 465.66 GiB로 보이는지 계산으로 보일 수 있다.</li>
+</ul>
+</div>
+
+<h2>비트: 0 아니면 1</h2>
+
+<p>U03·2에서 컴퓨터 안의 프로그램과 데이터는 모두 0과 1로 되어 있다고 했습니다. 전등 스위치 하나는 켜짐과 꺼짐, 두 가지 상태만 가집니다. 이처럼 두 가지 중 하나만 담을 수 있는 가장 작은 칸이 비트입니다.</p>
+
+<div class="box">
+<p class="box-k">정의</p>
+<p><b class="key">비트(bit)</b>: 0 또는 1 하나를 담는 정보의 가장 작은 단위. binary digit(이진 숫자)를 줄인 말입니다. 기호는 소문자 <b>b</b> 또는 bit.</p>
+</div>
+
+<p>스위치 비유는 "두 가지 상태"라는 점만 맞습니다. 실제 부품에서 0과 1은 전압의 높낮이, 자석의 방향, 빛의 반사 여부 등 저장 장치마다 다른 방식으로 표현됩니다. 비트는 그 물리적 방식과 상관없이 "둘 중 하나"라는 정보의 양을 가리킵니다.</p>
+
+<h3>비트가 늘면 모양의 수는 두 배씩</h3>
+<p>비트 하나로는 두 가지(0, 1)밖에 나타낼 수 없습니다. 비트를 둘 붙이면 00, 01, 10, 11 네 가지, 셋이면 여덟 가지가 됩니다. 비트 하나를 더 붙일 때마다 기존 모양 각각에 "뒤에 0을 붙인 것"과 "뒤에 1을 붙인 것" 두 갈래가 생기므로 모양의 수가 두 배가 됩니다.</p>
+
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 276" role="img" aria-label="비트 수에 따라 만들 수 있는 0과 1의 모양을 모두 늘어놓았다. (가) 1비트: 0, 1 두 가지. (나) 2비트: 00, 01, 10, 11 네 가지. (다) 3비트: 000, 001, 010, 011, 100, 101, 110, 111 여덟 가지.">
+<rect class="f-box" x="119" y="24" width="22" height="22" rx="2"/>
+<text class="f-t" x="130" y="40" text-anchor="middle">0</text>
+<rect class="f-soft" x="119" y="50" width="22" height="22" rx="2"/>
+<text class="f-t" x="130" y="66" text-anchor="middle">1</text>
+<text class="f-cap" x="130" y="262" text-anchor="middle">(가) 1비트: 2가지</text>
+<rect class="f-box" x="357" y="24" width="22" height="22" rx="2"/>
+<text class="f-t" x="368" y="40" text-anchor="middle">0</text>
+<rect class="f-box" x="381" y="24" width="22" height="22" rx="2"/>
+<text class="f-t" x="392" y="40" text-anchor="middle">0</text>
+<rect class="f-box" x="357" y="50" width="22" height="22" rx="2"/>
+<text class="f-t" x="368" y="66" text-anchor="middle">0</text>
+<rect class="f-soft" x="381" y="50" width="22" height="22" rx="2"/>
+<text class="f-t" x="392" y="66" text-anchor="middle">1</text>
+<rect class="f-soft" x="357" y="76" width="22" height="22" rx="2"/>
+<text class="f-t" x="368" y="92" text-anchor="middle">1</text>
+<rect class="f-box" x="381" y="76" width="22" height="22" rx="2"/>
+<text class="f-t" x="392" y="92" text-anchor="middle">0</text>
+<rect class="f-soft" x="357" y="102" width="22" height="22" rx="2"/>
+<text class="f-t" x="368" y="118" text-anchor="middle">1</text>
+<rect class="f-soft" x="381" y="102" width="22" height="22" rx="2"/>
+<text class="f-t" x="392" y="118" text-anchor="middle">1</text>
+<text class="f-cap" x="380" y="262" text-anchor="middle">(나) 2비트: 4가지</text>
+<rect class="f-box" x="595" y="24" width="22" height="22" rx="2"/>
+<text class="f-t" x="606" y="40" text-anchor="middle">0</text>
+<rect class="f-box" x="619" y="24" width="22" height="22" rx="2"/>
+<text class="f-t" x="630" y="40" text-anchor="middle">0</text>
+<rect class="f-box" x="643" y="24" width="22" height="22" rx="2"/>
+<text class="f-t" x="654" y="40" text-anchor="middle">0</text>
+<rect class="f-box" x="595" y="50" width="22" height="22" rx="2"/>
+<text class="f-t" x="606" y="66" text-anchor="middle">0</text>
+<rect class="f-box" x="619" y="50" width="22" height="22" rx="2"/>
+<text class="f-t" x="630" y="66" text-anchor="middle">0</text>
+<rect class="f-soft" x="643" y="50" width="22" height="22" rx="2"/>
+<text class="f-t" x="654" y="66" text-anchor="middle">1</text>
+<rect class="f-box" x="595" y="76" width="22" height="22" rx="2"/>
+<text class="f-t" x="606" y="92" text-anchor="middle">0</text>
+<rect class="f-soft" x="619" y="76" width="22" height="22" rx="2"/>
+<text class="f-t" x="630" y="92" text-anchor="middle">1</text>
+<rect class="f-box" x="643" y="76" width="22" height="22" rx="2"/>
+<text class="f-t" x="654" y="92" text-anchor="middle">0</text>
+<rect class="f-box" x="595" y="102" width="22" height="22" rx="2"/>
+<text class="f-t" x="606" y="118" text-anchor="middle">0</text>
+<rect class="f-soft" x="619" y="102" width="22" height="22" rx="2"/>
+<text class="f-t" x="630" y="118" text-anchor="middle">1</text>
+<rect class="f-soft" x="643" y="102" width="22" height="22" rx="2"/>
+<text class="f-t" x="654" y="118" text-anchor="middle">1</text>
+<rect class="f-soft" x="595" y="128" width="22" height="22" rx="2"/>
+<text class="f-t" x="606" y="144" text-anchor="middle">1</text>
+<rect class="f-box" x="619" y="128" width="22" height="22" rx="2"/>
+<text class="f-t" x="630" y="144" text-anchor="middle">0</text>
+<rect class="f-box" x="643" y="128" width="22" height="22" rx="2"/>
+<text class="f-t" x="654" y="144" text-anchor="middle">0</text>
+<rect class="f-soft" x="595" y="154" width="22" height="22" rx="2"/>
+<text class="f-t" x="606" y="170" text-anchor="middle">1</text>
+<rect class="f-box" x="619" y="154" width="22" height="22" rx="2"/>
+<text class="f-t" x="630" y="170" text-anchor="middle">0</text>
+<rect class="f-soft" x="643" y="154" width="22" height="22" rx="2"/>
+<text class="f-t" x="654" y="170" text-anchor="middle">1</text>
+<rect class="f-soft" x="595" y="180" width="22" height="22" rx="2"/>
+<text class="f-t" x="606" y="196" text-anchor="middle">1</text>
+<rect class="f-soft" x="619" y="180" width="22" height="22" rx="2"/>
+<text class="f-t" x="630" y="196" text-anchor="middle">1</text>
+<rect class="f-box" x="643" y="180" width="22" height="22" rx="2"/>
+<text class="f-t" x="654" y="196" text-anchor="middle">0</text>
+<rect class="f-soft" x="595" y="206" width="22" height="22" rx="2"/>
+<text class="f-t" x="606" y="222" text-anchor="middle">1</text>
+<rect class="f-soft" x="619" y="206" width="22" height="22" rx="2"/>
+<text class="f-t" x="630" y="222" text-anchor="middle">1</text>
+<rect class="f-soft" x="643" y="206" width="22" height="22" rx="2"/>
+<text class="f-t" x="654" y="222" text-anchor="middle">1</text>
+<text class="f-cap" x="630" y="262" text-anchor="middle">(다) 3비트: 8가지</text>
+</svg>
+<figcaption>색칠한 칸이 1이다. 한 비트 늘 때마다 줄 수가 두 배가 된다.</figcaption>
+</figure>
+
+<div class="box">
+<p class="box-k">정의</p>
+<p>n개의 비트로 만들 수 있는 서로 다른 모양의 수 = <b class="key">2<sup>n</sup></b> (2를 n번 곱한 수, U04·2의 거듭제곱)</p>
+</div>
+
+<div class="table-wrap">
+<table>
+<tr><th>비트 수 n</th><th>1</th><th>2</th><th>3</th><th>4</th><th>8</th><th>10</th></tr>
+<tr><th>모양의 수 2<sup>n</sup></th><td>2</td><td>4</td><td>8</td><td>16</td><td>256</td><td>1,024</td></tr>
+</table>
+</div>
+
+<div class="box ex">
+<p class="box-k">풀이 예제</p>
+<p>8비트로 만들 수 있는 모양은 몇 가지일까요?</p>
+<p class="calc">① 2<sup>8</sup> = 2 × 2 × 2 × 2 × 2 × 2 × 2 × 2<br>
+② 앞에서부터: 2 × 2 = 4, 4 × 2 = 8, 8 × 2 = 16, 16 × 2 = 32, 32 × 2 = 64, 64 × 2 = 128, 128 × 2 = 256<br>
+③ 256가지</p>
+<p>256가지 모양에 0부터 차례로 번호를 붙이면 0, 1, 2, …, 255 입니다. 마지막 번호가 256이 아니라 <b>255</b>인 것은 0부터 셌기 때문입니다(U04·1의 "하나 차이": 0부터 255까지는 255 − 0 + 1 = 256개).</p>
+</div>
+
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+
+<h2>바이트: 비트 8개 묶음 <span class="tag memo">외우기</span></h2>
+
+<div class="box">
+<p class="box-k">정의</p>
+<p><b class="key">바이트(byte)</b>: 비트 8개를 묶은 단위. <b class="key">1 B = 8 b</b>. 기호는 대문자 <b>B</b>.<br>
+1바이트로 256가지(0~255)를 나타낼 수 있습니다.</p>
+</div>
+
+<p>파일 크기, 메모리와 저장 장치의 용량은 바이트로 셉니다. 영어 글자 하나는 보통 1바이트에 담깁니다. 예를 들어 대문자 A는 약속된 번호표(문자 인코딩)에서 65번이고, 65를 8비트로 적으면 01000001 입니다.</p>
+
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 176" role="img" aria-label="여덟 칸에 0, 1, 0, 0, 0, 0, 0, 1이 들어 있다. 칸 위의 자리값은 왼쪽부터 128, 64, 32, 16, 8, 4, 2, 1이다. 1이 있는 칸의 자리값 64와 1을 더하면 65이고, 65는 글자 A를 뜻한다. 여덟 칸이 1바이트다.">
+<text class="f-s" x="96" y="46" text-anchor="end">자리값</text>
+<text class="f-s" x="96" y="88" text-anchor="end">비트</text>
+<text class="f-s f-ink-t" x="145" y="46" text-anchor="middle">128</text>
+<rect class="f-box" x="110" y="60" width="70" height="40" rx="2"/>
+<text class="f-t" x="145" y="86" text-anchor="middle">0</text>
+<text class="f-s f-ink-t" x="215" y="46" text-anchor="middle">64</text>
+<rect class="f-soft" x="180" y="60" width="70" height="40" rx="2"/>
+<text class="f-t f-b" x="215" y="86" text-anchor="middle">1</text>
+<text class="f-s f-ink-t" x="285" y="46" text-anchor="middle">32</text>
+<rect class="f-box" x="250" y="60" width="70" height="40" rx="2"/>
+<text class="f-t" x="285" y="86" text-anchor="middle">0</text>
+<text class="f-s f-ink-t" x="355" y="46" text-anchor="middle">16</text>
+<rect class="f-box" x="320" y="60" width="70" height="40" rx="2"/>
+<text class="f-t" x="355" y="86" text-anchor="middle">0</text>
+<text class="f-s f-ink-t" x="425" y="46" text-anchor="middle">8</text>
+<rect class="f-box" x="390" y="60" width="70" height="40" rx="2"/>
+<text class="f-t" x="425" y="86" text-anchor="middle">0</text>
+<text class="f-s f-ink-t" x="495" y="46" text-anchor="middle">4</text>
+<rect class="f-box" x="460" y="60" width="70" height="40" rx="2"/>
+<text class="f-t" x="495" y="86" text-anchor="middle">0</text>
+<text class="f-s f-ink-t" x="565" y="46" text-anchor="middle">2</text>
+<rect class="f-box" x="530" y="60" width="70" height="40" rx="2"/>
+<text class="f-t" x="565" y="86" text-anchor="middle">0</text>
+<text class="f-s f-ink-t" x="635" y="46" text-anchor="middle">1</text>
+<rect class="f-soft" x="600" y="60" width="70" height="40" rx="2"/>
+<text class="f-t f-b" x="635" y="86" text-anchor="middle">1</text>
+<line class="f-ink" x1="110" y1="112" x2="670" y2="112"/>
+<line class="f-ink" x1="110" y1="106" x2="110" y2="112"/>
+<line class="f-ink" x1="670" y1="106" x2="670" y2="112"/>
+<text class="f-s" x="390" y="130" text-anchor="middle">8비트 = 1바이트</text>
+<text class="f-cap" x="390" y="160" text-anchor="middle">1이 있는 자리값만 더한다: 64 + 1 = 65 → 글자 A</text>
+</svg>
+<figcaption>각 칸의 자리값은 오른쪽에서 왼쪽으로 갈 때마다 두 배가 된다. 이진수 읽는 법은 SY01에서 자세히 다룬다.</figcaption>
+</figure>
+
+<p>한글 한 글자는 보통 더 많은 바이트를 씁니다. 지금 가장 널리 쓰는 UTF-8이라는 방식에서 "가"는 3바이트입니다. 실제로 확인한 코드와 결과입니다.</p>
+<pre><code>print(len("A".encode("utf-8")))
+print(len("가".encode("utf-8")))</code></pre>
+<pre><code>1
+3</code></pre>
+<p>지금은 코드를 읽지 못해도 괜찮습니다. "A를 UTF-8로 바꾸면 1바이트, 가는 3바이트"라는 결과만 봅니다. 글자와 바이트의 관계(인코딩)는 SY01과 PY07에서 다룹니다.</p>
+
+<h3>b와 B: 소문자 하나 차이가 8배</h3>
+<p>인터넷 속도 광고의 "100 Mbps"는 <b>bit per second</b>, 곧 1초에 1억 <b>비트</b>를 보낸다는 뜻입니다. 파일 크기는 바이트(B)로 적으니, 실제로 파일을 받는 빠르기를 어림하려면 8로 나눠야 합니다.</p>
+
+<div class="box ex">
+<p class="box-k">풀이 예제</p>
+<p>100 Mbps 회선으로 1초에 최대 몇 MB를 받을 수 있을까요? (SI 기준, 통신 장비가 덧붙이는 부가 정보는 무시)</p>
+<p class="calc">① 100 Mbps = 100 × 10<sup>6</sup> bit/s = 100,000,000 bit/s<br>
+② 비트를 바이트로: 8비트가 1바이트이므로 100,000,000 ÷ 8 = 12,500,000 B/s<br>
+③ MB로: 12,500,000 ÷ 1,000,000 = 12.5 MB/s</p>
+<p>광고의 "100"과 내려받기 창에 보이는 "12.5"가 다른 이유는 b와 B의 차이입니다. 실제로는 통신 과정에서 덧붙는 정보와 다른 사용자 때문에 이보다 조금 느리게 나옵니다.</p>
+</div>
+
+<div class="box trap">
+<p class="box-k">흔한 실수</p>
+<p><b>Mb와 MB를 같은 것으로 읽는 실수.</b> 소문자 b는 비트, 대문자 B는 바이트입니다. 1 MB = 8 Mb 입니다. 통신 속도는 관례적으로 비트(bps)로, 파일과 저장 용량은 바이트(B)로 적습니다. 대소문자를 바꿔 쓴 보기가 시험에도 나오니 단위 글자를 하나씩 확인합니다.</p>
+</div>
+
+<div class="check" data-q="q3"></div>
+<div class="check" data-q="q4"></div>
+
+<h2>kB와 KiB: 두 가지 자 <span class="tag grasp">이해하기</span></h2>
+
+<p>바이트는 너무 작아서 큰 양에는 U04·2의 접두어를 붙입니다. 그런데 여기서 두 가지 전통이 부딪힙니다.</p>
+<ul>
+<li><b>10의 거듭제곱으로 세는 쪽.</b> 킬로미터의 k처럼 k = 1,000 입니다. 국제 단위계(SI)의 뜻 그대로입니다.</li>
+<li><b>2의 거듭제곱으로 세는 쪽.</b> 컴퓨터는 0과 1, 곧 2를 바탕으로 동작하므로 메모리 크기는 2의 거듭제곱으로 딱 떨어집니다. 2<sup>10</sup> = 1,024가 1,000에 가까워서, 예전부터 1,024 B를 "1 킬로바이트"라고 불러 왔습니다.</li>
+</ul>
+<p>같은 "킬로바이트"라는 말이 1,000과 1,024 두 가지 뜻으로 쓰이자 혼란이 생겼습니다. 그래서 국제전기기술위원회(IEC)가 1998년에 <b>2의 거듭제곱용 이름을 따로</b> 만들었습니다. 킬로(kilo) 대신 키비(kibi, kilo + binary), 메가 대신 메비(mebi)처럼 부릅니다.</p>
+
+<div class="box">
+<p class="box-k">정의</p>
+<p><b class="key">kB</b> (킬로바이트, SI): 1 kB = 10<sup>3</sup> B = <b>1,000 B</b><br>
+<b class="key">KiB</b> (키비바이트, IEC): 1 KiB = 2<sup>10</sup> B = <b>1,024 B</b><br>
+SI 쪽은 한 단계마다 ×1,000, IEC 쪽은 한 단계마다 ×1,024 입니다. 이름에 <b>i가 들어 있으면 1,024 쪽</b>입니다.</p>
+</div>
+
+<div class="table-wrap">
+<table>
+<tr><th colspan="3">SI (10의 거듭제곱)</th><th colspan="3">IEC (2의 거듭제곱)</th></tr>
+<tr><th>기호</th><th>읽기</th><th>바이트</th><th>기호</th><th>읽기</th><th>바이트</th></tr>
+<tr><td>kB</td><td>킬로바이트</td><td>10<sup>3</sup> = 1,000</td><td>KiB</td><td>키비바이트</td><td>2<sup>10</sup> = 1,024</td></tr>
+<tr><td>MB</td><td>메가바이트</td><td>10<sup>6</sup> = 1,000,000</td><td>MiB</td><td>메비바이트</td><td>2<sup>20</sup> = 1,048,576</td></tr>
+<tr><td>GB</td><td>기가바이트</td><td>10<sup>9</sup> = 1,000,000,000</td><td>GiB</td><td>기비바이트</td><td>2<sup>30</sup> = 1,073,741,824</td></tr>
+<tr><td>TB</td><td>테라바이트</td><td>10<sup>12</sup></td><td>TiB</td><td>테비바이트</td><td>2<sup>40</sup> = 1,099,511,627,776</td></tr>
+</table>
+</div>
+
+<p>SI의 킬로는 소문자 <b>k</b>(kB), IEC의 키비는 대문자 <b>K</b>(KiB)입니다. 한 단계에서는 1,000과 1,024, 겨우 2.4% 차이지만, 단계를 올라갈수록 차이가 곱으로 쌓입니다.</p>
+
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 262" role="img" aria-label="막대 네 쌍. 각 쌍의 위 막대는 SI 단위(kB, MB, GB, TB)의 크기, 아래 막대는 IEC 단위(KiB, MiB, GiB, TiB)의 크기이며, SI 막대를 같은 길이로 맞췄다. IEC 막대는 Ki에서 1.024배, Mi에서 1.049배, Gi에서 1.074배, Ti에서 1.100배로 단계가 올라갈수록 길어진다.">
+<text class="f-cap" x="20" y="44" text-anchor="start">k · Ki</text>
+<rect class="f-box" x="120" y="20" width="500" height="16"/>
+<rect class="f-soft" x="120" y="40" width="512.0" height="16"/>
+<text class="f-s" x="640.0" y="53" text-anchor="start">1.024배</text>
+<text class="f-cap" x="20" y="98" text-anchor="start">M · Mi</text>
+<rect class="f-box" x="120" y="74" width="500" height="16"/>
+<rect class="f-soft" x="120" y="94" width="524.3" height="16"/>
+<text class="f-s" x="652.3" y="107" text-anchor="start">1.049배</text>
+<text class="f-cap" x="20" y="152" text-anchor="start">G · Gi</text>
+<rect class="f-box" x="120" y="128" width="500" height="16"/>
+<rect class="f-soft" x="120" y="148" width="536.9" height="16"/>
+<text class="f-s" x="664.9" y="161" text-anchor="start">1.074배</text>
+<text class="f-cap" x="20" y="206" text-anchor="start">T · Ti</text>
+<rect class="f-box" x="120" y="182" width="500" height="16"/>
+<rect class="f-soft" x="120" y="202" width="549.8" height="16"/>
+<text class="f-s" x="677.8" y="215" text-anchor="start">1.100배</text>
+<line class="f-dash" x1="620" y1="14" x2="620" y2="238"/>
+<rect class="f-box" x="120" y="240" width="22" height="12"/>
+<text class="f-s" x="150" y="251" text-anchor="start">SI: 1,000씩 (kB, MB, GB, TB)</text>
+<rect class="f-soft" x="420" y="240" width="22" height="12"/>
+<text class="f-s" x="450" y="251" text-anchor="start">IEC: 1,024씩 (KiB, MiB, GiB, TiB)</text>
+</svg>
+<figcaption>막대 길이는 실제 비율대로 그렸다. 위 막대를 모두 같은 길이로 맞추면 아래 막대가 점점 길어진다.</figcaption>
+</figure>
+
+<div class="box ex">
+<p class="box-k">풀이 예제</p>
+<p>1 GiB는 1 GB의 몇 배일까요?</p>
+<p class="calc">① 1 GiB = 2<sup>30</sup> B = 1,073,741,824 B<br>
+② 1 GB = 10<sup>9</sup> B = 1,000,000,000 B<br>
+③ 나누기: 1,073,741,824 ÷ 1,000,000,000 = 1.073741824<br>
+④ 약 1.074배, 곧 GiB가 GB보다 약 7.4% 크다</p>
+</div>
+
+<div class="check" data-q="q5"></div>
+<div class="check" data-q="q6"></div>
+
+<h2>500 GB는 왜 465로 보이나</h2>
+
+<p>이제 처음의 질문을 풀 수 있습니다. 저장 장치 회사는 SI 단위로 적습니다. 500 GB는 500 × 10<sup>9</sup> B 입니다. 한편 Windows의 파일 탐색기는 <b>1,024 단위(IEC 방식)로 계산하면서 이름은 KB·MB·GB로 표시</b>합니다. 같은 바이트 수를 더 큰 눈금의 자로 재니 숫자가 작게 나옵니다.</p>
+
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 152" role="img" aria-label="500,000,000,000 바이트를 나타내는 막대 하나를 위아래 두 자로 잰다. 위의 GB 자는 100 GB마다 눈금이 있고 막대 끝이 500이다. 아래의 GiB 자는 100 GiB마다 눈금이 있는데 눈금 간격이 더 넓어서 막대 끝이 465.66이다.">
+<rect class="f-soft" x="80" y="62" width="600" height="24"/>
+<text class="f-s f-ink-t" x="380" y="79" text-anchor="middle">500,000,000,000 바이트</text>
+<line class="f-ink" x1="80" y1="52" x2="80" y2="62"/>
+<text class="f-s" x="80" y="44" text-anchor="middle">0</text>
+<line class="f-ink" x1="200" y1="52" x2="200" y2="62"/>
+<text class="f-s" x="200" y="44" text-anchor="middle">100</text>
+<line class="f-ink" x1="320" y1="52" x2="320" y2="62"/>
+<text class="f-s" x="320" y="44" text-anchor="middle">200</text>
+<line class="f-ink" x1="440" y1="52" x2="440" y2="62"/>
+<text class="f-s" x="440" y="44" text-anchor="middle">300</text>
+<line class="f-ink" x1="560" y1="52" x2="560" y2="62"/>
+<text class="f-s" x="560" y="44" text-anchor="middle">400</text>
+<line class="f-ink" x1="680" y1="52" x2="680" y2="62"/>
+<text class="f-s" x="680" y="44" text-anchor="middle">500</text>
+<text class="f-s f-ink-t" x="680" y="20" text-anchor="end">GB 자 (1,000,000,000 B 단위)</text>
+<line class="f-ink" x1="80.0" y1="86" x2="80.0" y2="96"/>
+<text class="f-s" x="80.0" y="112" text-anchor="middle">0</text>
+<line class="f-ink" x1="208.8" y1="86" x2="208.8" y2="96"/>
+<text class="f-s" x="208.8" y="112" text-anchor="middle">100</text>
+<line class="f-ink" x1="337.7" y1="86" x2="337.7" y2="96"/>
+<text class="f-s" x="337.7" y="112" text-anchor="middle">200</text>
+<line class="f-ink" x1="466.5" y1="86" x2="466.5" y2="96"/>
+<text class="f-s" x="466.5" y="112" text-anchor="middle">300</text>
+<line class="f-ink" x1="595.4" y1="86" x2="595.4" y2="96"/>
+<text class="f-s" x="595.4" y="112" text-anchor="middle">400</text>
+<line class="f-line" x1="680" y1="86" x2="680" y2="100"/>
+<text class="f-s f-ink-t f-b" x="680" y="116" text-anchor="middle">465.66</text>
+<text class="f-s f-ink-t" x="680" y="140" text-anchor="end">GiB 자 (1,073,741,824 B 단위)</text>
+<text class="f-cap" x="20" y="44" text-anchor="start">GB</text>
+<text class="f-cap" x="20" y="112" text-anchor="start">GiB</text>
+</svg>
+<figcaption>막대(바이트 수)는 하나다. 아래 자의 눈금 간격이 위 자보다 약 1.074배 넓어서 끝의 숫자가 작아진다. 실제 비율대로 그렸다.</figcaption>
+</figure>
+
+<div class="box ex">
+<p class="box-k">풀이 예제</p>
+<p>500 GB 저장 장치는 몇 GiB일까요?</p>
+<p class="calc">① 바이트로: 500 GB = 500 × 10<sup>9</sup> B = 500,000,000,000 B<br>
+② 1 GiB의 바이트: 2<sup>30</sup> B = 1,073,741,824 B<br>
+③ 나누기: 500,000,000,000 ÷ 1,073,741,824 = 465.661…<br>
+④ 약 465.66 GiB</p>
+<p>Windows는 이 값을 "465 GB"쯤으로 보여 줍니다. 단위 이름은 GB지만 실제로는 GiB로 잰 값입니다. 사라진 바이트는 하나도 없습니다(실제 화면의 숫자는 미리 쓰인 공간 때문에 조금 더 작을 수 있습니다). 같은 계산을 Python으로 해 본 결과입니다.</p>
+<pre><code>print(500 * 10**9 / 2**30)</code></pre>
+<pre><code>465.66128730773926</code></pre>
+</div>
+
+<div class="box trap">
+<p class="box-k">시험 함정 · 빅분기 노트와의 차이</p>
+<p>빅분기 노트 <a href="../../../bigdata/notes/1-planning/01-빅데이터란.html">1-01</a>에서는 <b>KB = 1,024 B</b>로 계산했습니다. 이것은 IEC 이름이 생기기 전부터 쓰던 관례(대문자 K를 쓰고 1,024로 세는 방식)로, 국내 자격증 교재와 시험 문제에서 흔히 이 관례를 씁니다. 메모리 업계 표준에도 이 관례가 남아 있습니다. 그래서 같은 "킬로바이트"라도 책과 문제마다 1,000인지 1,024인지 다를 수 있습니다.</p>
+<p>정리하면 이렇습니다. ① <b>문제에 기준이 적혀 있으면 그대로 따른다.</b> ② 빅분기처럼 "KB, MB, GB… 순서와 한 단계에 1,024배"를 묻는 시험 문제는 1,024로 답한다. ③ 정확한 글을 쓸 때는 1,000이면 kB, 1,024이면 KiB로 써서 오해를 없앤다. 시험 기준은 바뀔 수 있으니 공식 공지와 문제의 조건을 먼저 확인합니다.</p>
+</div>
+
+<div class="check" data-q="q7"></div>
+
+<div class="why">
+<p class="box-k">왜 그럴까?</p>
+<p>메모리(RAM)는 8 GB, 16 GB처럼 2의 거듭제곱으로 딱 떨어지는 크기로 나오는데, 저장 장치는 500 GB, 1 TB처럼 10의 거듭제곱에 가까운 크기로 팝니다. 왜 이렇게 다를까요?</p>
+<details><summary>모범 답 보기</summary><p>메모리는 칸마다 주소(번호)를 붙여 쓰는데, 주소를 n비트로 적으면 2<sup>n</sup>개의 칸을 가리킬 수 있으므로 칸 수를 2의 거듭제곱으로 맞추는 것이 자연스럽습니다(그래서 "8 GB" 메모리는 실제로 8 GiB인 경우가 많습니다). 저장 장치는 그런 제약이 덜하고, 회사들이 SI 단위로 용량을 적어 온 관례가 있습니다. 같은 "GB"라는 글자가 제품마다 다른 자를 쓰는 셈이라 IEC 이름이 필요해졌습니다.</p></details>
+</div>
+
+<h2>기호 읽기 표</h2>
+
+<div class="table-wrap">
+<table>
+<tr><th>기호</th><th>읽기</th><th>뜻</th></tr>
+<tr><td>b, bit</td><td>비트</td><td>0 또는 1 하나</td></tr>
+<tr><td>B</td><td>바이트</td><td>8비트 (1 B = 8 b)</td></tr>
+<tr><td>2<sup>n</sup></td><td>2의 n제곱</td><td>n비트로 만들 수 있는 모양의 수</td></tr>
+<tr><td>bps, bit/s</td><td>비피에스, 초당 비트</td><td>1초에 보내는 비트 수 (통신 속도)</td></tr>
+<tr><td>Mbps</td><td>메가비피에스</td><td>초당 10<sup>6</sup>비트</td></tr>
+<tr><td>MB/s</td><td>초당 메가바이트</td><td>1초에 10<sup>6</sup>바이트</td></tr>
+<tr><td>kB</td><td>킬로바이트</td><td>1,000 B (SI)</td></tr>
+<tr><td>KiB</td><td>키비바이트</td><td>1,024 B (IEC)</td></tr>
+<tr><td>KB</td><td>킬로바이트 (관례)</td><td>대개 1,024 B. 빅분기 노트와 Windows가 이 뜻으로 씀</td></tr>
+<tr><td>MiB, GiB, TiB</td><td>메비·기비·테비바이트</td><td>2<sup>20</sup>, 2<sup>30</sup>, 2<sup>40</sup> B</td></tr>
+</table>
+</div>
+
+<h2>한눈에 정리</h2>
+
+<div class="table-wrap">
+<table>
+<tr><th>주제</th><th>꼭 기억할 것</th></tr>
+<tr><td>비트</td><td><b class="key">0 또는 1</b> 하나. n비트 → <b class="key">2<sup>n</sup></b>가지</td></tr>
+<tr><td>바이트</td><td><b class="key">1 B = 8 b</b>. 256가지(0~255). 영어 글자 하나 ≈ 1 B, UTF-8 한글 한 글자 = 3 B</td></tr>
+<tr><td>b와 B</td><td>통신 속도는 비트(Mbps), 파일은 바이트(MB). <b class="key">÷ 8</b>로 바꾼다</td></tr>
+<tr><td>SI</td><td><b class="key">kB = 1,000 B</b>, MB = 10<sup>6</sup> B, GB = 10<sup>9</sup> B. 저장 장치 회사가 쓴다</td></tr>
+<tr><td>IEC</td><td><b class="key">KiB = 1,024 B</b>, MiB = 2<sup>20</sup> B, GiB = 2<sup>30</sup> B. 이름에 i</td></tr>
+<tr><td>관례 KB</td><td>빅분기 노트·Windows는 <b class="key">KB = 1,024 B</b>. 문제의 기준을 먼저 본다</td></tr>
+<tr><td>500 GB</td><td>500 × 10<sup>9</sup> ÷ 2<sup>30</sup> ≈ <b class="key">465.66 GiB</b></td></tr>
+</table>
+</div>
+
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>8비트가 1바이트이고, 킬로·메가·기가는 SI에서 1,000씩, IEC(키비·메비·기비)에서 1,024씩 커지므로 단위 글자와 문제의 기준을 함께 확인해야 한다.</p></div>
+
+<h2>확인 문제</h2>
+<p>본문 중간에서 푼 문제 말고 남은 문제입니다. 보기를 누르면 바로 정답과 해설이 나옵니다.</p>
+<div id="quiz"></div>
+
+<section class="work" id="tools"></section>
+
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

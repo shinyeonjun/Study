@@ -1,5 +1,6 @@
 /* 공부 교재의 목록. 두 부분으로 되어 있다.
 
+   0) BDA_SKIP — 건너뛰는 단원(이미 아는 기초).
    1) CHAPTERS — 실제로 쓴 장. 새 장을 쓰면 여기에 한 줄만 추가한다(손으로 고치는 곳).
       단원 ID 아래에 { id, title, href }.
         id    : 공부 기록이 저장되는 번호. 장의 <body data-note="...">와 같아야 하고, 한번 정하면 바꾸지 않는다.
@@ -14,12 +15,32 @@ window.BDA_CHAPTERS = {
     {"id": "U01-1", "title": "궁금함을 질문으로 바꾸기", "href": "notes/u/u01-1.html"}
   ],
   U03: [
-    {"id": "U03-1", "title": "입력·처리·출력·저장", "href": "notes/u/u03-1.html"}
+    {"id": "U03-1", "title": "입력·처리·출력·저장", "href": "notes/u/u03-1.html"},
+    {"id": "U03-2", "title": "부품과 프로그램", "href": "notes/u/u03-2.html"},
+    {"id": "U03-3", "title": "브라우저와 서버", "href": "notes/u/u03-3.html"}
   ],
-  AR01: [
-    {"id": "AR01-1", "title": "자연수와 0, 자리값", "href": "notes/ar/ar01-1.html"}
+  U04: [
+    {"id": "U04-1", "title": "등호·부등호·괄호", "href": "notes/u/u04-1.html"},
+    {"id": "U04-2", "title": "변수·첨자·단위", "href": "notes/u/u04-2.html"},
+    {"id": "U04-3", "title": "비트·바이트와 kB·KiB", "href": "notes/u/u04-3.html"}
+  ],
+  AR06: [
+    {"id": "AR06-1", "title": "비와 비례, 단위당 양", "href": "notes/ar/ar06-1.html"},
+    {"id": "AR06-2", "title": "단위 환산과 속도·처리량", "href": "notes/ar/ar06-2.html"}
+  ],
+  AR07: [
+    {"id": "AR07-1", "title": "백분율과 퍼센트포인트", "href": "notes/ar/ar07-1.html"},
+    {"id": "AR07-2", "title": "증가율과 거듭된 변화", "href": "notes/ar/ar07-2.html"}
+  ],
+  AR10: [
+    {"id": "AR10-1", "title": "합과 평균, 합 기호 Σ", "href": "notes/ar/ar10-1.html"},
+    {"id": "AR10-2", "title": "가중평균과 평균의 평균 함정", "href": "notes/ar/ar10-2.html"}
   ]
 };
+
+/* 건너뛰는 단원: 사용자가 이미 아는 기초라서 쓰지 않는다(2026-11-18 결정: 기초 산술 제외).
+   목차에는 '건너뜀'으로 흐리게 남고, 경로의 앞내용에는 나오지 않는다. */
+window.BDA_SKIP = ["AR01", "AR02", "AR03", "AR04", "AR05", "AR08", "AR09"];
 
 // ---- 지도 시작 (tools/build_map.py가 만든다. 직접 고치지 않는다)
 window.BDA_MAP = {

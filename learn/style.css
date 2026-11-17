@@ -140,6 +140,8 @@ a.cell-main:hover { text-decoration: underline; text-underline-offset: 3px; }
 .urow .ut { color: var(--text); text-decoration: none; font-weight: 600; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .urow .ut:hover { color: var(--accent); text-decoration: underline; text-underline-offset: 3px; }
 .urow.off .uid, .urow.off .ut { color: var(--muted); font-weight: 400; }
+.urow.skip { opacity: 0.55; }
+.urow.skip .ut { text-decoration: line-through; text-decoration-color: var(--line); }
 .urow .utag { font-size: 0.72rem; color: var(--muted); border: 1px solid var(--line); border-radius: 4px; padding: 0 6px; white-space: nowrap; }
 .urow .utag:empty { display: none; }
 .uright { display: flex; justify-content: flex-end; }

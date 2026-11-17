@@ -1,0 +1,280 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>백분율과 퍼센트포인트 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e8c'/%3E%3Cpath d='M8 22V10m8 12V14m8 8V6' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="AR07-1">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+
+<header class="chapter">
+<p class="chap-sub">산술과 수 감각 · AR07 백분율과 변화</p>
+<p class="chap-num">AR07·1</p>
+<h1>백분율과 퍼센트포인트</h1>
+<p class="lead">뉴스에서 "합격률이 20%에서 25%로 5% 올랐다"는 문장을 봅니다. 그런데 다른 기사는 같은 변화를 "25% 올랐다"고 씁니다. 둘 중 하나가 틀린 걸까요? 이 장에서는 퍼센트가 무엇인지, 퍼센트를 계산할 때 왜 "무엇의" 퍼센트인지(기준값)가 중요한지, 그리고 퍼센트와 퍼센트포인트의 차이를 다룹니다.</p>
+</header>
+
+<div class="goal">
+<h2>이 장을 읽고 나면</h2>
+<ul>
+<li>퍼센트, 소수, 분수를 서로 바꿀 수 있다.</li>
+<li>"A의 p%", "B는 A의 몇 %", "어떤 수의 p%가 B"를 계산할 수 있다.</li>
+<li>같은 차이라도 기준값에 따라 퍼센트가 달라지는 이유를 예로 설명할 수 있다.</li>
+<li>두 퍼센트 사이의 변화를 퍼센트포인트와 퍼센트로 각각 바르게 말할 수 있다.</li>
+</ul>
+</div>
+
+<h2>퍼센트: 100을 기준으로 맞춘 비율</h2>
+
+<p>한 반 30명 가운데 12명이 안경을 씁니다. 다른 반은 25명 가운데 9명입니다. 어느 반이 안경 쓴 학생이 "많은 편"일까요? 앞 단원(AR06)에서 본 대로 전체에 대한 비율을 구하면 됩니다. 12 ÷ 30 = 0.4, 9 ÷ 25 = 0.36. 0.4가 더 큽니다.</p>
+
+<p>그런데 0.4, 0.36 같은 소수는 말로 전하기 불편합니다. 그래서 <b>기준량을 100으로 맞춰서</b> "100명이라면 몇 명인가"로 바꿔 말하는 습관이 생겼습니다. 0.4는 100명당 40명, 0.36은 100명당 36명입니다. 이것이 퍼센트입니다.</p>
+
+<div class="side"><b>읽는 법</b> % 기호는 "퍼센트"라고 읽습니다. 라틴어 per centum, "100마다"에서 왔습니다. 우리말로는 "백분율"(100으로 나눈 비율)이라고 합니다.</div>
+
+<div class="box">
+<p class="box-k">정의 <span class="tag memo">외우기</span></p>
+<p><b class="key">퍼센트</b>(percent, %)는 기준량을 100으로 보았을 때의 비율입니다. p%는 <b>p/100</b>과 같은 수입니다.</p>
+<p class="calc">비율(소수) × 100 = 퍼센트 &nbsp;&nbsp;&nbsp; 퍼센트 ÷ 100 = 비율(소수)</p>
+<p>예: 0.4 × 100 = 40% / 25% = 25 ÷ 100 = 0.25</p>
+</div>
+
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 262" role="img" aria-label="(가) 10 곱하기 10, 100칸 격자에서 25칸을 색칠했다. 100칸 중 25칸이므로 25퍼센트. (나) 0부터 1까지의 띠를 넷으로 나누고 첫 칸을 색칠했다. 띠 위에는 0, 0.25, 0.5, 0.75, 1, 아래에는 0퍼센트, 25퍼센트, 50퍼센트, 75퍼센트, 100퍼센트를 적었다. 25퍼센트는 25/100, 0.25, 1/4과 같다.">
+<line class="f-dash" x1="370" y1="14" x2="370" y2="226"/>
+<rect class="f-soft" x="100" y="20" width="200" height="40"/>
+<rect class="f-soft" x="100" y="60" width="100" height="20"/>
+<path class="f-ink" d="M120 20V220M140 20V220M160 20V220M180 20V220M200 20V220M220 20V220M240 20V220M260 20V220M280 20V220M100 40H300M100 60H300M100 80H300M100 100H300M100 120H300M100 140H300M100 160H300M100 180H300M100 200H300"/>
+<rect class="f-none" x="100" y="20" width="200" height="200"/>
+<rect class="f-soft" x="420" y="100" width="70" height="40"/>
+<rect class="f-none" x="420" y="100" width="280" height="40"/>
+<path class="f-dash" d="M490 100V140M560 100V140M630 100V140"/>
+<text class="f-s" x="420" y="88" text-anchor="middle">0</text>
+<text class="f-s" x="490" y="88" text-anchor="middle">0.25</text>
+<text class="f-s" x="560" y="88" text-anchor="middle">0.5</text>
+<text class="f-s" x="630" y="88" text-anchor="middle">0.75</text>
+<text class="f-s" x="700" y="88" text-anchor="middle">1</text>
+<text class="f-s" x="420" y="160" text-anchor="middle">0%</text>
+<text class="f-s" x="490" y="160" text-anchor="middle">25%</text>
+<text class="f-s" x="560" y="160" text-anchor="middle">50%</text>
+<text class="f-s" x="630" y="160" text-anchor="middle">75%</text>
+<text class="f-s" x="700" y="160" text-anchor="middle">100%</text>
+<text class="f-t" x="560" y="198" text-anchor="middle">25% = 25/100 = 0.25 = 1/4</text>
+<text class="f-cap" x="200" y="250" text-anchor="middle">(가) 100칸 중 25칸</text>
+<text class="f-cap" x="560" y="250" text-anchor="middle">(나) 같은 양을 0~1 띠 위에</text>
+</svg>
+<figcaption>(가)의 25칸과 (나)의 색칠한 칸은 같은 양이다. 퍼센트는 이 양을 "100칸 중 몇 칸"으로 읽은 이름이다.</figcaption>
+</figure>
+
+<h3>분수·소수·퍼센트 바꾸기</h3>
+
+<p>세 가지는 같은 값을 다르게 적은 것입니다. 분수를 소수로 바꾸는 법은 AR05에서 보았습니다. 소수에 100을 곱하면 퍼센트입니다.</p>
+
+<div class="table-wrap">
+<table>
+<tr><th>분수</th><th>소수</th><th>퍼센트</th><th>메모</th></tr>
+<tr><td>1/2</td><td>0.5</td><td>50%</td><td>절반</td></tr>
+<tr><td>1/4</td><td>0.25</td><td>25%</td><td></td></tr>
+<tr><td>3/4</td><td>0.75</td><td>75%</td><td></td></tr>
+<tr><td>1/5</td><td>0.2</td><td>20%</td><td></td></tr>
+<tr><td>1/8</td><td>0.125</td><td>12.5%</td><td>퍼센트도 소수일 수 있다</td></tr>
+<tr><td>1/10</td><td>0.1</td><td>10%</td><td>암산의 출발점</td></tr>
+<tr><td>1</td><td>1</td><td>100%</td><td>전체</td></tr>
+<tr><td>3/2</td><td>1.5</td><td>150%</td><td>100%를 넘을 수 있다</td></tr>
+</table>
+</div>
+
+<p>마지막 줄처럼 퍼센트는 100%를 넘을 수 있습니다. "올해 매출은 작년의 150%"는 작년의 1.5배라는 뜻입니다. 다만 "전체 가운데 일부"를 말하는 퍼센트(반에서 안경 쓴 학생의 비율 같은 것)는 0%에서 100% 사이에 있어야 합니다. 그 범위를 벗어나면 계산이 틀린 것입니다.</p>
+
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q5"></div>
+
+<h2>퍼센트 계산의 세 가지 꼴 <span class="tag grasp">이해하기</span></h2>
+
+<p>퍼센트 문제는 거의 모두 다음 한 줄의 관계에서 나옵니다.</p>
+
+<p class="calc">기준량 × (퍼센트 ÷ 100) = 비교하는 양</p>
+
+<p>세 칸 가운데 두 칸을 알면 나머지 한 칸을 구합니다. 그래서 문제는 세 가지 꼴뿐입니다.</p>
+
+<div class="box ex">
+<p class="box-k">풀이 예제 1 · A의 p%는 얼마인가</p>
+<p>200의 15%는 얼마일까요?</p>
+<p class="calc">① 15% = 15 ÷ 100 = 0.15<br>
+② 200 × 0.15 = 30</p>
+<p>암산 요령: 10%는 소수점을 한 칸 옮기면 됩니다. 200의 10% = 20. 5%는 그 절반 = 10. 15% = 10% + 5% = 20 + 10 = 30.</p>
+</div>
+
+<div class="box ex">
+<p class="box-k">풀이 예제 2 · B는 A의 몇 %인가</p>
+<p>30은 200의 몇 %일까요?</p>
+<p class="calc">① 기준량("~의" 앞에 붙은 것)은 200, 비교하는 양은 30<br>
+② 비율 = 30 ÷ 200 = 0.15<br>
+③ 0.15 × 100 = 15%</p>
+</div>
+
+<div class="box ex">
+<p class="box-k">풀이 예제 3 · 어떤 수의 p%가 B일 때, 어떤 수는</p>
+<p>어떤 수의 15%가 30입니다. 어떤 수는 얼마일까요?</p>
+<p class="calc">① 어떤 수 × 0.15 = 30<br>
+② 어떤 수 = 30 ÷ 0.15 = 200<br>
+③ 검산: 200 × 0.15 = 30</p>
+<p>②는 "곱해서 30이 되는 수를 찾으려면 나눈다"는 곱셈과 나눗셈의 관계를 쓴 것입니다. 1%가 30 ÷ 15 = 2이니 100%는 2 × 100 = 200이라고 생각해도 같습니다.</p>
+</div>
+
+<div class="check" data-q="q2"></div>
+<div class="check" data-q="q3"></div>
+
+<h2>기준값이 바뀌면 퍼센트가 바뀐다</h2>
+
+<p>A 가게의 하루 손님은 100명, B 가게는 80명입니다. 차는 20명입니다. 이 차이를 퍼센트로 말하면 몇 %일까요? 답은 <b>무엇을 기준으로 삼느냐</b>에 따라 둘입니다.</p>
+
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 236" role="img" aria-label="(가) B 80을 기준(색칠한 막대)으로 두고 A 100과 비교한다. 차이 20을 80으로 나누면 0.25, A는 B보다 25퍼센트 많다. (나) A 100을 기준(색칠한 막대)으로 두고 B 80과 비교한다. 같은 차이 20을 100으로 나누면 0.2, B는 A보다 20퍼센트 적다.">
+<text class="f-cap" x="140" y="18">(가) 기준이 B: "A는 B보다 몇 % 많은가"</text>
+<text class="f-t" x="128" y="46" text-anchor="end">B 80</text>
+<rect class="f-soft" x="140" y="28" width="320" height="24"/>
+<text class="f-t" x="128" y="80" text-anchor="end">A 100</text>
+<rect class="f-box" x="140" y="62" width="400" height="24"/>
+<line class="f-dash" x1="460" y1="24" x2="460" y2="90"/>
+<text class="f-s f-ink-t" x="500" y="79" text-anchor="middle">20</text>
+<text class="f-t" x="560" y="62">20 ÷ 80 = 0.25 → 25%</text>
+<text class="f-cap" x="140" y="136">(나) 기준이 A: "B는 A보다 몇 % 적은가"</text>
+<text class="f-t" x="128" y="164" text-anchor="end">A 100</text>
+<rect class="f-soft" x="140" y="146" width="400" height="24"/>
+<text class="f-t" x="128" y="198" text-anchor="end">B 80</text>
+<rect class="f-box" x="140" y="180" width="320" height="24"/>
+<rect class="f-dash" x="460" y="180" width="80" height="24"/>
+<text class="f-s f-ink-t" x="500" y="197" text-anchor="middle">20</text>
+<text class="f-t" x="560" y="180">20 ÷ 100 = 0.2 → 20%</text>
+</svg>
+<figcaption>색칠한 막대가 기준(나누는 수)이다. 차이 20은 같지만 나누는 막대가 다르다.</figcaption>
+</figure>
+
+<ul>
+<li>"A는 B보다 몇 % 많은가?" → B가 기준. 20 ÷ 80 = 0.25 → <b>25% 많다.</b></li>
+<li>"B는 A보다 몇 % 적은가?" → A가 기준. 20 ÷ 100 = 0.2 → <b>20% 적다.</b></li>
+</ul>
+
+<p>두 문장은 같은 사실을 말하지만 숫자가 다릅니다. 둘 다 맞습니다. 틀리는 것은 <b>기준을 말하지 않고 퍼센트만 말할 때</b>, 그리고 한 문장 안에서 기준을 바꿔치기할 때입니다.</p>
+
+<div class="box">
+<p class="box-k">규칙 <span class="tag memo">외우기</span></p>
+<p>"X는 <b>Y보다</b> 몇 % 많다/적다"에서 기준량은 <b>Y</b>("보다" 앞의 것)입니다. "X는 <b>Y의</b> 몇 %다"에서도 기준량은 <b>Y</b>("의" 앞의 것)입니다. 기준량이 나누는 수(분모)가 됩니다.</p>
+</div>
+
+<div class="box trap">
+<p class="box-k">시험 함정</p>
+<p><b>"A가 B보다 25% 많으면 B는 A보다 25% 적다"는 틀린 추론입니다.</b> 위 그림처럼 기준이 바뀌면 20%가 됩니다. 기준이 큰 쪽이 되면 같은 차이라도 퍼센트가 작아집니다. 통계 자료에서 "몇 % 차이"라는 말을 보면 무엇으로 나누었는지부터 확인합니다.</p>
+</div>
+
+<div class="check" data-q="q6"></div>
+
+<h2>퍼센트와 퍼센트포인트 <span class="tag memo">외우기</span></h2>
+
+<p>이제 장 처음의 질문입니다. 합격률이 작년 20%에서 올해 25%로 올랐습니다. 이 변화를 말하는 방법이 두 가지 있습니다.</p>
+
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 226" role="img" aria-label="0퍼센트부터 100퍼센트까지 눈금 위에 작년 20퍼센트 막대와 올해 25퍼센트 막대를 그렸다. 두 막대 끝의 차이는 5퍼센트포인트다. 작년을 기준으로 한 변화는 5 나누기 20, 25퍼센트 증가다.">
+<path class="f-ink" d="M200 44v-6h30v6"/>
+<text class="f-s f-ink-t" x="215" y="30" text-anchor="middle">5%p</text>
+<text class="f-t" x="70" y="69" text-anchor="end">작년</text>
+<rect class="f-soft" x="80" y="50" width="120" height="28"/>
+<text class="f-s f-ink-t" x="140" y="69" text-anchor="middle">20%</text>
+<text class="f-t" x="70" y="119" text-anchor="end">올해</text>
+<rect class="f-soft" x="80" y="100" width="150" height="28"/>
+<text class="f-s f-ink-t" x="155" y="119" text-anchor="middle">25%</text>
+<line class="f-dash" x1="200" y1="44" x2="200" y2="138"/>
+<line class="f-dash" x1="230" y1="44" x2="230" y2="138"/>
+<line class="f-ink" x1="80" y1="142" x2="680" y2="142"/>
+<path class="f-ink" d="M80 142v5M200 142v5M320 142v5M440 142v5M560 142v5M680 142v5"/>
+<text class="f-s" x="80" y="162" text-anchor="middle">0%</text>
+<text class="f-s" x="200" y="162" text-anchor="middle">20%</text>
+<text class="f-s" x="320" y="162" text-anchor="middle">40%</text>
+<text class="f-s" x="440" y="162" text-anchor="middle">60%</text>
+<text class="f-s" x="560" y="162" text-anchor="middle">80%</text>
+<text class="f-s" x="680" y="162" text-anchor="middle">100%</text>
+<text class="f-t" x="380" y="190" text-anchor="middle">두 막대 끝의 차이: 25 − 20 = 5%p (퍼센트포인트)</text>
+<text class="f-t" x="380" y="214" text-anchor="middle">작년을 기준으로 한 변화: 5 ÷ 20 = 0.25 → 25% 증가</text>
+</svg>
+<figcaption>눈금은 실제 비율대로 그렸다. 차이 자체(5칸)와, 그 차이를 작년 길이(20칸)로 나눈 값은 다른 수다.</figcaption>
+</figure>
+
+<div class="box">
+<p class="box-k">정의 <span class="tag memo">외우기</span></p>
+<p><b class="key">퍼센트포인트</b>(percentage point, %p)는 두 퍼센트 값의 <b>차</b>(빼기)입니다. 25% − 20% = <b>5%p</b>.</p>
+<p><b>퍼센트로 말한 변화</b>(상대 변화)는 그 차를 처음 값으로 <b>나눈</b> 것입니다. 5 ÷ 20 = 0.25 → <b>25% 증가</b>.</p>
+</div>
+
+<p>그러니 "20%에서 25%로 5%p 올랐다"와 "25% 올랐다"는 둘 다 맞는 말입니다. 틀린 것은 "5% 올랐다"입니다. 퍼센트끼리 뺀 값에 %를 붙이면, 읽는 사람은 "20%의 5%만큼, 곧 1%p 올라 21%가 되었다"로 이해할 수 있기 때문입니다. 그래서 <b>퍼센트끼리의 차에는 %p를 씁니다.</b></p>
+
+<p>내려갈 때도 같습니다. 실업률이 4%에서 3%로 내려갔다면 1%p 하락이고, 처음 값 기준으로는 1 ÷ 4 = 0.25 → 25% 하락입니다. 금리가 2%에서 3%로 오르면 1%p 오른 것이지만, 이자 부담은 3 ÷ 2 = 1.5배, 곧 50% 늘어납니다. 작은 %p 변화가 큰 % 변화일 수 있다는 점이 중요합니다.</p>
+
+<div class="table-wrap">
+<table>
+<tr><th>변화</th><th>퍼센트포인트 (차)</th><th>퍼센트 (차 ÷ 처음 값)</th></tr>
+<tr><td>합격률 20% → 25%</td><td>+5%p</td><td>+25%</td></tr>
+<tr><td>실업률 4% → 3%</td><td>−1%p</td><td>−25%</td></tr>
+<tr><td>금리 2% → 3%</td><td>+1%p</td><td>+50%</td></tr>
+<tr><td>점유율 50% → 55%</td><td>+5%p</td><td>+10%</td></tr>
+</table>
+</div>
+
+<p>첫 줄과 마지막 줄을 비교해 보세요. 둘 다 5%p 올랐지만, 처음 값이 20%인 쪽은 25% 증가이고 50%인 쪽은 10% 증가입니다. 앞 절의 "기준값이 바뀌면 퍼센트가 바뀐다"가 여기서도 그대로 작동합니다.</p>
+
+<div class="why">
+<p class="box-k">왜 그럴까?</p>
+<p>어떤 약을 먹은 사람 가운데 부작용이 생긴 비율이 1%에서 2%로 늘었습니다. 한 기사는 "부작용 위험 2배!", 다른 기사는 "부작용 1%p 증가"라고 썼습니다. 두 기사는 각각 무엇을 강조하고 있을까요?</p>
+<details><summary>모범 답 보기</summary><p>둘 다 같은 사실입니다. "2배"(100% 증가)는 처음 값 1%를 기준으로 한 상대 변화라서 크게 들립니다. "1%p 증가"는 절대적인 차이로, 100명 가운데 부작용이 1명에서 2명으로 늘었다는 뜻이라 작게 들립니다. 판단할 때는 두 가지를 함께 보는 것이 좋습니다. 상대 변화만 보면 원래 아주 드문 일이 크게 부풀려 보이고, 차만 보면 처음 값이 작을 때의 큰 변화를 놓칠 수 있습니다.</p></details>
+</div>
+
+<div class="check" data-q="q7"></div>
+<div class="check" data-q="q8"></div>
+
+<p>다음 장(AR07-2)에서는 변화를 여러 번 거듭할 때 퍼센트를 어떻게 다루는지 봅니다. +50% 뒤에 −50%를 하면 왜 원래대로 돌아오지 않는지가 그 중심입니다. 뒤의 그래프 읽기(DA03)와 조건부확률(PR02)에서도 "무엇으로 나누었나"라는 질문이 계속 나옵니다.</p>
+
+<h2>한눈에 정리</h2>
+
+<div class="table-wrap">
+<table>
+<tr><th>묻는 것</th><th>답</th></tr>
+<tr><td><b class="key">퍼센트</b></td><td>기준량을 100으로 본 비율. p% = p/100. 소수 × 100 = 퍼센트</td></tr>
+<tr><td>A의 p%</td><td>A × (p ÷ 100). 200의 15% = 30</td></tr>
+<tr><td>B는 A의 몇 %</td><td>B ÷ A × 100. 30은 200의 15%</td></tr>
+<tr><td>어떤 수의 p%가 B</td><td>B ÷ (p ÷ 100). 30 ÷ 0.15 = 200</td></tr>
+<tr><td>기준값</td><td>"Y보다", "Y의"에서 <b class="key">Y가 기준량</b>(분모). 기준이 바뀌면 퍼센트가 바뀐다</td></tr>
+<tr><td><b class="key">퍼센트포인트</b></td><td>두 퍼센트의 <b class="key">차</b>. 20% → 25%는 +5%p</td></tr>
+<tr><td>퍼센트 변화</td><td>차 ÷ 처음 값. 20% → 25%는 +25%</td></tr>
+</table>
+</div>
+
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>퍼센트는 언제나 "무엇의" 퍼센트이고, 퍼센트끼리의 차는 퍼센트포인트, 그 차를 처음 값으로 나눈 것이 퍼센트 변화다.</p></div>
+
+<h2>확인 문제</h2>
+<p>본문 중간에서 푼 문제 말고 남은 문제입니다. 보기를 누르면 바로 정답과 해설이 나옵니다.</p>
+<div id="quiz"></div>
+
+<section class="work" id="tools"></section>
+
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

@@ -1,0 +1,304 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>비와 비례, 단위당 양 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e8c'/%3E%3Cpath d='M8 22V10m8 12V14m8 8V6' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="AR06-1">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+
+<header class="chapter">
+<p class="chap-sub">산술과 수 감각 · AR06 비와 단위</p>
+<p class="chap-num">AR06·1</p>
+<h1>비와 비례, 단위당 양</h1>
+<p class="lead">마트 진열대에 같은 음료가 500 mL 한 병 1,800원, 1.5 L 한 병 4,800원으로 놓여 있습니다. 어느 쪽이 더 싼지 바로 말할 수 있을까요? 이 장에서는 두 양을 "몇 배인가"로 비교하는 비, 비가 같게 유지되는 비례, 그리고 "1개당·1시간당"처럼 기준을 1로 맞춘 단위당 양을 다룹니다.</p>
+</header>
+
+<div class="goal">
+<h2>이 장을 읽고 나면</h2>
+<ul>
+<li>두 양을 차(빼기)로 비교할 때와 비(나누기)로 비교할 때의 차이를 예로 설명할 수 있다.</li>
+<li>비 a : b를 읽고, 기준량과 비교하는 양을 찾아 비율을 계산할 수 있다.</li>
+<li>같은 비를 찾고, 비례식에서 빈칸의 값을 구할 수 있다.</li>
+<li>비(ratio)와 단위당 양(rate)의 차이를 단위로 구분할 수 있다.</li>
+<li>단위당 가격을 계산해 크기가 다른 두 상품을 공정하게 비교할 수 있다.</li>
+</ul>
+</div>
+
+<h2>두 양을 비교하는 두 방법</h2>
+
+<p>A 가게에 손님이 8명, B 가게에 4명 있습니다. "A가 B보다 얼마나 많은가?"라는 질문에는 답이 두 가지 있습니다.</p>
+
+<ul>
+<li><b>차로 비교:</b> 8 − 4 = 4. "A가 4명 더 많다."</li>
+<li><b>비로 비교:</b> 8 ÷ 4 = 2. "A는 B의 2배다."</li>
+</ul>
+
+<p>둘 다 맞는 말이지만 묻는 것이 다릅니다. 차는 <b>얼마만큼 더 있는가</b>(빼기)를, 비는 <b>몇 배인가</b>(나누기)를 말합니다.</p>
+
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 246" role="img" aria-label="(가) 길이 8인 막대 A와 길이 4인 막대 B를 나란히 놓고, A가 B보다 긴 부분 4를 점선으로 표시했다. 차는 8 빼기 4는 4. (나) 같은 막대 A를 B 길이만큼 두 칸으로 나누었다. A 안에 B가 두 번 들어가므로 비는 8 나누기 4는 2, 곧 2배.">
+<line class="f-dash" x1="380" y1="14" x2="380" y2="206"/>
+<text class="f-t" x="48" y="75" text-anchor="end">A</text>
+<rect class="f-soft" x="60" y="52" width="240" height="32"/>
+<text class="f-t" x="180" y="73" text-anchor="middle">8</text>
+<text class="f-t" x="48" y="135" text-anchor="end">B</text>
+<rect class="f-box" x="60" y="112" width="120" height="32"/>
+<text class="f-t" x="120" y="133" text-anchor="middle">4</text>
+<rect class="f-dash" x="180" y="112" width="120" height="32"/>
+<text class="f-s" x="240" y="133" text-anchor="middle">모자란 4</text>
+<text class="f-t f-b" x="180" y="180" text-anchor="middle">차: 8 − 4 = 4</text>
+<text class="f-t" x="428" y="75" text-anchor="end">A</text>
+<rect class="f-soft" x="440" y="52" width="240" height="32"/>
+<line class="f-line" x1="560" y1="52" x2="560" y2="84"/>
+<text class="f-s f-ink-t" x="500" y="73" text-anchor="middle">B 하나</text>
+<text class="f-s f-ink-t" x="620" y="73" text-anchor="middle">B 하나</text>
+<text class="f-t" x="428" y="135" text-anchor="end">B</text>
+<rect class="f-box" x="440" y="112" width="120" height="32"/>
+<text class="f-t" x="500" y="133" text-anchor="middle">4</text>
+<text class="f-t f-b" x="560" y="180" text-anchor="middle">비: 8 ÷ 4 = 2 (2배)</text>
+<text class="f-cap" x="180" y="232" text-anchor="middle">(가) 차로 비교</text>
+<text class="f-cap" x="560" y="232" text-anchor="middle">(나) 비로 비교</text>
+</svg>
+<figcaption>같은 두 막대. (가)는 남는 길이를, (나)는 B가 A 안에 몇 번 들어가는지를 본다.</figcaption>
+</figure>
+
+<p>어느 쪽을 쓸지는 상황이 정합니다. 손님이 100명에서 150명으로 는 가게와 1,000명에서 1,050명으로 는 가게는 <b>차로는 똑같이 50명</b> 늘었습니다. 하지만 앞 가게는 1.5배가 되었고 뒤 가게는 1.05배가 되었을 뿐입니다. 크기가 서로 다른 대상을 견줄 때는 비가 더 공정한 경우가 많습니다. 데이터 분석에서 "몇 배", "몇 퍼센트"를 자주 쓰는 이유가 이것입니다.</p>
+
+<h2>비: a : b <span class="tag memo">외우기</span></h2>
+
+<h3>읽는 법과 뜻</h3>
+
+<p>두 양을 나눗셈으로 비교한 것을 <b class="key">비</b>(ratio, 레이쇼)라고 하고, 기호 <code>:</code>(쌍점)을 써서 <code>a : b</code>로 적습니다. 읽을 때는 "a 대 b"라고 읽습니다. 3 : 2는 "삼 대 이"입니다.</p>
+
+<div class="side"><b>용어</b> <b>기준량</b>은 "무엇에 대해" 비교하는지의 그 무엇, 곧 나누는 수입니다. <b>비교하는 양</b>은 기준량과 견주어 보는 쪽입니다.</div>
+
+<div class="box">
+<p class="box-k">정의 <span class="tag memo">외우기</span></p>
+<p>비 <b>a : b</b>에서 뒤의 b를 <b class="key">기준량</b>, 앞의 a를 <b>비교하는 양</b>이라고 합니다. 비교하는 양을 기준량으로 나눈 값 <b>a ÷ b</b>를 <b class="key">비율</b>(또는 비의 값)이라고 합니다.</p>
+<p class="calc">비율 = 비교하는 양 ÷ 기준량</p>
+</div>
+
+<p>예를 들어 손님 8명과 4명의 비 8 : 4에서 기준량은 4, 비율은 8 ÷ 4 = 2입니다. 비율은 분수로 8/4라고 적어도 같은 값입니다(분수가 곧 나눗셈이라는 것은 AR04에서 보았습니다).</p>
+
+<p><b>비는 순서가 중요합니다.</b> 3 : 2와 2 : 3은 다른 비입니다. 3 : 2의 비율은 1.5이고, 2 : 3의 비율은 2 ÷ 3 = 0.666…입니다. "남학생 대 여학생"이라고 말했으면 남학생 수를 앞에 적어야 합니다.</p>
+
+<h3>약분해서 간단히 하기</h3>
+
+<p>어느 반에 남학생 12명, 여학생 18명이 있습니다. 남 : 여 = 12 : 18입니다. 이것을 더 간단한 비로 바꿀 수 있습니다. 12명과 18명을 6명씩 한 묶음으로 나누면 남학생은 2묶음, 여학생은 3묶음입니다. 묶음 수끼리의 비는 2 : 3입니다.</p>
+
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 214" role="img" aria-label="남학생 12명 막대를 6명씩 두 칸으로, 여학생 18명 막대를 6명씩 세 칸으로 나누었다. 칸 수의 비가 2 대 3이므로 12 대 18은 2 대 3과 같다.">
+<text class="f-t" x="136" y="62" text-anchor="end">남학생 12명</text>
+<rect class="f-soft" x="150" y="40" width="80" height="34"/>
+<rect class="f-soft" x="230" y="40" width="80" height="34"/>
+<text class="f-s f-ink-t" x="190" y="62" text-anchor="middle">6명</text>
+<text class="f-s f-ink-t" x="270" y="62" text-anchor="middle">6명</text>
+<text class="f-t f-b" x="330" y="62">2칸</text>
+<text class="f-t" x="136" y="122" text-anchor="end">여학생 18명</text>
+<rect class="f-box" x="150" y="100" width="80" height="34"/>
+<rect class="f-box" x="230" y="100" width="80" height="34"/>
+<rect class="f-box" x="310" y="100" width="80" height="34"/>
+<text class="f-s f-ink-t" x="190" y="122" text-anchor="middle">6명</text>
+<text class="f-s f-ink-t" x="270" y="122" text-anchor="middle">6명</text>
+<text class="f-s f-ink-t" x="350" y="122" text-anchor="middle">6명</text>
+<text class="f-t f-b" x="410" y="122">3칸</text>
+<text class="f-t f-b" x="380" y="174" text-anchor="middle">남 : 여 = 12 : 18 = 2 : 3</text>
+<text class="f-s" x="380" y="198" text-anchor="middle">한 칸의 크기(6명)는 두 막대에서 같다</text>
+</svg>
+<figcaption>비를 간단히 하는 것은 두 양을 같은 크기의 칸으로 다시 세는 일이다.</figcaption>
+</figure>
+
+<p>계산으로는 앞뒤 수를 <b>같은 수로 나누면</b> 됩니다. 12와 18을 둘 다 6(최대공약수)으로 나누면 2와 3입니다. 분수의 약분과 똑같습니다. 12/18 = 2/3이었던 것을 떠올리면 됩니다. 같은 수를 곱해도 비는 그대로입니다. 2 : 3 = 4 : 6 = 20 : 30.</p>
+
+<h3>기준량이 바뀌면 비율이 바뀐다</h3>
+
+<p>같은 반에서 세 가지 비율을 계산할 수 있습니다. 무엇을 기준량으로 삼았는지가 다릅니다.</p>
+
+<div class="table-wrap">
+<table>
+<tr><th>묻는 것</th><th>비</th><th>비율 계산</th><th>값</th></tr>
+<tr><td>여학생에 대한 남학생</td><td>12 : 18</td><td>12 ÷ 18</td><td>0.666… (= 2/3)</td></tr>
+<tr><td>남학생에 대한 여학생</td><td>18 : 12</td><td>18 ÷ 12</td><td>1.5</td></tr>
+<tr><td>전체에 대한 남학생</td><td>12 : 30</td><td>12 ÷ 30</td><td>0.4</td></tr>
+</table>
+</div>
+
+<p>마지막 줄처럼 <b>전체를 기준량</b>으로 삼은 비율은 0과 1 사이에 있고, "전체 가운데 얼마나"를 뜻합니다. 다음 단원(AR07)에서 이 값에 100을 곱해 퍼센트로 바꿉니다. 0.4는 40%입니다.</p>
+
+<div class="box trap">
+<p class="box-k">흔한 실수</p>
+<p><b>"남학생 비율"이라는 말만 보고 12 ÷ 18을 계산하는 실수.</b> "남학생 비율"은 보통 전체에 대한 남학생, 곧 12 ÷ 30 = 0.4를 뜻합니다. 비율이 나오면 먼저 "무엇으로 나누었나(기준량이 무엇인가)"를 찾습니다. 기사나 보고서에서 숫자가 이상해 보일 때 대부분 여기서 어긋납니다.</p>
+</div>
+
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+
+<h2>비례: 비가 같게 유지된다 <span class="tag grasp">이해하기</span></h2>
+
+<p>밥을 지을 때 쌀 2컵에 물 3컵을 넣는다고 합시다. 쌀을 4컵으로 늘리면 물은 6컵이 되어야 밥맛이 같습니다. 쌀과 물의 비가 2 : 3으로 그대로이기 때문입니다. 이렇게 두 양이 <b>같은 비를 유지하며 함께 변하는 관계</b>를 <b class="key">비례</b>라고 합니다.</p>
+
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 226" role="img" aria-label="쌀과 물의 표. 쌀 1, 2, 3, 4, 5컵에 물 1.5, 3, 4.5, 6, 7.5컵. 쌀 2컵에서 4컵으로 2배가 될 때 물도 3컵에서 6컵으로 2배가 된다. 어느 칸이든 물 나누기 쌀은 1.5다.">
+<rect class="f-soft" x="70" y="60" width="100" height="80"/>
+<rect class="f-soft" x="270" y="60" width="100" height="80"/>
+<rect class="f-soft" x="470" y="60" width="100" height="80"/>
+<rect class="f-none" x="70" y="60" width="600" height="80"/>
+<line class="f-line" x1="70" y1="100" x2="670" y2="100"/>
+<line class="f-line" x1="170" y1="60" x2="170" y2="140"/>
+<line class="f-line" x1="270" y1="60" x2="270" y2="140"/>
+<line class="f-line" x1="370" y1="60" x2="370" y2="140"/>
+<line class="f-line" x1="470" y1="60" x2="470" y2="140"/>
+<line class="f-line" x1="570" y1="60" x2="570" y2="140"/>
+<text class="f-s f-ink-t f-b" x="120" y="85" text-anchor="middle">쌀 (컵)</text>
+<text class="f-s f-ink-t f-b" x="120" y="125" text-anchor="middle">물 (컵)</text>
+<text class="f-t" x="220" y="85" text-anchor="middle">1</text><text class="f-t" x="320" y="85" text-anchor="middle">2</text><text class="f-t" x="420" y="85" text-anchor="middle">3</text><text class="f-t" x="520" y="85" text-anchor="middle">4</text><text class="f-t" x="620" y="85" text-anchor="middle">5</text>
+<text class="f-t" x="220" y="125" text-anchor="middle">1.5</text><text class="f-t" x="320" y="125" text-anchor="middle">3</text><text class="f-t" x="420" y="125" text-anchor="middle">4.5</text><text class="f-t" x="520" y="125" text-anchor="middle">6</text><text class="f-t" x="620" y="125" text-anchor="middle">7.5</text>
+<path class="f-line" d="M320 56 Q420 16 516 54" marker-end="url(#f-arrow)"/>
+<text class="f-s f-ink-t" x="420" y="26" text-anchor="middle">×2</text>
+<path class="f-line" d="M320 144 Q420 184 516 146" marker-end="url(#f-arrow)"/>
+<text class="f-s f-ink-t" x="420" y="186" text-anchor="middle">×2</text>
+<text class="f-t" x="370" y="214" text-anchor="middle">어느 칸이든 물 ÷ 쌀 = 1.5 (쌀 1컵당 물 1.5컵)</text>
+</svg>
+<figcaption>쌀이 2배가 되면 물도 2배가 된다. 색칠한 칸은 비교에 쓴 두 칸이다.</figcaption>
+</figure>
+
+<p>표에서 두 가지를 읽을 수 있습니다. 첫째, 한쪽이 2배, 3배가 되면 다른 쪽도 2배, 3배가 됩니다. 둘째, 위아래 칸을 나누면 언제나 같은 값(물 ÷ 쌀 = 1.5)이 나옵니다. 이 두 성질을 가진 관계를 <b>정비례</b>라고 부릅니다. 뒤의 함수 단원에서 이것을 식과 그래프(곧은 선)로 다시 봅니다.</p>
+
+<h3>비례식</h3>
+
+<p>같은 두 비를 등호로 이은 식을 <b class="key">비례식</b>이라고 합니다. 2 : 3 = 4 : 6 처럼 씁니다. 비례식에서는 바깥쪽 두 수(2와 6, <b>외항</b>)의 곱과 안쪽 두 수(3과 4, <b>내항</b>)의 곱이 같습니다. 2 × 6 = 12, 3 × 4 = 12. 이 성질로 빈칸을 찾거나 계산을 검산합니다.</p>
+
+<div class="box ex">
+<p class="box-k">풀이 예제</p>
+<p>쌀 2컵에 물 3컵의 비율로 밥을 짓습니다. 쌀 5컵이면 물은 몇 컵이 필요할까요?</p>
+<p class="calc">① 비를 적는다. 쌀 : 물 = 2 : 3 = 5 : □<br>
+② 기준을 1로 맞춘다. 쌀 1컵당 물은 3 ÷ 2 = 1.5컵<br>
+③ 쌀 5컵이면 물은 5 × 1.5 = 7.5컵<br>
+④ 외항·내항으로 검산한다. 외항의 곱 2 × 7.5 = 15, 내항의 곱 3 × 5 = 15. 같으므로 맞다.</p>
+<p>②가 이 장 전체의 요령입니다. "1개당 얼마"로 먼저 바꾸면 비례 문제는 곱셈 하나로 끝납니다. 이것을 다음 절에서 단위당 양이라는 이름으로 정리합니다.</p>
+</div>
+
+<div class="box trap">
+<p class="box-k">흔한 실수</p>
+<p><b>양쪽에 같은 수를 더하면 비가 유지된다고 생각하는 실수.</b> 쌀 2컵 : 물 3컵에서 둘 다 3컵씩 더해 5 : 6으로 만들면 비율이 3/2 = 1.5에서 6/5 = 1.2로 바뀝니다. 밥이 질어지지 않고 되어집니다. 비를 유지하려면 <b>같은 수를 곱하거나 나눠야</b> 합니다. 더하기는 차를 유지하고, 곱하기는 비를 유지합니다.</p>
+</div>
+
+<div class="check" data-q="q5"></div>
+<div class="check" data-q="q9"></div>
+
+<h2>단위당 양: 기준을 1로 맞춘다</h2>
+
+<h3>비와 단위당 양의 차이 <span class="tag grasp">이해하기</span></h3>
+
+<p>남학생 12명 : 여학생 18명은 "명"과 "명", 같은 종류끼리의 비교입니다. 나누면 단위가 지워져서 비율 0.666…에는 단위가 없습니다. 그런데 "80 km를 2시간에 갔다"를 나누면 사정이 다릅니다. 80 km ÷ 2 h = 40 km/h. 종류가 다른 두 양을 나누었기 때문에 <b>단위가 남습니다.</b></p>
+
+<div class="side"><b>읽는 법</b> 단위 사이의 빗금 <code>/</code>는 "~당", "~마다"라고 읽습니다. km/h는 "킬로미터 퍼 아워", 곧 1시간당 킬로미터입니다. 영어 per를 옮긴 말입니다.</div>
+
+<div class="box">
+<p class="box-k">정의 <span class="tag memo">외우기</span></p>
+<p>종류가 다른 두 양을 나누어 <b>한쪽을 1로 맞춘 값</b>을 <b class="key">단위당 양</b>(rate, 레이트)이라고 합니다. 결과에 "A/B"(B 1당 A) 꼴의 단위가 붙습니다.</p>
+<p>예: 속력 40 km/h(1시간당 40 km), 단가 1,500원/개(1개당 1,500원), 인구 밀도 500명/km²(1 km²당 500명).</p>
+</div>
+
+<div class="table-wrap">
+<table>
+<tr><th></th><th>비 (ratio)</th><th>단위당 양 (rate)</th></tr>
+<tr><td>비교하는 두 양</td><td>같은 종류 (명과 명, 원과 원)</td><td>다른 종류 (km와 시간, 원과 개)</td></tr>
+<tr><td>나눈 결과의 단위</td><td>없음 (단위가 지워진다)</td><td>남는다 (km/h, 원/개)</td></tr>
+<tr><td>예</td><td>남 : 여 = 2 : 3 (비율 2/3), 남 : 전체 = 12 : 30 (비율 0.4)</td><td>40 km/h, 1,500원/개</td></tr>
+</table>
+</div>
+
+<p>한국어에서는 "비율", "증가율", "속도", "단가"처럼 이름이 제각각이라 둘이 섞여 보입니다. 구별하는 가장 쉬운 방법은 <b>결과에 단위가 남는지</b> 보는 것입니다. 이 습관은 다음 장의 단위 환산과 차원 확인으로 이어집니다.</p>
+
+<h3>단위당 양으로 공정하게 비교하기</h3>
+
+<p>장 처음의 음료 문제로 돌아갑니다. 크기가 다른 두 병은 가격을 그대로 비교할 수 없습니다. 같은 양에 대한 가격, 곧 단위당 가격으로 바꿔야 공정합니다. 1 L = 1,000 mL이므로 1.5 L = 1,500 mL입니다(mL은 밀리리터, 1리터의 1000분의 1).</p>
+
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 286" role="img" aria-label="(가) 500 mL 병을 100 mL 칸 5개로 나눈 띠. 1,800원을 5칸으로 나누면 칸당 360원. (나) 1.5 L 병을 100 mL 칸 15개로 나눈 띠. 4,800원을 15칸으로 나누면 칸당 320원. 100 mL당 (나)가 40원 싸다.">
+<text class="f-t" x="108" y="73" text-anchor="end">(가) 500 mL</text>
+<rect class="f-soft" x="120" y="50" width="200" height="36"/>
+<path class="f-line" d="M160 50V86M200 50V86M240 50V86M280 50V86"/>
+<text class="f-t f-b" x="336" y="73">1,800원</text>
+<text class="f-s f-ink-t" x="120" y="112">1,800원 ÷ 5칸 = 칸당 360원</text>
+<text class="f-t" x="108" y="173" text-anchor="end">(나) 1.5 L</text>
+<rect class="f-box" x="120" y="150" width="600" height="36"/>
+<path class="f-line" d="M160 150V186M200 150V186M240 150V186M280 150V186M320 150V186M360 150V186M400 150V186M440 150V186M480 150V186M520 150V186M560 150V186M600 150V186M640 150V186M680 150V186"/>
+<text class="f-s f-ink-t" x="120" y="212">4,800원 ÷ 15칸 = 칸당 320원</text>
+<text class="f-s f-ink-t" x="720" y="212" text-anchor="end">4,800원</text>
+<line class="f-dash" x1="120" y1="232" x2="720" y2="232"/>
+<text class="f-t f-b" x="380" y="262" text-anchor="middle">100 mL당 360원 대 320원 → (나)가 40원 싸다</text>
+</svg>
+<figcaption>한 칸 = 100 mL. 띠 길이는 실제 양의 비율대로 그렸다.</figcaption>
+</figure>
+
+<div class="box ex">
+<p class="box-k">풀이 예제</p>
+<p>500 mL 1,800원과 1.5 L 4,800원 가운데 어느 쪽이 같은 양 대비 더 싼지 구합니다.</p>
+<p class="calc">① 단위를 맞춘다. 1.5 L = 1,500 mL<br>
+② (가) 1 mL당 가격: 1,800 ÷ 500 = 3.6원/mL<br>
+③ (나) 1 mL당 가격: 4,800 ÷ 1,500 = 3.2원/mL<br>
+④ 3.2 &lt; 3.6이므로 (나)가 1 mL당 0.4원 싸다. 100 mL로 보면 320원 대 360원.</p>
+<p>①을 빠뜨리면 4,800 ÷ 1.5 = 3,200을 1,800 ÷ 500 = 3.6과 비교하는 엉뚱한 일이 생깁니다. 단위당 양을 비교할 때는 <b>분모의 단위가 같아야</b> 합니다.</p>
+</div>
+
+<p>단위당 양은 뒤집어도 됩니다. "1원으로 몇 mL를 사는가"로 물으면 (가)는 500 ÷ 1,800 ≈ 0.28 mL/원, (나)는 1,500 ÷ 4,800 ≈ 0.31 mL/원입니다. 이때는 <b>큰 쪽이 유리</b>합니다. 뒤집으면 크고 작음의 해석도 뒤집힌다는 점에 주의합니다(≈은 "거의 같다"라는 뜻으로, AR05에서 본 반올림한 값임을 나타냅니다).</p>
+
+<div class="why">
+<p class="box-k">왜 그럴까?</p>
+<p>두 지역의 교통사고 건수를 비교하려 합니다. A시는 한 해 1,200건, B시는 300건입니다. "A시가 4배 위험하다"고 말해도 될까요?</p>
+<details><summary>모범 답 보기</summary><p>아직 말할 수 없습니다. 두 시의 크기(인구, 차량 수, 도로 길이)가 다르면 건수만으로는 공정한 비교가 안 됩니다. 예를 들어 A시 인구가 120만 명, B시가 10만 명이라면 인구 1만 명당 사고는 A시 10건, B시 30건으로 오히려 B시가 높습니다. 무엇을 기준(분모)으로 삼느냐에 따라 결론이 바뀌므로 "무엇당"을 함께 밝혀야 합니다.</p></details>
+</div>
+
+<div class="check" data-q="q7"></div>
+<div class="check" data-q="q8"></div>
+
+<p>단위당 양은 뒤에서 계속 나옵니다. 다음 장에서는 km/h를 m/s로 바꾸는 단위 환산과 인터넷 속도(Mbps)를 다루고, 통계에서는 "1인당 평균", 머신러닝에서는 "초당 처리하는 데이터 수"로 다시 만납니다.</p>
+
+<h2>한눈에 정리</h2>
+
+<div class="table-wrap">
+<table>
+<tr><th>묻는 것</th><th>답</th></tr>
+<tr><td>차와 비</td><td>차는 빼기(얼마나 더), 비는 나누기(<b class="key">몇 배</b>)</td></tr>
+<tr><td>비 a : b</td><td>"a 대 b". 뒤의 b가 <b class="key">기준량</b>. 순서를 바꾸면 다른 비</td></tr>
+<tr><td>비율</td><td>비교하는 양 ÷ 기준량</td></tr>
+<tr><td>같은 비 만들기</td><td>앞뒤에 같은 수를 <b class="key">곱하거나 나눈다</b>. 더하면 비가 바뀐다</td></tr>
+<tr><td>비례식</td><td>a : b = c : d 이면 <b class="key">외항의 곱 = 내항의 곱</b> (a × d = b × c)</td></tr>
+<tr><td>단위당 양</td><td>종류가 다른 두 양을 나눠 한쪽을 1로 맞춘 값. <b class="key">단위가 남는다</b> (km/h, 원/개)</td></tr>
+<tr><td>공정한 비교</td><td>크기가 다르면 같은 단위 기준의 단위당 양으로 바꿔 비교</td></tr>
+</table>
+</div>
+
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>비는 두 양을 나눗셈으로 견주는 것이고, 기준을 1로 맞춘 단위당 양으로 바꾸면 크기가 다른 것끼리도 공정하게 비교할 수 있다.</p></div>
+
+<h2>확인 문제</h2>
+<p>본문 중간에서 푼 문제 말고 남은 문제입니다. 보기를 누르면 바로 정답과 해설이 나옵니다.</p>
+<div id="quiz"></div>
+
+<section class="work" id="tools"></section>
+
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

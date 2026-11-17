@@ -1,0 +1,377 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>등호·부등호·괄호 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e8c'/%3E%3Cpath d='M8 22V10m8 12V14m8 8V6' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="U04-1">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+
+<header class="chapter">
+<p class="chap-sub">공부·컴퓨터의 출발점 · U04 기호와 단위 읽기</p>
+<p class="chap-num">U04·1</p>
+<h1>등호·부등호·괄호</h1>
+<p class="lead">"만 19세 이상"이라는 안내문을 기호로 쓰면 x ≥ 19입니다. 이 한 줄을 소리 내어 읽을 수 없으면, 뒤에 나오는 수식과 코드는 모두 암호처럼 보입니다. 이 장에서는 수학과 코드에서 가장 자주 나오는 기호인 등호(=, ≈, ≠), 부등호(&lt;, ≤, &gt;, ≥), 괄호( ), { }, [ ]를 읽는 법과 정확한 뜻을 하나씩 익힙니다.</p>
+</header>
+
+<div class="goal">
+<h2>이 장을 읽고 나면</h2>
+<ul>
+<li>=, ≈, ≠를 소리 내어 읽고, 언제 어느 것을 쓰는지 가를 수 있다.</li>
+<li>&lt;, ≤, &gt;, ≥를 이상·이하·초과·미만으로 바꿔 읽고, 수직선에 그릴 수 있다.</li>
+<li>"3 ≤ x &lt; 7" 같은 범위에 들어가는 정수의 개수를 셀 수 있다.</li>
+<li>괄호가 겹친 식을 안쪽부터 차례로 계산할 수 있다.</li>
+<li>같은 기호가 Python 코드에서는 어떻게 쓰이는지 구분할 수 있다.</li>
+</ul>
+</div>
+
+<h2>등호: 양쪽이 같다 <span class="tag grasp">이해하기</span></h2>
+
+<p>저울의 양쪽 접시에 같은 무게가 올라가면 저울이 수평이 됩니다. <b>등호</b>는 수식의 저울입니다.</p>
+
+<div class="box">
+<p class="box-k">정의</p>
+<p><b class="key">등호 =</b> (읽기: "같다", "는 …이다"): 왼쪽 값과 오른쪽 값이 <b>똑같다</b>는 뜻.<br>
+3 + 4 = 7 은 "3 더하기 4는 7이다"라고 읽습니다.</p>
+</div>
+
+<p>등호의 두 가지 성질을 기억해 둡니다.</p>
+<ul>
+<li><b>좌우를 바꿔도 참이다.</b> 3 + 4 = 7 이 참이면 7 = 3 + 4 도 참입니다. 등호는 "왼쪽을 계산하면 오른쪽이 나온다"는 화살표가 아니라 "둘이 같다"는 관계입니다.</li>
+<li><b>한 줄에 등호가 여러 개 있으면, 모든 부분이 서로 같아야 한다.</b> a = b = c 는 a, b, c가 모두 같다는 뜻입니다.</li>
+</ul>
+
+<div class="box trap">
+<p class="box-k">흔한 실수</p>
+<p>"3에 4를 더하고 2를 곱하라"를 계산하면서 <b>3 + 4 = 7 × 2 = 14</b> 라고 한 줄로 이어 쓰는 경우가 많습니다. 계산하는 사람 머릿속 순서는 맞지만, 식으로는 틀렸습니다. 이 줄은 "3 + 4 와 7 × 2 와 14가 모두 같다"는 뜻인데, 3 + 4 는 7이고 7 × 2 는 14라서 서로 같지 않습니다. 등호를 "그다음 계산은"이라는 뜻으로 쓰면 안 됩니다. 바르게 쓰면 이렇습니다.</p>
+<p class="calc">① 3 + 4 = 7<br>② 7 × 2 = 14<br>또는 한 줄로: (3 + 4) × 2 = 7 × 2 = 14 (세 부분이 모두 14로 같다)</p>
+</div>
+
+<div class="check" data-q="q1"></div>
+
+<h2>거의 같다 ≈, 같지 않다 ≠</h2>
+
+<div class="box">
+<p class="box-k">정의</p>
+<p><b class="key">≈</b> (읽기: "근사적으로 같다", "약", "거의 같다"): 정확히 같지는 않지만 지금 목적에서는 같다고 봐도 될 만큼 가깝다는 뜻.<br>
+<b class="key">≠</b> (읽기: "같지 않다"): 왼쪽과 오른쪽이 다르다는 뜻. 등호에 빗금을 그어 "아니다"를 나타냅니다.</p>
+</div>
+
+<p>22 ÷ 7 을 계산하면 3.142857…처럼 소수점 아래가 끝없이 이어집니다. 이것을 "약 3.14"라고 말할 때 22 ÷ 7 ≈ 3.14 로 씁니다. 22 ÷ 7 = 3.14 라고 쓰면 틀립니다. 실제로는 0.002857…만큼 차이가 나기 때문입니다.</p>
+
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 190" role="img" aria-label="수직선 세 개가 나란히 있다. (가) 0부터 6까지의 수직선에서 2 더하기 3과 5가 같은 점(5)에 놓인다. (나) 3.10부터 3.18까지 확대한 수직선에서 3.14와 22 나누기 7(3.142857...)이 아주 가깝지만 다른 두 점에 놓인다. (다) 0부터 6까지의 수직선에서 4와 5가 떨어진 두 점에 놓인다.">
+<line class="f-ink" x1="40" y1="90" x2="220" y2="90"/>
+<line class="f-ink" x1="40" y1="85" x2="40" y2="95"/><line class="f-ink" x1="70" y1="85" x2="70" y2="95"/><line class="f-ink" x1="100" y1="85" x2="100" y2="95"/><line class="f-ink" x1="130" y1="85" x2="130" y2="95"/><line class="f-ink" x1="160" y1="85" x2="160" y2="95"/><line class="f-ink" x1="190" y1="85" x2="190" y2="95"/><line class="f-ink" x1="220" y1="85" x2="220" y2="95"/>
+<text class="f-s" x="40" y="112" text-anchor="middle">0</text><text class="f-s" x="70" y="112" text-anchor="middle">1</text><text class="f-s" x="100" y="112" text-anchor="middle">2</text><text class="f-s" x="130" y="112" text-anchor="middle">3</text><text class="f-s" x="160" y="112" text-anchor="middle">4</text><text class="f-s" x="190" y="112" text-anchor="middle">5</text><text class="f-s" x="220" y="112" text-anchor="middle">6</text>
+<circle class="f-fill" cx="190" cy="90" r="5"/>
+<text class="f-t" x="190" y="62" text-anchor="middle">2 + 3 과 5</text>
+<line class="f-ink" x1="190" y1="68" x2="190" y2="82"/>
+<text class="f-s" x="130" y="140" text-anchor="middle">한 점에 겹친다</text>
+<line class="f-ink" x1="290" y1="90" x2="470" y2="90"/>
+<line class="f-ink" x1="290" y1="85" x2="290" y2="95"/><line class="f-ink" x1="335" y1="85" x2="335" y2="95"/><line class="f-ink" x1="380" y1="85" x2="380" y2="95"/><line class="f-ink" x1="425" y1="85" x2="425" y2="95"/><line class="f-ink" x1="470" y1="85" x2="470" y2="95"/>
+<text class="f-s" x="290" y="112" text-anchor="middle">3.10</text><text class="f-s" x="335" y="112" text-anchor="middle">3.12</text><text class="f-s" x="380" y="112" text-anchor="middle">3.14</text><text class="f-s" x="425" y="112" text-anchor="middle">3.16</text><text class="f-s" x="470" y="112" text-anchor="middle">3.18</text>
+<circle class="f-fill" cx="380" cy="90" r="4"/>
+<circle class="f-box" cx="386.4" cy="90" r="4"/>
+<text class="f-t" x="372" y="62" text-anchor="end">3.14</text>
+<line class="f-ink" x1="372" y1="67" x2="379" y2="84"/>
+<text class="f-t" x="396" y="62" text-anchor="start">22 ÷ 7</text>
+<line class="f-ink" x1="396" y1="67" x2="388" y2="84"/>
+<text class="f-s" x="380" y="140" text-anchor="middle">아주 가깝지만 다른 두 점</text>
+<line class="f-ink" x1="540" y1="90" x2="720" y2="90"/>
+<line class="f-ink" x1="540" y1="85" x2="540" y2="95"/><line class="f-ink" x1="570" y1="85" x2="570" y2="95"/><line class="f-ink" x1="600" y1="85" x2="600" y2="95"/><line class="f-ink" x1="630" y1="85" x2="630" y2="95"/><line class="f-ink" x1="660" y1="85" x2="660" y2="95"/><line class="f-ink" x1="690" y1="85" x2="690" y2="95"/><line class="f-ink" x1="720" y1="85" x2="720" y2="95"/>
+<text class="f-s" x="540" y="112" text-anchor="middle">0</text><text class="f-s" x="570" y="112" text-anchor="middle">1</text><text class="f-s" x="600" y="112" text-anchor="middle">2</text><text class="f-s" x="630" y="112" text-anchor="middle">3</text><text class="f-s" x="660" y="112" text-anchor="middle">4</text><text class="f-s" x="690" y="112" text-anchor="middle">5</text><text class="f-s" x="720" y="112" text-anchor="middle">6</text>
+<circle class="f-fill" cx="660" cy="90" r="5"/>
+<circle class="f-fill" cx="690" cy="90" r="5"/>
+<text class="f-s" x="630" y="140" text-anchor="middle">떨어진 두 점</text>
+<text class="f-cap" x="130" y="176" text-anchor="middle">(가) 2 + 3 = 5</text>
+<text class="f-cap" x="380" y="176" text-anchor="middle">(나) 22 ÷ 7 ≈ 3.14</text>
+<text class="f-cap" x="630" y="176" text-anchor="middle">(다) 4 ≠ 5</text>
+</svg>
+<figcaption>(나)는 3.10에서 3.18 사이만 크게 늘려 그렸다. (가)·(다)와 눈금 간격이 다르다.</figcaption>
+</figure>
+
+<p>≈를 쓸 때 "얼마나 가까워야 거의 같은가"는 정해져 있지 않습니다. 목적에 따라 다릅니다. 저장 용량을 어림할 때는 1,024 ≈ 1,000 이라고 써도 되지만, 정확히 셀 때는 1,024 ≠ 1,000 입니다(U04·3에서 이 차이가 실제로 문제가 됩니다). 그래서 ≈를 쓸 때는 어느 자리에서 반올림했는지 함께 적는 것이 좋습니다.</p>
+
+<div class="check" data-q="q9"></div>
+
+<h2>부등호: 어느 쪽이 큰가 <span class="tag memo">외우기</span></h2>
+
+<div class="box">
+<p class="box-k">정의</p>
+<p><b class="key">a &lt; b</b> (읽기: "a는 b보다 작다"), <b class="key">a &gt; b</b> (읽기: "a는 b보다 크다").<br>
+<b class="key">a ≤ b</b> (읽기: "a는 b보다 작거나 같다"), <b class="key">a ≥ b</b> (읽기: "a는 b보다 크거나 같다").<br>
+≤와 ≥ 아래의 짧은 줄은 등호의 한 줄이 남은 것으로, "같은 경우도 포함한다"는 뜻입니다.</p>
+</div>
+
+<p>방향이 헷갈리면 모양을 봅니다. 부등호는 <b>벌어진 쪽에 큰 수</b>, <b>뾰족한 쪽에 작은 수</b>가 옵니다.</p>
+
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 130" role="img" aria-label="2 < 5 라는 식이 가운데 있다. 부등호의 뾰족한 쪽은 왼쪽의 2를 향하고, 이름표는 뾰족한 쪽에 작은 수. 벌어진 쪽은 오른쪽의 5를 향하고, 이름표는 벌어진 쪽에 큰 수.">
+<text class="f-cap" x="340" y="56" text-anchor="middle">2</text>
+<text class="f-cap" x="380" y="56" text-anchor="middle">&lt;</text>
+<text class="f-cap" x="420" y="56" text-anchor="middle">5</text>
+<line class="f-ink" x1="374" y1="62" x2="300" y2="96"/>
+<line class="f-ink" x1="388" y1="62" x2="460" y2="96"/>
+<text class="f-s f-ink-t" x="296" y="112" text-anchor="end">뾰족한 쪽 → 작은 수</text>
+<text class="f-s f-ink-t" x="464" y="112" text-anchor="start">벌어진 쪽 → 큰 수</text>
+</svg>
+<figcaption>2 &lt; 5 와 5 &gt; 2 는 같은 사실을 반대 방향에서 읽은 것이다.</figcaption>
+</figure>
+
+<h3>이상·이하·초과·미만</h3>
+<p>한국어 안내문과 시험 문제는 부등호 대신 낱말을 씁니다. 네 낱말과 기호를 정확히 짝지어 외워야 합니다. 핵심은 <b>"이"가 붙으면 그 수를 포함</b>(이상, 이하)하고, <b>초과·미만은 포함하지 않는다</b>는 것입니다.</p>
+
+<div class="table-wrap">
+<table>
+<tr><th>낱말</th><th>기호</th><th>읽기</th><th>19를 포함하나</th><th>예: 정수 중에서</th></tr>
+<tr><td><b class="key">19 이상</b></td><td>x ≥ 19</td><td>x는 19보다 크거나 같다</td><td>포함</td><td>19, 20, 21, …</td></tr>
+<tr><td><b class="key">19 초과</b></td><td>x &gt; 19</td><td>x는 19보다 크다</td><td>포함 안 함</td><td>20, 21, 22, …</td></tr>
+<tr><td><b class="key">19 이하</b></td><td>x ≤ 19</td><td>x는 19보다 작거나 같다</td><td>포함</td><td>…, 17, 18, 19</td></tr>
+<tr><td><b class="key">19 미만</b></td><td>x &lt; 19</td><td>x는 19보다 작다</td><td>포함 안 함</td><td>…, 16, 17, 18</td></tr>
+</table>
+</div>
+
+<div class="side"><b>용어</b> <b>x</b>는 아직 정해지지 않은 수를 대신 적는 글자입니다. "어떤 사람의 나이"처럼 사람마다 다른 값을 한 글자로 부르는 것입니다. 이런 글자를 <b>변수</b>라고 하며, U04·2에서 자세히 봅니다.</div>
+
+<p>이 네 가지를 수직선에 그리면 차이가 한눈에 보입니다. 수직선에서 <b>속이 찬 점(●)은 그 수를 포함</b>, <b>속이 빈 점(○)은 포함하지 않음</b>을 뜻합니다.</p>
+
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 236" role="img" aria-label="수직선 네 개. 각각 15부터 23까지 눈금이 있다. (가) x ≥ 19, 19 이상: 19에 속이 찬 점, 오른쪽으로 화살표. (나) x > 19, 19 초과: 19에 속이 빈 점, 오른쪽으로 화살표. (다) x ≤ 19, 19 이하: 19에 속이 찬 점, 왼쪽으로 화살표. (라) x < 19, 19 미만: 19에 속이 빈 점, 왼쪽으로 화살표.">
+<text class="f-cap" x="30" y="36" text-anchor="start">(가) x ≥ 19 · 19 이상</text>
+<line class="f-ink" x1="40" y1="70" x2="340" y2="70"/>
+<line class="f-ink" x1="40" y1="66" x2="40" y2="74"/><line class="f-ink" x1="77.5" y1="66" x2="77.5" y2="74"/><line class="f-ink" x1="115" y1="66" x2="115" y2="74"/><line class="f-ink" x1="152.5" y1="66" x2="152.5" y2="74"/><line class="f-ink" x1="190" y1="66" x2="190" y2="74"/><line class="f-ink" x1="227.5" y1="66" x2="227.5" y2="74"/><line class="f-ink" x1="265" y1="66" x2="265" y2="74"/><line class="f-ink" x1="302.5" y1="66" x2="302.5" y2="74"/><line class="f-ink" x1="340" y1="66" x2="340" y2="74"/>
+<text class="f-s" x="40" y="90" text-anchor="middle">15</text><text class="f-s" x="115" y="90" text-anchor="middle">17</text><text class="f-s f-ink-t f-b" x="190" y="90" text-anchor="middle">19</text><text class="f-s" x="265" y="90" text-anchor="middle">21</text><text class="f-s" x="340" y="90" text-anchor="middle">23</text>
+<line class="f-line" x1="190" y1="54" x2="340" y2="54" marker-end="url(#f-arrow)"/>
+<circle class="f-fill" cx="190" cy="54" r="5"/>
+<text class="f-cap" x="410" y="36" text-anchor="start">(나) x &gt; 19 · 19 초과</text>
+<line class="f-ink" x1="420" y1="70" x2="720" y2="70"/>
+<line class="f-ink" x1="420" y1="66" x2="420" y2="74"/><line class="f-ink" x1="457.5" y1="66" x2="457.5" y2="74"/><line class="f-ink" x1="495" y1="66" x2="495" y2="74"/><line class="f-ink" x1="532.5" y1="66" x2="532.5" y2="74"/><line class="f-ink" x1="570" y1="66" x2="570" y2="74"/><line class="f-ink" x1="607.5" y1="66" x2="607.5" y2="74"/><line class="f-ink" x1="645" y1="66" x2="645" y2="74"/><line class="f-ink" x1="682.5" y1="66" x2="682.5" y2="74"/><line class="f-ink" x1="720" y1="66" x2="720" y2="74"/>
+<text class="f-s" x="420" y="90" text-anchor="middle">15</text><text class="f-s" x="495" y="90" text-anchor="middle">17</text><text class="f-s f-ink-t f-b" x="570" y="90" text-anchor="middle">19</text><text class="f-s" x="645" y="90" text-anchor="middle">21</text><text class="f-s" x="720" y="90" text-anchor="middle">23</text>
+<line class="f-line" x1="575" y1="54" x2="720" y2="54" marker-end="url(#f-arrow)"/>
+<circle class="f-box" cx="570" cy="54" r="5"/>
+<text class="f-cap" x="30" y="146" text-anchor="start">(다) x ≤ 19 · 19 이하</text>
+<line class="f-ink" x1="40" y1="180" x2="340" y2="180"/>
+<line class="f-ink" x1="40" y1="176" x2="40" y2="184"/><line class="f-ink" x1="77.5" y1="176" x2="77.5" y2="184"/><line class="f-ink" x1="115" y1="176" x2="115" y2="184"/><line class="f-ink" x1="152.5" y1="176" x2="152.5" y2="184"/><line class="f-ink" x1="190" y1="176" x2="190" y2="184"/><line class="f-ink" x1="227.5" y1="176" x2="227.5" y2="184"/><line class="f-ink" x1="265" y1="176" x2="265" y2="184"/><line class="f-ink" x1="302.5" y1="176" x2="302.5" y2="184"/><line class="f-ink" x1="340" y1="176" x2="340" y2="184"/>
+<text class="f-s" x="40" y="200" text-anchor="middle">15</text><text class="f-s" x="115" y="200" text-anchor="middle">17</text><text class="f-s f-ink-t f-b" x="190" y="200" text-anchor="middle">19</text><text class="f-s" x="265" y="200" text-anchor="middle">21</text><text class="f-s" x="340" y="200" text-anchor="middle">23</text>
+<line class="f-line" x1="190" y1="164" x2="40" y2="164" marker-end="url(#f-arrow)"/>
+<circle class="f-fill" cx="190" cy="164" r="5"/>
+<text class="f-cap" x="410" y="146" text-anchor="start">(라) x &lt; 19 · 19 미만</text>
+<line class="f-ink" x1="420" y1="180" x2="720" y2="180"/>
+<line class="f-ink" x1="420" y1="176" x2="420" y2="184"/><line class="f-ink" x1="457.5" y1="176" x2="457.5" y2="184"/><line class="f-ink" x1="495" y1="176" x2="495" y2="184"/><line class="f-ink" x1="532.5" y1="176" x2="532.5" y2="184"/><line class="f-ink" x1="570" y1="176" x2="570" y2="184"/><line class="f-ink" x1="607.5" y1="176" x2="607.5" y2="184"/><line class="f-ink" x1="645" y1="176" x2="645" y2="184"/><line class="f-ink" x1="682.5" y1="176" x2="682.5" y2="184"/><line class="f-ink" x1="720" y1="176" x2="720" y2="184"/>
+<text class="f-s" x="420" y="200" text-anchor="middle">15</text><text class="f-s" x="495" y="200" text-anchor="middle">17</text><text class="f-s f-ink-t f-b" x="570" y="200" text-anchor="middle">19</text><text class="f-s" x="645" y="200" text-anchor="middle">21</text><text class="f-s" x="720" y="200" text-anchor="middle">23</text>
+<line class="f-line" x1="565" y1="164" x2="420" y2="164" marker-end="url(#f-arrow)"/>
+<circle class="f-box" cx="570" cy="164" r="5"/>
+<text class="f-s" x="380" y="228" text-anchor="middle">● 그 수를 포함 · ○ 그 수를 포함하지 않음</text>
+</svg>
+<figcaption>(가)와 (나)의 차이는 19 한 점뿐이다. 화살표는 그 방향으로 끝없이 이어진다는 뜻이다.</figcaption>
+</figure>
+
+<div class="box trap">
+<p class="box-k">시험 함정</p>
+<p>"19세 미만 관람 불가"에서 19세는 볼 수 있을까요? 미만은 19를 <b>포함하지 않으므로</b> 관람 불가 대상은 x &lt; 19, 곧 18세까지입니다. 19세는 볼 수 있습니다. 반대로 "19세 이하 할인"이면 19세도 할인을 받습니다. 시험에서 이상/초과, 이하/미만을 바꿔 쓴 보기가 자주 나오니, 경계의 수 하나를 넣어 보고 포함되는지 따져 보세요.</p>
+</div>
+
+<div class="check" data-q="q2"></div>
+<div class="check" data-q="q3"></div>
+<div class="check" data-q="q4"></div>
+
+<h2>범위와 개수 세기</h2>
+
+<p>부등호 두 개를 이어 쓰면 범위가 됩니다. <b>3 ≤ x &lt; 7</b> 은 "x는 3 이상 7 미만"이라고 읽고, "3 ≤ x 이면서 동시에 x &lt; 7"이라는 뜻입니다. 이어 쓸 때는 작은 수를 왼쪽, 큰 수를 오른쪽에 두고 부등호의 방향을 같게 맞춥니다.</p>
+
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 140" role="img" aria-label="0부터 10까지의 수직선. 위쪽에 3 ≤ x < 7 범위가 굵은 선으로 표시되어 있고, 3에는 속이 찬 점, 7에는 속이 빈 점이 있다. 수직선 위의 정수 3, 4, 5, 6에 점이 찍혀 있다. 정수는 3, 4, 5, 6 네 개다.">
+<text class="f-t" x="380" y="30" text-anchor="middle">3 ≤ x &lt; 7</text>
+<line class="f-line" x1="244" y1="50" x2="511" y2="50"/>
+<circle class="f-fill" cx="244" cy="50" r="5"/>
+<circle class="f-box" cx="516" cy="50" r="5"/>
+<line class="f-ink" x1="40" y1="84" x2="720" y2="84"/>
+<line class="f-ink" x1="40" y1="79" x2="40" y2="89"/><line class="f-ink" x1="108" y1="79" x2="108" y2="89"/><line class="f-ink" x1="176" y1="79" x2="176" y2="89"/><line class="f-ink" x1="244" y1="79" x2="244" y2="89"/><line class="f-ink" x1="312" y1="79" x2="312" y2="89"/><line class="f-ink" x1="380" y1="79" x2="380" y2="89"/><line class="f-ink" x1="448" y1="79" x2="448" y2="89"/><line class="f-ink" x1="516" y1="79" x2="516" y2="89"/><line class="f-ink" x1="584" y1="79" x2="584" y2="89"/><line class="f-ink" x1="652" y1="79" x2="652" y2="89"/><line class="f-ink" x1="720" y1="79" x2="720" y2="89"/>
+<circle class="f-fill" cx="244" cy="84" r="4"/><circle class="f-fill" cx="312" cy="84" r="4"/><circle class="f-fill" cx="380" cy="84" r="4"/><circle class="f-fill" cx="448" cy="84" r="4"/>
+<text class="f-s" x="40" y="108" text-anchor="middle">0</text><text class="f-s" x="108" y="108" text-anchor="middle">1</text><text class="f-s" x="176" y="108" text-anchor="middle">2</text><text class="f-s f-ink-t f-b" x="244" y="108" text-anchor="middle">3</text><text class="f-s f-ink-t f-b" x="312" y="108" text-anchor="middle">4</text><text class="f-s f-ink-t f-b" x="380" y="108" text-anchor="middle">5</text><text class="f-s f-ink-t f-b" x="448" y="108" text-anchor="middle">6</text><text class="f-s" x="516" y="108" text-anchor="middle">7</text><text class="f-s" x="584" y="108" text-anchor="middle">8</text><text class="f-s" x="652" y="108" text-anchor="middle">9</text><text class="f-s" x="720" y="108" text-anchor="middle">10</text>
+<text class="f-s" x="380" y="132" text-anchor="middle">범위 안의 정수: 3, 4, 5, 6 → 4개</text>
+</svg>
+<figcaption>3은 속이 찬 점이라 들어가고, 7은 속이 빈 점이라 빠진다.</figcaption>
+</figure>
+
+<div class="side"><b>용어</b> <b>정수</b>는 …, −2, −1, 0, 1, 2, …처럼 소수점 아래가 없는 수입니다. 3 ≤ x &lt; 7 에는 3.5나 6.9 같은 수도 들어가지만, "정수만 세라"고 하면 3, 4, 5, 6만 셉니다. 수의 종류는 AR 단원에서 자세히 다룹니다.</div>
+
+<div class="box ex">
+<p class="box-k">풀이 예제</p>
+<p>(1) 3 이상 7 미만인 정수는 몇 개일까요?</p>
+<p class="calc">① 기호로: 3 ≤ x &lt; 7<br>
+② 양 끝 확인: 3은 "이상"이라 포함, 7은 "미만"이라 빠짐<br>
+③ 들어가는 정수: 3, 4, 5, 6<br>
+④ 개수: 4개. (양 끝을 모두 포함하는 3부터 6까지로 바꾸면 6 − 3 + 1 = 4)</p>
+<p>(2) 10 초과 15 이하인 정수는 몇 개일까요?</p>
+<p class="calc">① 기호로: 10 &lt; x ≤ 15<br>
+② 양 끝 확인: 10은 "초과"라 빠짐, 15는 "이하"라 포함<br>
+③ 들어가는 정수: 11, 12, 13, 14, 15<br>
+④ 개수: 15 − 11 + 1 = 5개</p>
+<p>두 예 모두 마지막에 "+ 1"이 붙습니다. 양 끝을 모두 포함하는 a부터 b까지의 정수는 b − a 개가 아니라 <b>b − a + 1 개</b>입니다. 손가락으로 3, 4, 5, 6을 세어 보면 6 − 3 = 3이 아니라 4개입니다. 이 "하나 차이"는 코드에서 반복 횟수를 셀 때 자주 틀리는 곳이라 지금 익혀 두면 좋습니다.</p>
+</div>
+
+<div class="check" data-q="q5"></div>
+
+<div class="more">
+<p class="box-k">더 알아보기 · 구간 기호 [3, 7)</p>
+<p>대학 수학이나 통계 책에서는 3 ≤ x &lt; 7 을 <b>[3, 7)</b>처럼 쓰기도 합니다. 대괄호 [ ]는 그 끝을 포함, 소괄호 ( )는 포함하지 않음을 뜻합니다. 히스토그램의 구간을 나눌 때 자주 보게 됩니다. 이때의 괄호는 아래에서 볼 "먼저 계산하라"는 괄호와 뜻이 전혀 다릅니다. 같은 기호가 자리에 따라 다른 뜻을 가진다는 점을 기억해 두세요.</p>
+</div>
+
+<h2>괄호: 먼저 계산하라는 표시 <span class="tag memo">외우기</span></h2>
+
+<p>괄호는 "이 안을 한 덩어리로 보고 먼저 계산하라"는 표시입니다. 괄호 하나만 옮겨도 답이 달라집니다.</p>
+<p class="calc">(10 − 4) − 3 = 6 − 3 = 3<br>
+10 − (4 − 3) = 10 − 1 = 9</p>
+<p>같은 수, 같은 빼기인데 괄호 위치만 달라서 3과 9라는 다른 답이 나왔습니다.</p>
+
+<div class="box">
+<p class="box-k">정의</p>
+<p><b class="key">소괄호 ( )</b>, <b class="key">중괄호 { }</b>, <b class="key">대괄호 [ ]</b>: 괄호 안을 먼저 계산하라는 표시.<br>
+괄호가 겹치면 <b>가장 안쪽부터</b> 계산합니다. 한국 수학 교과에서는 보통 안쪽부터 소괄호 → 중괄호 → 대괄호 순으로 감싸 <b>[ { ( ) } ]</b> 모양으로 씁니다.</p>
+</div>
+
+<p>모양을 바꿔 가며 감싸는 것은 어느 열린 괄호가 어느 닫힌 괄호와 짝인지 눈으로 찾기 쉽게 하려는 것입니다. 다른 나라 교재는 감싸는 순서가 다르기도 하고, 소괄호만 여러 겹 쓰기도 합니다. 어떤 모양이든 <b>"가장 안쪽 짝부터"</b>라는 규칙은 같습니다.</p>
+
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 216" role="img" aria-label="식 50 − [2 × {3 + (5 − 3)}] 를 네 줄에 걸쳐 안쪽부터 푼다. 첫 줄에서 소괄호 (5 − 3)을 강조하고 2가 된다. 둘째 줄 50 − [2 × {3 + 2}]에서 중괄호를 강조하고 5가 된다. 셋째 줄 50 − [2 × 5]에서 대괄호를 강조하고 10이 된다. 넷째 줄 50 − 10 = 40.">
+<rect class="f-soft" x="398" y="22" width="124" height="26" rx="3"/>
+<text class="f-t" x="200" y="40" text-anchor="middle">50</text><text class="f-t" x="226" y="40" text-anchor="middle">−</text><text class="f-t" x="252" y="40" text-anchor="middle">[</text><text class="f-t" x="278" y="40" text-anchor="middle">2</text><text class="f-t" x="304" y="40" text-anchor="middle">×</text><text class="f-t" x="330" y="40" text-anchor="middle">{</text><text class="f-t" x="356" y="40" text-anchor="middle">3</text><text class="f-t" x="382" y="40" text-anchor="middle">+</text><text class="f-t" x="408" y="40" text-anchor="middle">(</text><text class="f-t" x="434" y="40" text-anchor="middle">5</text><text class="f-t" x="460" y="40" text-anchor="middle">−</text><text class="f-t" x="486" y="40" text-anchor="middle">3</text><text class="f-t" x="512" y="40" text-anchor="middle">)</text><text class="f-t" x="538" y="40" text-anchor="middle">}</text><text class="f-t" x="564" y="40" text-anchor="middle">]</text>
+<text class="f-s f-ink-t" x="600" y="40" text-anchor="start">① 소괄호: 5 − 3 = 2</text>
+<rect class="f-soft" x="320" y="72" width="124" height="26" rx="3"/>
+<text class="f-t" x="200" y="90" text-anchor="middle">50</text><text class="f-t" x="226" y="90" text-anchor="middle">−</text><text class="f-t" x="252" y="90" text-anchor="middle">[</text><text class="f-t" x="278" y="90" text-anchor="middle">2</text><text class="f-t" x="304" y="90" text-anchor="middle">×</text><text class="f-t" x="330" y="90" text-anchor="middle">{</text><text class="f-t" x="356" y="90" text-anchor="middle">3</text><text class="f-t" x="382" y="90" text-anchor="middle">+</text><text class="f-t" x="408" y="90" text-anchor="middle">2</text><text class="f-t" x="434" y="90" text-anchor="middle">}</text><text class="f-t" x="460" y="90" text-anchor="middle">]</text>
+<text class="f-s f-ink-t" x="600" y="90" text-anchor="start">② 중괄호: 3 + 2 = 5</text>
+<rect class="f-soft" x="242" y="122" width="124" height="26" rx="3"/>
+<text class="f-t" x="200" y="140" text-anchor="middle">50</text><text class="f-t" x="226" y="140" text-anchor="middle">−</text><text class="f-t" x="252" y="140" text-anchor="middle">[</text><text class="f-t" x="278" y="140" text-anchor="middle">2</text><text class="f-t" x="304" y="140" text-anchor="middle">×</text><text class="f-t" x="330" y="140" text-anchor="middle">5</text><text class="f-t" x="356" y="140" text-anchor="middle">]</text>
+<text class="f-s f-ink-t" x="600" y="140" text-anchor="start">③ 대괄호: 2 × 5 = 10</text>
+<text class="f-t" x="200" y="190" text-anchor="middle">50</text><text class="f-t" x="226" y="190" text-anchor="middle">−</text><text class="f-t" x="256" y="190" text-anchor="middle">10</text><text class="f-t" x="286" y="190" text-anchor="middle">=</text><text class="f-t f-b" x="316" y="190" text-anchor="middle">40</text>
+<text class="f-s f-ink-t" x="600" y="190" text-anchor="start">④ 50 − 10 = 40</text>
+<text class="f-s" x="40" y="40" text-anchor="start">1단계</text>
+<text class="f-s" x="40" y="90" text-anchor="start">2단계</text>
+<text class="f-s" x="40" y="140" text-anchor="start">3단계</text>
+<text class="f-s" x="40" y="190" text-anchor="start">끝</text>
+</svg>
+<figcaption>한 단계마다 가장 안쪽 괄호 하나가 숫자 하나로 바뀌며 식이 짧아진다.</figcaption>
+</figure>
+
+<div class="box ex">
+<p class="box-k">풀이 예제</p>
+<p>50 − [2 × {3 + (5 − 3)}] 를 계산합니다.</p>
+<p class="calc">① 가장 안쪽 소괄호: (5 − 3) = 2 → 50 − [2 × {3 + 2}]<br>
+② 그다음 중괄호: {3 + 2} = 5 → 50 − [2 × 5]<br>
+③ 그다음 대괄호: [2 × 5] = 10 → 50 − 10<br>
+④ 남은 계산: 50 − 10 = 40</p>
+<p>각 줄은 이전 줄과 <b>같은 값</b>입니다. 그래서 50 − [2 × {3 + (5 − 3)}] = 50 − [2 × {3 + 2}] = 50 − [2 × 5] = 50 − 10 = 40 처럼 등호로 이어 써도 됩니다. 앞의 "흔한 실수"와 달리 모든 부분이 정말로 40으로 같기 때문입니다.</p>
+</div>
+
+<p>괄호 안에 곱셈과 덧셈이 섞여 있을 때 어느 것을 먼저 하는지(곱셈·나눗셈을 덧셈·뺄셈보다 먼저)는 AR 단원의 "계산 순서"에서 다룹니다. 이 장의 예는 괄호 하나 안에 계산이 하나씩만 있게 골랐습니다.</p>
+
+<div class="check" data-q="q7"></div>
+
+<h2>코드에서는 기호가 조금 다르다</h2>
+
+<p>키보드에는 ≤, ≥, ≠ 같은 글쇠가 없습니다. 그래서 Python 같은 프로그래밍 언어는 글자 두 개를 붙여 씁니다. 그리고 가장 조심할 것은 <b>등호 =의 뜻이 수학과 다르다</b>는 점입니다.</p>
+
+<div class="table-wrap">
+<table>
+<tr><th>수학</th><th>Python</th><th>Python에서의 뜻</th></tr>
+<tr><td>a = b (같다)</td><td><code>a == b</code></td><td>a와 b가 같은지 따져서 참(True)/거짓(False)을 낸다</td></tr>
+<tr><td>(없음)</td><td><code>a = 5</code></td><td>a라는 이름에 5를 <b>넣는다</b>(대입). "같다"가 아니다</td></tr>
+<tr><td>a ≠ b</td><td><code>a != b</code></td><td>다른지 따진다</td></tr>
+<tr><td>a ≤ b, a ≥ b</td><td><code>a &lt;= b</code>, <code>a &gt;= b</code></td><td>작거나 같은지, 크거나 같은지 따진다</td></tr>
+<tr><td>( ), { }, [ ] 모두 묶기</td><td><code>( )</code>만 묶기</td><td>Python에서 [ ]와 { }는 묶기가 아니라 목록 같은 다른 뜻이다</td></tr>
+</table>
+</div>
+
+<p>실제로 실행해 본 코드와 결과입니다.</p>
+<pre><code>age = 19
+print(age >= 19)
+print(age > 19)
+print(age != 20)</code></pre>
+<pre><code>True
+False
+True</code></pre>
+<p>첫 줄 <code>age = 19</code>는 "age는 19와 같다"가 아니라 "age라는 이름표에 19를 넣어라"입니다. 그다음 줄들이 "19 이상인가?"(참), "19 초과인가?"(거짓, 19는 19보다 크지 않다), "20과 다른가?"(참)를 따집니다. 수학 괄호를 코드로 옮길 때는 모두 소괄호로 바꿉니다.</p>
+<pre><code>print(2 * (3 + (5 - 3)))
+print((10 - 4) - 3)
+print(10 - (4 - 3))</code></pre>
+<pre><code>10
+3
+9</code></pre>
+<p>코드에서 곱하기는 ×가 아니라 <code>*</code>로 씁니다. 결과 3과 9는 앞에서 손으로 계산한 값과 같습니다.</p>
+
+<div class="check" data-q="q10"></div>
+
+<div class="why">
+<p class="box-k">왜 그럴까?</p>
+<p>Python은 왜 "같은가?"를 따질 때 =를 하나만 쓰지 않고 ==처럼 두 개를 쓰게 만들었을까요?</p>
+<details><summary>모범 답 보기</summary><p>프로그램에서는 값을 이름에 넣는 일(대입)이 매우 자주 나오기 때문에, 그 일에 짧은 = 하나를 먼저 내주었습니다. 그러면 "같은가?"를 묻는 일은 다른 표시가 필요하므로 ==를 씁니다. 둘을 구분하지 않으면 "x에 5를 넣어라"와 "x가 5인가?"를 컴퓨터가 가릴 수 없습니다.</p></details>
+</div>
+
+<h2>기호 읽기 표</h2>
+
+<p>이 장에서 나온 기호를 모았습니다. 소리 내어 읽어 보며 익힙니다.</p>
+
+<div class="table-wrap">
+<table>
+<tr><th>기호</th><th>읽기</th><th>뜻</th><th>예</th><th>Python</th></tr>
+<tr><td>=</td><td>같다, …는 …이다</td><td>양쪽 값이 똑같다</td><td>3 + 4 = 7</td><td><code>==</code></td></tr>
+<tr><td>≈</td><td>약, 거의 같다</td><td>목적에 비추어 같다고 봐도 될 만큼 가깝다</td><td>22 ÷ 7 ≈ 3.14</td><td>(없음)</td></tr>
+<tr><td>≠</td><td>같지 않다</td><td>양쪽이 다르다</td><td>4 ≠ 5</td><td><code>!=</code></td></tr>
+<tr><td>&lt;</td><td>작다 (미만)</td><td>왼쪽이 더 작다. 같으면 안 된다</td><td>x &lt; 19</td><td><code>&lt;</code></td></tr>
+<tr><td>&gt;</td><td>크다 (초과)</td><td>왼쪽이 더 크다. 같으면 안 된다</td><td>x &gt; 19</td><td><code>&gt;</code></td></tr>
+<tr><td>≤</td><td>작거나 같다 (이하)</td><td>왼쪽이 더 작거나 같다</td><td>x ≤ 19</td><td><code>&lt;=</code></td></tr>
+<tr><td>≥</td><td>크거나 같다 (이상)</td><td>왼쪽이 더 크거나 같다</td><td>x ≥ 19</td><td><code>&gt;=</code></td></tr>
+<tr><td>a ≤ x &lt; b</td><td>x는 a 이상 b 미만</td><td>두 조건을 동시에 만족하는 범위</td><td>3 ≤ x &lt; 7</td><td><code>3 &lt;= x &lt; 7</code></td></tr>
+<tr><td>( )</td><td>소괄호</td><td>먼저 계산 (가장 안쪽)</td><td>(5 − 3)</td><td><code>( )</code></td></tr>
+<tr><td>{ }</td><td>중괄호</td><td>먼저 계산 (소괄호 바깥)</td><td>{3 + 2}</td><td>묶기에 쓰지 않음</td></tr>
+<tr><td>[ ]</td><td>대괄호</td><td>먼저 계산 (중괄호 바깥)</td><td>[2 × 5]</td><td>묶기에 쓰지 않음</td></tr>
+</table>
+</div>
+
+<h2>한눈에 정리</h2>
+
+<div class="table-wrap">
+<table>
+<tr><th>주제</th><th>꼭 기억할 것</th></tr>
+<tr><td>등호</td><td><b class="key">=</b>는 "다음 계산"이 아니라 양쪽이 <b class="key">같다</b>는 관계. 좌우를 바꿔도 참</td></tr>
+<tr><td>≈, ≠</td><td><b class="key">≈</b> 거의 같다(반올림·어림), <b class="key">≠</b> 같지 않다</td></tr>
+<tr><td>포함하는 말</td><td><b class="key">이상 ≥</b>, <b class="key">이하 ≤</b>: 경계의 수를 포함 (수직선 ●)</td></tr>
+<tr><td>포함하지 않는 말</td><td><b class="key">초과 &gt;</b>, <b class="key">미만 &lt;</b>: 경계의 수를 빼고 (수직선 ○)</td></tr>
+<tr><td>정수 개수</td><td>양 끝을 포함하는 a부터 b까지: <b class="key">b − a + 1</b> 개</td></tr>
+<tr><td>괄호</td><td><b class="key">가장 안쪽부터</b>. 한국 교과는 [ { ( ) } ] 모양</td></tr>
+<tr><td>코드</td><td>같은가? <code>==</code>, 넣기 <code>=</code>, 다른가? <code>!=</code>, 묶기는 <code>( )</code>만</td></tr>
+</table>
+</div>
+
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>등호는 양쪽이 같다는 관계이고, 이상·이하는 경계를 포함하며 초과·미만은 빼고, 겹친 괄호는 가장 안쪽부터 푼다.</p></div>
+
+<h2>확인 문제</h2>
+<p>본문 중간에서 푼 문제 말고 남은 문제입니다. 보기를 누르면 바로 정답과 해설이 나옵니다.</p>
+<div id="quiz"></div>
+
+<section class="work" id="tools"></section>
+
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

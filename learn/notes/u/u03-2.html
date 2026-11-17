@@ -1,0 +1,379 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>부품과 프로그램 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e8c'/%3E%3Cpath d='M8 22V10m8 12V14m8 8V6' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="U03-2">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+
+<header class="chapter">
+<p class="chap-sub">공부·컴퓨터의 출발점 · U03 컴퓨터의 큰 그림</p>
+<p class="chap-num">U03·2</p>
+<h1>부품과 프로그램</h1>
+<p class="lead">노트북으로 메모장을 열어 글을 쓰다가 저장하지 않은 채 배터리가 꺼지면, 쓰던 글은 사라지고 어제 저장한 파일은 그대로 남아 있습니다. 왜 어떤 것은 사라지고 어떤 것은 남을까요? 이 장에서는 컴퓨터 안에서 일을 나눠 맡는 부품 세 가지(CPU, 메모리, 저장 장치)와, 그 부품에게 무엇을 할지 알려 주는 프로그램, 그리고 프로그램이 다루는 재료인 데이터를 봅니다.</p>
+</header>
+
+<div class="goal">
+<h2>이 장을 읽고 나면</h2>
+<ul>
+<li>하드웨어와 소프트웨어를 구분하고, 예를 들어 나눌 수 있다.</li>
+<li>CPU·메모리·저장 장치가 각각 무슨 일을 맡는지, 전원을 끄면 어떻게 되는지 설명할 수 있다.</li>
+<li>프로그램 하나를 실행할 때 저장 장치→메모리→CPU로 이어지는 순서를 그릴 수 있다.</li>
+<li>프로그램과 데이터를 구분하고, 같은 프로그램에 다른 데이터를 넣으면 결과가 달라지는 것을 계산으로 보일 수 있다.</li>
+</ul>
+</div>
+
+<h2>손에 잡히는 것과 잡히지 않는 것</h2>
+
+<p>컴퓨터를 이루는 것을 크게 둘로 나눌 수 있습니다. 하나는 키보드, 화면, 본체 안의 칩처럼 <b>손으로 만질 수 있는 물건</b>입니다. 다른 하나는 메모장, 카카오톡, Windows처럼 <b>화면에서 쓰지만 손으로 잡을 수는 없는 것</b>입니다.</p>
+
+<div class="box">
+<p class="box-k">정의</p>
+<p><b class="key">하드웨어(hardware)</b>: 컴퓨터를 이루는 물리적인 기계와 부품. 만질 수 있고, 무게가 있습니다.<br>
+<b class="key">소프트웨어(software)</b>: 하드웨어에게 무엇을 어떤 순서로 할지 알려 주는 명령의 묶음. 저장 장치 안에 0과 1의 모양으로 들어 있고, 손으로 만질 수는 없습니다.</p>
+</div>
+
+<p>영어 hard는 "딱딱한", soft는 "부드러운"이라는 뜻입니다. 한 번 만들면 바꾸기 어려운 기계는 hard, 내려받거나 고쳐서 쉽게 바꿀 수 있는 명령은 soft라고 이름 붙였다고 생각하면 기억하기 쉽습니다.</p>
+
+<div class="side"><b>용어</b> <b>프로그램(program)</b>은 컴퓨터가 따라 할 명령을 순서대로 적어 둔 것입니다. 소프트웨어는 프로그램과 그에 딸린 파일(그림, 설정 등)을 합쳐 부르는 말로, 일상에서는 둘을 거의 같은 뜻으로 씁니다. 휴대폰의 <b>앱(app)</b>도 프로그램입니다(application의 줄임말).</div>
+
+<p>소프트웨어는 다시 두 층으로 나뉩니다.</p>
+<ul>
+<li><b class="key">운영체제(OS, Operating System)</b>: 하드웨어를 직접 관리하는 바탕 소프트웨어. 어느 프로그램에 메모리를 얼마나 줄지, 키보드에서 들어온 글자를 어느 창에 보낼지, 파일을 저장 장치의 어디에 둘지를 정합니다. Windows, macOS, Linux, 휴대폰의 Android와 iOS가 운영체제입니다.</li>
+<li><b class="key">응용 프로그램(application)</b>: 사람이 하려는 일을 해 주는 프로그램. 메모장, 브라우저, 엑셀, 사진 앱, 그리고 나중에 쓸 Python도 여기에 속합니다. 응용 프로그램은 하드웨어를 직접 만지지 않고 운영체제에 부탁해서 씁니다.</li>
+</ul>
+
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 290" role="img" aria-label="네 층이 위아래로 쌓여 있다. 맨 위는 사용자(사람)로 누르고 보고 듣는다. 그 아래 응용 프로그램(메모장, 브라우저, 사진 앱, 엑셀), 그 아래 운영체제(Windows, macOS, Android, iOS), 맨 아래 하드웨어(CPU, 메모리, 저장 장치, 화면, 키보드). 응용 프로그램과 운영체제 두 층을 묶어 소프트웨어라고 적었다.">
+<rect class="f-box" x="180" y="20" width="420" height="52" rx="4"/>
+<text class="f-t" x="390" y="42" text-anchor="middle">사용자 (사람)</text>
+<text class="f-s" x="390" y="62" text-anchor="middle">누르고 · 보고 · 듣는다</text>
+<rect class="f-soft" x="180" y="84" width="420" height="52" rx="4"/>
+<text class="f-t" x="390" y="106" text-anchor="middle">응용 프로그램</text>
+<text class="f-s f-ink-t" x="390" y="126" text-anchor="middle">메모장 · 브라우저 · 사진 앱 · 엑셀</text>
+<rect class="f-soft" x="180" y="148" width="420" height="52" rx="4"/>
+<text class="f-t" x="390" y="170" text-anchor="middle">운영체제 (OS)</text>
+<text class="f-s f-ink-t" x="390" y="190" text-anchor="middle">Windows · macOS · Android · iOS</text>
+<rect class="f-box" x="180" y="212" width="420" height="52" rx="4"/>
+<text class="f-t" x="390" y="234" text-anchor="middle">하드웨어</text>
+<text class="f-s" x="390" y="254" text-anchor="middle">CPU · 메모리 · 저장 장치 · 화면 · 키보드</text>
+<line class="f-ink" x1="160" y1="84" x2="160" y2="200"/>
+<line class="f-ink" x1="160" y1="84" x2="170" y2="84"/>
+<line class="f-ink" x1="160" y1="200" x2="170" y2="200"/>
+<text class="f-cap" x="148" y="147" text-anchor="end">소프트웨어</text>
+<text class="f-cap" x="148" y="243" text-anchor="end">하드웨어</text>
+<text class="f-s" x="616" y="146" text-anchor="start">↕ 부탁한다</text>
+<text class="f-s" x="616" y="210" text-anchor="start">↕ 직접 관리한다</text>
+</svg>
+<figcaption>사람은 응용 프로그램을 쓰고, 응용 프로그램은 운영체제를 거쳐 하드웨어를 쓴다.</figcaption>
+</figure>
+
+<div class="box trap">
+<p class="box-k">흔한 실수</p>
+<p><b>"소프트웨어는 눈에 안 보이니 어디에도 없다"</b>는 틀린 생각입니다. 소프트웨어는 손으로 잡을 수 없을 뿐, 저장 장치 안에 <b>파일로 분명히 들어 있습니다.</b> 메모장도 컴퓨터 어딘가에 notepad.exe라는 파일로 있습니다. 반대로 "USB 메모리에 든 프로그램"이라고 할 때, USB 메모리 자체는 하드웨어이고 그 안에 담긴 프로그램이 소프트웨어입니다. <b>그릇은 하드웨어, 그릇에 담긴 명령은 소프트웨어</b>로 나누면 헷갈리지 않습니다.</p>
+</div>
+
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+
+<h2>일을 나눠 맡는 세 부품 <span class="tag memo">외우기</span></h2>
+
+<p>U03·1에서 컴퓨터가 하는 일을 입력·처리·출력·저장으로 나눴습니다. 입력과 출력은 키보드·화면 같은 바깥 장치가 맡습니다. 본체 안에서 처리와 저장을 맡는 핵심 부품은 세 가지입니다.</p>
+
+<div class="box">
+<p class="box-k">정의</p>
+<p><b class="key">CPU(중앙 처리 장치, Central Processing Unit)</b>: 명령을 하나씩 읽어 계산·비교 같은 <b>처리</b>를 실제로 하는 부품. 컴퓨터의 "두뇌"라고 흔히 부릅니다.<br>
+<b class="key">메모리(memory, 주기억장치)</b>: 지금 실행 중인 프로그램과 지금 다루는 데이터를 <b>잠깐 올려 두는</b> 곳. 흔히 <b>RAM</b>(램, Random Access Memory)이라고 부릅니다. CPU가 바로 꺼내 쓸 수 있을 만큼 빠르지만, <b>전원이 꺼지면 내용이 모두 사라집니다.</b><br>
+<b class="key">저장 장치(storage, 보조기억장치)</b>: 파일을 <b>오래 남겨 두는</b> 곳. SSD나 하드디스크(HDD)가 여기에 속합니다. 메모리보다 느리지만 훨씬 많이 담을 수 있고, <b>전원이 꺼져도 내용이 남습니다.</b></p>
+</div>
+
+<div class="side"><b>용어</b> 전원이 꺼지면 내용이 사라지는 성질을 <b>휘발성(volatile)</b>이라고 합니다. 알코올이 공기 중으로 날아가 버리는 것처럼 사라진다는 뜻입니다. 메모리는 휘발성, 저장 장치는 비휘발성입니다. <b>SSD</b>(Solid State Drive)는 반도체 칩에, <b>HDD</b>(Hard Disk Drive)는 돌아가는 원판에 기록하는 저장 장치입니다.</div>
+
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 300" role="img" aria-label="본체 안을 점선 상자로 묶었다. 그 안에 위에서부터 CPU(처리: 계산과 비교), 메모리 RAM(지금 쓰는 것을 올려 둠), 저장 장치 SSD(꺼져도 남음)가 있다. CPU와 메모리 사이, 메모리와 저장 장치 사이에는 위아래 양방향 화살표가 있다. 왼쪽의 입력 장치(키보드, 마우스)에서 메모리로 화살표가 들어오고, 메모리에서 오른쪽의 출력 장치(화면, 스피커)로 화살표가 나간다. CPU 옆에는 처리를 맡는다, 저장 장치 옆에는 저장을 맡는다고 적혀 있다.">
+<rect class="f-dash" x="284" y="22" width="192" height="264" rx="6"/>
+<text class="f-s" x="380" y="15" text-anchor="middle">본체 안</text>
+<rect class="f-soft" x="300" y="36" width="160" height="60" rx="4"/>
+<text class="f-cap" x="380" y="61" text-anchor="middle">CPU</text>
+<text class="f-s f-ink-t" x="380" y="82" text-anchor="middle">계산 · 비교</text>
+<rect class="f-soft" x="300" y="124" width="160" height="60" rx="4"/>
+<text class="f-cap" x="380" y="149" text-anchor="middle">메모리 (RAM)</text>
+<text class="f-s f-ink-t" x="380" y="170" text-anchor="middle">지금 쓰는 것을 올려 둠</text>
+<rect class="f-box" x="300" y="212" width="160" height="60" rx="4"/>
+<text class="f-cap" x="380" y="237" text-anchor="middle">저장 장치 (SSD)</text>
+<text class="f-s" x="380" y="258" text-anchor="middle">꺼져도 남음</text>
+<line class="f-line" x1="370" y1="96" x2="370" y2="122" marker-end="url(#f-arrow)"/>
+<line class="f-line" x1="390" y1="124" x2="390" y2="98" marker-end="url(#f-arrow)"/>
+<line class="f-line" x1="370" y1="184" x2="370" y2="210" marker-end="url(#f-arrow)"/>
+<line class="f-line" x1="390" y1="212" x2="390" y2="186" marker-end="url(#f-arrow)"/>
+<rect class="f-box" x="20" y="124" width="150" height="60" rx="4"/>
+<text class="f-t" x="95" y="149" text-anchor="middle">입력 장치</text>
+<text class="f-s" x="95" y="170" text-anchor="middle">키보드 · 마우스</text>
+<line class="f-line" x1="170" y1="154" x2="296" y2="154" marker-end="url(#f-arrow)"/>
+<rect class="f-box" x="590" y="124" width="150" height="60" rx="4"/>
+<text class="f-t" x="665" y="149" text-anchor="middle">출력 장치</text>
+<text class="f-s" x="665" y="170" text-anchor="middle">화면 · 스피커</text>
+<line class="f-line" x1="460" y1="154" x2="586" y2="154" marker-end="url(#f-arrow)"/>
+<text class="f-s" x="490" y="70" text-anchor="start">← 처리를 맡는다</text>
+<text class="f-s" x="490" y="246" text-anchor="start">← 저장을 맡는다</text>
+</svg>
+<figcaption>본체 안의 세 부품. 실제 기계에는 이 밖에도 부품을 잇는 회로가 많지만 여기서는 뺐다.</figcaption>
+</figure>
+
+<h3>주방에 빗대어 보기</h3>
+
+<p>세 부품의 관계는 식당 주방에 빗대면 잘 보입니다.</p>
+
+<div class="table-wrap">
+<table>
+<tr><th>주방</th><th>컴퓨터</th><th>닮은 점</th></tr>
+<tr><td>요리사</td><td>CPU</td><td>실제로 손을 움직여 일하는 쪽</td></tr>
+<tr><td>조리대</td><td>메모리</td><td>지금 쓰는 재료와 레시피를 펼쳐 두는 곳. 넓을수록 여러 요리를 한꺼번에 하기 쉽다</td></tr>
+<tr><td>냉장고·창고</td><td>저장 장치</td><td>많이 넣어 둘 수 있지만, 쓰려면 꺼내서 조리대로 옮겨야 한다</td></tr>
+</table>
+</div>
+
+<p>요리사가 냉장고 안에서 바로 요리하지 않듯, CPU도 저장 장치에 든 것을 바로 처리하지 않습니다. 먼저 메모리로 올린 다음 처리합니다. 메모리가 작으면(조리대가 좁으면) 여러 프로그램을 켜 둘 때 재료를 냉장고와 조리대 사이로 계속 옮겨야 해서 느려집니다.</p>
+
+<div class="box trap">
+<p class="box-k">비유가 틀어지는 곳</p>
+<p>이 비유는 두 군데에서 실제와 다릅니다. ① 조리대 위 재료는 불을 꺼도 그대로 있지만, <b>메모리의 내용은 전원이 꺼지면 사라집니다.</b> ② 냉장고에서 재료를 꺼내면 냉장고에는 그만큼 없어지지만, 컴퓨터는 저장 장치의 내용을 메모리로 <b>복사</b>합니다. 원본은 저장 장치에 그대로 남습니다. 그래서 파일을 열어 고치기만 하고 저장하지 않으면 원본은 예전 모습 그대로입니다.</p>
+</div>
+
+<h3>메모리와 저장 장치 비교</h3>
+
+<p>둘 다 "무언가를 담는 곳"이라서 가장 많이 헷갈립니다. 일상에서 "메모리"라는 말이 USB 메모리, 휴대폰 저장 공간에도 쓰이는 것도 헷갈림을 키웁니다. 이 교재에서 <b>메모리</b>는 RAM, 곧 전원을 끄면 지워지는 작업 공간만을 가리킵니다.</p>
+
+<div class="table-wrap">
+<table>
+<tr><th></th><th>메모리 (RAM)</th><th>저장 장치 (SSD·HDD)</th></tr>
+<tr><td>하는 일</td><td>지금 실행 중인 것을 올려 둔다</td><td>파일을 오래 남겨 둔다</td></tr>
+<tr><td>속도</td><td>빠르다</td><td>메모리보다 느리다</td></tr>
+<tr><td>담는 양</td><td>적다</td><td>많다</td></tr>
+<tr><td>전원을 끄면</td><td><b>사라진다</b> (휘발성)</td><td><b>남는다</b> (비휘발성)</td></tr>
+<tr><td>다른 이름</td><td>주기억장치, 램</td><td>보조기억장치, 디스크</td></tr>
+</table>
+</div>
+
+<p>컴퓨터를 살 때 "메모리 16GB, SSD 512GB"처럼 적힌 사양을 보게 됩니다. GB(기가바이트)는 담을 수 있는 양의 단위입니다(U04·3에서 자세히). 이 예처럼 보통 저장 장치가 메모리보다 몇십 배 큽니다. 계산하면 512 ÷ 16 = 32배입니다.</p>
+
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 240" role="img" aria-label="두 그림이 나란히 있다. (가) 켜져 있는 동안: 메모리에는 쓰던 글, 열어 둔 사진, 실행 중인 앱이 있고, 저장 장치에는 보고서.txt, 사진.jpg, 메모장 프로그램이 있다. (나) 껐다 다시 켠 뒤: 메모리는 비어 있고, 저장 장치에는 보고서.txt, 사진.jpg, 메모장 프로그램이 그대로 있다.">
+<rect class="f-soft" x="30" y="24" width="330" height="70" rx="4"/>
+<text class="f-cap" x="46" y="50" text-anchor="start">메모리</text>
+<text class="f-s f-ink-t" x="46" y="78" text-anchor="start">쓰던 글 · 열어 둔 사진 · 실행 중인 앱</text>
+<rect class="f-box" x="30" y="112" width="330" height="70" rx="4"/>
+<text class="f-cap" x="46" y="138" text-anchor="start">저장 장치</text>
+<text class="f-s" x="46" y="166" text-anchor="start">보고서.txt · 사진.jpg · 메모장 프로그램</text>
+<rect class="f-none" x="400" y="24" width="330" height="70" rx="4"/>
+<text class="f-cap" x="416" y="50" text-anchor="start">메모리</text>
+<text class="f-s" x="416" y="78" text-anchor="start">비어 있음 (전원과 함께 사라짐)</text>
+<rect class="f-box" x="400" y="112" width="330" height="70" rx="4"/>
+<text class="f-cap" x="416" y="138" text-anchor="start">저장 장치</text>
+<text class="f-s" x="416" y="166" text-anchor="start">보고서.txt · 사진.jpg · 메모장 프로그램</text>
+<text class="f-cap" x="195" y="222" text-anchor="middle">(가) 켜져 있는 동안</text>
+<text class="f-cap" x="565" y="222" text-anchor="middle">(나) 껐다 다시 켠 뒤</text>
+</svg>
+<figcaption>전원을 끄면 메모리 칸만 비고 저장 장치 칸은 그대로다.</figcaption>
+</figure>
+
+<p>이제 처음의 질문에 답할 수 있습니다. 메모장에서 쓰던 글은 <b>메모리</b>에만 있었기 때문에 전원과 함께 사라졌고, 어제 저장한 파일은 <b>저장 장치</b>에 있었기 때문에 남았습니다. "저장" 단추는 메모리에 있는 내용을 저장 장치로 옮겨 적으라는 명령입니다.</p>
+
+<div class="check" data-q="q3"></div>
+
+<h2>프로그램 하나가 실행되는 순서 <span class="tag grasp">이해하기</span></h2>
+
+<p>바탕화면의 메모장 아이콘을 두 번 눌러(더블클릭) 보고서.txt를 열고, 한 줄을 고친 뒤 저장하는 장면을 세 부품이 어떻게 나눠 맡는지 따라가 봅시다.</p>
+
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 260" role="img" aria-label="왼쪽부터 저장 장치, 메모리, CPU 세 칸이 있다. 저장 장치에는 메모장.exe와 보고서.txt가 있다. 1번 아이콘 더블클릭. 2번 저장 장치에서 메모리로 올리기: 메모리에 메모장 명령들과 고치는 중인 보고서가 생긴다. 3번 메모리에서 CPU로 명령을 하나씩 읽는다. CPU는 명령을 하나씩 읽고 실행한다. 4번 CPU가 결과를 메모리에 쓴다. 5번 저장 단추를 누르면 메모리에서 저장 장치로 기록한다. 6번 전원을 끄면 메모리는 비고, 5번에서 저장한 보고서.txt만 남는다.">
+<text class="f-s" x="110" y="28" text-anchor="middle">① 아이콘 더블클릭</text>
+<rect class="f-box" x="20" y="40" width="180" height="160" rx="4"/>
+<text class="f-cap" x="110" y="64" text-anchor="middle">저장 장치</text>
+<rect class="f-box" x="40" y="82" width="140" height="34" rx="3"/>
+<text class="f-s f-ink-t" x="110" y="104" text-anchor="middle">메모장.exe</text>
+<rect class="f-box" x="40" y="142" width="140" height="34" rx="3"/>
+<text class="f-s f-ink-t" x="110" y="164" text-anchor="middle">보고서.txt</text>
+<rect class="f-soft" x="290" y="40" width="180" height="160" rx="4"/>
+<text class="f-cap" x="380" y="64" text-anchor="middle">메모리</text>
+<rect class="f-box" x="310" y="82" width="140" height="34" rx="3"/>
+<text class="f-s f-ink-t" x="380" y="104" text-anchor="middle">메모장 명령들</text>
+<rect class="f-box" x="310" y="142" width="140" height="34" rx="3"/>
+<text class="f-s f-ink-t" x="380" y="164" text-anchor="middle">보고서 (고치는 중)</text>
+<rect class="f-soft" x="560" y="40" width="180" height="160" rx="4"/>
+<text class="f-cap" x="650" y="64" text-anchor="middle">CPU</text>
+<text class="f-s f-ink-t" x="650" y="112" text-anchor="middle">명령을 하나씩</text>
+<text class="f-s f-ink-t" x="650" y="132" text-anchor="middle">읽고 실행한다</text>
+<line class="f-line" x1="200" y1="99" x2="286" y2="99" marker-end="url(#f-arrow)"/>
+<text class="f-s" x="245" y="90" text-anchor="middle">② 올리기</text>
+<line class="f-line" x1="470" y1="99" x2="556" y2="99" marker-end="url(#f-arrow)"/>
+<text class="f-s" x="515" y="90" text-anchor="middle">③ 명령 읽기</text>
+<line class="f-line" x1="560" y1="159" x2="474" y2="159" marker-end="url(#f-arrow)"/>
+<text class="f-s" x="515" y="150" text-anchor="middle">④ 결과</text>
+<line class="f-line" x1="290" y1="159" x2="204" y2="159" marker-end="url(#f-arrow)"/>
+<text class="f-s" x="245" y="150" text-anchor="middle">⑤ 저장</text>
+<text class="f-s" x="380" y="236" text-anchor="middle">⑥ 전원을 끄면 메모리는 비고, ⑤에서 기록한 보고서.txt만 남는다</text>
+</svg>
+<figcaption>②는 복사다. 저장 장치의 원본은 그대로 있다.</figcaption>
+</figure>
+
+<div class="box ex">
+<p class="box-k">풀이 예제</p>
+<p>보고서.txt를 메모장으로 열어 첫 줄의 "초안"을 "최종"으로 고치고 저장합니다. 각 단계를 어느 부품이 맡는지 적어 봅시다.</p>
+<p class="calc">① 입력: 마우스로 아이콘을 더블클릭한다. 운영체제가 "메모장을 실행하라"는 뜻으로 받아들인다.<br>
+② 저장 장치 → 메모리: 운영체제가 저장 장치의 메모장.exe를 읽어 메모리에 올린다(복사). 보고서.txt의 내용도 메모리로 올린다.<br>
+③ 메모리 → CPU: CPU가 메모리에 올라온 메모장의 명령을 하나씩 읽어 실행한다. 그 결과 화면에 보고서 내용이 보인다(출력).<br>
+④ 입력과 처리: 키보드로 "초안"을 지우고 "최종"을 친다. CPU는 메모리 속 보고서 내용을 바꾼다. 이 순간 저장 장치의 원본에는 아직 "초안"이 적혀 있다.<br>
+⑤ 메모리 → 저장 장치: 저장 단추(Ctrl+S)를 누르면 메모리의 바뀐 내용이 저장 장치의 보고서.txt에 기록된다. 이제 원본도 "최종"이다.<br>
+⑥ 메모장을 닫으면 메모장 명령과 보고서 내용이 메모리에서 지워진다. 저장 장치에는 메모장.exe와 "최종"이 적힌 보고서.txt가 남는다.</p>
+<p>④와 ⑤ 사이에 전원이 꺼졌다면? 메모리의 "최종"은 사라지고, 다시 켜서 열면 저장 장치에 남아 있던 "초안"이 보입니다.</p>
+</div>
+
+<p>이 과정에서 볼 것은, <b>CPU는 항상 메모리를 통해서 일한다</b>는 점입니다. 프로그램을 "실행한다"는 말은 실제로는 "저장 장치의 프로그램을 메모리로 올리고, CPU가 그 명령을 차례로 따라 하게 한다"는 뜻입니다.</p>
+
+<div class="check" data-q="q4"></div>
+<div class="check" data-q="q5"></div>
+
+<h2>프로그램과 데이터 <span class="tag grasp">이해하기</span></h2>
+
+<p>메모장 예에서 메모리에 올라간 것은 두 종류였습니다. 하나는 메모장이라는 <b>프로그램</b>(무엇을 할지 적은 명령)이고, 다른 하나는 보고서의 글자들이라는 <b>데이터</b>(명령이 다루는 재료)입니다.</p>
+
+<div class="box">
+<p class="box-k">정의</p>
+<p><b class="key">프로그램</b>: 무엇을 어떤 순서로 할지 적어 둔 명령의 목록.<br>
+<b class="key">데이터</b>: 프로그램이 읽고, 계산하고, 만들어 내는 재료(숫자·글자·사진·소리 등).</p>
+</div>
+
+<p>요리로 치면 <b>레시피가 프로그램</b>, <b>재료가 데이터</b>, 레시피를 따라 손을 움직이는 <b>요리사가 CPU</b>입니다. 같은 레시피에 다른 재료를 넣으면 다른 요리가 나오듯, 같은 프로그램에 다른 데이터를 넣으면 다른 결과가 나옵니다.</p>
+
+<h3>같은 프로그램, 다른 데이터</h3>
+
+<p>점수 목록을 받아 평균을 내는 프로그램을 말로 적으면 이렇습니다.</p>
+<div class="sample"><p class="sample-k">평균 프로그램 (말로 적은 명령)</p><blockquote>① 점수를 모두 더한다.<br>② 더한 값을 점수의 개수로 나눈다.<br>③ 그 값을 화면에 보여 준다.</blockquote></div>
+
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 240" role="img" aria-label="가운데에 평균 프로그램 상자가 하나 있다. 명령은 1 모두 더한다, 2 개수로 나눈다, 3 보여 준다. 왼쪽에서 데이터 세 묶음이 들어간다. (가) 80, 90, 70은 80이 나온다. (나) 60, 100은 80이 나온다. (다) 50, 70, 90, 100은 77.5가 나온다.">
+<text class="f-cap" x="130" y="24" text-anchor="middle">데이터</text>
+<text class="f-cap" x="380" y="24" text-anchor="middle">프로그램 (하나)</text>
+<text class="f-cap" x="655" y="24" text-anchor="middle">결과</text>
+<text class="f-t" x="32" y="66" text-anchor="middle">(가)</text>
+<rect class="f-box" x="56" y="42" width="150" height="38" rx="4"/>
+<text class="f-t" x="131" y="66" text-anchor="middle">80, 90, 70</text>
+<text class="f-t" x="32" y="136" text-anchor="middle">(나)</text>
+<rect class="f-box" x="56" y="112" width="150" height="38" rx="4"/>
+<text class="f-t" x="131" y="136" text-anchor="middle">60, 100</text>
+<text class="f-t" x="32" y="206" text-anchor="middle">(다)</text>
+<rect class="f-box" x="56" y="182" width="150" height="38" rx="4"/>
+<text class="f-t" x="131" y="206" text-anchor="middle">50, 70, 90, 100</text>
+<rect class="f-soft" x="290" y="62" width="180" height="136" rx="4"/>
+<text class="f-s f-ink-t" x="306" y="98" text-anchor="start">① 모두 더한다</text>
+<text class="f-s f-ink-t" x="306" y="134" text-anchor="start">② 개수로 나눈다</text>
+<text class="f-s f-ink-t" x="306" y="170" text-anchor="start">③ 보여 준다</text>
+<line class="f-line" x1="206" y1="61" x2="286" y2="100" marker-end="url(#f-arrow)"/>
+<line class="f-line" x1="206" y1="131" x2="286" y2="131" marker-end="url(#f-arrow)"/>
+<line class="f-line" x1="206" y1="201" x2="286" y2="162" marker-end="url(#f-arrow)"/>
+<line class="f-line" x1="470" y1="100" x2="576" y2="61" marker-end="url(#f-arrow)"/>
+<line class="f-line" x1="470" y1="131" x2="576" y2="131" marker-end="url(#f-arrow)"/>
+<line class="f-line" x1="470" y1="162" x2="576" y2="201" marker-end="url(#f-arrow)"/>
+<rect class="f-box" x="580" y="42" width="150" height="38" rx="4"/>
+<text class="f-t f-b" x="655" y="66" text-anchor="middle">80</text>
+<rect class="f-box" x="580" y="112" width="150" height="38" rx="4"/>
+<text class="f-t f-b" x="655" y="136" text-anchor="middle">80</text>
+<rect class="f-box" x="580" y="182" width="150" height="38" rx="4"/>
+<text class="f-t f-b" x="655" y="206" text-anchor="middle">77.5</text>
+</svg>
+<figcaption>프로그램은 하나도 바뀌지 않았고, 들어간 데이터만 바뀌었다.</figcaption>
+</figure>
+
+<div class="box ex">
+<p class="box-k">풀이 예제</p>
+<p>세 데이터를 프로그램의 명령대로 하나씩 따라가 봅시다.</p>
+<p class="calc">(가) ① 80 + 90 = 170, 170 + 70 = 240 ② 점수가 3개이므로 240 ÷ 3 = 80 ③ 80<br>
+(나) ① 60 + 100 = 160 ② 점수가 2개이므로 160 ÷ 2 = 80 ③ 80<br>
+(다) ① 50 + 70 = 120, 120 + 90 = 210, 210 + 100 = 310 ② 점수가 4개이므로 310 ÷ 4 = 77.5 ③ 77.5</p>
+<p>(가)와 (나)는 데이터가 전혀 다른데 결과가 같습니다. 결과만 보고 어떤 데이터가 들어갔는지 알 수는 없다는 뜻이기도 합니다. 평균이라는 값 자체의 성질은 산술·통계 단원에서 다시 봅니다.</p>
+</div>
+
+<h3>둘 다 0과 1로 저장된다</h3>
+
+<p>프로그램과 데이터는 역할이 다르지만, 저장 장치 안에서는 <b>둘 다 0과 1로 된 파일</b>입니다. 메모장.exe도 보고서.txt도 똑같이 0과 1의 줄입니다. 운영체제는 파일 이름 끝의 <b>확장자</b>(.exe, .txt, .jpg 등)를 보고 이 파일이 실행할 프로그램인지, 어떤 프로그램으로 열 데이터인지를 가립니다. 확장자는 U02 "파일과 폴더"에서 자세히 다룹니다. 0과 1이 어떻게 글자와 숫자가 되는지는 U04·3에서 봅니다.</p>
+
+<h3>코드로 본 프로그램과 데이터</h3>
+
+<p>나중에 Python 단원에서 쓰게 될 코드로 같은 평균 프로그램을 적으면 두 줄입니다. 지금은 읽을 필요 없이 생김새만 봅니다.</p>
+
+<pre><code>scores = [80, 90, 70]
+print(sum(scores) / len(scores))</code></pre>
+<p>실제로 실행한 결과입니다.</p>
+<pre><code>80.0</code></pre>
+
+<p>첫 줄의 <code>[80, 90, 70]</code>이 <b>데이터</b>이고, "모두 더해서(<code>sum</code>) 개수(<code>len</code>)로 나눈 뒤 보여 줘라(<code>print</code>)"가 <b>프로그램</b>의 명령입니다. 대괄호 안의 숫자만 [60, 100]으로 바꾸면 프로그램의 나머지는 그대로 두고 다른 결과를 얻습니다. 결과가 80이 아니라 80.0으로 나오는 이유는 Python 단원에서 다룹니다.</p>
+
+<div class="more">
+<p class="box-k">더 알아보기 · 프로그램도 데이터가 될 때</p>
+<p>프로그램을 인터넷에서 내려받거나 USB로 복사할 때, 복사를 맡은 프로그램에게 그 설치 파일은 "옮길 재료", 곧 데이터일 뿐입니다. 실행하기 전까지는 그냥 0과 1의 덩어리입니다. 같은 파일이 <b>실행되면 프로그램, 옮겨지거나 읽히면 데이터</b>로 다뤄집니다. 그래서 출처를 모르는 파일을 함부로 실행하면 안 됩니다. 실행하는 순간 그 안의 명령을 CPU가 따라 하기 때문입니다.</p>
+</div>
+
+<div class="why">
+<p class="box-k">왜 그럴까?</p>
+<p>컴퓨터를 오래 켜 두고 프로그램을 많이 열어 두면 느려지다가, 몇 개를 닫으면 다시 빨라지곤 합니다. 세 부품 중 어느 것과 관련이 있을까요?</p>
+<details><summary>모범 답 보기</summary><p>메모리입니다. 실행 중인 프로그램과 데이터는 모두 메모리에 올라가는데, 메모리가 가득 차면 운영체제가 당장 안 쓰는 것을 저장 장치로 잠시 내려놓았다가 다시 올리기를 반복합니다. 저장 장치는 메모리보다 느리기 때문에 이 옮기기가 잦아질수록 느려집니다. 프로그램을 닫으면 메모리가 비어서 옮기기가 줄어듭니다. 주방으로 치면 조리대가 좁아 냉장고를 계속 오가는 상황입니다.</p></details>
+</div>
+
+<div class="check" data-q="q7"></div>
+<div class="check" data-q="q8"></div>
+
+<h2>이 구분이 다시 나오는 곳</h2>
+<ul>
+<li><b>U03·3</b>: 내 컴퓨터의 브라우저(프로그램)가 멀리 있는 서버 컴퓨터에게 웹 페이지(데이터)를 달라고 요청하는 장면을 봅니다.</li>
+<li><b>U05와 Python 단원</b>: 내가 쓴 코드가 프로그램이 되고, CSV 파일이 데이터가 됩니다. "코드를 실행한다"가 위의 ①~⑥ 순서와 같은 일입니다.</li>
+<li><b>빅데이터·AI</b>: 데이터가 메모리보다 크면 한 번에 올릴 수 없어서 나눠 읽거나 여러 컴퓨터에 나눠 처리합니다. 빅데이터 기술이 필요한 이유 하나가 바로 이 메모리의 한계입니다. 딥러닝에서 자주 듣는 GPU는 CPU처럼 처리를 맡되, 같은 계산을 한꺼번에 많이 하는 데 특화된 부품입니다.</li>
+</ul>
+
+<h2>한눈에 정리</h2>
+
+<div class="table-wrap">
+<table>
+<tr><th>이름</th><th>뜻</th><th>예 · 특징</th></tr>
+<tr><td><b class="key">하드웨어</b></td><td>만질 수 있는 기계와 부품</td><td>키보드, 화면, CPU, 메모리, SSD</td></tr>
+<tr><td><b class="key">소프트웨어</b></td><td>하드웨어에게 할 일을 알려 주는 명령의 묶음</td><td>운영체제, 응용 프로그램. 저장 장치에 파일로 있다</td></tr>
+<tr><td><b class="key">운영체제</b></td><td>하드웨어를 관리하는 바탕 소프트웨어</td><td>Windows, macOS, Android</td></tr>
+<tr><td><b class="key">CPU</b></td><td>명령을 읽어 처리한다</td><td>요리사</td></tr>
+<tr><td><b class="key">메모리 (RAM)</b></td><td>지금 실행 중인 것을 올려 둔다</td><td>빠르다, 전원을 끄면 <b class="key">사라진다</b> (휘발성)</td></tr>
+<tr><td><b class="key">저장 장치</b></td><td>파일을 오래 남긴다</td><td>SSD·HDD, 전원을 꺼도 남는다</td></tr>
+<tr><td>실행 순서</td><td colspan="2"><b class="key">저장 장치 → 메모리 → CPU</b>, 저장할 때는 메모리 → 저장 장치</td></tr>
+<tr><td><b class="key">프로그램</b> / <b class="key">데이터</b></td><td colspan="2">할 일을 적은 명령 / 명령이 다루는 재료. 둘 다 0과 1의 파일로 저장된다</td></tr>
+</table>
+</div>
+
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>프로그램(소프트웨어)은 저장 장치에서 메모리로 올라와 CPU가 따라 하는 명령이고, 데이터는 그 명령이 다루는 재료이며, 메모리의 것은 전원과 함께 사라지고 저장 장치의 것은 남는다.</p></div>
+
+<h2>확인 문제</h2>
+<p>본문 중간에서 푼 문제 말고 남은 문제입니다. 보기를 누르면 바로 정답과 해설이 나옵니다.</p>
+<div id="quiz"></div>
+
+<section class="work" id="tools"></section>
+
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

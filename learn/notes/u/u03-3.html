@@ -1,0 +1,373 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>브라우저와 서버 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e8c'/%3E%3Cpath d='M8 22V10m8 12V14m8 8V6' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="U03-3">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+
+<header class="chapter">
+<p class="chap-sub">공부·컴퓨터의 출발점 · U03 컴퓨터의 큰 그림</p>
+<p class="chap-num">U03·3</p>
+<h1>브라우저와 서버</h1>
+<p class="lead">주소창에 뉴스 사이트 주소를 치고 Enter를 누르면 1초쯤 뒤에 기사가 뜹니다. 그 기사는 내 컴퓨터에 있던 것이 아닙니다. 멀리 있는 다른 컴퓨터가 보내 준 것입니다. 이 장에서는 그 1초 동안 두 컴퓨터가 주고받는 일, 곧 웹 요청 한 번의 큰 그림을 그려 봅니다.</p>
+</header>
+
+<div class="goal">
+<h2>이 장을 읽고 나면</h2>
+<ul>
+<li>클라이언트·서버·브라우저가 각각 무엇인지 설명할 수 있다.</li>
+<li>인터넷과 웹의 차이를 말할 수 있다.</li>
+<li>주소(URL)를 프로토콜·호스트 이름·경로로 나눠 읽을 수 있다.</li>
+<li>웹 페이지 하나가 뜨기까지 요청과 응답이 오가는 순서를 그릴 수 있다.</li>
+<li>페이지 하나에 요청이 몇 번 필요한지 셀 수 있다.</li>
+</ul>
+</div>
+
+<h2>부탁하는 쪽과 들어주는 쪽</h2>
+
+<p>식당을 떠올려 봅시다. 손님이 "김치찌개 하나 주세요"라고 <b>주문</b>하면, 주방은 그 주문을 받아 음식을 만들어 <b>내어 줍니다.</b> 손님은 부탁하는 쪽, 주방은 부탁을 들어주는 쪽입니다. 웹 페이지를 볼 때 두 컴퓨터 사이에서도 똑같은 일이 일어납니다.</p>
+
+<div class="box">
+<p class="box-k">정의</p>
+<p><b class="key">클라이언트(client)</b>: 다른 컴퓨터에게 무언가를 <b>요청</b>하는 쪽. 영어로 "손님, 의뢰인"이라는 뜻입니다.<br>
+<b class="key">서버(server)</b>: 요청을 받아 그에 맞는 것을 <b>응답</b>으로 돌려주는 쪽. 영어로 "시중드는 사람"이라는 뜻입니다.<br>
+<b class="key">요청(request)</b>과 <b class="key">응답(response)</b>: 클라이언트가 보내는 부탁과, 서버가 돌려주는 답.</p>
+</div>
+
+<p>웹 페이지를 볼 때 클라이언트 역할을 하는 프로그램이 <b class="key">브라우저(browser)</b>입니다. Chrome, Edge, Safari, Firefox, 휴대폰의 삼성 인터넷이 모두 브라우저입니다. 브라우저는 두 가지 일을 합니다.</p>
+<ol>
+<li>주소를 받아 그 주소의 서버에 페이지를 <b>요청</b>한다.</li>
+<li>서버가 보내 준 응답(글자·그림·모양 정보)을 읽어 <b>화면에 그린다.</b></li>
+</ol>
+
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 236" role="img" aria-label="왼쪽에 내 컴퓨터가 있고 그 안에 브라우저가 있다. 이쪽이 클라이언트, 요청하는 쪽이다. 오른쪽에 서버 컴퓨터가 있고 그 안에 웹 서버 프로그램과 저장 장치(index.html, style.css, logo.png)가 있다. 이쪽이 서버, 응답하는 쪽이다. 가운데 인터넷을 건너 1번 요청(/index.html 주세요)이 오른쪽으로 가고, 2번 응답(index.html 내용)이 왼쪽으로 돌아온다.">
+<rect class="f-box" x="20" y="40" width="200" height="150" rx="4"/>
+<text class="f-cap" x="120" y="66" text-anchor="middle">내 컴퓨터</text>
+<rect class="f-soft" x="40" y="86" width="160" height="40" rx="3"/>
+<text class="f-t" x="120" y="111" text-anchor="middle">브라우저</text>
+<rect class="f-dash" x="250" y="40" width="260" height="150" rx="6"/>
+<text class="f-s" x="380" y="60" text-anchor="middle">인터넷</text>
+<line class="f-line" x1="220" y1="106" x2="536" y2="106" marker-end="url(#f-arrow)"/>
+<text class="f-s f-ink-t" x="380" y="97" text-anchor="middle">① 요청: /index.html 주세요</text>
+<line class="f-line" x1="540" y1="160" x2="224" y2="160" marker-end="url(#f-arrow)"/>
+<text class="f-s f-ink-t" x="380" y="151" text-anchor="middle">② 응답: index.html 내용</text>
+<rect class="f-box" x="540" y="40" width="200" height="150" rx="4"/>
+<text class="f-cap" x="640" y="66" text-anchor="middle">서버 컴퓨터</text>
+<rect class="f-soft" x="560" y="80" width="160" height="34" rx="3"/>
+<text class="f-s f-ink-t" x="640" y="102" text-anchor="middle">웹 서버 프로그램</text>
+<rect class="f-box" x="560" y="124" width="160" height="54" rx="3"/>
+<text class="f-s" x="640" y="146" text-anchor="middle">index.html</text>
+<text class="f-s" x="640" y="166" text-anchor="middle">style.css · logo.png</text>
+<text class="f-s" x="120" y="216" text-anchor="middle">클라이언트 · 요청하는 쪽</text>
+<text class="f-s" x="640" y="216" text-anchor="middle">서버 · 응답하는 쪽</text>
+</svg>
+<figcaption>요청은 클라이언트에서 서버로, 응답은 서버에서 클라이언트로 간다.</figcaption>
+</figure>
+
+<div class="box trap">
+<p class="box-k">흔한 실수</p>
+<p><b>"서버는 특별하게 생긴 거대한 기계다"</b>는 반만 맞습니다. 서버는 <b>역할의 이름</b>입니다. 요청을 받아 응답하는 프로그램이 돌고 있으면, 평범한 노트북도 서버가 될 수 있습니다. 실제 서비스의 서버는 하루 종일 켜 두고 많은 요청을 받아야 해서 전용 기계를 데이터 센터에 모아 두는 경우가 많을 뿐입니다. 또 "서버"라는 말은 그 <b>컴퓨터</b>를 가리킬 때도, 그 안에서 요청을 받는 <b>프로그램</b>을 가리킬 때도 씁니다. 앞뒤 말을 보고 가립니다.</p>
+</div>
+
+<div class="more">
+<p class="box-k">더 알아보기 · 식당 비유의 한계</p>
+<p>식당 주방은 한 번에 손님 몇 명만 상대하지만, 서버는 같은 순간에 수천 명의 요청을 동시에 받아 처리하기도 합니다. 또 주방은 음식을 내주면 그 음식이 없어지지만, 서버는 파일을 <b>복사</b>해서 보내므로 원본은 그대로 남고 다음 사람에게도 똑같이 보낼 수 있습니다.</p>
+</div>
+
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+
+<h2>인터넷과 웹은 같은 말이 아니다</h2>
+
+<p>일상에서는 "인터넷 한다"와 "웹 서핑 한다"를 섞어 쓰지만 두 낱말의 뜻은 다릅니다.</p>
+
+<div class="box">
+<p class="box-k">정의</p>
+<p><b class="key">인터넷(Internet)</b>: 전 세계의 컴퓨터 네트워크를 서로 이어 놓은 거대한 연결망. 데이터가 오가는 <b>길</b>입니다.<br>
+<b class="key">웹(Web, World Wide Web)</b>: 인터넷이라는 길 위에서 브라우저로 페이지를 주고받는 <b>서비스 하나</b>.</p>
+</div>
+
+<p>도로와 택배에 빗대면, 인터넷은 전국을 잇는 <b>도로망</b>이고 웹은 그 도로 위를 다니는 <b>택배 서비스 하나</b>입니다. 같은 도로 위로 다른 서비스(전자우편, 메신저, 온라인 게임, 파일 전송)도 다닙니다. 카카오톡으로 메시지를 보낼 때도 인터넷을 쓰지만 브라우저로 웹 페이지를 보는 것은 아닙니다.</p>
+
+<div class="side"><b>용어</b> <b>네트워크(network)</b>는 여러 컴퓨터를 선이나 전파로 이어 데이터를 주고받게 한 것입니다. 집 안의 공유기에 휴대폰과 노트북이 함께 붙어 있으면 그것도 작은 네트워크입니다. 네트워크는 NW 단원에서 자세히 다룹니다.</div>
+
+<div class="check" data-q="q3"></div>
+
+<h2>주소 읽기: URL</h2>
+
+<p>브라우저가 서버에게 요청하려면 <b>어느 컴퓨터의 어느 파일</b>을 달라고 할지 알아야 합니다. 그것을 한 줄로 적은 것이 주소창의 주소, 곧 <b class="key">URL</b>(Uniform Resource Locator, 자원의 위치를 적는 통일된 형식)입니다.</p>
+
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 160" role="img" aria-label="주소 https://www.example.com/news/today.html 을 세 칸으로 나눴다. 첫 칸 https:// 는 프로토콜, 주고받는 약속이다. 둘째 칸 www.example.com 은 호스트 이름, 어느 컴퓨터에게 요청할지다. 셋째 칸 /news/today.html 은 경로, 그 컴퓨터 안의 어느 파일인지다.">
+<rect class="f-soft" x="60" y="26" width="140" height="44" rx="3"/>
+<text class="f-t" x="130" y="54" text-anchor="middle">https://</text>
+<rect class="f-box" x="200" y="26" width="240" height="44" rx="3"/>
+<text class="f-t" x="320" y="54" text-anchor="middle">www.example.com</text>
+<rect class="f-soft" x="440" y="26" width="260" height="44" rx="3"/>
+<text class="f-t" x="570" y="54" text-anchor="middle">/news/today.html</text>
+<line class="f-ink" x1="130" y1="70" x2="130" y2="96"/>
+<line class="f-ink" x1="320" y1="70" x2="320" y2="96"/>
+<line class="f-ink" x1="570" y1="70" x2="570" y2="96"/>
+<text class="f-cap" x="130" y="116" text-anchor="middle">프로토콜</text>
+<text class="f-s" x="130" y="138" text-anchor="middle">주고받는 약속</text>
+<text class="f-cap" x="320" y="116" text-anchor="middle">호스트 이름</text>
+<text class="f-s" x="320" y="138" text-anchor="middle">어느 컴퓨터에게</text>
+<text class="f-cap" x="570" y="116" text-anchor="middle">경로</text>
+<text class="f-s" x="570" y="138" text-anchor="middle">그 컴퓨터 안의 어느 파일을</text>
+</svg>
+<figcaption>example.com은 설명용으로 따로 남겨 둔 이름이다. 실제 뉴스 사이트가 아니다.</figcaption>
+</figure>
+
+<ul>
+<li><b class="key">프로토콜(protocol)</b>: 두 컴퓨터가 어떤 약속(형식과 순서)으로 주고받을지. 웹은 <b>HTTP</b>(HyperText Transfer Protocol)라는 약속을 쓰고, 오가는 내용을 암호로 감싼 것이 <b>HTTPS</b>입니다. 지금 대부분의 사이트는 https를 씁니다.</li>
+<li><b class="key">호스트 이름(host name)</b>: 요청을 받을 컴퓨터의 이름. <b>도메인 이름</b>이라고도 합니다. 사람이 외우기 쉬운 글자 이름입니다.</li>
+<li><b class="key">경로(path)</b>: 그 컴퓨터 안에서 어느 파일(또는 어느 페이지)인지. 빗금(/)으로 폴더를 나눠 적습니다. 폴더와 경로는 U02에서 자세히 봅니다.</li>
+</ul>
+
+<div class="box ex">
+<p class="box-k">풀이 예제</p>
+<p>주소 <code>https://data.example.org/2026/sales.csv</code>를 세 부분으로 나눠 봅시다.</p>
+<p class="calc">① 맨 앞에서 <code>://</code>까지: <code>https://</code> → 프로토콜은 HTTPS<br>
+② <code>://</code> 뒤부터 다음 빗금(/) 앞까지: <code>data.example.org</code> → 호스트 이름<br>
+③ 그 빗금부터 끝까지: <code>/2026/sales.csv</code> → 경로. 2026 폴더 안의 sales.csv 파일</p>
+<p>이 주소로 요청하면 data.example.org라는 컴퓨터에게 "2026 폴더의 sales.csv를 주세요"라고 부탁하는 셈입니다. 끝이 .csv이므로 받은 것은 화면에 그릴 페이지가 아니라 표 데이터 파일입니다. 이렇게 웹으로 데이터 파일을 받아 오는 것은 데이터 분석에서 자주 하는 일입니다.</p>
+</div>
+
+<div class="check" data-q="q4"></div>
+<div class="check" data-q="q5"></div>
+
+<h2>요청 한 번 따라가기 <span class="tag grasp">이해하기</span></h2>
+
+<p>이제 주소창에 <code>https://www.example.com/news/today.html</code>을 치고 Enter를 누른 뒤 일어나는 일을 순서대로 따라갑니다. 실제로는 이보다 단계가 많지만, 큰 줄기는 다음과 같습니다.</p>
+
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 400" role="img" aria-label="세 세로줄이 있다. 왼쪽 브라우저(내 컴퓨터), 가운데 DNS 서버(이름을 주소로 안내), 오른쪽 웹 서버(www.example.com). 시간은 위에서 아래로 흐른다. 1 브라우저가 DNS에 www.example.com 주소를 묻는다. 2 DNS가 203.0.113.10 이라고 답한다. 3 브라우저가 웹 서버에 GET /news/today.html 을 요청한다. 4 웹 서버가 파일을 찾는다. 5 웹 서버가 200 OK와 HTML을 응답한다. 6 브라우저가 HTML을 읽고 화면을 그리기 시작한다. 7 브라우저가 GET /style.css 를 요청한다. 8 웹 서버가 200 OK와 CSS를 응답한다. 9 브라우저가 모양을 입혀 완성한다.">
+<rect class="f-soft" x="60" y="16" width="180" height="46" rx="4"/>
+<text class="f-cap" x="150" y="37" text-anchor="middle">브라우저</text>
+<text class="f-s f-ink-t" x="150" y="54" text-anchor="middle">내 컴퓨터</text>
+<rect class="f-box" x="290" y="16" width="180" height="46" rx="4"/>
+<text class="f-cap" x="380" y="37" text-anchor="middle">DNS 서버</text>
+<text class="f-s" x="380" y="54" text-anchor="middle">이름을 주소로 안내</text>
+<rect class="f-box" x="520" y="16" width="180" height="46" rx="4"/>
+<text class="f-cap" x="610" y="37" text-anchor="middle">웹 서버</text>
+<text class="f-s" x="610" y="54" text-anchor="middle">www.example.com</text>
+<line class="f-dash" x1="150" y1="62" x2="150" y2="390"/>
+<line class="f-dash" x1="380" y1="62" x2="380" y2="390"/>
+<line class="f-dash" x1="610" y1="62" x2="610" y2="390"/>
+<line class="f-line" x1="150" y1="98" x2="376" y2="98" marker-end="url(#f-arrow)"/>
+<text class="f-s f-ink-t" x="265" y="90" text-anchor="middle">① www.example.com 주소는?</text>
+<line class="f-line" x1="380" y1="132" x2="154" y2="132" marker-end="url(#f-arrow)"/>
+<text class="f-s f-ink-t" x="265" y="124" text-anchor="middle">② 203.0.113.10 입니다</text>
+<line class="f-line" x1="150" y1="178" x2="606" y2="178" marker-end="url(#f-arrow)"/>
+<text class="f-s f-ink-t" x="490" y="170" text-anchor="middle">③ 요청: GET /news/today.html</text>
+<text class="f-s f-ink-t" x="620" y="208" text-anchor="start">④ 파일 찾기</text>
+<line class="f-line" x1="610" y1="236" x2="154" y2="236" marker-end="url(#f-arrow)"/>
+<text class="f-s f-ink-t" x="490" y="228" text-anchor="middle">⑤ 응답: 200 OK + HTML</text>
+<text class="f-s f-ink-t" x="140" y="266" text-anchor="end">⑥ 화면 그리기 시작</text>
+<line class="f-line" x1="150" y1="300" x2="606" y2="300" marker-end="url(#f-arrow)"/>
+<text class="f-s f-ink-t" x="490" y="292" text-anchor="middle">⑦ 요청: GET /style.css</text>
+<line class="f-line" x1="610" y1="340" x2="154" y2="340" marker-end="url(#f-arrow)"/>
+<text class="f-s f-ink-t" x="490" y="332" text-anchor="middle">⑧ 응답: 200 OK + CSS</text>
+<text class="f-s f-ink-t" x="140" y="372" text-anchor="end">⑨ 모양 입혀 완성</text>
+</svg>
+<figcaption>시간은 위에서 아래로 흐른다. 203.0.113.10은 설명용으로 남겨 둔 번호다.</figcaption>
+</figure>
+
+<h3>①② 이름을 번호로 바꾸기</h3>
+<p>인터넷에 붙은 컴퓨터는 저마다 <b class="key">IP 주소</b>라는 번호를 가집니다. 203.0.113.10처럼 점으로 나뉜 숫자입니다. 사람은 www.example.com 같은 이름이 외우기 쉽지만, 인터넷의 길은 번호로 찾아갑니다. 그래서 브라우저는 먼저 <b class="key">DNS</b>(Domain Name System, 도메인 이름 체계)에게 "이 이름의 번호가 뭐죠?"라고 묻습니다. 전화번호부에서 이름으로 번호를 찾는 것과 같습니다. 한번 알아낸 번호는 한동안 기억해 두고 다시 묻지 않습니다.</p>
+
+<h3>③ 요청 보내기</h3>
+<p>번호를 알았으니 그 컴퓨터에게 요청을 보냅니다. 요청은 HTTP라는 약속에 맞춘 글자 몇 줄입니다. 핵심만 간추리면 이렇게 생겼습니다.</p>
+<pre><code>GET /news/today.html HTTP/1.1
+Host: www.example.com</code></pre>
+<p>첫 줄은 "가져다주세요(<code>GET</code>), 경로는 <code>/news/today.html</code>, HTTP 1.1 약속으로"라는 뜻이고, 둘째 줄은 받을 컴퓨터의 이름입니다. 앞에서 나눈 URL의 호스트 이름과 경로가 그대로 들어가 있습니다.</p>
+
+<h3>④⑤ 서버가 찾아서 돌려주기</h3>
+<p>요청을 받은 웹 서버는 자기 저장 장치에서 news 폴더의 today.html을 찾습니다(페이지를 그 자리에서 만들어 내는 서버도 있습니다). 찾으면 응답을 돌려줍니다. 응답도 글자로 시작합니다.</p>
+<pre><code>HTTP/1.1 200 OK
+Content-Type: text/html; charset=utf-8
+
+&lt;!doctype html&gt;
+&lt;html lang="ko"&gt;
+… (페이지 내용) …</code></pre>
+<p>첫 줄의 <b>200</b>은 <b class="key">상태 코드</b>로, "잘 찾아서 보낸다"는 뜻입니다. 둘째 줄은 보내는 것이 HTML 문서라는 안내이고, 빈 줄 다음부터가 실제 내용입니다. 없는 파일을 요청하면 200 대신 <b>404</b>(Not Found, 찾을 수 없음)가 돌아옵니다. 잘못된 주소를 쳤을 때 보는 "404 페이지"가 이것입니다. 상태 코드의 종류는 NW02에서 자세히 봅니다.</p>
+
+<div class="side"><b>용어</b> <b>HTML</b>(HyperText Markup Language)은 웹 페이지의 글과 구조(제목, 문단, 그림 자리)를 적는 형식입니다. <b>CSS</b>는 글자 크기·색·배치 같은 모양을 적는 형식입니다. <b>자바스크립트(JavaScript)</b> 파일은 페이지 안에서 브라우저가 실행하는 프로그램(명령)을 적은 파일로, 단추를 누르면 정답이 나오는 것 같은 움직임을 맡습니다. 지금 읽는 이 페이지도 HTML 파일, style.css 파일, 그리고 확인 문제를 움직이는 자바스크립트 파일 몇 개로 되어 있습니다.</div>
+
+<h3>⑥~⑨ 화면 그리기와 추가 요청</h3>
+<p>브라우저는 받은 HTML을 위에서부터 읽으며 화면을 그립니다. 읽다 보면 "모양은 style.css에 있다", "여기에 logo.png 그림을 넣어라" 같은 표시가 나옵니다. 브라우저는 그 파일들을 <b>각각 따로 다시 요청</b>합니다. 모든 응답이 도착해야 페이지가 완성됩니다.</p>
+
+<div class="check" data-q="q6"></div>
+<div class="check" data-q="q7"></div>
+
+<h2>페이지 하나에 요청은 몇 번?</h2>
+
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 220" role="img" aria-label="왼쪽에 today.html 의 내용 일부가 있다. 네 줄: link href style.css, img src logo.png, img src chart.png, img src photo.jpg. 오른쪽에 요청 다섯 개가 있다. 요청 1 today.html, 요청 2 style.css, 요청 3 logo.png, 요청 4 chart.png, 요청 5 photo.jpg. 왼쪽의 각 줄이 오른쪽의 요청 2부터 5로 이어진다.">
+<rect class="f-box" x="20" y="20" width="330" height="190" rx="4"/>
+<text class="f-cap" x="40" y="42" text-anchor="start">today.html 의 내용 (일부)</text>
+<text class="f-s f-ink-t" x="40" y="74" text-anchor="start">&lt;link href="style.css"&gt;</text>
+<text class="f-s f-ink-t" x="40" y="110" text-anchor="start">&lt;img src="logo.png"&gt;</text>
+<text class="f-s f-ink-t" x="40" y="146" text-anchor="start">&lt;img src="chart.png"&gt;</text>
+<text class="f-s f-ink-t" x="40" y="182" text-anchor="start">&lt;img src="photo.jpg"&gt;</text>
+<rect class="f-soft" x="440" y="20" width="300" height="28" rx="3"/>
+<text class="f-s f-ink-t" x="456" y="39" text-anchor="start">요청 1: today.html</text>
+<rect class="f-box" x="440" y="56" width="300" height="28" rx="3"/>
+<text class="f-s f-ink-t" x="456" y="75" text-anchor="start">요청 2: style.css</text>
+<rect class="f-box" x="440" y="92" width="300" height="28" rx="3"/>
+<text class="f-s f-ink-t" x="456" y="111" text-anchor="start">요청 3: logo.png</text>
+<rect class="f-box" x="440" y="128" width="300" height="28" rx="3"/>
+<text class="f-s f-ink-t" x="456" y="147" text-anchor="start">요청 4: chart.png</text>
+<rect class="f-box" x="440" y="164" width="300" height="28" rx="3"/>
+<text class="f-s f-ink-t" x="456" y="183" text-anchor="start">요청 5: photo.jpg</text>
+<line class="f-line" x1="350" y1="38" x2="436" y2="34" marker-end="url(#f-arrow)"/>
+<line class="f-line" x1="250" y1="70" x2="436" y2="70" marker-end="url(#f-arrow)"/>
+<line class="f-line" x1="250" y1="106" x2="436" y2="106" marker-end="url(#f-arrow)"/>
+<line class="f-line" x1="250" y1="142" x2="436" y2="142" marker-end="url(#f-arrow)"/>
+<line class="f-line" x1="250" y1="178" x2="436" y2="178" marker-end="url(#f-arrow)"/>
+</svg>
+<figcaption>HTML 안에서 다른 파일을 가리키는 줄마다 요청이 하나씩 더 생긴다.</figcaption>
+</figure>
+
+<div class="box ex">
+<p class="box-k">풀이 예제</p>
+<p>위 그림의 today.html을 처음 열 때 브라우저가 서버에 보내는 요청은 모두 몇 번일까요? (DNS에 묻는 것은 세지 않습니다.)</p>
+<p class="calc">① 페이지 자체(today.html): 1번<br>
+② HTML 안에서 가리키는 모양 파일(style.css): 1번<br>
+③ HTML 안에서 가리키는 그림(logo.png, chart.png, photo.jpg): 3번<br>
+④ 합계: 1 + 1 + 3 = 5번</p>
+<p>같은 페이지를 다시 열면 브라우저가 전에 받은 파일을 기억해 두었다가(이것을 <b>캐시</b>, cache라고 합니다) 다시 받지 않을 수 있어서, 요청 수가 줄어들 수 있습니다. 위의 5번은 "처음 열 때"의 수입니다. 또 실제 브라우저는 CSS 파일 안에서 가리키는 글꼴·그림이나 탭에 보이는 작은 사이트 아이콘(favicon)을 더 요청하기도 합니다. 이 장의 문제에서는 HTML 안에서 직접 가리키는 파일만 셉니다.</p>
+</div>
+
+<div class="check" data-q="q8"></div>
+
+<h2>두 컴퓨터의 입력·처리·출력 <span class="tag grasp">이해하기</span></h2>
+
+<p>U03·1의 입력·처리·출력을 두 컴퓨터에 함께 대어 보면, <b>한 컴퓨터의 출력이 다른 컴퓨터의 입력</b>이 되는 것을 볼 수 있습니다.</p>
+
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 322" role="img" aria-label="세 줄로 된 흐름. 첫째 줄 브라우저: 입력 주소 입력, 처리 요청 만들기, 출력 요청 보내기. 오른쪽 끝에서 인터넷을 건너 아래로 내려가 둘째 줄 서버로 간다. 둘째 줄은 오른쪽에서 왼쪽으로 흐른다: 입력 요청 받기, 처리 파일 찾기, 출력 응답 보내기. 왼쪽 끝에서 인터넷을 건너 아래로 내려가 셋째 줄 브라우저로 간다. 셋째 줄: 입력 응답 받기, 처리 HTML 읽기, 출력 화면에 그리기.">
+<text class="f-cap" x="60" y="59" text-anchor="middle">브라우저</text>
+<text class="f-cap" x="60" y="175" text-anchor="middle">서버</text>
+<text class="f-cap" x="60" y="291" text-anchor="middle">브라우저</text>
+<rect class="f-box" x="120" y="30" width="180" height="48" rx="4"/>
+<text class="f-s" x="210" y="48" text-anchor="middle">입력</text>
+<text class="f-t" x="210" y="68" text-anchor="middle">주소 입력</text>
+<rect class="f-soft" x="330" y="30" width="180" height="48" rx="4"/>
+<text class="f-s f-ink-t" x="420" y="48" text-anchor="middle">처리</text>
+<text class="f-t" x="420" y="68" text-anchor="middle">요청 만들기</text>
+<rect class="f-box" x="540" y="30" width="180" height="48" rx="4"/>
+<text class="f-s" x="630" y="48" text-anchor="middle">출력</text>
+<text class="f-t" x="630" y="68" text-anchor="middle">요청 보내기</text>
+<line class="f-line" x1="300" y1="54" x2="326" y2="54" marker-end="url(#f-arrow)"/>
+<line class="f-line" x1="510" y1="54" x2="536" y2="54" marker-end="url(#f-arrow)"/>
+<line class="f-line" x1="630" y1="78" x2="630" y2="142" marker-end="url(#f-arrow)"/>
+<text class="f-s" x="640" y="115" text-anchor="start">인터넷</text>
+<rect class="f-box" x="540" y="146" width="180" height="48" rx="4"/>
+<text class="f-s" x="630" y="164" text-anchor="middle">입력</text>
+<text class="f-t" x="630" y="184" text-anchor="middle">요청 받기</text>
+<rect class="f-soft" x="330" y="146" width="180" height="48" rx="4"/>
+<text class="f-s f-ink-t" x="420" y="164" text-anchor="middle">처리</text>
+<text class="f-t" x="420" y="184" text-anchor="middle">파일 찾기</text>
+<rect class="f-box" x="120" y="146" width="180" height="48" rx="4"/>
+<text class="f-s" x="210" y="164" text-anchor="middle">출력</text>
+<text class="f-t" x="210" y="184" text-anchor="middle">응답 보내기</text>
+<line class="f-line" x1="540" y1="170" x2="514" y2="170" marker-end="url(#f-arrow)"/>
+<line class="f-line" x1="330" y1="170" x2="304" y2="170" marker-end="url(#f-arrow)"/>
+<line class="f-line" x1="210" y1="194" x2="210" y2="258" marker-end="url(#f-arrow)"/>
+<text class="f-s" x="220" y="231" text-anchor="start">인터넷</text>
+<rect class="f-box" x="120" y="262" width="180" height="48" rx="4"/>
+<text class="f-s" x="210" y="280" text-anchor="middle">입력</text>
+<text class="f-t" x="210" y="300" text-anchor="middle">응답 받기</text>
+<rect class="f-soft" x="330" y="262" width="180" height="48" rx="4"/>
+<text class="f-s f-ink-t" x="420" y="280" text-anchor="middle">처리</text>
+<text class="f-t" x="420" y="300" text-anchor="middle">HTML 읽기</text>
+<rect class="f-box" x="540" y="262" width="180" height="48" rx="4"/>
+<text class="f-s" x="630" y="280" text-anchor="middle">출력</text>
+<text class="f-t" x="630" y="300" text-anchor="middle">화면에 그리기</text>
+<line class="f-line" x1="300" y1="286" x2="326" y2="286" marker-end="url(#f-arrow)"/>
+<line class="f-line" x1="510" y1="286" x2="536" y2="286" marker-end="url(#f-arrow)"/>
+</svg>
+<figcaption>브라우저의 출력(요청)이 서버의 입력이 되고, 서버의 출력(응답)이 다시 브라우저의 입력이 된다.</figcaption>
+</figure>
+
+<p>서버 쪽 처리(파일 찾기)에는 U03·2의 세 부품이 그대로 쓰입니다. 서버의 저장 장치에 있던 today.html을 메모리로 올리고, CPU가 웹 서버 프로그램의 명령에 따라 응답을 만들어 보냅니다. 서버도 결국 <b>입력·처리·출력·저장을 하는 컴퓨터 한 대</b>입니다.</p>
+
+<div class="check" data-q="q10"></div>
+
+<h2>이 교재와 빅데이터에서 다시 보기</h2>
+
+<h3>이 교재는 어디에 있나</h3>
+<p>이 교재의 페이지를 내 컴퓨터의 파일로 직접 열면 주소창이 <code>file:///D:/…/u03-3.html</code>처럼 <b>file</b>로 시작합니다. 이때는 서버가 없습니다. 브라우저가 내 저장 장치의 파일을 바로 읽습니다. 같은 파일을 GitHub Pages 같은 곳에 올리면 주소가 <code>https://</code>로 시작하고, 그때부터는 그곳의 서버가 요청을 받아 이 HTML과 style.css를 보내 줍니다.</p>
+<p>한 가지 더. 이 교재에서 푼 문제 기록은 <b>서버가 아니라 내 브라우저 안</b>에 저장됩니다(브라우저가 가진 작은 저장 공간을 씁니다). 그래서 다른 기기나 다른 브라우저에서 열면 기록이 보이지 않습니다. 서버는 페이지를 보내 주기만 하고, 내가 무엇을 풀었는지는 받지 않습니다.</p>
+
+<h3>서버가 남기는 기록: 웹 로그</h3>
+<p>많은 웹 서버는 요청을 받을 때마다 한 줄씩 기록을 남깁니다. 이것을 <b class="key">웹 로그(web log)</b>라고 합니다. 흔한 모양은 이렇습니다.</p>
+<pre><code>203.0.113.25 - - [18/Nov/2026:09:15:02 +0900] "GET /news/today.html HTTP/1.1" 200 5120</code></pre>
+<div class="table-wrap">
+<table>
+<tr><th>부분</th><th>뜻</th></tr>
+<tr><td><code>203.0.113.25</code></td><td>요청한 쪽(클라이언트)의 IP 주소</td></tr>
+<tr><td><code>[18/Nov/2026:09:15:02 +0900]</code></td><td>요청을 받은 날짜와 시각 (+0900은 한국 시간)</td></tr>
+<tr><td><code>"GET /news/today.html HTTP/1.1"</code></td><td>요청의 첫 줄 그대로</td></tr>
+<tr><td><code>200</code></td><td>상태 코드 (잘 보냈다)</td></tr>
+<tr><td><code>5120</code></td><td>보낸 내용의 크기 (바이트, U04·3)</td></tr>
+</table>
+</div>
+<p>빅데이터 노트 <a href="../../../bigdata/notes/1-planning/01-빅데이터란.html">1-01</a>에서 웹 로그를 <b>반정형 데이터</b>의 예로 봤습니다. 칸이 정해진 표는 아니지만 자리마다 뜻이 정해져 있어 나눠 읽을 수 있기 때문입니다. 인기 있는 사이트는 이런 줄이 하루에 아주 많이 쌓입니다. "어느 페이지가 몇 시에 많이 읽혔나" 같은 질문은 이 줄들을 모아 세는 데서 시작합니다.</p>
+
+<div class="why">
+<p class="box-k">왜 그럴까?</p>
+<p>인터넷 선을 뽑은 상태에서도, 내 컴퓨터에 저장해 둔 이 교재의 HTML 파일은 브라우저로 열립니다. 그런데 뉴스 사이트는 열리지 않습니다. 둘의 차이는 무엇일까요?</p>
+<details><summary>모범 답 보기</summary><p>내 컴퓨터의 파일은 브라우저가 내 저장 장치에서 바로 읽으므로 서버도 인터넷도 필요 없습니다. 뉴스 사이트의 페이지는 멀리 있는 서버의 저장 장치에 있으므로, 인터넷을 통해 요청을 보내고 응답을 받아야 볼 수 있습니다. 길(인터넷)이 끊기면 요청이 서버에 닿지 않습니다.</p></details>
+</div>
+
+<h2>한눈에 정리</h2>
+
+<div class="table-wrap">
+<table>
+<tr><th>낱말</th><th>뜻</th></tr>
+<tr><td><b class="key">클라이언트</b></td><td>요청하는 쪽. 웹에서는 브라우저</td></tr>
+<tr><td><b class="key">서버</b></td><td>요청을 받아 응답하는 쪽. 기계가 아니라 역할의 이름</td></tr>
+<tr><td><b class="key">브라우저</b></td><td>페이지를 요청하고, 받은 HTML·CSS·그림으로 화면을 그리는 프로그램</td></tr>
+<tr><td><b class="key">인터넷</b> / <b class="key">웹</b></td><td>컴퓨터를 잇는 연결망(길) / 그 위에서 페이지를 주고받는 서비스 하나</td></tr>
+<tr><td><b class="key">URL</b></td><td><b class="key">프로토콜</b>(https://) + <b class="key">호스트 이름</b>(www.example.com) + <b class="key">경로</b>(/news/today.html)</td></tr>
+<tr><td><b class="key">DNS</b></td><td>호스트 이름을 <b class="key">IP 주소</b>(번호)로 바꿔 알려 준다</td></tr>
+<tr><td><b class="key">상태 코드</b></td><td>200 = 잘 보냄, 404 = 찾을 수 없음</td></tr>
+<tr><td>요청 수</td><td>HTML 1번 + 그 안에서 가리키는 파일마다 1번씩</td></tr>
+</table>
+</div>
+
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>브라우저(클라이언트)가 URL로 서버에 요청을 보내면 서버가 파일을 찾아 응답하고, 브라우저는 그것을 읽어 화면을 그리며, 한 컴퓨터의 출력이 다른 컴퓨터의 입력이 된다.</p></div>
+
+<h2>확인 문제</h2>
+<p>본문 중간에서 푼 문제 말고 남은 문제입니다. 보기를 누르면 바로 정답과 해설이 나옵니다.</p>
+<div id="quiz"></div>
+
+<section class="work" id="tools"></section>
+
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

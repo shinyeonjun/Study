@@ -29,9 +29,10 @@
     a.href = B.BASE + "unit.html?u=" + u.id;
     bar.appendChild(a);
     bar.appendChild(document.createTextNode(" · " + chs.length + "장 중 " + (idx + 1) + "장"));
-    if (u.pre.length) {
+    var skip = window.BDA_SKIP || [], pre = u.pre.filter(function (x) { return skip.indexOf(x) < 0; });
+    if (pre.length) {
       bar.appendChild(document.createTextNode(" · 먼저: "));
-      u.pre.forEach(function (pid, i) {
+      pre.forEach(function (pid, i) {
         var p = M.units.filter(function (x) { return x.id === pid; })[0], pa = el("a", "", pid + " " + p.title);
         pa.href = B.BASE + "unit.html?u=" + pid;
         if (i) bar.appendChild(document.createTextNode(", "));

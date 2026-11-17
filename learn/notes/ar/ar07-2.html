@@ -1,0 +1,280 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>증가율과 거듭된 변화 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e8c'/%3E%3Cpath d='M8 22V10m8 12V14m8 8V6' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="AR07-2">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+
+<header class="chapter">
+<p class="chap-sub">산술과 수 감각 · AR07 백분율과 변화</p>
+<p class="chap-num">AR07·2</p>
+<h1>증가율과 거듭된 변화</h1>
+<p class="lead">10,000원짜리 주식이 하루에 50% 올랐다가 다음 날 50% 내렸습니다. 원래 10,000원으로 돌아왔을까요? 아닙니다. 7,500원이 됩니다. 이 장에서는 증가율을 계산하는 법, 퍼센트 변화를 곱셈(배수)으로 바꾸는 법, 그리고 변화가 여러 번 거듭될 때 왜 퍼센트를 그냥 더하면 안 되는지를 다룹니다.</p>
+</header>
+
+<div class="goal">
+<h2>이 장을 읽고 나면</h2>
+<ul>
+<li>처음 값과 나중 값으로 증가율·감소율을 계산할 수 있다.</li>
+<li>"+p%"와 "−p%"를 곱할 배수(1.1, 0.8 등)로 바꿀 수 있다.</li>
+<li>+50% 뒤에 −50%를 하면 원래로 돌아오지 않는 이유를 기준값으로 설명할 수 있다.</li>
+<li>여러 번의 변화(연속 증가, 중복 할인)를 배수의 곱으로 계산할 수 있다.</li>
+<li>할인 뒤 가격에서 원래 가격을 거꾸로 구할 수 있다.</li>
+</ul>
+</div>
+
+<h2>증가율: 변화량 ÷ 처음 값</h2>
+
+<p>어느 가게의 한 달 매출이 800만 원에서 1,000만 원이 되었습니다. 얼마나 늘었다고 말할까요? 앞 장에서 배운 대로 두 가지 말이 있습니다. 차로는 200만 원 늘었고, 비로는 처음 값의 몇 %만큼 늘었는지를 말합니다. 뒤의 것을 <b>증가율</b>이라고 합니다.</p>
+
+<div class="box">
+<p class="box-k">정의 <span class="tag memo">외우기</span></p>
+<p class="calc"><b class="key">증가율</b> = (나중 값 − 처음 값) ÷ 처음 값 × 100 (%)</p>
+<p>결과가 음수이면 줄어든 것이고, 그 크기를 <b>감소율</b>이라고 합니다. 분모는 언제나 <b>처음 값</b>(바뀌기 전 값)입니다.</p>
+</div>
+
+<div class="box ex">
+<p class="box-k">풀이 예제</p>
+<p>매출이 800에서 1,000이 되었을 때(단위 만 원)와, 반대로 1,000에서 800이 되었을 때의 변화율을 구합니다.</p>
+<p class="calc">① 800 → 1,000: 변화량 = 1,000 − 800 = 200<br>
+② 증가율 = 200 ÷ 800 = 0.25 → 25% 증가<br>
+③ 1,000 → 800: 변화량 = 800 − 1,000 = −200<br>
+④ 변화율 = −200 ÷ 1,000 = −0.2 → 20% 감소</p>
+<p>변화량의 크기는 200으로 같은데 퍼센트가 다릅니다. 분모(처음 값)가 800과 1,000으로 다르기 때문입니다. 앞 장의 "기준값이 바뀌면 퍼센트가 바뀐다"가 그대로입니다.</p>
+</div>
+
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 196" role="img" aria-label="처음 값 800을 길이 400 막대로, 나중 값 1000을 길이 500 막대로 그렸다. 나중 막대에서 처음보다 긴 부분 200을 색칠했다. 200 나누기 800은 0.25, 25퍼센트 증가이고, 1000은 800 곱하기 1.25다.">
+<text class="f-t" x="108" y="49" text-anchor="end">처음 800</text>
+<rect class="f-box" x="120" y="30" width="400" height="28"/>
+<text class="f-t" x="108" y="99" text-anchor="end">나중 1,000</text>
+<rect class="f-box" x="120" y="80" width="400" height="28"/>
+<rect class="f-soft" x="520" y="80" width="100" height="28"/>
+<text class="f-s f-ink-t" x="570" y="99" text-anchor="middle">+200</text>
+<line class="f-dash" x1="520" y1="22" x2="520" y2="116"/>
+<text class="f-s" x="320" y="49" text-anchor="middle">기준 (100%)</text>
+<text class="f-t" x="380" y="146" text-anchor="middle">200 ÷ 800 = 0.25 → 25% 증가</text>
+<text class="f-t f-b" x="380" y="176" text-anchor="middle">1,000 = 800 × 1.25</text>
+</svg>
+<figcaption>막대 길이는 실제 비율대로 그렸다. 색칠한 부분을 기준 막대 길이로 잰 것이 증가율이다.</figcaption>
+</figure>
+
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+
+<h2>퍼센트 변화를 곱셈으로 바꾸기 <span class="tag grasp">이해하기</span></h2>
+
+<p>그림 1의 마지막 줄을 보세요. 25% 늘어난 값은 처음 값에 <b>1.25를 곱한</b> 값입니다. 처음 값 전체(100% = 1)에 늘어난 부분(25% = 0.25)이 더해졌으니 1 + 0.25 = 1.25배입니다. 이렇게 "몇 배가 되었는가"로 바꾼 수를 <b class="key">배수</b>(곱할 수)라고 부르겠습니다.</p>
+
+<div class="box">
+<p class="box-k">규칙 <span class="tag memo">외우기</span></p>
+<p class="calc">p% 증가 → × (1 + p/100) &nbsp;&nbsp;&nbsp; p% 감소 → × (1 − p/100)</p>
+<p>반대로, 배수 r을 알면 변화율은 (r − 1) × 100%입니다. r이 1보다 크면 증가, 작으면 감소입니다.</p>
+</div>
+
+<div class="table-wrap">
+<table>
+<tr><th>변화</th><th>배수</th><th>100에 적용하면</th></tr>
+<tr><td>+10%</td><td>× 1.1</td><td>110</td></tr>
+<tr><td>+50%</td><td>× 1.5</td><td>150</td></tr>
+<tr><td>+100%</td><td>× 2</td><td>200 (2배)</td></tr>
+<tr><td>−20%</td><td>× 0.8</td><td>80</td></tr>
+<tr><td>−50%</td><td>× 0.5</td><td>50 (절반)</td></tr>
+<tr><td>−100%</td><td>× 0</td><td>0 (모두 사라짐)</td></tr>
+</table>
+</div>
+
+<p>감소는 −100%가 끝입니다. 그보다 더 줄면 음수가 되기 때문에, 개수나 가격처럼 음수가 될 수 없는 양에서는 "120% 감소" 같은 말이 성립하지 않습니다. 증가에는 끝이 없습니다. +300%는 4배입니다.</p>
+
+<p>배수로 바꾸면 좋은 점은 계산이 한 번의 곱셈으로 끝난다는 것입니다. 35,000원 상품을 20% 할인하면 35,000 × 0.8 = 28,000원. "35,000의 20%를 구해서 빼기"(35,000 − 7,000)와 같은 답이지만 한 단계가 줄고, 다음 절처럼 변화가 거듭될 때 진짜 힘을 발휘합니다.</p>
+
+<div class="check" data-q="q4"></div>
+
+<h2>+50% 다음 −50%는 0이 아니다</h2>
+
+<p>장 처음의 주식으로 돌아갑니다. 단순하게 100을 처음 값으로 놓고 따라가 봅니다.</p>
+
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 256" role="img" aria-label="세 막대. 처음 100. 50퍼센트 오른 뒤 150. 이때 오른 양은 100의 50퍼센트, 50이다. 다시 50퍼센트 내린 뒤 75. 이때 내린 양은 150의 50퍼센트, 75다. 처음 높이 100을 점선으로 표시했고, 마지막 막대는 그보다 25 낮다.">
+<line class="f-ink" x1="110" y1="220" x2="660" y2="220"/>
+<rect class="f-box" x="140" y="100" width="80" height="120"/>
+<rect class="f-soft" x="340" y="40" width="80" height="180"/>
+<rect class="f-box" x="540" y="130" width="80" height="90"/>
+<line class="f-dash" x1="130" y1="100" x2="640" y2="100"/>
+<text class="f-s" x="646" y="104">처음 높이</text>
+<text class="f-t f-b" x="180" y="92" text-anchor="middle">100</text>
+<text class="f-t f-b" x="380" y="32" text-anchor="middle">150</text>
+<text class="f-t f-b" x="580" y="122" text-anchor="middle">75</text>
+<text class="f-s f-ink-t" x="646" y="124">25 모자람</text>
+<line class="f-line" x1="226" y1="150" x2="334" y2="150" marker-end="url(#f-arrow)"/>
+<text class="f-s f-ink-t" x="280" y="140" text-anchor="middle">+ 100의 50%</text>
+<text class="f-s f-ink-t" x="280" y="168" text-anchor="middle">= +50</text>
+<line class="f-line" x1="426" y1="180" x2="534" y2="180" marker-end="url(#f-arrow)"/>
+<text class="f-s f-ink-t" x="480" y="170" text-anchor="middle">− 150의 50%</text>
+<text class="f-s f-ink-t" x="480" y="198" text-anchor="middle">= −75</text>
+<text class="f-cap" x="180" y="244" text-anchor="middle">처음</text>
+<text class="f-cap" x="380" y="244" text-anchor="middle">+50% 뒤</text>
+<text class="f-cap" x="580" y="244" text-anchor="middle">−50% 뒤</text>
+</svg>
+<figcaption>막대 높이는 실제 비율대로 그렸다. 두 번의 50%는 서로 다른 값(100과 150)의 50%다.</figcaption>
+</figure>
+
+<div class="box ex">
+<p class="box-k">풀이 예제</p>
+<p class="calc">① 처음 100. +50%: 100 × 1.5 = 150 (늘어난 양 50 = 100의 50%)<br>
+② −50%: 150 × 0.5 = 75 (줄어든 양 75 = 150의 50%)<br>
+③ 전체 배수: 1.5 × 0.5 = 0.75 → 전체 변화 (0.75 − 1) × 100 = −25%</p>
+<p>두 번의 "50%"는 <b>기준값이 다릅니다.</b> 오를 때는 100의 50%(50)만큼 올랐고, 내릴 때는 150의 50%(75)만큼 내렸습니다. 내린 양이 더 크니 원래보다 낮아집니다.</p>
+</div>
+
+<p>순서를 바꿔도 결과는 같습니다. 먼저 −50%면 100 → 50, 그다음 +50%면 50 → 75. 곱셈은 순서를 바꿔도 같기 때문입니다(0.5 × 1.5 = 1.5 × 0.5 = 0.75).</p>
+
+<div class="box trap">
+<p class="box-k">흔한 실수</p>
+<p><b>퍼센트 변화를 더하고 빼는 실수.</b> "+50%와 −50%를 합치면 0%"는 틀립니다. 퍼센트 변화는 매번 <b>그때의 값</b>을 기준으로 하기 때문에 더할 수 없습니다. 거듭된 변화는 <b>배수를 곱합니다.</b></p>
+<p><b>되돌리기도 같은 퍼센트가 아니다.</b> 50% 떨어진 값을 원래대로 돌리려면 50%가 아니라 100% 올라야 합니다(50 → 100은 2배). 20% 떨어졌다면 25% 올라야 합니다(80 → 100, 20 ÷ 80 = 0.25).</p>
+</div>
+
+<h3>할인 뒤 가격에서 원래 가격 구하기</h3>
+
+<p>"20% 할인해서 8,000원"인 물건의 원래 가격은 얼마일까요? 흔히 8,000에 20%를 더해 8,000 × 1.2 = 9,600원이라고 하지만 틀립니다. 20%는 <b>원래 가격</b>의 20%였지 8,000원의 20%가 아니었습니다.</p>
+
+<div class="box ex">
+<p class="box-k">풀이 예제</p>
+<p class="calc">① 원래 가격 × 0.8 = 8,000<br>
+② 원래 가격 = 8,000 ÷ 0.8 = 10,000원<br>
+③ 검산: 10,000 × 0.8 = 8,000. 맞다. (9,600 × 0.8 = 7,680이라 9,600은 틀림)</p>
+<p>배수로 거꾸로 가려면 <b>곱했던 배수로 나눕니다.</b> 이것이 앞 장 풀이 예제 3("어떤 수의 p%가 B")과 같은 계산입니다.</p>
+</div>
+
+<div class="check" data-q="q3"></div>
+<div class="check" data-q="q8"></div>
+
+<h2>거듭된 변화: 배수를 곱한다</h2>
+
+<h3>매년 같은 비율로 늘 때</h3>
+
+<p>어떤 서비스의 사용자가 매년 10%씩 늘어난다고 합시다. 처음 100만 명이면 3년 뒤에는 몇 명일까요? "10% × 3 = 30%, 그러니 130만 명"이라고 하면 틀립니다.</p>
+
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 256" role="img" aria-label="네 막대. 처음 100, 1년 뒤 110, 2년 뒤 121, 3년 뒤 133.1. 각 막대에서 전년보다 늘어난 부분을 색칠했고, 늘어난 양은 10, 11, 12.1로 해마다 커진다.">
+<line class="f-ink" x1="90" y1="220" x2="700" y2="220"/>
+<rect class="f-box" x="110" y="80" width="80" height="140"/>
+<rect class="f-box" x="270" y="80" width="80" height="140"/>
+<rect class="f-soft" x="270" y="66" width="80" height="14"/>
+<rect class="f-box" x="430" y="66" width="80" height="154"/>
+<rect class="f-soft" x="430" y="50.6" width="80" height="15.4"/>
+<rect class="f-box" x="590" y="50.6" width="80" height="169.4"/>
+<rect class="f-soft" x="590" y="33.66" width="80" height="16.94"/>
+<text class="f-t f-b" x="150" y="72" text-anchor="middle">100</text>
+<text class="f-t f-b" x="310" y="58" text-anchor="middle">110</text>
+<text class="f-t f-b" x="470" y="43" text-anchor="middle">121</text>
+<text class="f-t f-b" x="630" y="26" text-anchor="middle">133.1</text>
+<text class="f-s f-ink-t" x="356" y="77">+10</text>
+<text class="f-s f-ink-t" x="516" y="62">+11</text>
+<text class="f-s f-ink-t" x="676" y="46">+12.1</text>
+<text class="f-s" x="310" y="160" text-anchor="middle">× 1.1</text>
+<text class="f-s" x="470" y="160" text-anchor="middle">× 1.1</text>
+<text class="f-s" x="630" y="160" text-anchor="middle">× 1.1</text>
+<text class="f-cap" x="150" y="244" text-anchor="middle">처음</text>
+<text class="f-cap" x="310" y="244" text-anchor="middle">1년 뒤</text>
+<text class="f-cap" x="470" y="244" text-anchor="middle">2년 뒤</text>
+<text class="f-cap" x="630" y="244" text-anchor="middle">3년 뒤</text>
+</svg>
+<figcaption>막대 높이는 실제 비율대로 그렸다. 매년 같은 10%지만 기준이 커져서 늘어나는 양(색칠한 부분)이 커진다.</figcaption>
+</figure>
+
+<div class="box ex">
+<p class="box-k">풀이 예제</p>
+<p class="calc">① 1년 뒤: 100 × 1.1 = 110<br>
+② 2년 뒤: 110 × 1.1 = 121<br>
+③ 3년 뒤: 121 × 1.1 = 133.1<br>
+④ 전체 배수: 1.1 × 1.1 × 1.1 = 1.331 → 전체 증가율 33.1%</p>
+<p>30%가 아니라 33.1%인 이유는 그림의 색칠한 부분에 있습니다. 2년째에는 처음 100이 아니라 110의 10%(11)가 늘고, 3년째에는 121의 10%(12.1)가 늡니다. <b>늘어난 것이 다시 늘어나는</b> 셈입니다.</p>
+</div>
+
+<div class="side"><b>용어</b> <b>복리</b>(compound interest)는 이자에도 이자가 붙는 방식, <b>단리</b>는 처음 원금에만 이자가 붙는 방식입니다. 여기서는 계산 방식만 다룹니다.</div>
+
+<p>이렇게 같은 비율의 변화가 거듭되어 늘어난 것 위에 다시 붙는 것을 <b class="key">복합 변화</b>(compound change)라고 합니다. 저금의 이자 계산에서 "복리"라고 부르는 것이 같은 원리입니다. 같은 수를 여러 번 곱하는 1.1 × 1.1 × 1.1은 거듭제곱으로 1.1<sup>3</sup>이라고 줄여 적는데, 이 표기는 AR08에서 배웁니다.</p>
+
+<p>기간이 길수록 차이가 커집니다. 매년 10%씩 10년이면 단순히 더한 100%(2배)가 아니라 약 2.59배가 됩니다(1.1을 열 번 곱한 값 ≈ 2.5937). 인구, 사용자 수, 감염자 수처럼 "지금 크기에 비례해서 늘어나는" 양이 이렇게 움직입니다. 뒤의 지수와 로그 단원(AL07)이 이런 변화를 다루는 도구입니다.</p>
+
+<h3>할인이 겹칠 때</h3>
+
+<p>"20% 할인에 추가 10% 할인"은 30% 할인일까요? 두 번째 할인은 이미 할인된 가격에 적용됩니다.</p>
+
+<div class="box ex">
+<p class="box-k">풀이 예제</p>
+<p>10,000원 상품에 20% 할인 뒤 추가 10% 할인을 적용합니다.</p>
+<p class="calc">① 첫 할인: 10,000 × 0.8 = 8,000<br>
+② 추가 할인: 8,000 × 0.9 = 7,200<br>
+③ 전체 배수: 0.8 × 0.9 = 0.72 → 전체 변화 (0.72 − 1) × 100 = −28%<br>
+④ 실제 할인율은 30%가 아니라 28% (30% 할인이라면 7,000원)</p>
+</div>
+
+<div class="box memo">
+<p class="box-k">외우는 법</p>
+<p><b>퍼센트를 배수로 → 배수끼리 곱하기 → 1을 빼서 다시 퍼센트로.</b> +50%, −50%는 1.5 × 0.5 = 0.75 → −25%. 10%씩 세 번은 1.1 × 1.1 × 1.1 = 1.331 → +33.1%. 20%, 10% 할인은 0.8 × 0.9 = 0.72 → −28%.</p>
+</div>
+
+<div class="more">
+<p class="box-k">더 알아보기 · 평균 변화율</p>
+<p>2년 동안 +50%, −50%로 변해 전체 배수가 0.75였습니다. "해마다 같은 비율로 변했다면 매년 몇 %였을까?"를 물으면, 두 번 곱해서 0.75가 되는 수를 찾아야 합니다. 0.866 × 0.866 ≈ 0.75이므로 매년 약 13.4% 감소한 셈입니다. 두 변화율을 그냥 평균한 (+50 − 50) ÷ 2 = 0%와 전혀 다릅니다. 곱해서 이어지는 변화의 평균은 더해서 나누는 평균과 다르다는 점만 기억해 두면 됩니다. 두 번 곱해 어떤 수가 되는 수(제곱근)는 AR08에서, 평균은 AR10에서 다룹니다.</p>
+</div>
+
+<div class="why">
+<p class="box-k">왜 그럴까?</p>
+<p>어떤 물건 가격이 10% 오른 뒤 10% 내렸습니다. 처음보다 비싸졌을까요, 싸졌을까요, 그대로일까요? 계산하기 전에 이유로 먼저 답해 보세요.</p>
+<details><summary>모범 답 보기</summary><p>싸졌습니다. 내릴 때의 10%는 이미 오른 가격(처음보다 큰 값)의 10%라서, 오를 때 붙은 양보다 내릴 때 빠지는 양이 더 큽니다. 계산하면 1.1 × 0.9 = 0.99로 처음보다 1% 낮습니다. 100원이라면 110원이 되었다가 99원이 됩니다.</p></details>
+</div>
+
+<div class="check" data-q="q5"></div>
+<div class="check" data-q="q6"></div>
+
+<h2>한눈에 정리</h2>
+
+<div class="table-wrap">
+<table>
+<tr><th>묻는 것</th><th>답</th></tr>
+<tr><td><b class="key">증가율</b></td><td>(나중 − 처음) ÷ <b class="key">처음 값</b> × 100. 음수면 감소</td></tr>
+<tr><td>퍼센트를 <b class="key">배수</b>로</td><td>+p% → × (1 + p/100), −p% → × (1 − p/100)</td></tr>
+<tr><td>+50% 뒤 −50%</td><td>1.5 × 0.5 = 0.75 → <b class="key">−25%</b>. 두 50%의 기준값이 다르다</td></tr>
+<tr><td>되돌리기</td><td>−50%를 되돌리려면 +100%, −20%를 되돌리려면 +25%</td></tr>
+<tr><td>원래 가격 구하기</td><td>할인 뒤 가격 ÷ 배수. 8,000 ÷ 0.8 = 10,000</td></tr>
+<tr><td><b class="key">복합 변화</b></td><td>배수를 곱한다. 10%씩 3번 = 1.331배 = +33.1%</td></tr>
+<tr><td>중복 할인</td><td>20% 뒤 10% = 0.8 × 0.9 = 0.72 → 28% 할인</td></tr>
+</table>
+</div>
+
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>퍼센트 변화는 매번 그때의 값을 기준으로 하므로 더하지 말고 배수로 바꿔 곱해야 한다.</p></div>
+
+<h2>확인 문제</h2>
+<p>본문 중간에서 푼 문제 말고 남은 문제입니다. 보기를 누르면 바로 정답과 해설이 나옵니다.</p>
+<div id="quiz"></div>
+
+<section class="work" id="tools"></section>
+
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>
