@@ -51,65 +51,13 @@
     });
   }
 
-  // 맨 왼쪽 아이콘 줄: 홈, 차례 여닫기, 내 공책 여닫기, 복습, 그리고 이전·다음 노트
-  var ICON = {
-    home: "M4 11l8-7 8 7M6 10v9h12v-9",
-    list: "M9 6h11M9 12h11M9 18h11M4.5 6h.01M4.5 12h.01M4.5 18h.01",
-    book: "M5 4h11a3 3 0 013 3v13H8a3 3 0 01-3-3zM5 17a3 3 0 013-3h11M9 8h6",
-    redo: "M20 12a8 8 0 11-2.6-5.9M20 4v5h-5",
-    prev: "M15 5l-7 7 7 7",
-    next: "M9 5l7 7-7 7"
-  };
-  function icon(name) {
-    var ns = "http://www.w3.org/2000/svg", svg = document.createElementNS(ns, "svg"), p = document.createElementNS(ns, "path");
-    svg.setAttribute("viewBox", "0 0 24 24");
-    svg.setAttribute("aria-hidden", "true");
-    p.setAttribute("d", ICON[name]);
-    svg.appendChild(p);
-    return svg;
-  }
-  function initRail(note) {
-    var rail = document.getElementById("rail");
-    if (!rail) return;
-    function item(tag, name, text) {
-      var e = el(tag);
-      if (tag === "button") e.type = "button";
-      e.appendChild(icon(name));
-      e.appendChild(el("span", "", text));
-      rail.appendChild(e);
-      return e;
-    }
-    function toggle(name, text, cls, key) {
-      var b = item("button", name, text), off = false;
-      try { off = localStorage.getItem(key) === "1"; } catch (e) {}
-      function set(v) {
-        off = v;
-        document.body.classList.toggle(cls, off);
-        b.setAttribute("aria-pressed", off ? "false" : "true");
-        try { localStorage.setItem(key, off ? "1" : "0"); } catch (e) {}
-      }
-      b.onclick = function () { set(!off); };
-      set(off);
-    }
-    item("a", "home", "홈").href = B.BASE + "index.html";
-    toggle("list", "차례", "no-toc", "bda-no-toc");
-    toggle("book", "내 공책", "no-work", "bda-no-work");
-    item("a", "redo", "복습").href = B.BASE + "review.html";
-    rail.appendChild(el("span", "spacer"));
-    [["prev", "이전 노트", note && note.prev], ["next", "다음 노트", note && note.next]].forEach(function (x) {
-      var a = item("a", x[0], x[1]);
-      a.className = "step" + (x[2] ? "" : " off");
-      if (x[2]) a.href = B.BASE + x[2].href;
-    });
-  }
-
   // 왼쪽 목차: 본문의 큰 제목(h2)과 작은 제목(h3)에서 자동으로 만든다. 지금 읽는 곳을 표시한다
   function initToc() {
     var toc = document.getElementById("toc"), main = document.querySelector("main");
     if (!toc || !main) return;
-    var heads = [].slice.call(main.querySelectorAll("h2, h3")).filter(function (h) { return !h.closest(".goal, .kit, .panel"); });
+    var heads = [].slice.call(main.querySelectorAll("h2, h3")).filter(function (h) { return h.parentNode === main; });
     var box = el("details", "toc-box"), list = el("ol"), links = [];
-    box.open = window.matchMedia("(min-width: 1180px)").matches;
+    box.open = window.matchMedia("(min-width: 1100px)").matches;
     box.appendChild(el("summary", "", "차례"));
     heads.forEach(function (h, i) {
       if (!h.id) h.id = "s" + (i + 1);
@@ -200,7 +148,6 @@
   // 연습장: 종이 대신 손가락이나 마우스로 그림·계산을 끄적이는 곳. 저장되지 않는다
   function initPad(host) {
     var d = el("details", "panel kit pad");
-    d.open = window.matchMedia("(min-width: 1180px)").matches;
     d.appendChild(el("summary", "", "연습장 (그림 따라 그리기 · 계산)"));
     var tools = el("div", "pad-tools"), cv = el("canvas"), ctx = null, erase = false, on = false;
     function setup() {
@@ -256,13 +203,12 @@
     if (!id) return;
     var note = B.findNote(id);
     if (note) initNav(note);
-    initRail(note);
     initHide();
     initWhy(id);
     var tools = document.getElementById("tools");
     if (tools) {
       tools.appendChild(el("p", "work-title", "내 공책"));
-      tools.appendChild(el("p", "muted small", "읽다가 떠오른 것을 바로 적고 끄적이는 곳"));
+      tools.appendChild(el("p", "muted small", "책 여백에 적듯이, 이 장을 읽고 떠오른 것을 적고 끄적이는 곳"));
       initMemo(id, tools);
       initPad(tools);
     }

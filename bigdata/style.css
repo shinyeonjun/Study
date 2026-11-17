@@ -1,48 +1,49 @@
-/* 빅분기 노트 전용 모양. 밝은 화면·어두운 화면 둘 다 지원한다.
-   기준: 글 폭은 한 줄에 한글 35~40자, 줄 간격 넉넉히, 색은 뜻이 있을 때만 쓴다.
+/* 빅분기 노트 전용 모양. 종이 수험서처럼: 책상 위의 종이 한 장, 장·절 번호, 번호 붙은 그림, 형광펜 핵심어.
+   밝은 화면·어두운 화면 둘 다 지원한다.
    파랑 = 정의·핵심 / 청록 = 예제 / 노랑 = 함정 / 보라 = 외우기 / 초록·빨강 = 맞음·틀림 */
 :root {
-  --bg: #f1f2f5;
-  --surface: #ffffff;
-  --text: #16181d;
-  --muted: #666d7a;
-  --line: #e1e3e9;
-  --accent: #3366f0;
-  --accent-soft: #e8eeff;
-  --blue: #0e7490;
-  --blue-soft: #e0f4f8;
+  --bg: #e9e5dc;
+  --surface: #fffdf8;
+  --text: #1e1c19;
+  --muted: #6c665c;
+  --line: #e3ddd0;
+  --accent: #1f4e8c;
+  --accent-soft: #e7eef8;
+  --blue: #0b6b72;
+  --blue-soft: #e2f2f1;
   --warn: #8a5a00;
-  --warn-soft: #fff4d6;
+  --warn-soft: #fff3d1;
   --memo: #6d3fc4;
   --memo-soft: #f1eaff;
   --ok: #15803d;
   --ok-soft: #e4f6ea;
   --no: #c2372b;
   --no-soft: #fdecea;
-  --blank: #d3d8e3;
-  --shadow: 0 1px 2px rgba(22, 24, 29, 0.05), 0 4px 14px rgba(22, 24, 29, 0.05);
-  --r: 16px;
-  --top: 54px;
+  --hl: #ffec99;
+  --blank: #d8d2c4;
+  --shadow: 0 1px 2px rgba(30, 28, 25, 0.06), 0 10px 30px rgba(30, 28, 25, 0.08);
+  --r: 10px;
+  --top: 50px;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --bg: #111318; --surface: #1a1d24; --text: #e8eaee; --muted: #9aa1ae; --line: #2a2e38;
-    --accent: #7ea2ff; --accent-soft: #1c2640;
-    --blue: #67d0e6; --blue-soft: #12303a;
+    --bg: #121110; --surface: #1c1b19; --text: #e9e5dc; --muted: #a39c8f; --line: #302d28;
+    --accent: #8fb4ea; --accent-soft: #1c2638;
+    --blue: #6fcfd0; --blue-soft: #12302f;
     --warn: #e9c46a; --warn-soft: #362d14;
     --memo: #c3a2ee; --memo-soft: #2a2138;
-    --ok: #6fd08c; --ok-soft: #14301f; --no: #f0958a; --no-soft: #3a1c19; --blank: #33405c;
-    --shadow: none;
+    --ok: #6fd08c; --ok-soft: #14301f; --no: #f0958a; --no-soft: #3a1c19;
+    --hl: #5c4d10; --blank: #3a362f; --shadow: none;
   }
 }
 :root[data-theme="dark"] {
-  --bg: #111318; --surface: #1a1d24; --text: #e8eaee; --muted: #9aa1ae; --line: #2a2e38;
-  --accent: #7ea2ff; --accent-soft: #1c2640;
-  --blue: #67d0e6; --blue-soft: #12303a;
+  --bg: #121110; --surface: #1c1b19; --text: #e9e5dc; --muted: #a39c8f; --line: #302d28;
+  --accent: #8fb4ea; --accent-soft: #1c2638;
+  --blue: #6fcfd0; --blue-soft: #12302f;
   --warn: #e9c46a; --warn-soft: #362d14;
   --memo: #c3a2ee; --memo-soft: #2a2138;
-  --ok: #6fd08c; --ok-soft: #14301f; --no: #f0958a; --no-soft: #3a1c19; --blank: #33405c;
-  --shadow: none;
+  --ok: #6fd08c; --ok-soft: #14301f; --no: #f0958a; --no-soft: #3a1c19;
+  --hl: #5c4d10; --blank: #3a362f; --shadow: none;
 }
 
 * { box-sizing: border-box; }
@@ -53,48 +54,52 @@ body {
   color: var(--text);
   font-family: "Pretendard", "Malgun Gothic", "Apple SD Gothic Neo", system-ui, sans-serif;
   font-size: 17px;
-  line-height: 1.8;
+  line-height: 1.85;
   word-break: keep-all;
   overflow-wrap: anywhere;
 }
 main { max-width: 700px; margin: 0 auto; padding: 28px 16px 96px; }
 
-/* 노트 화면 틀: [아이콘 줄][차례][본문][내 공책]. 본문은 쭉 읽고, 양옆은 따라온다.
-   화면이 좁으면 한 줄로 접혀 차례 → 본문 → 내 공책 순서가 된다 */
-.app { display: grid; grid-template-columns: 68px 240px minmax(0, 1fr) 372px; align-items: start; }
-body.no-toc .app { grid-template-columns: 68px 0 minmax(0, 1fr) 372px; }
-body.no-work .app { grid-template-columns: 68px 240px minmax(0, 1fr) 0; }
-body.no-toc.no-work .app { grid-template-columns: 68px 0 minmax(0, 1fr) 0; }
-body.no-toc .toc, body.no-work .work { display: none; }
-.app main { max-width: 760px; width: 100%; margin: 0 auto; padding: 36px 28px 120px; }
-.rail, .toc, .work { position: sticky; top: var(--top); height: calc(100vh - var(--top)); overflow-y: auto; }
-.rail { background: var(--surface); border-right: 1px solid var(--line); display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 12px 0; }
-.rail a, .rail button { width: 56px; border: 0; background: none; border-radius: 12px; padding: 8px 0 6px; display: grid; justify-items: center; gap: 3px; font-size: 0.68rem; line-height: 1.2; color: var(--muted); text-decoration: none; cursor: pointer; }
-.rail svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
-.rail a:hover, .rail button:hover { background: var(--bg); color: var(--text); }
-.rail [aria-pressed="true"] { background: var(--text); color: var(--surface); }
-.rail [aria-pressed="true"]:hover { background: var(--text); color: var(--surface); }
-.rail .spacer { flex: 1; }
-.rail .step { background: var(--accent-soft); color: var(--accent); }
-.rail .step.off { opacity: 0.4; pointer-events: none; }
-.toc { background: var(--surface); border-right: 1px solid var(--line); padding: 20px 16px 24px; font-size: 0.9rem; line-height: 1.5; }
-.toc summary { font-weight: 800; font-size: 0.95rem; margin-bottom: 12px; cursor: default; list-style: none; }
+/* 책 틀: 왼쪽에 차례, 가운데에 종이 한 장. 화면이 좁으면 차례는 접힌 채 종이 위로 간다 */
+.book { display: grid; grid-template-columns: 230px minmax(0, 820px); justify-content: center; gap: 0 36px; padding: 0 16px; align-items: start; }
+.page { max-width: none; width: 100%; margin: 28px 0 80px; padding: 60px 68px 72px; background: var(--surface); border-radius: 4px; box-shadow: var(--shadow); counter-reset: sec fig; }
+.toc { position: sticky; top: var(--top); max-height: calc(100vh - var(--top)); overflow-y: auto; padding: 36px 0 24px; font-size: 0.86rem; line-height: 1.5; }
+.toc summary { font-weight: 800; font-size: 0.78rem; letter-spacing: 0.08em; color: var(--muted); margin-bottom: 10px; cursor: default; list-style: none; }
 .toc summary::-webkit-details-marker { display: none; }
-.toc ol { list-style: none; margin: 0; padding: 0; }
+.toc ol { list-style: none; margin: 0; padding: 0; counter-reset: t; }
 .toc li { margin: 0; }
-.toc a { display: block; padding: 7px 10px; border-radius: 10px; color: var(--muted); text-decoration: none; }
-.toc li.sub a { padding-left: 22px; font-size: 0.85rem; }
-.toc a:hover { background: var(--bg); color: var(--text); }
-.toc a.on { background: var(--accent-soft); color: var(--accent); font-weight: 700; }
-.work { border-left: 1px solid var(--line); background: var(--surface); padding: 18px 16px 24px; }
-.work-title { font-weight: 800; font-size: 0.95rem; margin: 0 0 4px; }
-.work .panel { border: 0; box-shadow: none; padding: 0; margin: 18px 0 0; background: none; }
-.work .panel h2, .work .pad > summary { font-size: 0.85rem; font-weight: 800; color: var(--muted); margin: 0 0 8px; }
-.work textarea { min-height: 220px; }
+.toc li:not(.sub) { counter-increment: t; counter-reset: ts; }
+.toc li.sub { counter-increment: ts; }
+.toc a { display: block; padding: 5px 8px; border-radius: 6px; color: var(--muted); text-decoration: none; }
+.toc li:not(.sub) a::before { content: counter(t) "  "; font-weight: 700; }
+.toc li.sub a { padding-left: 22px; font-size: 0.82rem; }
+.toc li.sub a::before { content: counter(t) "." counter(ts) "  "; }
+.toc a:hover { color: var(--text); }
+.toc a.on { color: var(--accent); font-weight: 700; background: color-mix(in srgb, var(--surface) 70%, transparent); }
 .read-bar { height: 3px; position: sticky; top: var(--top); z-index: 4; margin-bottom: -3px; }
-.read-bar i { display: block; height: 100%; width: 0; background: var(--accent); border-radius: 0 3px 3px 0; }
-.top-in.wide { max-width: none; padding: 9px 16px; }
-h1 { font-size: 2.15rem; line-height: 1.3; margin: 0 0 14px; letter-spacing: -0.02em; font-weight: 800; }
+.read-bar i { display: block; height: 100%; width: 0; background: var(--accent); }
+.top-in.wide { max-width: 1120px; }
+
+/* 장 머리: 과목, 큰 장 번호, 제목 */
+.chapter { border-bottom: 2px solid var(--text); padding-bottom: 20px; margin-bottom: 28px; }
+.chap-sub { font-size: 0.85rem; font-weight: 700; color: var(--accent); margin: 0 0 2px; letter-spacing: 0.02em; }
+.chap-num { font-size: 4.2rem; font-weight: 800; line-height: 1; margin: 0 0 10px; color: var(--accent); letter-spacing: -0.03em; font-variant-numeric: tabular-nums; }
+.chapter h1 { margin-bottom: 10px; }
+.chapter .lead { margin: 0; }
+
+/* 절 번호: 1, 1.1 … 책처럼 자동으로 붙는다 */
+.page > h2 { counter-increment: sec; counter-reset: sub; border-top: 1px solid var(--line); padding-top: 30px; }
+.page > h2::before { content: counter(sec); color: var(--accent); margin-right: 12px; font-variant-numeric: tabular-nums; }
+.page > h3 { counter-increment: sub; }
+.page > h3::before { content: counter(sec) "." counter(sub); color: var(--accent); margin-right: 10px; font-variant-numeric: tabular-nums; }
+
+/* 옆 쪽지: 용어 풀이. 넓은 화면에서는 본문 오른쪽에 붙고, 좁으면 본문 사이에 들어간다 */
+.side { float: right; clear: right; width: 220px; margin: 4px 0 14px 24px; padding: 10px 14px; border-left: 3px solid var(--accent); background: var(--accent-soft); font-size: 0.85rem; line-height: 1.6; border-radius: 0 var(--r) var(--r) 0; }
+.side b:first-child { display: block; color: var(--accent); font-size: 0.78rem; }
+.more { border: 1px solid var(--line); border-radius: var(--r); padding: 14px 18px; margin: 20px 0; font-size: 0.93rem; }
+.more > :last-child { margin-bottom: 0; }
+.more .box-k { color: var(--muted); }
+h1 { font-size: 2.1rem; line-height: 1.3; margin: 0 0 14px; letter-spacing: -0.02em; font-weight: 800; }
 h2 { font-size: 1.5rem; line-height: 1.4; margin: 60px 0 14px; letter-spacing: -0.01em; font-weight: 800; }
 h3 { font-size: 1.12rem; margin: 32px 0 8px; font-weight: 700; }
 p { margin: 0 0 14px; }
@@ -108,7 +113,7 @@ button { font: inherit; color: inherit; }
 .eyebrow { color: var(--accent); font-size: 0.85rem; font-weight: 700; margin: 0 0 6px; }
 
 /* 맨 위 막대 */
-.top { position: sticky; top: 0; z-index: 5; background: var(--surface); border-bottom: 1px solid var(--line); }
+.top { position: sticky; top: 0; z-index: 5; background: var(--bg); border-bottom: 1px solid var(--line); }
 .top-in { max-width: 700px; margin: 0 auto; padding: 8px 16px; display: flex; align-items: center; gap: 8px; }
 .brand { font-weight: 800; color: var(--text); text-decoration: none; white-space: nowrap; }
 .crumb { color: var(--muted); font-size: 0.85rem; flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -116,7 +121,7 @@ button { font: inherit; color: inherit; }
 .tool[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--bg); }
 
 /* 이 페이지에서 배우는 것 */
-.goal { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); box-shadow: var(--shadow); padding: 18px 22px; margin: 0 0 8px; }
+.goal { border: 1px solid var(--line); border-radius: var(--r); padding: 16px 22px; margin: 0 0 8px; }
 .goal h2 { font-size: 0.9rem; margin: 0 0 6px; color: var(--accent); }
 .goal ul { margin: 0; }
 
@@ -138,34 +143,35 @@ button { font: inherit; color: inherit; }
 .box.trap .box-k, .box.warn .box-k { color: var(--warn); }
 .box.memo { background: var(--memo-soft); }
 .box.memo .box-k { color: var(--memo); }
-.box.sum { background: var(--surface); border: 2px solid var(--accent); }
+.box.sum { background: none; border: 2px solid var(--text); }
 .calc { font-variant-numeric: tabular-nums; }
 
 /* 핵심어. '핵심어 가리기'를 켜면 빈칸이 되고, 누르면 하나씩 보인다 */
-.key { font-weight: 700; color: var(--accent); border-radius: 4px; }
+.key { font-weight: 700; color: inherit; background: linear-gradient(transparent 52%, var(--hl) 52%); border-radius: 2px; padding: 0 1px; }
 body.hide-keys .key { cursor: pointer; }
 body.hide-keys .key:not(.shown) { color: transparent; background: var(--blank); user-select: none; }
-body.hide-keys .key.shown { background: var(--accent-soft); }
+body.hide-keys .key.shown { background: var(--hl); }
 
 /* 그림 자료. 이름표는 그림 안에 들어 있다. 캡션은 그림에 없는 말만 짧게 */
-.fig { margin: 20px 0; }
-.fig img { display: block; width: 100%; height: auto; border-radius: var(--r); border: 1px solid var(--line); background: #fff; box-shadow: var(--shadow); }
-.fig figcaption { color: var(--muted); font-size: 0.88rem; margin-top: 8px; }
+.fig { margin: 26px 0; counter-increment: fig; clear: both; }
+.fig img { display: block; width: 100%; height: auto; border-radius: 6px; border: 1px solid var(--line); background: #fff; }
+.fig figcaption { color: var(--muted); font-size: 0.88rem; margin-top: 8px; text-align: center; }
+.fig figcaption::before { content: "그림 " counter(fig) "  "; font-weight: 800; color: var(--text); }
 
 /* 표 */
 .table-wrap { overflow-x: auto; margin: 16px 0; }
 table { border-collapse: collapse; width: 100%; font-size: 0.95rem; line-height: 1.6; }
 th, td { border: 1px solid var(--line); padding: 8px 10px; text-align: left; vertical-align: top; }
-th { background: var(--accent-soft); white-space: nowrap; }
-td { background: var(--surface); }
+th { background: var(--accent-soft); white-space: nowrap; border-bottom: 2px solid var(--accent); }
+td { background: none; }
 
 /* 문제 풀이: 보기를 누르면 바로 정답과 보기별 해설 */
-.qcard { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); box-shadow: var(--shadow); padding: 18px 20px; margin: 14px 0; }
+.qcard { background: var(--bg); border: 1px solid var(--line); border-radius: var(--r); padding: 18px 20px; margin: 14px 0; }
 .q-no { display: block; font-size: 0.78rem; font-weight: 800; color: var(--muted); margin-bottom: 2px; }
 .q-text { font-weight: 700; margin-bottom: 10px; }
 .q-steps { background: var(--blue-soft); border-radius: 8px; padding: 10px 14px; }
 .opts { display: grid; gap: 8px; margin-bottom: 12px; }
-.opt { text-align: left; border: 1px solid var(--line); background: var(--bg); border-radius: 10px; padding: 10px 14px; cursor: pointer; line-height: 1.6; }
+.opt { text-align: left; border: 1px solid var(--line); background: var(--surface); border-radius: 10px; padding: 10px 14px; cursor: pointer; line-height: 1.6; }
 .opt:hover:not(:disabled) { border-color: var(--accent); }
 .opt.sel { border-color: var(--accent); background: var(--accent-soft); }
 .opt:disabled { cursor: default; color: var(--text); }
@@ -175,7 +181,7 @@ td { background: var(--surface); }
 .why-line { display: block; font-size: 0.88rem; color: var(--muted); margin-top: 4px; }
 .opt.right .why-line { color: var(--ok); }
 .opt.wrong .why-line { color: var(--no); }
-.q-input { display: block; width: 100%; font: inherit; color: var(--text); background: var(--bg); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; margin: 0 0 12px; resize: vertical; }
+.q-input { display: block; width: 100%; font: inherit; color: var(--text); background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; margin: 0 0 12px; resize: vertical; }
 .q-input.small { font-size: 0.88rem; margin-top: 10px; }
 input.q-input[type="date"] { width: auto; }
 .conf { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-size: 0.88rem; color: var(--muted); }
@@ -189,7 +195,7 @@ input.q-input[type="date"] { width: auto; }
 .q-note, .q-src { font-size: 0.88rem; color: var(--muted); margin: 10px 0 0; }
 .quiz-status { margin: 20px 0 0; padding: 16px 18px; border: 1px dashed var(--accent); border-radius: 12px; display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
 .quiz-status p { margin: 0; flex: 1 1 240px; font-size: 0.95rem; }
-.btn { display: inline-block; border: 0; background: var(--accent); color: #fff; font-weight: 700; border-radius: 999px; padding: 10px 22px; cursor: pointer; text-decoration: none; }
+.btn { display: inline-block; border: 0; background: var(--accent); color: var(--surface); font-weight: 700; border-radius: 8px; padding: 9px 20px; cursor: pointer; text-decoration: none; }
 .btn:disabled { opacity: 0.4; cursor: default; }
 .btn.ghost { background: none; color: var(--text); border: 1px solid var(--line); font-weight: 400; padding: 6px 14px; font-size: 0.88rem; margin: 0 8px 8px 0; }
 .small { font-size: 0.85rem; }
@@ -200,7 +206,11 @@ input.q-input[type="date"] { width: auto; }
 .why summary, details.plain summary { cursor: pointer; color: var(--accent); font-size: 0.9rem; }
 
 /* 내 메모, 연습장 */
-.kit { margin-top: 20px; }
+.work { margin-top: 56px; padding-top: 28px; border-top: 2px solid var(--text); }
+.work-title { font-size: 1.3rem; font-weight: 800; margin: 0; }
+.work .q-input { background: var(--bg); }
+.kit { margin-top: 20px; box-shadow: none; background: none; border: 0; padding: 0; }
+.kit h2, .pad > summary { font-size: 0.95rem; font-weight: 800; margin: 0 0 8px; }
 .pad > summary { cursor: pointer; font-weight: 700; }
 .pad-tools { display: flex; gap: 8px; margin: 12px 0 8px; }
 .pad canvas { display: block; width: 100%; height: 300px; background: var(--bg); border: 1px solid var(--line); border-radius: 10px; touch-action: none; cursor: crosshair; }
@@ -261,16 +271,19 @@ sup { font-size: 0.7em; line-height: 0; }
 code { background: var(--accent-soft); padding: 1px 6px; border-radius: 5px; font-size: 0.92em; }
 footer { margin-top: 56px; color: var(--muted); font-size: 0.85rem; }
 
-@media (max-width: 1179px) {
-  .app, body.no-toc .app, body.no-work .app, body.no-toc.no-work .app { display: block; }
-  .rail { display: none; }
-  .toc, .work { position: static; height: auto; border: 0; background: none; max-width: 760px; margin: 0 auto; padding: 16px 16px 0; }
-  body.no-toc .toc, body.no-work .work { display: block; }
-  .toc summary { list-style: revert; cursor: pointer; border: 1px solid var(--line); border-radius: 12px; padding: 8px 14px; background: var(--surface); margin: 0; font-size: 0.88rem; }
+@media (max-width: 1099px) {
+  .book { display: block; max-width: 852px; margin: 0 auto; }
+  .toc { position: static; max-height: none; padding: 16px 0 0; }
+  .toc summary { list-style: revert; cursor: pointer; border: 1px solid var(--line); border-radius: 8px; padding: 8px 14px; background: var(--surface); margin: 0; letter-spacing: 0; font-size: 0.88rem; color: var(--text); }
   .toc details[open] summary { margin-bottom: 8px; }
-  .app main { padding: 20px 16px 40px; }
-  .work { padding-bottom: 96px; }
-  .work .panel { border: 1px solid var(--line); box-shadow: var(--shadow); padding: 18px 20px; background: var(--surface); }
+  .page { margin-top: 16px; }
+}
+@media (max-width: 700px) {
+  .book { padding: 0; }
+  .toc { padding: 12px 12px 0; }
+  .page { padding: 32px 20px 56px; margin: 12px 0 0; border-radius: 0; box-shadow: none; }
+  .side { float: none; width: auto; margin: 16px 0; }
+  .chap-num { font-size: 3.2rem; }
 }
 @media (max-width: 480px) {
   body { font-size: 16px; }
@@ -281,6 +294,7 @@ footer { margin-top: 56px; color: var(--muted); font-size: 0.85rem; }
   .brand { flex: 1; }
 }
 @media print {
-  .top, .toc, .kit, .conf, .pager { display: none; }
+  .top, .toc, .work, .read-bar, .conf, .pager { display: none; }
+  .page { box-shadow: none; margin: 0; padding: 0; }
   body { background: #fff; }
 }
