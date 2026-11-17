@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>평균의 t 신뢰구간을 손으로 만들기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="ST03-2">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">통계와 실험 설계 · ST03 불확실성을 나타내기</p>
+<p class="chap-num">ST03·2</p>
+<h1>평균의 t 신뢰구간을 손으로 만들기</h1>
+<p class="lead">다섯 측정값의 평균이 10 ms입니다. 이 값은 한 표본에서 나온 추정값입니다. 표본이 바뀌면 이 평균도 달라지므로, 흔들림의 크기와 원하는 포괄률을 정해 평균의 신뢰구간을 만듭니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul>
+<li>표본 한 묶음에서 평균, 표준편차, 표준오차 추정값을 계산한다.</li>
+<li>t 분포의 임계값과 오차한계로 단일 평균의 신뢰구간을 구한다.</li>
+<li>95% 구간의 뜻과 적용 조건을 설명한다.</li>
+</ul></div>
+
+<h2>측정 다섯 번으로 평균을 추정한다</h2>
+<p>교육용 지연 시간 모형에서 서로 독립인 실행 다섯 번을 동일한 조건에서 뽑았습니다. 관측값은 <code>8, 9, 10, 11, 12 ms</code>입니다. 목표인 <code>μ</code>는 이 조건에서 실행을 거듭할 때의 평균 지연 시간입니다. 표본평균 <code>x̄ = 50/5 = 10 ms</code>를 먼저 구합니다.</p>
+<p>모집단 표준편차 σ를 모릅니다. 평균과의 차이 <code>−2, −1, 0, 1, 2</code>를 제곱해서 더하면 10입니다. 평균을 이미 자료에서 추정했으므로 표본분산은 <code>10/(5−1) = 2.5 ms²</code>, 표본 표준편차는 <code>s = √2.5 ≈ 1.581 ms</code>입니다.</p>
+<p>이 자료에서 평균의 표준오차를 <code>s/√n = √2.5/√5 = √0.5 ≈ 0.707 ms</code>로 추정합니다. s의 단위는 ms이고, s를 단위 없는 √n으로 나눈 값도 ms입니다. <code>10 ± 0.707</code>을 그대로 95% 구간으로 부르려면 별도의 근거가 필요합니다. 95%에 맞추려면 반복해서 뽑을 때 표준화한 차이가 얼마나 극단적으로 변하는지 알아야 합니다.</p>
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+
+<h2>t 분포에서 오차한계를 정한다</h2>
+<p>관측이 서로 독립이고 같은 정규분포에서 왔으며 모집단 분산이 양수라면, 정규 모형 안에서 반복 표집할 때 <code>T = (X̄−μ)/(S/√n)</code>은 <b class="key">t 분포</b>를 따릅니다. 대문자 <code>S</code>는 가능한 표본마다 바뀌는 표본 표준편차입니다. 차이를 표준오차 추정값으로 나눈 t는 단위가 없고, 평균을 추정할 때 표준편차 추정도 함께 흔들리는 성질을 반영합니다.</p>
+<p><b>자유도</b>는 이 문제에서 <code>n−1</code>입니다. 다섯 관측값에서 평균을 빼면 편차 합이 0이 되어, 네 편차를 정하면 마지막 편차가 정해집니다. n=5이면 자유도는 4입니다. 표본이 작아 s의 불확실성이 클수록 t 분포는 표준정규분포보다 꼬리가 두껍습니다.</p>
+<p>양측 95%를 만들려면 중앙 확률을 0.95로 잡고, 남은 0.05를 좌우에 각각 0.025씩 둡니다. 자유도 4에서 오른쪽 경계 <code>t* ≈ 2.776</code>의 왼쪽 누적 확률은 0.975입니다. 이 경계를 <b class="key">임계값</b>이라고 합니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 258" role="img" aria-label="자유도 4인 t 분포에서 −2.776과 +2.776 사이의 중앙 면적이 95%이고 좌우 꼬리는 각각 2.5%이다.">
+<polygon class="f-soft" points="237.62485452971475,171 237.62,162.81 241.23,162.11 244.84,161.34 248.45,160.49 252.06,159.57 255.67,158.55 259.28,157.44 262.89,156.23 266.5,154.9 270.11,153.45 273.72,151.86 277.33,150.13 280.94,148.23 284.55,146.17 288.16,143.93 291.77,141.5 295.37,138.86 298.98,136.01 302.59,132.94 306.2,129.64 309.81,126.1 313.42,122.34 317.03,118.34 320.64,114.13 324.25,109.71 327.86,105.11 331.47,100.36 335.08,95.49 338.69,90.55 342.3,85.6 345.91,80.7 349.52,75.92 353.12,71.33 356.73,67.03 360.34,63.08 363.95,59.58 367.56,56.59 371.17,54.19 374.78,52.43 378.39,51.36 382,51 385.61,51.36 389.22,52.43 392.83,54.19 396.44,56.59 400.05,59.58 403.66,63.08 407.27,67.03 410.88,71.33 414.48,75.92 418.09,80.7 421.7,85.6 425.31,90.55 428.92,95.49 432.53,100.36 436.14,105.11 439.75,109.71 443.36,114.13 446.97,118.34 450.58,122.34 454.19,126.1 457.8,129.64 461.41,132.94 465.02,136.01 468.63,138.86 472.23,141.5 475.84,143.93 479.45,146.17 483.06,148.23 486.67,150.13 490.28,151.86 493.89,153.45 497.5,154.9 501.11,156.23 504.72,157.44 508.33,158.55 511.94,159.57 515.55,160.49 519.16,161.34 522.77,162.11 526.38,162.81 526.3751454702852,171"/>
+<line class="f-ink" x1="70" y1="171" x2="694" y2="171"/>
+<polyline class="f-line" points="70,170.62 75.2,170.59 80.4,170.56 85.6,170.52 90.8,170.48 96,170.44 101.2,170.39 106.4,170.34 111.6,170.28 116.8,170.22 122,170.15 127.2,170.08 132.4,169.99 137.6,169.9 142.8,169.79 148,169.67 153.2,169.54 158.4,169.4 163.6,169.24 168.8,169.06 174,168.85 179.2,168.63 184.4,168.37 189.6,168.08 194.8,167.76 200,167.39 205.2,166.98 210.4,166.51 215.6,165.98 220.8,165.38 226,164.7 231.2,163.92 236.4,163.04 241.6,162.03 246.8,160.89 252,159.58 257.2,158.1 262.4,156.4 267.6,154.47 272.8,152.28 278,149.79 283.2,146.96 288.4,143.77 293.6,140.18 298.8,136.16 304,131.68 309.2,126.72 314.4,121.28 319.6,115.37 324.8,109.02 330,102.31 335.2,95.32 340.4,88.2 345.6,81.11 350.8,74.26 356,67.88 361.2,62.21 366.4,57.49 371.6,53.95 376.8,51.75 382,51 387.2,51.75 392.4,53.95 397.6,57.49 402.8,62.21 408,67.88 413.2,74.26 418.4,81.11 423.6,88.2 428.8,95.32 434,102.31 439.2,109.02 444.4,115.37 449.6,121.28 454.8,126.72 460,131.68 465.2,136.16 470.4,140.18 475.6,143.77 480.8,146.96 486,149.79 491.2,152.28 496.4,154.47 501.6,156.4 506.8,158.1 512,159.58 517.2,160.89 522.4,162.03 527.6,163.04 532.8,163.92 538,164.7 543.2,165.38 548.4,165.98 553.6,166.51 558.8,166.98 564,167.39 569.2,167.76 574.4,168.08 579.6,168.37 584.8,168.63 590,168.85 595.2,169.06 600.4,169.24 605.6,169.4 610.8,169.54 616,169.67 621.2,169.79 626.4,169.9 631.6,169.99 636.8,170.08 642,170.15 647.2,170.22 652.4,170.28 657.6,170.34 662.8,170.39 668,170.44 673.2,170.48 678.4,170.52 683.6,170.56 688.8,170.59 694,170.62"/>
+<line class="f-dash" x1="237.62" y1="162.81" x2="237.62" y2="178"/>
+<text class="f-s" x="237.62" y="199" text-anchor="middle">-2.776</text>
+<line class="f-dash" x1="526.38" y1="162.81" x2="526.38" y2="178"/>
+<text class="f-s" x="526.38" y="199" text-anchor="middle">2.776</text>
+<text class="f-s" x="382" y="199" text-anchor="middle">0</text>
+<text class="f-cap" x="382" y="45" text-anchor="middle">자유도 4의 t 분포</text>
+<text class="f-t" x="382" y="133" text-anchor="middle">가운데 확률 0.95</text>
+<text class="f-s" x="135" y="136" text-anchor="middle">0.025</text>
+<line class="f-ink" x1="139" y1="142" x2="179" y2="169"/>
+<text class="f-s" x="631" y="136" text-anchor="middle">0.025</text>
+<line class="f-ink" x1="626" y1="142" x2="588" y2="169"/>
+<text class="f-s" x="383" y="235" text-anchor="middle">표준화한 차이 t</text>
+</svg>
+<figcaption>95%는 가운데 영역의 면적이다. 오른쪽 임계값은 왼쪽 누적 확률이 0.975가 되는 지점이다.</figcaption>
+</figure>
+<div class="box"><p class="box-k">부등식에서 구간으로</p><p><code>−t* ≤ (X̄−μ)/(S/√n) ≤ t*</code>인 사건을 μ가 가운데 오도록 정리하면 <code>X̄−t*·S/√n ≤ μ ≤ X̄+t*·S/√n</code>입니다. 수집한 값으로 계산하면 양측 구간은 <code>x̄ ± t*·s/√n</code>이 됩니다. <code>t*·s/√n</code>은 양옆에 붙이는 거리인 <b class="key">오차한계</b>입니다.</p></div>
+<p>오차한계는 <code>2.776445… × 0.707107… ≈ 1.963 ms</code>입니다. 끝에서 반올림한 결과 평균의 95% t 신뢰구간은 <code>[8.037, 11.963] ms</code>입니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 209" role="img" aria-label="표본평균 10 ms에서 1.963 ms만큼 왼쪽과 오른쪽으로 떨어진 8.037 ms와 11.963 ms가 구간 양끝이다.">
+<line class="f-ink" x1="125" y1="134" x2="645" y2="134"/>
+<line class="f-ink" x1="177" y1="134" x2="177" y2="142"/>
+<text class="f-s" x="177" y="165" text-anchor="middle">8</text>
+<line class="f-ink" x1="281" y1="134" x2="281" y2="142"/>
+<text class="f-s" x="281" y="165" text-anchor="middle">9</text>
+<line class="f-ink" x1="385" y1="134" x2="385" y2="142"/>
+<text class="f-s" x="385" y="165" text-anchor="middle">10</text>
+<line class="f-ink" x1="489" y1="134" x2="489" y2="142"/>
+<text class="f-s" x="489" y="165" text-anchor="middle">11</text>
+<line class="f-ink" x1="593" y1="134" x2="593" y2="142"/>
+<text class="f-s" x="593" y="165" text-anchor="middle">12</text>
+<line class="f-line" x1="180.82" y1="89" x2="589.18" y2="89"/>
+<line class="f-dash" x1="180.82" y1="89" x2="180.82" y2="134"/>
+<circle class="f-fill" cx="180.82" cy="89" r="5"/>
+<line class="f-dash" x1="385" y1="89" x2="385" y2="134"/>
+<circle class="f-fill" cx="385" cy="89" r="5"/>
+<line class="f-dash" x1="589.18" y1="89" x2="589.18" y2="134"/>
+<circle class="f-fill" cx="589.18" cy="89" r="5"/>
+<text class="f-s" x="180.82" y="66" text-anchor="middle">8.037</text>
+<text class="f-cap" x="385" y="66" text-anchor="middle">평균 10.000</text>
+<text class="f-s" x="589.18" y="66" text-anchor="middle">11.963</text>
+<text class="f-s" x="282.91" y="113" text-anchor="middle">−1.963</text>
+<text class="f-s" x="487.09" y="113" text-anchor="middle">+1.963</text>
+<text class="f-s" x="694" y="165" text-anchor="middle">ms</text>
+</svg>
+<figcaption>표본표준편차 1.581 ms와 표준오차 추정값 0.707 ms는 오차한계 1.963 ms의 계산 재료다.</figcaption>
+</figure>
+<div class="check" data-q="q3"></div>
+<div class="check" data-q="q4"></div>
+<p class="small">실행 예제</p>
+<pre data-example="python"><code>from math import sqrt
+import numpy as np
+from scipy.stats import t
+
+sample = np.array([8, 9, 10, 11, 12])
+n = sample.size
+mean = sample.mean()
+s = sample.std(ddof=1)
+se = s / sqrt(n)
+critical = t.ppf(0.975, df=n - 1)
+margin = critical * se
+
+print(f&quot;mean={mean:.3f}, s={s:.3f}, SE={se:.3f} ms&quot;)
+print(f&quot;df={n - 1}, t*={critical:.3f}, margin={margin:.3f} ms&quot;)
+print(f&quot;95% CI=[{mean - margin:.3f}, {mean + margin:.3f}] ms&quot;)</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>mean=10.000, s=1.581, SE=0.707 ms
+df=4, t*=2.776, margin=1.963 ms
+95% CI=[8.037, 11.963] ms</code></pre>
+<p><code>ddof=1</code>은 분산에서 n−1로 나눌 때의 옵션입니다. <code>t.ppf(0.975, df=4)</code>는 0.975의 누적 확률을 가진 t값을 찾습니다. 이진 자료와 같은 경우에도 평균을 계산할 수 있지만, 모든 자료에 작은 표본 t 구간을 적용할 수 있는 것은 아닙니다.</p>
+
+<h2>모집단 평균에 대한 구간으로 읽는다</h2>
+<p>독립 정규 모형이 맞으면 앞으로 같은 방식으로 표본을 뽑고 구간을 만드는 절차의 포괄률이 95%입니다. 참평균은 정해져 있고, 무작위로 바뀌는 것은 표본과 구간입니다. 주어진 구간이 참평균을 포함하는지는 현재 알 수 없지만 둘 사이의 포함 관계는 이미 결정돼 있습니다.</p>
+<p>개별 측정값의 95%가 이 구간에 든다고 말할 근거는 없습니다. 다음에 들어올 측정값의 범위를 알고 싶다면 개별 관측의 분산도 반영하는 별도의 예측구간이 필요합니다. 평균을 얼마나 정밀하게 추정했는지의 질문과 한 번의 측정이 어디에 올지의 질문을 구별하세요.</p>
+<div class="why"><p class="box-k">왜 그럴까?</p><p>같은 자료로 95% 대신 99% t 구간을 만들면 왜 길어질까요?</p><details><summary>모범 답 보기</summary><p>중앙에 확률을 0.99만큼 넣으려면 양끝을 더 멀리 둡니다. 같은 자유도에서 t*가 커지고 표준오차 추정값은 같으므로, 두 끝까지의 거리가 늘어납니다.</p></details></div>
+<p>독립성과 표본을 뽑은 범위는 수집 과정에서 확인합니다. 독립 표본이 충분히 크고 꼬리가 지나치게 무겁지 않으면 t 구간을 근사적으로 쓸 수 있습니다. n=5 정도로 작을 때 심한 비대칭이나 극단값이 있으면 포괄률이 목표에서 벗어날 수 있습니다. 몇 건에 걸쳐 같은 사용자나 장비를 반복 측정한 경우도 표본 구조에 맞는 방법이 필요합니다. n=1이거나 표본 표준편차가 0인 사례에는 이 t 통계량을 계산할 수 없습니다.</p>
+<div class="check" data-q="q6"></div>
+<div class="check" data-q="q7"></div>
+
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table><thead><tr><th scope="col">순서</th><th scope="col">계산·해석</th></tr></thead><tbody>
+<tr><th scope="row">중심과 퍼짐</th><td>x̄와 s를 계산하고 s/√n으로 평균의 표준오차를 추정</td></tr>
+<tr><th scope="row"><b class="key">임계값</b></th><td>자유도 n−1, 양측이면 각 꼬리에 (1−신뢰수준)/2</td></tr>
+<tr><th scope="row"><b class="key">오차한계</b></th><td>t*·s/√n을 평균 양옆에 더하고 뺌</td></tr>
+<tr><th scope="row"><b class="key">신뢰수준</b></th><td>가정 아래 반복한 구간 절차가 참평균을 포함하는 비율의 목표값</td></tr>
+</tbody></table></div>
+<div class="box sum"><p class="box-k">다음 장으로</p><p><a href="st03-3.html">다음 장</a>에서는 작은 표본을 다시 뽑아 통계량이 얼마나 흔들리는지 그립니다.</p></div>
+
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://itl.nist.gov/div898/handbook/eda/section3/eda352.htm">NIST · 단일 평균의 t 신뢰구간과 양측검정</a></li>
+<li><a href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.ttest_1samp.html">SciPy · 단일 평균 t 검정과 구간 계산</a></li>
+</ul>
+<h2>확인 문제</h2>
+<p>직접 계산하거나 설명을 먼저 적고 답을 확인해 보세요.</p>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

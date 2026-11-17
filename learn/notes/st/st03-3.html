@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>부트스트랩: 가지고 있는 표본에서 다시 뽑기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="ST03-3">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">통계와 실험 설계 · ST03 불확실성을 나타내기</p>
+<p class="chap-num">ST03·3</p>
+<h1>부트스트랩: 가지고 있는 표본에서 다시 뽑기</h1>
+<p class="lead">새 기계에서 수집한 표본 하나가 있습니다. 모집단에서 같은 표본을 몇만 번 새로 얻기는 어렵습니다. 부트스트랩은 원표본을 이용해 통계량을 여러 번 다시 계산하고 그 변동으로 불확실성을 어림합니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul>
+<li>경험분포와 크기 n의 복원 재표집이 무엇인지 설명한다.</li>
+<li>재표집 평균과 백분위수 구간을 코드로 계산한다.</li>
+<li>표본 크기 n과 반복 횟수 B를 구별하고 적용 한계를 확인한다.</li>
+</ul></div>
+
+<h2>모집단 대신 표본에 들어 있는 값을 사용한다</h2>
+<p>표준오차를 정확히 알 수 있다면, 새로 표집할 때 통계량이 얼마나 흔들릴지 말할 수 있습니다. 실제 모집단의 분포는 보통 모릅니다. <b class="key">부트스트랩</b>은 관측한 자료를 바탕으로 표집분포를 근사합니다. 이 장에서는 서로 독립이고 동일한 분포를 따르는 관측의 <b class="key">비모수 부트스트랩</b>을 다룹니다.</p>
+<p>원표본 <code>[4, 6, 8]</code>에서 한 행을 확률 1/3씩 뽑는 분포를 생각합니다. 관측된 행의 상대도수를 확률로 쓴 이 분포가 <b class="key">경험분포</b>입니다. 원표본이 <code>[4, 8, 8]</code>이면 값 8에 해당하는 행이 둘이라 8이 나올 확률은 2/3입니다. 숫자의 종류가 아니라 관측한 행을 뽑습니다.</p>
+<p>뽑은 행을 후보에 돌려놓는 <b>복원 재표집</b>으로 길이 3의 새 목록을 만듭니다. 목록 하나의 평균을 구합니다. 이제 처음부터 후보 세 행을 다시 놓고 새 목록을 뽑습니다. 이 두 작업을 B번 하면 평균 B개를 얻습니다. 원래 평균 6을 추정값으로 기록하고 평균 B개의 산포로 그 추정의 표준오차를 근사합니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 260" role="img" aria-label="원표본 4, 6, 8에서 크기 3으로 복원 재표집한다. 예시 [4,4,8], [4,6,8], [8,8,8]의 평균은 16/3, 6, 8이다.">
+<text class="f-cap" x="145" y="31" text-anchor="middle">원표본</text>
+<text class="f-cap" x="415" y="31" text-anchor="middle">복원 재표집 결과</text>
+<text class="f-cap" x="662" y="31" text-anchor="middle">재표집 평균</text>
+<rect class="f-box" x="80" y="113" width="45" height="40"/>
+<text class="f-t" x="102.5" y="140" text-anchor="middle">4</text>
+<rect class="f-box" x="125" y="113" width="45" height="40"/>
+<text class="f-t" x="147.5" y="140" text-anchor="middle">6</text>
+<rect class="f-box" x="170" y="113" width="45" height="40"/>
+<text class="f-t" x="192.5" y="140" text-anchor="middle">8</text>
+<line class="f-line" x1="243" y1="133" x2="300" y2="133"/>
+<text class="f-s" x="271.5" y="119" text-anchor="middle">→</text>
+<rect class="f-soft" x="329" y="51" width="57" height="40"/>
+<text class="f-t" x="357.5" y="78" text-anchor="middle">4</text>
+<rect class="f-soft" x="386" y="51" width="57" height="40"/>
+<text class="f-t" x="414.5" y="78" text-anchor="middle">4</text>
+<rect class="f-soft" x="443" y="51" width="57" height="40"/>
+<text class="f-t" x="471.5" y="78" text-anchor="middle">8</text>
+<text class="f-s" x="566" y="78" text-anchor="middle">→</text>
+<text class="f-t" x="662" y="78" text-anchor="middle">16/3</text>
+<rect class="f-soft" x="329" y="113" width="57" height="40"/>
+<text class="f-t" x="357.5" y="140" text-anchor="middle">4</text>
+<rect class="f-soft" x="386" y="113" width="57" height="40"/>
+<text class="f-t" x="414.5" y="140" text-anchor="middle">6</text>
+<rect class="f-soft" x="443" y="113" width="57" height="40"/>
+<text class="f-t" x="471.5" y="140" text-anchor="middle">8</text>
+<text class="f-s" x="566" y="140" text-anchor="middle">→</text>
+<text class="f-t" x="662" y="140" text-anchor="middle">6</text>
+<rect class="f-soft" x="329" y="175" width="57" height="40"/>
+<text class="f-t" x="357.5" y="202" text-anchor="middle">8</text>
+<rect class="f-soft" x="386" y="175" width="57" height="40"/>
+<text class="f-t" x="414.5" y="202" text-anchor="middle">8</text>
+<rect class="f-soft" x="443" y="175" width="57" height="40"/>
+<text class="f-t" x="471.5" y="202" text-anchor="middle">8</text>
+<text class="f-s" x="566" y="202" text-anchor="middle">→</text>
+<text class="f-t" x="662" y="202" text-anchor="middle">8</text>
+<text class="f-s" x="409" y="244" text-anchor="middle">한 행을 뽑을 때마다 세 행 모두 다시 후보가 된다.</text>
+</svg>
+<figcaption>4가 두 번 나온 표본도, 원표본 그대로 나온 표본도 복원 재표집의 가능한 결과다.</figcaption>
+</figure>
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+
+<h2>작은 표본으로 재표집분포를 전부 확인한다</h2>
+<p><code>[4, 6, 8]</code>에서 복원 재표집한 길이 3의 목록은 순서를 구별하면 <code>3³ = 27</code>개입니다. 목록 하나의 평균이 8이려면 <code>[8,8,8]</code> 한 가지여야 해 확률은 <code>1/27</code>입니다. 평균이 6이려면 모두 6이거나 4·6·8을 하나씩 뽑아야 합니다. 순서가 <code>1 + 3×2×1 = 7</code>개이므로 확률은 <code>7/27</code>입니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 259" role="img" aria-label="27개 재표집에서 평균 4, 4.67, 5.33, 6, 6.67, 7.33, 8이 각각 1, 3, 6, 7, 6, 3, 1번 나온다.">
+<line class="f-ink" x1="96" y1="38" x2="96" y2="203"/>
+<line class="f-ink" x1="96" y1="203" x2="710" y2="203"/>
+<line class="f-dash" x1="96" y1="163" x2="710" y2="163"/>
+<text class="f-s" x="82" y="167" text-anchor="end">2</text>
+<line class="f-dash" x1="96" y1="123" x2="710" y2="123"/>
+<text class="f-s" x="82" y="127" text-anchor="end">4</text>
+<line class="f-dash" x1="96" y1="83" x2="710" y2="83"/>
+<text class="f-s" x="82" y="87" text-anchor="end">6</text>
+<rect class="f-soft" x="128" y="183" width="36" height="20"/>
+<text class="f-s" x="146" y="174" text-anchor="middle">1</text>
+<text class="f-s" x="146" y="225" text-anchor="middle">4</text>
+<rect class="f-soft" x="214" y="143" width="36" height="60"/>
+<text class="f-s" x="232" y="134" text-anchor="middle">3</text>
+<text class="f-s" x="232" y="225" text-anchor="middle">4.67</text>
+<rect class="f-soft" x="300" y="83" width="36" height="120"/>
+<text class="f-s" x="318" y="74" text-anchor="middle">6</text>
+<text class="f-s" x="318" y="225" text-anchor="middle">5.33</text>
+<rect class="f-soft" x="386" y="63" width="36" height="140"/>
+<text class="f-s" x="404" y="54" text-anchor="middle">7</text>
+<text class="f-s" x="404" y="225" text-anchor="middle">6</text>
+<rect class="f-soft" x="472" y="83" width="36" height="120"/>
+<text class="f-s" x="490" y="74" text-anchor="middle">6</text>
+<text class="f-s" x="490" y="225" text-anchor="middle">6.67</text>
+<rect class="f-soft" x="558" y="143" width="36" height="60"/>
+<text class="f-s" x="576" y="134" text-anchor="middle">3</text>
+<text class="f-s" x="576" y="225" text-anchor="middle">7.33</text>
+<rect class="f-soft" x="644" y="183" width="36" height="20"/>
+<text class="f-s" x="662" y="174" text-anchor="middle">1</text>
+<text class="f-s" x="662" y="225" text-anchor="middle">8</text>
+<text class="f-s" x="96" y="28" text-anchor="start">순서 수</text>
+<text class="f-s" x="407" y="250" text-anchor="middle">재표집 평균</text>
+</svg>
+<figcaption>가로축의 소수 값은 반올림했다. 각 막대의 횟수를 27로 나누면 확률이다.</figcaption>
+</figure>
+<p>모든 재표집의 평균은 원표본 평균 6을 중심으로 퍼져 있습니다. 이 결과는 <em>주어진 원표본에 조건을 건</em> 분포입니다. 실제 모집단에서 새 원표본을 뽑으면 경험분포도 바뀌고 그 표본의 부트스트랩 분포도 바뀝니다. 원표본이 달라질 때의 표집분포를 실험실에서 직접 안다는 뜻은 아닙니다.</p>
+<p class="small">실행 예제</p>
+<pre data-example="python"><code>from itertools import product
+from collections import Counter
+
+sample = (4, 6, 8)
+sums = Counter(sum(draw) for draw in product(sample, repeat=len(sample)))
+for total, count in sorted(sums.items()):
+    print(f&quot;{total / len(sample):.2f}: {count}&quot;)</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>4.00: 1
+4.67: 3
+5.33: 6
+6.00: 7
+6.67: 6
+7.33: 3
+8.00: 1</code></pre>
+<div class="check" data-q="q3"></div>
+<div class="check" data-q="q4"></div>
+
+<h2>분포의 가운데로 백분위수 구간을 만든다</h2>
+<p>재표집 통계량의 표준편차는 부트스트랩 표준오차입니다. 또 한 방법은 재표집 통계량을 정렬한 뒤 양쪽 2.5% 지점에 해당하는 2.5번째와 97.5번째 백분위수를 구간 양끝으로 삼는 것입니다. 이를 양측 95% <b class="key">백분위수 부트스트랩 구간</b>이라 합니다. 유한한 반복에서 분위수 사이의 값을 구하는 방법은 여러 가지이며, 아래 코드는 NumPy의 기본 선형 보간을 씁니다.</p>
+<p>이번 자료는 독립적으로 측정한 실행 8건의 지연 시간입니다. 재표집한 자료 한 행의 길이는 8이고, 그런 행을 20,000개 만듭니다. <code>axis=1</code>로 각 재표집 행을 평균 내면 길이 20,000인 배열을 얻습니다.</p>
+<p class="small">실행 예제</p>
+<pre data-example="python"><code>import numpy as np
+
+sample = np.array([4, 6, 7, 9, 10, 12, 13, 15])
+rng = np.random.default_rng(41)
+resamples = rng.choice(sample, size=(20_000, sample.size), replace=True)
+boot_means = resamples.mean(axis=1)
+low, high = np.quantile(boot_means, [0.025, 0.975])
+
+print(f&quot;mean={sample.mean():.3f} ms&quot;)
+print(f&quot;bootstrap SE={boot_means.std(ddof=1):.3f} ms&quot;)
+print(f&quot;percentile interval=[{low:.3f}, {high:.3f}] ms&quot;)</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>mean=9.500 ms
+bootstrap SE=1.230 ms
+percentile interval=[7.125, 11.875] ms</code></pre>
+<p><code>default_rng(41)</code>은 같은 실행을 확인하기 위해 난수 생성기의 시작 상태를 고정합니다. <code>n</code>은 실제 관측 수, <code>B</code>는 원표본을 두고 컴퓨터가 재표집한 횟수입니다. B를 늘리면 같은 경험분포에서 계산한 표준오차와 분위수의 난수 오차를 줄일 수 있습니다. 원표본에 들어 있는 정보는 그대로입니다.</p>
+<div class="check" data-q="q6"></div>
+<div class="check" data-q="q7"></div>
+
+<h2>어떤 단위에서 무엇을 다시 뽑을지 확인한다</h2>
+<div class="box"><p class="box-k">적용을 좌우하는 세 가지</p><ul>
+<li><b>대표성</b>이 중요합니다. 활동 사용자만 관측했다면 재표집 값도 그 사용자에게서 나옵니다. 조사에서 빠진 집단의 특성은 독립된 자료 수집 등 다른 근거가 필요합니다.</li>
+<li><b>의존성</b>에 맞추어 단위를 정합니다. 같은 사용자의 전후 측정 차이를 연구하면 한 사람의 두 값을 묶어 재표집하는 방법을 고려합니다. 시계열의 연속 기록이라면 인접 관계를 살리는 블록처럼 모형과 수집 설계에 맞는 재표집이 필요합니다.</li>
+<li><b>작은 표본과 극단값</b>을 봅니다. 예를 들어 모든 원자료가 8이면 재표집에서도 8밖에 나오지 않고 표준오차가 0으로 계산됩니다. 이 결과가 실제 모집단의 변동을 잘 반영하는지는 별도로 살펴야 합니다.</li>
+</ul></div>
+<p>모든 문제에서 백분위수 구간의 실제 포괄률이 정확히 95%인 것은 아닙니다. 표본의 크기와 분포, 선택한 통계량, 재표집 단위가 중요합니다. 같은 부트스트랩 분포를 쓴 구간에도 백분위수법, 기본법(basic), 편향과 비대칭을 보정하는 BCa 등의 방식이 있습니다. 어떤 방법으로 구간을 계산했는지 이름을 함께 남겨야 결과를 다시 만들 수 있습니다.</p>
+<div class="why"><p class="box-k">왜 그럴까?</p><p>행 8개가 있는 자료의 재표집 횟수를 두 배로 늘려도, 새로운 관측값을 8개 더 모았을 때와 무엇이 다른가요?</p><details><summary>모범 답 보기</summary><p>재표집을 늘리면 같은 8행을 바탕으로 계산한 분포가 덜 흔들립니다. 새 독립 관측값은 경험분포를 구성하는 근거를 늘립니다. 전자는 계산의 오차, 후자는 표집에서 오는 불확실성과 관련됩니다.</p></details></div>
+<div class="check" data-q="q8"></div>
+
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table><thead><tr><th scope="col">무엇을 하나</th><th scope="col">뜻</th></tr></thead><tbody>
+<tr><th scope="row"><b class="key">경험분포</b></th><td>원표본에서 각 행을 같은 확률로 뽑는 출발 분포</td></tr>
+<tr><th scope="row"><b class="key">복원 재표집</b></th><td>원표본과 같은 크기의 자료를 뽑되 각 행을 다시 후보로 돌려놓음</td></tr>
+<tr><th scope="row"><b class="key">부트스트랩 표준오차</b></th><td>재표집 통계량의 분포가 퍼진 정도</td></tr>
+<tr><th scope="row"><b class="key">백분위수 구간</b></th><td>재표집 통계량 분포에서 지정한 분위수를 구간 양끝에 사용</td></tr>
+</tbody></table></div>
+<div class="box sum"><p class="box-k">다음 단원으로</p><p><a href="../../unit.html?u=ST04">ST04</a>에서는 정해 둔 기준값이 관측 자료와 어느 정도 잘 맞는지 검정합니다.</p></div>
+
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://doi.org/10.1214/aos/1176344552">Efron(1979) · 부트스트랩 원 논문</a></li>
+<li><a href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.bootstrap.html">SciPy · 부트스트랩 구간과 재표집 단위</a></li>
+</ul>
+<h2>확인 문제</h2>
+<p>직접 계산하거나 설명을 먼저 적고 답을 확인해 보세요.</p>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

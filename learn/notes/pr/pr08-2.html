@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>대수의 법칙으로 표본평균의 안정성을 설명하기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="PR08-2">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">확률</p>
+<p class="chap-num">PR08·2</p>
+<h1>대수의 법칙으로 표본평균의 안정성을 설명하기</h1>
+<p class="lead">공정한 동전의 앞면 비율은 기록을 이어 갈수록 1/2 부근에 더 자주 들어옵니다. 오차가 항상 줄어드는지와 큰 오차가 날 확률이 줄어드는지를 구별하면, 큰 표본이 무엇을 보장하는지 정확히 읽을 수 있습니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>기대값과 표본평균의 분산을 계산한다.</li><li>허용오차를 사용해 확률수렴을 설명한다.</li><li>이항분포와 체비쇼프 부등식으로 오차 확률을 비교한다.</li></ul></div>
+
+<h2>한 경로에서 점을 하나씩 추가한다</h2>
+<p>동전 앞면을 1, 뒷면을 0으로 기록합니다. Xᵢ는 i번째 시행에서 나온 값입니다. 계산하기 전에는 Xᵢ도, 처음 n개의 평균 <code>Mₙ=(X₁+…+Xₙ)/n</code>도 모형에서 변하는 확률변수입니다. 실제로 1, 0, 1, 1을 관측하면 n=4인 경우의 평균은 3/4입니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 272" role="img" aria-label="동전을 16번 던진 한 경로의 누적 앞면 비율. 4회에서 0.75, 8회와 12회에서 0.5, 16회에서 0.4375.">
+<line class="f-ink" x1="138" y1="226" x2="683" y2="226" marker-end="url(#f-arrow)"/><line class="f-ink" x1="138" y1="226" x2="138" y2="61" marker-end="url(#f-arrow)"/><text class="f-cap" x="155" y="45" text-anchor="middle">누적 앞면 비율</text><line class="f-ink" x1="133" y1="226" x2="143" y2="226"/><text class="f-s" x="123" y="230" text-anchor="end">0</text><line class="f-ink" x1="133" y1="151" x2="143" y2="151"/><text class="f-s" x="123" y="155" text-anchor="end">0.5</text><line class="f-ink" x1="133" y1="76" x2="143" y2="76"/><text class="f-s" x="123" y="80" text-anchor="end">1</text><line class="f-dash" x1="138" y1="151" x2="650" y2="151"/><polyline class="f-line" points="170.000,76.000 202.000,151.000 234.000,126.000 266.000,113.500 298.000,136.000 330.000,151.000 362.000,161.714 394.000,151.000 426.000,159.333 458.000,166.000 490.000,157.818 522.000,151.000 554.000,145.231 586.000,151.000 618.000,156.000 650.000,160.375"/><circle class="f-fill" cx="170" cy="76" r="2.8"/><circle class="f-fill" cx="202" cy="151" r="2.8"/><circle class="f-fill" cx="234" cy="126" r="2.8"/><circle class="f-fill" cx="266" cy="113.5" r="2.8"/><circle class="f-fill" cx="298" cy="136" r="2.8"/><circle class="f-fill" cx="330" cy="151" r="2.8"/><circle class="f-fill" cx="362" cy="161.71428571428572" r="2.8"/><circle class="f-fill" cx="394" cy="151" r="2.8"/><circle class="f-fill" cx="426" cy="159.33333333333334" r="2.8"/><circle class="f-fill" cx="458" cy="166" r="2.8"/><circle class="f-fill" cx="490" cy="157.8181818181818" r="2.8"/><circle class="f-fill" cx="522" cy="151" r="2.8"/><circle class="f-fill" cx="554" cy="145.23076923076923" r="2.8"/><circle class="f-fill" cx="586" cy="151" r="2.8"/><circle class="f-fill" cx="618" cy="156" r="2.8"/><circle class="f-fill" cx="650" cy="160.375" r="2.8"/><line class="f-ink" x1="170" y1="226" x2="170" y2="231"/><text class="f-s" x="170" y="248" text-anchor="middle">1</text><line class="f-ink" x1="266" y1="226" x2="266" y2="231"/><text class="f-s" x="266" y="248" text-anchor="middle">4</text><line class="f-ink" x1="394" y1="226" x2="394" y2="231"/><text class="f-s" x="394" y="248" text-anchor="middle">8</text><line class="f-ink" x1="522" y1="226" x2="522" y2="231"/><text class="f-s" x="522" y="248" text-anchor="middle">12</text><line class="f-ink" x1="650" y1="226" x2="650" y2="231"/><text class="f-s" x="650" y="248" text-anchor="middle">16</text><text class="f-cap" x="692" y="249" text-anchor="middle">시행 수 n</text>
+</svg><figcaption>누적 평균은 위아래로 움직인다. 이 한 경로에서는 8회에 0.5가 된 뒤 9회에 4/9로 다시 내려간다.</figcaption></figure>
+<p>n=8에서 정확히 0.5여도, 9번째가 0이면 평균은 4/9로 이동합니다. 한 경로에서 오차가 매번 작아진다는 규칙은 없습니다. 어떤 고정한 n에서 새로운 표본을 뽑는다면, 큰 오차가 날 가능성을 계산할 수 있습니다.</p>
+<div class="check" data-q="q1"></div>
+<h2>표본평균의 중심과 폭</h2>
+<p>X₁,…,Xₙ을 <b class="key">독립이고 동일한 분포</b>에서 뽑습니다. 이 조건은 영어 약자 i.i.d.로 적습니다. 각 Xᵢ의 기대값은 같은 μ이고, 분산은 유한한 σ²이라고 합시다. 평균의 상수배와 덧셈 성질로 <code>E[Mₙ]=μ</code>입니다. 분산에서는 1/n을 밖으로 꺼낼 때 제곱하고, 독립인 변수들의 합의 분산은 각각의 분산을 더합니다.</p>
+<div class="box "><p class="box-k">두 식을 따로 계산한다</p><p class="calc">E[Mₙ] = (nμ)/n = μ</p><p class="calc">Var(Mₙ) = (nσ²)/n² = σ²/n</p><p>표본평균의 표준편차는 σ/√n입니다. 분산은 원래 단위의 제곱이고, 이 표준편차는 원래 자료와 단위가 같습니다.</p></div>
+<p>공정한 동전의 Xᵢ는 μ=1/2, σ²=1/4입니다. n=16이면 평균의 분산은 1/64, 표준편차는 1/8입니다. 원래 0 또는 1인 관측값 한 개의 표준편차 1/2는 그대로입니다. 같은 동전을 계속 쓰면서 평균의 분포 폭이 달라진 것입니다.</p>
+<div class="check" data-q="q2"></div><div class="check" data-q="q3"></div>
+<h2>정해 둔 오차를 벗어날 확률을 잰다</h2>
+<p>허용오차 ε를 양수로 정합니다. <code>|Mₙ−μ| ≥ ε</code>인 표본은 추정 오차가 ε 이상입니다. 이 사건이 일어나면 <code>(Mₙ−μ)²</code>는 ε² 이상이고, 그 외에도 제곱값은 0 이상입니다. 따라서 제곱값의 평균은 <code>ε² × P(|Mₙ−μ| ≥ ε)</code>보다 작을 수 없습니다. 이 제곱값의 평균이 바로 표본평균의 분산입니다.</p>
+<div class="box "><p class="box-k">체비쇼프 부등식과 약한 대수의 법칙</p><p class="calc">P(|Mₙ−μ| ≥ ε) ≤ Var(Mₙ) / ε² = σ²/(nε²)</p><p>어떤 ε&gt;0을 먼저 고정하더라도 n이 커지면 오른쪽이 0으로 갑니다. 이를 표본평균이 μ로 <b>확률수렴</b>한다고 하며, 위의 독립·동일분포 및 유한분산 조건에서 성립하는 <b>약한 대수의 법칙</b>입니다.</p></div>
+<p>동전 예제에서 ε=0.25라면 상한은 4/n입니다. n=16에서 이 상한은 0.25입니다. 정확한 확률은 앞면 개수 K가 4 이하이거나 12 이상인 표본을 세어 구합니다. 두 경계는 오차가 정확히 0.25인 경우이므로 포함합니다. 실제 확률은 약 0.0768입니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 273" role="img" aria-label="공정한 동전에서 평균이 0.5로부터 0.25 이상 벗어날 확률과 4/n 상한. n 4, 8, 16, 32, 64, 128.">
+<line class="f-ink" x1="115" y1="222" x2="672" y2="222" marker-end="url(#f-arrow)"/><line class="f-ink" x1="115" y1="222" x2="115" y2="44" marker-end="url(#f-arrow)"/><text class="f-cap" x="113" y="32" text-anchor="middle">확률</text><line class="f-ink" x1="109" y1="222" x2="121" y2="222"/><text class="f-s" x="100" y="226" text-anchor="end">0</text><line class="f-ink" x1="109" y1="180" x2="121" y2="180"/><text class="f-s" x="100" y="184" text-anchor="end">0.25</text><line class="f-ink" x1="109" y1="138" x2="121" y2="138"/><text class="f-s" x="100" y="142" text-anchor="end">0.5</text><line class="f-ink" x1="109" y1="96" x2="121" y2="96"/><text class="f-s" x="100" y="100" text-anchor="end">0.75</text><line class="f-ink" x1="109" y1="54" x2="121" y2="54"/><text class="f-s" x="100" y="58" text-anchor="end">1</text><polyline class="f-dash" points="155.000,54.000 247.000,138.000 339.000,180.000 431.000,201.000 523.000,211.500 615.000,216.750"/><polyline class="f-line" points="155.000,117.000 247.000,173.438 339.000,209.095 431.000,220.824 523.000,221.987 615.000,222.000"/><circle class="f-fill" cx="155" cy="117" r="3.5"/><circle class="f-fill" cx="247" cy="173.4375" r="3.5"/><circle class="f-fill" cx="339" cy="209.095458984375" r="3.5"/><circle class="f-fill" cx="431" cy="220.823938395828" r="3.5"/><circle class="f-fill" cx="523" cy="221.98700843083944" r="3.5"/><circle class="f-fill" cx="615" cy="221.99999784258367" r="3.5"/><line class="f-ink" x1="155" y1="222" x2="155" y2="228"/><text class="f-s" x="155" y="249" text-anchor="middle">4</text><line class="f-ink" x1="247" y1="222" x2="247" y2="228"/><text class="f-s" x="247" y="249" text-anchor="middle">8</text><line class="f-ink" x1="339" y1="222" x2="339" y2="228"/><text class="f-s" x="339" y="249" text-anchor="middle">16</text><line class="f-ink" x1="431" y1="222" x2="431" y2="228"/><text class="f-s" x="431" y="249" text-anchor="middle">32</text><line class="f-ink" x1="523" y1="222" x2="523" y2="228"/><text class="f-s" x="523" y="249" text-anchor="middle">64</text><line class="f-ink" x1="615" y1="222" x2="615" y2="228"/><text class="f-s" x="615" y="249" text-anchor="middle">128</text><line class="f-dash" x1="436" y1="54" x2="479" y2="54"/><text class="f-s" x="493" y="58" text-anchor="start">상한 4/n</text><line class="f-line" x1="436" y1="79" x2="479" y2="79"/><circle class="f-fill" cx="457" cy="79" r="3.5"/><text class="f-s" x="493" y="83" text-anchor="start">이항분포로 구한 확률</text>
+</svg><figcaption>가로 눈금은 시행 수를 두 배씩 늘려 배치했다. 직선은 정해진 표본 크기에서 구한 점들을 잇는다.</figcaption></figure>
+<pre data-example="python"><code>from math import comb
+
+for n in (4, 8, 16, 32, 64, 128):
+    outside = sum(
+        comb(n, k)
+        for k in range(n + 1)
+        if abs(4 * k - 2 * n) &gt;= n
+    )
+    probability = outside / 2**n
+    print(f&quot;{n:3d}: {probability:.3e}  {4 / n:.4f}&quot;)</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>4: 6.250e-01  1.0000
+  8: 2.891e-01  0.5000
+ 16: 7.681e-02  0.2500
+ 32: 7.000e-03  0.1250
+ 64: 7.733e-05  0.0625
+128: 1.284e-08  0.0312</code></pre>
+<p><code>abs(4*k−2*n) ≥ n</code>은 <code>|k/n−0.5| ≥ 0.25</code> 양변을 4n배한 것입니다. 이렇게 하면 경계에서 소수 반올림을 피할 수 있습니다. <code>6.250e-01</code>은 6.250×10⁻¹로, 0.6250과 같습니다. 상한은 실제 확률의 최대 허용치를 말하며 예제처럼 느슨할 수 있습니다.</p>
+<div class="check" data-q="q4"></div><div class="check" data-q="q6"></div>
+<h2>조건을 빼면 어떻게 되는가</h2>
+<p>동전 하나를 단 한 번 던져 나온 값을 n줄에 반복해서 적으면 n이 커져도 평균은 첫 행과 같습니다. 각 행의 주변분포는 같지만 관측들이 완전히 연결되어 있어서 위 분산 계산을 적용할 수 없습니다. 큰 표본으로부터 무엇을 기대할지는 행 수와 함께 표본을 뽑은 방법과 관측 사이의 관계를 확인해야 합니다.</p>
+<h2>한눈에 정리</h2>
+<ul><li>동일분포 독립 관측을 평균 내면 평균의 중심은 μ, 분산은 σ²/n이다.</li><li>약한 대수의 법칙은 정해 둔 오차 밖에 있을 확률이 0으로 간다는 정리다.</li><li>확률의 상한, 한 번 관측한 표본, 정확한 모형 확률을 구별한다.</li></ul>
+
+<h2>참고 자료</h2>
+<ul><li><a href="https://ocw.mit.edu/courses/6-041-probabilistic-systems-analysis-and-applied-probability-fall-2010/pages/lecture-notes/">MIT OpenCourseWare · 확률론 19강과 20강</a></li></ul>
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

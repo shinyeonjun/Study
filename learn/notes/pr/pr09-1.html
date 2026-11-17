@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>조건부기댓값과 전기댓값: 집단 비율로 평균을 합치기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e8c'/%3E%3Cpath d='M8 22V10m8 12V14m8 8V6' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="PR09-1">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+
+<header class="chapter">
+<p class="chap-sub">확률 · PR09 조건부 평균</p>
+<p class="chap-num">PR09·1</p>
+<h1>조건부기댓값과 전기댓값: 집단 비율로 평균을 합치기</h1>
+<p class="lead">요청 방식 A와 B의 평균 대기시간을 따로 구합니다. 이어 전체 평균은 집단 수가 아닌, 요청 한 건이 각 집단에 속할 확률로 가중합니다. 확률변수에 절댓값이나 제곱을 적용할 때도 확률을 어떻게 옮기는지 확인합니다.</p>
+</header>
+
+<div class="goal">
+<h2>이 장을 읽고 나면</h2>
+<ul>
+<li>조건부분포로부터 조건부기댓값을 계산한다.</li>
+<li>집단 비율로 가중하여 전기댓값을 구하고 한 값과 확률변수 표기를 구분한다.</li>
+<li>여러 입력이 하나의 출력으로 가는 확률변수 변환을 계산한다.</li>
+</ul>
+</div>
+
+<h2>조건을 알고 있을 때 그 집단의 평균을 낸다</h2>
+<p>어느 날의 서비스 요청 여덟 건에서 하나를 같은 확률로 고르는 모형입니다. 요청 방식 G는 A 또는 B이고, 대기시간 Y의 단위는 분입니다. 아래 숫자는 개별 요청의 대기 시간입니다. 일반적인 모집단 결과로 확대하려면 표본이 어떻게 수집됐는지 별도로 확인합니다.</p>
+<div class="table-wrap"><table>
+<tr><th scope="col">요청 방식 G</th><th scope="col">대기 시간 Y(분)</th><th scope="col">건수</th><th scope="col">집단 비율</th></tr>
+<tr><td>A</td><td>3, 3, 5, 5, 7, 7</td><td>6</td><td>3/4</td></tr>
+<tr><td>B</td><td>8, 10</td><td>2</td><td>1/4</td></tr>
+</table></div>
+<p>A를 알 때 3, 5, 7분이 각각 조건부확률 1/3입니다. 따라서 A의 <b class="key">조건부기댓값</b>은 <code>E[Y | G=A]=(3+5+7)/3=5</code>분입니다. B에서는 (8+10)/2=9분입니다. 조건이 주어지면 그 조건부확률로 가중 평균을 구합니다. 일반 이산 경우 <code>E[Y | G=g]=Σᵧ y·P(Y=y | G=g)</code>이고, 분모인 P(G=g)가 양수인 집단에서만 이 방식으로 계산합니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 271" role="img" aria-label="A 집단에는 3,5,7분이 각각 두 번 있고 평균 5분이다. B에는 8,10분이 한 번씩 있고 평균 9분이다. A 비율 3/4와 B 비율 1/4를 곱해 전체 평균을 6분으로 구한다.">
+<line class="f-ink" x1="95" y1="214" x2="656" y2="214" marker-end="url(#f-arrow)"/>
+<line class="f-ink" x1="104" y1="214" x2="104" y2="221"/><text class="f-s" x="104" y="240" text-anchor="middle">2</text>
+<line class="f-ink" x1="161" y1="214" x2="161" y2="221"/><text class="f-s" x="161" y="240" text-anchor="middle">3</text>
+<line class="f-ink" x1="218" y1="214" x2="218" y2="221"/><text class="f-s" x="218" y="240" text-anchor="middle">4</text>
+<line class="f-ink" x1="275" y1="214" x2="275" y2="221"/><text class="f-s" x="275" y="240" text-anchor="middle">5</text>
+<line class="f-ink" x1="332" y1="214" x2="332" y2="221"/><text class="f-s" x="332" y="240" text-anchor="middle">6</text>
+<line class="f-ink" x1="389" y1="214" x2="389" y2="221"/><text class="f-s" x="389" y="240" text-anchor="middle">7</text>
+<line class="f-ink" x1="446" y1="214" x2="446" y2="221"/><text class="f-s" x="446" y="240" text-anchor="middle">8</text>
+<line class="f-ink" x1="503" y1="214" x2="503" y2="221"/><text class="f-s" x="503" y="240" text-anchor="middle">9</text>
+<line class="f-ink" x1="560" y1="214" x2="560" y2="221"/><text class="f-s" x="560" y="240" text-anchor="middle">10</text>
+<line class="f-dash" x1="332" y1="50" x2="332" y2="212"/>
+<text class="f-cap" x="332" y="38" text-anchor="middle">전체 평균 6분</text>
+<text class="f-cap" x="93" y="88" text-anchor="end">A</text>
+<text class="f-cap" x="93" y="154" text-anchor="end">B</text>
+<circle class="f-fill" cx="161" cy="76" r="5"/>
+<circle class="f-fill" cx="161" cy="91" r="5"/>
+<circle class="f-fill" cx="275" cy="76" r="5"/>
+<circle class="f-fill" cx="275" cy="91" r="5"/>
+<circle class="f-fill" cx="389" cy="76" r="5"/>
+<circle class="f-fill" cx="389" cy="91" r="5"/>
+<circle class="f-fill" cx="446" cy="148" r="5"/>
+<circle class="f-fill" cx="560" cy="148" r="5"/>
+<line class="f-ink" x1="275" y1="95" x2="275" y2="102"/>
+<line class="f-ink" x1="503" y1="148" x2="503" y2="157"/>
+<text class="f-s" x="275" y="119" text-anchor="middle">A 평균 5분</text>
+<text class="f-s" x="503" y="175" text-anchor="middle">B 평균 9분</text>
+<text class="f-t" x="630" y="88" text-anchor="middle">6/8</text>
+<text class="f-t" x="630" y="154" text-anchor="middle">2/8</text>
+<text class="f-s" x="669" y="218" text-anchor="start">Y (분)</text>
+</svg>
+<figcaption>점 하나는 뽑힐 확률이 같은 요청 한 건이다. 전체 평균은 두 집단 평균의 중간인 7분보다, 비중이 큰 A의 평균에 가깝다.</figcaption>
+</figure>
+<p><code>E[Y | G=A]</code>는 숫자 5입니다. 반면 <code>E[Y | G]</code>는 요청을 뽑기 전에는 G의 값에 따라 달라지는 확률변수입니다. 5분이 될 확률은 3/4이고, 9분이 될 확률은 1/4입니다. G만 알게 되었을 때 쓸 집단 평균을 각각 지정한 함수라고 생각하면 됩니다.</p>
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+<h2>조건부 평균을 다시 평균 내면 전체 평균이다</h2>
+<p>전체 평균은 모든 자료를 직접 더한 (30+18)/8=6분입니다. 집단별로 조건부 평균을 먼저 구했다면 <code>(3/4)×5 + (1/4)×9=6</code>분으로도 계산할 수 있습니다. 5와 9를 그냥 1/2씩 섞은 7분은 A와 B를 같은 확률로 뽑는 다른 모형에서는 맞지만, 이 여덟 건 중 하나를 골랐을 때의 답은 아닙니다.</p>
+<div class="box ex"><p class="box-k">전기댓값의 법칙</p>
+<p>기댓값이 유한할 때 <code>E[Y]=E[E[Y | G]]</code>입니다. 이산형 G라면 바깥 평균은 <code>Σ_g P(G=g)·E[Y | G=g]</code>입니다. 전기댓값 또는 전체기댓값의 법칙이라고 부릅니다. 조건부확률에 집단 확률을 곱하면 원래의 결합확률이 돌아옵니다. 집단에 한 차례, 그 안의 시간에 한 차례 합을 취하면 원래 전체 평균을 구하는 것과 같은 합입니다.</p>
+</div>
+<p>연속인 Y에 대해 조건부밀도가 주어진 경우에는 그 밀도에 y를 곱해 적분합니다. 앞 단원의 삼각형 예에서는 Y | X=x가 (0,x)의 균등분포이므로 조건부 평균은 x/2입니다. 그래서 확률변수 <code>E[Y | X]</code>는 X/2가 됩니다. 앞 장의 X 밀도 2x를 써서 X/2의 기댓값을 적분하면 Y의 전체 평균 1/3을 얻습니다. Y의 주변밀도 2(1−y)로 직접 적분해도 1/3입니다.</p>
+<div class="check" data-q="q3"></div>
+<div class="check" data-q="q4"></div>
+<h2>변환한 값은 확률을 어디서 받아 오나</h2>
+<p><b class="key">확률변수 변환</b>은 관측된 값에 함수를 적용해 새 변수를 만드는 일입니다. 예를 들어 <code>T=|Y−6|</code>을 대기시간 Y와 기준 6분의 절대 차이로 두겠습니다. 5분과 7분은 둘 다 기준에서 1분 떨어져 있습니다. 따라서 <code>P(T=1)=P(Y=5)+P(Y=7)=2/8+2/8=1/2</code>입니다. 새 값으로 가는 원래 값의 확률을 모두 합칩니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 238" role="img" aria-label="Y가 3,5,7,8,10이면 T=|Y−6|은 각각 3,1,1,2,4다. 5와 7의 두 확률 질량이 T=1에 모인다.">
+<line class="f-ink" x1="95" y1="94" x2="453" y2="144" marker-end="url(#f-arrow)"/>
+<line class="f-line" x1="234" y1="94" x2="151" y2="144" marker-end="url(#f-arrow)"/>
+<line class="f-line" x1="373" y1="94" x2="151" y2="144" marker-end="url(#f-arrow)"/>
+<line class="f-ink" x1="512" y1="94" x2="302" y2="144" marker-end="url(#f-arrow)"/>
+<line class="f-ink" x1="651" y1="94" x2="604" y2="144" marker-end="url(#f-arrow)"/>
+<rect class="f-box" x="53" y="52" width="84" height="38" rx="4"/><text class="f-t" x="95" y="77" text-anchor="middle">3분</text>
+<rect class="f-box" x="192" y="52" width="84" height="38" rx="4"/><text class="f-t" x="234" y="77" text-anchor="middle">5분</text>
+<rect class="f-box" x="331" y="52" width="84" height="38" rx="4"/><text class="f-t" x="373" y="77" text-anchor="middle">7분</text>
+<rect class="f-box" x="470" y="52" width="84" height="38" rx="4"/><text class="f-t" x="512" y="77" text-anchor="middle">8분</text>
+<rect class="f-box" x="609" y="52" width="84" height="38" rx="4"/><text class="f-t" x="651" y="77" text-anchor="middle">10분</text>
+<rect class="f-soft" x="104" y="149" width="94" height="47" rx="4"/><text class="f-t" x="151" y="171" text-anchor="middle">1분</text><text class="f-s" x="151" y="189" text-anchor="middle">P=4/8</text>
+<rect class="f-box" x="255" y="149" width="94" height="47" rx="4"/><text class="f-t" x="302" y="171" text-anchor="middle">2분</text><text class="f-s" x="302" y="189" text-anchor="middle">P=1/8</text>
+<rect class="f-box" x="406" y="149" width="94" height="47" rx="4"/><text class="f-t" x="453" y="171" text-anchor="middle">3분</text><text class="f-s" x="453" y="189" text-anchor="middle">P=2/8</text>
+<rect class="f-box" x="557" y="149" width="94" height="47" rx="4"/><text class="f-t" x="604" y="171" text-anchor="middle">4분</text><text class="f-s" x="604" y="189" text-anchor="middle">P=1/8</text>
+<text class="f-cap" x="36" y="32" text-anchor="start">원래 대기시간 Y</text>
+<text class="f-cap" x="36" y="221" text-anchor="start">변환한 거리 T = |Y−6|의 분포</text>
+</svg>
+<figcaption>서로 다른 두 입력 값이 같은 출력에 도착한다. 결과가 같으면 원래 값의 확률을 더한다.</figcaption>
+</figure>
+<p>T의 평균은 <code>1×4/8+2×1/8+3×2/8+4×1/8=2</code>분입니다. 변환분포부터 만들지 않고 <code>Σᵧ |y−6|·P(Y=y)</code>로 원래 분포 위에서 직접 계산해도 같습니다. 이 원리로 기댓값만 필요할 때 불필요한 새 확률표를 생략할 수 있습니다. 한편 <code>|E[Y]−6|=0</code>이라서 일반적으로 <code>E[g(Y)]</code>를 <code>g(E[Y])</code>로 바꿀 수 없음을 보입니다.</p>
+<h3>연속형에서는 변환 사건을 원래 변수의 사건으로 바꾼다</h3>
+<p>앞 단원의 삼각형 예에서 X는 0과 1 사이이고 밀도는 2x입니다. <code>U=X²</code>라면 0&lt;u&lt;1에서 <code>F_U(u)=P(U≤u)=P(X≤√u)=∫₀^√u 2x dx=u</code>입니다. 0 이하에서는 0, 1 이상에서는 1이므로 U는 (0,1)의 균등분포입니다. <b>누적분포함수</b> F는 ‘그 값 이하일 확률’이며, X가 음수도 가질 수 있다면 X²≤u의 풀이에 음수 쪽도 포함해야 합니다.</p>
+<div class="check" data-q="q5"></div>
+<div class="check" data-q="q6"></div>
+<h2>같은 값을 같은 칸으로 모아서 확인한다</h2>
+<pre data-example="python"><code>from collections import Counter
+from fractions import Fraction as F
+
+a = [3, 3, 5, 5, 7, 7]
+b = [8, 10]
+all_waits = a + b
+n = len(all_waits)
+group_means = [F(sum(group), len(group)) for group in (a, b)]
+overall = sum(mean * F(len(group), n) for mean, group in zip(group_means, (a, b)))
+assert overall == F(sum(all_waits), n)
+
+distances = Counter(abs(wait - overall) for wait in all_waits)
+mean_distance = sum(distance * F(count, n) for distance, count in distances.items())
+assert sum(distances.values()) == n
+print("A, B 평균:", *group_means)
+print("전체 평균:", overall)
+print("거리별 건수:", [(int(distance), count) for distance, count in sorted(distances.items())])
+print("평균 절대 거리:", mean_distance)</code></pre>
+<pre data-output><code>A, B 평균: 5 9
+전체 평균: 6
+거리별 건수: [(1, 4), (2, 1), (3, 2), (4, 1)]
+평균 절대 거리: 2</code></pre>
+<h2>참고 자료</h2>
+<ul><li><a href="https://ocw.mit.edu/courses/6-041sc-probabilistic-systems-analysis-and-applied-probability-fall-2013/e3e0a97e8298a57f911e24c304008870_MIT6_041SCF13_L12.pdf">MIT OCW 6.041 · 조건부기댓값과 전기댓값</a></li>
+<li><a href="https://online.stat.psu.edu/stat414/Lesson22">Penn State STAT 414 · 확률변수 변환과 누적분포함수</a></li></ul>
+
+<h2>확인 문제</h2>
+<p>본문에서 푼 것 말고 남은 문제입니다. 먼저 답을 정한 뒤 해설을 확인합니다.</p>
+<div id="quiz"></div>
+
+<section class="work" id="tools"></section>
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

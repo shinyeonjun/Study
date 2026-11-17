@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>정규분포와 첫 도착의 지수분포 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e8c'/%3E%3Cpath d='M8 22V10m8 12V14m8 8V6' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="PR06-2">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+
+<header class="chapter">
+<p class="chap-sub">확률 · PR06 연속분포</p>
+<p class="chap-num">PR06·2</p>
+<h1>정규분포와 첫 도착의 지수분포</h1>
+<p class="lead">평균 근처에 값이 몰리는 측정값과 사건이 처음 일어날 때까지의 대기 시간은 서로 다른 모양을 가집니다. 정규분포와 지수분포를 각각 써서 구간 확률, 분위수, 단위를 읽어 봅니다.</p>
+</header>
+
+<div class="goal">
+<h2>이 장을 읽고 나면</h2>
+<ul>
+<li>정규분포의 평균·표준편차를 읽고, 원래 값을 z점수로 바꾸어 확률과 분위수를 구한다.</li>
+<li>일정한 도착률의 포아송 과정에서 건수와 첫 도착 대기 시간의 관계를 설명한다.</li>
+<li>대기 시간의 지수분포에서 꼬리 확률을 계산하고, 평균·분산의 단위를 점검한다.</li>
+</ul>
+</div>
+
+<h2>정규분포에서 떨어진 거리를 표준편차로 잰다</h2>
+<p>반복 측정의 오차처럼 가운데에 값이 몰리고 양쪽으로 갈수록 드물어지는 양을 <b class="key">정규분포</b>로 나타낼 수 있습니다. 평균 μ는 정규분포의 중심이고 표준편차 σ &gt; 0은 퍼진 정도입니다. N(μ,σ²) 표기에서는 두 번째 자리가 분산입니다. 이 장에서는 평균이 50밀리초(ms), 표준편차가 10 ms인 정규 모형을 씁니다.</p>
+<p>이 모형에서 60 ms는 평균보다 10 ms 크므로 오른쪽으로 표준편차 한 칸에 있습니다. 40 ms는 왼쪽으로 한 칸입니다. 항상 평균을 뺀 다음 표준편차로 나누면, 원래 수치를 다른 위치나 단위의 모형과 같은 척도에서 읽을 수 있습니다. 이 계산을 <b class="key">표준화</b>라고 합니다.</p>
+<p class="calc">정규변수 X ∼ N(μ,σ²)이면 Z = (X−μ)/σ ∼ N(0,1).<br>원래 값 x = μ + σz.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 299" role="img" aria-label="중앙이 z=0, 원래 값 50밀리초인 표준정규 곡선. z=-1은 40밀리초, z=1은 60밀리초이며 둘 사이 영역을 칠했다.">
+<polygon class="f-soft" points="302,221 302.00,121.79 306.88,115.60 311.75,109.46 316.63,103.42 321.50,97.53 326.38,91.86 331.25,86.45 336.13,81.37 341.00,76.65 345.88,72.36 350.75,68.54 355.63,65.23 360.50,62.47 365.38,60.28 370.25,58.71 375.13,57.75 380.00,57.43 384.88,57.75 389.75,58.71 394.63,60.28 399.50,62.47 404.38,65.23 409.25,68.54 414.13,72.36 419.00,76.65 423.88,81.37 428.75,86.45 433.63,91.86 438.50,97.53 443.38,103.42 448.25,109.46 453.13,115.60 458.00,121.79 458,221"/>
+<path class="f-ink" d="M85 221h591" marker-end="url(#f-arrow)"/>
+<polyline class="f-line" fill="none" points="107.00,220.64 111.88,220.56 116.75,220.45 121.63,220.32 126.50,220.17 131.38,219.98 136.25,219.76 141.13,219.50 146.00,219.18 150.88,218.81 155.75,218.38 160.63,217.87 165.50,217.27 170.38,216.58 175.25,215.78 180.13,214.86 185.00,213.81 189.88,212.61 194.75,211.25 199.63,209.72 204.50,207.99 209.38,206.05 214.25,203.89 219.13,201.50 224.00,198.86 228.88,195.97 233.75,192.80 238.63,189.35 243.50,185.63 248.38,181.61 253.25,177.32 258.13,172.74 263.00,167.90 267.88,162.79 272.75,157.44 277.63,151.88 282.50,146.11 287.38,140.19 292.25,134.13 297.13,127.98 302.00,121.79 306.88,115.60 311.75,109.46 316.63,103.42 321.50,97.53 326.38,91.86 331.25,86.45 336.13,81.37 341.00,76.65 345.88,72.36 350.75,68.54 355.63,65.23 360.50,62.47 365.38,60.28 370.25,58.71 375.13,57.75 380.00,57.43 384.88,57.75 389.75,58.71 394.63,60.28 399.50,62.47 404.38,65.23 409.25,68.54 414.13,72.36 419.00,76.65 423.88,81.37 428.75,86.45 433.63,91.86 438.50,97.53 443.38,103.42 448.25,109.46 453.13,115.60 458.00,121.79 462.88,127.98 467.75,134.13 472.63,140.19 477.50,146.11 482.38,151.88 487.25,157.44 492.13,162.79 497.00,167.90 501.88,172.74 506.75,177.32 511.63,181.61 516.50,185.63 521.38,189.35 526.25,192.80 531.13,195.97 536.00,198.86 540.88,201.50 545.75,203.89 550.63,206.05 555.50,207.99 560.38,209.72 565.25,211.25 570.13,212.61 575.00,213.81 579.88,214.86 584.75,215.78 589.63,216.58 594.50,217.27 599.38,217.87 604.25,218.38 609.13,218.81 614.00,219.18 618.88,219.50 623.75,219.76 628.63,219.98 633.50,220.17 638.38,220.32 643.25,220.45 648.13,220.56 653.00,220.64"/>
+<path class="f-dash" d="M380 57.43V221 M302 121.79V221 M458 121.79V221"/>
+<path class="f-ink" d="M224 217v8 M302 217v8 M380 217v8 M458 217v8 M536 217v8"/>
+<text class="f-cap" x="380" y="34" text-anchor="middle">표준정규 밀도 φ(z)</text>
+<text class="f-t" x="224" y="247" text-anchor="middle">−2</text>
+<text class="f-t" x="302" y="247" text-anchor="middle">−1</text>
+<text class="f-t" x="380" y="247" text-anchor="middle">0</text>
+<text class="f-t" x="458" y="247" text-anchor="middle">1</text>
+<text class="f-t" x="536" y="247" text-anchor="middle">2</text>
+<text class="f-t" x="688" y="248">z</text>
+<text class="f-t" x="224" y="277" text-anchor="middle">30</text>
+<text class="f-t" x="302" y="277" text-anchor="middle">40</text>
+<text class="f-t" x="380" y="277" text-anchor="middle">50</text>
+<text class="f-t" x="458" y="277" text-anchor="middle">60</text>
+<text class="f-t" x="536" y="277" text-anchor="middle">70</text>
+<text class="f-t" x="688" y="278">x (ms)</text>
+<text class="f-cap" x="380" y="184" text-anchor="middle">0.6827</text>
+</svg>
+<figcaption>같은 위치를 아래 두 눈금으로 표시했다. 곡선의 높이는 표준화한 z의 밀도다. 칠한 면적은 P(−1 ≤ Z ≤ 1) = P(40 ≤ X ≤ 60) ≈ 0.6827이다.</figcaption>
+</figure>
+<p>시간인 분자와 표준편차의 시간 단위가 나누어져 z는 단위가 없습니다. 표준화하면 밀도 그래프의 가로 폭과 높이 척도가 달라집니다. 40~60 ms와 z의 −1~1처럼 서로 대응하는 구간의 확률은 같습니다. 표준화는 원래 모양을 유지한 채 중심과 단위를 바꾸는 계산이므로, 정규분포에 적용하면 표준정규분포가 됩니다.</p>
+<div class="check" data-q="q1"></div>
+
+<h2>정규 누적확률과 분위수를 각각 읽는다</h2>
+<p><b class="key">표준정규 누적분포함수</b>를 Φ(z) = P(Z ≤ z)라고 씁니다. 정규 밀도의 누적값은 보통 표 또는 수치 계산으로 구합니다. 아래 상자처럼 구간의 양 끝을 각각 표준화한 뒤, 오른쪽 누적값에서 왼쪽 누적값을 뺍니다.</p>
+<div class="box ex"><p class="box-k">손으로 풀기 · 평균에서 한 칸 안쪽</p>
+<p class="calc">P(40 ≤ X ≤ 60) = Φ((60−50)/10) − Φ((40−50)/10)<br>= Φ(1) − Φ(−1) ≈ 0.84134475 − 0.15865525 = 0.68268950.</p>
+<p>밀도가 중심에 대해 대칭이므로 P(X &gt; 60)과 P(X &lt; 40)은 각각 약 0.15865525입니다. 두 꼬리를 합하면 약 0.31731050입니다.</p>
+</div>
+<p>반대로 누적확률 0.95를 주고 시간의 95번째 백분위수를 묻는다면, Φ(z)=0.95를 만족하는 z부터 찾습니다. z ≈ 1.64485이므로 시간은 50 + 10(1.64485) ≈ 66.45 ms입니다. 오른쪽 꼬리만 5%인 위치입니다. 가운데 95%를 원하면 양쪽 꼬리가 각각 2.5%여야 하므로 오른쪽 경계에 쓰는 분위수는 Φ의 0.975 분위수입니다.</p>
+<div class="check" data-q="q3"></div>
+<div class="check" data-q="q4"></div>
+
+<h2>첫 도착이 늦다는 것은 그때까지 도착이 없다는 뜻이다</h2>
+<p>앞으로 t시간 동안 기록 장치에 들어오는 사건 수를 N(t), 첫 사건까지 걸리는 시간을 T라고 하겠습니다. 사건의 평균 도착률이 시간당 λ로 일정하고, 겹치지 않는 구간의 도착 수가 독립인 동질 포아송 과정을 가정합니다. 이 과정에서 N(t)는 평균 λt인 포아송분포입니다. t가 커지면 관측하는 구간과 그 안의 평균 사건 수도 늘어납니다.</p>
+<p>T &gt; t라는 사건은 시각 t까지 도착 수가 0이라는 사건과 같습니다. 포아송 질량함수에 0건을 넣으면 다음 결과를 얻습니다. t ≥ 0이며 λ &gt; 0입니다.</p>
+<p class="calc">P(T &gt; t) = P(N(t)=0) = e<sup>−λt</sup>.<br>F<sub>T</sub>(t) = 1 − e<sup>−λt</sup>, &nbsp; f<sub>T</sub>(t) = λe<sup>−λt</sup> &nbsp; (t ≥ 0).</p>
+<p>이 <b class="key">지수분포</b>에서 음수 시간의 누적확률과 밀도는 0입니다. 위 식에서 e<sup>−λt</sup>는 <b class="key">꼬리 확률</b>이고, f<sub>T</sub>(t)는 시간 1단위당 확률이 얼마나 쌓이는지 나타내는 밀도입니다. 밀도에 λ가 붙는 이유는 F<sub>T</sub>를 미분할 때 e의 지수 −λt의 기울기가 −λ이기 때문입니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 289" role="img" aria-label="시간당 도착률이 2일 때 t시간까지 도착이 없을 확률은 e의 마이너스 2t승이다. t=0.5시간에서 약 0.3679다.">
+<path class="f-ink" d="M100 224h550" marker-end="url(#f-arrow)"/>
+<path class="f-ink" d="M118 235V42" marker-end="url(#f-arrow)"/>
+<polyline class="f-line" fill="none" points="118.00,64.00 125.66,73.69 133.31,82.80 140.97,91.36 148.63,99.39 156.28,106.94 163.94,114.03 171.59,120.70 179.25,126.96 186.91,132.83 194.56,138.36 202.22,143.55 209.88,148.42 217.53,153.00 225.19,157.30 232.84,161.34 240.50,165.14 248.16,168.71 255.81,172.06 263.47,175.20 271.13,178.16 278.78,180.94 286.44,183.55 294.09,186.00 301.75,188.30 309.41,190.46 317.06,192.49 324.72,194.40 332.38,196.20 340.03,197.88 347.69,199.46 355.34,200.95 363.00,202.35 370.66,203.66 378.31,204.89 385.97,206.05 393.63,207.14 401.28,208.16 408.94,209.12 416.59,210.02 424.25,210.87 431.91,211.66 439.56,212.41 447.22,213.11 454.88,213.77 462.53,214.39 470.19,214.97 477.84,215.52 485.50,216.03 493.16,216.52 500.81,216.97 508.47,217.40 516.13,217.80 523.78,218.17 531.44,218.53 539.09,218.86 546.75,219.17 554.41,219.46 562.06,219.74 569.72,219.99 577.38,220.24 585.03,220.47 592.69,220.68 600.34,220.88 608.00,221.07"/>
+<path class="f-dash" d="M118 165.14h122.5v58.86"/>
+<path class="f-ink" d="M114 64h8 M363 220v8 M608 220v8"/>
+<circle class="f-fill" cx="240.5" cy="165.14" r="4"/>
+<text class="f-t" x="107" y="68" text-anchor="end">1</text>
+<text class="f-t" x="107" y="169" text-anchor="end">0.3679</text>
+<text class="f-t" x="118" y="247" text-anchor="middle">0</text>
+<text class="f-t" x="240.5" y="247" text-anchor="middle">0.5</text>
+<text class="f-t" x="363" y="247" text-anchor="middle">1</text>
+<text class="f-t" x="608" y="247" text-anchor="middle">2</text>
+<text class="f-t" x="662" y="228">t (시간)</text>
+<text class="f-cap" x="135" y="41">P(T &gt; t) = P(N(t) = 0)</text>
+<text class="f-cap" x="393" y="132">e⁻²ᵗ</text>
+</svg>
+<figcaption>30분은 0.5시간이므로 P(T &gt; 0.5) = e<sup>−2·0.5</sup> ≈ 0.3679다. 이 그림은 밀도 곡선이 아니라 꼬리 확률의 값 자체를 세로축에 놓았다.</figcaption>
+</figure>
+<p>첫 사건이 30분에서 1시간 사이에 올 확률은 P(T &gt; 0.5) − P(T &gt; 1) = e<sup>−1</sup> − e<sup>−2</sup> ≈ 0.2325입니다. 이미 30분 동안 아무 일도 없었던 경우, 앞으로 30분도 사건이 없을 조건부 확률은 P(T &gt; 1)/P(T &gt; 0.5) = e<sup>−1</sup>입니다. 지수분포에서는 경과 시간에 관계없이 추가 대기 시간의 분포가 같으며 이를 <b class="key">무기억성</b>이라고 부릅니다. 시간대에 따라 도착률이 오르내리거나 사건이 몰려 발생하는 기록에는 모형 가정을 다시 확인합니다.</p>
+<div class="check" data-q="q5"></div>
+<div class="check" data-q="q6"></div>
+
+<h2>평균·분산·표준편차에 단위를 붙인다</h2>
+<p>이산 확률변수의 기댓값은 값마다 확률 질량을 곱해 더했습니다. 밀도가 있는 X에서는 x에 작은 구간 확률 f(x)dx를 곱해 적분합니다. 기댓값과 분산이 유한할 때 각각 아래와 같이 계산합니다.</p>
+<p class="calc">E[X] = ∫ x f(x) dx.<br>Var(X) = ∫ (x−E[X])² f(x) dx = E[X²] − E[X]².</p>
+<p>적분 범위는 실수 전체로 두거나 밀도가 양수인 영역만 적습니다. 지수분포에는 부분적분을 쓸 수 있습니다. E[T] = ∫<sub>0</sub><sup>∞</sup> t λe<sup>−λt</sup> dt에서 u=t, v=−e<sup>−λt</sup>로 두면 경계항 [−te<sup>−λt</sup>]<sub>0</sub><sup>∞</sup>가 0으로 갑니다. 남은 ∫<sub>0</sub><sup>∞</sup> e<sup>−λt</sup> dt는 1/λ입니다. 같은 방식으로 E[T²] = 2E[T]/λ = 2/λ²이고, 분산은 2/λ² − (1/λ)² = 1/λ²입니다.</p>
+<div class="table-wrap"><table>
+<tr><th scope="col">양</th><th scope="col">시간당 λ=2인 예</th><th scope="col">단위</th></tr>
+<tr><td>도착률 λ</td><td>2</td><td>1/시간</td></tr>
+<tr><td>평균 1/λ</td><td>0.5</td><td>시간</td></tr>
+<tr><td>분산 1/λ²</td><td>0.25</td><td>시간²</td></tr>
+<tr><td>표준편차 1/λ</td><td>0.5</td><td>시간</td></tr>
+</table></div>
+<p>분 단위로 바꾸면 평균과 표준편차에는 60을 곱하지만 분산에는 60²을 곱합니다. 같은 분포의 도착률 λ는 분당 2/60이 됩니다. 일부 도구는 지수분포를 도착률 λ 대신 <b class="key">척도</b> 1/λ로 입력받습니다. 모수 이름과 단위를 확인하면 시간당 2와 평균 0.5시간을 구분할 수 있습니다.</p>
+<div class="check" data-q="q8"></div>
+
+<h2>계산기로 정규의 면적과 지수의 꼬리를 확인한다</h2>
+<p>파이썬의 <code>NormalDist</code>는 누적확률을 계산하는 <code>cdf</code>와 확률을 위치로 바꾸는 <code>inv_cdf</code>를 제공합니다. <code>sigma</code>는 표준편차를 받으므로 10을 입력합니다. 지수 모형에서는 e<sup>−λt</sup>가 0건의 확률과 같은지 같은 t와 λ를 넣어 대조합니다.</p>
+<pre data-example="python"><code>from math import exp, isclose
+from statistics import NormalDist
+
+latency = NormalDist(mu=50, sigma=10)
+standard = NormalDist()
+central = latency.cdf(60) - latency.cdf(40)
+assert isclose(central, standard.cdf(1) - standard.cdf(-1))
+
+rate_per_hour = 2
+wait_hours = 0.5
+mean_count = rate_per_hour * wait_hours
+no_arrival = exp(-mean_count) * mean_count**0
+tail = exp(-rate_per_hour * wait_hours)
+assert isclose(no_arrival, tail)
+
+print(f"40~60 ms 확률: {central:.6f}")
+print(f"정규 95번째 백분위수: {latency.inv_cdf(0.95):.2f} ms")
+print(f"30분 0건 확률 / 30분 초과 대기: {no_arrival:.6f} / {tail:.6f}")
+print(f"30분~1시간 내 첫 도착 확률: {tail - exp(-rate_per_hour):.6f}")
+print(f"대기 시간 평균: {1 / rate_per_hour:.2f}시간")
+print(f"대기 시간 분산: {1 / rate_per_hour**2:.2f}시간²")</code></pre>
+<pre data-output><code>40~60 ms 확률: 0.682689
+정규 95번째 백분위수: 66.45 ms
+30분 0건 확률 / 30분 초과 대기: 0.367879 / 0.367879
+30분~1시간 내 첫 도착 확률: 0.232544
+대기 시간 평균: 0.50시간
+대기 시간 분산: 0.25시간²</code></pre>
+
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table>
+<tr><th scope="col">대상</th><th scope="col">계산 기준</th></tr>
+<tr><td>정규분포</td><td>z = (x−μ)/σ. 확률은 Φ로, 확률에서 위치를 찾을 때는 분위수로 계산한다.</td></tr>
+<tr><td>고정 구간의 건수와 첫 대기 시간</td><td>동질 포아송 과정에서 N(t)는 평균 λt인 포아송분포이고 T는 도착률 λ의 지수분포다.</td></tr>
+<tr><td>단위</td><td>평균·표준편차는 원자료 단위다. 분산은 그 단위의 제곱이고 표준점수는 무단위다.</td></tr>
+</table></div>
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://openstax.org/books/introductory-statistics-2e/pages/6-2-using-the-normal-distribution">OpenStax Introductory Statistics 2e · 정규분포의 면적과 표준화</a></li>
+<li><a href="https://openstax.org/books/introductory-statistics-2e/pages/5-3-the-exponential-distribution">OpenStax Introductory Statistics 2e · 지수분포와 포아송의 연결</a></li>
+<li><a href="https://docs.python.org/3/library/statistics.html#statistics.NormalDist">Python 표준 라이브러리 · NormalDist의 표준편차, 누적확률, 역누적확률</a></li>
+<li><a href="https://numpy.org/doc/stable/reference/random/generated/numpy.random.Generator.exponential.html">NumPy 공식 문서 · 지수분포의 척도 모수</a></li>
+</ul>
+
+<h2>확인 문제</h2>
+<p>아직 풀지 않은 문제입니다. 먼저 식이나 근거를 적어 보고 해설을 확인합니다.</p>
+<div id="quiz"></div>
+
+<section class="work" id="tools"></section>
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>전분산: 집단 안의 차이와 집단 사이의 차이 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e8c'/%3E%3Cpath d='M8 22V10m8 12V14m8 8V6' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="PR09-2">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+
+<header class="chapter">
+<p class="chap-sub">확률 · PR09 조건부 평균</p>
+<p class="chap-num">PR09·2</p>
+<h1>전분산: 집단 안의 차이와 집단 사이의 차이</h1>
+<p class="lead">같은 날의 대기시간 8개에는 요청 방식이 달라도 생기는 차이와, 같은 방식 안에서도 남는 차이가 함께 들어 있습니다. 전체 분산을 둘로 나누고 조건부 평균이 제곱오차를 얼마나 줄이는지 확인합니다.</p>
+</header>
+
+<div class="goal">
+<h2>이 장을 읽고 나면</h2>
+<ul>
+<li>조건부 분산과 조건부 평균의 분산을 구분한다.</li>
+<li>집단 비율을 써서 전분산을 검산하고 평균만으로는 알 수 없는 값을 판단한다.</li>
+<li>제곱오차 기준에서 조건부 평균이 예측값이 되는 이유를 설명한다.</li>
+</ul>
+</div>
+
+<h2>편차를 두 단계로 나눈다</h2>
+<p>앞 장과 같은 모형입니다. A 방식의 시간은 3, 3, 5, 5, 7, 7분, B 방식은 8, 10분입니다. 여덟 건 각각을 확률 1/8로 뽑습니다. 집단 변수 G는 A를 확률 3/4, B를 확률 1/4로 취합니다. 전체 평균은 6분, 조건부 평균은 A가 5분, B가 9분입니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 291" role="img" aria-label="B 집단에서 대기시간 10분인 요청 하나를 골랐다. 전체 평균 6, B 평균 9, 관측값 10이다. 전체 평균과의 차이 4는 6→9의 3과 9→10의 1로 나뉜다.">
+<line class="f-ink" x1="424" y1="240" x2="730" y2="240" marker-end="url(#f-arrow)"/>
+<line class="f-ink" x1="454" y1="240" x2="454" y2="246"/><text class="f-s" x="454" y="265" text-anchor="middle">6</text>
+<line class="f-ink" x1="514" y1="240" x2="514" y2="246"/><text class="f-s" x="514" y="265" text-anchor="middle">7</text>
+<line class="f-ink" x1="574" y1="240" x2="574" y2="246"/><text class="f-s" x="574" y="265" text-anchor="middle">8</text>
+<line class="f-ink" x1="634" y1="240" x2="634" y2="246"/><text class="f-s" x="634" y="265" text-anchor="middle">9</text>
+<line class="f-ink" x1="694" y1="240" x2="694" y2="246"/><text class="f-s" x="694" y="265" text-anchor="middle">10</text>
+<line class="f-dash" x1="454" y1="57" x2="454" y2="238"/>
+<line class="f-dash" x1="634" y1="57" x2="634" y2="238"/>
+<line class="f-dash" x1="694" y1="57" x2="694" y2="238"/>
+<text class="f-s" x="446" y="52" text-anchor="end">전체 평균</text>
+<text class="f-s" x="634" y="42" text-anchor="middle">B 평균</text>
+<text class="f-s" x="703" y="66" text-anchor="start">관측</text>
+<text class="f-cap" x="307" y="108" text-anchor="end">집단 안</text>
+<text class="f-cap" x="307" y="157" text-anchor="end">집단 사이</text>
+<text class="f-cap" x="307" y="206" text-anchor="end">전체 편차</text>
+<line class="f-line" x1="634" y1="102" x2="689" y2="102" marker-end="url(#f-arrow)"/>
+<text class="f-s" x="664" y="94" text-anchor="middle">+1</text>
+<line class="f-line" x1="454" y1="151" x2="629" y2="151" marker-end="url(#f-arrow)"/>
+<text class="f-s" x="544" y="143" text-anchor="middle">+3</text>
+<line class="f-line" x1="454" y1="200" x2="689" y2="200" marker-end="url(#f-arrow)"/>
+<text class="f-s" x="574" y="192" text-anchor="middle">+4</text>
+<text class="f-s" x="742" y="264" text-anchor="end">분</text>
+</svg>
+<figcaption>한 관측의 부호 있는 편차는 두 조각을 그대로 더한다. 분산에서는 제곱한 뒤 평균해야 한다.</figcaption>
+</figure>
+<p>10분을 관측하면 전체 평균과의 편차는 10−6=4분입니다. 자기 집단의 평균에서 벗어난 10−9=1분과 그 집단 평균이 전체 평균에서 벗어난 9−6=3분의 합입니다. 일반적으로 <code>Y−μ = (Y−m(G)) + (m(G)−μ)</code>입니다. 여기서 μ=E[Y], m(G)=E[Y|G]입니다.</p>
+<div class="box ex"><p class="box-k">제곱하기 전에 알아 둘 것</p>
+<p>위 관측에서는 4²가 1²+3²와 같지 않습니다. 제곱하면 교차항 2×1×3도 생깁니다. 다만 같은 집단 안에서 (Y−m(G))를 평균하면 0이고, 나머지 인수 (m(G)−μ)는 그 집단에서 상수입니다. 교차항은 모든 집단에 대해 평균할 때 0이 됩니다.</p>
+</div>
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+<h2>조건부 분산과 조건부 평균의 분산은 다르다</h2>
+<p>A에서 대기시간은 평균 5분을 중심으로 −2, 0, +2만큼, 각각 확률 1/3로 벗어납니다. 따라서 <code>Var(Y|G=A)=(4+0+4)/3=8/3</code>분²입니다. B에서는 평균 9에서 −1과 +1만큼 차이 나므로 <code>Var(Y|G=B)=1</code>분²입니다. 이 여덟 건이 모형 전체여서 집단 내부에서 가능한 값의 확률이 곧 분산의 가중치입니다. 표본으로 모집단 분산을 추정할 때 쓰는 n−1을 이 계산에 적용하지 않습니다.</p>
+<div class="table-wrap"><table>
+<tr><th scope="col">항</th><th scope="col">계산</th><th scope="col">결과</th></tr>
+<tr><td>집단 내부 분산의 평균</td><td>(3/4)×(8/3) + (1/4)×1</td><td>9/4 = 2.25분²</td></tr>
+<tr><td>조건부 평균의 분산</td><td>(3/4)×(5−6)² + (1/4)×(9−6)²</td><td>3분²</td></tr>
+<tr><td>전체 분산</td><td>9/4 + 3</td><td>21/4 = 5.25분²</td></tr>
+</table></div>
+<p>첫째 항은 각 집단에서 평균 주위로 흩어진 정도를 그 집단 비율로 평균한 값입니다. 둘째 항은 개인 대기시간 대신 각 집단의 평균값 5, 9의 분산을 구한 것입니다. 무작위 요청이 A일 때 5, B일 때 9라는 확률변수이므로 두 값에 3/4와 1/4를 그대로 씁니다.</p>
+<div class="check" data-q="q3"></div>
+<div class="check" data-q="q4"></div>
+<div class="box ex"><p class="box-k">전분산의 법칙</p>
+<p>Y의 제곱 기댓값이 유한한 경우 <b class="key"><code>Var(Y)=E[Var(Y|G)] + Var(E[Y|G])</code></b>입니다. 집단 정보를 모르는 상태에서 직접 얻은 분산을, 조건부 정보를 써서 다시 계산하는 식입니다. 두 항 모두 단위가 Y 단위의 제곱입니다. 표준편차를 집단 비율로 평균하는 공식으로 바꿀 수 없습니다.</p>
+</div>
+<p>전체 자료에서 직접 확인하려면 6을 뺀 뒤 제곱합니다. 3, 5, 7, 8, 10분이 각각 두 번, 두 번, 두 번, 한 번, 한 번 있으므로 제곱합은 <code>2×9+2×1+2×1+4+16=42</code>입니다. 전체 여덟 건으로 나누면 <code>42/8=5.25</code>입니다. 집단 평균과 비율만 있다면 둘째 항까지는 구할 수 있지만, 집단 안의 분산을 모르면 전체 분산은 정할 수 없습니다.</p>
+<div class="check" data-q="q5"></div>
+<div class="check" data-q="q6"></div>
+<h2>회귀가 예측하려는 평균</h2>
+<p>집단 정보 없이 대기시간을 숫자 하나 c로 예측한다고 합시다. 제곱오차의 평균 <code>E[(Y−c)²]</code>는 전체 평균 6에서 가장 작고, 그 값은 5.25입니다. G가 알려지면 A에서는 5, B에서는 9를 각각 예측합니다. 이때 제곱오차의 평균은 첫째 항 2.25입니다. 그 차이 3은 집단 평균 사이의 분산입니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 241" role="img" aria-label="전체 분산이 5.25분 제곱이다. 모든 요청에 6분을 예측할 때 제곱오차 평균은 5.25. 집단별 평균 5·9분을 예측할 때는 2.25. 차이인 3은 집단별 평균의 분산이다.">
+<text class="f-cap" x="255" y="26" text-anchor="start">제곱오차의 평균 (분²)</text>
+<line class="f-ink" x1="255" y1="184" x2="707" y2="184" marker-end="url(#f-arrow)"/>
+<line class="f-ink" x1="255" y1="184" x2="255" y2="190"/><text class="f-s" x="255" y="208" text-anchor="middle">0</text>
+<line class="f-ink" x1="337" y1="184" x2="337" y2="190"/><text class="f-s" x="337" y="208" text-anchor="middle">1</text>
+<line class="f-ink" x1="419" y1="184" x2="419" y2="190"/><text class="f-s" x="419" y="208" text-anchor="middle">2</text>
+<line class="f-ink" x1="501" y1="184" x2="501" y2="190"/><text class="f-s" x="501" y="208" text-anchor="middle">3</text>
+<line class="f-ink" x1="583" y1="184" x2="583" y2="190"/><text class="f-s" x="583" y="208" text-anchor="middle">4</text>
+<line class="f-ink" x1="665" y1="184" x2="665" y2="190"/><text class="f-s" x="665" y="208" text-anchor="middle">5</text>
+<text class="f-t" x="239" y="72" text-anchor="end">전체에 6분 예측</text>
+<text class="f-t" x="239" y="136" text-anchor="end">집단별 5·9분 예측</text>
+<rect class="f-soft" x="255" y="49" width="184.5" height="34" rx="4"/>
+<rect class="f-over" x="439.5" y="49" width="246" height="34" rx="4"/>
+<rect class="f-soft" x="255" y="113" width="184.5" height="34" rx="4"/>
+<text class="f-s" x="347.25" y="71" text-anchor="middle">집단 내 · 2.25</text>
+<text class="f-s" x="562.5" y="71" text-anchor="middle">집단 간 · 3</text>
+<text class="f-s" x="347.25" y="135" text-anchor="middle">남은 오차 · 2.25</text>
+<text class="f-s" x="687" y="40" text-anchor="middle">5.25</text>
+</svg>
+<figcaption>집단 정보를 쓰는 이 모형에서 제곱오차가 3분²만큼 줄어든다.</figcaption>
+</figure>
+<p>조건 G=g에서 임의의 예측값 c와 실제 조건부 평균 m을 놓고 <code>Y−c=(Y−m)+(m−c)</code>로 씁니다. 조건부평균을 취한 교차항이 0이므로 <code>E[(Y−c)² | G=g] = Var(Y|G=g)+(m−c)²</code>입니다. 조건별로 가장 작은 오차를 만들려면 c=m을 택합니다. 이것이 제곱오차 기준에서 <b class="key">회귀함수</b>가 조건부 평균을 예측하는 이유입니다. 직선을 쓰는 모형이나 한정된 자료에서 학습한 모형은 그 함수를 근사합니다. 절대오차를 쓰면 적절한 목표가 달라질 수 있습니다.</p>
+<p>집단 평균을 예측으로 쓰려면 새 요청이 들어올 때 G가 알려져 있어야 합니다. 여기의 오차 감소는 여덟 건을 모형 전체로 뒀을 때의 계산입니다. 실제 회귀의 새 데이터에서 얼마나 개선되는지는 학습에 쓰지 않은 자료로 확인합니다.</p>
+<h2>두 방식으로 얻은 분산을 분수로 대조한다</h2>
+<pre data-example="python"><code>from fractions import Fraction as F
+
+def average(values):
+    return F(sum(values), len(values))
+
+groups = ([3, 3, 5, 5, 7, 7], [8, 10])
+all_waits = [wait for group in groups for wait in group]
+overall = average(all_waits)
+means = [average(group) for group in groups]
+weights = [F(len(group), len(all_waits)) for group in groups]
+group_vars = [
+    average([(wait - mean)**2 for wait in group])
+    for group, mean in zip(groups, means)
+]
+within = sum(w * var for w, var in zip(weights, group_vars))
+between = sum(w * (mean - overall)**2 for w, mean in zip(weights, means))
+direct = average([(wait - overall)**2 for wait in all_waits])
+assert direct == within + between
+
+print("A, B 조건부 분산:", *group_vars)
+print("집단 내부 평균 분산:", within)
+print("집단 평균의 분산:", between)
+print("전체 분산:", direct)</code></pre>
+<pre data-output><code>A, B 조건부 분산: 8/3 1
+집단 내부 평균 분산: 9/4
+집단 평균의 분산: 3
+전체 분산: 21/4</code></pre>
+<h2>참고 자료</h2>
+<ul><li><a href="https://ocw.mit.edu/courses/6-041sc-probabilistic-systems-analysis-and-applied-probability-fall-2013/e3e0a97e8298a57f911e24c304008870_MIT6_041SCF13_L12.pdf">MIT OCW 6.041 · 조건부 분산과 전분산</a></li>
+<li><a href="https://ocw.mit.edu/courses/14-310x-data-analysis-for-social-scientists-spring-2023/mit14_310x_s23_week04_lec09.pdf">MIT OCW 14.310x · 조건부 평균과 회귀</a></li></ul>
+
+<h2>확인 문제</h2>
+<p>본문에서 푼 것 말고 남은 문제입니다. 먼저 답을 정한 뒤 해설을 확인합니다.</p>
+<div id="quiz"></div>
+
+<section class="work" id="tools"></section>
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

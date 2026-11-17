@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>선형결합과 기저로 벡터의 좌표 읽기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="LA06-1">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">선형대수</p>
+<p class="chap-num">LA06·1</p>
+<h1>선형결합과 기저로 벡터의 좌표 읽기</h1>
+<p class="lead">여러 화살표를 원하는 길이로 늘이거나 뒤집어 더하면 어느 점까지 갈 수 있을까요? 도달할 수 있는 범위와 그 점을 가리키는 좌표는 서로 다른 질문입니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>선형결합으로 만들 수 있는 점들을 생성공간으로 표현한다.</li><li>독립인지 영벡터를 만드는 조합으로 판단한다.</li><li>같은 벡터의 좌표를 두 기저에서 각각 읽는다.</li></ul></div>
+
+<h2>성분을 더하는 대신 벡터에 계수를 붙인다</h2>
+<p>u=(1,0), v=(1,1)을 두고 <code>c₁u+c₂v</code>를 계산하면 <code>(c₁+c₂, c₂)</code>입니다. 두 계수를 각각 고를 수 있습니다. 예를 들어 (4,2)를 만들려면 먼저 c₂=2를 정하고, 첫 성분에서 c₁+2=4를 풀어 c₁=2로 정합니다. 계수를 곱하고 벡터들을 더한 이런 식을 <b class="key">선형결합</b>이라고 합니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 280" role="img" aria-label="표준 좌표 (4,2). u=(1,0)을 두 배 하고 그 끝에서 v=(1,1)을 두 배 더해 같은 위치에 도달한다.">
+<line class="f-ink" x1="114" y1="235" x2="565.4000000000001" y2="235" marker-end="url(#f-arrow)"/><line class="f-ink" x1="175" y1="268.55" x2="175" y2="38.579999999999984" marker-end="url(#f-arrow)"/><line class="f-ink" x1="236" y1="238.66" x2="236" y2="231.34"/><text class="f-s" x="236" y="253" text-anchor="middle">1</text><line class="f-ink" x1="297" y1="238.66" x2="297" y2="231.34"/><text class="f-s" x="297" y="253" text-anchor="middle">2</text><line class="f-ink" x1="358" y1="238.66" x2="358" y2="231.34"/><text class="f-s" x="358" y="253" text-anchor="middle">3</text><line class="f-ink" x1="419" y1="238.66" x2="419" y2="231.34"/><text class="f-s" x="419" y="253" text-anchor="middle">4</text><line class="f-ink" x1="480" y1="238.66" x2="480" y2="231.34"/><text class="f-s" x="480" y="253" text-anchor="middle">5</text><line class="f-ink" x1="541" y1="238.66" x2="541" y2="231.34"/><text class="f-s" x="541" y="253" text-anchor="middle">6</text><line class="f-ink" x1="171.34" y1="174" x2="178.66" y2="174"/><text class="f-s" x="161" y="178" text-anchor="middle">1</text><line class="f-ink" x1="171.34" y1="113" x2="178.66" y2="113"/><text class="f-s" x="161" y="117" text-anchor="middle">2</text><line class="f-ink" x1="171.34" y1="52" x2="178.66" y2="52"/><text class="f-s" x="161" y="56" text-anchor="middle">3</text><text class="f-s" x="164" y="251" text-anchor="middle">0</text><text class="f-s" x="574.55" y="230" text-anchor="middle">x</text><text class="f-s" x="188" y="34.31" text-anchor="middle">y</text><line class="f-ink" x1="175" y1="235" x2="419" y2="113" marker-end="url(#f-arrow)"/><line class="f-line" x1="175" y1="235" x2="297" y2="235" marker-end="url(#f-arrow)"/><line class="f-line" x1="297" y1="235" x2="419" y2="113" marker-end="url(#f-arrow)"/><line class="f-dash" x1="419" y1="235" x2="419" y2="113"/><circle class="f-fill" cx="419" cy="113" r="3.2"/><text class="f-t" x="239" y="222" text-anchor="middle">2u</text><text class="f-t" x="387" y="180" text-anchor="middle">2v</text><text class="f-t" x="475" y="106" text-anchor="middle">w = (4, 2)</text>
+</svg><figcaption>같은 벡터 (4,2)를 표준기저에서는 (4,2), u와 v 기저에서는 (2,2)라고 적는다.</figcaption></figure>
+<p>표준기저는 각각 x와 y만 1인 e₁=(1,0), e₂=(0,1)입니다. 이들로 w를 표현하면 계수가 (4,2)입니다. 순서 있는 기저 (u,v)로 같은 w를 표현하면 계수가 (2,2)입니다. 벡터가 바뀐 셈이 아니라 성분을 읽는 기준이 달라졌습니다.</p>
+<div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
+<h2>만들 수 있는 벡터 모두를 모은다</h2>
+<p>계수를 모든 실수 범위에서 바꿔서 만들 수 있는 벡터의 집합을 <b class="key">생성공간</b>(span)이라고 합니다. u와 v의 결합 (c₁+c₂,c₂)는 임의의 (a,b)에 대해 c₂=b, c₁=a−b로 정하면 그 (a,b)가 됩니다. 그래서 span(u,v)=ℝ²입니다.</p>
+<p>a=(1,1), b=(2,2)에서는 사정이 다릅니다. <code>c₁a+c₂b=(c₁+2c₂,c₁+2c₂)</code>이므로 y=x인 점만 만들 수 있습니다. 반대로 그 직선 위의 모든 (t,t)는 t·a로 만들 수 있습니다. 생성공간이 정확히 어떤 집합인지 확인할 때 이처럼 양방향을 보입니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 285" role="img" aria-label="a=(1,1), b=(2,2)는 같은 방향. 두 벡터의 생성공간은 y=x 직선이다. w=(3,1)은 직선 밖.">
+<line class="f-ink" x1="135" y1="232" x2="542" y2="232" marker-end="url(#f-arrow)"/><line class="f-ink" x1="190" y1="262.25" x2="190" y2="54.89999999999998" marker-end="url(#f-arrow)"/><line class="f-ink" x1="245" y1="235.3" x2="245" y2="228.7"/><text class="f-s" x="245" y="250" text-anchor="middle">1</text><line class="f-ink" x1="300" y1="235.3" x2="300" y2="228.7"/><text class="f-s" x="300" y="250" text-anchor="middle">2</text><line class="f-ink" x1="355" y1="235.3" x2="355" y2="228.7"/><text class="f-s" x="355" y="250" text-anchor="middle">3</text><line class="f-ink" x1="410" y1="235.3" x2="410" y2="228.7"/><text class="f-s" x="410" y="250" text-anchor="middle">4</text><line class="f-ink" x1="465" y1="235.3" x2="465" y2="228.7"/><text class="f-s" x="465" y="250" text-anchor="middle">5</text><line class="f-ink" x1="520" y1="235.3" x2="520" y2="228.7"/><text class="f-s" x="520" y="250" text-anchor="middle">6</text><line class="f-ink" x1="186.7" y1="177" x2="193.3" y2="177"/><text class="f-s" x="176" y="181" text-anchor="middle">1</text><line class="f-ink" x1="186.7" y1="122" x2="193.3" y2="122"/><text class="f-s" x="176" y="126" text-anchor="middle">2</text><line class="f-ink" x1="186.7" y1="67" x2="193.3" y2="67"/><text class="f-s" x="176" y="71" text-anchor="middle">3</text><text class="f-s" x="179" y="248" text-anchor="middle">0</text><text class="f-s" x="550.25" y="227" text-anchor="middle">x</text><text class="f-s" x="203" y="51.05000000000001" text-anchor="middle">y</text><line class="f-dash" x1="157" y1="265" x2="366" y2="56"/><line class="f-line" x1="190" y1="232" x2="300" y2="122" marker-end="url(#f-arrow)"/><circle class="f-fill" cx="245" cy="177" r="3.2"/><circle class="f-fill" cx="355" cy="177" r="3.2"/><text class="f-t" x="227" y="167" text-anchor="middle">a=(1,1)</text><text class="f-t" x="319" y="110" text-anchor="middle">b=(2,2)</text><text class="f-t" x="404" y="183" text-anchor="middle">w=(3,1)</text>
+</svg><figcaption>a의 끝점과 b의 화살표가 같은 직선 위에 있다. 직선 밖의 w는 이 두 벡터의 선형결합으로 만들 수 없다.</figcaption></figure>
+<p>이 직선에는 원점이 있고, 직선 위 두 점을 벡터로 더하거나 실수를 곱해도 같은 직선에 남습니다. 이렇게 영벡터를 포함하고 덧셈과 스칼라곱을 해도 집합 안에 남는 벡터들의 집합을 <b>부분공간</b>이라고 합니다. 발생 가능한 결과가 y=x+1인 직선 위라고 하면 원점이 빠지므로 그 직선 자체는 ℝ²의 부분공간이 아닙니다.</p>
+<div class="check" data-q="q3"></div><div class="check" data-q="q4"></div>
+<h2>영벡터를 만드는 조합에서 중복 찾기</h2>
+<p>u와 v로 <code>c₁u+c₂v=0</code>을 만들려면 둘째 성분에서 c₂=0, 첫째 성분에서 c₁=0입니다. 모든 계수를 0으로 놓는 방법뿐입니다. 이런 벡터 목록을 <b class="key">선형독립</b>이라고 합니다. a와 b에서는 <code>2a−b=0</code>이라 0이 아닌 계수 (2,−1)가 있습니다. 둘째 벡터를 첫째 벡터의 배수로 만들 수 있다는 뜻입니다.</p>
+<div class="box "><p class="box-k">기저와 차원</p><p>한 공간을 전부 생성하고 선형독립인 벡터들의 목록을 그 공간의 <b>기저</b>라고 합니다. 기저에서 각 벡터의 좌표는 하나로 정해집니다. 서로 다른 조합이 같은 결과를 만든다면 두 조합을 빼서 0이 아닌 계수의 영벡터를 만들 수 있기 때문입니다. 유한차원 공간에서 기저에 들어 있는 벡터 수를 <b>차원</b>이라고 합니다.</p><p>y=x 직선에는 a 한 개면 충분해 차원은 1입니다. ℝ²의 기저는 두 개의 독립인 벡터로 이루어져 차원은 2입니다. 기저의 벡터를 적는 순서를 바꾸면 좌표에서 두 계수의 순서도 바뀝니다.</p></div>
+<div class="check" data-q="q5"></div><div class="check" data-q="q6"></div>
+<p>기저 벡터를 열로 쌓은 행렬 C에 기저 좌표를 곱하면 표준 좌표가 나옵니다. 이 예제는 가역인 2×2이므로 <code>solve(C,w)</code>로 반대 방향의 계산을 확인할 수 있습니다.</p>
+<pre data-example="python"><code>import numpy as np
+
+u = np.array([1, 0])
+v = np.array([1, 1])
+C = np.column_stack([u, v])
+w = np.array([4, 2])
+coordinates = np.linalg.solve(C, w)
+print(coordinates.tolist())
+print((C @ coordinates).tolist())</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>[2.0, 2.0]
+[4.0, 2.0]</code></pre>
+<p>u와 v가 직교하지 않음에 주의합니다. 여기에서 단순히 w·u와 w·v를 적으면 4와 6이 나오므로 좌표 2, 2와 다릅니다. <a href="../../unit.html?u=LA02">내적으로 성분을 읽는 방법</a>은 이 단원의 직교정규기저 장에서 조건과 함께 사용합니다.</p>
+<h2>한눈에 정리</h2>
+<ul><li>선형결합으로 만드는 모든 벡터를 모으면 생성공간이 된다.</li><li>영벡터가 계수 전부를 0으로 놓을 때에만 나오면 독립이다.</li><li>생성과 독립을 함께 만족하는 기저의 계수로 벡터의 좌표를 읽는다.</li></ul>
+
+<h2>참고 자료</h2>
+<ul><li><a href="https://ocw.mit.edu/courses/18-06sc-linear-algebra-fall-2011/pages/ax-b-and-the-four-subspaces/independence-basis-and-dimension/">MIT OpenCourseWare · 독립, 기저, 차원</a></li></ul>
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

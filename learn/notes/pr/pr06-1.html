@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>확률밀도·누적확률·분위수 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e8c'/%3E%3Cpath d='M8 22V10m8 12V14m8 8V6' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="PR06-1">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+
+<header class="chapter">
+<p class="chap-sub">확률 · PR06 연속분포</p>
+<p class="chap-num">PR06·1</p>
+<h1>확률밀도·누적확률·분위수</h1>
+<p class="lead">같은 응답 시간도 재는 단위에 따라 다른 숫자로 기록됩니다. 시간을 연속적인 양으로 놓고, 한 구간에 확률이 얼마나 모이는지 면적으로 계산해 봅니다.</p>
+</header>
+
+<div class="goal">
+<h2>이 장을 읽고 나면</h2>
+<ul>
+<li>연속분포에서는 한 점의 밀도와 구간의 확률을 구분한다.</li>
+<li>밀도를 적분해 누적분포함수를 만들고, 누적값의 차이로 구간 확률을 구한다.</li>
+<li>균등분포의 확률을 길이의 비율로 계산하고, 누적확률에서 분위수를 찾는다.</li>
+</ul>
+</div>
+
+<h2>측정값이 한 구간에 들어갈 확률을 구한다</h2>
+<p>서비스 응답을 기다리는 시간이 0.31초인지 0.312초인지는 측정 정밀도에 따라 달라집니다. 대기 시간을 실수로 모형화하면, 한 값에 확률을 배정하는 이산형 문제와 접근이 달라집니다. 예를 들어 0.30초에서 0.32초 사이에 들어올 확률을 묻고, 그 구간 위에서 확률이 얼마나 쌓이는지 계산합니다.</p>
+<p>이 장은 <b class="key">확률밀도함수</b> f를 갖는 연속분포를 다룹니다. f(x)는 음이 아니고, 실수 전체에 걸쳐 적분한 값이 1입니다. 밀도가 0이 아닌 범위를 적고 그 밖에서는 f(x)=0으로 둡니다. 구간 확률은 구간 위의 넓이입니다.</p>
+<p class="calc">P(a &lt; X ≤ b) = ∫<sub>a</sub><sup>b</sup> f(x) dx.</p>
+<p>밀도의 높이가 구간 안에서 거의 일정하면, 확률은 그 높이에 구간 폭을 곱한 값에 가깝습니다. X가 초 단위라면 f(x)의 단위는 1/초이고, f(x) dx의 단위는 서로 상쇄됩니다. 점 하나의 폭은 0이므로 이 모형에서는 P(X=a)=0입니다. 구간 끝점을 포함해도 확률은 같습니다. 기기가 0.31초라는 반올림 값을 기록할 확률은 0.31초로 표시되는 구간을 적분해 구합니다.</p>
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+
+<h2>밀도 f(x)=2x의 넓이를 직접 구한다</h2>
+<p>0 ≤ x ≤ 1에서 f(x)=2x, 그 밖에서는 f(x)=0인 모형을 써 봅시다. x축 위의 직각삼각형은 밑변 1, 높이 2여서 전체 넓이가 1입니다. x=0.75의 밀도는 1.5이지만 어떤 사건의 확률도 1.5가 되지 않습니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 280" role="img" aria-label="x가 0부터 1까지 밀도 f(x)=2x는 0에서 2까지 직선으로 높아진다. 0.25에서 0.75까지의 사다리꼴을 칠했다. 양 끝의 밀도는 0.5와 1.5다.">
+<polygon class="f-box" points="125,227 565,227 565,45"/>
+<polygon class="f-soft" points="235,227 235,181.5 455,90.5 455,227"/>
+<path class="f-ink" d="M85 227h572" marker-end="url(#f-arrow)"/>
+<path class="f-ink" d="M125 239V29" marker-end="url(#f-arrow)"/>
+<path class="f-line" d="M86 227h39l440-182 M565 227h73"/>
+<path class="f-dash" d="M125 45h440 M125 90.5h330 M125 181.5h110"/>
+<path class="f-ink" d="M235 223v8 M455 223v8 M565 223v8"/>
+<text class="f-cap" x="140" y="31">f(x)</text>
+<text class="f-t" x="669" y="231">x</text>
+<text class="f-t" x="112" y="49" text-anchor="end">2</text>
+<text class="f-t" x="112" y="95" text-anchor="end">1.5</text>
+<text class="f-t" x="112" y="186" text-anchor="end">0.5</text>
+<text class="f-t" x="125" y="253" text-anchor="middle">0</text>
+<text class="f-t" x="235" y="253" text-anchor="middle">0.25</text>
+<text class="f-t" x="455" y="253" text-anchor="middle">0.75</text>
+<text class="f-t" x="565" y="253" text-anchor="middle">1</text>
+<text class="f-cap" x="351" y="202" text-anchor="middle">확률 0.5</text>
+</svg>
+<figcaption>칠한 사다리꼴의 평균 높이는 (0.5 + 1.5)/2 = 1이고 폭이 0.5이므로, 면적은 0.5다.</figcaption>
+</figure>
+<p class="calc">∫<sub>0.25</sub><sup>0.75</sup> 2x dx = [x²]<sub>0.25</sub><sup>0.75</sup> = 0.5625 − 0.0625 = 0.5.</p>
+<p>확률변수가 범위를 벗어날 수 없다고 설정했다면, 끝 바깥쪽까지 적분해도 f=0인 부분은 누적을 늘리지 않습니다. 가령 P(X ≤ 1.2)=1입니다.</p>
+<div class="check" data-q="q3"></div>
+
+<h2>왼쪽부터 면적을 누적해 F(x)를 만든다</h2>
+<p><b class="key">누적분포함수</b> F(x) = P(X ≤ x)는 왼쪽 전체에서 x까지의 확률입니다. 앞에서 이산확률을 더했던 자리에 면적 적분이 들어갑니다. 밀도는 위아래로 움직일 수 있지만, F는 음이 아닌 면적을 누적하므로 줄어들지 않습니다.</p>
+<p class="calc">F(x) = ∫<sub>−∞</sub><sup>x</sup> f(t) dt.<br>P(a &lt; X ≤ b) = F(b) − F(a).</p>
+<div class="box ex"><p class="box-k">세 구간에서 정의하기</p>
+<p>위 밀도에서 x &lt; 0에는 아직 면적이 없습니다. 0 ≤ x ≤ 1에서는 ∫<sub>0</sub><sup>x</sup> 2t dt = x²입니다. x &gt; 1이면 전체 면적 1을 이미 지나왔습니다. 그래서 F(x)는 왼쪽에서 0, 가운데에서 x², 오른쪽에서 1입니다. 밀도 f가 연속인 내부에서는 미적분의 기본정리로 F′(x)=f(x)입니다.</p>
+</div>
+<div class="check" data-q="q4"></div>
+
+<h2>분위수는 누적확률에서 x를 찾는다</h2>
+<p>누적분포는 x를 주고 왼쪽 확률을 구합니다. <b class="key">분위수</b> q<sub>p</sub>는 반대로 누적확률 p를 주고 이에 대응하는 위치를 구합니다. 0 &lt; p &lt; 1이고 F가 그 위치에서 한 번만 p를 지난다면 F(q<sub>p</sub>)=p를 풉니다. F가 p인 구간이 있어 답이 여러 개라면, 여기서는 F(x) ≥ p를 처음 만족하는 위치를 사용합니다. 일반식으로는 q<sub>p</sub> = inf{x | F(x) ≥ p}입니다. inf는 이 집합의 가장 큰 하한입니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 282" role="img" aria-label="누적분포 F는 x=0까지 0, 0에서 1까지 제곱 곡선, x=1 이후 1이다. F=0.25에서 가로로 곡선을 만난 다음 아래로 내려가면 x=0.5다.">
+<path class="f-ink" d="M84 224h582" marker-end="url(#f-arrow)"/>
+<path class="f-ink" d="M125 237V27" marker-end="url(#f-arrow)"/>
+<path class="f-dash" d="M125 44h440 M125 179h220v45"/>
+<path class="f-line" d="M86 224h39 Q345 224 565 44 H646"/>
+<circle class="f-fill" cx="345" cy="179" r="5"/>
+<path class="f-ink" d="M345 220v8 M565 220v8"/>
+<text class="f-t" x="111" y="48" text-anchor="end">1</text>
+<text class="f-t" x="111" y="183" text-anchor="end">0.25</text>
+<text class="f-t" x="125" y="249" text-anchor="middle">0</text>
+<text class="f-t" x="345" y="249" text-anchor="middle">0.5</text>
+<text class="f-t" x="565" y="249" text-anchor="middle">1</text>
+<text class="f-cap" x="141" y="29">F(x)</text>
+<text class="f-t" x="676" y="228">x</text>
+<text class="f-cap" x="502" y="166" text-anchor="middle">F(x) = x²</text>
+</svg>
+<figcaption>0.25 분위수에서는 누적확률 0.25를 먼저 지정한다. F(x)=x²에서 x=√0.25=0.5를 얻는다.</figcaption>
+</figure>
+<p>같은 분포의 중앙값은 p=0.5에 대응하는 √0.5 ≈ 0.7071입니다. 밀도가 오른쪽으로 갈수록 높아서, 구간의 가운데 x=0.5에서 왼쪽 면적은 1/4밖에 쌓이지 않습니다. 분위수는 가능 범위에서 차지한 길이의 비율보다 누적확률로 결정합니다.</p>
+<div class="check" data-q="q6"></div>
+
+<h2>밀도가 일정하면 길이가 두 배일 때 확률도 두 배다</h2>
+<p>신호가 오는 시각을 2초부터 8초 사이의 <b class="key">연속 균등분포</b>로 모형화합시다. 전체 폭이 6초이므로 넓이를 1로 만드는 높이는 1/6입니다. 3초부터 5초까지의 폭은 2초이므로 확률은 2/6 = 1/3입니다. 반대로 0.25 분위수까지는 전체 폭의 1/4인 1.5초가 필요합니다. 시작점 2초를 더해 3.5초입니다.</p>
+<p class="calc">U(a,b)에서 a ≤ x ≤ b일 때 f(x) = 1/(b−a), F(x) = (x−a)/(b−a).<br>q<sub>p</sub> = a + p(b−a).</p>
+<p>이 식에서 a &lt; b이며, 확률을 구할 구간이 [a,b]의 밖으로 걸치면 겹치는 길이만 셉니다. 실제 응답이나 도착 시간이 균등하게 분포한다는 결론은 관측이나 현상에 대한 근거로 따로 판단합니다.</p>
+<div class="check" data-q="q8"></div>
+
+<h2>누적값과 분위수를 계산하여 되돌려 본다</h2>
+<p>코드에서 두 함수는 각각 밀도 2x인 예와 균등분포 예의 누적면적을 계산합니다. 분위수를 해당 F에 돌려 넣으면 목표 누적확률이 나옵니다.</p>
+<pre data-example="python"><code>from math import isclose, sqrt
+
+def triangular_cdf(x):
+    return min(max(x, 0.0), 1.0)**2
+
+def uniform_cdf(x, left, right):
+    fraction = (x - left) / (right - left)
+    return min(max(fraction, 0.0), 1.0)
+
+p = 0.25
+q = sqrt(p)
+uniform_q = 2 + p * (8 - 2)
+assert isclose(triangular_cdf(q), p)
+assert isclose(uniform_cdf(uniform_q, 2, 8), p)
+print(f"삼각형 밀도의 구간 확률: {triangular_cdf(0.75) - triangular_cdf(0.25):.4f}")
+print(f"삼각형 밀도의 25% 분위수: {q:.4f}")
+print(f"균등 모형에서 3~5초 확률: {uniform_cdf(5, 2, 8) - uniform_cdf(3, 2, 8):.4f}")
+print(f"균등 모형의 25% 분위수: {uniform_q:.4f}초")</code></pre>
+<pre data-output><code>삼각형 밀도의 구간 확률: 0.5000
+삼각형 밀도의 25% 분위수: 0.5000
+균등 모형에서 3~5초 확률: 0.3333
+균등 모형의 25% 분위수: 3.5000초</code></pre>
+
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table>
+<tr><th scope="col">질문</th><th scope="col">함수와 계산</th></tr>
+<tr><td>한 구간에 확률이 얼마나 있나?</td><td>밀도 f의 구간 면적 ∫ f를 구한다.</td></tr>
+<tr><td>x까지 확률이 얼마나 쌓였나?</td><td>F(x)를 구한다. P(a &lt; X ≤ b) = F(b) − F(a).</td></tr>
+<tr><td>왼쪽 확률이 p가 되는 곳은 어디인가?</td><td>분위수 q<sub>p</sub>를 구한다. 누적확률이 처음 p 이상이 되는 위치다.</td></tr>
+</table></div>
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://openstax.org/books/introductory-statistics-2e/pages/5-chapter-review">OpenStax Introductory Statistics 2e · 연속 확률과 밀도의 면적</a></li>
+<li><a href="https://openstax.org/books/introductory-statistics-2e/pages/5-2-the-uniform-distribution">OpenStax Introductory Statistics 2e · 균등분포의 폭, 확률, 백분위수</a></li>
+</ul>
+
+<h2>확인 문제</h2>
+<p>아직 풀지 않은 문제입니다. 먼저 식이나 근거를 적어 보고 해설을 확인합니다.</p>
+<div id="quiz"></div>
+
+<section class="work" id="tools"></section>
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

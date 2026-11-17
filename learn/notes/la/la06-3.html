@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>직교정규기저와 QR로 가장 가까운 해 찾기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="LA06-3">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">선형대수</p>
+<p class="chap-num">LA06·3</p>
+<h1>직교정규기저와 QR로 가장 가까운 해 찾기</h1>
+<p class="lead">데이터의 모든 점을 지나는 직선이 없을 때에도, 오차 제곱합이 가장 작은 직선을 찾을 수 있습니다. 이미 배운 사영을 여러 방향으로 확장한 뒤 QR 분해로 계산을 정리합니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>직교정규기저에서 내적으로 사영을 구한다.</li><li>그람–슈미트 절차로 QR이 만드는 두 행렬을 설명한다.</li><li>Ax=b가 불가능할 때 최소제곱해를 구하고 잔차의 직교 조건으로 확인한다.</li></ul></div>
+
+<h2>서로 수직인 단위 방향에서 성분을 읽는다</h2>
+<p>길이가 1이고 서로 다른 두 방향의 내적이 0인 기저를 <b class="key">직교정규기저</b>라 합니다. 기저 q₁,…,qᵣ로 이루어진 부분공간에서 b의 사영은 <code>p=q₁(q₁·b)+…+qᵣ(qᵣ·b)</code>입니다. 각 방향의 내적이 다른 방향의 성분을 섞지 않습니다. 실제로 p를 b에서 뺀 벡터는 모든 qᵢ와 내적이 0입니다.</p>
+<p>기저를 열로 묶은 Q를 쓰면 <code>QᵀQ=I</code>, 사영은 <code>p=QQᵀb</code>입니다. <code>Qᵀb</code>가 내적으로 구한 계수를 담고, 앞의 Q가 이 계수로 출력 공간에 벡터를 만듭니다. 이 기저가 출력 공간 전체보다 작은 부분공간을 생성하면 <code>QQᵀ</code>는 전체 항등행렬이 아니라 그 부분공간으로 보내는 행렬입니다.</p>
+<div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
+<h2>기존 방향에 겹치는 부분을 빼고 길이를 맞춘다</h2>
+<p>a₁=(1,0), a₂=(2,2)에서 먼저 a₁을 길이 1로 만든 q₁=(1,0)을 둡니다. a₂에서 q₁ 방향 사영 <code>(q₁·a₂)q₁=(2,0)</code>을 빼면 r₂=(0,2)입니다. 이를 길이 2로 나눠 q₂=(0,1)을 얻습니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 279" role="img" aria-label="a₂=(2,2)에서 a₁ 방향 사영 (2,0)을 뺀다. 남은 r₂=(0,2)를 정규화하면 q₂=(0,1)이다.">
+<line class="f-ink" x1="156" y1="234" x2="520.8" y2="234" marker-end="url(#f-arrow)"/><line class="f-ink" x1="213" y1="265.35" x2="213" y2="50.45999999999998" marker-end="url(#f-arrow)"/><line class="f-ink" x1="270" y1="237.42" x2="270" y2="230.58"/><text class="f-s" x="270" y="252" text-anchor="middle">1</text><line class="f-ink" x1="327" y1="237.42" x2="327" y2="230.58"/><text class="f-s" x="327" y="252" text-anchor="middle">2</text><line class="f-ink" x1="384" y1="237.42" x2="384" y2="230.58"/><text class="f-s" x="384" y="252" text-anchor="middle">3</text><line class="f-ink" x1="441" y1="237.42" x2="441" y2="230.58"/><text class="f-s" x="441" y="252" text-anchor="middle">4</text><line class="f-ink" x1="498" y1="237.42" x2="498" y2="230.58"/><text class="f-s" x="498" y="252" text-anchor="middle">5</text><line class="f-ink" x1="209.58" y1="177" x2="216.42" y2="177"/><text class="f-s" x="199" y="181" text-anchor="middle">1</text><line class="f-ink" x1="209.58" y1="120" x2="216.42" y2="120"/><text class="f-s" x="199" y="124" text-anchor="middle">2</text><line class="f-ink" x1="209.58" y1="63" x2="216.42" y2="63"/><text class="f-s" x="199" y="67" text-anchor="middle">3</text><text class="f-s" x="202" y="250" text-anchor="middle">0</text><text class="f-s" x="529.3499999999999" y="229" text-anchor="middle">x</text><text class="f-s" x="226" y="46.47" text-anchor="middle">y</text><line class="f-ink" x1="213" y1="234" x2="327" y2="120" marker-end="url(#f-arrow)"/><line class="f-line" x1="213" y1="234" x2="327" y2="234" marker-end="url(#f-arrow)"/><line class="f-dash" x1="327" y1="234" x2="327" y2="120"/><line class="f-line" x1="213" y1="234" x2="213" y2="120" marker-end="url(#f-arrow)"/><circle class="f-fill" cx="327" cy="120" r="3.2"/><line class="f-ink" x1="316.74" y1="234" x2="316.74" y2="223.74"/><line class="f-ink" x1="316.74" y1="223.74" x2="327" y2="223.74"/><text class="f-t" x="341" y="112" text-anchor="middle">a₂</text><text class="f-t" x="305" y="223" text-anchor="middle">사영 2q₁</text><text class="f-t" x="178" y="113" text-anchor="middle">r₂</text>
+</svg><figcaption>먼저 x축 성분을 빼고 나면 남은 벡터는 x축에 직교한다. 각 결과를 길이 1로 만들면 직교정규기저가 된다.</figcaption></figure>
+<p>다음 벡터에서도 지금까지 만든 q 방향들의 사영을 모두 빼고 길이를 1로 맞춥니다. 이 절차가 <b class="key">그람–슈미트 직교화</b>입니다. 입력 열이 모두 독립이면 남은 벡터가 0이 되지 않습니다. 0이 나왔다는 것은 그 열이 앞 열들의 생성공간 안에 있다는 뜻이고, 0을 길이로 나누는 단계는 생략해야 합니다.</p>
+<p>m행 n열 A의 열이 모두 독립이라면 m≥n입니다. 직교화한 n개의 q를 열로 쌓은 Q는 m×n입니다. 원래 열 aⱼ를 복원하는 계수 <code>rᵢⱼ=qᵢ·aⱼ</code>를 R에 담습니다. i가 j보다 크면 해당 qᵢ는 앞의 열들과 직교하므로 rᵢⱼ=0입니다. 그래서 R은 n×n의 위삼각 행렬이고 <code>A=QR</code>입니다. 이를 <b>QR 분해</b>라고 합니다.</p>
+<div class="check" data-q="q3"></div><div class="check" data-q="q4"></div>
+<h2>세 점에 가장 가까운 직선을 구한다</h2>
+<p>시각 t=0,1,2에서 측정값 b=(1,1,4)를 얻었습니다. 직선 <code>y=β₀+β₁t</code>의 예측 세 개는 <code>Aβ</code>로 쓸 수 있습니다. A의 두 열은 <code>(1,1,1)</code>과 <code>(0,1,2)</code>입니다. 정확한 직선이면 연속한 시간 구간의 y 차이가 같아야 하지만 관측 차이는 0과 3입니다. 대신 A의 열공간에서 b에 가장 가까운 점을 찾습니다.</p>
+<div class="box ex"><p class="box-k">손계산으로 QR과 직선 구하기</p><ol><li>첫 열을 정규화하면 q₁=(1,1,1)/√3입니다. 다음 열에서 그 방향 사영 (1,1,1)을 빼고 정규화하면 q₂=(−1,0,1)/√2입니다.</li><li>R의 첫 행은 (√3,√3), 둘째 행은 (0,√2)입니다. Qᵀb의 두 값은 6/√3, 3/√2입니다.</li><li>Rβ=Qᵀb의 둘째 행에서 √2 β₁=3/√2이므로 β₁=1.5입니다. 첫째 행에서 β₀+β₁=2이므로 β₀=0.5입니다.</li></ol></div>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 309" role="img" aria-label="관측 세 점은 (0, 1), (1, 1), (2, 4)다. 적합 직선 0.5+1.5t와의 세 잔차는 0.5, −1, 0.5다.">
+<line class="f-ink" x1="153" y1="255" x2="691" y2="255" marker-end="url(#f-arrow)"/><line class="f-ink" x1="153" y1="255" x2="153" y2="36" marker-end="url(#f-arrow)"/><text class="f-cap" x="151" y="25" text-anchor="middle">y</text><text class="f-cap" x="695" y="248" text-anchor="middle">t</text><line class="f-ink" x1="147" y1="255" x2="159" y2="255"/><text class="f-s" x="136" y="259" text-anchor="middle">0</text><line class="f-ink" x1="147" y1="211" x2="159" y2="211"/><text class="f-s" x="136" y="215" text-anchor="middle">1</text><line class="f-ink" x1="147" y1="167" x2="159" y2="167"/><text class="f-s" x="136" y="171" text-anchor="middle">2</text><line class="f-ink" x1="147" y1="123" x2="159" y2="123"/><text class="f-s" x="136" y="127" text-anchor="middle">3</text><line class="f-ink" x1="147" y1="79" x2="159" y2="79"/><text class="f-s" x="136" y="83" text-anchor="middle">4</text><line class="f-ink" x1="153" y1="255" x2="153" y2="262"/><text class="f-s" x="153" y="281" text-anchor="middle">0</text><line class="f-ink" x1="312" y1="255" x2="312" y2="262"/><text class="f-s" x="312" y="281" text-anchor="middle">1</text><line class="f-ink" x1="471" y1="255" x2="471" y2="262"/><text class="f-s" x="471" y="281" text-anchor="middle">2</text><line class="f-ink" x1="630" y1="255" x2="630" y2="262"/><text class="f-s" x="630" y="281" text-anchor="middle">3</text><line class="f-line" x1="153" y1="233" x2="566.4000000000001" y2="61.39999999999998"/><line class="f-dash" x1="153" y1="233" x2="153" y2="211"/><circle class="f-fill" cx="153" cy="211" r="4"/><circle class="f-none" cx="153" cy="233" r="3.5"/><text class="f-s" x="181" y="226" text-anchor="middle">+0.5</text><line class="f-dash" x1="312" y1="167" x2="312" y2="211"/><circle class="f-fill" cx="312" cy="211" r="4"/><circle class="f-none" cx="312" cy="167" r="3.5"/><text class="f-s" x="340" y="193" text-anchor="middle">−1</text><line class="f-dash" x1="471" y1="101" x2="471" y2="79"/><circle class="f-fill" cx="471" cy="79" r="4"/><circle class="f-none" cx="471" cy="101" r="3.5"/><text class="f-s" x="499" y="94" text-anchor="middle">+0.5</text><text class="f-cap" x="611" y="71" text-anchor="middle">적합 직선</text>
+</svg><figcaption>채운 점은 관측 y, 빈 점은 같은 t에서의 예측값이다. 잔차는 관측값에서 예측값을 뺀 수다.</figcaption></figure>
+<p>예측은 (0.5, 2, 3.5)이고 잔차 <code>e=b−Aβ</code>는 (0.5, −1, 0.5)입니다. 잔차 제곱합은 0.25+1+0.25=1.5입니다. 잔차와 첫 열의 내적은 <code>0.5−1+0.5=0</code>, 둘째 열과의 내적은 <code>0−1+1=0</code>입니다.</p>
+<div class="check" data-q="q5"></div><div class="check" data-q="q6"></div>
+<h2>왜 이 조건이 제곱합의 최솟값을 주나</h2>
+<p>어떤 다른 예측 Aβ′를 고르더라도, 현재 예측 Aβ와의 차이는 열공간 안에 있습니다. e는 그 차이와 직교합니다. 그러므로 <code>‖b−Aβ′‖² = ‖e‖² + ‖Aβ−Aβ′‖²</code>입니다. 앞 항은 고정이고 뒤 항은 음수가 될 수 없습니다. 이 방식으로 잔차 제곱합을 최소화하는 문제를 <b class="key">최소제곱</b>이라고 합니다. 열이 독립이면 같은 예측을 만드는 β가 하나뿐이라 해도 하나입니다.</p>
+<p>직교 조건 <code>Aᵀ(b−Aβ)=0</code>을 펼치면 <code>AᵀAβ=Aᵀb</code>라는 <b>정규방정식</b>이 됩니다. 계산에서는 AᵀA를 직접 만들면 원래 A의 수치적 민감도가 더 커질 수 있습니다. 아래처럼 QR로 구하거나, 일반 최소제곱 함수 <code>lstsq</code>를 사용합니다. 라이브러리 QR에서 q 벡터의 부호가 손계산과 달라도, R의 대응 행의 부호도 함께 바뀌므로 A와 β는 같습니다.</p>
+<pre data-example="python"><code>import numpy as np
+
+A = np.array([[1, 0], [1, 1], [1, 2]], dtype=float)
+b = np.array([1, 1, 4], dtype=float)
+Q, R = np.linalg.qr(A, mode=&quot;reduced&quot;)
+beta = np.linalg.solve(R, Q.T @ b)
+fit = A @ beta
+err = b - fit
+solution, _, rank, _ = np.linalg.lstsq(A, b, rcond=None)
+
+print(f&quot;{beta[0]:.2f} {beta[1]:.2f}&quot;)
+print(fit.round(2).tolist(), err.round(2).tolist())
+print(f&quot;{err @ err:.2f}&quot;, rank, np.allclose(A.T @ err, 0),
+      np.allclose(beta, solution))</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>0.50 1.50
+[0.5, 2.0, 3.5] [0.5, -1.0, 0.5]
+1.50 2 True True</code></pre>
+<p>열이 종속일 때에도 사영과 최소 잔차는 정해지지만 계수는 여러 개일 수 있습니다. 이때 가역 R을 전제로 한 직접 풀이 대신 <code>lstsq</code>가 돌려주는 랭크와 최소 노름 해의 의미를 확인합니다.</p>
+<div class="check" data-q="q7"></div>
+<h2>한눈에 정리</h2>
+<ul><li>직교정규기저의 각 계수는 내적으로 바로 구할 수 있다.</li><li>QR 분해의 Q는 직교정규인 열, R은 원래 열을 복원하는 계수를 가진다.</li><li>최소제곱은 관측을 열공간에 사영한다. 잔차는 열공간과 직교한다.</li></ul>
+
+<h2>참고 자료</h2>
+<ul><li><a href="https://ocw.mit.edu/courses/18-06sc-linear-algebra-fall-2011/pages/least-squares-determinants-and-eigenvalues/">MIT OpenCourseWare · 사영, 최소제곱과 그람–슈미트</a></li><li><a href="https://numpy.org/doc/stable/reference/generated/numpy.linalg.qr.html">NumPy · QR 분해</a></li><li><a href="https://numpy.org/doc/stable/reference/generated/numpy.linalg.lstsq.html">NumPy · 최소제곱 해</a></li></ul>
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

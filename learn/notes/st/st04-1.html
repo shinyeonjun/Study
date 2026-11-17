@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>귀무가설, 검정통계량, p값 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="ST04-1">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">통계와 실험 설계 · ST04 가설검정</p>
+<p class="chap-num">ST04·1</p>
+<h1>귀무가설, 검정통계량, p값</h1>
+<p class="lead">동전에서 앞면이 여덟 번 중 일곱 번 나왔습니다. 공정한 동전이라면 어느 정도 드문 관측일까요? 비교할 가설을 명시하고, 그 가설 아래에서 관측한 정도만큼 극단적인 결과의 확률을 계산해 봅니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul>
+<li>검정할 모집단 모수와 귀무·대립가설을 적는다.</li>
+<li>검정통계량과 귀무분포에서 단측·양측 p값을 계산한다.</li>
+<li>p값과 유의수준을 비교하고 결론을 구간 및 효과와 함께 읽는다.</li>
+</ul></div>
+
+<h2>자료를 보기 전에 기준과 질문을 고른다</h2>
+<p>동전의 앞면 확률을 <code>π</code>라 둡니다. 공정한 동전의 기준은 <code>π=0.5</code>입니다. 비교의 출발점이 되는 가설을 <b class="key">귀무가설</b> <code>H₀</code>라고 합니다. 기준과 어떤 방향으로 다른지 묻는 가설이 <b class="key">대립가설</b> <code>H₁</code>입니다.</p>
+<div class="table-wrap"><table><thead><tr><th scope="col">질문</th><th scope="col">귀무가설 H₀</th><th scope="col">대립가설 H₁</th></tr></thead><tbody>
+<tr><th scope="row">앞면 확률이 0.5와 다른가?</th><td>π=0.5</td><td>π≠0.5</td></tr>
+<tr><th scope="row">앞면 쪽으로 치우쳤는가?</th><td>π≤0.5</td><td>π&gt;0.5</td></tr>
+</tbody></table></div>
+<p>첫 질문은 작은 쪽과 큰 쪽을 모두 봐서 <b>양측</b>, 둘째 질문은 큰 쪽만 봐서 <b>오른쪽 단측</b>입니다. 둘째 검정에서 H₀ 안의 값 중 앞면이 많이 나올 위험은 <code>π=0.5</code>에서 가장 큽니다. 기준 분포는 이 경계로 계산합니다. 앞면이 많이 나온 뒤에 작은 p값을 얻으려고 질문을 바꾸면 처음 계획한 오류율의 근거가 사라집니다.</p>
+<p>관측 자료에서 검정에 쓸 숫자를 계산합니다. 이를 <b class="key">검정통계량</b>이라고 합니다. 여기서는 동전을 같은 조건에서 서로 독립적으로 여덟 번 던지고 앞면 횟수 <code>K</code>를 씁니다. <code>H₀: π=0.5</code>가 참인 경우 <code>K</code>가 어떤 값으로 나올지의 분포가 <b class="key">귀무분포</b>입니다.</p>
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+
+<h2>관측했거나 그보다 극단적인 결과의 확률</h2>
+<p>여덟 번 중 일곱 번이 앞면이었습니다. 공정한 동전이라면 앞면이 7번 나온 순서가 8개, 8번 나온 순서가 1개입니다. 가능한 전체 앞·뒷면 순서는 <code>2⁸=256</code>개이고 각각 같은 확률입니다. 오른쪽 단측 검정의 <b class="key">p값</b>은 <code>P(K≥7 | π=0.5) = (8+1)/256 ≈ 0.03516</code>입니다.</p>
+<p>양측 질문에서는 앞면이 지나치게 적은 경우도 극단적입니다. π=0.5에서 기대 횟수 4와 관측 7의 차이는 <code>|7−4|=3</code>입니다. <code>|K−4|≥3</code>을 그 정도 이상의 극단 결과로 정했으므로 <code>K≤1</code>도 셉니다. 양측 p값은 <code>(1+8+8+1)/256 = 18/256 ≈ 0.07031</code>입니다. 두 꼬리 확률이 같아 두 배가 된 계산입니다. 분포나 검정 규칙이 비대칭이면 양측 확률을 각 검정의 정의에 맞춰 계산해야 합니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 272" role="img" aria-label="공정한 동전을 여덟 번 던지면 앞면 횟수 0부터 8까지의 경우의 수는 1, 8, 28, 56, 70, 56, 28, 8, 1이다. 양쪽 꼬리에 표시한 횟수는 0, 1, 7, 8이다.">
+<line class="f-ink" x1="100" y1="38" x2="100" y2="209"/>
+<line class="f-ink" x1="100" y1="209" x2="709" y2="209"/>
+<line class="f-dash" x1="100" y1="165" x2="709" y2="165"/>
+<text class="f-s" x="86" y="169" text-anchor="end">20</text>
+<line class="f-dash" x1="100" y1="121" x2="709" y2="121"/>
+<text class="f-s" x="86" y="125" text-anchor="end">40</text>
+<line class="f-dash" x1="100" y1="77" x2="709" y2="77"/>
+<text class="f-s" x="86" y="81" text-anchor="end">60</text>
+<rect class="f-over" x="128" y="206.8" width="38" height="2.2"/>
+<text class="f-s" x="147" y="197.8" text-anchor="middle">1</text>
+<text class="f-s" x="147" y="230" text-anchor="middle">0</text>
+<rect class="f-over" x="193" y="191.4" width="38" height="17.6"/>
+<text class="f-s" x="212" y="182.4" text-anchor="middle">8</text>
+<text class="f-s" x="212" y="230" text-anchor="middle">1</text>
+<rect class="f-soft" x="258" y="147.4" width="38" height="61.6"/>
+<text class="f-s" x="277" y="138.4" text-anchor="middle">28</text>
+<text class="f-s" x="277" y="230" text-anchor="middle">2</text>
+<rect class="f-soft" x="323" y="85.8" width="38" height="123.2"/>
+<text class="f-s" x="342" y="76.8" text-anchor="middle">56</text>
+<text class="f-s" x="342" y="230" text-anchor="middle">3</text>
+<rect class="f-soft" x="388" y="55" width="38" height="154"/>
+<text class="f-s" x="407" y="46" text-anchor="middle">70</text>
+<text class="f-s" x="407" y="230" text-anchor="middle">4</text>
+<rect class="f-soft" x="453" y="85.8" width="38" height="123.2"/>
+<text class="f-s" x="472" y="76.8" text-anchor="middle">56</text>
+<text class="f-s" x="472" y="230" text-anchor="middle">5</text>
+<rect class="f-soft" x="518" y="147.4" width="38" height="61.6"/>
+<text class="f-s" x="537" y="138.4" text-anchor="middle">28</text>
+<text class="f-s" x="537" y="230" text-anchor="middle">6</text>
+<rect class="f-over" x="583" y="191.4" width="38" height="17.6"/>
+<text class="f-s" x="602" y="182.4" text-anchor="middle">8</text>
+<text class="f-s" x="602" y="230" text-anchor="middle">7</text>
+<rect class="f-over" x="648" y="206.8" width="38" height="2.2"/>
+<text class="f-s" x="667" y="197.8" text-anchor="middle">1</text>
+<text class="f-s" x="667" y="230" text-anchor="middle">8</text>
+<text class="f-s" x="100" y="26" text-anchor="start">경우의 수</text>
+<text class="f-s" x="407" y="256" text-anchor="middle">앞면 횟수 k</text>
+</svg>
+<figcaption>양측 꼬리에 해당하는 4개 막대의 경우의 수를 합하면 18이다. 전체 256개 순서는 귀무 모형에서 같은 확률을 갖는다.</figcaption>
+</figure>
+<div class="box"><p class="box-k">p값이 답하는 질문</p><p>귀무 모형과 표집·검정 가정 아래에서, 미리 정한 규칙으로 볼 때 이번 결과만큼 또는 그보다 극단적인 검정통계량이 나올 확률입니다. 조건이 걸린 곳은 H₀ 쪽입니다. <code>p=0.07031</code>에서 바로 알 수 있는 것은 관측한 극단 정도의 꼬리 확률입니다.</p></div>
+<p>판정 기준인 <b class="key">유의수준</b> <code>α</code>는 자료를 보기 전에 정합니다. 이 장에서는 <code>p &lt; α</code>이면 H₀를 <b>기각</b>하고, <code>p ≥ α</code>이면 <b>기각하지 않는다</b>고 정합니다. α=0.05에서 양측 결과는 기각하지 못합니다. 처음부터 오른쪽 단측으로 설계했다면 0.03516이므로 기각합니다. 양측에서 기각하지 못했다는 결론은 기준과 차이를 드러낼 근거가 이 검정에서 충분하지 않았다는 뜻입니다.</p>
+<div class="check" data-q="q3"></div>
+<div class="check" data-q="q4"></div>
+<div class="check" data-q="q5"></div>
+
+<h2>평균의 t 검정을 신뢰구간과 대조한다</h2>
+<p>모집단 평균을 비교할 때는 관측값을 요약하는 통계량도 달라집니다. 교육용 예에서 독립인 지연 시간 <code>8,9,10,11,12 ms</code>를 같은 정규 모형에서 뽑았다고 둡니다. <a href="st03-2.html">신뢰구간 장</a>에서 계산한 표본평균은 10 ms, 표준오차 추정값은 <code>√0.5 ms</code>입니다. 미리 정한 기준값 <code>μ₀=8 ms</code>에 대해 <code>H₀: μ=8</code>, <code>H₁: μ≠8</code>을 검정합니다.</p>
+<p>기준과 추정값의 차이를 표준오차 단위로 바꾸면 <code>t = (x̄−μ₀)/(s/√n) = 2/√0.5 ≈ 2.828</code>입니다. H₀가 참이면 정규 모형에서 이 통계량은 자유도 4의 t 분포를 따릅니다. 양측 p값은 <code>P(|T|≥|2.828…| | H₀)</code>이고 약 0.04742입니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 249" role="img" aria-label="자유도 4인 t 분포에서 관측된 t=2.828과 절댓값이 같거나 큰 좌우 꼬리를 표시했다. 꼬리 하나의 확률은 약 0.02371이다.">
+<polygon class="f-over" points="70,174 70,173.63 74.58,173.6 79.16,173.57 83.74,173.54 88.32,173.51 92.91,173.47 97.49,173.44 102.07,173.39 106.65,173.35 111.23,173.3 115.81,173.25 120.39,173.19 124.97,173.12 129.56,173.05 134.14,172.98 138.72,172.89 143.3,172.8 147.88,172.7 152.46,172.59 157.04,172.46 161.62,172.33 166.2,172.18 170.79,172.01 175.37,171.83 179.95,171.63 184.53,171.4 189.11,171.16 193.69,170.88 198.27,170.57 202.85,170.23 207.43,169.85 212.02,169.43 216.6,168.95 221.18,168.42 225.76,167.83 230.34,167.17 234.92,166.42 234.92,174"/>
+<polygon class="f-over" points="529.08,174 529.08,166.42 533.66,167.17 538.24,167.83 542.82,168.42 547.4,168.95 551.98,169.43 556.57,169.85 561.15,170.23 565.73,170.57 570.31,170.88 574.89,171.16 579.47,171.4 584.05,171.63 588.63,171.83 593.21,172.01 597.8,172.18 602.38,172.33 606.96,172.46 611.54,172.59 616.12,172.7 620.7,172.8 625.28,172.89 629.86,172.98 634.44,173.05 639.03,173.12 643.61,173.19 648.19,173.25 652.77,173.3 657.35,173.35 661.93,173.39 666.51,173.44 671.09,173.47 675.68,173.51 680.26,173.54 684.84,173.57 689.42,173.6 694,173.63 694,174"/>
+<line class="f-ink" x1="70" y1="174" x2="694" y2="174"/>
+<polyline class="f-line" points="70,173.63 75.2,173.6 80.4,173.57 85.6,173.53 90.8,173.49 96,173.45 101.2,173.4 106.4,173.35 111.6,173.3 116.8,173.23 122,173.17 127.2,173.09 132.4,173.01 137.6,172.91 142.8,172.81 148,172.69 153.2,172.57 158.4,172.42 163.6,172.26 168.8,172.09 174,171.89 179.2,171.66 184.4,171.41 189.6,171.13 194.8,170.81 200,170.45 205.2,170.04 210.4,169.58 215.6,169.06 220.8,168.47 226,167.8 231.2,167.03 236.4,166.16 241.6,165.17 246.8,164.05 252,162.76 257.2,161.3 262.4,159.63 267.6,157.73 272.8,155.57 278,153.12 283.2,150.34 288.4,147.2 293.6,143.67 298.8,139.7 304,135.29 309.2,130.41 314.4,125.05 319.6,119.24 324.8,112.99 330,106.38 335.2,99.5 340.4,92.49 345.6,85.51 350.8,78.77 356,72.49 361.2,66.91 366.4,62.27 371.6,58.78 376.8,56.61 382,55.88 387.2,56.61 392.4,58.78 397.6,62.27 402.8,66.91 408,72.49 413.2,78.77 418.4,85.51 423.6,92.49 428.8,99.5 434,106.38 439.2,112.99 444.4,119.24 449.6,125.05 454.8,130.41 460,135.29 465.2,139.7 470.4,143.67 475.6,147.2 480.8,150.34 486,153.12 491.2,155.57 496.4,157.73 501.6,159.63 506.8,161.3 512,162.76 517.2,164.05 522.4,165.17 527.6,166.16 532.8,167.03 538,167.8 543.2,168.47 548.4,169.06 553.6,169.58 558.8,170.04 564,170.45 569.2,170.81 574.4,171.13 579.6,171.41 584.8,171.66 590,171.89 595.2,172.09 600.4,172.26 605.6,172.42 610.8,172.57 616,172.69 621.2,172.81 626.4,172.91 631.6,173.01 636.8,173.09 642,173.17 647.2,173.23 652.4,173.3 657.6,173.35 662.8,173.4 668,173.45 673.2,173.49 678.4,173.53 683.6,173.57 688.8,173.6 694,173.63"/>
+<line class="f-dash" x1="234.92" y1="166.42" x2="234.92" y2="181"/>
+<text class="f-s" x="234.92" y="201" text-anchor="middle">-2.828</text>
+<line class="f-dash" x1="529.08" y1="166.42" x2="529.08" y2="181"/>
+<text class="f-s" x="529.08" y="201" text-anchor="middle">2.828</text>
+<text class="f-s" x="382" y="203" text-anchor="middle">0</text>
+<text class="f-cap" x="382" y="46" text-anchor="middle">귀무가설 아래의 t 분포</text>
+<text class="f-s" x="136" y="138" text-anchor="middle">0.02371</text>
+<line class="f-ink" x1="143" y1="146" x2="201" y2="170"/>
+<text class="f-s" x="630" y="138" text-anchor="middle">0.02371</text>
+<line class="f-ink" x1="624" y1="146" x2="567" y2="170"/>
+<text class="f-s" x="382" y="232" text-anchor="middle">t</text>
+</svg>
+<figcaption>색이 들어간 양쪽 꼬리의 면적을 합친 값이 양측 p값이다. 화면 밖으로 이어지는 꼬리의 면적도 계산에 포함된다.</figcaption>
+</figure>
+<p class="small">실행 예제</p>
+<pre data-example="python"><code>from math import comb
+from scipy.stats import ttest_1samp
+
+one_tail = (comb(8, 7) + comb(8, 8)) / (2**8)
+print(f&quot;coin: one-sided={one_tail:.5f}, two-sided={2 * one_tail:.5f}&quot;)
+
+sample = [8, 9, 10, 11, 12]
+result = ttest_1samp(sample, popmean=8, alternative=&quot;two-sided&quot;)
+interval = result.confidence_interval(confidence_level=0.95)
+print(f&quot;mean test: t={result.statistic:.3f}, p={result.pvalue:.5f}&quot;)
+print(f&quot;95% CI=[{interval.low:.3f}, {interval.high:.3f}] ms&quot;)</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>coin: one-sided=0.03516, two-sided=0.07031
+mean test: t=2.828, p=0.04742
+95% CI=[8.037, 11.963] ms</code></pre>
+<p>α=0.05에서 <code>0.04742 &lt; 0.05</code>이므로 기준값을 기각합니다. 같은 양측 t 모형으로 얻은 95% 신뢰구간 <code>[8.037, 11.963] ms</code>에도 기준 8 ms가 밖에 있습니다. 두 계산이 쓰는 부등식이 같기 때문입니다. 양측 t에서 <code>p &lt; α</code>는 <code>|t| &gt; t*</code>에 해당하고, 이는 <code>μ₀</code>가 대응하는 닫힌 구간 밖에 있다는 조건입니다. 다른 가정이나 다른 검정으로 만든 구간에는 이 대조가 그대로 적용되지 않습니다.</p>
+<div class="why"><p class="box-k">왜 그럴까?</p><p>평균 차이 2 ms와 p값 0.04742를 둘 다 기록하면 무엇을 각각 알 수 있나요?</p><details><summary>모범 답 보기</summary><p>2 ms는 관측 차이의 크기와 단위를 알려 줍니다. p값은 기준 평균과 검정 가정 아래에서 결과의 극단 정도를 알려 줍니다. 판단에는 평균 차이의 구간, 표본 설계, 2 ms가 실제로 중요한지에 대한 기준도 쓰입니다.</p></details></div>
+<div class="check" data-q="q7"></div>
+<div class="check" data-q="q8"></div>
+
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table><thead><tr><th scope="col">낱말</th><th scope="col">검정에서 하는 일</th></tr></thead><tbody>
+<tr><th scope="row"><b class="key">귀무가설</b></th><td>검정통계량의 기준 분포를 구성한다.</td></tr>
+<tr><th scope="row"><b class="key">대립가설</b></th><td>어떤 방향의 차이를 극단적으로 볼지 정한다.</td></tr>
+<tr><th scope="row"><b class="key">p값</b></th><td>귀무 모형 아래 이번만큼 또는 더 극단적인 결과의 확률이다.</td></tr>
+<tr><th scope="row"><b class="key">유의수준</b></th><td>검정 전에 정하는 기각 판단의 기준이다.</td></tr>
+</tbody></table></div>
+<div class="box sum"><p class="box-k">다음 장으로</p><p><a href="st04-2.html">다음 장</a>에서는 기각 규칙이 어떤 상황에서 틀릴 수 있는지, 얼마나 많은 자료가 필요한지 계산합니다.</p></div>
+
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://itl.nist.gov/div898/handbook/eda/section3/eda352.htm">NIST · 단일 평균의 t 신뢰구간과 양측검정</a></li>
+<li><a href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.ttest_1samp.html">SciPy · 단일 평균 t 검정과 구간 계산</a></li>
+<li><a href="https://www.amstat.org/asa/files/pdfs/P-ValueStatement.pdf">미국통계학회 · p값과 통계적 유의성 성명</a></li>
+</ul>
+<h2>확인 문제</h2>
+<p>직접 계산하거나 설명을 먼저 적고 답을 확인해 보세요.</p>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

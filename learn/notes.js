@@ -183,6 +183,11 @@ window.BDA_CHAPTERS = {
     {"id": "LA05-1", "title": "가우스 소거: 연립식의 해가 한 개·없음·여러 개인 경우", "href": "notes/la/la05-1.html"},
     {"id": "LA05-2", "title": "역행렬과 선형계 풀이: 어떻게 되돌릴 것인가", "href": "notes/la/la05-2.html"}
   ],
+  LA06: [
+    {"id": "LA06-1", "title": "선형결합과 기저로 벡터의 좌표 읽기", "href": "notes/la/la06-1.html"},
+    {"id": "LA06-2", "title": "열공간과 영공간으로 선형계의 해 읽기", "href": "notes/la/la06-2.html"},
+    {"id": "LA06-3", "title": "직교정규기저와 QR로 가장 가까운 해 찾기", "href": "notes/la/la06-3.html"}
+  ],
   CA01: [
     {"id": "CA01-1", "title": "항을 크게 보낼 때와 두 점을 좁힐 때", "href": "notes/ca/ca01-1.html"},
     {"id": "CA01-2", "title": "함수의 극한과 연속: 그 점과 그 주변", "href": "notes/ca/ca01-2.html"}
@@ -202,6 +207,10 @@ window.BDA_CHAPTERS = {
   CA05: [
     {"id": "CA05-1", "title": "정적분: 순간 변화율을 합해 순변화를 구하기", "href": "notes/ca/ca05-1.html"},
     {"id": "CA05-2", "title": "부정적분·치환과 측정값의 수치 적분", "href": "notes/ca/ca05-2.html"}
+  ],
+  CA06: [
+    {"id": "CA06-1", "title": "부분적분과 이상적분", "href": "notes/ca/ca06-1.html"},
+    {"id": "CA06-2", "title": "이중적분과 좌표가 바꾸는 넓이", "href": "notes/ca/ca06-2.html"}
   ],
   PR01: [
     {"id": "PR01-1", "title": "가능한 결과와 그중에 묻는 사건", "href": "notes/pr/pr01-1.html"}
@@ -223,6 +232,24 @@ window.BDA_CHAPTERS = {
     {"id": "PR05-2", "title": "기하분포: 첫 성공을 만날 때까지 몇 번인가", "href": "notes/pr/pr05-2.html"},
     {"id": "PR05-3", "title": "포아송분포: 정해진 구간 안에서 몇 건인가", "href": "notes/pr/pr05-3.html"}
   ],
+  PR06: [
+    {"id": "PR06-1", "title": "확률밀도·누적확률·분위수", "href": "notes/pr/pr06-1.html"},
+    {"id": "PR06-2", "title": "정규분포와 첫 도착의 지수분포", "href": "notes/pr/pr06-2.html"}
+  ],
+  PR07: [
+    {"id": "PR07-1", "title": "결합분포표에서 주변분포와 조건부분포 읽기", "href": "notes/pr/pr07-1.html"},
+    {"id": "PR07-2", "title": "연속 결합밀도: 삼각형을 세로와 가로로 자르기", "href": "notes/pr/pr07-2.html"},
+    {"id": "PR07-3", "title": "공분산과 상관: 함께 움직이는 방향을 수로 읽기", "href": "notes/pr/pr07-3.html"}
+  ],
+  PR08: [
+    {"id": "PR08-1", "title": "난수로 표본을 만들고 경험분포 읽기", "href": "notes/pr/pr08-1.html"},
+    {"id": "PR08-2", "title": "대수의 법칙으로 표본평균의 안정성을 설명하기", "href": "notes/pr/pr08-2.html"},
+    {"id": "PR08-3", "title": "중심극한정리로 표본평균의 분포 읽기", "href": "notes/pr/pr08-3.html"}
+  ],
+  PR09: [
+    {"id": "PR09-1", "title": "조건부기댓값과 전기댓값: 집단 비율로 평균을 합치기", "href": "notes/pr/pr09-1.html"},
+    {"id": "PR09-2", "title": "전분산: 집단 안의 차이와 집단 사이의 차이", "href": "notes/pr/pr09-2.html"}
+  ],
   ST01: [
     {"id": "ST01-1", "title": "기술과 추론 · 어떤 평균을 추정하는가", "href": "notes/st/st01-1.html"},
     {"id": "ST01-2", "title": "반복 관측·표집 편향·측정 편향", "href": "notes/st/st01-2.html"}
@@ -230,6 +257,15 @@ window.BDA_CHAPTERS = {
   ST02: [
     {"id": "ST02-1", "title": "모수·통계량·우도: 관측을 잘 설명하는 값을 찾기", "href": "notes/st/st02-1.html"},
     {"id": "ST02-2", "title": "추정량의 편향과 변동: 한 번의 오차와 반복의 성질", "href": "notes/st/st02-2.html"}
+  ],
+  ST03: [
+    {"id": "ST03-1", "title": "표집분포와 표준오차, 구간의 포괄률", "href": "notes/st/st03-1.html"},
+    {"id": "ST03-2", "title": "평균의 t 신뢰구간을 손으로 만들기", "href": "notes/st/st03-2.html"},
+    {"id": "ST03-3", "title": "부트스트랩: 가지고 있는 표본에서 다시 뽑기", "href": "notes/st/st03-3.html"}
+  ],
+  ST04: [
+    {"id": "ST04-1", "title": "귀무가설, 검정통계량, p값", "href": "notes/st/st04-1.html"},
+    {"id": "ST04-2", "title": "틀릴 확률과 검정력, 표본 수를 정하는 법", "href": "notes/st/st04-2.html"}
   ],
   RS01: [
     {"id": "RS01-1", "title": "질문에서 가설로: 조작적 정의와 측정", "href": "notes/rs/rs01-1.html"},

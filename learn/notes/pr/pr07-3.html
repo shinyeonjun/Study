@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>공분산과 상관: 함께 움직이는 방향을 수로 읽기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e8c'/%3E%3Cpath d='M8 22V10m8 12V14m8 8V6' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="PR07-3">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+
+<header class="chapter">
+<p class="chap-sub">확률 · PR07 함께 변하는 양</p>
+<p class="chap-num">PR07·3</p>
+<h1>공분산과 상관: 함께 움직이는 방향을 수로 읽기</h1>
+<p class="lead">두 변수의 관련성을 한 숫자로 표현할 때 두 값이 각각 평균보다 얼마나 큰지부터 봅니다. 공분산은 이 두 차이의 곱을 평균하고, 상관은 측정 단위가 달라져도 선형 관련성을 비교하게 합니다.</p>
+</header>
+
+<div class="goal">
+<h2>이 장을 읽고 나면</h2>
+<ul>
+<li>확률이 주어진 점들로부터 공분산, 피어슨 상관, 공분산 행렬을 계산한다.</li>
+<li>공분산과 상관의 단위, 0인 분산이라는 예외를 설명한다.</li>
+<li>독립과 무상관의 관계를 반례로 판정한다.</li>
+</ul>
+</div>
+
+<h2>평균을 기준으로 함께 높고 낮은지 본다</h2>
+<p>한 관측에서 두 수 X,Y가 짝지어 옵니다. 설명용 모형에서 X는 처리에 들인 시간(h), Y는 추가 대기 시간(min)이고, 가능한 짝 (0,1), (1,0), (1,2), (2,3)은 확률이 각 1/4입니다. 평균은 각각 μ<sub>X</sub>=1시간, μ<sub>Y</sub>=1.5분입니다. X는 X의 평균을, Y는 Y의 평균을 빼서 각각 <b>중심화</b>합니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 281" role="img" aria-label="같은 확률의 점 (0,1),(1,0),(1,2),(2,3). 평균은 (1,1.5). 왼쪽 아래와 오른쪽 위의 점에서 중심화한 두 차이의 곱은 양수다.">
+<line class="f-ink" x1="132" y1="227" x2="430" y2="227" marker-end="url(#f-arrow)"/>
+<line class="f-ink" x1="155" y1="237" x2="155" y2="46" marker-end="url(#f-arrow)"/>
+<line class="f-ink" x1="155" y1="227" x2="155" y2="233"/><text class="f-s" x="155" y="250" text-anchor="middle">0</text>
+<line class="f-ink" x1="260" y1="227" x2="260" y2="233"/><text class="f-s" x="260" y="250" text-anchor="middle">1</text>
+<line class="f-ink" x1="365" y1="227" x2="365" y2="233"/><text class="f-s" x="365" y="250" text-anchor="middle">2</text>
+<line class="f-ink" x1="149" y1="173" x2="155" y2="173"/><text class="f-s" x="142" y="177" text-anchor="end">1</text>
+<line class="f-ink" x1="149" y1="119" x2="155" y2="119"/><text class="f-s" x="142" y="123" text-anchor="end">2</text>
+<line class="f-ink" x1="149" y1="65" x2="155" y2="65"/><text class="f-s" x="142" y="69" text-anchor="end">3</text>
+<text class="f-cap" x="437" y="232" text-anchor="start">X (시간)</text>
+<text class="f-cap" x="146" y="36" text-anchor="end">Y (분)</text>
+<line class="f-dash" x1="260" y1="227" x2="260" y2="46"/>
+<line class="f-dash" x1="155" y1="146" x2="382" y2="146"/>
+<circle class="f-fill" cx="155" cy="173" r="5"/>
+<circle class="f-fill" cx="260" cy="227" r="5"/>
+<circle class="f-fill" cx="260" cy="119" r="5"/>
+<circle class="f-fill" cx="365" cy="65" r="5"/>
+<text class="f-s" x="272" y="164" text-anchor="start">중심 (1, 1.5)</text>
+<text class="f-s" x="54" y="171" text-anchor="start">(0, 1)</text>
+<text class="f-s" x="278" y="121" text-anchor="start">(1, 2)</text>
+<text class="f-s" x="392" y="65" text-anchor="start">(2, 3)</text>
+<text class="f-s" x="276" y="212" text-anchor="start">(1, 0)</text>
+<text class="f-t" x="520" y="106" text-anchor="middle">아래·왼쪽의 편차 곱</text>
+<text class="f-s" x="520" y="129" text-anchor="middle">(−1)(−0.5) = 0.5</text>
+<text class="f-t" x="520" y="174" text-anchor="middle">위·오른쪽의 편차 곱</text>
+<text class="f-s" x="520" y="197" text-anchor="middle">(+1)(+1.5) = 1.5</text>
+</svg>
+<figcaption>가운데 두 점은 x 편차가 0이다. 그래서 Y값이 달라도 편차 곱에 0을 보탠다.</figcaption>
+</figure>
+<div class="table-wrap"><table>
+<tr><th scope="col">(X,Y)</th><th scope="col">X−1 (h)</th><th scope="col">Y−1.5 (min)</th><th scope="col">편차의 곱 (h·min)</th></tr>
+<tr><td>(0,1)</td><td>−1</td><td>−0.5</td><td>0.5</td></tr>
+<tr><td>(1,0)</td><td>0</td><td>−1.5</td><td>0</td></tr>
+<tr><td>(1,2)</td><td>0</td><td>+0.5</td><td>0</td></tr>
+<tr><td>(2,3)</td><td>+1</td><td>+1.5</td><td>1.5</td></tr>
+</table></div>
+<p><b class="key">공분산</b>은 편차의 곱을 확률로 평균한 값입니다. <code>Cov(X,Y)=E[(X−μ_X)(Y−μ_Y)]</code>이며, 전개하면 <code>Cov(X,Y)=E[XY]−E[X]E[Y]</code>입니다. 이 장에서는 두 변수의 제곱 기댓값이 유한하다고 가정합니다. 여기서는 네 곱의 평균 0.5 h·min을 얻습니다. 양수는 같은 방향 편차의 곱이, 음수는 반대 방향 편차의 곱이 더 크게 기여했다는 뜻입니다.</p>
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+<h2>단위를 지우려면 표준편차 두 개로 나눈다</h2>
+<p>X를 시간에서 분으로 바꾸면 새 변수는 60X입니다. 공분산은 60배가 되어 수치가 30으로 바뀝니다. <b class="key">피어슨 상관계수</b> ρ는 <code>Cov(X,Y)/(σ_X σ_Y)</code>로 계산합니다. 양의 단위 변환에서는 분자와 분모가 같이 늘어나므로 상관은 그대로입니다. 측정 방향을 반대로 뒤집으면 상관의 부호도 바뀝니다.</p>
+<p>이 예에서 Var(X)=0.5 h², Var(Y)=1.25 min²입니다. 그러므로 <code>ρ = 0.5 / √(0.5×1.25) ≈ 0.632456</code>입니다. 상관의 범위는 −1부터 1이고 단위가 없습니다. 정확히 +1이나 −1이면 분산이 양수인 두 값이 확률 1로 증가·감소하는 직선 위에 놓입니다. 둘 중 하나가 항상 일정해 표준편차가 0이면 공분산은 0이어도 이 상관계수는 정의되지 않습니다.</p>
+<div class="box ex"><p class="box-k">벡터로 읽는 분모</p>
+<p>이 예에서 중심화한 X,Y를 길이 4인 벡터로 놓으면 분자 4·Cov는 두 벡터의 내적입니다. 분모 4σ<sub>X</sub>σ<sub>Y</sub>는 두 길이의 곱입니다. 즉 같은 확률의 점에서는 상관을 중심화 벡터 사이 각도의 코사인으로 볼 수 있습니다. 각도가 직각이면 선형 방향에서 편차 곱의 합이 0입니다.</p>
+</div>
+<div class="check" data-q="q3"></div>
+<div class="check" data-q="q4"></div>
+<h2>여러 변수의 공분산을 행렬로 정리한다</h2>
+<p>변수 순서를 (X,Y)로 정하면 <b class="key">공분산 행렬</b> Σ의 (i,j) 칸은 i번째와 j번째 변수의 공분산입니다. 대각에는 자기 자신과의 공분산 곧 분산이 들어갑니다. 편차 곱의 두 인수를 바꿔도 값이 같아서 좌우의 대응 칸은 대칭입니다.</p>
+<div class="table-wrap"><table>
+<tr><th scope="col">Σ</th><th scope="col">X (h)</th><th scope="col">Y (min)</th></tr>
+<tr><td>X (h)</td><td>0.5 h²</td><td>0.5 h·min</td></tr>
+<tr><td>Y (min)</td><td>0.5 h·min</td><td>1.25 min²</td></tr>
+</table></div>
+<p>가중합의 분산도 이 행렬에서 읽습니다. 두 변수의 단위를 맞춘 뒤 <code>Var(aX+bY)=a²Var(X)+2ab Cov(X,Y)+b²Var(Y)</code>입니다. 양쪽 비대각 칸이 합쳐져 2가 나옵니다. 벡터 a로 적으면 이 값은 aᵀΣa이고 항상 0 이상입니다. 예를 들어 X를 분으로 바꾼 60X와 Y를 더하면 분산은 <code>3600×0.5 + 120×0.5 + 1.25 = 1861.25 min²</code>입니다.</p>
+<p>지금은 네 점이 확률 모형 전체여서 평균은 4로 나눴습니다. 이 네 점을 미지의 모집단에서 추출한 표본으로 쓰면 모집단 공분산을 추정하는 데 표본 공분산(보통 n−1로 나눔)을 사용할 수 있습니다. 정의하려는 대상과 분모를 먼저 확인합니다.</p>
+<div class="check" data-q="q5"></div>
+<div class="check" data-q="q6"></div>
+<h2>무상관이어도 규칙이 숨어 있을 수 있다</h2>
+<p>독립인 변수에서는 E[XY]=E[X]E[Y]가 되어 공분산이 0입니다. 두 분산이 양수라면 상관도 0입니다. 거꾸로 공분산이 0이라고 독립이 되지는 않습니다. X가 −1, 0, 1을 각각 1/3로 취하고 Y=X²인 경우를 살펴봅니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 245" role="img" aria-label="X=-1,0,1에 각각 확률 1/3. Y=X²이므로 세 점은 (-1,1),(0,0),(1,1). 양끝 편차 곱이 −1/3과 +1/3이라 합이 0.">
+<line class="f-ink" x1="117" y1="175" x2="417" y2="175" marker-end="url(#f-arrow)"/>
+<line class="f-ink" x1="246" y1="185" x2="246" y2="69" marker-end="url(#f-arrow)"/>
+<line class="f-ink" x1="140" y1="175" x2="140" y2="181"/><text class="f-s" x="140" y="198" text-anchor="middle">-1</text>
+<line class="f-ink" x1="246" y1="175" x2="246" y2="181"/><text class="f-s" x="246" y="198" text-anchor="middle">0</text>
+<line class="f-ink" x1="352" y1="175" x2="352" y2="181"/><text class="f-s" x="352" y="198" text-anchor="middle">1</text>
+<line class="f-ink" x1="240" y1="88" x2="246" y2="88"/><text class="f-s" x="233" y="92" text-anchor="end">1</text>
+<text class="f-cap" x="424" y="180" text-anchor="start">X</text>
+<text class="f-cap" x="246" y="59" text-anchor="middle">Y</text>
+<line class="f-dash" x1="140" y1="117" x2="352" y2="117"/>
+<circle class="f-fill" cx="140" cy="88" r="5"/>
+<circle class="f-fill" cx="246" cy="175" r="5"/>
+<circle class="f-fill" cx="352" cy="88" r="5"/>
+<text class="f-s" x="137" y="74" text-anchor="middle">(−1, 1)</text>
+<text class="f-s" x="256" y="160" text-anchor="start">(0, 0)</text>
+<text class="f-s" x="352" y="74" text-anchor="middle">(1, 1)</text>
+<text class="f-s" x="260" y="111" text-anchor="start">Y 평균 2/3</text>
+<rect class="f-soft" x="486" y="66" width="226" height="85" rx="4"/>
+<text class="f-t" x="599" y="97" text-anchor="middle">−1/3 + 0 + 1/3 = 0</text>
+<text class="f-s" x="599" y="124" text-anchor="middle">X의 값이 Y를 정확히 정한다.</text>
+</svg>
+<figcaption>그림은 세 이산 결과만 표시한다. 중간에는 확률을 가진 다른 점이 없다.</figcaption>
+</figure>
+<p>E[X]=0, E[Y]=2/3입니다. E[XY]=E[X³]=(−1+0+1)/3=0이라 공분산은 0입니다. 그러나 X=0을 알 때 Y=0의 확률은 1이고 전체에서 Y=0의 확률은 1/3입니다. 선형 관련성을 나타내는 곱은 서로 상쇄됐지만 가능한 조합에 관한 정보는 남아 있습니다. 산점도와 결합분포를 같이 보는 이유입니다.</p>
+<pre data-example="python"><code>from fractions import Fraction as F
+from math import sqrt
+
+def mean(values):
+    return F(sum(values), len(values))
+
+def covariance(xs, ys):
+    x_mean, y_mean = mean(xs), mean(ys)
+    return mean([(x - x_mean) * (y - y_mean) for x, y in zip(xs, ys)])
+
+xs = [0, 1, 1, 2]
+ys = [1, 0, 2, 3]
+var_x = covariance(xs, xs)
+var_y = covariance(ys, ys)
+cov_xy = covariance(xs, ys)
+rho = cov_xy / sqrt(var_x * var_y)
+print("행렬 첫 행:", var_x, cov_xy)
+print("행렬 둘째 행:", cov_xy, var_y)
+print(f"상관: {rho:.6f}")
+u = [-1, 0, 1]
+v = [x**2 for x in u]
+assert covariance(u, u) &gt; 0 and covariance(v, v) &gt; 0
+print("Y=X² 공분산:", covariance(u, v))</code></pre>
+<pre data-output><code>행렬 첫 행: 1/2 1/2
+행렬 둘째 행: 1/2 5/4
+상관: 0.632456
+Y=X² 공분산: 0</code></pre>
+<p>코드의 <code>zip</code>은 정해 둔 같은 길이의 두 리스트를 순서대로 붙입니다. 실제 짝 자료에서는 X와 Y의 순서를 각각 따로 정렬하면 원래의 짝이 깨집니다. 동일 관측의 두 값을 같은 위치에 두어야 합니다.</p>
+<h2>참고 자료</h2>
+<ul><li><a href="https://online.stat.psu.edu/stat414/Lesson18">Penn State STAT 414 · 공분산과 피어슨 상관</a></li>
+<li><a href="https://ocw.mit.edu/courses/18-05-introduction-to-probability-and-statistics-spring-2022/mit18_05_s22_probability.pdf">MIT OCW 18.05 · 결합분포와 공분산</a></li></ul>
+
+<h2>확인 문제</h2>
+<p>본문에서 푼 것 말고 남은 문제입니다. 먼저 답을 정한 뒤 해설을 확인합니다.</p>
+<div id="quiz"></div>
+
+<section class="work" id="tools"></section>
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>
