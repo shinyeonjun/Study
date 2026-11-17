@@ -40,9 +40,8 @@
     });
   }
 
-  function drawDays() {
-    var box = document.getElementById("days");
-    if (!box) return;
+  function drawDays() { document.querySelectorAll(".days").forEach(drawDaysIn); }
+  function drawDaysIn(box) {
     box.textContent = "";
     var t = B.today(), n = 0, strip = el("div", "strip");
     for (var d = t - 13; d <= t; d++) {
@@ -55,9 +54,8 @@
     box.appendChild(el("p", "muted small", "최근 14일 중 " + n + "일 공부"));
   }
 
-  function drawBackup() {
-    var box = document.getElementById("backup");
-    if (!box) return;
+  function drawBackup() { document.querySelectorAll(".backup").forEach(drawBackupIn); }
+  function drawBackupIn(box) {
     box.textContent = "";
     var out = el("button", "lnk", "기록 내보내기"), inp = el("input"), lab = el("label", "lnk", "가져오기"), msg = el("p", "muted small");
     out.type = "button";
