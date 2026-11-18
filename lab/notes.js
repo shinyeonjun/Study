@@ -13,7 +13,7 @@ window.BDA_SUBJECTS = [
       { id: "S03", title: "곱을 합으로", href: "decks/s03.html", area: 1 },
       { id: "S04", title: "변화를 재다", href: "decks/s04.html", area: 1 },
       { id: "S05", title: "여러 변수와 기울기 벡터", href: "decks/s05.html", area: 1 },
-      { id: "S06", title: "틀린 만큼 고친다", href: "decks/s06.html", area: 2 },
+      { id: "S06", title: "틀린 만큼 고친다: 손실과 경사하강", href: "decks/s06.html", area: 2 },
       { id: "S07", title: "학습 문제를 세우는 법", href: "decks/s07.html", area: 2 },
       { id: "S08", title: "선형회귀 완성", href: "decks/s08.html", area: 3 },
       { id: "S09", title: "자료를 표와 배열로", href: "decks/s09.html", area: 3 }

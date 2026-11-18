@@ -29,7 +29,10 @@ FIGS = r"""() => {
 OVERFLOW = r"""() => {
   const slides=[...document.querySelectorAll('.slide')]; const out=[];
   slides.forEach((s,si)=>{ slides.forEach(x=>x.classList.toggle('on',x===s));
-    if (s.scrollHeight > s.clientHeight + 4) out.push(si+1); });
+    if (s.scrollHeight > s.clientHeight + 4 && !s.querySelector('pre, table')) out.push(si+1+'(넘침)');  // 코드·표 장은 스크롤 허용
+    s.querySelectorAll('svg.fig-svg').forEach(svg=>{ if(getComputedStyle(svg).display==='none') return;
+      const r=svg.getBoundingClientRect(), vb=svg.viewBox.baseVal, want=r.width*vb.height/vb.width;
+      if (r.height < want*0.9 || r.width < 300) out.push(si+1+'(그림 눌림 '+Math.round(r.width)+'×'+Math.round(r.height)+')'); }); });
   return out;
 }"""
 
@@ -71,7 +74,7 @@ def run(names):
                         probs.append(f"슬라이드 {n}장 (12~18 권장)")
                 ov = pg.evaluate(OVERFLOW)
                 if ov:
-                    probs.append(f"{w}px 화면에서 넘치는 장: {ov}")
+                    probs.append(f"{w}px 화면: {ov}")
                 probs += [f"{w}px 콘솔 오류: {e}" for e in errs]
                 pg.close()
             print(f"== {name}: " + ("OK" if not probs else ""))
