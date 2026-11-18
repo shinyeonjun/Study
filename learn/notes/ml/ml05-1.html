@@ -34,7 +34,8 @@
 <h2>확률의 비율을 로그로 바꾸어 선형식과 연결한다</h2>
 <p>이진 목표에서 긴 대기를 양성 1이라고 합시다. 양성 확률 p가 0.8이면 음성 확률은 0.2이고 양성과 음성의 확률 비인 <b class="key">오즈</b>는 <code>p/(1−p)=4</code>입니다. 양의 값인 오즈에 자연로그를 쓴 <b class="key">로짓</b>은 <code>ln[p/(1−p)]</code>입니다. 확률 p가 0과 1 사이를 움직이면 로짓은 모든 실수 값을 가질 수 있습니다.</p>
 <p><b class="key">로지스틱 회귀</b>는 <code>z=b+wᵀx</code>로 로짓을 표현합니다. 이를 확률로 돌려 놓는 <b class="key">시그모이드</b>는 <code>p=1/(1+exp(−z))</code>입니다. z=0이면 p=0.5이며 z가 커질 때 p가 커집니다. 이 장의 합성 모형은 <code>z=2x−4</code>입니다. x=1,2,3일 때 로짓은 −2,0,2이고 확률은 약 0.119,0.500,0.881입니다.</p>
-<div class="check" data-q="q1"></div><div class="check" data-q="q2"></div><div class="check" data-q="q3"></div>
+<p>계수는 로그오즈의 기울기로 읽습니다. 다른 입력을 고정하고 x<sub>j</sub>가 1 늘면 로짓이 w<sub>j</sub>만큼 늘고, 오즈는 <code>exp(w_j)</code>배가 됩니다. 이 배수를 <b class="key">오즈비</b>라고 합니다. <code>z=2x−4</code>에서 x가 2에서 3이 되면 오즈는 1에서 <code>e²≈7.389</code>로 늘어납니다(0.881/0.119≈7.39). 확률 p 자체는 x에 대해 S자로 변하므로 "x가 1 늘면 확률이 몇 %p 는다"처럼 일정한 값으로 읽을 수 없습니다.</p>
+<div class="check" data-q="q1"></div><div class="check" data-q="q2"></div><div class="check" data-q="q3"></div><div class="check" data-q="q9"></div>
 
 <h2>예측 확률과 경보 결정은 서로 다른 단계다</h2>
 <p>확률이 기준 이상이면 경보를 보낸다고 정합니다. 임계값 0.5는 로짓 0을 뜻하므로 이 예에서는 x≥2에서 경보합니다. 임계값이 0.8이면 <code>2x−4≥ln 4</code>이므로 <code>x≥(4+ln 4)/2≈2.693</code>입니다. x가 벡터일 때는 일정한 로짓을 내는 <code>b+wᵀx=상수</code>가 경계입니다.</p>
@@ -67,11 +68,12 @@
 </svg>
 <figcaption>높은 임계값을 선택하면 같은 확률 곡선에서 양성으로 부르는 경계가 달라진다.</figcaption>
 </figure>
-<p>경보 기준을 바꾸는 데 모형을 다시 학습할 필요는 없습니다. 임계값은 지연 누락과 거짓 경보의 비용에 맞춰 검증 자료에서 고릅니다. 연속 값에 맞춘 모형의 출력이 얼마나 잘 보정됐는지는 평가에서 따로 확인합니다.</p>
+<p>경보 기준을 바꾸는 데 모형을 다시 학습할 필요는 없습니다. 임계값은 지연 누락과 거짓 경보의 비용에 맞춰 검증 자료에서 고릅니다. 모형이 0.8이라고 말한 사례들 가운데 실제로 약 80%가 양성인지, 즉 확률이 실제 빈도와 맞는지(<b>보정</b>, calibration)는 평가에서 따로 확인합니다.</p>
 <div class="check" data-q="q4"></div><div class="check" data-q="q5"></div>
 
 <h2>실제 라벨에 준 확률에 손실을 매긴다</h2>
 <p>관측 라벨 y가 1이면 손실은 <code>−ln p</code>, y가 0이면 <code>−ln(1−p)</code>입니다. 이를 합친 <b class="key">이진 교차엔트로피(BCE)</b>는 <code>−[y ln p+(1−y)ln(1−p)]</code>입니다. 여러 관측의 BCE를 줄이도록 회귀 계수를 정합니다. 자연로그를 쓰므로 손실 단위는 나트입니다.</p>
+<div class="box"><p class="box-k">BCE와 최대가능도</p><p>관측이 서로 독립이라고 보면, 계수가 주어졌을 때 관측된 라벨 전체가 나올 확률(가능도)은 각 관측에서 실제 라벨에 준 확률의 곱입니다. 곱에 로그를 씌우고 부호를 바꾸면 BCE의 합이 됩니다. 그래서 <b class="key">BCE 최소화 = 최대가능도 추정</b>입니다. 선형 회귀와 달리 닫힌 해가 없어 경사하강 계열의 반복 최적화로 계수를 찾습니다. 한 관측의 BCE를 로짓 z로 미분하면 <code>p−y</code>라는 간단한 꼴이 나와, 예측 확률이 정답보다 클수록 z를 낮추는 방향으로 고칩니다. scikit-learn의 <code>LogisticRegression</code>은 기본으로 L2 규제(<code>C=1.0</code>, C가 작을수록 규제가 강함)를 더한 손실을 lbfgs로 최소화합니다.</p></div>
 <figure class="fig">
 <svg class="fig-svg" viewBox="0 0 760 230" role="img" aria-label="x가 1,2,3이면 로짓 −2,0,2와 확률 0.119,0.500,0.881을 얻는다. 관측 라벨 0,1,1에 대한 자연로그 손실은 0.127,0.693,0.127이다.">
 <rect class="f-box" x="77" y="28" width="108" height="40"/>
@@ -143,13 +145,14 @@ z= 2, p=0.881, y=1, BCE=0.127
 mean BCE=0.3157
 z=1000: y=1 loss=0.0, y=0 loss=1000.0</code></pre>
 <div class="why"><p class="box-k">왜 그럴까?</p><p>z=1000인데 실제 라벨이 0이면 왜 큰 손실이 나올까요?</p><details><summary>모범 답 보기</summary><p>모형은 양성에 거의 모든 확률을 줬습니다. 실제 정답인 음성 확률을 매우 작게 지정했으므로 그 음의 로그가 큽니다.</p></details></div>
-<div class="check" data-q="q6"></div><div class="check" data-q="q7"></div>
+<div class="check" data-q="q6"></div><div class="check" data-q="q10"></div><div class="check" data-q="q7"></div>
 
 <h2>한눈에 정리</h2>
 <div class="table-wrap"><table><thead><tr><th scope="col">개념</th><th scope="col">확인할 것</th></tr></thead><tbody>
 <tr><th scope="row"><b class="key">로짓</b></th><td>확률의 오즈에 자연로그를 적용한 값</td></tr>
 <tr><th scope="row"><b class="key">시그모이드</b></th><td>유한한 실수 로짓을 0과 1 사이 확률로 변환</td></tr>
-<tr><th scope="row"><b class="key">BCE</b></th><td>실제 라벨에 준 확률의 음의 로그</td></tr>
+<tr><th scope="row"><b class="key">오즈비</b></th><td>입력이 1 늘 때 오즈가 exp(w)배</td></tr>
+<tr><th scope="row"><b class="key">BCE</b></th><td>실제 라벨에 준 확률의 음의 로그. 합의 최소화 = 최대가능도</td></tr>
 </tbody></table></div><div class="box sum"><p class="box-k">다음 장으로</p><p><a href="ml05-2.html">다음 장</a>에서는 서로 배타적인 클래스가 셋 이상일 때의 확률과 손실을 계산합니다.</p></div>
 
 <h2>참고 자료</h2>

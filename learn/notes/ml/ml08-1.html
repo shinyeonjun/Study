@@ -33,7 +33,14 @@
 
 <h2>비어 있는 이유를 보고 채울 값을 정한다</h2>
 <p>연습용 배송 표의 거리 열에 <code>[4, 비어 있음, 8, 비어 있음]</code>이 있습니다. <b class="key">결측값</b>은 필요한 값이 관측되지 않았다는 뜻입니다. 비어 있거나 기록되지 않은 거리와 실제 거리 0은 다른 상태입니다. 수집 실패인지, 아직 기록할 시간이 아닌지, 항목 자체가 맞지 않는지 확인합니다. 학습에 필요한 목표 라벨이 빠진 상황은 입력 특성의 빈칸과 따로 처리합니다.</p>
-<p>모델이 수치 결측을 직접 다룰 수 없다면 훈련에서 관측한 값으로 채울 기준을 구할 수 있습니다. 값을 대신 채우는 일을 <b class="key">결측값 대치</b>라고 합니다. 값 4와 8의 중앙값으로 채우면 6입니다. 데이터가 없는 행을 통째로 제외할 수도 있지만 특정 집단에서 결측이 많다면 남는 자료의 범위가 바뀝니다.</p>
+<p>통계에서는 비어 있게 된 원리를 세 가지로 나눕니다. 어떤 대치가 편향을 덜 만드는지가 이것에 달려 있습니다.</p>
+<div class="table-wrap"><table><thead><tr><th scope="col">구분</th><th scope="col">뜻</th><th scope="col">배송 예</th></tr></thead><tbody>
+<tr><th scope="row"><b class="key">MCAR</b> (완전 무작위 결측)</th><td>결측 여부가 어떤 값과도 무관</td><td>기록 장비가 무작위로 가끔 꺼짐</td></tr>
+<tr><th scope="row"><b class="key">MAR</b> (무작위 결측)</th><td>결측 여부가 <em>관측된</em> 다른 변수로 설명됨</td><td>특정 지점의 단말기에서만 거리가 자주 빠짐</td></tr>
+<tr><th scope="row"><b class="key">MNAR</b> (비무작위 결측)</th><td>결측 여부가 <em>빠진 값 자체</em>에 달림</td><td>아주 먼 거리일수록 측정이 실패해 빠짐</td></tr>
+</tbody></table></div>
+<p>MCAR이면 결측 행을 빼도 남은 자료의 분포가 치우치지 않지만(표본 수만 줄어듦), MAR·MNAR에서는 빼거나 단순 대치하면 치우칠 수 있습니다. MNAR은 관측된 자료만으로는 확인할 수 없어 수집 과정을 조사해야 합니다.</p>
+<p>모델이 수치 결측을 직접 다룰 수 없다면 훈련에서 관측한 값으로 채울 기준을 구할 수 있습니다. 값을 대신 채우는 일을 <b class="key">결측값 대치</b>라고 합니다. 수치 열은 평균이나 중앙값(이상값에 덜 흔들림), 범주 열은 최빈값으로 채우는 것이 가장 단순한 방법입니다. 값 4와 8의 중앙값으로 채우면 6입니다. 데이터가 없는 행을 통째로 제외할 수도 있지만 특정 집단에서 결측이 많다면 남는 자료의 범위가 바뀝니다.</p>
 <figure class="fig">
 <svg class="fig-svg" viewBox="0 0 760 298" role="img" aria-label="훈련 거리 4, 결측, 8, 결측에서 관측한 두 수의 중앙값은 6이다. 빠진 값을 6으로 채우고 그 행의 결측 표시를 1로 둔다.">
 <rect class="f-box" x="53" y="35" width="104" height="40"/>
@@ -83,13 +90,15 @@
 </svg>
 <figcaption>채운 거리와 결측 표시의 역할을 나누면 실제로 거리가 6인 행과 보충한 행을 구분할 수 있다.</figcaption>
 </figure>
-<p>거리가 비었는지를 별도 열 <code>distance_missing</code>에 두면, 보충한 6과 원래부터 거리 6인 주문을 구별할 수 있습니다. 결측 여부도 접수 시점에 알 수 있을 때 특성으로 쓸 수 있습니다. 훈련에서 관측을 하나도 못 한 열에는 중앙값이 없으므로 수집을 보완하거나 빼거나, 업무상 의미 있는 미리 지정한 값으로 처리합니다.</p>
+<p>거리가 비었는지를 별도 열 <code>distance_missing</code>에 두면, 보충한 6과 원래부터 거리 6인 주문을 구별할 수 있습니다. 결측 여부도 접수 시점에 알 수 있을 때 특성으로 쓸 수 있습니다. scikit-learn의 <code>SimpleImputer</code>는 기본값이 <code>strategy="mean"</code>, <code>add_indicator=False</code>이므로, 이 예처럼 하려면 <code>strategy="median"</code>, <code>add_indicator=True</code>로 지정합니다. 훈련에서 관측을 하나도 못 한 열에는 중앙값이 없으므로 수집을 보완하거나 빼거나, 업무상 의미 있는 미리 지정한 값으로 처리합니다.</p>
 <div class="check" data-q="q1"></div>
 <div class="check" data-q="q2"></div>
+<div class="check" data-q="q9"></div>
 
 <h2>범주마다 자리 하나를 정해 0 또는 1을 쓴다</h2>
 <p>배송 유형이 보관함·방문이라면 서로 다른 이름일 뿐입니다. 명목 범주에 아무 번호나 주어 거리 계산에 쓰면 번호 사이의 순서와 간격이 입력에 들어갑니다. <b class="key">원-핫 인코딩</b>은 범주마다 한 열을 두고 이번 행에 해당하는 범주의 열에만 1을 씁니다.</p>
-<p>이번에는 유형의 결측을 별도의 <code>결측</code> 범주로 기록합니다. 훈련에서 보관함·결측·방문이 나왔으므로 새 행에도 그 세 열만 같은 순서로 만듭니다. 운영에서 처음 등장한 <code>점포</code>는 기존 열 가운데 해당되는 것이 없습니다. 새 범주를 만나면 오류로 알려 주거나, 미리 정한 기타 범주에 보내거나, 예시처럼 해당 범주 쪽 열을 모두 0으로 만들 수 있습니다. 마지막 방식은 scikit-learn의 <code>handle_unknown="ignore"</code>와 같은 원리입니다.</p>
+<p>이번에는 유형의 결측을 별도의 <code>결측</code> 범주로 기록합니다. 훈련에서 보관함·결측·방문이 나왔으므로 새 행에도 그 세 열만 같은 순서로 만듭니다. 운영에서 처음 등장한 <code>점포</code>는 기존 열 가운데 해당되는 것이 없습니다. 새 범주를 만나면 오류로 알려 주거나, 미리 정한 기타 범주에 보내거나, 예시처럼 해당 범주 쪽 열을 모두 0으로 만들 수 있습니다. 마지막 방식은 scikit-learn의 <code>handle_unknown="ignore"</code>와 같은 원리입니다. <code>OneHotEncoder</code>의 기본값은 <code>handle_unknown="error"</code>(새 범주에서 오류)와 <code>drop=None</code>(모든 범주의 열을 남김)입니다.</p>
+<p>범주에 실제 순서가 있으면 이야기가 다릅니다. 배송 등급 <code>일반 &lt; 빠름 &lt; 당일</code>처럼 순서가 의미 있는 <b class="key">순서형 범주</b>는 0, 1, 2 같은 정수 하나로 바꾸는 <b>순서 인코딩</b>(scikit-learn <code>OrdinalEncoder</code>, 순서는 <code>categories</code>로 직접 지정)을 쓸 수 있습니다. 이때도 0→1과 1→2의 간격이 같다는 가정이 선형 모델에 들어가므로, 간격이 의미 없으면 원-핫이 안전합니다. 나무 모델은 크기 비교만 하므로 이 간격 가정의 영향을 덜 받습니다.</p>
 <figure class="fig">
 <svg class="fig-svg" viewBox="0 0 760 284" role="img" aria-label="열 순서를 보관함, 결측, 방문으로 고정한다. 각 학습 범주는 해당 열에만 1을 쓴다. 새 유형 점포는 무시 설정에서 세 열이 모두 0이다.">
 <rect class="f-box" x="83" y="31" width="208" height="40"/>
@@ -140,9 +149,10 @@
 <div class="check" data-q="q3"></div>
 <div class="check" data-q="q4"></div>
 <div class="check" data-q="q5"></div>
+<div class="check" data-q="q10"></div>
 
 <h2>기준 범주와 새 범주를 어떻게 표현했는지 확인한다</h2>
-<p>모든 범주의 열을 쓰면 기존 범주의 한 행에서 세 열의 합은 1입니다. 기존 범주로만 이루어진 훈련 자료에서는 이 열의 합이 절편을 나타내는 1의 열과 똑같습니다. 절편이 있는 비정규화 선형 회귀에서 각 계수를 식별하려면 기준 범주의 열 하나를 빼는 방식이 있습니다. 예를 들어 <b>보관함</b>을 빼면 남은 <code>(결측,방문)</code>이 <code>(0,0)</code>인 기존 행은 보관함을 가리킵니다.</p>
+<p>모든 범주의 열을 쓰면 기존 범주의 한 행에서 세 열의 합은 1입니다. 기존 범주로만 이루어진 훈련 자료에서는 이 열의 합이 절편을 나타내는 1의 열과 똑같습니다. 그러면 열들이 완전한 <b>다중공선성</b>(한 열이 다른 열들의 선형결합)에 놓여, 절편이 있고 규제가 없는 선형 회귀에서 계수가 하나로 정해지지 않습니다. 이를 <b class="key">더미 변수 함정</b>이라 부르고, 피하려고 기준 범주의 열 하나를 빼는 방식(k개 범주 → k−1열, <code>drop="first"</code>)이 있습니다. 예를 들어 <b>보관함</b>을 빼면 남은 <code>(결측,방문)</code>이 <code>(0,0)</code>인 기존 행은 보관함을 가리킵니다.</p>
 <p>여기에 새 범주를 모두 0으로 처리하는 방식까지 쓰면 점포와 보관함이 다 같은 벡터가 됩니다. 구별이 업무에 중요하다면 새 범주 정책을 처음부터 별도로 정해야 합니다. 모든 모델에서 기준 범주를 빼야 하는 것은 아니며, 나무처럼 절편과 선형 독립을 요구하지 않는 모델은 세 열을 그대로 쓸 수 있습니다.</p>
 <p class="small">실행 예제</p>
 <pre data-example="python"><code>from statistics import median
@@ -178,9 +188,11 @@ new unknown type: [6.0, 1, 0, 0, 0]</code></pre>
 <h2>한눈에 정리</h2>
 <div class="table-wrap"><table><thead><tr><th scope="col">개념</th><th scope="col">확인할 점</th></tr></thead><tbody>
 <tr><th scope="row"><b class="key">결측값 대치</b></th><td>훈련에서 정한 중앙값 등으로 입력 빈칸을 처리</td></tr>
+<tr><th scope="row">결측 원리</th><td><b class="key">MCAR</b>·<b class="key">MAR</b>·<b class="key">MNAR</b>: 빼거나 단순 대치해도 되는지가 달라짐</td></tr>
 <tr><th scope="row"><b class="key">원-핫 인코딩</b></th><td>정한 범주 순서로 0/1 열을 만듦</td></tr>
+<tr><th scope="row">순서형 범주</th><td>순서가 있으면 정수 하나로 순서 인코딩 가능 (간격 가정 주의)</td></tr>
 <tr><th scope="row">새 범주</th><td>오류, 기타 범주, 또는 기존 열을 모두 0 등 규칙 선택</td></tr>
-<tr><th scope="row">기준 범주</th><td>제거한 열이 무엇이며 0 벡터가 무엇을 뜻하는지 기록</td></tr>
+<tr><th scope="row">기준 범주</th><td><b class="key">더미 변수 함정</b>을 피하려 k−1열. 0 벡터가 무엇을 뜻하는지 기록</td></tr>
 </tbody></table></div>
 <div class="box sum"><p class="box-k">다음 장으로</p><p><a href="ml08-2.html">다음 장</a>에서는 숫자 열의 단위와 비대칭, 특성끼리의 결합을 다룹니다.</p></div>
 

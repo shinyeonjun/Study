@@ -76,8 +76,12 @@
 <figcaption>m와 kg의 눈금은 서로 다르다. 종이 위의 길이 대신 거리 공식에 넣은 수치로 이웃을 정한다.</figcaption>
 </figure>
 <p>기존 주문의 지연 라벨은 A=1, B=0, C=0, D=1입니다. 원래 수치에서 가장 가까운 한 행 A만 쓰면 지연 1, 세 행 A·B·C를 쓰면 정상 0이 다수입니다. 이웃을 세 건 고른 뒤 시간이 16, 14, 18분이었다면 평균 16분이 회귀 예측입니다. k는 양의 정수이며 이 구현에서는 훈련 행 수 이하여야 합니다.</p>
+<p>k는 모델의 복잡도를 정하는 <b class="key">하이퍼파라미터</b>(학습 전에 사람이 정하는 설정값)입니다. k=1이면 훈련 행 하나하나에 예측이 맞춰져 훈련 정확도는 (같은 입력에 다른 라벨이 없다면) 100%지만, 잡음 섞인 한 행에 따라 경계가 들쭉날쭉해져 <b>과적합</b>되기 쉽습니다. k를 키우면 경계가 매끄러워지고, k가 훈련 행 수와 같으면 모든 입력에 전체 다수 클래스를 답하는 <b>과소적합</b>이 됩니다. 그래서 k는 검증으로 고릅니다.</p>
+<p>거리도 유클리드만 있는 것은 아닙니다. 좌표 차이의 절댓값을 더하는 <b class="key">맨해튼 거리</b> <code>|x₁−q₁|+|x₂−q₂|</code>도 자주 쓰며, 둘을 묶은 <b>민코프스키 거리</b> <code>(Σ|xᵢ−qᵢ|ᵖ)^(1/p)</code>는 p=1이면 맨해튼, p=2이면 유클리드입니다. scikit-learn의 <code>KNeighborsClassifier</code> 기본값은 <code>n_neighbors=5</code>, <code>metric="minkowski"</code>, <code>p=2</code>(유클리드), <code>weights="uniform"</code>(같은 가중치 투표)입니다. <code>weights="distance"</code>로 두면 가까운 이웃일수록 거리의 역수만큼 큰 표를 줍니다.</p>
 <div class="check" data-q="q1"></div>
 <div class="check" data-q="q2"></div>
+<div class="check" data-q="q9"></div>
+<div class="check" data-q="q10"></div>
 
 <h2>훈련자료의 척도로 거리의 비중을 정한다</h2>
 <p>원래 수치의 거리에는 m와 kg가 섞입니다. 예를 들어 거리를 km로 저장하면 그 열의 차이가 1,000분의 1로 작아집니다. 남은 열은 같아도 순위가 바뀔 수 있습니다. <b class="key">표준화</b>는 열별로 훈련 평균을 빼고 훈련 표준편차로 나누어, 한 표준편차의 변화에 같은 수치 크기를 주는 선택입니다.</p>
@@ -145,6 +149,8 @@ k=1: 0</code></pre>
 <div class="table-wrap"><table><thead><tr><th scope="col">개념</th><th scope="col">계산</th></tr></thead><tbody>
 <tr><th scope="row"><b class="key">최근접 이웃</b></th><td>거리 순으로 k행을 고름</td></tr>
 <tr><th scope="row"><b class="key">분류·회귀</b></th><td>이웃 라벨의 다수결 또는 이웃 목표의 평균</td></tr>
+<tr><th scope="row"><b class="key">k</b></th><td>작으면 과적합, 크면 과소적합. 검증으로 고름</td></tr>
+<tr><th scope="row"><b class="key">맨해튼 거리</b></th><td>좌표 차이 절댓값의 합 (민코프스키 p=1)</td></tr>
 <tr><th scope="row"><b class="key">표준화</b></th><td>훈련에서 척도를 배워 새 입력에도 동일 적용</td></tr>
 <tr><th scope="row">동률</th><td>이웃 경계와 투표 동률을 별도로 다룸</td></tr>
 </tbody></table></div>

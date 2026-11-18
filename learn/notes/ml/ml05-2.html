@@ -71,12 +71,13 @@
 </svg>
 <figcaption>실제 라벨이 B라면 손실에는 B의 확률 2/7이 쓰인다.</figcaption>
 </figure>
+<p>로짓을 클래스마다 따로 선형식으로 두고 <code>z_k=b_k+w_kᵀx</code>에 softmax를 적용한 모형이 <b class="key">다항 로지스틱 회귀</b>(softmax 회귀)입니다. 클래스가 둘이면 <code>p₁=exp(z₁)/(exp(z₀)+exp(z₁))=1/(1+exp(−(z₁−z₀)))</code>이므로, 로짓의 차이 <code>z₁−z₀</code>에 시그모이드를 쓴 앞 장의 이진 로지스틱 회귀와 같습니다. 모든 로짓에 같은 값을 더해도 확률이 같으므로(마지막 절에서 확인합니다) 한 클래스의 로짓을 0으로 고정해도 표현력은 줄지 않습니다. 그림의 C 로짓이 0인 것도 이런 기준 클래스로 읽을 수 있습니다.</p>
 <p>서로 배타적이지 않은 여러 라벨을 붙이는 문제는 다릅니다. 예를 들어 한 글에 결제와 배달 문의가 동시에 있을 수 있다면, 각 라벨의 포함 여부를 별도 이진 문제처럼 다룰 수 있습니다.</p>
-<div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
+<div class="check" data-q="q1"></div><div class="check" data-q="q2"></div><div class="check" data-q="q9"></div>
 
 <h2>가장 큰 로짓이 어느 클래스인지 확인한다</h2>
 <p>지수 함수는 증가하고 분모가 모든 클래스에서 같으므로 큰 로짓은 큰 확률을 냅니다. 가장 큰 값의 위치인 <b class="key">argmax</b>는 로짓과 확률에서 같습니다. 어느 클래스를 예측할지만 필요하면 순위만 비교해도 됩니다.</p>
-<p>입력 x에 대한 로짓이 <code>(−x,1,x)</code>라면 x&lt;−1에서 A, −1&lt;x&lt;1에서 B, x&gt;1에서 C가 가장 큽니다. x=±1에서는 동률입니다. 두 로짓이 같은 점도 두 값이 다른 모든 로짓보다 높거나 같아야 실제 예측 경계가 됩니다. 예를 들어 x=0에서는 A와 C가 동률이지만 둘 다 B보다 작습니다.</p>
+<p>입력 x에 대한 로짓이 <code>(−x,1,x)</code>라면 x&lt;−1에서 A, −1&lt;x&lt;1에서 B, x&gt;1에서 C가 가장 큽니다. x=±1에서는 동률입니다. 두 로짓이 같은 점도 두 값이 다른 모든 로짓보다 높거나 같아야 실제 예측 경계가 됩니다. 예를 들어 x=0에서는 A와 C가 동률이지만 둘 다 B보다 작습니다. 로짓이 x의 선형식이면 두 클래스의 경계 <code>z_j=z_k</code>는 <code>(b_j−b_k)+(w_j−w_k)ᵀx=0</code>이라는 직선(고차원에서는 초평면)이므로, 다항 로지스틱 회귀의 결정 경계는 선형입니다.</p>
 <figure class="fig">
 <svg class="fig-svg" viewBox="0 0 760 289" role="img" aria-label="클래스 점수 A=−x, B=1, C=x에서 가장 큰 값은 x가 −1보다 작을 때 A, −1과 1 사이에서 B, 1보다 클 때 C다.">
 <line class="f-ink" x1="94" y1="139" x2="666" y2="139"/>
@@ -129,6 +130,7 @@ extreme: C probability=0.0, C loss=2000.0</code></pre>
 <h2>한눈에 정리</h2>
 <div class="table-wrap"><table><thead><tr><th scope="col">개념</th><th scope="col">확인할 것</th></tr></thead><tbody>
 <tr><th scope="row"><b class="key">softmax</b></th><td>같은 로짓 묶음에서 지수값을 확률 합 1로 바꿈</td></tr>
+<tr><th scope="row"><b class="key">다항 로지스틱 회귀</b></th><td>클래스마다 선형 로짓 → softmax. 두 클래스면 이진 로지스틱과 같음</td></tr>
 <tr><th scope="row"><b class="key">argmax</b></th><td>로짓과 확률의 최대 위치가 같음</td></tr>
 <tr><th scope="row"><b class="key">교차엔트로피</b></th><td>정답 클래스의 음의 로그확률을 로짓에서 안정 계산</td></tr>
 </tbody></table></div><div class="box sum"><p class="box-k">다음 장으로</p><p><a href="../../unit.html?u=ML06">다음 장</a>에서는 거리와 나무를 사용한 다른 분류 방식을 배웁니다.</p></div>

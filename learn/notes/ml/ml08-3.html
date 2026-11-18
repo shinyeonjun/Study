@@ -158,6 +158,34 @@ fold=2: fill=9.0, predicted=[1, 0, 1], accuracy=0.667
 validation average=0.833
 test: fill=7.0, predicted=[0, 1], accuracy=0.500</code></pre>
 <p>이 합성 예의 수치 열 하나에서는 양의 표준편차로 나눠도 거리의 순서는 그대로입니다. 코드에서 보여 주는 것은 평가 회차마다 변환값을 다시 구하는 절차입니다. 이미 정한 방식으로 A와 B를 합쳐 재학습한 뒤, 이 절차에 참여하지 않은 테스트에서 한 번 평가합니다. 테스트 두 건의 50%는 그 자료에 대한 결과로만 읽습니다.</p>
+<p>scikit-learn에서는 같은 절차를 <code>Pipeline</code> 하나로 씁니다. <code>cross_val_score</code>는 회차마다 파이프라인 전체를 복제해 그 회차의 훈련 행으로만 <code>fit</code>하고 검증 행에는 <code>transform</code>과 예측만 하므로, 위 손 계산과 같은 점수가 나옵니다. 결측은 <code>np.nan</code>으로 넣고, 회차는 행 번호 목록으로 직접 지정했습니다.</p>
+<p class="small">실행 예제</p>
+<pre data-example="python"><code>import numpy as np
+from sklearn.pipeline import make_pipeline
+from sklearn.impute import SimpleImputer
+from sklearn.preprocessing import StandardScaler
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.model_selection import cross_val_score
+
+X = np.array([[2], [np.nan], [6], [np.nan], [8], [10]])
+y = np.array([0, 0, 1, 0, 1, 1])
+folds = [([0, 1, 2], [3, 4, 5]), ([3, 4, 5], [0, 1, 2])]
+
+model = make_pipeline(
+    SimpleImputer(strategy=&quot;median&quot;),
+    StandardScaler(),
+    KNeighborsClassifier(n_neighbors=1),
+)
+scores = cross_val_score(model, X, y, cv=folds)
+print(&quot;fold scores:&quot;, scores.round(3))
+print(&quot;mean:&quot;, round(scores.mean(), 3))
+model.fit(X, y)
+print(&quot;fill value:&quot;, model[0].statistics_)</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>fold scores: [1.    0.667]
+mean: 0.833
+fill value: [7.]</code></pre>
+<p>마지막 <code>fit</code>은 A와 B 전체로 다시 학습한 최종 모형이라 대치값이 7입니다. 수치 열과 범주 열이 함께 있으면 <code>ColumnTransformer([("num", 수치 파이프라인, ["distance"]), ("cat", 범주 파이프라인, ["kind"])])</code>를 이 파이프라인의 첫 단계로 넣어 첫 그림의 두 경로를 그대로 표현합니다. 파이프라인 밖에서 전체 자료로 <code>fit_transform</code>한 뒤 교차검증하면 이 장에서 본 누출이 그대로 생깁니다.</p>
 <div class="why"><p class="box-k">왜 그럴까?</p><p>검증에서 다른 결측 대치와 거리 변환을 고른 뒤 테스트 점수에 맞춰 한 번 더 바꾸면 무엇이 달라질까요?</p><details><summary>모범 답 보기</summary><p>테스트가 후보를 고르는 자료가 됩니다. 검증으로 방법을 고르고, 선택과 학습에 사용하지 않은 자료에서 마지막 점수를 얻어야 합니다.</p></details></div>
 <div class="check" data-q="q6"></div>
 <div class="check" data-q="q7"></div>

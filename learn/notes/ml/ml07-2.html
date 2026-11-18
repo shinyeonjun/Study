@@ -32,7 +32,8 @@
 </ul></div>
 
 <h2>제곱손실에서 잔차의 일부를 더한다</h2>
-<p><b class="key">부스팅</b>은 작은 모델을 순서대로 추가해 앞 단계까지의 답을 보완하는 방법입니다. 제곱손실의 회귀에서 <code>r=y−F(x)</code>를 맞히는 다음 나무는 손실이 줄어드는 방향을 학습합니다. 손실을 <code>½(y−F)²</code>로 두면 예측값 F에 대한 음의 미분이 잔차 r입니다. 다른 손실에서는 그 음의 기울기가 그대로 <code>y−F</code>는 아닙니다.</p>
+<p><b class="key">부스팅</b>은 작은 모델을 순서대로 추가해 앞 단계까지의 답을 보완하는 방법입니다. 제곱손실의 회귀에서 <code>r=y−F(x)</code>를 맞히는 다음 나무는 손실이 줄어드는 방향을 학습합니다. 손실을 <code>½(y−F)²</code>로 두면 예측값 F에 대한 음의 미분이 잔차 r입니다. 다른 손실에서는 그 음의 기울기가 그대로 <code>y−F</code>는 아닙니다. 이처럼 매 단계 손실을 현재 예측으로 미분한 음의 기울기(유사 잔차)에 작은 나무를 맞춰 더하는 방법을 <b class="key">그래디언트 부스팅</b>이라고 합니다. 예측값 공간에서 경사하강을 한 걸음씩 하는 것과 같습니다.</p>
+<p>나무의 답을 그대로 더하지 않고 <b class="key">학습률</b> ν(0&lt;ν≤1, 축소라고도 함)를 곱해 일부만 더합니다. ν가 작으면 한 단계의 보정이 작아 같은 훈련 손실에 이르는 데 나무가 더 많이 필요하지만, 한 나무의 실수에 덜 휘둘려 대체로 새 자료에서 더 낫습니다. 그래서 학습률과 나무 수는 함께 조정합니다.</p>
 <p>합성 목표 <code>[10,12,18,20]</code>분의 평균 F₀는 15분입니다. 왼쪽 두 행과 오른쪽 두 행을 나누는 얕은 나무를 생각합니다. F₀의 잔차는 <code>[−5,−3,3,5]</code>, 두 잎의 평균은 -4와 4입니다. 학습률 0.5로 <code>F₁=F₀+0.5×나무의 답</code>을 계산하면 <code>[13,13,17,17]</code>입니다.</p>
 <figure class="fig">
 <svg class="fig-svg" viewBox="0 0 760 272" role="img" aria-label="목표는 10,12,18,20분이다. 처음 예측 모두 15의 잔차는 −5,−3,3,5이다. 첫 보완 예측은 13,13,17,17, 둘째는 12,12,18,18이다.">
@@ -103,7 +104,7 @@
 <div class="check" data-q="q1"></div><div class="check" data-q="q2"></div><div class="check" data-q="q3"></div>
 
 <h2>가중치를 바꿔 틀린 사례에 더 주목할 수 있다</h2>
-<p>이진 <b class="key">AdaBoost</b>의 한 형태는 라벨과 모형 답을 −1 또는 +1로 둡니다. 처음 네 행의 가중치는 1/4씩입니다. 첫 모델이 넷째만 틀리면 틀린 행의 가중치 합인 가중오류는 <code>ε=1/4</code>입니다. 이 모델의 투표 힘은 <code>α=½ log((1−ε)/ε)=½ log 3≈0.549</code>입니다.</p>
+<p>이진 <b class="key">AdaBoost</b>의 한 형태는 라벨과 모형 답을 −1 또는 +1로 둡니다. 처음 네 행의 가중치는 1/4씩입니다. 첫 모델이 넷째만 틀리면 틀린 행의 가중치 합인 가중오류는 <code>ε=1/4</code>입니다. 이 모델의 투표 힘은 자연로그로 <code>α=½ ln((1−ε)/ε)=½ ln 3≈0.549</code>입니다. ε가 작을수록 α가 크고, ε=0.5(무작위 추측 수준)이면 α=0이 되어 그 모델은 최종 투표에 영향을 주지 못합니다.</p>
 <p>맞힌 행의 기존 가중치에 <code>exp(−α)</code>, 틀린 행에는 <code>exp(α)</code>를 곱한 뒤, 합이 1이 되게 나눕니다. 틀린 행은 1/2를, 맞힌 행은 각각 1/6을 얻습니다. 이후 모델을 이 가중치로 학습하고, 최종 답은 각 모델의 −1/+1 답에 α를 곱해 더한 값의 부호로 고릅니다. 이 계산은 가중오류가 0과 0.5 사이인 단계의 예입니다.</p>
 <figure class="fig">
 <svg class="fig-svg" viewBox="0 0 760 245" role="img" aria-label="처음 네 가중치는 모두 1/4. 첫 모델이 넷째만 틀렸다면 갱신 뒤 첫 세 가중치는 각각 1/6, 넷째는 1/2이다.">
@@ -142,7 +143,7 @@
 <figcaption>가중치의 합은 1이다. 다음 분류기는 이 가중치를 반영해 배운다.</figcaption>
 </figure>
 <div class="why"><p class="box-k">왜 그럴까?</p><p>틀린 행이 실제로는 잘못 붙인 정답이라면 어떤 일이 생길까요?</p><details><summary>모범 답 보기</summary><p>그 행의 가중치가 커져 다음 모델이 그 오류에 더 맞추려 할 수 있습니다. 검증 결과와 어려운 사례의 라벨을 함께 확인합니다.</p></details></div>
-<div class="check" data-q="q4"></div><div class="check" data-q="q5"></div>
+<div class="check" data-q="q4"></div><div class="check" data-q="q5"></div><div class="check" data-q="q9"></div>
 
 <h2>학습하는 순서가 바뀌면 무엇이 달라질까</h2>
 <p class="small">실행 예제</p>
@@ -169,12 +170,19 @@ round=2, prediction=[12.0, 12.0, 18.0, 18.0], MSE=2.0
 vote weight=0.549
 row weights: [0.167, 0.167, 0.167, 0.5]</code></pre>
 <p>배깅에서는 한 표본에서 학습한 나무의 답이 다른 나무 학습의 출발점일 필요가 없습니다. 부스팅에서는 이전 예측이나 오류가 다음 과제를 정합니다. 단계 수, 나무 깊이, 학습률은 검증으로 고릅니다. 훈련 손실이 계속 내려갔다고 새 자료에서도 반드시 좋아지는 것은 아닙니다.</p>
+<div class="table-wrap"><table><thead><tr><th scope="col"></th><th scope="col">배깅·랜덤 포레스트</th><th scope="col">부스팅</th></tr></thead><tbody>
+<tr><th scope="row">학습 순서</th><td>나무끼리 독립 (병렬 가능)</td><td>앞 단계 결과에 따라 순차</td></tr>
+<tr><th scope="row">기본 나무</th><td>깊게 키운 나무</td><td>얕은 나무 (깊이 1~수 단계)</td></tr>
+<tr><th scope="row">주로 줄이는 것</th><td>분산</td><td>편향 (단계가 너무 많으면 과적합)</td></tr>
+<tr><th scope="row">합치는 법</th><td>같은 가중치의 평균·투표</td><td>학습률이나 α를 곱한 합</td></tr>
+</tbody></table></div>
+<p>scikit-learn의 <code>GradientBoostingRegressor</code>·<code>GradientBoostingClassifier</code> 기본값은 <code>learning_rate=0.1</code>, <code>n_estimators=100</code>, <code>max_depth=3</code>이고, <code>AdaBoostClassifier</code>는 <code>n_estimators=50</code>, <code>learning_rate=1.0</code>에 기본 약한 모델로 깊이 1 나무(그루터기)를 씁니다. 큰 자료에서는 특성 값을 구간으로 묶어 빠르게 계산하는 <code>HistGradientBoostingClassifier</code>나, 같은 그래디언트 부스팅을 규제·속도 면에서 확장한 XGBoost·LightGBM 같은 별도 라이브러리를 많이 씁니다.</p>
 <div class="check" data-q="q6"></div><div class="check" data-q="q7"></div>
 
 <h2>한눈에 정리</h2>
 <div class="table-wrap"><table><thead><tr><th scope="col">개념</th><th scope="col">확인할 것</th></tr></thead><tbody>
 <tr><th scope="row"><b class="key">부스팅</b></th><td>앞 단계의 예측에서 남은 오차를 순서대로 보완</td></tr>
-<tr><th scope="row">제곱손실</th><td>잔차를 학습한 답의 일부를 기존 답에 더함</td></tr>
+<tr><th scope="row"><b class="key">그래디언트 부스팅</b></th><td>손실의 음의 기울기에 나무를 맞춰 학습률만큼 더함. 제곱손실이면 음의 기울기 = 잔차</td></tr>
 <tr><th scope="row">AdaBoost</th><td>가중오류로 모델 투표 힘과 다음 자료 가중치를 정함</td></tr>
 </tbody></table></div><div class="box sum"><p class="box-k">다음 장으로</p><p><a href="../../unit.html?u=ML08">다음 장</a>에서는 이 모델들을 학습과 평가에 넣기 전 입력을 준비합니다.</p></div>
 
