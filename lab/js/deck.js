@@ -4,7 +4,7 @@
 (function () {
   var B = window.BDA, el = B.el;
 
-  document.addEventListener("DOMContentLoaded", function () {
+  function initDeck() {
     var id = document.body.getAttribute("data-note");
     var slides = [].slice.call(document.querySelectorAll(".slide"));
     if (!slides.length) return;
@@ -28,7 +28,9 @@
     // 마지막 장 끝에 다음 덱으로
     var notes = B.allNotes(), k = notes.map(function (n) { return n.id; }).indexOf(id);
     var end = slides[slides.length - 1], links = el("p", "deck-end");
-    var home = el("a", "", "목차"); home.href = B.BASE + "index.html"; links.appendChild(home);
+    var home = el("a", "", "목차");
+    home.href = document.body.dataset.deckHome || B.BASE + "index.html";
+    links.appendChild(home);
     if (k >= 0 && notes[k + 1]) { var nx = el("a", "next", notes[k + 1].title + " →"); nx.href = B.BASE + notes[k + 1].href; links.appendChild(nx); }
     end.appendChild(links);
 
@@ -47,7 +49,8 @@
 
     function typing(t) { return t && /INPUT|TEXTAREA|SELECT/.test(t.tagName); }
     document.addEventListener("keydown", function (e) {
-      if (typing(e.target) || e.altKey || e.ctrlKey || e.metaKey) return;
+      if (typing(e.target) || e.altKey || e.ctrlKey || e.metaKey ||
+          (e.target instanceof Element && e.target.matches(".fig.zoomed"))) return;
       if (e.key === " " && e.target instanceof Element && e.target.closest("button, a, summary")) return;
       if (e.key === "ArrowRight" || e.key === "PageDown" || e.key === " ") { e.preventDefault(); show(i + 1); }
       else if (e.key === "ArrowLeft" || e.key === "PageUp") { e.preventDefault(); show(i - 1); }
@@ -57,7 +60,7 @@
 
     // 빈 곳을 누르면 넘김(왼쪽 1/3은 되돌림). 문제·링크·버튼·글 선택은 건드리지 않는다
     document.querySelector(".deck").addEventListener("click", function (e) {
-      if (e.target.closest("a, button, input, textarea, label, .check, pre, details")) return;
+      if (e.target.closest("a, button, input, textarea, label, .check, .qa, pre, details")) return;
       if (String(window.getSelection && window.getSelection()).length) return;
       show(e.clientX < window.innerWidth / 3 ? i - 1 : i + 1);
     });
@@ -65,7 +68,7 @@
     var x0 = null, y0 = null;
     document.addEventListener("touchstart", function (e) {
       // 옆으로 밀어 보는 그림·코드·문제 위에서 시작한 밀기는 넘기기로 쓰지 않는다
-      if (e.target.closest(".fig, pre, .check, .table-wrap")) { x0 = null; return; }
+      if (e.target.closest(".fig, pre, .check, .qa, .table-wrap")) { x0 = null; return; }
       x0 = e.touches[0].clientX; y0 = e.touches[0].clientY;
     }, { passive: true });
     document.addEventListener("touchend", function (e) {
@@ -86,5 +89,11 @@
     });
 
     show(fromHash());
-  });
+  }
+
+  if (document.body.hasAttribute("data-deck-home")) {
+    document.addEventListener("deckready", initDeck, { once: true });
+  } else {
+    document.addEventListener("DOMContentLoaded", initDeck);
+  }
 })();

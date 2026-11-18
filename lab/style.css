@@ -409,9 +409,33 @@ body.deck-body { overflow: hidden; }
 .dn-count { min-width: 64px; text-align: center; font-size: 0.85rem; color: var(--muted); font-variant-numeric: tabular-nums; }
 .deck-end { display: flex; justify-content: space-between; gap: 12px; margin-top: 28px; }
 .deck-end a.next { font-weight: 800; }
+.topic-links { display: flex; flex-wrap: wrap; gap: 8px 20px; }
+.topic-search {
+  display: block;
+  width: min(100%, 28rem);
+  padding: 8px 12px;
+  font: inherit;
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+}
+.topic-group { margin-top: 12px; border-bottom: 1px solid var(--line); }
+.topic-group summary { padding: 8px 4px; cursor: pointer; font-weight: 700; }
+.topic-group .urow { grid-template-columns: 46px minmax(0, 1fr); }
+.topic-group .urow[hidden] { display: none; }
+.topic-chapters { padding-inline-start: 1.5rem; }
+.topic-chapters li + li { margin-top: 8px; }
+.topic-slide > a { font-size: 0.88rem; padding-block: 5px; }
+.topic-slide > .topic-zoom { display: none; }
+.topic-slide figcaption::before { content: none; }
+.topic-example pre { flex-shrink: 0; max-height: 32vh; overflow: auto; }
 @media (max-width: 700px) {
   .slide { padding: 3vh 18px 84px; }
   .slide .fig-svg { min-width: 0; }
   .slide .fig-wide { display: none; }
   .slide .fig-narrow { display: block; }
+  .topic-slide > .topic-zoom { display: block; align-self: center; width: auto; margin: 6px 0; }
+  .topic-slide .fig.zoomed .fig-svg { min-width: 740px; max-height: none; }
+  .topic-slide .fig.zoomed figcaption { position: sticky; left: 0; }
 }
