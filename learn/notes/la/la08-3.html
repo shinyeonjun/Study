@@ -40,7 +40,7 @@
 <h2>큰 성분만 남기면 행렬을 적은 수로 표현한다</h2>
 <p>행렬 A=UΣVᵀ를 각 축의 기여를 더한 식 A=Σ<sub>i</sub> σ<sub>i</sub>u<sub>i</sub>v<sub>i</sub>ᵀ로 적을 수 있습니다. 열 u와 행 vᵀ를 곱한 행렬은 열들이 모두 u의 배수이므로 랭크가 최대 1입니다. 특잇값을 큰 순서대로 놓고 처음 k개 항을 남기면 랭크가 최대 k인 A<sub>k</sub>를 얻습니다.</p>
 <p class="calc">A<sub>k</sub> = Σ<sub>i=1</sub><sup>k</sup> σ<sub>i</sub> u<sub>i</sub>v<sub>i</sub>ᵀ.</p>
-<p><b class="key">프로베니우스 노름</b> ∥B∥<sub>F</sub>는 행렬 B의 원소를 모두 제곱해 합한 뒤 제곱근을 취한 값입니다. 랭크가 k 이하인 행렬 중에서 이 방식으로 만든 A<sub>k</sub>가 ∥A−A<sub>k</sub>∥<sub>F</sub>를 최소화합니다. 이를 에카르트–영 정리라고 부릅니다. 남긴 항과 버린 항은 서로 직교인 방향의 기여이므로 오차 제곱은 버린 특잇값들의 제곱합입니다. 같은 크기의 특잇값이 경계에 걸리면 최적 표현이 여러 개일 수 있습니다.</p>
+<p><b class="key">프로베니우스 노름</b> ∥B∥<sub>F</sub>는 행렬 B의 원소를 모두 제곱해 합한 뒤 제곱근을 취한 값입니다. 랭크가 k 이하인 행렬 중에서 이 방식으로 만든 A<sub>k</sub>가 ∥A−A<sub>k</sub>∥<sub>F</sub>를 최소화합니다. 이를 에카르트–영 정리라고 부릅니다. 남긴 항과 버린 항은 서로 직교인 방향의 기여이므로 오차 제곱은 버린 특잇값들의 제곱합 ∥A−A<sub>k</sub>∥<sub>F</sub>² = σ<sub>k+1</sub>² + … + σ<sub>p</sub>² 입니다. 오차를 행렬이 단위벡터를 늘이는 최대 배율인 <b>스펙트럼 노름</b> ∥B∥₂(=B의 가장 큰 특잇값)로 재도 같은 A<sub>k</sub>가 최선이고, 그때 오차는 ∥A−A<sub>k</sub>∥₂ = σ<sub>k+1</sub>입니다. 같은 크기의 특잇값이 경계에 걸리면 최적 표현이 여러 개일 수 있습니다.</p>
 <p>1000×500 행렬에는 원소가 500,000개입니다. k=20인 근사를 행렬 두 개와 특잇값 목록으로 보관하면 1000×20+500×20+20=30,020개의 수가 필요합니다. 원소 저장 개수만 비교한 결과입니다. 특잇값이 천천히 줄어드는 자료라면 같은 k로 버리는 오차가 클 수 있습니다.</p>
 <div class="check" data-q="q1"></div>
 <div class="check" data-q="q2"></div>
@@ -128,8 +128,10 @@ reconstruction: [[12.0, 7.0], [8.0, 3.0], [10.0, 5.0], [10.0, 5.0]]</code></pre>
 <tr><td>저랭크 근사</td><td>특잇값이 큰 항부터 남긴다. 오차 제곱은 버린 특잇값 제곱합.</td></tr>
 <tr><td>PCA의 두 공간</td><td>V는 특성의 방향, XV=UΣ는 관측의 투영 점수.</td></tr>
 <tr><td>분산과 복원</td><td>축 분산은 σ²/(n−1). 점수를 축으로 펼쳐 평균을 다시 더한다.</td></tr>
+<tr><td>에카르트–영</td><td>랭크 k 이하 중 A<sub>k</sub>가 최선. 오차 ∥·∥<sub>F</sub>²=Σ<sub>i&gt;k</sub>σᵢ², ∥·∥₂=σ<sub>k+1</sub>.</td></tr>
 </tbody>
 </table></div>
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>큰 특잇값 k개만 남긴 A<sub>k</sub>는 랭크 k 이하에서 가장 가까운 근사이고, 중심화한 자료에 적용하면 V가 주성분 축, UΣ가 점수, σᵢ²/(n−1)이 축의 분산인 PCA가 됩니다.</p></div>
 <h2>참고 자료</h2>
 <ul>
 <li><a href="https://ocw.mit.edu/courses/18-06sc-linear-algebra-fall-2011/pages/positive-definite-matrices-and-applications/singular-value-decomposition/">MIT 18.06SC · SVD와 낮은 랭크의 합</a></li>

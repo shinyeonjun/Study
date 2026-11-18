@@ -20,7 +20,7 @@
 <main class="page">
 <svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
 <header class="chapter">
-<p class="chap-sub">선형대수</p>
+<p class="chap-sub">선형대수 · LA06 공간과 기저</p>
 <p class="chap-num">LA06·1</p>
 <h1>선형결합과 기저로 벡터의 좌표 읽기</h1>
 <p class="lead">여러 화살표를 원하는 길이로 늘이거나 뒤집어 더하면 어느 점까지 갈 수 있을까요? 도달할 수 있는 범위와 그 점을 가리키는 좌표는 서로 다른 질문입니다.</p>
@@ -40,12 +40,15 @@
 <figure class="fig"><svg class="fig-svg" viewBox="0 0 760 285" role="img" aria-label="a=(1,1), b=(2,2)는 같은 방향. 두 벡터의 생성공간은 y=x 직선이다. w=(3,1)은 직선 밖.">
 <line class="f-ink" x1="135" y1="232" x2="542" y2="232" marker-end="url(#f-arrow)"/><line class="f-ink" x1="190" y1="262.25" x2="190" y2="54.89999999999998" marker-end="url(#f-arrow)"/><line class="f-ink" x1="245" y1="235.3" x2="245" y2="228.7"/><text class="f-s" x="245" y="250" text-anchor="middle">1</text><line class="f-ink" x1="300" y1="235.3" x2="300" y2="228.7"/><text class="f-s" x="300" y="250" text-anchor="middle">2</text><line class="f-ink" x1="355" y1="235.3" x2="355" y2="228.7"/><text class="f-s" x="355" y="250" text-anchor="middle">3</text><line class="f-ink" x1="410" y1="235.3" x2="410" y2="228.7"/><text class="f-s" x="410" y="250" text-anchor="middle">4</text><line class="f-ink" x1="465" y1="235.3" x2="465" y2="228.7"/><text class="f-s" x="465" y="250" text-anchor="middle">5</text><line class="f-ink" x1="520" y1="235.3" x2="520" y2="228.7"/><text class="f-s" x="520" y="250" text-anchor="middle">6</text><line class="f-ink" x1="186.7" y1="177" x2="193.3" y2="177"/><text class="f-s" x="176" y="181" text-anchor="middle">1</text><line class="f-ink" x1="186.7" y1="122" x2="193.3" y2="122"/><text class="f-s" x="176" y="126" text-anchor="middle">2</text><line class="f-ink" x1="186.7" y1="67" x2="193.3" y2="67"/><text class="f-s" x="176" y="71" text-anchor="middle">3</text><text class="f-s" x="179" y="248" text-anchor="middle">0</text><text class="f-s" x="550.25" y="227" text-anchor="middle">x</text><text class="f-s" x="203" y="51.05000000000001" text-anchor="middle">y</text><line class="f-dash" x1="157" y1="265" x2="366" y2="56"/><line class="f-line" x1="190" y1="232" x2="300" y2="122" marker-end="url(#f-arrow)"/><circle class="f-fill" cx="245" cy="177" r="3.2"/><circle class="f-fill" cx="355" cy="177" r="3.2"/><text class="f-t" x="227" y="167" text-anchor="middle">a=(1,1)</text><text class="f-t" x="319" y="110" text-anchor="middle">b=(2,2)</text><text class="f-t" x="404" y="183" text-anchor="middle">w=(3,1)</text>
 </svg><figcaption>a의 끝점과 b의 화살표가 같은 직선 위에 있다. 직선 밖의 w는 이 두 벡터의 선형결합으로 만들 수 없다.</figcaption></figure>
-<p>이 직선에는 원점이 있고, 직선 위 두 점을 벡터로 더하거나 실수를 곱해도 같은 직선에 남습니다. 이렇게 영벡터를 포함하고 덧셈과 스칼라곱을 해도 집합 안에 남는 벡터들의 집합을 <b>부분공간</b>이라고 합니다. 발생 가능한 결과가 y=x+1인 직선 위라고 하면 원점이 빠지므로 그 직선 자체는 ℝ²의 부분공간이 아닙니다.</p>
+<p>이 직선에는 원점이 있고, 직선 위 두 점을 벡터로 더하거나 실수를 곱해도 같은 직선에 남습니다. 이렇게 영벡터를 포함하고 덧셈과 스칼라곱을 해도 집합 안에 남는 벡터들의 집합을 <b>부분공간</b>이라고 합니다. 반면 y=x+1인 직선은 원점을 지나지 않으므로 ℝ²의 부분공간이 아닙니다. 어떤 벡터 목록의 생성공간이든 계수를 모두 0으로 두면 영벡터가 나오므로, 생성공간은 항상 부분공간입니다.</p>
 <div class="check" data-q="q3"></div><div class="check" data-q="q4"></div>
 <h2>영벡터를 만드는 조합에서 중복 찾기</h2>
 <p>u와 v로 <code>c₁u+c₂v=0</code>을 만들려면 둘째 성분에서 c₂=0, 첫째 성분에서 c₁=0입니다. 모든 계수를 0으로 놓는 방법뿐입니다. 이런 벡터 목록을 <b class="key">선형독립</b>이라고 합니다. a와 b에서는 <code>2a−b=0</code>이라 0이 아닌 계수 (2,−1)가 있습니다. 둘째 벡터를 첫째 벡터의 배수로 만들 수 있다는 뜻입니다.</p>
 <div class="box "><p class="box-k">기저와 차원</p><p>한 공간을 전부 생성하고 선형독립인 벡터들의 목록을 그 공간의 <b>기저</b>라고 합니다. 기저에서 각 벡터의 좌표는 하나로 정해집니다. 서로 다른 조합이 같은 결과를 만든다면 두 조합을 빼서 0이 아닌 계수의 영벡터를 만들 수 있기 때문입니다. 유한차원 공간에서 기저에 들어 있는 벡터 수를 <b>차원</b>이라고 합니다.</p><p>y=x 직선에는 a 한 개면 충분해 차원은 1입니다. ℝ²의 기저는 두 개의 독립인 벡터로 이루어져 차원은 2입니다. 기저의 벡터를 적는 순서를 바꾸면 좌표에서 두 계수의 순서도 바뀝니다.</p></div>
-<div class="check" data-q="q5"></div><div class="check" data-q="q6"></div>
+<h3>여러 벡터의 독립을 한 번에 판정한다</h3>
+<p>벡터 a₁,…,aₖ ∈ ℝᵐ을 열로 쌓은 m×k 행렬을 A라고 하면, 선형결합 c₁a₁+…+cₖaₖ는 곱 Ac와 같습니다. 그래서 독립이라는 말은 <code>Ac=0</code>의 해가 c=0 하나뿐이라는 말과 같고, 가우스 소거(LA05)에서 <b>모든 열에 피벗이 있다</b>(랭크가 k)는 말과 같습니다. 예를 들어 (1,0,1), (0,1,1), (1,1,2)는 셋째가 앞 둘의 합이라 종속이고, 소거하면 피벗이 두 개뿐입니다.</p>
+<p>피벗은 행마다 최대 하나이므로 ℝᵐ에서 m개보다 많은 벡터는 <b>항상 종속</b>입니다. ℝ²의 벡터 세 개는 어떻게 골라도 종속입니다. 같은 이유로 한 공간의 기저는 어떻게 고르든 벡터 수가 같고, 그래서 차원이라는 수가 기저 선택과 상관없이 하나로 정해집니다. ℝⁿ에서 정확히 n개의 벡터라면 "독립"과 "ℝⁿ 전체를 생성"이 서로를 보장하므로 둘 중 하나만 확인해도 기저입니다.</p>
+<div class="check" data-q="q5"></div><div class="check" data-q="q6"></div><div class="check" data-q="q9"></div>
 <p>기저 벡터를 열로 쌓은 행렬 C에 기저 좌표를 곱하면 표준 좌표가 나옵니다. 이 예제는 가역인 2×2이므로 <code>solve(C,w)</code>로 반대 방향의 계산을 확인할 수 있습니다.</p>
 <pre data-example="python"><code>import numpy as np
 
@@ -59,13 +62,21 @@ print((C @ coordinates).tolist())</code></pre>
 <p class="small">실행 결과</p>
 <pre data-output><code>[2.0, 2.0]
 [4.0, 2.0]</code></pre>
-<p>u와 v가 직교하지 않음에 주의합니다. 여기에서 단순히 w·u와 w·v를 적으면 4와 6이 나오므로 좌표 2, 2와 다릅니다. <a href="../../unit.html?u=LA02">내적으로 성분을 읽는 방법</a>은 이 단원의 직교정규기저 장에서 조건과 함께 사용합니다.</p>
+<p>u와 v가 직교하지 않음에 주의합니다. 여기에서 단순히 w·u와 w·v를 적으면 4와 6이 나오므로 좌표 2, 2와 다릅니다. 내적으로 바로 좌표를 읽는 방법은 기저가 서로 수직이고 길이가 1일 때만 통합니다. 이 조건은 <a href="la06-3.html">직교정규기저 장(LA06·3)</a>에서 다룹니다.</p>
 <h2>한눈에 정리</h2>
-<ul><li>선형결합으로 만드는 모든 벡터를 모으면 생성공간이 된다.</li><li>영벡터가 계수 전부를 0으로 놓을 때에만 나오면 독립이다.</li><li>생성과 독립을 함께 만족하는 기저의 계수로 벡터의 좌표를 읽는다.</li></ul>
+<div class="table-wrap"><table><thead><tr><th scope="col">낱말</th><th scope="col">정의·판정</th><th scope="col">이 장의 예</th></tr></thead><tbody>
+<tr><td><b class="key">선형결합</b></td><td>c₁v₁+…+cₖvₖ</td><td>2u+2v=(4,2)</td></tr>
+<tr><td><b class="key">생성공간</b>(span)</td><td>모든 선형결합의 집합, 항상 부분공간</td><td>span((1,1),(2,2)) = 직선 y=x</td></tr>
+<tr><td><b class="key">선형독립</b></td><td>Ac=0의 해가 c=0뿐 ⇔ 모든 열이 피벗 열</td><td>(1,0),(1,1)은 독립, (1,1),(2,2)는 종속</td></tr>
+<tr><td>기저·차원</td><td>독립이면서 생성하는 목록 / 그 벡터 수</td><td>ℝ²의 차원 2, y=x 직선의 차원 1</td></tr>
+<tr><td>좌표</td><td>기저에 붙는 계수(기저마다 다름)</td><td>(4,2) → (u,v) 기저에서 (2,2)</td></tr>
+</tbody></table></div>
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>생성공간은 만들 수 있는 범위, 독립은 중복이 없다는 조건이며, 둘을 함께 만족하는 기저에서만 좌표가 하나로 정해집니다.</p></div>
 
 <h2>참고 자료</h2>
 <ul><li><a href="https://ocw.mit.edu/courses/18-06sc-linear-algebra-fall-2011/pages/ax-b-and-the-four-subspaces/independence-basis-and-dimension/">MIT OpenCourseWare · 독립, 기저, 차원</a></li></ul>
 <h2>확인 문제</h2>
+<p>본문 중간에서 푼 문제 말고 남은 문제입니다. 보기를 누르면 바로 정답과 해설이 나옵니다.</p>
 <div id="quiz"></div>
 <section class="work" id="tools"></section>
 <nav class="pager" aria-label="이전 장과 다음 장"></nav>

@@ -20,7 +20,7 @@
 <main class="page">
 <svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
 <header class="chapter">
-<p class="chap-sub">선형대수</p>
+<p class="chap-sub">선형대수 · LA06 공간과 기저</p>
 <p class="chap-num">LA06·2</p>
 <h1>열공간과 영공간으로 선형계의 해 읽기</h1>
 <p class="lead">선형계 Ax=b의 우변마다 해가 있는지 먼저 묻고, 해가 있다면 입력이 얼마나 달라질 수 있는지 봅니다. 행렬의 열공간은 가능한 출력, 영공간은 출력에서 사라지는 입력 방향을 알려줍니다.</p>
@@ -32,10 +32,10 @@
 <pre><code>A = [ 1  0  1 ]
     [ 0  1  1 ]
     [ 1  1  2 ]</code></pre>
-<p>모든 입력을 넣어 얻는 출력 집합 <code>span(a₁,a₂,a₃)</code>을 <b class="key">열공간</b>이라고 합니다. 마지막 출력은 앞의 두 출력을 더한 값입니다. 그래서 b=(2,3,5)는 가능한 출력이고 b=(2,3,6)은 불가능합니다. 누구라도 처음 두 출력을 (2,3)으로 만드는 입력은 마지막 출력을 5로 내기 때문입니다.</p>
+<p>모든 입력을 넣어 얻는 출력 집합 <code>span(a₁,a₂,a₃)</code>을 <b class="key">열공간</b>이라고 합니다. 마지막 출력은 앞의 두 출력을 더한 값입니다. 그래서 b=(2,3,5)는 가능한 출력이고 b=(2,3,6)은 불가능합니다. 처음 두 출력을 (2,3)으로 만드는 입력은 어떤 것이든 마지막 출력을 2+3=5로 내기 때문입니다. 정리하면 <b>Ax=b에 해가 있다 ⇔ b가 A의 열공간에 있다</b>입니다.</p>
 <div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
 <h2>피벗이 가리키는 원래 열로 기저를 만든다</h2>
-<p>세 번째 열은 첫째와 둘째의 합입니다. 첫째와 둘째는 첫 두 성분에서 각각 다른 자리만 1이므로 독립입니다. 이 두 열이 열공간의 기저를 이루며 차원은 2입니다. 일반적으로 행 소거를 하면 추린 피벗 열 번호를 알 수 있습니다. A의 열공간 기저를 정할 때에는 이 번호에 해당하는 <b>원래 A의 열</b>을 꺼냅니다. 행 소거는 열 사이의 선형결합 관계를 보존하지만, 각 열이 출력 공간에서 실제로 놓이는 위치를 바꿀 수 있기 때문입니다.</p>
+<p>세 번째 열은 첫째와 둘째의 합입니다. 첫째와 둘째는 첫 두 성분에서 각각 다른 자리만 1이므로 독립입니다. 이 두 열이 열공간의 기저를 이루며 차원은 2입니다. 열공간의 차원을 A의 <b class="key">랭크</b>(rank, 계수)라고 하고, 행 소거에서 나오는 피벗의 개수와 같습니다. 행공간(행들의 생성공간)의 차원도 같은 피벗 수와 같아서, 행 랭크와 열 랭크는 언제나 같습니다. 일반적으로 행 소거를 하면 추린 피벗 열 번호를 알 수 있습니다. A의 열공간 기저를 정할 때에는 이 번호에 해당하는 <b>원래 A의 열</b>을 꺼냅니다. 행 소거는 열 사이의 선형결합 관계를 보존하지만, 각 열이 출력 공간에서 실제로 놓이는 위치를 바꿀 수 있기 때문입니다.</p>
 <div class="box ex"><p class="box-k">풀이 예제</p><p>이 A에서는 셋째 행에서 첫째와 둘째 행을 빼면 0행이 됩니다. 첫 두 행이 이미 첫째와 둘째 열에 각각 피벗을 가지고 있습니다. 그래서 랭크는 2입니다. 예컨대 첫 피벗에 대응하는 원래 열은 (1,0,1)이고, 소거 결과의 첫 열은 (1,0,0)입니다. 후자는 <code>y₃=y₁+y₂</code>를 만족하지 않습니다.</p></div>
 <div class="check" data-q="q3"></div><div class="check" data-q="q4"></div>
 <h2>영공간의 벡터를 더해도 출력은 그대로다</h2>
@@ -60,17 +60,27 @@ for t in (-1, 0, 1):
 [1, 2, 1] [2, 3, 5]</code></pre>
 <div class="check" data-q="q5"></div><div class="check" data-q="q6"></div>
 <h2>입력 차원을 두 숫자로 설명한다</h2>
-<p>A가 m행 n열이면 열공간은 ℝᵐ 안에 있고 영공간은 입력 공간 ℝⁿ 안에 있습니다. 피벗 변수 개수 r은 랭크입니다. 동차 방정식 Ax=0의 자유변수는 n−r개이고, 각각을 1, 나머지를 0으로 두어 얻는 해들이 영공간의 기저가 됩니다. 따라서 <code>rank(A) + dim(ker A) = n</code>입니다. 이 관계가 <b>차원 정리</b>입니다.</p>
+<p>A가 m행 n열이면 열공간은 ℝᵐ 안에 있고 영공간은 입력 공간 ℝⁿ 안에 있습니다. 피벗 변수 개수 r은 랭크입니다. 동차 방정식 Ax=0의 자유변수는 n−r개이고, 각각을 1, 나머지를 0으로 두어 얻는 해들이 영공간의 기저가 됩니다. 따라서 <code>rank(A) + dim(ker A) = n</code>입니다. 영공간의 차원 dim(ker A)를 <b>퇴화차수</b>(nullity)라고 하며, 이 관계를 <b class="key">차원 정리</b>(랭크–퇴화차수 정리, rank–nullity theorem)라고 합니다.</p>
+<p>이 정리로 해의 개수를 정리할 수 있습니다. b가 열공간에 있으면 해가 있고, 그때 영공간이 {0}뿐(rank=n)이면 해가 하나, 영공간 차원이 1 이상이면 해가 무수히 많습니다. 이 장의 A는 rank 2, n=3이라 영공간 차원이 1이고, b=(2,3,5)의 해는 직선 하나만큼 있습니다.</p>
 <figure class="fig"><svg class="fig-svg" viewBox="0 0 760 206" role="img" aria-label="A의 입력 차원 3은 영공간 차원 1과 열공간 차원 2의 합이다.">
 <rect class="f-box" x="70" y="55" width="620" height="120" rx="3"/><rect class="f-box" x="80" y="108" width="200" height="56" rx="3"/><rect class="f-soft" x="280" y="108" width="400" height="56" rx="3"/><text class="f-t f-b" x="380" y="88" text-anchor="middle">입력 차원 3</text><text class="f-t" x="180" y="142" text-anchor="middle">영공간 차원 1</text><text class="f-t" x="480" y="142" text-anchor="middle">열공간의 차원 2</text>
 </svg><figcaption>입력의 차원은 영공간 차원과 랭크의 합이다. 상자의 길이는 이 예제의 1과 2를 나타낸다.</figcaption></figure>
 <p>위 그림은 차원 개수의 관계를 보여 줍니다. 영공간과 열공간을 같은 공간의 두 부분으로 쪼갠 그림으로 읽으면 안 됩니다. m과 n이 다르면 두 공간의 벡터는 애초에 성분 개수가 다를 수 있습니다.</p>
+<div class="check" data-q="q9"></div>
 <h2>한눈에 정리</h2>
-<ul><li>열공간을 보면 주어진 b를 출력할 수 있는지 알 수 있다.</li><li>영공간은 Ax=0을 푼 해들의 부분공간이다. 일관된 Ax=b의 해는 한 해에 영공간만큼 더해서 찾는다.</li><li>랭크와 영공간의 차원을 더하면 입력 차원 n이다.</li></ul>
+<div class="table-wrap"><table><thead><tr><th scope="col">낱말</th><th scope="col">뜻</th><th scope="col">이 장의 A (3×3)</th></tr></thead><tbody>
+<tr><td><b class="key">열공간</b> C(A)</td><td>가능한 출력 Ax 전체, ℝᵐ의 부분공간. Ax=b의 해 존재 ⇔ b∈C(A)</td><td>b₃=b₁+b₂인 평면, 차원 2</td></tr>
+<tr><td><b class="key">영공간</b> N(A)</td><td>Ax=0의 해 전체, ℝⁿ의 부분공간</td><td>t(−1,−1,1), 차원 1</td></tr>
+<tr><td><b class="key">랭크</b></td><td>열공간 차원 = 피벗 수 = 행공간 차원</td><td>2</td></tr>
+<tr><td>차원 정리</td><td>rank(A) + dim N(A) = n(열 수)</td><td>2+1=3</td></tr>
+<tr><td>모든 해</td><td>특수해 x₀ + 영공간 벡터</td><td>(2,3,0)+t(−1,−1,1)</td></tr>
+</tbody></table></div>
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>열공간은 해가 있는지를, 영공간은 해가 얼마나 많은지를 정하고, 둘의 차원은 rank + nullity = n으로 묶입니다.</p></div>
 
 <h2>참고 자료</h2>
 <ul><li><a href="https://ocw.mit.edu/courses/18-06sc-linear-algebra-fall-2011/pages/ax-b-and-the-four-subspaces/">MIT OpenCourseWare · Ax=b와 네 가지 부분공간</a></li><li><a href="https://ocw.mit.edu/courses/18-06sc-linear-algebra-fall-2011/pages/ax-b-and-the-four-subspaces/independence-basis-and-dimension/">MIT OpenCourseWare · 독립, 기저, 차원</a></li></ul>
 <h2>확인 문제</h2>
+<p>본문 중간에서 푼 문제 말고 남은 문제입니다. 보기를 누르면 바로 정답과 해설이 나옵니다.</p>
 <div id="quiz"></div>
 <section class="work" id="tools"></section>
 <nav class="pager" aria-label="이전 장과 다음 장"></nav>

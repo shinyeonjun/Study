@@ -20,7 +20,7 @@
 <main class="page">
 <svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
 <header class="chapter">
-<p class="chap-sub">선형대수</p>
+<p class="chap-sub">선형대수 · LA06 공간과 기저</p>
 <p class="chap-num">LA06·3</p>
 <h1>직교정규기저와 QR로 가장 가까운 해 찾기</h1>
 <p class="lead">데이터의 모든 점을 지나는 직선이 없을 때에도, 오차 제곱합이 가장 작은 직선을 찾을 수 있습니다. 이미 배운 사영을 여러 방향으로 확장한 뒤 QR 분해로 계산을 정리합니다.</p>
@@ -34,10 +34,12 @@
 <h2>기존 방향에 겹치는 부분을 빼고 길이를 맞춘다</h2>
 <p>a₁=(1,0), a₂=(2,2)에서 먼저 a₁을 길이 1로 만든 q₁=(1,0)을 둡니다. a₂에서 q₁ 방향 사영 <code>(q₁·a₂)q₁=(2,0)</code>을 빼면 r₂=(0,2)입니다. 이를 길이 2로 나눠 q₂=(0,1)을 얻습니다.</p>
 <figure class="fig"><svg class="fig-svg" viewBox="0 0 760 279" role="img" aria-label="a₂=(2,2)에서 a₁ 방향 사영 (2,0)을 뺀다. 남은 r₂=(0,2)를 정규화하면 q₂=(0,1)이다.">
-<line class="f-ink" x1="156" y1="234" x2="520.8" y2="234" marker-end="url(#f-arrow)"/><line class="f-ink" x1="213" y1="265.35" x2="213" y2="50.45999999999998" marker-end="url(#f-arrow)"/><line class="f-ink" x1="270" y1="237.42" x2="270" y2="230.58"/><text class="f-s" x="270" y="252" text-anchor="middle">1</text><line class="f-ink" x1="327" y1="237.42" x2="327" y2="230.58"/><text class="f-s" x="327" y="252" text-anchor="middle">2</text><line class="f-ink" x1="384" y1="237.42" x2="384" y2="230.58"/><text class="f-s" x="384" y="252" text-anchor="middle">3</text><line class="f-ink" x1="441" y1="237.42" x2="441" y2="230.58"/><text class="f-s" x="441" y="252" text-anchor="middle">4</text><line class="f-ink" x1="498" y1="237.42" x2="498" y2="230.58"/><text class="f-s" x="498" y="252" text-anchor="middle">5</text><line class="f-ink" x1="209.58" y1="177" x2="216.42" y2="177"/><text class="f-s" x="199" y="181" text-anchor="middle">1</text><line class="f-ink" x1="209.58" y1="120" x2="216.42" y2="120"/><text class="f-s" x="199" y="124" text-anchor="middle">2</text><line class="f-ink" x1="209.58" y1="63" x2="216.42" y2="63"/><text class="f-s" x="199" y="67" text-anchor="middle">3</text><text class="f-s" x="202" y="250" text-anchor="middle">0</text><text class="f-s" x="529.3499999999999" y="229" text-anchor="middle">x</text><text class="f-s" x="226" y="46.47" text-anchor="middle">y</text><line class="f-ink" x1="213" y1="234" x2="327" y2="120" marker-end="url(#f-arrow)"/><line class="f-line" x1="213" y1="234" x2="327" y2="234" marker-end="url(#f-arrow)"/><line class="f-dash" x1="327" y1="234" x2="327" y2="120"/><line class="f-line" x1="213" y1="234" x2="213" y2="120" marker-end="url(#f-arrow)"/><circle class="f-fill" cx="327" cy="120" r="3.2"/><line class="f-ink" x1="316.74" y1="234" x2="316.74" y2="223.74"/><line class="f-ink" x1="316.74" y1="223.74" x2="327" y2="223.74"/><text class="f-t" x="341" y="112" text-anchor="middle">a₂</text><text class="f-t" x="305" y="223" text-anchor="middle">사영 2q₁</text><text class="f-t" x="178" y="113" text-anchor="middle">r₂</text>
+<line class="f-ink" x1="156" y1="234" x2="520.8" y2="234" marker-end="url(#f-arrow)"/><line class="f-ink" x1="213" y1="265.35" x2="213" y2="50.45999999999998" marker-end="url(#f-arrow)"/><line class="f-ink" x1="270" y1="237.42" x2="270" y2="230.58"/><text class="f-s" x="270" y="252" text-anchor="middle">1</text><line class="f-ink" x1="327" y1="237.42" x2="327" y2="230.58"/><text class="f-s" x="327" y="252" text-anchor="middle">2</text><line class="f-ink" x1="384" y1="237.42" x2="384" y2="230.58"/><text class="f-s" x="384" y="252" text-anchor="middle">3</text><line class="f-ink" x1="441" y1="237.42" x2="441" y2="230.58"/><text class="f-s" x="441" y="252" text-anchor="middle">4</text><line class="f-ink" x1="498" y1="237.42" x2="498" y2="230.58"/><text class="f-s" x="498" y="252" text-anchor="middle">5</text><line class="f-ink" x1="209.58" y1="177" x2="216.42" y2="177"/><text class="f-s" x="199" y="181" text-anchor="middle">1</text><line class="f-ink" x1="209.58" y1="120" x2="216.42" y2="120"/><text class="f-s" x="199" y="124" text-anchor="middle">2</text><line class="f-ink" x1="209.58" y1="63" x2="216.42" y2="63"/><text class="f-s" x="199" y="67" text-anchor="middle">3</text><text class="f-s" x="202" y="250" text-anchor="middle">0</text><text class="f-s" x="529.3499999999999" y="229" text-anchor="middle">x</text><text class="f-s" x="226" y="46.47" text-anchor="middle">y</text><line class="f-ink" x1="213" y1="234" x2="327" y2="120" marker-end="url(#f-arrow)"/><line class="f-line" x1="213" y1="234" x2="327" y2="234" marker-end="url(#f-arrow)"/><line class="f-dash" x1="327" y1="234" x2="327" y2="120"/><line class="f-line" x1="213" y1="234" x2="213" y2="120" marker-end="url(#f-arrow)"/><circle class="f-fill" cx="327" cy="120" r="3.2"/><line class="f-ink" x1="316.74" y1="234" x2="316.74" y2="223.74"/><line class="f-ink" x1="316.74" y1="223.74" x2="327" y2="223.74"/><text class="f-t" x="341" y="112" text-anchor="middle">a₂</text><text class="f-t" x="280" y="224" text-anchor="middle">사영 2q₁</text><text class="f-t" x="178" y="113" text-anchor="middle">r₂</text>
 </svg><figcaption>먼저 x축 성분을 빼고 나면 남은 벡터는 x축에 직교한다. 각 결과를 길이 1로 만들면 직교정규기저가 된다.</figcaption></figure>
-<p>다음 벡터에서도 지금까지 만든 q 방향들의 사영을 모두 빼고 길이를 1로 맞춥니다. 이 절차가 <b class="key">그람–슈미트 직교화</b>입니다. 입력 열이 모두 독립이면 남은 벡터가 0이 되지 않습니다. 0이 나왔다는 것은 그 열이 앞 열들의 생성공간 안에 있다는 뜻이고, 0을 길이로 나누는 단계는 생략해야 합니다.</p>
-<p>m행 n열 A의 열이 모두 독립이라면 m≥n입니다. 직교화한 n개의 q를 열로 쌓은 Q는 m×n입니다. 원래 열 aⱼ를 복원하는 계수 <code>rᵢⱼ=qᵢ·aⱼ</code>를 R에 담습니다. i가 j보다 크면 해당 qᵢ는 앞의 열들과 직교하므로 rᵢⱼ=0입니다. 그래서 R은 n×n의 위삼각 행렬이고 <code>A=QR</code>입니다. 이를 <b>QR 분해</b>라고 합니다.</p>
+<p>다음 벡터에서도 지금까지 만든 q 방향들의 사영을 모두 빼고 길이를 1로 맞춥니다.</p>
+<p class="calc">rⱼ = aⱼ − (q₁·aⱼ)q₁ − … − (qⱼ₋₁·aⱼ)qⱼ₋₁, &nbsp; qⱼ = rⱼ / ∥rⱼ∥</p>
+<p>이 절차가 <b class="key">그람–슈미트 직교화</b>입니다. 입력 열이 모두 독립이면 남은 벡터가 0이 되지 않습니다. 0이 나왔다는 것은 그 열이 앞 열들의 생성공간 안에 있다는 뜻이고, 0을 길이로 나누는 단계는 생략해야 합니다.</p>
+<p>m행 n열 A의 열이 모두 독립이라면 m≥n입니다. 직교화한 n개의 q를 열로 쌓은 Q는 m×n입니다. 원래 열 aⱼ를 복원하는 계수 <code>rᵢⱼ=qᵢ·aⱼ</code>를 R에 담습니다. i가 j보다 크면 해당 qᵢ는 앞의 열들과 직교하므로 rᵢⱼ=0입니다. 또 대각 원소 rⱼⱼ=qⱼ·aⱼ=∥rⱼ∥은 양수입니다. 그래서 R은 대각이 양수인 n×n 위삼각 행렬이고 <code>A=QR</code>입니다. 이를 <b>QR 분해</b>라고 합니다.</p>
 <div class="check" data-q="q3"></div><div class="check" data-q="q4"></div>
 <h2>세 점에 가장 가까운 직선을 구한다</h2>
 <p>시각 t=0,1,2에서 측정값 b=(1,1,4)를 얻었습니다. 직선 <code>y=β₀+β₁t</code>의 예측 세 개는 <code>Aβ</code>로 쓸 수 있습니다. A의 두 열은 <code>(1,1,1)</code>과 <code>(0,1,2)</code>입니다. 정확한 직선이면 연속한 시간 구간의 y 차이가 같아야 하지만 관측 차이는 0과 3입니다. 대신 A의 열공간에서 b에 가장 가까운 점을 찾습니다.</p>
@@ -48,8 +50,9 @@
 <p>예측은 (0.5, 2, 3.5)이고 잔차 <code>e=b−Aβ</code>는 (0.5, −1, 0.5)입니다. 잔차 제곱합은 0.25+1+0.25=1.5입니다. 잔차와 첫 열의 내적은 <code>0.5−1+0.5=0</code>, 둘째 열과의 내적은 <code>0−1+1=0</code>입니다.</p>
 <div class="check" data-q="q5"></div><div class="check" data-q="q6"></div>
 <h2>왜 이 조건이 제곱합의 최솟값을 주나</h2>
-<p>어떤 다른 예측 Aβ′를 고르더라도, 현재 예측 Aβ와의 차이는 열공간 안에 있습니다. e는 그 차이와 직교합니다. 그러므로 <code>‖b−Aβ′‖² = ‖e‖² + ‖Aβ−Aβ′‖²</code>입니다. 앞 항은 고정이고 뒤 항은 음수가 될 수 없습니다. 이 방식으로 잔차 제곱합을 최소화하는 문제를 <b class="key">최소제곱</b>이라고 합니다. 열이 독립이면 같은 예측을 만드는 β가 하나뿐이라 해도 하나입니다.</p>
-<p>직교 조건 <code>Aᵀ(b−Aβ)=0</code>을 펼치면 <code>AᵀAβ=Aᵀb</code>라는 <b>정규방정식</b>이 됩니다. 계산에서는 AᵀA를 직접 만들면 원래 A의 수치적 민감도가 더 커질 수 있습니다. 아래처럼 QR로 구하거나, 일반 최소제곱 함수 <code>lstsq</code>를 사용합니다. 라이브러리 QR에서 q 벡터의 부호가 손계산과 달라도, R의 대응 행의 부호도 함께 바뀌므로 A와 β는 같습니다.</p>
+<p>어떤 다른 예측 Aβ′를 고르더라도, 현재 예측 Aβ와의 차이는 열공간 안에 있습니다. e는 그 차이와 직교합니다. 그러므로 <code>‖b−Aβ′‖² = ‖e‖² + ‖Aβ−Aβ′‖²</code>입니다. 앞 항은 고정이고 뒤 항은 음수가 될 수 없습니다. 이 방식으로 잔차 제곱합을 최소화하는 문제를 <b class="key">최소제곱</b>이라고 합니다. 열이 독립이면 같은 예측을 만드는 β가 하나뿐이므로 최소제곱해도 하나로 정해집니다.</p>
+<p>직교 조건 <code>Aᵀ(b−Aβ)=0</code>을 펼치면 <code>AᵀAβ=Aᵀb</code>라는 <b class="key">정규방정식</b>(normal equation)이 됩니다. 이 예에서는 AᵀA=[[3,3],[3,5]], Aᵀb=(6,9)이므로 3β₀+3β₁=6, 3β₀+5β₁=9입니다. 두 식을 빼면 2β₁=3, β₁=1.5이고 β₀=0.5로 QR과 같은 답입니다. A=QR을 넣으면 AᵀA=RᵀQᵀQR=RᵀR이고 Aᵀb=RᵀQᵀb이므로, 가역인 Rᵀ를 양쪽에서 지우면 정규방정식이 곧 <code>Rβ=Qᵀb</code>가 됩니다.</p>
+<p>손계산에서는 정규방정식이 간단하지만, 컴퓨터 계산에서는 AᵀA를 직접 만들면 조건수(입력 오차가 해에서 몇 배로 커질 수 있는지 재는 수)가 A의 조건수의 제곱이 됩니다. 이 예에서도 A의 조건수는 약 2.92, AᵀA의 조건수는 약 8.55입니다. 아래처럼 QR로 구하거나, 일반 최소제곱 함수 <code>lstsq</code>를 사용합니다. 라이브러리 QR에서 q 벡터의 부호가 손계산과 달라도, R의 대응 행의 부호도 함께 바뀌므로 A와 β는 같습니다.</p>
 <pre data-example="python"><code>import numpy as np
 
 A = np.array([[1, 0], [1, 1], [1, 2]], dtype=float)
@@ -68,14 +71,23 @@ print(f&quot;{err @ err:.2f}&quot;, rank, np.allclose(A.T @ err, 0),
 <pre data-output><code>0.50 1.50
 [0.5, 2.0, 3.5] [0.5, -1.0, 0.5]
 1.50 2 True True</code></pre>
-<p>열이 종속일 때에도 사영과 최소 잔차는 정해지지만 계수는 여러 개일 수 있습니다. 이때 가역 R을 전제로 한 직접 풀이 대신 <code>lstsq</code>가 돌려주는 랭크와 최소 노름 해의 의미를 확인합니다.</p>
+<p>열이 종속일 때에도 사영과 최소 잔차는 정해지지만 계수는 여러 개일 수 있습니다. 이때 R이 가역이 아니어서 <code>solve(R, …)</code>를 쓸 수 없습니다. <code>lstsq</code>는 그런 경우 랭크를 함께 돌려주고, 가능한 해 가운데 길이가 가장 짧은 해(최소 노름 해)를 고릅니다. 이 선택은 LA08·2의 유사역행렬에서 자세히 다룹니다.</p>
 <div class="check" data-q="q7"></div>
+<div class="check" data-q="q9"></div>
 <h2>한눈에 정리</h2>
-<ul><li>직교정규기저의 각 계수는 내적으로 바로 구할 수 있다.</li><li>QR 분해의 Q는 직교정규인 열, R은 원래 열을 복원하는 계수를 가진다.</li><li>최소제곱은 관측을 열공간에 사영한다. 잔차는 열공간과 직교한다.</li></ul>
+<div class="table-wrap"><table><thead><tr><th scope="col">낱말</th><th scope="col">식·조건</th><th scope="col">이 장의 예</th></tr></thead><tbody>
+<tr><td><b class="key">직교정규기저</b></td><td>QᵀQ=I, 사영 p=QQᵀb, 계수는 내적 qᵢ·b</td><td>q₁=(1,1,1)/√3, q₂=(−1,0,1)/√2</td></tr>
+<tr><td><b class="key">그람–슈미트</b></td><td>앞 q들의 사영을 빼고 길이 1로 나눔</td><td>(0,1,2)−(1,1,1)=(−1,0,1) → q₂</td></tr>
+<tr><td><b class="key">QR 분해</b></td><td>A=QR, Q는 m×n 직교정규 열, R은 n×n 위삼각</td><td>R=[[√3,√3],[0,√2]]</td></tr>
+<tr><td><b class="key">최소제곱</b></td><td>∥b−Aβ∥² 최소 ⇔ Aᵀ(b−Aβ)=0</td><td>β=(0.5, 1.5), 잔차 제곱합 1.5</td></tr>
+<tr><td>정규방정식 / QR</td><td>AᵀAβ=Aᵀb / Rβ=Qᵀb (같은 해, QR이 수치적으로 안정)</td><td>[[3,3],[3,5]]β=(6,9)</td></tr>
+</tbody></table></div>
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>최소제곱해는 b를 A의 열공간에 사영해 잔차가 모든 열과 직교하게 만드는 β이고, 정규방정식이나 QR의 Rβ=Qᵀb로 구합니다.</p></div>
 
 <h2>참고 자료</h2>
 <ul><li><a href="https://ocw.mit.edu/courses/18-06sc-linear-algebra-fall-2011/pages/least-squares-determinants-and-eigenvalues/">MIT OpenCourseWare · 사영, 최소제곱과 그람–슈미트</a></li><li><a href="https://numpy.org/doc/stable/reference/generated/numpy.linalg.qr.html">NumPy · QR 분해</a></li><li><a href="https://numpy.org/doc/stable/reference/generated/numpy.linalg.lstsq.html">NumPy · 최소제곱 해</a></li></ul>
 <h2>확인 문제</h2>
+<p>본문 중간에서 푼 문제 말고 남은 문제입니다. 보기를 누르면 바로 정답과 해설이 나옵니다.</p>
 <div id="quiz"></div>
 <section class="work" id="tools"></section>
 <nav class="pager" aria-label="이전 장과 다음 장"></nav>
