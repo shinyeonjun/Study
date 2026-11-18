@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>재실행 조건을 기록하고 입력과 결과를 따로 검사하기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="RS14-1">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">연구하고 설명하는 방법 · RS14 재실행 가능한 연구 산출물 만들기</p>
+<p class="chap-num">RS14·1</p>
+<h1>재실행 조건을 기록하고 입력과 결과를 따로 검사하기</h1>
+<p class="lead">같은 이름의 CSV라도 받은 날짜에 따라 값이 달라질 수 있습니다. 자료, 코드, 실행 순서, 허용 오차를 준비해 다른 날 이어서 해도 어느 지점부터 확인할지 알 수 있게 만듭니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>실행 명세에 입력·환경·명령·산출물 조건을 기록한다.</li><li>바이트 동일성과 수치 결과 일치 검사를 각각 실시한다.</li><li>재실행이 실패한 단계와 관측값을 남긴다.</li></ul></div>
+
+<h2>다시 실행하는 사람이 출발할 조건을 남긴다</h2>
+<p>같은 고정 자료와 분석 단계에서 같은 수치가 나오는지 확인하는 일을 계산 재현이라고 부릅니다. 같은 질문을 새 장비·새 관측으로 조사하는 연구는 새 자료가 주는 증거까지 따로 다룹니다. 이번 장에서는 이미 수록한 <a href="../../unit.html?u=DA10">마우나로아 실습</a>의 CSV를 가지고, 다른 사람이 입력과 계산 결과를 확인할 수 있는 최소 기록을 씁니다.</p>
+<div class="table-wrap"><table><thead><tr><th scope="col">남길 기록</th><th scope="col">이번 수치 검산에서의 예</th></tr></thead><tbody><tr><td>자료</td><td>출처 문서, 1990–2019년 범위, 파일 이름, 기대 SHA-256</td></tr><tr><td>코드·환경</td><td>해당 교재 버전, Python 버전, 표준 라이브러리만 사용</td></tr><tr><td>실행 순서</td><td>다운로드 → 파일 검사 → 열과 키 검사 → 계산</td></tr><tr><td>출력 확인</td><td>30행, 처음과 마지막의 차이 57.20, 농도 열 평균 379.922</td></tr><tr><td>실패를 보고할 때</td><td>작업 폴더, 명령, 마지막 통과 단계와 기대·관측 값</td></tr></tbody></table></div>
+<p>무작위 표본을 쓰는 연구라면 난수의 시드와 생성 방법, 그룹 분할 방법도 여기에 적습니다. 새 환경에서 패키지가 필요하면 이름과 검증한 버전, 설치 순서를 남깁니다. 하드웨어가 수치나 속도에 영향을 주는 비교는 해당 조건도 기록해야 의미가 있습니다.</p>
+<div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
+<h2>어떤 파일을 읽었는가와 숫자가 같은가</h2>
+<p>SHA-256은 받은 바이트 내용에서 64개의 16진수 문자로 된 요약값을 만듭니다. 이번 테스트는 같은 스냅샷을 사용해야 하므로 그 값이 기대값과 같은지 확인합니다. 줄바꿈이나 인코딩만 달라져도 요약값이 달라질 수 있습니다. 논문에서 허용한 입력이 ‘숫자 표가 같음’이라면 파일 검사와 별개로, 파싱해 열 이름, 키, 값의 동치성을 비교할 기준을 마련합니다.</p>
+<p>정수 행 수, 열 이름, 고정된 파일의 해시처럼 정확히 일치해야 할 것은 직접 비교합니다. 부동소수점으로 얻은 결과는 입력·알고리즘의 정밀도에 따라 허용 오차를 정합니다. Python의 <code>math.isclose(a,b)</code>는 차이가 <var>max(rel_tol·max(|a|,|b|), abs_tol)</var> 이하인지 비교합니다. 0 근처에서는 상대 오차만으로 허용 범위가 거의 없어지므로 절대 오차의 근거를 따로 씁니다.</p>
+<div class="check" data-q="q3"></div><div class="check" data-q="q4"></div><div class="check" data-q="q5"></div>
+<h2>실패를 발견하는 순서대로 확인한다</h2>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 160" role="img" aria-label="파일, 해석한 표, 계산 결과를 순서대로 검사해 어떤 단계에서 처음 실패했는지 확인한다.">
+<rect class="f-box" x="42" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="135" y="61" text-anchor="middle">파일 검사</text><text class="f-s" x="135" y="89" text-anchor="middle">경로와 SHA-256</text><text class="f-s" x="135" y="110" text-anchor="middle">다르면 계산 중단</text><line class="f-line" x1="235" y1="84" x2="278" y2="84" marker-end="url(#f-arrow)"/><rect class="f-soft" x="287" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="380" y="61" text-anchor="middle">자료 검사</text><text class="f-s" x="380" y="89" text-anchor="middle">열 이름·연도 키</text><text class="f-s" x="380" y="110" text-anchor="middle">목표 범위를 확인</text><line class="f-line" x1="480" y1="84" x2="523" y2="84" marker-end="url(#f-arrow)"/><rect class="f-box" x="532" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="625" y="61" text-anchor="middle">결과 검사</text><text class="f-s" x="625" y="89" text-anchor="middle">기대 숫자와 비교</text><text class="f-s" x="625" y="110" text-anchor="middle">다르면 단계 기록</text>
+</svg><figcaption>결과가 다를 때 허용치를 바꾸기 전에 어떤 조건이 달라졌는지 기록한다.</figcaption></figure>
+<p>파일을 못 찾은 실패와 파일을 열었지만 해시가 다른 실패는 서로 다른 단계입니다. 수치 허용치도 결과를 본 뒤 넓히면 미리 약속했던 검사 의미가 바뀝니다. 그날의 입력 검사 결과, 명령, 실행 환경과 상태를 남긴 뒤, 입력을 확인하지 못했다면 기존 결과를 덮어쓰지 않습니다.</p>
+<div class="check" data-q="q6"></div><div class="check" data-q="q7"></div>
+<h2>정상 입력과 바이트 한 자리 변경을 검산한다</h2>
+<p><a href="../../labs/mauna-loa/annual_co2.csv" download>연평균 관측 CSV</a>를 저장하고 예제를 그 파일의 작업 폴더에서 실행합니다. 파일을 수정하는 대신 메모리의 바이트만 바꿔 검사합니다.</p>
+<pre data-example="python"><code>from csv import DictReader
+from decimal import Decimal
+from hashlib import sha256
+from io import StringIO
+from math import isclose
+from pathlib import Path
+
+expected = &quot;434137320f75320a6dbbd6cdb713fc11e85b8f8d5e257369c3b358bfd27e10f4&quot;
+original = Path(&quot;annual_co2.csv&quot;).read_bytes()
+def digest(data):
+    return sha256(data).hexdigest()
+
+def verify(data):
+    if digest(data) != expected:
+        raise ValueError(&quot;입력 SHA-256 불일치&quot;)
+    reader = DictReader(StringIO(data.decode(&quot;utf-8&quot;)))
+    if reader.fieldnames != [&quot;year&quot;,&quot;mean_ppm&quot;,&quot;uncertainty_ppm&quot;]:
+        raise ValueError(&quot;열 이름 불일치&quot;)
+    rows = list(reader)
+    if [int(row[&quot;year&quot;]) for row in rows] != list(range(1990,2020)):
+        raise ValueError(&quot;연도 키 불일치&quot;)
+    values = [Decimal(row[&quot;mean_ppm&quot;]) for row in rows]
+    return len(values), values[-1]-values[0], sum(values)/len(values)
+
+print(*verify(original))
+try:
+    verify(original.replace(b&quot;354.45&quot;, b&quot;354.46&quot;, 1))
+except ValueError as problem:
+    print(problem)
+print(isclose(0,2e-10,rel_tol=1e-8,abs_tol=1e-9),
+      isclose(0,2e-9,rel_tol=1e-8,abs_tol=1e-9))</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>30 57.20 379.922
+입력 SHA-256 불일치
+True False</code></pre>
+<div class="check" data-q="q8"></div>
+
+<h2>참고 자료</h2>
+<ul><li><a href="https://www.nationalacademies.org/read/25303/chapter/6">미국 국립학술원 · Reproducibility and Replicability in Science, 3장</a></li><li><a href="https://docs.python.org/3/library/math.html#math.isclose">Python · math.isclose의 비교식</a></li><li><a href="../../labs/mauna-loa/SOURCE.md">마우나로아 수록 CSV의 출처와 환경</a></li></ul>
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

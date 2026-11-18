@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>공개 회귀 결과를 재계산하고 한 점에 대한 민감도를 확인하기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="RS15-1">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">연구하고 설명하는 방법 · RS15 공개 결과를 재현하고 새 가설 검증하기</p>
+<p class="chap-num">RS15·1</p>
+<h1>공개 회귀 결과를 재계산하고 한 점에 대한 민감도를 확인하기</h1>
+<p class="lead">기울기와 상관이 거의 같은 네 표가 있습니다. 원자료를 그리면 모양이 서로 다릅니다. 먼저 공개 결과를 숫자로 재계산하고, 어떤 점이 기울기를 결정하는지 계획한 한 가지 변경으로 확인합니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>재현할 결과와 허용 오차를 사전에 적는다.</li><li>중심화 합으로 절편·기울기·상관을 재계산한다.</li><li>한 관측 제거에서 식별 불가를 증명하고 결론의 범위를 제한한다.</li></ul></div>
+
+<h2>재현할 주장을 실행 전에 한 줄로 적는다</h2>
+<p>Anscombe가 제시한 네 자료의 기울기와 Pearson 상관을 재계산합니다. 같은 11행을 사용하는 원표를 정하고 ‘기울기는 소수 둘째 자리까지 .50, 상관은 .82가 되는가’를 먼저 확인합니다. 더 엄격하게 비교하려면 같은 원표에서 아래 여섯 자리 목표와 비교합니다. 프로그램끼리는 반올림하기 전 수치의 차이를 예컨대 5×10⁻⁷ 이하로 두되, 원표의 측정 정밀도와 이 검사 정밀도를 구별합니다.</p>
+<p>설명할 민감도 변화는 하나입니다. IV에서 x=19인 한 행만 제외합니다. 예상은 나머지 x가 모두 8이 되어 기울기를 정하지 못한다는 것입니다. 원 논문도 그 점의 역할을 다루므로, 여기서는 계산 재현과 원표에서의 민감도 분석을 구분해 기록합니다.</p>
+<div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
+<h2>열의 평균을 뺀 합계로 회귀를 계산한다</h2>
+<p><var>Sxx=∑(xᵢ−x̄)²</var>, <var>Sxy=∑(xᵢ−x̄)(yᵢ−ȳ)</var>, <var>Syy=∑(yᵢ−ȳ)²</var>입니다. 절편이 있는 최소제곱에서 <var>b=Sxy/Sxx</var>, <var>a=ȳ−b·x̄</var>입니다. 두 제곱합이 모두 양수이면 상관 <var>r=Sxy/√(Sxx Syy)</var>를 얻습니다. 분모가 0인 경우에는 계산을 멈추고, 값이 정의될 조건부터 확인합니다.</p>
+<div class="table-wrap"><table><thead><tr><th scope="col">세트</th><th scope="col">n</th><th scope="col">Sxx</th><th scope="col">절편</th><th scope="col">기울기</th><th scope="col">상관</th></tr></thead><tbody><tr><td>I</td><td>11</td><td>110</td><td>3.000091</td><td>0.500091</td><td>0.816421</td></tr><tr><td>II</td><td>11</td><td>110</td><td>3.000909</td><td>0.500000</td><td>0.816237</td></tr><tr><td>III</td><td>11</td><td>110</td><td>3.002455</td><td>0.499727</td><td>0.816287</td></tr><tr><td>IV</td><td>11</td><td>110</td><td>3.001727</td><td>0.499909</td><td>0.816521</td></tr></tbody></table></div>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 465" role="img" aria-label="Anscombe I은 대체로 직선 주변, II는 휘어짐, III은 큰 잔차, IV는 동일한 x의 값들과 멀리 떨어진 한 x를 보인다. 각 패널의 축 범위는 같다.">
+<text class="f-cap" x="204.5" y="25" text-anchor="middle">I</text><line class="f-ink" x1="78" y1="35" x2="78" y2="182"/><line class="f-ink" x1="78" y1="182" x2="331" y2="182"/><line class="f-ink" x1="92.88235294117646" y1="182" x2="92.88235294117646" y2="186"/><text class="f-s" x="92.88235294117646" y="204" text-anchor="middle">4</text><line class="f-ink" x1="152.41176470588235" y1="182" x2="152.41176470588235" y2="186"/><text class="f-s" x="152.41176470588235" y="204" text-anchor="middle">8</text><line class="f-ink" x1="211.94117647058823" y1="182" x2="211.94117647058823" y2="186"/><text class="f-s" x="211.94117647058823" y="204" text-anchor="middle">12</text><line class="f-ink" x1="271.47058823529414" y1="182" x2="271.47058823529414" y2="186"/><text class="f-s" x="271.47058823529414" y="204" text-anchor="middle">16</text><line class="f-ink" x1="331" y1="182" x2="331" y2="186"/><text class="f-s" x="331" y="204" text-anchor="middle">20</text><line class="f-grid" x1="78" y1="157.5" x2="331" y2="157.5"/><text class="f-s" x="68" y="161.5" text-anchor="end">4</text><line class="f-grid" x1="78" y1="108.5" x2="331" y2="108.5"/><text class="f-s" x="68" y="112.5" text-anchor="end">8</text><line class="f-grid" x1="78" y1="59.5" x2="331" y2="59.5"/><text class="f-s" x="68" y="63.5" text-anchor="end">12</text><circle class="f-fill" cx="182.18" cy="108.01" r="4"/><circle class="f-fill" cx="152.41" cy="121.36" r="4"/><circle class="f-fill" cx="226.82" cy="113.64" r="4"/><circle class="f-fill" cx="167.29" cy="98.58" r="4"/><circle class="f-fill" cx="197.06" cy="104.46" r="4"/><circle class="f-fill" cx="241.71" cy="84.49" r="4"/><circle class="f-fill" cx="122.65" cy="117.81" r="4"/><circle class="f-fill" cx="92.88" cy="154.31" r="4"/><circle class="f-fill" cx="211.94" cy="73.71" r="4"/><circle class="f-fill" cx="137.53" cy="147.45" r="4"/><circle class="f-fill" cx="107.76" cy="136.92" r="4"/><text class="f-cap" x="559.5" y="25" text-anchor="middle">II</text><line class="f-ink" x1="433" y1="35" x2="433" y2="182"/><line class="f-ink" x1="433" y1="182" x2="686" y2="182"/><line class="f-ink" x1="447.88235294117646" y1="182" x2="447.88235294117646" y2="186"/><text class="f-s" x="447.88235294117646" y="204" text-anchor="middle">4</text><line class="f-ink" x1="507.4117647058823" y1="182" x2="507.4117647058823" y2="186"/><text class="f-s" x="507.4117647058823" y="204" text-anchor="middle">8</text><line class="f-ink" x1="566.9411764705883" y1="182" x2="566.9411764705883" y2="186"/><text class="f-s" x="566.9411764705883" y="204" text-anchor="middle">12</text><line class="f-ink" x1="626.4705882352941" y1="182" x2="626.4705882352941" y2="186"/><text class="f-s" x="626.4705882352941" y="204" text-anchor="middle">16</text><line class="f-ink" x1="686" y1="182" x2="686" y2="186"/><text class="f-s" x="686" y="204" text-anchor="middle">20</text><line class="f-grid" x1="433" y1="157.5" x2="686" y2="157.5"/><text class="f-s" x="423" y="161.5" text-anchor="end">4</text><line class="f-grid" x1="433" y1="108.5" x2="686" y2="108.5"/><text class="f-s" x="423" y="112.5" text-anchor="end">8</text><line class="f-grid" x1="433" y1="59.5" x2="686" y2="59.5"/><text class="f-s" x="423" y="63.5" text-anchor="end">12</text><circle class="f-fill" cx="537.18" cy="94.53" r="4"/><circle class="f-fill" cx="507.41" cy="106.78" r="4"/><circle class="f-fill" cx="581.82" cy="99.43" r="4"/><circle class="f-fill" cx="522.29" cy="99.07" r="4"/><circle class="f-fill" cx="552.06" cy="93.06" r="4"/><circle class="f-fill" cx="596.71" cy="107.28" r="4"/><circle class="f-fill" cx="477.65" cy="131.41" r="4"/><circle class="f-fill" cx="447.88" cy="168.53" r="4"/><circle class="f-fill" cx="566.94" cy="94.66" r="4"/><circle class="f-fill" cx="492.53" cy="117.57" r="4"/><circle class="f-fill" cx="462.76" cy="148.44" r="4"/><text class="f-cap" x="204.5" y="260" text-anchor="middle">III</text><line class="f-ink" x1="78" y1="270" x2="78" y2="417"/><line class="f-ink" x1="78" y1="417" x2="331" y2="417"/><line class="f-ink" x1="92.88235294117646" y1="417" x2="92.88235294117646" y2="421"/><text class="f-s" x="92.88235294117646" y="439" text-anchor="middle">4</text><line class="f-ink" x1="152.41176470588235" y1="417" x2="152.41176470588235" y2="421"/><text class="f-s" x="152.41176470588235" y="439" text-anchor="middle">8</text><line class="f-ink" x1="211.94117647058823" y1="417" x2="211.94117647058823" y2="421"/><text class="f-s" x="211.94117647058823" y="439" text-anchor="middle">12</text><line class="f-ink" x1="271.47058823529414" y1="417" x2="271.47058823529414" y2="421"/><text class="f-s" x="271.47058823529414" y="439" text-anchor="middle">16</text><line class="f-ink" x1="331" y1="417" x2="331" y2="421"/><text class="f-s" x="331" y="439" text-anchor="middle">20</text><line class="f-grid" x1="78" y1="392.5" x2="331" y2="392.5"/><text class="f-s" x="68" y="396.5" text-anchor="end">4</text><line class="f-grid" x1="78" y1="343.5" x2="331" y2="343.5"/><text class="f-s" x="68" y="347.5" text-anchor="end">8</text><line class="f-grid" x1="78" y1="294.5" x2="331" y2="294.5"/><text class="f-s" x="68" y="298.5" text-anchor="end">12</text><circle class="f-fill" cx="182.18" cy="350.12" r="4"/><circle class="f-fill" cx="152.41" cy="358.57" r="4"/><circle class="f-fill" cx="226.82" cy="285.44" r="4"/><circle class="f-fill" cx="167.29" cy="354.40" r="4"/><circle class="f-fill" cx="197.06" cy="345.83" r="4"/><circle class="f-fill" cx="241.71" cy="333.21" r="4"/><circle class="f-fill" cx="122.65" cy="367.02" r="4"/><circle class="f-fill" cx="92.88" cy="375.47" r="4"/><circle class="f-fill" cx="211.94" cy="341.66" r="4"/><circle class="f-fill" cx="137.53" cy="362.86" r="4"/><circle class="f-fill" cx="107.76" cy="371.31" r="4"/><text class="f-cap" x="559.5" y="260" text-anchor="middle">IV</text><line class="f-ink" x1="433" y1="270" x2="433" y2="417"/><line class="f-ink" x1="433" y1="417" x2="686" y2="417"/><line class="f-ink" x1="447.88235294117646" y1="417" x2="447.88235294117646" y2="421"/><text class="f-s" x="447.88235294117646" y="439" text-anchor="middle">4</text><line class="f-ink" x1="507.4117647058823" y1="417" x2="507.4117647058823" y2="421"/><text class="f-s" x="507.4117647058823" y="439" text-anchor="middle">8</text><line class="f-ink" x1="566.9411764705883" y1="417" x2="566.9411764705883" y2="421"/><text class="f-s" x="566.9411764705883" y="439" text-anchor="middle">12</text><line class="f-ink" x1="626.4705882352941" y1="417" x2="626.4705882352941" y2="421"/><text class="f-s" x="626.4705882352941" y="439" text-anchor="middle">16</text><line class="f-ink" x1="686" y1="417" x2="686" y2="421"/><text class="f-s" x="686" y="439" text-anchor="middle">20</text><line class="f-grid" x1="433" y1="392.5" x2="686" y2="392.5"/><text class="f-s" x="423" y="396.5" text-anchor="end">4</text><line class="f-grid" x1="433" y1="343.5" x2="686" y2="343.5"/><text class="f-s" x="423" y="347.5" text-anchor="end">8</text><line class="f-grid" x1="433" y1="294.5" x2="686" y2="294.5"/><text class="f-s" x="423" y="298.5" text-anchor="end">12</text><circle class="f-fill" cx="507.41" cy="360.89" r="4"/><circle class="f-fill" cx="507.41" cy="370.94" r="4"/><circle class="f-fill" cx="507.41" cy="347.05" r="4"/><circle class="f-fill" cx="507.41" cy="333.21" r="4"/><circle class="f-fill" cx="507.41" cy="337.74" r="4"/><circle class="f-fill" cx="507.41" cy="355.26" r="4"/><circle class="f-fill" cx="507.41" cy="377.19" r="4"/><circle class="f-fill" cx="671.12" cy="288.38" r="4"/><circle class="f-fill" cx="507.41" cy="373.39" r="4"/><circle class="f-fill" cx="507.41" cy="344.60" r="4"/><circle class="f-fill" cx="507.41" cy="357.10" r="4"/><text class="f-s" x="724" y="434" text-anchor="middle">x</text><text class="f-s" x="34" y="36" text-anchor="middle">y</text>
+</svg><figcaption>모든 패널에 같은 눈금을 사용했다. IV의 한 오른쪽 관측은 기울기를 정하는 데 필요하다.</figcaption></figure>
+<p>II는 곡선의 모양이 있고 III에는 큰 수직 잔차가 있습니다. IV에는 다른 x에서 멀리 떨어진 한 점이 있습니다. 한 묶음의 숫자를 재계산해 일치했다는 결과는 각 데이터에서 직선 가정이 잘 맞는다는 판단을 대신할 수 없습니다.</p>
+<div class="check" data-q="q3"></div><div class="check" data-q="q4"></div><div class="check" data-q="q5"></div>
+<h2>x가 같으면 기울기를 바꿔도 같은 적합이 가능하다</h2>
+<p>IV의 (19,12.50)을 제외한 10개의 x는 모두 8이고 y의 평균은 7.001입니다. 원래는 두 x 수준의 평균을 잇는 기울기 (12.50−7.001)/(19−8)=5499/11000을 확인할 수 있습니다. 삭제 뒤 모든 예측값은 a+8b 한 숫자입니다. 이 숫자를 7.001로 만들면 어느 b에서도 같은 오차를 냅니다. 이때 기울기를 0으로 정하는 것은 절편만 있는 다른 모형을 택한 것입니다. 자료만으로 기울기 0을 확인한 결론으로 쓰지 않습니다.</p>
+<div class="check" data-q="q6"></div><div class="check" data-q="q7"></div>
+<h2>표의 네 계산과 계획한 변경을 실행한다</h2>
+<pre data-example="python"><code>from math import sqrt
+from statistics import mean
+
+x = [10,8,13,9,11,14,6,4,12,7,5]
+late = [8,8,8,8,8,8,8,19,8,8,8]
+values = [[8.04,6.95,7.58,8.81,8.33,9.96,7.24,4.26,10.84,4.82,5.68],[9.14,8.14,8.74,8.77,9.26,8.1,6.13,3.1,9.13,7.26,4.74],[7.46,6.77,12.74,7.11,7.81,8.84,6.08,5.39,8.15,6.42,5.73],[6.58,5.76,7.71,8.84,8.47,7.04,5.25,12.5,5.56,7.91,6.89]]
+def summarize(x,y):
+    mx,my = mean(x),mean(y)
+    dx,dy = [a-mx for a in x],[b-my for b in y]
+    xx,yy = sum(a*a for a in dx),sum(b*b for b in dy)
+    xy = sum(a*b for a,b in zip(dx,dy))
+    if xx == 0:
+        return xx,None,None,None
+    slope = xy/xx
+    return xx,my-slope*mx,slope,xy/sqrt(xx*yy) if yy else None
+
+for label,predictor,y in zip((&quot;I&quot;,&quot;II&quot;,&quot;III&quot;,&quot;IV&quot;),(x,x,x,late),values):
+    xx, intercept, slope, r = summarize(predictor,y)
+    print(label, xx, f&quot;{intercept:.6f} {slope:.6f} {r:.6f}&quot;)
+remaining = [(a,b) for a,b in zip(late,values[3]) if a!=19]
+new_x,new_y = map(list,zip(*remaining))
+print(len(remaining), mean(new_y), summarize(new_x,new_y)[0])
+assert summarize(new_x,new_y)[2] is None</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>I 110 3.000091 0.500091 0.816421
+II 110 3.000909 0.500000 0.816237
+III 110 3.002455 0.499727 0.816287
+IV 110 3.001727 0.499909 0.816521
+10 7.001 0</code></pre>
+<p>새 질문을 검증하려면 같은 자료를 여러 방법으로 고쳐 좋은 결과만 고르기보다, 바꾸는 한 요소, 예상 방향, 관측 단위와 평가식을 별도로 기록합니다. 이 실습에서 확인한 것은 특정한 공개 표에서 한 점에 기울기의 식별이 달려 있다는 사실입니다.</p>
+<div class="check" data-q="q8"></div>
+
+<h2>참고 자료</h2>
+<ul><li><a href="https://doi.org/10.1080/00031305.1973.10478966">Anscombe · Graphs in Statistical Analysis</a></li><li><a href="https://stat.ethz.ch/R-manual/R-devel/library/datasets/html/anscombe.html">R datasets · Anscombe 공식 데이터 설명과 검산 예</a></li></ul>
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

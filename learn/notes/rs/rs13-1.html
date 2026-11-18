@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>역분산으로 연구 결과를 합치고 이질성을 확인하기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="RS13-1">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">연구하고 설명하는 방법 · RS13 연구 결과의 불확실성과 증거 합성</p>
+<p class="chap-num">RS13·1</p>
+<h1>역분산으로 연구 결과를 합치고 이질성을 확인하기</h1>
+<p class="lead">세 연구가 같은 처리를 비교했다고 해도 추정값의 정밀도와 결과가 다를 수 있습니다. 공통 효과가 있다는 모형에서 가중평균을 도출하고, 그 모형과 맞지 않는 경우를 확인합니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>효과 추정치의 표준오차에서 역분산 가중치를 구한다.</li><li>반복 연구의 독립성을 이용한 결합 분산을 유도한다.</li><li>이질성·겹치는 표본·보고 누락이 해석에 주는 영향을 구분한다.</li></ul></div>
+
+<h2>어떤 효과와 어떤 방향을 평균하는가</h2>
+<p>세 연구의 결과가 모두 기준과 대안 사이의 평균 지연 차이이고 양수일 때 시간이 줄었다고 합시다. 결과 정의와 단위가 같을 때 연구의 효과 추정치 yᵢ와 표준오차 SEᵢ를 모읍니다. 표준오차는 효과 추정량이 반복해서 흔들릴 정도이며, 한 연구의 원래 관측값을 나열한 표준편차와 다릅니다.</p>
+<div class="table-wrap"><table><thead><tr><th scope="col">연구</th><th scope="col">효과 (ms)</th><th scope="col">표준오차 (ms)</th><th scope="col">역분산 가중치</th></tr></thead><tbody><tr><td>A</td><td>0</td><td>1</td><td>1</td></tr><tr><td>B</td><td>1</td><td>0.5</td><td>4</td></tr><tr><td>C</td><td>3</td><td>1</td><td>1</td></tr></tbody></table></div>
+<div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
+<h2>공통 효과 정규모형에서 가중평균을 도출한다</h2>
+<p>서로 독립인 추정치들이 같은 θ를 평균으로 하며, 각각 정규이고 알려진 분산 vᵢ=SEᵢ²를 가진다고 둡니다. 그때 음의 로그우도에서 θ에 관계있는 항은 ∑ᵢ(yᵢ−θ)²/(2vᵢ)입니다. 미분을 0으로 놓으면 <var>θ̂=∑ᵢwᵢyᵢ/∑ᵢwᵢ</var>이고 wᵢ=1/vᵢ입니다. 연구 B는 분산이 A의 1/4이라 비중이 네 배입니다.</p>
+<p>정규화한 가중치를 aᵢ=wᵢ/∑w라고 쓰면 독립 가정에서 Var(θ̂)=∑aᵢ²vᵢ=1/∑wᵢ입니다. 이번 예의 결합 효과는 7/6, 표준오차는 1/√6이고, 정규 95% 구간은 약 [0.3665,1.9668]ms입니다. 개별 연구가 낸 표준오차를 알려진 수처럼 사용할 때, 실제로는 표준오차도 추정됐을 수 있으므로 이 정규 구간은 근사입니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 264" role="img" aria-label="세 연구의 효과와 정규 95% 구간 및 결합 구간을 같은 ms 축 위에 놓았다. 0에 세로 점선이 있다.">
+<line class="f-dash" x1="310" y1="27" x2="310" y2="206"/><line class="f-ink" x1="174" y1="206" x2="650" y2="206"/><text class="f-t" x="142" y="58" text-anchor="end">A</text><line class="f-ink" x1="176.72" y1="53" x2="443.28" y2="53"/><circle class="f-ink" cx="310.00" cy="53" r="5"/><text class="f-t" x="142" y="96" text-anchor="end">B</text><line class="f-ink" x1="311.36" y1="91" x2="444.64" y2="91"/><circle class="f-ink" cx="378.00" cy="91" r="5"/><text class="f-t" x="142" y="134" text-anchor="end">C</text><line class="f-ink" x1="380.72" y1="129" x2="647.28" y2="129"/><circle class="f-ink" cx="514.00" cy="129" r="5"/><text class="f-t f-b" x="142" y="179" text-anchor="end">결합</text><line class="f-line" x1="334.92302" y1="174" x2="443.743692" y2="174"/><circle class="f-fill" cx="389.33" cy="174" r="5"/><line class="f-ink" x1="174" y1="206" x2="174" y2="212"/><text class="f-s" x="174" y="230" text-anchor="middle">-2</text><line class="f-ink" x1="242" y1="206" x2="242" y2="212"/><text class="f-s" x="242" y="230" text-anchor="middle">-1</text><line class="f-ink" x1="310" y1="206" x2="310" y2="212"/><text class="f-s" x="310" y="230" text-anchor="middle">0</text><line class="f-ink" x1="378" y1="206" x2="378" y2="212"/><text class="f-s" x="378" y="230" text-anchor="middle">1</text><line class="f-ink" x1="446" y1="206" x2="446" y2="212"/><text class="f-s" x="446" y="230" text-anchor="middle">2</text><line class="f-ink" x1="514" y1="206" x2="514" y2="212"/><text class="f-s" x="514" y="230" text-anchor="middle">3</text><line class="f-ink" x1="582" y1="206" x2="582" y2="212"/><text class="f-s" x="582" y="230" text-anchor="middle">4</text><line class="f-ink" x1="650" y1="206" x2="650" y2="212"/><text class="f-s" x="650" y="230" text-anchor="middle">5</text><text class="f-cap" x="649" y="252" text-anchor="end">효과 (ms)</text>
+</svg><figcaption>A와 C의 구간 너비는 같지만 중심이 다르고, B는 구간이 좁아 결합에서 더 큰 비중을 갖는다.</figcaption></figure>
+<div class="check" data-q="q3"></div><div class="check" data-q="q4"></div><div class="check" data-q="q5"></div>
+<h2>공통 효과와 맞지 않는 정도를 계산한다</h2>
+<p>잔차의 가중제곱합 <var>Q=∑wᵢ(yᵢ−θ̂)²</var>은 합치기 전 결과들이 결합값에서 얼마나 떨어졌는지 잽니다. 독립·알려진 분산의 정규 공통 효과 모형 아래, 각 효과에서 θ를 빼고 표준오차로 나눈 벡터는 표준정규입니다. θ를 맞추는 자유도 하나를 투영으로 제거하고 남은 제곱합이므로 Q는 자유도 k−1의 카이제곱입니다.</p>
+<p>이 예에서 Q=29/6입니다. 흔히 쓰는 이질성 지표는 Q&gt;0에서 <var>I²=max(0,(Q−(k−1))/Q)</var>이며 여기서는 17/29입니다. Q와 I²는 자료가 적으면 정밀하지 않습니다. 두 수는 결과 정의가 다른 연구를 합쳐도 될지 판단하는 근거 전부를 대체하지 않습니다. C를 빼면 결합값은 4/5입니다. 한 결과를 사후 제거하면 사실상 질문에 포함된 범위가 바뀌므로, 원래 범위의 결과와 별개로 민감도 계산임을 밝힙니다.</p>
+<div class="check" data-q="q6"></div><div class="check" data-q="q7"></div>
+<h2>표본이 겹치거나 결과가 공개되지 않았다면</h2>
+<p>같은 표본을 쓴 두 비교를 별개의 독립 연구처럼 넣으면 오차가 함께 움직입니다. 그때 분산에는 가중치 곱과 공분산 항을 포함해야 합니다. 예를 들어 A의 추정치를 두 번 넣고 각 가중치 1인 줄로 처리하면, 독립으로 가정한 분산은 1/7이지만 A가 완전히 중복인 실제 계산은 9/49입니다. 이 차이를 없애려면 연구 식별자와 겹치는 결과를 먼저 파악해야 합니다. 작은 효과나 실패한 실험이 보고되지 않은 문제는 가중치와 잔차만으로 진단할 수 없으므로, 포함 기준 및 확인한 누락을 따로 기록합니다.</p>
+<pre data-example="python"><code>from fractions import Fraction as F
+from math import exp, sqrt
+
+values = [0,1,3]
+weights = [1,4,1]
+total = sum(weights)
+theta = F(sum(w*y for w,y in zip(weights,values)),total)
+q = sum(w*(y-theta)**2 for w,y in zip(weights,values))
+i2 = max(F(0),(q-2)/q)
+se = sqrt(1/total)
+print(theta, q, i2)
+print(f&quot;{se:.6f} {theta-1.959964*se:.6f} {theta+1.959964*se:.6f}&quot;)
+print(f&quot;{exp(-float(q)/2):.6f}&quot;, F(4,5))
+print(F(1,7), F(2,7)**2 + F(4,7)**2/4 + F(1,7)**2)</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>7/6 29/6 17/29
+0.408248 0.366515 1.966819
+0.089219 4/5
+1/7 9/49</code></pre>
+<p>자유도 2에서 카이제곱 꼬리는 exp(−Q/2)이므로 위 코드의 0.089219가 나옵니다. 자유도가 달라지면 같은 지수식을 일반적으로 쓸 수 없습니다.</p>
+<div class="check" data-q="q8"></div>
+
+<h2>참고 자료</h2>
+<ul><li><a href="https://www.cochrane.org/authors/handbooks-and-manuals/handbook/current/chapter-10">Cochrane Handbook · 역분산과 이질성, 10장</a></li><li><a href="https://doi.org/10.1002/sim.1186">Higgins와 Thompson · Quantifying Heterogeneity in a Meta-analysis</a></li></ul>
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

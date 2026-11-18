@@ -817,6 +817,9 @@ window.BDA_CHAPTERS = {
     {"id": "ML15-1", "title": "확률 보정과 확률 예측의 채점 규칙", "href": "notes/ml/ml15-1.html"},
     {"id": "ML15-2", "title": "교환가능한 보정 자료로 분할 적합 예측구간 만들기", "href": "notes/ml/ml15-2.html"}
   ],
+  ML16: [
+    {"id": "ML16-1", "title": "장비별로 분리해 중첩 검증하고 마지막 두 장비를 평가하기", "href": "notes/ml/ml16-1.html"}
+  ],
   DL01: [
     {"id": "DL01-1", "title": "텐서의 모양과 배치 축 읽기", "href": "notes/dl/dl01-1.html"},
     {"id": "DL01-2", "title": "선형층과 활성함수로 작은 MLP 만들기", "href": "notes/dl/dl01-2.html"}
@@ -923,6 +926,13 @@ window.BDA_CHAPTERS = {
     {"id": "RL14-1", "title": "궤적 확률을 미분해 정책 경사와 기준값을 얻기", "href": "notes/rl/rl14-1.html"},
     {"id": "RL14-2", "title": "종료와 잘림을 구별해 GAE를 계산하고 PPO 목적을 읽기", "href": "notes/rl/rl14-2.html"}
   ],
+  RL15: [
+    {"id": "RL15-1", "title": "세 상태 Actor–Critic을 학습하고 기준 정책과 재현하기", "href": "notes/rl/rl15-1.html"}
+  ],
+  RL16: [
+    {"id": "RL16-1", "title": "행동 기록에서 정책 가치와 이중 강건 추정량을 계산하기", "href": "notes/rl/rl16-1.html"},
+    {"id": "RL16-2", "title": "두 단계 기록에서 시점별 가중치와 이중 강건 합을 대조하기", "href": "notes/rl/rl16-2.html"}
+  ],
   RS01: [
     {"id": "RS01-1", "title": "질문에서 가설로: 조작적 정의와 측정", "href": "notes/rs/rs01-1.html"},
     {"id": "RS01-2", "title": "큰 질문을 작은 비교로: 가정과 반례", "href": "notes/rs/rs01-2.html"}
@@ -966,6 +976,19 @@ window.BDA_CHAPTERS = {
   RS11: [
     {"id": "RS11-1", "title": "검색과 포함 기준을 다시 실행할 수 있게 기록하기", "href": "notes/rs/rs11-1.html"},
     {"id": "RS11-2", "title": "논문의 주장, 수치, 적용 조건을 근거표에 옮기기", "href": "notes/rs/rs11-2.html"}
+  ],
+  RS12: [
+    {"id": "RS12-1", "title": "반복 측정에서 독립 실험 단위와 짝을 정하기", "href": "notes/rs/rs12-1.html"},
+    {"id": "RS12-2", "title": "짝 비교의 검정력과 자료를 보고 멈추는 규칙", "href": "notes/rs/rs12-2.html"}
+  ],
+  RS13: [
+    {"id": "RS13-1", "title": "역분산으로 연구 결과를 합치고 이질성을 확인하기", "href": "notes/rs/rs13-1.html"}
+  ],
+  RS14: [
+    {"id": "RS14-1", "title": "재실행 조건을 기록하고 입력과 결과를 따로 검사하기", "href": "notes/rs/rs14-1.html"}
+  ],
+  RS15: [
+    {"id": "RS15-1", "title": "공개 회귀 결과를 재계산하고 한 점에 대한 민감도를 확인하기", "href": "notes/rs/rs15-1.html"}
   ],
   BD01: [
     {"id": "BD01-1", "title": "분석 기획 실습에서 업무 결정과 평가 기준 맞추기", "href": "notes/bd/bd01-1.html"},

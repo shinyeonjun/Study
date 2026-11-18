@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>장비별로 분리해 중첩 검증하고 마지막 두 장비를 평가하기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="ML16-1">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">머신러닝 · ML16 기계학습 비교 프로젝트</p>
+<p class="chap-num">ML16·1</p>
+<h1>장비별로 분리해 중첩 검증하고 마지막 두 장비를 평가하기</h1>
+<p class="lead">같은 장비에서 나온 두 행이 훈련과 검증에 한 줄씩 들어가면, 새 장비에 얼마나 잘 맞을지 과대평가할 수 있습니다. 장비 묶음을 유지하면서 정규화 강도를 고르고, 따로 남긴 보류 자료로 마지막 차이를 확인합니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>개발 바깥 검증, 안쪽 선택, 최종 보류의 역할을 구별한다.</li><li>대칭 입력에서 ridge 기울기를 도출하고 기준 모델과 비교한다.</li><li>전체 평균과 보류 장비별 결과를 함께 보고한다.</li></ul></div>
+
+<h2>합성 장비 표와 선택 규칙을 고정한다</h2>
+<p>장비 A~H에서 입력 x=0과 x=2의 연속값을 한 번씩 측정합니다. 손으로 답을 정해 두기 위해 <var>y=10+sᵍ(x−1)</var>로 합성합니다. sᵍ는 장비 g의 자료를 만드는 기울기입니다. 분석 코드의 입력 피처는 x뿐이고 장비 ID는 분할을 유지할 때만 사용합니다.</p>
+<div class="table-wrap"><table><thead><tr><th scope="col">항목</th><th scope="col">A</th><th scope="col">B</th><th scope="col">C</th><th scope="col">D</th><th scope="col">E</th><th scope="col">F</th><th scope="col">G</th><th scope="col">H</th></tr></thead><tbody><tr><td>sᵍ</td><td>0</td><td>1</td><td>1</td><td>2</td><td>2</td><td>3</td><td>2</td><td>−1</td></tr><tr><td>용도</td><td>개발</td><td>개발</td><td>개발</td><td>개발</td><td>개발</td><td>개발</td><td>보류</td><td>보류</td></tr></tbody></table></div>
+<p>기준은 훈련 자료 y의 상수 평균입니다. 대안은 절편에 벌점을 주지 않는 ridge 회귀로, 후보 λ는 0과 4입니다. 기준과 대안은 같은 검증 장비에 대한 평균절대오차(MAE)로 비교합니다. 타당한 입력만 포함된 합성 자료입니다. 실제 실험에서는 실패한 장비와 빠진 관측의 처리 규칙도 포함해 평가표의 단위를 정합니다.</p>
+<div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
+<h2>선택한 모형이 아니라 선택하는 절차를 평가한다</h2>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 160" role="img" aria-label="개발 안에서 바깥 검증을 남긴 다음 내부 훈련 장비로만 람다를 고른다. 개발 전체에서 다시 선택한 후 마지막 보류 장비를 평가한다.">
+<rect class="f-box" x="42" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="135" y="61" text-anchor="middle">개발 바깥 분할</text><text class="f-s" x="135" y="89" text-anchor="middle">AB / CD / EF</text><text class="f-s" x="135" y="110" text-anchor="middle">한 묶음은 검증</text><line class="f-line" x1="235" y1="84" x2="278" y2="84" marker-end="url(#f-arrow)"/><rect class="f-soft" x="287" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="380" y="61" text-anchor="middle">안쪽의 선택</text><text class="f-s" x="380" y="89" text-anchor="middle">남은 네 대에서</text><text class="f-s" x="380" y="110" text-anchor="middle">하나씩 빼며 λ 비교</text><line class="f-line" x1="480" y1="84" x2="523" y2="84" marker-end="url(#f-arrow)"/><rect class="f-box" x="532" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="625" y="61" text-anchor="middle">마지막 보류 평가</text><text class="f-s" x="625" y="89" text-anchor="middle">A–F로 선택 후 적합</text><text class="f-s" x="625" y="110" text-anchor="middle">G와 H를 한 번 평가</text>
+</svg><figcaption>안쪽에서 λ를 고른 뒤 훈련 네 대로 재적합해 바깥 장비를 평가한다.</figcaption></figure>
+<p>바깥 검증 짝은 AB, CD, EF를 차례로 씁니다. AB를 검증할 때는 C,D,E,F만 가지고 안쪽에서 장비 하나씩 빼어 λ를 비교합니다. 나머지 세 장비로 맞추고 안쪽에서 남긴 하나로 오차를 냅니다. 네 장비의 MAE 평균이 작은 λ를 고르고 동점이면 0을 택합니다. λ를 고른 다음 C,D,E,F 전체에서 다시 맞추어 A,B에 적용합니다. 이 과정을 나머지 바깥 짝에서 반복합니다. 같은 바깥 점수로 λ를 고르고 그 점수를 최종 성능으로 사용하면 선택 과정의 이득이 평가에 들어갑니다.</p>
+<div class="check" data-q="q3"></div><div class="check" data-q="q4"></div>
+<h2>대칭 자료에서 ridge의 정확한 기울기를 계산한다</h2>
+<p><var>u=x−1</var>로 놓으면 각 장비의 u는 −1과 1입니다. 훈련 자료의 u 평균이 0이고 y 평균이 10이므로 예측 절편은 10입니다. m대의 장비를 맞출 때 각 장비가 제곱오차 2(sᵍ−b)²를 더합니다. <var>2∑(sᵍ−b)²+λb²</var>를 b로 미분해 0으로 놓으면 <var>b=2∑sᵍ/(2m+λ)</var>입니다. 각 검증 장비에서 두 행의 절대오차는 모두 |sᵍ−b|입니다.</p>
+<div class="table-wrap"><table><thead><tr><th scope="col">바깥 검증</th><th scope="col">안쪽 MAE λ=0</th><th scope="col">안쪽 MAE λ=4</th><th scope="col">선택 λ</th><th scope="col">기준 MAE</th><th scope="col">대안 MAE</th></tr></thead><tbody><tr><td>AB</td><td>2/3</td><td>1</td><td>0</td><td>1/2</td><td>3/2</td></tr><tr><td>CD</td><td>4/3</td><td>6/5</td><td>4</td><td>3/2</td><td>1/2</td></tr><tr><td>EF</td><td>2/3</td><td>4/5</td><td>0</td><td>5/2</td><td>3/2</td></tr><tr><td>바깥 평균</td><td>—</td><td>—</td><td>—</td><td>3/2</td><td>7/6</td></tr></tbody></table></div>
+<p>개발의 바깥 폴드마다 훈련 집합이 서로 겹칩니다. 여러 바깥 점수를 완전히 독립인 복제 표본처럼 세어 단순 신뢰구간을 만드는 근거가 부족합니다. 보류 장비 자체를 늘리거나 새로운 실험을 추가할 때에도 관측과 불확실성의 단위를 맞춥니다.</p>
+<div class="check" data-q="q5"></div><div class="check" data-q="q6"></div>
+<h2>보류 장비의 평균은 같고 개별 차이는 크다</h2>
+<p>A~F 모두를 개발에 사용하면 안쪽 오차는 1과 20/21이어서 λ=4를 고릅니다. 개발 전체의 기울기는 9/8입니다. 보류 G의 기준·대안 MAE는 2와 7/8, H는 1과 17/8입니다. 두 장비에 동일한 비중을 두면 전체는 둘 다 3/2입니다. 기준에서 대안을 뺀 장비별 향상량은 9/8과 −9/8로 방향이 반대입니다. 장비 두 대에서 얻은 같은 평균은 전체 모집단에서 두 모형이 동등하다는 결론을 주지 않습니다.</p>
+<div class="check" data-q="q7"></div>
+<pre data-example="python"><code>from fractions import Fraction as F
+
+truth = dict(zip(&quot;ABCDEFGH&quot;, [0,1,1,2,2,3,2,-1]))
+rows = {g:[(u, 10+s*u) for u in (-1,1)] for g,s in truth.items()}
+
+def fit(train, lam):
+    pairs = [row for g in train for row in rows[g]]
+    a = F(sum(y for _,y in pairs),len(pairs))
+    b = F(sum(u*(y-a) for u,y in pairs),sum(u*u for u,_ in pairs)+lam)
+    return a,b
+
+def mae(test, model):
+    a,b = model
+    values = [abs(y-(a+b*u)) for g in test for u,y in rows[g]]
+    return sum(values)/len(values)
+
+def inner(dev, lam):
+    values = [mae(g,fit([h for h in dev if h!=g],lam)) for g in dev]
+    return sum(values)/len(values)
+
+def choose(dev):
+    return min((0,4),key=lambda l: (inner(dev,l),l))
+
+for test in (&quot;AB&quot;,&quot;CD&quot;,&quot;EF&quot;):
+    train = [g for g in &quot;ABCDEF&quot; if g not in test]
+    lam = choose(train)
+    a,b = fit(train,lam)
+    print(test, inner(train,0), inner(train,4), lam, b,
+          mae(test,(a,0)),mae(test,(a,b)))
+dev = &quot;ABCDEF&quot;
+lam = choose(dev)
+a,b = fit(dev,lam)
+print(lam, b, inner(dev,0), inner(dev,4))
+for test in (&quot;G&quot;,&quot;H&quot;,&quot;GH&quot;):
+    print(test, mae(test,(a,0)),mae(test,(a,b)))</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>AB 2/3 1 0 2 1/2 3/2
+CD 4/3 6/5 4 1 3/2 1/2
+EF 2/3 4/5 0 1 5/2 3/2
+4 9/8 1 20/21
+G 2 7/8
+H 1 17/8
+GH 3/2 3/2</code></pre>
+<div class="check" data-q="q8"></div>
+
+<h2>참고 자료</h2>
+<ul><li><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC1397873/">Varma와 Simon · 교차검증으로 모형을 고를 때의 오류 편향</a></li><li><a href="https://www.jmlr.org/papers/v11/cawley10a.html">Cawley와 Talbot · 모형 선택의 과적합</a></li><li><a href="https://jmlr.org/papers/v5/grandvalet04a.html">Bengio와 Grandvalet · 교차검증 분산</a></li></ul>
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

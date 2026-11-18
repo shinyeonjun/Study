@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>반복 측정에서 독립 실험 단위와 짝을 정하기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="RS12-1">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">연구하고 설명하는 방법 · RS12 실험 단위와 비교 계획 설계</p>
+<p class="chap-num">RS12·1</p>
+<h1>반복 측정에서 독립 실험 단위와 짝을 정하기</h1>
+<p class="lead">장비 네 대를 세 번씩 재면 기록은 열두 개입니다. 장비마다 일정한 특성이 있어서 세 값이 함께 움직일 수 있습니다. 표준오차에 무엇을 독립으로 세어야 하는지 묻고, 같은 장비를 짝으로 비교합니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>관측·배정·분석 단위를 각각 적는다.</li><li>반복 측정을 장비별 비교로 모아 표준오차를 구한다.</li><li>ablation 한 건의 비교 조건, 산출 결과, 실패 처리 규칙을 써 본다.</li></ul></div>
+
+<h2>한 행이 하나의 독립 실험이라는 가정부터 점검한다</h2>
+<p>컴퓨터 네 대에서 기준 방법과 대안 방법의 지연을 재고 싶습니다. 같은 장비에서 같은 과제를 두 방법에 모두 처리하게 합니다. 과제별 ‘기준 지연−대안 지연’을 한 줄에 쓴다면 관측 단위는 장비와 과제의 조합입니다. 장비마다 과제 세 개가 있어 열두 차이가 기록됩니다.</p>
+<p>이 실험에서는 장비가 서로 독립적으로 뽑힌다는 가정 아래, 장비를 독립 분석 단위로 둡니다. 방법을 어느 순서로 돌릴지는 장비와 과제 안에서 미리 무작위화하거나 균형을 맞춥니다. 예를 들어 앞 실행이 뒤 실행의 캐시를 데운다면 순서가 효과 추정에 들어옵니다. 그런 영향이 사라지도록 초기화하거나, 제거하기 어렵다는 사실을 기록하고 설계에 반영해야 합니다.</p>
+<p>한 장비의 모든 과제에 같은 방법 하나만 무작위 배정하는 다른 설계에서는 장비가 <b class="key">배정 단위</b>입니다. 그때 검정에서 표지를 섞는다면, 한 장비의 일부 과제만 다른 방법으로 옮길 수 없습니다. 배정됐던 장비 단위에 맞춰야 합니다.</p>
+<div class="check" data-q="q1"></div><div class="check" data-q="q2"></div><div class="check" data-q="q3"></div>
+<h2>조건이 같은 두 실행의 차이부터 만든다</h2>
+<div class="table-wrap"><table><thead><tr><th scope="col">장비</th><th scope="col">세 과제의 지연 차이 (ms)</th><th scope="col">장비별 차이 평균</th></tr></thead><tbody><tr><td>A</td><td>2, 3, 4</td><td>3</td></tr><tr><td>B</td><td>−1, 0, 1</td><td>0</td></tr><tr><td>C</td><td>1, 2, 3</td><td>2</td></tr><tr><td>D</td><td>−2, −1, 0</td><td>−1</td></tr></tbody></table></div>
+<p>장비들의 평균 차이는 (3+0+2−1)/4=1ms입니다. 차이가 양수면 대안이 더 빠릅니다. 장비 평균의 차이들이 독립이고 같은 변동을 가진다고 두면, 표본분산은 [(3−1)²+(0−1)²+(2−1)²+(−1−1)²]/3=10/3입니다. 전체 평균 추정량의 표준오차 추정은 √[(10/3)/4]=√(5/6)≈0.9129ms입니다.</p>
+<p>열두 과제 차이를 모두 독립이라고 계산하면 표준오차가 약 0.5365ms로 나옵니다. 이 예에서 장비 간의 차이와 장비 내부 반복을 하나로 섞으면 불확실성이 작게 보입니다. 장비별 행 수까지 다르면 두 계산의 평균이 달라질 수 있습니다. 장비에 같은 비중을 주려는지, 전체 실행 중 무작위 한 번에 해당하는 평균을 구하는지도 먼저 정합니다.</p>
+<div class="check" data-q="q4"></div><div class="check" data-q="q5"></div><div class="check" data-q="q6"></div>
+<h2>비교에서 바꾸는 부품 하나를 미리 적는다</h2>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 160" role="img" aria-label="같은 장비와 입력에 대해 구성 하나만 제거한 비교를 실시하고, 장비별 차이와 실패를 함께 보고한다.">
+<rect class="f-box" x="42" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="135" y="61" text-anchor="middle">전체 방식</text><text class="f-s" x="135" y="89" text-anchor="middle">같은 장비·입력</text><text class="f-s" x="135" y="110" text-anchor="middle">같은 반복 예산</text><line class="f-line" x1="235" y1="84" x2="278" y2="84" marker-end="url(#f-arrow)"/><rect class="f-soft" x="287" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="380" y="61" text-anchor="middle">제거 방식</text><text class="f-s" x="380" y="89" text-anchor="middle">부품 하나를 변경</text><text class="f-s" x="380" y="110" text-anchor="middle">나머지 설정을 고정</text><line class="f-line" x1="480" y1="84" x2="523" y2="84" marker-end="url(#f-arrow)"/><rect class="f-box" x="532" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="625" y="61" text-anchor="middle">비교 결과</text><text class="f-s" x="625" y="89" text-anchor="middle">장비마다 차이</text><text class="f-s" x="625" y="110" text-anchor="middle">실패도 함께 기록</text>
+</svg><figcaption>변경한 부품과 속도를 포함해 어디까지 비교 범위에 넣을지 기록한다.</figcaption></figure>
+<p><b class="key">제거 실험(ablation)</b>이라면 전체 방법과 한 구성만 제거한 방법으로 어떤 주장을 검사할지 먼저 씁니다. 예를 들어 같은 빌드, 입력, 실행 제한 안에서 메모리 캐시를 켠 것과 끈 것의 장비별 평균 지연을 비교합니다. 실패 처리 규칙도 사전에 지정합니다. 한 방법이 어려운 과제에서만 자주 끝나지 않는다면 성공 실행의 평균만으로 전체 방법의 지연을 비교하기 어렵습니다. 완료율과 종료 기준, 사전에 정의한 지연 지표를 모두 기록합니다.</p>
+<div class="check" data-q="q7"></div>
+<h2>두 계산을 실행해 어떤 표본 수를 썼는지 확인한다</h2>
+<pre data-example="python"><code>from math import sqrt
+from statistics import mean, stdev
+
+devices = [[2,3,4],[-1,0,1],[1,2,3],[-2,-1,0]]
+group = [mean(values) for values in devices]
+rows = [x for values in devices for x in values]
+for values in (group, rows):
+    print(len(values), mean(values), f&quot;{stdev(values)/sqrt(len(values)):.6f}&quot;)
+assert group == [3,0,2,-1]</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>4 1 0.912871
+12 1 0.536543</code></pre>
+<div class="check" data-q="q8"></div>
+
+<h2>참고 자료</h2>
+<ul><li><a href="https://doi.org/10.2307/1942661">Hurlbert · Pseudoreplication and the Design of Ecological Field Experiments</a></li><li><a href="https://www.itl.nist.gov/div898/handbook/prc/section3/prc311.htm">NIST · 대응 표본 비교</a></li><li><a href="https://doi.org/10.1073/pnas.1708274114">Nosek 외 · 연구 계획의 사전등록</a></li></ul>
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>
