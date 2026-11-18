@@ -165,27 +165,6 @@
     });
     view.appendChild(over);
 
-    // 공부하는 법: 하루 순서와 한 장 읽는 순서
-    var how = el("section", "plan-how");
-    var day = el("div"), one = el("div");
-    day.appendChild(el("h2", "", "하루"));
-    var dl = el("ol");
-    ["오늘 복습·오답부터 풉니다.",
-     "새 장은 '지금 할 공부'의 한 장만 합니다.",
-     "피곤한 날은 복습만, 또는 9단계 곁가지 한 장.",
-     "일주일에 한 번 기록 내보내기."].forEach(function (t) { dl.appendChild(el("li", "", t)); });
-    day.appendChild(dl);
-    one.appendChild(el("h2", "", "한 장"));
-    var ol = el("ol");
-    ["끝 문제를 먼저 훑어봅니다.",
-     "절 끝 문제는 그 자리에서 풉니다.",
-     "증명은 덮고, 쓴 가정을 공책에 한 줄로.",
-     "코드는 숫자를 바꿔 다시 돌려 봅니다.",
-     "끝 문제까지 풀면 마침. 막히면 '?' 표시하고 넘어갑니다."].forEach(function (t) { ol.appendChild(el("li", "", t)); });
-    one.appendChild(ol);
-    how.appendChild(day);
-    how.appendChild(one);
-    view.appendChild(how);
 
   }
 
@@ -198,7 +177,6 @@
     var h = head(p.no + "단계 · " + p.name, pr.done + " / " + pr.total + "장 · 약 " + weeks(pr.total) + "주");
     if (cur && cur.phase.id === p.id) h.querySelector("h1").appendChild(el("span", "now-tag", "지금"));
     view.appendChild(h);
-    if (p.note) view.appendChild(el("p", "plan-note muted", p.note));
     var blk = el("div", "area-block");
     p.items.forEach(function (it) { blk.appendChild(G.row(it.id, S, { tag: it.pulled ? "앞내용" : "" })); });
     view.appendChild(blk);
