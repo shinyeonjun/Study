@@ -34,6 +34,19 @@
 </svg><figcaption>로그의 결과는 지수다.</figcaption></figure>
 <div class="box "><p class="box-k">정의와 조건</p><p><b class="key">logₐ(x) = y ⇔ aʸ = x</b>입니다. 실수 로그에서 밑 a는 양수이고 1이 아니어야 하며, 입력 x는 양수여야 합니다. 그래야 aʸ가 서로 다른 y마다 다른 양수 값으로 대응합니다. 밑 1이면 항상 1만 나와 거꾸로 y를 하나로 정할 수 없습니다.</p></div>
 <p>예를 들어 log₂(1) = 0, log₂(1/8) = −3입니다. 음수인 로그 <em>출력</em>은 가능합니다. x = 0이나 −1처럼 양수가 아닌 <em>입력</em>에는 실수 로그를 쓸 수 없습니다. 자연로그 <b class="key">ln</b>은 밑이 e인 로그입니다. Python의 <code>math.log(x)</code>는 밑을 생략하면 자연로그를 계산합니다.</p>
+<div class="box trap"><p class="box-k">흔한 실수: 밑 없는 log</p><p>밑을 적지 않은 <code>log x</code>의 뜻은 분야마다 다릅니다. 한국 고등학교 교과서에서는 밑 10인 상용로그, 수학·통계·머신러닝 논문과 Python·NumPy에서는 대개 자연로그 ln, 정보이론·알고리즘에서는 자주 밑 2입니다. 처음 보는 자료에서는 밑을 먼저 확인합니다.</p></div>
+<h3>지수함수와 로그함수는 서로 역함수</h3>
+<p>정의를 두 번 쓰면 두 항등식이 나옵니다. <code>a<sup>logₐ x</sup> = x</code> (x &gt; 0), <code>logₐ(aʸ) = y</code> (y는 모든 실수). 하나를 한 뒤 다른 하나를 하면 원래 값으로 돌아오므로 <code>y = logₐ x</code>는 <code>y = aˣ</code>의 <b class="key">역함수</b>입니다. 입력과 출력의 자리가 바뀌므로 정의역과 치역도 서로 바뀝니다. 지수함수는 실수 전체 → 양수, 로그함수는 양수 → 실수 전체입니다. 그래프는 직선 y = x에 대해 대칭입니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 330" role="img" aria-label="같은 눈금의 좌표평면에 y=2^x, y=log₂x, y=x를 그렸다. 2^x 위의 점 (0,1)과 (2,4)는 log₂x 위의 점 (1,0)과 (4,2)로 y=x에 대해 대칭이고, 대응하는 점끼리 점선으로 이었다.">
+<line class="f-ink" x1="130" y1="230" x2="450" y2="230" marker-end="url(#f-arrow)"/><line class="f-ink" x1="220" y1="320" x2="220" y2="18" marker-end="url(#f-arrow)"/><text class="f-s" x="452" y="248" text-anchor="start">x</text><text class="f-s" x="228" y="20" text-anchor="start">y</text>
+<line class="f-dash" x1="140" y1="310" x2="420" y2="30"/><text class="f-s" x="428" y="34" text-anchor="start">y = x</text>
+<polyline class="f-line" fill="none" points="140.0,220.0 148.0,218.5 156.0,216.8 164.0,214.8 172.0,212.6 180.0,210.0 188.0,207.0 196.0,203.6 204.0,199.7 212.0,195.2 220.0,190.0 228.0,184.1 236.0,177.2 244.0,169.4 252.0,160.4 260.0,150.0 268.0,138.1 276.0,124.4 284.0,108.7 288.0,100.0 292.0,90.7 296.0,80.7 300.0,70.0 304.0,58.5 308.0,46.2 312.0,33.0 312.9,30.0"/>
+<polyline class="f-line" fill="none" points="230.0,310.0 231.5,302.0 233.2,294.0 235.2,286.0 237.4,278.0 240.0,270.0 243.0,262.0 246.4,254.0 250.3,246.0 254.8,238.0 260.0,230.0 265.9,222.0 272.8,214.0 280.6,206.0 289.6,198.0 300.0,190.0 311.9,182.0 325.6,174.0 341.3,166.0 359.3,158.0 380.0,150.0 403.8,142.0 420.0,137.1"/>
+<text class="f-t" x="296" y="45" text-anchor="end">y = 2ˣ</text><text class="f-t" x="428" y="141" text-anchor="start">y = log₂x</text>
+<line class="f-dash" x1="220" y1="190" x2="260" y2="230"/><line class="f-dash" x1="300" y1="70" x2="380" y2="150"/>
+<circle class="f-fill" cx="220" cy="190" r="4"/><circle class="f-fill" cx="260" cy="230" r="4"/><circle class="f-fill" cx="300" cy="70" r="4"/><circle class="f-fill" cx="380" cy="150" r="4"/>
+<text class="f-s" x="212" y="182" text-anchor="end">(0, 1)</text><text class="f-s" x="268" y="250" text-anchor="start">(1, 0)</text><text class="f-s" x="310" y="74" text-anchor="start">(2, 4)</text><text class="f-s" x="380" y="174" text-anchor="middle">(4, 2)</text>
+</svg><figcaption>가로·세로 눈금을 같게 그렸다. 좌표를 맞바꾼 점끼리 y = x에 대해 대칭이다.</figcaption></figure>
 <div class="check" data-q="q1"></div>
 <div class="check" data-q="q2"></div>
 <h2>곱은 로그에서 합이 된다</h2>
@@ -43,7 +56,8 @@
 <div class="check" data-q="q3"></div>
 <div class="check" data-q="q4"></div>
 <h2>배수에서 경과 시간을 구하기</h2>
-<p>시작값 100개가 단계당 1.2배가 되어 200개 이상이 되는 첫 정수 단계를 구합니다. 연속 지수 식 100 × 1.2<sup>t</sup> = 200을 풀면 <code>t = ln(2)/ln(1.2)</code>입니다. 로그 밑 변환은 <code>aʸ = x</code>의 양쪽에 ln을 적용하여 <code>y ln(a) = ln(x)</code>를 얻어서 나옵니다.</p>
+<p>시작값 100개가 단계당 1.2배가 되어 200개 이상이 되는 첫 정수 단계를 구합니다. 연속 지수 식 100 × 1.2<sup>t</sup> = 200을 100으로 나누면 1.2<sup>t</sup> = 2이므로 <code>t = log₁.₂(2)</code>입니다. 계산기와 Python에는 밑 1.2인 로그 버튼이 없으므로 밑을 바꿉니다.</p>
+<div class="box"><p class="box-k">밑 변환 공식 <span class="tag memo">외우기</span></p><p><code>logₐ(x) = ln(x)/ln(a) = log<sub>c</sub>(x)/log<sub>c</sub>(a)</code> (a, c는 양수이고 1이 아님, x &gt; 0)<br>이유: <code>aʸ = x</code>의 양변에 ln을 취하면 <code>y·ln(a) = ln(x)</code>이고, a ≠ 1이라 ln(a) ≠ 0이므로 나눌 수 있습니다.<br>따라서 <code>t = ln(2)/ln(1.2) ≈ 0.6931/0.1823 ≈ 3.802</code>입니다.</p></div>
 <pre data-example="python"><code>from math import ceil, log
 
 steps = log(2) / log(1.2)
@@ -65,6 +79,15 @@ print(f&quot;{100 * 1.2 ** k:.2f}&quot;)</code></pre>
 <div class="check" data-q="q6"></div>
 <h2>통계로 이어지는 지점</h2>
 <p>확률을 곱하던 식에 로그를 취하면 양수인 항의 곱이 합으로 바뀝니다. 밑이 e인 로그는 증가함수라 양수 영역에서 큰 값과 작은 값의 순서도 유지합니다. 통계의 우도를 계산할 때 이 두 성질을 함께 씁니다. 값이 0인 확률에 일반적인 실수 로그 함수를 그대로 적용하는 경우는 별도로 다뤄야 합니다.</p>
+
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table><thead><tr><th scope="col">항목</th><th scope="col">내용</th></tr></thead><tbody>
+<tr><th scope="row">정의</th><td>logₐ x = y ⇔ aʸ = x. 조건: <b class="key">a &gt; 0, a ≠ 1, x &gt; 0</b></td></tr>
+<tr><th scope="row">역관계</th><td>a<sup>logₐ x</sup> = x, logₐ(aʸ) = y. 그래프는 y = x에 대해 대칭</td></tr>
+<tr><th scope="row">로그 법칙</th><td>곱 → 합, 몫 → 차, uʳ → r·logₐ u (u, v &gt; 0). 합의 로그는 나누지 못함</td></tr>
+<tr><th scope="row">밑 변환</th><td>logₐ x = ln x / ln a</td></tr>
+<tr><th scope="row">ln, 로그 축</th><td>ln = 밑 e. 로그 축에서 같은 간격 = 같은 <b class="key">배수</b></td></tr></tbody></table></div>
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>로그는 지수함수의 역함수로, 몇 제곱인지를 돌려주며 곱을 합으로 바꿉니다.</p></div>
 
 <h2>참고 자료</h2>
 <ul><li><a href="https://openstax.org/books/algebra-and-trigonometry-2e/pages/6-3-logarithmic-functions">OpenStax · Algebra and Trigonometry 2e, Logarithmic Functions</a></li><li><a href="https://openstax.org/books/algebra-and-trigonometry-2e/pages/6-5-logarithmic-properties">OpenStax · Logarithmic Properties</a></li><li><a href="https://docs.python.org/3/library/math.html#power-and-logarithmic-functions">Python 공식 문서 · 지수와 로그</a></li></ul>

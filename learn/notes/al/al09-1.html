@@ -92,7 +92,7 @@
 <div class="check" data-q="q4"></div>
 
 <h2>배수를 곱해 만드는 등비수열</h2>
-<p>값이 <code>8, 4, 2, 1, …</code>로 줄어들면 차이는 −4, −2, −1이라 일정하지 않습니다. 대신 직전 값에 <code>1/2</code>를 계속 곱합니다. 매 단계 같은 수 r을 곱하는 수열을 이 장에서는 <b class="key">등비수열</b>, r을 <b>공비</b>라 부릅니다.</p>
+<p>값이 <code>8, 4, 2, 1, …</code>로 줄어들면 차이는 −4, −2, −1이라 일정하지 않습니다. 대신 직전 값에 <code>1/2</code>를 계속 곱합니다. 첫째 항부터 차례로 같은 수 r을 곱해 만드는 수열을 <b class="key">등비수열</b>, r을 <b>공비</b>라 부릅니다. 고등학교 교과서는 보통 첫째 항과 공비가 0이 아니라고 가정합니다. 그러면 이웃한 두 항의 비 <code>aₙ₊₁/aₙ</code>이 항상 r입니다.</p>
 <figure class="fig">
 <svg class="fig-svg" viewBox="0 0 760 301" role="img" aria-label="n=1부터 5까지 점의 높이가 8, 4, 2, 1, 0.5이다. 다음 점 높이가 직전 점의 절반이다.">
 <text class="f-cap" x="94" y="24" text-anchor="start">항의 값</text>
@@ -144,7 +144,7 @@
 <div class="check" data-q="q7"></div>
 
 <h2>첫 항 번호를 먼저 읽고 코드를 맞춘다</h2>
-<p>첫 기록을 1번으로 두면 <code>5 + 3(n−1)</code>의 n은 1부터 시작합니다. 첫 기록이 0번인 자료에서 같은 흐름을 적으면 <code>cₙ = 5 + 3n, n=0,1,…</code>입니다. 어떤 표기로 시작하느냐에 따라 이후 번째와 <em>첨자의 숫자</em>가 같지 않을 수 있습니다.</p>
+<p>첫 기록을 1번으로 두면 <code>5 + 3(n−1)</code>의 n은 1부터 시작합니다. 첫 기록이 0번인 자료에서 같은 흐름을 적으면 <code>cₙ = 5 + 3n, n=0,1,…</code>입니다. 등비수열도 같아서 0번에서 시작하면 <code>bₙ = b₀·rⁿ</code>, 1번에서 시작하면 <code>bₙ = b₁·rⁿ⁻¹</code>입니다. 0번에서 시작하면 "몇 번째"와 첨자의 숫자가 하나씩 어긋나므로, 식을 쓰기 전에 첫 첨자를 먼저 적어 둡니다.</p>
 <p class="small">실행 예제</p>
 <pre data-example="python"><code>from fractions import Fraction
 

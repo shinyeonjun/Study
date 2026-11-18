@@ -20,7 +20,7 @@
 <main class="page">
 <svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
 <header class="chapter">
-<p class="chap-sub">대수·함수</p>
+<p class="chap-sub">대수·함수·그래프 · AL08 각도·삼각함수·복소수</p>
 <p class="chap-num">AL08·2</p>
 <h1>사인 그래프의 진폭·주기·위상 읽기</h1>
 <p class="lead">원을 일정한 속도로 돌 때의 세로 좌표를 시간순으로 그립니다. 파동의 중심과 높이, 반복 시간, 시작점의 차이를 한 함수에서 찾아봅니다.</p>
@@ -35,10 +35,11 @@
 <line class="f-line" x1="102" y1="196" x2="655" y2="196"/><line class="f-line" x1="110" y1="200" x2="110" y2="37"/><line class="f-dash" x1="110" y1="196" x2="640" y2="196"/><text class="f-s" x="92" y="201" text-anchor="end">-1</text><line class="f-dash" x1="110" y1="130" x2="640" y2="130"/><text class="f-s" x="92" y="135" text-anchor="end">2</text><line class="f-dash" x1="110" y1="64" x2="640" y2="64"/><text class="f-s" x="92" y="69" text-anchor="end">5</text><path class="f-line" d="M115.00 130.00 L120.42 121.39 L125.83 112.92 L131.25 104.74 L136.67 97.00 L142.08 89.82 L147.50 83.33 L152.92 77.64 L158.33 72.84 L163.75 69.02 L169.17 66.25 L174.58 64.56 L180.00 64.00 L185.42 64.56 L190.83 66.25 L196.25 69.02 L201.67 72.84 L207.08 77.64 L212.50 83.33 L217.92 89.82 L223.33 97.00 L228.75 104.74 L234.17 112.92 L239.58 121.39 L245.00 130.00 L250.42 138.61 L255.83 147.08 L261.25 155.26 L266.67 163.00 L272.08 170.18 L277.50 176.67 L282.92 182.36 L288.33 187.16 L293.75 190.98 L299.17 193.75 L304.58 195.44 L310.00 196.00 L315.42 195.44 L320.83 193.75 L326.25 190.98 L331.67 187.16 L337.08 182.36 L342.50 176.67 L347.92 170.18 L353.33 163.00 L358.75 155.26 L364.17 147.08 L369.58 138.61 L375.00 130.00 L380.42 121.39 L385.83 112.92 L391.25 104.74 L396.67 97.00 L402.08 89.82 L407.50 83.33 L412.92 77.64 L418.33 72.84 L423.75 69.02 L429.17 66.25 L434.58 64.56 L440.00 64.00 L445.42 64.56 L450.83 66.25 L456.25 69.02 L461.67 72.84 L467.08 77.64 L472.50 83.33 L477.92 89.82 L483.33 97.00 L488.75 104.74 L494.17 112.92 L499.58 121.39 L505.00 130.00 L510.42 138.61 L515.83 147.08 L521.25 155.26 L526.67 163.00 L532.08 170.18 L537.50 176.67 L542.92 182.36 L548.33 187.16 L553.75 190.98 L559.17 193.75 L564.58 195.44 L570.00 196.00 L575.42 195.44 L580.83 193.75 L586.25 190.98 L591.67 187.16 L597.08 182.36 L602.50 176.67 L607.92 170.18 L613.33 163.00 L618.75 155.26 L624.17 147.08 L629.58 138.61 L635.00 130.00"/><text class="f-s" x="115" y="218" text-anchor="middle">0</text><text class="f-s" x="180" y="218" text-anchor="middle">1</text><text class="f-s" x="245" y="218" text-anchor="middle">2</text><text class="f-s" x="310" y="218" text-anchor="middle">3</text><text class="f-s" x="375" y="218" text-anchor="middle">4</text><text class="f-s" x="440" y="218" text-anchor="middle">5</text><text class="f-s" x="505" y="218" text-anchor="middle">6</text><text class="f-s" x="570" y="218" text-anchor="middle">7</text><text class="f-s" x="635" y="218" text-anchor="middle">8</text><line class="f-ink" x1="115" y1="39" x2="375" y2="39" marker-end="url(#f-arrow)"/><text class="f-s" x="245" y="28" text-anchor="middle">주기 4초</text><text class="f-s" x="103" y="27" text-anchor="middle">센서 출력</text><text class="f-s" x="650" y="236" text-anchor="middle">시간(초)</text>
 </svg><figcaption>4초가 지나면 각도가 2π만큼 더해져 단위원의 같은 위치로 돌아옵니다.</figcaption></figure>
 <h2>주기와 1초에 몇 번 반복하는지를 구분한다</h2>
-<p>각이 초당 π/2라디안씩 증가하므로 각이 한 바퀴 2π 증가하는 데 2π/(π/2)=4초가 걸립니다. 이것이 주기입니다. 주파수는 1초당 주기의 수라서 1/4=0.25Hz입니다. 일반식 b+A sin(ωt+φ)에서 ω&gt;0, A≠0이면 진폭 |A|, 중심 b, 주기 2π/ω입니다. 상수 b만 바꾸면 위아래로 이동하고, ω를 두 배로 키우면 주기가 절반이 됩니다.</p>
+<p>각이 초당 π/2라디안씩 증가하므로 각이 한 바퀴 2π 증가하는 데 2π/(π/2)=4초가 걸립니다. 이것이 주기입니다. <b class="key">주파수</b> f는 1초당 주기의 수라서 1/4=0.25Hz입니다. 주기 T와 주파수는 <code>f = 1/T</code>, 각이 1초에 늘어나는 양인 <b class="key">각진동수</b>(각속도) ω와는 <code>ω = 2πf = 2π/T</code>의 관계입니다. 여기서 ω = π/2 rad/s입니다. 일반식 b+A sin(ωt+φ)에서 ω&gt;0, A≠0이면 진폭 |A|, 중심 b, 주기 2π/ω입니다. 상수 b만 바꾸면 위아래로 이동하고, ω를 두 배로 키우면 주기가 절반이 됩니다.</p>
 <div class="check" data-q="q3"></div><div class="check" data-q="q4"></div>
 <h2>센서의 시작점이 다를 때</h2>
 <p>g(t)=2+3 sin(πt/2+π/2)라 하면 h(t+1)과 같습니다. 시각 t에서 h의 1초 뒤 값을 보여 주므로 g의 그래프는 h보다 왼쪽으로 1초 이동합니다. h는 t=1에서 첫 꼭대기이며 g는 t=0부터 꼭대기에 있습니다. 괄호 안에 더한 위상은 라디안이고 그래프를 옮기는 시간은 초입니다.</p>
+<p>일반적으로 <code>sin(ωt + φ) = sin(ω(t + φ/ω))</code>이므로, 위상 φ &gt; 0을 더하면 그래프는 <b class="key">φ/ω만큼 왼쪽</b>으로 이동합니다. 여기서는 (π/2)÷(π/2) = 1초입니다. 또 <code>sin(θ + π/2) = cos θ</code>이므로 g(t) = 2 + 3 cos(πt/2)로도 쓸 수 있습니다. 코사인 그래프는 사인 그래프를 π/2만큼 왼쪽으로 옮긴 모양입니다.</p>
 <div class="check" data-q="q5"></div>
 <pre data-example="python"><code>from math import isclose, pi, sin
 
@@ -61,6 +62,12 @@ g(0): 5.0
 주기와 이동 확인: True True</code></pre>
 <p>데이터가 일정한 간격으로 측정되지 않았거나 간격이 너무 길면 꼭대기를 놓칠 수 있습니다. 표본들의 최댓값과 최솟값만으로 실제 파형의 진폭을 항상 찾을 수는 없습니다. 각을 시간에 연결한 모델이나 더 촘촘한 측정이 도움이 됩니다.</p>
 <div class="check" data-q="q6"></div>
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table><thead><tr><th scope="col">y = b + A sin(ωt + φ)</th><th scope="col">읽는 법</th></tr></thead><tbody>
+<tr><th scope="row">중심선</th><td>y = b</td></tr>
+<tr><th scope="row">진폭</th><td>|A|. 최댓값 b + |A|, 최솟값 b − |A|</td></tr>
+<tr><th scope="row">주기·주파수</th><td><b class="key">T = 2π/ω</b>, f = 1/T, ω = 2πf</td></tr>
+<tr><th scope="row">위상</th><td>φ &gt; 0이면 φ/ω만큼 왼쪽 이동</td></tr></tbody></table></div>
 <div class="box sum"><p class="box-k">한 줄 정리</p><p>사인의 중심·진폭·주기는 각각 높이와 변화 폭, 한 바퀴 도는 시간에서 계산합니다.</p></div>
 
 <h2>참고 자료</h2>

@@ -20,7 +20,7 @@
 <main class="page">
 <svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
 <header class="chapter">
-<p class="chap-sub">대수·함수</p>
+<p class="chap-sub">대수·함수·그래프 · AL08 각도·삼각함수·복소수</p>
 <p class="chap-num">AL08·3</p>
 <h1>복소수의 곱셈을 크기와 회전으로 읽기</h1>
 <p class="lead">a+bi를 평면의 한 점으로 보면, i를 곱할 때 생기는 부호 변화가 실제로 어느 방향의 회전인지 볼 수 있습니다.</p>
@@ -28,7 +28,7 @@
 <div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>실수부·허수부·절댓값과 켤레를 구한다.</li><li>i의 곱을 90° 회전으로 해석한다.</li><li>극형식에서 곱의 크기와 각을 계산한다.</li></ul></div>
 
 <h2>점 하나를 두 수로 적는다</h2>
-<p>i는 i²=−1로 정의한 허수 단위입니다. 복소수 z=a+bi에서 실수부는 a, 허수부는 b입니다. 복소평면에서는 가로좌표 a, 세로좌표 b에 점을 놓습니다. 예로 z=3+4i는 (3,4)이고 원점까지의 거리인 절댓값은 |z|=√(3²+4²)=5입니다.</p>
+<p>i는 i²=−1로 정의한 허수 단위입니다. 복소수 z=a+bi에서 실수부는 a, 허수부는 b입니다. 복소평면에서는 가로좌표 a, 세로좌표 b에 점을 놓습니다. 예로 z=3+4i는 (3,4)이고 원점까지의 거리인 절댓값은 |z|=√(3²+4²)=5입니다. 덧셈과 뺄셈은 실수부끼리, 허수부끼리 계산하므로 평면 벡터의 덧셈과 같습니다(예: (3+4i)+(1−2i)=4+2i). 두 복소수는 실수부와 허수부가 각각 같을 때만 같습니다.</p>
 <p>켤레는 실수부를 그대로 두고 허수부의 부호를 바꾼 3−4i입니다. 평면에서 실수축에 대하여 대칭입니다. 둘을 곱하면 중간항이 상쇄되어 (3+4i)(3−4i)=3²+4²=25입니다. 일반적으로 z와 켤레의 곱은 |z|²입니다.</p>
 <div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
 <h2>i를 곱하면 좌표가 (−b,a)가 된다</h2>
@@ -39,7 +39,7 @@
 <div class="check" data-q="q3"></div><div class="check" data-q="q4"></div>
 <h2>절댓값과 각으로 곱셈을 계산한다</h2>
 <p>0이 아닌 복소수는 z=r(cos θ+i sin θ)로 적을 수 있습니다. r=|z|이고 θ는 양의 실수축에서의 각입니다. 각은 2π의 정수배만큼 달라도 같은 점을 가리킵니다. z=0이면 각을 정할 고유한 방향이 없습니다.</p>
-<p>곱셈에서 사인과 코사인의 각 덧셈 공식을 적용하면 크기는 곱하고 각은 더합니다. 예로 크기 2·각 π/3인 점과 크기 3·각 π/6인 점을 곱하면 크기 6·각 π/2입니다. 코사인 0, 사인 1이므로 결과는 6i입니다. 이 표현에서 크기 1인 인수는 거리 유지와 각 변화만 만듭니다.</p>
+<p>z₁ = r₁(cos α + i sin α), z₂ = r₂(cos β + i sin β)를 곱해 전개하면 <code>z₁z₂ = r₁r₂[(cos α cos β − sin α sin β) + i(sin α cos β + cos α sin β)]</code>입니다. 괄호 안은 삼각함수의 <b class="key">덧셈정리</b> <code>cos(α+β) = cos α cos β − sin α sin β</code>, <code>sin(α+β) = sin α cos β + cos α sin β</code> 그대로이므로 <code>z₁z₂ = r₁r₂(cos(α+β) + i sin(α+β))</code>입니다. 곧 크기는 곱하고 각은 더합니다. 예로 크기 2·각 π/3인 점과 크기 3·각 π/6인 점을 곱하면 크기 6·각 π/2입니다. 코사인 0, 사인 1이므로 결과는 6i입니다. 이 표현에서 크기 1인 인수는 거리 유지와 각 변화만 만듭니다.</p>
 <div class="check" data-q="q5"></div>
 <pre data-example="python"><code>from cmath import rect
 from math import isclose, pi
@@ -61,6 +61,13 @@ print(&quot;극형식 곱의 허수부:&quot;, f&quot;{product.imag:.1f}&quot;)<
 극형식 곱의 허수부: 6.0</code></pre>
 <p>Python은 허수 단위를 <code>j</code>로 씁니다. 예를 들어 <code>3+4j</code>가 z입니다. 실수부와 허수부를 근삿값으로 저장하므로 각을 곱한 결과의 좌표도 오차 범위를 두어 비교합니다.</p>
 <div class="check" data-q="q6"></div>
+<div class="more"><p class="box-k">더 알아보기 · 오일러 공식</p><p>신호 처리·제어·그래픽스에서는 cos θ + i sin θ를 <code>e^(iθ)</code>로 줄여 씁니다(오일러 공식). 그러면 극형식은 z = r·e^(iθ)이고, 곱셈에서 각이 더해지는 성질이 지수법칙 e^(iα)·e^(iβ) = e^(i(α+β))와 같은 모양이 됩니다. 증명은 미적분(급수) 뒤에 합니다.</p></div>
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table><thead><tr><th scope="col">항목</th><th scope="col">z = a + bi = r(cos θ + i sin θ)</th></tr></thead><tbody>
+<tr><th scope="row">허수 단위</th><td>i² = −1. Python에서는 j</td></tr>
+<tr><th scope="row">절댓값·켤레</th><td>|z| = √(a² + b²), <b class="key">켤레</b> a − bi, z·(켤레) = |z|²</td></tr>
+<tr><th scope="row">i를 곱함</th><td>(a, b) → (−b, a): 반시계 <b class="key">90° 회전</b></td></tr>
+<tr><th scope="row">극형식의 곱</th><td>크기는 곱하고 각은 더함</td></tr></tbody></table></div>
 <div class="box sum"><p class="box-k">한 줄 정리</p><p>복소수의 곱은 좌표로 전개할 수 있고, 극형식에서는 크기와 방향의 변화로 계산할 수 있습니다.</p></div>
 
 <h2>참고 자료</h2>

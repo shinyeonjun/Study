@@ -91,7 +91,9 @@ print(sum(numbers))</code></pre>
 </svg>
 <figcaption>다섯 열의 합계 110은 원래 합을 두 번 더한 값이다.</figcaption>
 </figure>
-<p>5개의 열에서 각각 22가 나왔으므로 <code>2S = 5×22</code>이고 <code>S=55</code>입니다. 일반적인 등차수열에서는 서로 짝이 되는 두 항의 합이 <code>a₁ + aₙ</code>입니다. 왼쪽에서 한 칸 갈 때 +d, 오른쪽에서 한 칸 되돌아올 때 −d가 상쇄되기 때문입니다. 그래서 <code>Sₙ = n(a₁ + aₙ)/2</code>입니다.</p>
+<p>5개의 열에서 각각 22가 나왔으므로 <code>2S = 5×22</code>이고 <code>S=55</code>입니다. 일반적인 등차수열에서는 서로 짝이 되는 두 항의 합이 <code>a₁ + aₙ</code>입니다. 왼쪽에서 한 칸 갈 때 +d, 오른쪽에서 한 칸 되돌아올 때 −d가 상쇄되기 때문입니다. 그래서 <code>Sₙ = n(a₁ + aₙ)/2</code>입니다. 끝항 대신 공차를 쓰면 aₙ = a₁ + (n−1)d이므로 <code>Sₙ = n{2a₁ + (n−1)d}/2</code>입니다. 예제에 넣으면 5×(10 + 4×3)/2 = 55로 같습니다.</p>
+<div class="box"><p class="box-k">Σ의 성질과 자주 쓰는 합 <span class="tag memo">외우기</span></p><p>상수 c와 수열 aₖ, bₖ에 대해<br><code>Σ(aₖ + bₖ) = Σaₖ + Σbₖ</code>, <code>Σ c·aₖ = c·Σaₖ</code>, <code>Σ<sub>k=1</sub><sup>n</sup> c = n·c</code><br><code>Σ<sub>k=1</sub><sup>n</sup> k = n(n+1)/2</code>, <code>Σ<sub>k=1</sub><sup>n</sup> k² = n(n+1)(2n+1)/6</code><br>예: Σ<sub>k=1</sub><sup>10</sup> (2k + 1) = 2×55 + 10 = 120.</p></div>
+<div class="box trap"><p class="box-k">흔한 실수</p><p>곱의 합은 합의 곱이 아닙니다. <code>Σaₖbₖ ≠ (Σaₖ)(Σbₖ)</code>이고 <code>Σaₖ² ≠ (Σaₖ)²</code>입니다. 예: 1² + 2² = 5이지만 (1 + 2)² = 9입니다. 분산·공분산 공식에서 이 차이가 계속 나옵니다.</p></div>
 <div class="check" data-q="q4"></div>
 
 <h2>등비수열의 합에서 겹치는 항 지우기</h2>
@@ -121,7 +123,7 @@ print(sum(numbers))</code></pre>
 
 <h2>곱의 기호와 조건의 지시함수</h2>
 <p><b class="key">파이 Π</b>는 항을 모두 곱하라는 뜻입니다. 시작값 x가 기간마다 비율 <code>rᵢ</code>만큼 변하면 기간이 끝날 때마다 <code>1+rᵢ</code>를 곱합니다. 먼저 10% 늘고 다음에 20% 줄면 <code>∏<sub>i=1</sub><sup>2</sup> (1+rᵢ) = 1.10×0.80 = 0.88</code>입니다. 따라서 원래 10,000원은 8,800원이 됩니다. 두 비율을 단순히 더해 −10%라고 하면 서로 다른 기준값을 무시합니다.</p>
-<p><b class="key">지시함수</b> <code>1{조건}</code>은 조건이 참이면 1, 거짓이면 0입니다. 다섯 값 <code>65, 70, 90, 68, 75</code>에서 70 이상인 수를 세려면 <code>Σ<sub>i=1</sub><sup>5</sup> 1{xᵢ ≥ 70}</code>을 씁니다. 합에 들어간 다섯 값은 <code>0, 1, 1, 0, 1</code>이므로 결과는 3입니다. 전체 개수 5로 나누면 이 표의 상대도수인 3/5입니다.</p>
+<p><b class="key">지시함수</b> <code>1{조건}</code>은 조건이 참이면 1, 거짓이면 0입니다. 책에 따라 𝟙(조건), I(조건), 𝟙<sub>A</sub>(x)로도 씁니다. 다섯 값 <code>65, 70, 90, 68, 75</code>에서 70 이상인 수를 세려면 <code>Σ<sub>i=1</sub><sup>5</sup> 1{xᵢ ≥ 70}</code>을 씁니다. 합에 들어간 다섯 값은 <code>0, 1, 1, 0, 1</code>이므로 결과는 3입니다. 전체 개수 5로 나누면 이 표의 상대도수인 3/5입니다.</p>
 <p class="small">실행 예제</p>
 <pre data-example="python"><code>from fractions import Fraction as F
 from math import prod

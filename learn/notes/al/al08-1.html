@@ -20,7 +20,7 @@
 <main class="page">
 <svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
 <header class="chapter">
-<p class="chap-sub">대수·함수</p>
+<p class="chap-sub">대수·함수·그래프 · AL08 각도·삼각함수·복소수</p>
 <p class="chap-num">AL08·1</p>
 <h1>각을 라디안으로 바꾸고 단위원 위의 좌표 읽기</h1>
 <p class="lead">직각삼각형에서 배운 비율을 원 위의 좌표로 바꾸면 90도보다 큰 각이나 음의 각에도 같은 사인·코사인을 쓸 수 있습니다.</p>
@@ -28,17 +28,18 @@
 <div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>도와 라디안 사이를 변환한다.</li><li>직각삼각형의 변과 단위원의 좌표로 삼각함수를 계산한다.</li><li>각의 방향과 사분면에서 부호를 읽는다.</li></ul></div>
 
 <h2>각의 크기를 원호로 재기</h2>
-<p>반지름 r인 원에서 중심각이 만드는 호의 길이가 s라면, 양의 중심각의 라디안 값은 θ=s/r입니다. 원을 한 바퀴 돌 때 호 길이는 2πr이므로 한 바퀴는 2π라디안입니다. 도 단위의 360°와 같은 각입니다. 따라서 180°=π라디안, 60°=π/3라디안입니다.</p>
+<p>반지름 r인 원에서 중심각이 만드는 호의 길이가 s라면, 양의 중심각의 라디안 값은 θ=s/r입니다. 원을 한 바퀴 돌 때 호 길이는 2πr이므로 한 바퀴는 2π라디안입니다. 도 단위의 360°와 같은 각입니다. 따라서 180°=π라디안, 60°=π/3라디안입니다. 도를 라디안으로 바꿀 때는 <code>×π/180</code>, 거꾸로는 <code>×180/π</code>를 합니다. 1라디안은 약 57.3°입니다. 라디안은 길이÷길이라서 단위 없는 수이고, 그래서 미적분과 Python의 삼각함수는 라디안을 기본으로 씁니다.</p>
 <p>예로 반지름이 6cm인 원에서 60°에 해당하는 호의 길이는 s=rθ=6×π/3=2πcm입니다. 도로 적힌 60을 그대로 곱하면 단위가 섞입니다. 양의 각은 x축의 오른쪽을 출발해 반시계 방향으로 잽니다. 음의 각은 시계 방향 회전을 나타냅니다.</p>
 <div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
 <h2>직각삼각형의 비가 점의 좌표가 된다</h2>
 <p>직각삼각형 두 변이 3과 4이면 빗변은 피타고라스 정리로 √(3²+4²)=5입니다. 밑변 3 옆의 각 θ를 볼 때, cos θ=3/5, sin θ=4/5입니다. 모든 변을 빗변 5로 나누면 빗변이 1인 닮은 삼각형이 됩니다. 오른쪽과 위쪽 길이가 바로 (cos θ, sin θ)입니다.</p>
 <div class="check" data-q="q3"></div>
 <figure class="fig"><svg class="fig-svg" viewBox="0 0 760 266" role="img" aria-label="단위원에서 π/3만큼 반시계 회전한 점의 좌표는 정확히 1/2와 √3/2">
-<line class="f-line" x1="227" y1="135" x2="530" y2="135" marker-end="url(#f-arrow)"/><line class="f-line" x1="367" y1="246" x2="367" y2="23" marker-end="url(#f-arrow)"/><circle cx="367" cy="135" r="95" class="f-ink"/><line class="f-line" x1="367" y1="135" x2="414.5" y2="52.727586640478336"/><line class="f-dash" x1="414.5" y1="52.727586640478336" x2="414.5" y2="135"/><line class="f-dash" x1="367" y1="52.727586640478336" x2="414.5" y2="52.727586640478336"/><circle cx="414.5" cy="52.727586640478336" r="5" class="f-fill"/><text class="f-t" x="501" y="52" text-anchor="middle">P=(1/2, √3/2)</text><text class="f-t" x="299" y="56" text-anchor="middle">sin θ</text><text class="f-t" x="414" y="155" text-anchor="middle">cos θ</text><text class="f-s" x="406" y="111" text-anchor="middle">θ=π/3</text><text class="f-t" x="544" y="139" text-anchor="middle">x</text><text class="f-t" x="381" y="23" text-anchor="middle">y</text>
-</svg><figcaption>반지름이 1이면 점 P의 가로좌표는 cos θ, 세로좌표는 sin θ입니다.</figcaption></figure>
+<line class="f-line" x1="227" y1="135" x2="530" y2="135" marker-end="url(#f-arrow)"/><line class="f-line" x1="367" y1="246" x2="367" y2="23" marker-end="url(#f-arrow)"/><circle cx="367" cy="135" r="95" class="f-ink"/><line class="f-line" x1="367" y1="135" x2="414.5" y2="52.727586640478336"/><line class="f-dash" x1="414.5" y1="52.727586640478336" x2="414.5" y2="135"/><line class="f-dash" x1="367" y1="52.727586640478336" x2="414.5" y2="52.727586640478336"/><circle cx="414.5" cy="52.727586640478336" r="5" class="f-fill"/><text class="f-t" x="501" y="52" text-anchor="middle">P=(1/2, √3/2)</text><text class="f-t" x="299" y="56" text-anchor="middle">sin θ</text><text class="f-t" x="414" y="155" text-anchor="middle">cos θ</text><path class="f-ink" fill="none" d="M389 135 A22 22 0 0 0 378 115.95"/><text class="f-t" x="393" y="124" text-anchor="start">θ</text><text class="f-t" x="544" y="139" text-anchor="middle">x</text><text class="f-t" x="381" y="23" text-anchor="middle">y</text>
+</svg><figcaption>θ = π/3(60°)인 경우. 반지름이 1이면 점 P의 가로좌표는 cos θ, 세로좌표는 sin θ입니다.</figcaption></figure>
 <h2>직각삼각형 밖에서도 좌표를 쓰기</h2>
-<p>단위원의 점은 항상 x²+y²=1을 만족합니다. 따라서 cos²θ+sin²θ=1입니다. θ=π/3에서 각을 π−θ=2π/3으로 바꾸면 y축 대칭이므로 가로 좌표의 부호만 바뀝니다. cos(2π/3)=−1/2, sin(2π/3)=√3/2입니다. 각을 −θ로 바꾸면 x축 대칭이므로 세로 좌표의 부호가 바뀝니다.</p>
+<div class="box"><p class="box-k">일반각의 삼각함수 정의</p><p>양의 x축에서 각 θ(라디안, 반시계가 +)만큼 돌린 반지름이 단위원과 만나는 점을 P라 할 때 <b class="key">P = (cos θ, sin θ)</b>로 정의합니다. <code>tan θ = sin θ / cos θ</code>이고 cos θ = 0인 θ = π/2 + kπ(k는 정수)에서는 정의되지 않습니다. 반지름 r인 원이면 점은 (r cos θ, r sin θ)입니다. 예각에서는 직각삼각형의 비(밑변/빗변, 높이/빗변, 높이/밑변)와 같습니다.</p></div>
+<p>단위원의 점은 항상 x²+y²=1을 만족합니다. 따라서 cos²θ+sin²θ=1입니다. θ=π/3에서 각을 π−θ=2π/3으로 바꾸면 y축 대칭이므로 가로 좌표의 부호만 바뀝니다. cos(2π/3)=−1/2, sin(2π/3)=√3/2입니다. 각을 −θ로 바꾸면 x축 대칭이므로 세로 좌표의 부호가 바뀝니다. 그래서 사분면마다 부호가 정해집니다. 제1사분면은 cos·sin 모두 +, 제2사분면은 cos −·sin +, 제3사분면은 둘 다 −, 제4사분면은 cos +·sin −입니다. 각에 2π를 더하면 같은 점으로 돌아오므로 <code>sin(θ + 2π) = sin θ</code>, <code>cos(θ + 2π) = cos θ</code>입니다.</p>
 <div class="check" data-q="q4"></div><div class="check" data-q="q5"></div>
 <pre data-example="python"><code>from math import cos, isclose, pi, radians, sin, sqrt
 
@@ -58,6 +59,13 @@ print(&quot;호의 길이:&quot;, f&quot;{arc:.4f}&quot;)</code></pre>
 호의 길이: 6.2832</code></pre>
 <p>Python <code>sin</code>과 <code>cos</code>의 입력은 라디안입니다. π처럼 근사된 실수를 쓰기 때문에 계산한 sin(π)는 아주 작은 0이 아닌 수가 나올 수 있습니다. 0과의 대조에는 예상하는 값의 규모에 맞는 절대 허용 오차를 정해 사용합니다.</p>
 <div class="check" data-q="q6"></div>
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table><thead><tr><th scope="col">항목</th><th scope="col">내용</th></tr></thead><tbody>
+<tr><th scope="row">라디안</th><td>θ = s/r. 360° = <b class="key">2π</b>, 180° = π, 도 → 라디안은 ×π/180</td></tr>
+<tr><th scope="row">단위원</th><td>P = (<b class="key">cos θ, sin θ</b>), tan θ = sin θ/cos θ</td></tr>
+<tr><th scope="row">항등식</th><td>cos²θ + sin²θ = 1 (피타고라스)</td></tr>
+<tr><th scope="row">대칭</th><td>π−θ: cos 부호만 바뀜, −θ: sin 부호만 바뀜, θ+2π: 그대로</td></tr>
+<tr><th scope="row">Python</th><td>math.sin·cos의 입력은 라디안. radians()로 변환</td></tr></tbody></table></div>
 <div class="box sum"><p class="box-k">한 줄 정리</p><p>각을 라디안으로 정하고 단위원에서 오른쪽과 위쪽 좌표를 각각 코사인과 사인으로 읽습니다.</p></div>
 
 <h2>참고 자료</h2>

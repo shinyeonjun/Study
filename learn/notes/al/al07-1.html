@@ -30,7 +30,7 @@
 <h2>차이를 비교할까, 비를 비교할까</h2>
 <p>두 시스템의 요청 수가 처음에 3건이고 다음에는 둘 다 6건이라고 합시다. 첫 시스템은 같은 간격마다 3건이 더 생기고, 둘째는 전 단계의 두 배가 됩니다. 세 번째 관측부터 9와 12가 되어 차이가 드러납니다.</p>
 <div class="table-wrap"><table><thead><tr><th scope="col">경과 단계 t</th><th scope="col">같은 양을 더함: 3+3t</th><th scope="col">같은 배를 곱함: 3×2ᵗ</th></tr></thead><tbody><tr><td>0</td><td>3</td><td>3</td></tr><tr><td>1</td><td>6</td><td>6</td></tr><tr><td>2</td><td>9</td><td>12</td></tr><tr><td>3</td><td>12</td><td>24</td></tr><tr><td>4</td><td>15</td><td>48</td></tr></tbody></table></div>
-<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 303" role="img" aria-label="같은 시작값 3에서 한 단계마다 3을 더하는 직선과 두 배가 되는 지수 모델을 비교한다. 네 번째 단계에서 각각 15와 48.">
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 303" role="img" aria-label="같은 시작값 3에서 한 단계마다 3을 더하는 직선과 두 배가 되는 지수 모델을 비교한다. t=4에서 각각 15와 48.">
 <line class="f-ink" x1="104" y1="235" x2="642" y2="235"/><line class="f-ink" x1="104" y1="42" x2="104" y2="235"/><text class="f-t f-b" x="99" y="28" text-anchor="start">관측량</text><text class="f-s" x="390" y="286" text-anchor="middle">같은 시간 간격</text><line class="f-ink" x1="104" y1="235" x2="104" y2="241"/><text class="f-s" x="104" y="257" text-anchor="middle">0</text><line class="f-ink" x1="224" y1="235" x2="224" y2="241"/><text class="f-s" x="224" y="257" text-anchor="middle">1</text><line class="f-ink" x1="344" y1="235" x2="344" y2="241"/><text class="f-s" x="344" y="257" text-anchor="middle">2</text><line class="f-ink" x1="464" y1="235" x2="464" y2="241"/><text class="f-s" x="464" y="257" text-anchor="middle">3</text><line class="f-ink" x1="584" y1="235" x2="584" y2="241"/><text class="f-s" x="584" y="257" text-anchor="middle">4</text><line class="f-dash" x1="104" y1="235" x2="620" y2="235"/><text class="f-s" x="90" y="239" text-anchor="end">0</text><line class="f-dash" x1="104" y1="200" x2="620" y2="200"/><text class="f-s" x="90" y="204" text-anchor="end">10</text><line class="f-dash" x1="104" y1="165" x2="620" y2="165"/><text class="f-s" x="90" y="169" text-anchor="end">20</text><line class="f-dash" x1="104" y1="130" x2="620" y2="130"/><text class="f-s" x="90" y="134" text-anchor="end">30</text><line class="f-dash" x1="104" y1="95" x2="620" y2="95"/><text class="f-s" x="90" y="99" text-anchor="end">40</text><line class="f-dash" x1="104" y1="60" x2="620" y2="60"/><text class="f-s" x="90" y="64" text-anchor="end">50</text><polyline class="f-line" fill="none" points="104,224.5 224,214 344,193 464,151 584,67"/><circle class="f-fill" cx="104" cy="224.5" r="3"/><circle class="f-fill" cx="224" cy="214" r="3"/><circle class="f-fill" cx="344" cy="193" r="3"/><circle class="f-fill" cx="464" cy="151" r="3"/><circle class="f-fill" cx="584" cy="67" r="3"/><polyline class="f-ink" fill="none" points="104,224.5 224,214 344,203.5 464,193 584,182.5"/><circle class="f-fill" cx="104" cy="224.5" r="3"/><circle class="f-fill" cx="224" cy="214" r="3"/><circle class="f-fill" cx="344" cy="203.5" r="3"/><circle class="f-fill" cx="464" cy="193" r="3"/><circle class="f-fill" cx="584" cy="182.5" r="3"/><text class="f-s" x="603" y="61" text-anchor="start">매번 ×2</text><text class="f-s" x="603" y="189" text-anchor="start">매번 +3</text>
 </svg><figcaption>두 선은 같은 축을 쓴다. 점 사이 선분은 관측 단계의 비교를 돕는다.</figcaption></figure>
 <p>두 번째 모델에서는 연속 두 단계의 비가 늘 2입니다. 같은 양을 더하는 모델에서는 연속 두 단계의 차이가 3입니다. 초기값·기간·단위를 함께 적습니다. 실제 요청이 계속 두 배가 될지 여부는 자료와 시스템 조건을 살펴야 합니다.</p>
@@ -39,7 +39,10 @@
 <h2>0·음수·분수 지수</h2>
 <p>양수 a에서 a<sup>0</sup> = 1, a<sup>−1</sup> = 1/a입니다. a<sup>t</sup>에서 t를 1 낮추는 것은 a로 나누는 것이라고 보면 일관됩니다. 예를 들어 4<sup>1</sup> = 4에서 0으로 내리면 1, −1로 내리면 1/4입니다.</p>
 <div class="box "><p class="box-k">분수 지수를 수로 읽기</p><p>4<sup>1/2</sup>는 제곱하면 4가 되는 양수입니다. 값은 2입니다. 일반적으로 a &gt; 0, 정수 m, 양의 정수 n에 대해 a<sup>m/n</sup>은 a의 양의 n제곱근을 구해 m제곱한 값입니다. 따라서 8<sup>2/3</sup> = (∛8)² = 4입니다.</p></div>
-<p>밑이 음수인 식은 지수에 따라 실수에서 계산 가능 여부가 달라집니다. (−8)의 세제곱근은 −2지만 (−8)의 제곱근은 실수가 아닙니다. 실수 t 전체를 받는 함수 <code>aᵗ</code>를 정의할 때는 양수 밑을 사용합니다. 0은 음수 지수에서 0으로 나누게 됩니다.</p>
+<p>밑이 음수인 식은 지수에 따라 실수에서 계산 가능 여부가 달라집니다. (−8)의 세제곱근은 −2지만 (−8)의 제곱근은 실수가 아닙니다. 실수 t 전체를 받는 함수 <code>aᵗ</code>를 정의할 때는 양수 밑을 사용합니다. 밑이 0이면 양의 지수에서만 값이 정해지고(0ᵗ = 0), 음수 지수는 0으로 나누는 셈이라 정의되지 않습니다. 0⁰은 분야에 따라 1로 약속하기도 하고 정하지 않기도 합니다.</p>
+<p>√2처럼 무리수인 지수는 1.4, 1.41, 1.414, …처럼 가까워지는 유리수 지수의 값이 다가가는 수로 정합니다. 그래서 a &gt; 0이면 모든 실수 t에 대해 aᵗ가 하나로 정해집니다.</p>
+<div class="box"><p class="box-k">지수법칙 <span class="tag memo">외우기</span></p><p>a &gt; 0, b &gt; 0이고 x, y가 실수일 때<br><code>aˣ·aʸ = aˣ⁺ʸ</code>, <code>aˣ ÷ aʸ = aˣ⁻ʸ</code>, <code>(aˣ)ʸ = aˣʸ</code>, <code>(ab)ˣ = aˣbˣ</code>, <code>(a/b)ˣ = aˣ/bˣ</code>.<br>예: 2³·2⁴ = 2⁷ = 128, (2³)² = 2⁶ = 64, 8<sup>2/3</sup> = (2³)<sup>2/3</sup> = 2² = 4.</p></div>
+<div class="box trap"><p class="box-k">흔한 실수</p><p>밑이 음수이면 지수법칙이 깨질 수 있습니다. <code>((−8)²)<sup>1/2</sup> = 64<sup>1/2</sup> = 8</code>이지만, 법칙을 그대로 써서 <code>(−8)<sup>2·1/2</sup> = (−8)¹ = −8</code>이라 하면 틀립니다. 또 <code>aˣ + aʸ</code>는 <code>aˣ⁺ʸ</code>가 아닙니다(2² + 2³ = 12, 2⁵ = 32).</p></div>
 <div class="check" data-q="q3"></div>
 <div class="check" data-q="q4"></div>
 <h2>모델에서 증가와 감소 읽기</h2>
@@ -55,7 +58,7 @@
 2 320.0</code></pre>
 <div class="check" data-q="q5"></div>
 <h2>자연상수 e가 쓰이는 자리</h2>
-<p><b class="key">e</b>는 약 2.71828인 양수입니다. 예를 들어 한 기간 안에서 1/n만큼의 증가율을 n번 곱하는 <code>(1 + 1/n)ⁿ</code>은 n을 크게 할수록 e에 가까워집니다. 이 극한과 미분 성질은 미적분에서 설명합니다. e<sup>t</sup>는 <code>exp(t)</code>로도 쓰고, Python에서는 <code>math.exp</code>로 계산합니다.</p>
+<p><b class="key">e</b>는 약 2.71828인 양수입니다. 예를 들어 한 기간을 n개로 나누어 매 조각마다 1/n씩 비율로 늘리는 복리 <code>(1 + 1/n)ⁿ</code>은 n을 크게 할수록 e에 가까워집니다. 이 극한과 미분 성질은 미적분에서 설명합니다. e<sup>t</sup>는 <code>exp(t)</code>로도 쓰고, Python에서는 <code>math.exp</code>로 계산합니다.</p>
 <pre data-example="python"><code>from math import exp
 
 print(f&quot;{(1 + 1 / 1000) ** 1000:.5f}&quot;)
@@ -67,6 +70,15 @@ print(f&quot;{exp(0):.5f}&quot;)</code></pre>
 1.00000</code></pre>
 <p>y = C e<sup>kt</sup> 꼴에서는 t가 1 증가할 때 배수는 e<sup>k</sup>입니다. 초기값 C가 양수일 때 k &gt; 0이면 증가하고 k &lt; 0이면 감소합니다. k가 0일 때는 값이 C로 일정합니다. 다음 장에서는 배수와 시작값·끝값이 주어졌을 때 경과 단계를 거꾸로 구합니다.</p>
 <div class="check" data-q="q6"></div>
+
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table><thead><tr><th scope="col">항목</th><th scope="col">내용</th></tr></thead><tbody>
+<tr><th scope="row">변화 규칙</th><td>같은 양을 더함(차이 일정) ↔ 같은 배를 곱함(<b class="key">비 일정</b>)</td></tr>
+<tr><th scope="row">0·음수·분수 지수</th><td>a⁰ = 1, a⁻ⁿ = 1/aⁿ, a<sup>m/n</sup> = (a의 양의 n제곱근)ᵐ (a &gt; 0)</td></tr>
+<tr><th scope="row">지수법칙</th><td>aˣaʸ = aˣ⁺ʸ, (aˣ)ʸ = aˣʸ, (ab)ˣ = aˣbˣ — <b class="key">양수 밑</b>에서</td></tr>
+<tr><th scope="row">지수함수 y = aᵗ</th><td>a &gt; 0, a ≠ 1. 정의역 실수 전체, 치역 양수 전체. a &gt; 1 증가, 0 &lt; a &lt; 1 감소</td></tr>
+<tr><th scope="row">e</th><td>약 2.71828. (1 + 1/n)ⁿ의 극한. Python <code>math.exp</code></td></tr></tbody></table></div>
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>지수함수는 같은 시간마다 같은 배를 곱하는 변화이며, 실수 지수까지 쓰려면 밑이 양수여야 합니다.</p></div>
 
 <h2>참고 자료</h2>
 <ul><li><a href="https://openstax.org/books/algebra-and-trigonometry-2e/pages/6-1-exponential-functions">OpenStax · Algebra and Trigonometry 2e, Exponential Functions</a></li><li><a href="https://docs.python.org/3/library/math.html#power-and-logarithmic-functions">Python 공식 문서 · 지수와 로그</a></li></ul>
