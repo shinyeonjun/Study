@@ -8,7 +8,7 @@
 <link rel="stylesheet" href="../../style.css">
 </head>
 <body data-note="CA08-1">
-<header class="top"><div class="top-in">
+<header class="top"><div class="top-in wide">
 <a class="brand" href="../../index.html">공부 교재</a>
 <span class="crumb"></span>
 <button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
@@ -20,7 +20,7 @@
 <main class="page">
 <svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
 <header class="chapter">
-<p class="chap-sub">미적분</p>
+<p class="chap-sub">미적분과 변화 · CA08 시간에 따라 변하는 시스템</p>
 <p class="chap-num">CA08·1</p>
 <h1>차분식으로 상태의 다음 값과 안정성 읽기</h1>
 <p class="lead">조절 장치를 한 번 적용하면 다음 측정값이 어떻게 달라지는지 적습니다. 시작값이 달라도 같은 상태 가까이 모이는 경우를 숫자로 확인합니다.</p>
@@ -28,7 +28,7 @@
 <div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>초기값에 차분 규칙을 반복해 상태를 계산한다.</li><li>변하지 않는 고정점을 찾는다.</li><li>고정점에서의 차이가 줄어들거나 커지는 조건을 설명한다.</li></ul></div>
 
 <h2>한 번의 규칙과 시작값이 있어야 다음을 안다</h2>
-<p>실험 장치의 상태 x를 같은 간격으로 읽습니다. 다음 상태를 xₖ₊₁=0.5xₖ+3으로 바꾼다고 합시다. 처음 측정값 x₀=2를 넣으면 x₁=4, x₂=5, x₃=5.5입니다. 이처럼 시간 단계를 정수 k로 세는 규칙은 차분식 또는 이산시간 모형입니다. 같은 업데이트 규칙도 다른 초기값을 넣으면 처음 궤적이 달라집니다.</p>
+<p>실험 장치의 상태 x를 같은 간격으로 읽습니다. 다음 상태를 xₖ₊₁=0.5xₖ+3으로 바꾼다고 합시다. 처음 측정값 x₀=2를 넣으면 x₁=4, x₂=5, x₃=5.5입니다. 이처럼 시간 단계를 정수 k로 세는 규칙은 차분식 또는 이산시간 모형입니다. 이름은 <b class="key">차분</b> Δxₖ = xₖ₊₁ − xₖ에서 왔습니다. 같은 규칙을 Δxₖ = −0.5xₖ + 3, 즉 “한 단계의 변화량이 현재 상태로 정해진다”로 쓸 수 있고, 이것이 미분방정식 y′ = f(y)의 이산판입니다. 다음 값을 정하려면 규칙과 함께 <b class="key">초기조건</b> x₀가 있어야 합니다. 같은 업데이트 규칙도 다른 초기값을 넣으면 처음 궤적이 달라집니다.</p>
 <div class="check" data-q="q1"></div>
 <div class="table-wrap"><table><thead><tr><th scope="col">단계 k</th><th scope="col">시작값 2의 상태</th><th scope="col">시작값 10의 상태</th></tr></thead><tbody><tr><td>0</td><td>2</td><td>10</td></tr><tr><td>1</td><td>4</td><td>8</td></tr><tr><td>2</td><td>5</td><td>7</td></tr><tr><td>3</td><td>5.5</td><td>6.5</td></tr><tr><td>4</td><td>5.75</td><td>6.25</td></tr></tbody></table></div>
 <h2>업데이트해도 남는 값</h2>
@@ -56,6 +56,18 @@ assert trace(6, 0.5, 3, 4) == [6]*5</code></pre>
 교대: [2.0, 8.0, 5.0, 6.5, 5.75]</code></pre>
 <p>어떤 고정점이 존재하고 eₖ₊₁=a·eₖ이면 |a|&lt;1에서 오차 크기가 0으로 갑니다. |a|&gt;1이면 처음 오차가 0이 아닌 경우 크기가 커집니다. a=−1이면 오차가 같은 크기로 부호만 바꿉니다. a=1인 원래 식 xₖ₊₁=xₖ+b에서는 b=0일 때 모든 시작값이 고정점이고 b≠0이면 고정점이 없습니다.</p>
 <div class="check" data-q="q5"></div><div class="check" data-q="q6"></div>
+<p>선형 규칙 xₖ₊₁ = a·xₖ + b (a ≠ 1)는 고정점 x* = b/(1 − a)를 가지며, eₖ = aᵏe₀이므로 닫힌 식 <b>xₖ = x* + aᵏ(x₀ − x*)</b>로 쓸 수 있습니다. 위 예에서 x₄ = 6 + 0.5⁴·(2 − 6) = 6 − 0.25 = 5.75로 표와 같습니다.</p>
+<div class="box"><p class="box-k">비선형 규칙의 고정점 안정성 <span class="tag memo">외우기</span></p>
+<p>xₖ₊₁ = g(xₖ)이고 g(x*) = x*, g가 x* 근처에서 미분 가능하면, 작은 오차는 eₖ₊₁ = g(x* + eₖ) − x* ≈ g′(x*)·eₖ로 움직입니다. 따라서 <b>|g′(x*)| &lt; 1이면 국소적으로 안정</b>(근처에서 출발하면 모임), <b>|g′(x*)| &gt; 1이면 불안정</b>, |g′(x*)| = 1이면 이 일차 근사로는 판정할 수 없습니다. 선형 규칙에서는 g′ = a라 위 조건과 같습니다.</p>
+<p class="calc">예: g(x) = 2.5x(1 − x). 고정점은 x = 2.5x(1 − x)를 풀어 0과 0.6.<br>g′(x) = 2.5(1 − 2x)이므로 g′(0) = 2.5 (불안정), g′(0.6) = −0.5 (안정, 부호가 바뀌며 접근).<br>x₀ = 0.5 → 0.625, 0.5859, 0.6065, 0.5966, 0.6017 …: 0.6과의 차이가 약 −0.5배씩 바뀝니다.</p></div>
+
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table><thead><tr><th scope="col">대상</th><th scope="col">식과 뜻</th></tr></thead><tbody>
+<tr><td>차분식</td><td>xₖ₊₁ = g(xₖ). 규칙과 초기조건 x₀가 있어야 궤적이 정해진다.</td></tr>
+<tr><td><b class="key">고정점</b></td><td>g(x*) = x*. 선형이면 x* = b/(1 − a) (a ≠ 1).</td></tr>
+<tr><td>선형 안정성</td><td>eₖ = aᵏe₀. |a| &lt; 1 수렴, |a| &gt; 1 발산, a &lt; 0이면 부호가 번갈아 바뀐다.</td></tr>
+<tr><td>비선형 안정성</td><td>|g′(x*)| &lt; 1이면 국소 안정, &gt; 1이면 불안정, = 1이면 판정 불가.</td></tr>
+</tbody></table></div>
 <div class="box sum"><p class="box-k">한 줄 정리</p><p>상태가 유지되는 고정점을 구하고, 그 점과의 차이가 갱신할 때마다 어떻게 변하는지 봅니다.</p></div>
 
 <h2>참고 자료</h2>

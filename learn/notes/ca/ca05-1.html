@@ -141,12 +141,15 @@
 <div class="check" data-q="q4"></div>
 <div class="check" data-q="q5"></div>
 <h2>누적한 함수를 미분하면 순간 변화율이 돌아온다</h2>
-<p>정적분의 위끝을 바꾸어 <b>A(x) = ∫<sub>0</sub><sup>x</sup> r(t) dt</b>라고 두면, x를 넣었을 때 처음부터 그때까지 얼마나 물이 달라졌는지 주는 함수가 됩니다. x 근처의 작은 구간에서 r이 연속이라면, 그 구간의 면적을 폭 h로 나눈 값은 h가 작은 동안 r(x)에 가까워집니다. 따라서 내부점에서 <b>A′(x) = r(x)</b>입니다.</p>
+<p>정적분의 위끝을 바꾸어 <b>A(x) = ∫<sub>0</sub><sup>x</sup> r(t) dt</b>라고 두면, x를 넣었을 때 처음부터 그때까지 얼마나 물이 달라졌는지 주는 함수가 됩니다. x 근처의 작은 구간에서 r이 연속이라면, 그 구간의 면적을 폭 h로 나눈 값은 h가 작은 동안 r(x)에 가까워집니다. 식으로는 A(x+h) − A(x) = ∫<sub>x</sub><sup>x+h</sup> r(t) dt이고, 이 구간에서 r의 최솟값 m<sub>h</sub>와 최댓값 M<sub>h</sub> 사이에 h·m<sub>h</sub> ≤ (그 적분) ≤ h·M<sub>h</sub>가 성립합니다. h → 0이면 r의 연속성 때문에 m<sub>h</sub>와 M<sub>h</sub>가 모두 r(x)로 가므로 <b>A′(x) = r(x)</b>입니다.</p>
 <p>이를 <b class="key">미적분의 기본정리</b>의 누적 관점으로 읽습니다. A(x)는 순변화량이고 저장량 그 자체는 아닙니다. 초기 저장량이 10L라면 저장량은 10 + A(x)입니다. 2분에 A(2) = −2L여서 저장량은 8L이고, 5분에는 A(5) = 2.5L여서 12.5L입니다.</p>
 <div class="check" data-q="q6"></div>
 <div class="check" data-q="q7"></div>
 <h2>순간 변화율의 원시함수를 알면 정적분을 계산한다</h2>
-<p>미분해서 r이 되는 함수 F를 원시함수라고 합니다. r이 [a, b]에서 연속이고 F가 원시함수라면 누적 함수와 F는 같은 도함수를 갖습니다. 초기 누적량을 0으로 맞추면 <b>정적분 ∫<sub>a</sub><sup>b</sup> r(t) dt = F(b) − F(a)</b>입니다. 원시함수에 어떤 상수를 더해도 이 차에서는 상쇄됩니다.</p>
+<p>미분해서 r이 되는 함수 F를 원시함수라고 합니다. r이 [a, b]에서 연속이면 A(x) = ∫<sub>a</sub><sup>x</sup> r(t) dt도 원시함수이고(앞 절), 한 구간에서 도함수가 같은 두 함수는 상수만큼만 다르므로 F(x) = A(x) + C입니다. A(a) = 0이므로 <b>∫<sub>a</sub><sup>b</sup> r(t) dt = A(b) − A(a) = F(b) − F(a)</b>입니다. 원시함수에 어떤 상수를 더해도 이 차에서는 상쇄됩니다.</p>
+<div class="box"><p class="box-k">미적분의 기본정리 두 부분 (r이 [a, b]에서 연속일 때)</p>
+<p>① A(x) = ∫<sub>a</sub><sup>x</sup> r(t) dt는 [a, b]에서 미분 가능하고 A′(x) = r(x)이다(끝점에서는 한쪽 미분).<br>② F가 [a, b]에서 r의 원시함수(F′ = r)이면 ∫<sub>a</sub><sup>b</sup> r(t) dt = F(b) − F(a)이다.</p>
+<p>교과서에 따라 ①을 제1기본정리, ②를 제2기본정리로 부르거나 순서를 반대로 부르기도 합니다. 번호보다 내용으로 기억합니다.</p></div>
 <p>예에서는 F(t) = t²/2 − 2t입니다. F′(t) = t − 2입니다. F(5) − F(0) = 25/2 − 10 − 0 = 2.5L라 그래프 넓이와 맞습니다. 두 기본정리의 관점을 연결하면, ‘적분으로 함수를 만든 뒤 미분’과 ‘미분이 알려진 함수의 끝값 차이’가 같은 구조입니다.</p>
 <pre data-example="python"><code>def rate(t):
     return t - 2
@@ -175,6 +178,7 @@ print(f"정적분: {F(5)-F(0):.3f} L")</code></pre>
 <tr><td>누적 변화까지의 순간 기울기</td><td>r이 연속인 내부점에서 A′(x) = r(x).</td></tr>
 <tr><td>한 구간의 정적분</td><td>연속 r의 원시함수 F를 찾아 F(위끝) − F(아래끝).</td></tr>
 </table></div>
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>정적분은 변화율 × 폭을 부호째 더한 리만 합의 극한이고, 연속 함수에서는 원시함수의 끝값 차 F(b) − F(a)로 계산합니다.</p></div>
 <h2>참고 자료</h2>
 <ul><li><a href="https://openstax.org/books/calculus-volume-1/pages/5-2-the-definite-integral">OpenStax · 정적분과 부호 있는 넓이</a></li>
 <li><a href="https://openstax.org/books/calculus-volume-1/pages/5-3-the-fundamental-theorem-of-calculus">OpenStax · 미적분의 기본정리</a></li></ul>

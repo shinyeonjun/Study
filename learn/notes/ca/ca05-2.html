@@ -79,7 +79,7 @@
 <figcaption>변수를 바꾸면 경계뿐 아니라 작은 구간 폭의 관계도 바뀐다. 이 예에서는 du = 2x dx다.</figcaption>
 </figure>
 <p class="calc">∫<sub>0</sub><sup>1</sup> 2x(1 + x²)³ dx = ∫<sub>1</sub><sup>2</sup> u³ du = (2⁴ − 1⁴)/4 = 15/4.</p>
-<p>또는 원시함수 F(x) = (1 + x²)⁴/4에 원래 경계 0, 1을 넣어 같은 값 3.75를 얻습니다. <b>u의 원시함수에 x 경계를 넣는 방식</b>과 <b>x의 원시함수에 u 경계를 넣는 방식</b>은 변수를 섞은 계산입니다.</p>
+<p>또는 원시함수 F(x) = (1 + x²)⁴/4에 원래 경계 0, 1을 넣어 같은 값 3.75를 얻습니다. <b>u의 원시함수에 x 경계를 넣는 방식</b>과 <b>x의 원시함수에 u 경계를 넣는 방식</b>은 두 변수를 섞은 틀린 계산입니다. 예를 들어 u⁴/4에 x 경계 0, 1을 넣으면 1/4이 나와 3.75와 다릅니다.</p>
 <div class="box trap"><p class="box-k">줄어드는 치환에서도 부호를 따라간다</p>
 <p>∫<sub>0</sub><sup>1</sup> 2(3 − 2x)³ dx에서는 u = 3 − 2x, du = −2 dx를 씁니다. 경계는 u = 3에서 1로 줄어듭니다. 2 dx = −du이므로 ∫<sub>3</sub><sup>1</sup> −u³ du가 됩니다. 경계를 1에서 3으로 뒤집을 때 부호가 한 번 더 바뀌어 ∫<sub>1</sub><sup>3</sup> u³ du = (81 − 1)/4 = 20입니다.</p>
 </div>
@@ -152,7 +152,14 @@ print(f"치환 예제 검산: {exact_original:.2f}")</code></pre>
 <pre data-output><code>구간별 L: [3.0, 8.0, 2.0]
 누적량: 13.0 L
 치환 예제 검산: 3.75</code></pre>
-<p>사다리꼴 합은 직선 사이의 넓이에는 정확합니다. 곡선의 경우에는 함수와 측정 간격에 따라 오차가 생깁니다. 실제로 더 많은 측정값을 얻으면 구간을 다시 나눠 볼 수 있지만, 같은 데이터에 선으로 추정한 점만 더해도 새 정보는 생기지 않습니다.</p>
+<p>사다리꼴 합은 직선 사이의 넓이에는 정확합니다. 곡선의 경우에는 함수와 측정 간격에 따라 오차가 생깁니다. 식을 아는 함수로 오차를 재 보면 두 방법의 차이가 드러납니다. ∫<sub>0</sub><sup>1</sup> x² dx = 1/3을 같은 폭 h = 1/n으로 근사합니다.</p>
+<div class="table-wrap"><table>
+<tr><th scope="col">구간 수 n</th><th scope="col">왼쪽 리만 합</th><th scope="col">오차</th><th scope="col">사다리꼴 합</th><th scope="col">오차</th></tr>
+<tr><td>2</td><td>0.125</td><td>−0.2083</td><td>0.375</td><td>+0.0417</td></tr>
+<tr><td>4</td><td>0.21875</td><td>−0.1146</td><td>0.34375</td><td>+0.0104</td></tr>
+<tr><td>8</td><td>0.2734375</td><td>−0.0599</td><td>0.3359375</td><td>+0.0026</td></tr>
+</table></div>
+<p>n을 두 배로 하면 왼쪽 리만 합의 오차는 대략 절반(h에 비례), 사다리꼴 합의 오차는 (이 예에서는 정확히) 4분의 1(h²에 비례)로 줄어듭니다. f″이 [a, b]에서 연속이면 사다리꼴 합 T의 오차는 어떤 c ∈ (a, b)에 대해 ∫<sub>a</sub><sup>b</sup> f dx − T = −(b − a)h²f″(c)/12입니다. f(x) = x²는 f″ = 2로 일정해서 n = 2(h = 0.5)이면 −1·0.25·2/12 = −0.0417, 즉 T가 참값보다 0.0417 큽니다. 아래로 볼록(f″ &gt; 0)한 곡선에서는 현이 곡선 위에 있으므로 사다리꼴 합이 참값보다 큽니다. 실제로 더 많은 측정값을 얻으면 구간을 다시 나눠 볼 수 있지만, 같은 데이터에 선으로 추정한 점만 더해도 새 정보는 생기지 않습니다.</p>
 <div class="check" data-q="q8"></div>
 <div class="check" data-q="q9"></div>
 <h2>한눈에 정리</h2>
@@ -162,6 +169,7 @@ print(f"치환 예제 검산: {exact_original:.2f}")</code></pre>
 <tr><td>치환적분</td><td>안쪽과 그 미분을 묶고, 변수와 범위를 같은 기준으로 맞춘다.</td></tr>
 <tr><td>사다리꼴 합</td><td>실제 구간 폭 × 끝점 높이 평균. 측정 사이의 보간 가정을 기록한다.</td></tr>
 </table></div>
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>부정적분은 원시함수 + C의 모음이고, 치환은 연쇄법칙을 거꾸로 쓰며 경계도 같은 변수로 바꾸고, 표로 된 측정값은 보간 가정을 밝힌 사다리꼴 합으로 적분합니다.</p></div>
 <h2>참고 자료</h2>
 <ul><li><a href="https://openstax.org/books/calculus-volume-1/pages/5-5-substitution">OpenStax · 부분이 합성된 함수와 치환</a></li>
 <li><a href="https://openstax.org/books/calculus-volume-2/pages/3-6-numerical-integration">OpenStax · 수치 적분과 사다리꼴</a></li></ul>

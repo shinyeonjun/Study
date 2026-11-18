@@ -93,6 +93,9 @@
 </figure>
 <p class="calc">∫<sub>0</sub><sup>∞</sup> e<sup>−x</sup> dx = lim<sub>b→∞</sub> [−e<sup>−x</sup>]<sub>0</sub><sup>b</sup> = lim<sub>b→∞</sub>(1 − e<sup>−b</sup>) = 1.</p>
 <p>∞는 적분에 값을 대입할 수 있는 수가 아닙니다. 왼쪽 끝이 −∞라면 유한한 왼쪽 경계를 −∞로 보냅니다. 양쪽이 모두 무한한 구간은 중간 기준점 하나에서 나누어 두 적분이 각각 수렴하는지 확인합니다. 또 함수가 0에 가까워진다는 사실만으로 면적의 수렴을 판단할 수 없습니다. x ≥ 1에서 1/x는 0에 가까워지지만 ∫<sub>1</sub><sup>b</sup> (1/x) dx = ln b가 끝없이 커집니다.</p>
+<div class="box"><p class="box-k">수렴 조건 · p-적분 <span class="tag memo">외우기</span></p>
+<p class="calc">∫<sub>1</sub><sup>∞</sup> x<sup>−p</sup> dx는 p &gt; 1이면 1/(p − 1)로 수렴, p ≤ 1이면 발산.<br>∫<sub>0</sub><sup>1</sup> x<sup>−p</sup> dx는 p &lt; 1이면 1/(1 − p)로 수렴, p ≥ 1이면 발산.</p>
+<p>p ≠ 1이면 원시함수 x<sup>1−p</sup>/(1 − p)에서 x<sup>1−p</sup>가 x → ∞일 때 0으로 가려면 1 − p &lt; 0, x → 0⁺일 때 0으로 가려면 1 − p &gt; 0이어야 하기 때문입니다. p = 1은 두 쪽 모두 ln으로 발산합니다. 무한 꼬리는 충분히 빨리 줄어야 하고(p &gt; 1), 0 근처의 높이는 충분히 느리게 커져야(p &lt; 1) 합니다. 원시함수를 모를 때는 0 ≤ f ≤ g이고 ∫g가 수렴하면 ∫f도 수렴한다는 <b>비교 판정</b>으로 이 기준 함수와 견줍니다.</p></div>
 <div class="check" data-q="q3"></div>
 <div class="check" data-q="q4"></div>
 
@@ -138,6 +141,7 @@ b=6: 넓이 0.997521, 꼬리 0.002479
 <tr><td>함수가 경계에서 끝없이 커진다</td><td>경계를 안쪽으로 옮겨 적분한 뒤 원래 경계에 접근한다.</td></tr>
 <tr><td>구간 가운데 특이점이 있다</td><td>그 점에서 나눈 두 부분의 극한을 따로 확인한다.</td></tr>
 </table></div>
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>부분적분은 곱의 미분을 거꾸로 쓴 ∫u dv = uv − ∫v du이고, 이상적분은 유한 구간 적분의 극한이 유한하게 존재할 때만 값을 갖습니다.</p></div>
 <h2>참고 자료</h2>
 <ul>
 <li><a href="https://openstax.org/books/calculus-volume-2/pages/3-1-integration-by-parts">OpenStax Calculus Volume 2 · 곱의 미분과 부분적분</a></li>

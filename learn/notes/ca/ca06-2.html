@@ -85,7 +85,10 @@
 <p class="calc">세로 먼저: ∫<sub>0</sub><sup>1</sup> [∫<sub>0</sub><sup>x</sup> 1 dy] dx = ∫<sub>0</sub><sup>1</sup> x dx = 1/2.<br>가로 먼저: ∫<sub>0</sub><sup>1</sup> [∫<sub>y</sub><sup>1</sup> 1 dx] dy = ∫<sub>0</sub><sup>1</sup> (1 − y) dy = 1/2.</p>
 <p>같은 영역 위에 높이 y를 누적한다면 세로부터 계산할 때 안쪽 적분은 [y²/2]<sub>0</sub><sup>x</sup> = x²/2이고, 바깥 적분은 1/6입니다. 가로부터 계산할 때는 y가 고정이므로 안쪽 적분은 y(1 − y), 바깥 적분은 1/2 − 1/3 = 1/6입니다.</p>
 </div>
-<p>이처럼 같은 영역에서 함수를 계속 누적할 수 있습니다. 나중에 결합밀도를 배울 때 이 삼각형 위의 높이 2를 적분하면 2·(1/2)=1이 됩니다. 삼각형 밖은 밀도를 0으로 두고, 관심 영역의 면적에 높이를 곱해 확률을 구합니다.</p>
+<div class="box"><p class="box-k">연속확률과의 연결</p>
+<p>연속확률변수 X의 <b class="key">확률밀도함수</b> f는 f ≥ 0이고 ∫<sub>−∞</sub><sup>∞</sup> f(x) dx = 1인 함수이며, P(a ≤ X ≤ b) = ∫<sub>a</sub><sup>b</sup> f(x) dx입니다. 높이가 아니라 넓이가 확률입니다. 두 변수 (X, Y)의 결합밀도 f(x, y)도 같아서 전체 이중적분이 1이고, 영역 B에 들어갈 확률은 ∬<sub>B</sub> f dA입니다.</p>
+<p class="calc">예: 삼각형 D 위에서 f = 2, 밖에서 0. 전체 = 2 × (1/2) = 1.<br>P(X &lt; 1/2) = ∫<sub>0</sub><sup>1/2</sup> [∫<sub>0</sub><sup>x</sup> 2 dy] dx = ∫<sub>0</sub><sup>1/2</sup> 2x dx = 1/4.<br>안쪽 적분 ∫<sub>0</sub><sup>x</sup> 2 dy = 2x (0 &lt; x &lt; 1)는 X 하나만의 밀도(주변밀도)입니다.</p>
+<p>밀도가 일정할 때만 ‘면적 × 높이’로 줄여 쓸 수 있고, 일반적으로는 적분해야 합니다. 앞 장의 이상적분도 같은 역할을 합니다. 대기 시간 T의 밀도가 λe<sup>−λt</sup>(t ≥ 0)이면 P(T &gt; t) = ∫<sub>t</sub><sup>∞</sup> λe<sup>−λs</sup> ds = e<sup>−λt</sup>입니다.</p></div>
 <div class="check" data-q="q3"></div>
 <div class="check" data-q="q4"></div>
 
@@ -126,6 +129,10 @@
 <p>위 그림에서는 J = [[2, 0], [0, −3]]입니다. 행렬식은 −6입니다. 음수는 방향이 뒤집혔음을 보여 주며, 작은 면적 dA는 6 du dv로 바뀝니다. 매끄럽고 일대일인 변환이 영역 안에서 좌표를 겹치지 않게 바꾸고 det J가 0이 아닌 경우, 다음처럼 적분합니다.</p>
 <p class="calc">∬<sub>D</sub> f(x,y) dA = ∬<sub>S</sub> f(x(u,v), y(u,v)) |det J(u,v)| du dv.</p>
 <p>S는 uv에서의 영역이고 D는 S를 변환한 xy 영역입니다. 위 예에서 f(x,y)=x+y라면 f는 2u+3(1−v)로 바뀝니다. 이 함수의 단위 정사각형 위 평균은 1+1.5=2.5이고, 면적 배율 6을 적용한 적분은 15입니다.</p>
+<div class="box ex"><p class="box-k">극좌표 · |det J| = r</p>
+<p>x = r cos θ, y = r sin θ (r ≥ 0, 0 ≤ θ &lt; 2π)이면 J = [[cos θ, −r sin θ], [sin θ, r cos θ]], det J = r(cos²θ + sin²θ) = r입니다. 그래서 dA = r dr dθ입니다. 원점에서 멀수록 같은 dr, dθ가 더 넓은 부채꼴 조각이 되기 때문입니다.</p>
+<p class="calc">∬<sub>ℝ²</sub> e<sup>−(x²+y²)/2</sup> dA = ∫<sub>0</sub><sup>2π</sup> ∫<sub>0</sub><sup>∞</sup> e<sup>−r²/2</sup> r dr dθ = 2π · [−e<sup>−r²/2</sup>]<sub>0</sub><sup>∞</sup> = 2π.</p>
+<p>이 값은 (∫<sub>−∞</sub><sup>∞</sup> e<sup>−x²/2</sup> dx)²과 같으므로 ∫ e<sup>−x²/2</sup> dx = √(2π)입니다. 표준정규분포 밀도의 1/√(2π)가 여기서 나옵니다. r = 0인 원점 하나에서는 det J = 0이지만 넓이가 0인 점이라 적분값에 영향이 없습니다.</p></div>
 <div class="box ex"><p class="box-k">배율이 위치에 따라 달라지는 예</p>
 <p>단위 정사각형 S에 x=u, y=(1+u)v를 적용하면 D는 0 ≤ x ≤ 1, 0 ≤ y ≤ 1+x인 사다리꼴입니다. J = [[1,0],[v,1+u]]이므로 |det J|=1+u입니다. 왼쪽 u=0에서는 세로 길이가 그대로이고, 오른쪽 u=1에서는 두 배입니다. D의 넓이는 ∫<sub>0</sub><sup>1</sup> [∫<sub>0</sub><sup>1</sup> (1+u) dv] du = 3/2입니다.</p>
 </div>
@@ -158,6 +165,7 @@ print(f"직사각형 위 높이 x+y의 누적: {original:.1f}, {transformed:.1f}
 <tr><td>적분 순서 바꾸기</td><td>새 바깥 변수의 전체 범위와 새 안쪽 변수의 단면 경계를 다시 읽는다.</td></tr>
 <tr><td>적분 변수 바꾸기</td><td>적분 함수에 새 좌표를 대입하고 새 영역에서 |det J|를 곱한다.</td></tr>
 </table></div>
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>이중적분은 단면 적분을 두 번 하는 반복적분으로 계산하고, 순서를 바꾸면 경계를 다시 읽으며, 변수를 바꾸면 |det J|를 곱합니다.</p></div>
 <h2>참고 자료</h2>
 <ul>
 <li><a href="https://openstax.org/books/calculus-volume-3/pages/5-1-double-integrals-over-rectangular-regions">OpenStax Calculus Volume 3 · 직사각형의 이중적분</a></li>

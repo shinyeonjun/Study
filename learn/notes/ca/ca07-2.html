@@ -8,7 +8,7 @@
 <link rel="stylesheet" href="../../style.css">
 </head>
 <body data-note="CA07-2">
-<header class="top"><div class="top-in">
+<header class="top"><div class="top-in wide">
 <a class="brand" href="../../index.html">공부 교재</a>
 <span class="crumb"></span>
 <button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
@@ -20,7 +20,7 @@
 <main class="page">
 <svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
 <header class="chapter">
-<p class="chap-sub">미적분</p>
+<p class="chap-sub">미적분과 변화 · CA07 근사와 곡률</p>
 <p class="chap-num">CA07·2</p>
 <h1>헤시안으로 방향마다 휘어지는 정도 비교하기</h1>
 <p class="lead">변수가 두 개면 움직일 방향도 여러 가지입니다. 한 점에서 기울기는 0인데 한 방향은 올라가고 다른 방향은 내려가는 이유를 그림과 수로 확인합니다.</p>
@@ -33,7 +33,7 @@
 <p>이 이계편도함수의 2×2 배열이 헤시안 H=[[2,2],[2,6]]입니다. 두 변수의 이계편도함수가 주변에서 연속이면 이 예처럼 섞인 항 두 개가 같습니다.</p>
 <div class="check" data-q="q1"></div>
 <h2>한 방향으로 자르면 다시 한 변수의 함수가 된다</h2>
-<p>이동 방향 d=(1,−1)을 고르고 원점에서 (x,y)=(t,−t)로 움직입니다. 이 방향에서 f는 t²−2t²+3t²=2t²입니다. t에 대한 두 번째 미분은 4입니다. 행렬에서는 Hd=(0,−4), dᵀHd=1×0+(−1)×(−4)=4입니다. 길이가 1인 방향으로 비교할 때는 d를 그 길이로 나눠 단위벡터로 맞춥니다. 여기서는 t당 움직인 길이가 √2입니다.</p>
+<p>이동 방향 d=(1,−1)을 고르고 원점에서 (x,y)=(t,−t)로 움직입니다. 이 방향에서 f는 t²−2t²+3t²=2t²입니다. t에 대한 두 번째 미분은 4입니다. 행렬에서는 Hd=(0,−4), dᵀHd=1×0+(−1)×(−4)=4입니다. 길이가 1인 방향으로 비교할 때는 d를 그 길이로 나눠 단위벡터로 맞춥니다. 여기서는 t당 움직인 길이가 √2이므로 단위 방향 u = d/√2의 곡률은 uᵀHu = 4/2 = 2입니다.</p>
 <div class="check" data-q="q2"></div><div class="check" data-q="q3"></div>
 <figure class="fig"><svg class="fig-svg" viewBox="0 0 760 246" role="img" aria-label="g(t,0)=t²와 g(0,t)=−t²는 원점에서 방향 곡률 부호가 다름">
 <line class="f-line" x1="118" y1="137" x2="645" y2="137"/><line class="f-line" x1="377" y1="221" x2="377" y2="32"/><circle cx="290" cy="62" r="4" class="f-fill"/><circle cx="464" cy="62" r="4" class="f-fill"/><circle cx="290" cy="212" r="4" class="f-fill"/><circle cx="464" cy="212" r="4" class="f-fill"/><path class="f-ink" d="M290 62 Q377 212 464 62"/><path class="f-dash" d="M290 212 Q377 62 464 212"/><text class="f-t" x="648" y="156" text-anchor="middle">이동량 t</text><text class="f-t" x="555" y="56" text-anchor="middle">g(t, 0)=t²</text><text class="f-t" x="569" y="224" text-anchor="middle">g(0, t)=−t²</text><text class="f-t" x="378" y="22" text-anchor="middle">함숫값</text>
@@ -43,6 +43,17 @@
 <h2>모든 방향에서 올라가는지 확인한다</h2>
 <p>이 f의 방향 곡률은 d=(a,b)에 대해 2(a+b)²+4b²입니다. 0이 아닌 방향에서는 양수이므로 원점은 이 이차식에서 유일한 전역 최솟값입니다. 보다 일반적인 매끄러운 함수에서는 기울기가 0이고 모든 방향의 헤시안 곡률이 양수인 점이 엄격한 <em>국소</em> 최솟값입니다. 함수가 멀리서 다시 낮아질 수 있으므로 기울기와 헤시안만 보고 전역 최솟값이라고 단정하지 않습니다.</p>
 <p>g(x,y)=x²−y²는 원점에서 기울기가 0입니다. x 방향으로는 값이 올라가고 y 방향으로는 내려가므로 안장점입니다. 반대로 f(x)=x⁴는 원점에서 두 번째 미분이 0이어도 최소이고, −x⁴는 최대입니다. 이차항이 0인 방향이 있으면 더 높은 항이나 직접 비교가 필요할 수 있습니다.</p>
+<h2>이계도함수 판정법 <span class="tag memo">외우기</span></h2>
+<p>한 변수에서 <b class="key">이계도함수</b> f″(x)는 기울기 f′의 변화율입니다. f″ &gt; 0인 구간에서는 기울기가 커지므로 그래프가 아래로 볼록(convex)하고, f″ &lt; 0이면 위로 볼록(concave)합니다. 그래서 f′(a) = 0인 점(정지점, 임계점)에서 다음이 성립합니다.</p>
+<div class="table-wrap"><table><thead><tr><th scope="col">한 변수: f′(a) = 0일 때</th><th scope="col">두 변수: ∇f = 0일 때, D = f<sub>xx</sub>f<sub>yy</sub> − f<sub>xy</sub>² (= det H)</th><th scope="col">결론</th></tr></thead><tbody>
+<tr><td>f″(a) &gt; 0</td><td>D &gt; 0이고 f<sub>xx</sub> &gt; 0 (H의 고윳값이 모두 양수)</td><td>엄격한 국소 최솟값</td></tr>
+<tr><td>f″(a) &lt; 0</td><td>D &gt; 0이고 f<sub>xx</sub> &lt; 0 (고윳값이 모두 음수)</td><td>엄격한 국소 최댓값</td></tr>
+<tr><td>(해당 없음)</td><td>D &lt; 0 (고윳값의 부호가 서로 다름)</td><td><b class="key">안장점</b></td></tr>
+<tr><td>f″(a) = 0</td><td>D = 0 (고윳값 중 0이 있음)</td><td>판정 불가: 더 높은 차수나 직접 비교</td></tr>
+</tbody></table></div>
+<p>앞의 f는 H = [[2,2],[2,6]]이라 D = 2·6 − 2² = 8 &gt; 0, f<sub>xx</sub> = 2 &gt; 0이므로 원점이 국소 최솟값입니다. H의 고윳값은 4 ± 2√2 ≈ 1.17, 6.83으로 모두 양수이며, 단위 방향 곡률 uᵀHu는 항상 이 두 값 사이에 있습니다. g(x,y) = x² − y²는 H = [[2,0],[0,−2]], D = −4 &lt; 0이라 안장점입니다. 판정 불가의 예로, x⁴, −x⁴, x³은 모두 0에서 f′ = f″ = 0이지만 각각 최소, 최대, 극값 아님입니다.</p>
+<h3>국소 극값과 전역 극값</h3>
+<p>국소(local) 최솟값은 그 점 근처에서만 가장 작은 값이고, 전역(global) 최솟값은 정의역 전체에서 가장 작은 값입니다. 닫힌 구간 [a, b]에서 연속인 함수는 최댓값과 최솟값을 반드시 가지며(최대·최소 정리), 그 후보는 구간 안의 임계점과 두 끝점뿐입니다. 예를 들어 f(x) = x³ − 3x를 [−2, 3]에서 보면 f′ = 3x² − 3 = 0에서 x = ±1이고, 후보값은 f(−2) = −2, f(−1) = 2, f(1) = −2, f(3) = 18입니다. x = −1의 국소 최댓값 2는 전역 최댓값이 아니며, 전역 최댓값 18은 기울기가 0이 아닌 끝점 x = 3에 있습니다. 전역 최솟값 −2는 x = 1과 x = −2 두 곳에서 나옵니다.</p>
 <div class="check" data-q="q5"></div>
 <pre data-example="python"><code>import numpy as np
 
@@ -64,6 +75,14 @@ assert curvature == finite_difference</code></pre>
 <pre data-output><code>Hd: [0, -4]
 곡률: 4 차분: 4.0</code></pre>
 <div class="check" data-q="q6"></div>
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table><thead><tr><th scope="col">대상</th><th scope="col">식과 뜻</th></tr></thead><tbody>
+<tr><td><b class="key">헤시안</b> H</td><td>이계편도함수의 행렬. 섞인 편도함수가 연속이면 대칭이다.</td></tr>
+<tr><td>방향 곡률</td><td>dᵀHd = 방향 d로 자른 단면의 두 번째 미분. 단위 방향끼리 비교한다.</td></tr>
+<tr><td>2차 근사</td><td>f(p + d) ≈ f(p) + ∇f(p)·d + ½dᵀHd</td></tr>
+<tr><td>정지점 판정</td><td>H의 고윳값이 모두 양수 → 국소 최소, 모두 음수 → 국소 최대, 부호 섞임 → 안장점, 0 포함 → 판정 불가</td></tr>
+<tr><td>전역 극값</td><td>국소 정보만으로는 알 수 없다. 닫힌 구간이면 임계점과 끝점의 값을 비교한다.</td></tr>
+</tbody></table></div>
 <div class="box sum"><p class="box-k">한 줄 정리</p><p>기울기는 일차 변화, 헤시안은 방향에 따른 이차 변화를 알려 줍니다.</p></div>
 
 <h2>참고 자료</h2>
