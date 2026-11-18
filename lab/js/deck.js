@@ -8,7 +8,8 @@
     var id = document.body.getAttribute("data-note");
     var slides = [].slice.call(document.querySelectorAll(".slide"));
     if (!slides.length) return;
-    var i = Math.min(Math.max(parseInt(location.hash.slice(1), 10) - 1 || 0, 0), slides.length - 1);
+    var i = 0;
+    function fromHash() { return /^#\d+$/.test(location.hash) ? Number(location.hash.slice(1)) - 1 : 0; }
 
     // 위아래 틀: 진도 막대, 장 번호, 이전·다음
     var bar = el("div", "deck-bar"), fill = el("i");
@@ -19,6 +20,8 @@
     prev.type = next.type = "button";
     prev.setAttribute("aria-label", "이전 장");
     next.setAttribute("aria-label", "다음 장");
+    nav.setAttribute("aria-label", "슬라이드 이동");
+    count.setAttribute("aria-live", "polite");
     nav.appendChild(prev); nav.appendChild(count); nav.appendChild(next);
     document.body.appendChild(nav);
 
@@ -40,10 +43,12 @@
     }
     prev.onclick = function () { show(i - 1); };
     next.onclick = function () { show(i + 1); };
+    window.addEventListener("hashchange", function () { show(fromHash()); });
 
     function typing(t) { return t && /INPUT|TEXTAREA|SELECT/.test(t.tagName); }
     document.addEventListener("keydown", function (e) {
       if (typing(e.target) || e.altKey || e.ctrlKey || e.metaKey) return;
+      if (e.key === " " && e.target instanceof Element && e.target.closest("button, a, summary")) return;
       if (e.key === "ArrowRight" || e.key === "PageDown" || e.key === " ") { e.preventDefault(); show(i + 1); }
       else if (e.key === "ArrowLeft" || e.key === "PageUp") { e.preventDefault(); show(i - 1); }
       else if (e.key === "Home") show(0);
@@ -80,6 +85,6 @@
       });
     });
 
-    show(i);
+    show(fromHash());
   });
 })();

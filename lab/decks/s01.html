@@ -91,7 +91,7 @@
 
 <!-- 6 -->
 <section class="slide">
-<h2>내적 = 얼마나 같은 방향인가</h2>
+<h2>코사인 = 방향이 얼마나 비슷한가</h2>
 <figure class="fig"><svg class="fig-svg" viewBox="0 0 760 250" role="img" aria-label="기준 화살표 (1,0)과 비교한 코사인. 같은 방향 (1,0)은 1, 대각선 (1,1)은 0.707, 위쪽 (0,1)은 0, 반대 (-1,0)은 -1.">
 <line class="f-line" x1="380" y1="200" x2="500" y2="200" marker-end="url(#f-arrow)"/>
 <line class="f-line" x1="380" y1="200" x2="465" y2="115" marker-end="url(#f-arrow)"/>
@@ -158,7 +158,7 @@
 <section class="slide">
 <h2>학습 = 좋은 w, b 찾기</h2>
 <p class="big">ŷ = w·x + b</p>
-<p class="say">x는 자료가 준다. w와 b는 처음엔 모른다. 실제 집값과 가장 가깝게 맞추는 w, b를 찾는 것이 <b>학습</b>. 어떻게 찾는지는 다음 덱.</p>
+<p class="say">x는 자료가 준다. w와 b는 처음엔 모른다. 실제 집값과 가장 가깝게 맞추는 w, b를 찾는 것이 <b>학습</b>.</p>
 <p class="kw"><span>파라미터</span><span>학습</span><span>예측 ŷ</span></p>
 </section>
 
@@ -219,7 +219,6 @@ print(X @ w + b)</code></pre>
 <tr><td>예측</td><td>ŷ = w·x + b</td></tr>
 <tr><td>행렬곱 Xw</td><td>여러 자료를 한 번에</td></tr>
 </table></div>
-<p class="say">다음 덱: <b>틀린 만큼 고친다</b> — 손실 · 미분 · 경사하강</p>
 <p class="small muted">더 깊게(개념 사전): <a href="../../learn/unit.html?u=LA01">벡터</a> · <a href="../../learn/unit.html?u=LA02">내적과 거리</a> · <a href="../../learn/unit.html?u=LA03">행렬</a> · <a href="../../learn/unit.html?u=ML04">선형 회귀</a></p>
 </section>
 

@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>여러 변수와 기울기 벡터 · 슬라이드 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%238a4b14'/%3E%3Cpath d='M10 8l12 8-12 8z' fill='%23fff'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../style.css">
+</head>
+<body class="deck-body" data-note="S05">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../index.html">슬라이드 교재</a>
+<span class="crumb">덱 5</span>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<main class="deck">
+
+<section class="slide cover-slide">
+<p class="deck-no">덱 5</p>
+<h1>여러 변수와 기울기 벡터</h1>
+<p class="road"><b>편미분</b> → <b>기울기 벡터</b> → <b>방향미분</b> → <b>야코비안</b></p>
+<p class="say">모델의 가중치 두 개 중 어느 쪽을 얼마나 움직일까?</p>
+</section>
+
+<section class="slide">
+<h2>가중치가 두 개면 손실에 방향이 생긴다</h2>
+<figure class="fig"><svg class="fig-svg fig-wide" viewBox="0 0 760 212" role="img" aria-label="두 가중치가 나타내는 예측이 각각 목표 2와 −1에서 떨어져 있다."><rect class="f-box" x="30" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="135.66666666666669" y="66" text-anchor="middle">첫 목표</text><text class="f-cap" x="135.66666666666669" y="105" text-anchor="middle">목표 2</text><text class="f-s" x="135.66666666666669" y="139" text-anchor="middle">첫 예측의 정답</text><rect class="f-box" x="263.33333333333337" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="369.00000000000006" y="66" text-anchor="middle">둘째 목표</text><text class="f-cap" x="369.00000000000006" y="105" text-anchor="middle">목표 −1</text><text class="f-s" x="369.00000000000006" y="139" text-anchor="middle">둘째 예측의 정답</text><rect class="f-soft" x="496.6666666666667" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="602.3333333333334" y="66" text-anchor="middle">현재</text><text class="f-cap" x="602.3333333333334" y="105" text-anchor="middle">(0, 1)</text><text class="f-s" x="602.3333333333334" y="139" text-anchor="middle">손실 4+4=8</text></svg><svg class="fig-svg fig-narrow" viewBox="0 0 390 187" role="img" aria-label="두 가중치가 나타내는 예측이 각각 목표 2와 −1에서 떨어져 있다."><rect class="f-box" x="20" y="6" width="350" height="51" rx="5"/><text class="f-s" x="34" y="25" text-anchor="start">첫 목표</text><text class="f-cap" x="34" y="47" text-anchor="start">목표 2</text><text class="f-s" x="354" y="46" text-anchor="end">첫 예측의 정답</text><rect class="f-box" x="20" y="68" width="350" height="51" rx="5"/><text class="f-s" x="34" y="87" text-anchor="start">둘째 목표</text><text class="f-cap" x="34" y="109" text-anchor="start">목표 −1</text><text class="f-s" x="354" y="108" text-anchor="end">둘째 예측의 정답</text><rect class="f-soft" x="20" y="130" width="350" height="51" rx="5"/><text class="f-s" x="34" y="149" text-anchor="start">현재</text><text class="f-cap" x="34" y="171" text-anchor="start">(0, 1)</text><text class="f-s" x="354" y="170" text-anchor="end">손실 4+4=8</text></svg></figure>
+<p class="big">L=(w₁−2)²+(w₂+1)²</p>
+<p class="say">두 오차 제곱을 더해 하나의 손실로 감싼다.</p>
+</section>
+
+<section class="slide">
+<h2>한 변수만 움직인다 = 편미분</h2>
+<figure class="fig"><svg class="fig-svg fig-wide" viewBox="0 0 760 140" role="img" aria-label="현재 가중치 (0,1)에서 첫 편미분은 −4, 둘째 편미분은 +4."><text class="f-s" x="245" y="28" text-anchor="middle">w₁만 움직임</text><text class="f-s" x="367" y="28" text-anchor="middle">w₂만 움직임</text><text class="f-s" x="175" y="74.8" text-anchor="end">고정값</text><rect class="f-box" x="184" y="48" width="118" height="35" rx="5"/><text class="f-t" x="243" y="73.6" text-anchor="middle">w₂=1</text><rect class="f-box" x="306" y="48" width="118" height="35" rx="5"/><text class="f-t" x="365" y="73.6" text-anchor="middle">w₁=0</text><text class="f-s" x="175" y="114.8" text-anchor="end">현재 기울기</text><rect class="f-soft" x="184" y="88" width="118" height="35" rx="5"/><text class="f-t" x="243" y="113.6" text-anchor="middle">−4</text><rect class="f-soft" x="306" y="88" width="118" height="35" rx="5"/><text class="f-t" x="365" y="113.6" text-anchor="middle">+4</text></svg><svg class="fig-svg fig-narrow" viewBox="0 0 390 140" role="img" aria-label="현재 가중치 (0,1)에서 첫 편미분은 −4, 둘째 편미분은 +4."><text class="f-s" x="165.5" y="28" text-anchor="middle">w₁만 움직임</text><text class="f-s" x="280.5" y="28" text-anchor="middle">w₂만 움직임</text><text class="f-s" x="99" y="74.8" text-anchor="end">고정값</text><rect class="f-box" x="108" y="48" width="111" height="35" rx="5"/><text class="f-t" x="163.5" y="73.6" text-anchor="middle">w₂=1</text><rect class="f-box" x="223" y="48" width="111" height="35" rx="5"/><text class="f-t" x="278.5" y="73.6" text-anchor="middle">w₁=0</text><text class="f-s" x="99" y="114.8" text-anchor="end">현재 기울기</text><rect class="f-soft" x="108" y="88" width="111" height="35" rx="5"/><text class="f-t" x="163.5" y="113.6" text-anchor="middle">−4</text><rect class="f-soft" x="223" y="88" width="111" height="35" rx="5"/><text class="f-t" x="278.5" y="113.6" text-anchor="middle">+4</text></svg></figure>
+<p class="say">한 축에서 미분하는 동안 다른 축의 값은 그대로 둔다.</p>
+</section>
+
+<section class="slide">
+<h2>모든 편미분을 벡터 하나로</h2>
+<figure class="fig"><svg class="fig-svg fig-wide" viewBox="0 0 760 212" role="img" aria-label="편미분을 벡터로 묶은 기울기는 (−4,4)이다."><rect class="f-box" x="30" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="135.66666666666669" y="66" text-anchor="middle">w₁ 방향</text><text class="f-cap" x="135.66666666666669" y="105" text-anchor="middle">−4</text><text class="f-s" x="135.66666666666669" y="139" text-anchor="middle">오른쪽으로 가면 감소</text><rect class="f-box" x="263.33333333333337" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="369.00000000000006" y="66" text-anchor="middle">w₂ 방향</text><text class="f-cap" x="369.00000000000006" y="105" text-anchor="middle">+4</text><text class="f-s" x="369.00000000000006" y="139" text-anchor="middle">위로 가면 증가</text><rect class="f-soft" x="496.6666666666667" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="602.3333333333334" y="66" text-anchor="middle">기울기 ∇L</text><text class="f-cap" x="602.3333333333334" y="105" text-anchor="middle">(−4, +4)</text><text class="f-s" x="602.3333333333334" y="139" text-anchor="middle">가장 빠른 증가 쪽</text></svg><svg class="fig-svg fig-narrow" viewBox="0 0 390 187" role="img" aria-label="편미분을 벡터로 묶은 기울기는 (−4,4)이다."><rect class="f-box" x="20" y="6" width="350" height="51" rx="5"/><text class="f-s" x="34" y="25" text-anchor="start">w₁ 방향</text><text class="f-cap" x="34" y="47" text-anchor="start">−4</text><text class="f-s" x="354" y="46" text-anchor="end">오른쪽으로 가면 감소</text><rect class="f-box" x="20" y="68" width="350" height="51" rx="5"/><text class="f-s" x="34" y="87" text-anchor="start">w₂ 방향</text><text class="f-cap" x="34" y="109" text-anchor="start">+4</text><text class="f-s" x="354" y="108" text-anchor="end">위로 가면 증가</text><rect class="f-soft" x="20" y="130" width="350" height="51" rx="5"/><text class="f-s" x="34" y="149" text-anchor="start">기울기 ∇L</text><text class="f-cap" x="34" y="171" text-anchor="start">(−4, +4)</text><text class="f-s" x="354" y="170" text-anchor="end">가장 빠른 증가 쪽</text></svg></figure>
+<p class="big">−∇L = (4, −4)</p>
+<p class="say">기울기 벡터가 0이 아니면, 반대 방향이 가장 빠른 국소 감소.</p>
+</section>
+
+<section class="slide check-slide">
+<h2>잠깐, 직접</h2>
+<div class="check" data-q="q1"></div>
+</section>
+
+<section class="slide">
+<h2>가고 싶은 방향과 내적한다</h2>
+<figure class="fig"><svg class="fig-svg fig-wide" viewBox="0 0 760 212" role="img" aria-label="기울기 (−4,4)와 길이 1인 방향 (.6,.8)의 내적은 0.8."><rect class="f-box" x="30" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="135.66666666666669" y="66" text-anchor="middle">기울기</text><text class="f-cap" x="135.66666666666669" y="105" text-anchor="middle">(−4, 4)</text><text class="f-s" x="135.66666666666669" y="139" text-anchor="middle">현재 점에서</text><line class="f-line" x1="243.33333333333334" y1="105" x2="260.33333333333337" y2="105" marker-end="url(#f-arrow)"/><rect class="f-box" x="263.33333333333337" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="369.00000000000006" y="66" text-anchor="middle">단위 방향</text><text class="f-cap" x="369.00000000000006" y="105" text-anchor="middle">(.6, .8)</text><text class="f-s" x="369.00000000000006" y="139" text-anchor="middle">길이 1</text><line class="f-line" x1="476.66666666666674" y1="105" x2="493.66666666666674" y2="105" marker-end="url(#f-arrow)"/><rect class="f-soft" x="496.6666666666667" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="602.3333333333334" y="66" text-anchor="middle">방향 미분</text><text class="f-cap" x="602.3333333333334" y="105" text-anchor="middle">0.8</text><text class="f-s" x="602.3333333333334" y="139" text-anchor="middle">−2.4 + 3.2</text></svg><svg class="fig-svg fig-narrow" viewBox="0 0 390 187" role="img" aria-label="기울기 (−4,4)와 길이 1인 방향 (.6,.8)의 내적은 0.8."><rect class="f-box" x="20" y="6" width="350" height="51" rx="5"/><text class="f-s" x="34" y="25" text-anchor="start">기울기</text><text class="f-cap" x="34" y="47" text-anchor="start">(−4, 4)</text><text class="f-s" x="354" y="46" text-anchor="end">현재 점에서</text><line class="f-line" x1="195" y1="58" x2="195" y2="67" marker-end="url(#f-arrow)"/><rect class="f-box" x="20" y="68" width="350" height="51" rx="5"/><text class="f-s" x="34" y="87" text-anchor="start">단위 방향</text><text class="f-cap" x="34" y="109" text-anchor="start">(.6, .8)</text><text class="f-s" x="354" y="108" text-anchor="end">길이 1</text><line class="f-line" x1="195" y1="120" x2="195" y2="129" marker-end="url(#f-arrow)"/><rect class="f-soft" x="20" y="130" width="350" height="51" rx="5"/><text class="f-s" x="34" y="149" text-anchor="start">방향 미분</text><text class="f-cap" x="34" y="171" text-anchor="start">0.8</text><text class="f-s" x="354" y="170" text-anchor="end">−2.4 + 3.2</text></svg></figure>
+<p class="big">DᵤL = ∇L · u</p>
+<p class="say">한 방향으로 잰 순간 손실 변화율.</p>
+</section>
+
+<section class="slide">
+<h2>등고선의 중심으로 가면 손실이 준다</h2>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 244" role="img" aria-label="원형 등고선에서 현재 (0,1)의 감소 방향은 중심인 최소점 (2,−1)을 향한다."><circle class="f-ink" cx="427" cy="122" r="32.00"/><circle class="f-ink" cx="427" cy="122" r="64.00"/><circle class="f-ink" cx="427" cy="122" r="90.51"/><line class="f-line" x1="363" y1="58" x2="418" y2="112" marker-end="url(#f-arrow)"/><circle class="f-fill" cx="363" cy="58" r="6"/><circle class="f-fill" cx="427" cy="122" r="6"/><text class="f-t" x="335" y="26" text-anchor="middle">현재 (0, 1)</text><line class="f-dash" x1="351" y1="31" x2="363" y2="52"/><text class="f-t" x="579" y="125" text-anchor="middle">최소 (2, −1)</text><line class="f-dash" x1="439" y1="122" x2="518" y2="122"/></svg></figure>
+<p class="say">이 모형의 등고선은 (2,−1)을 중심으로 한 원. 중심으로 향하면 손실이 작아진다.</p>
+</section>
+
+<section class="slide check-slide">
+<h2>잠깐, 직접</h2>
+<div class="check" data-q="q2"></div>
+</section>
+
+<section class="slide">
+<h2>출력도 여러 개면 편미분을 표로</h2>
+<figure class="fig"><svg class="fig-svg fig-wide" viewBox="0 0 760 140" role="img" aria-label="출력 y1과 y2에 대한 입력별 변화율을 행으로 적어 야코비안을 만든다."><text class="f-s" x="245" y="28" text-anchor="middle">w₁</text><text class="f-s" x="367" y="28" text-anchor="middle">w₂</text><text class="f-s" x="175" y="74.8" text-anchor="end">y₁=w₁+2w₂</text><rect class="f-box" x="184" y="48" width="118" height="35" rx="5"/><text class="f-t" x="243" y="73.6" text-anchor="middle">1</text><rect class="f-soft" x="306" y="48" width="118" height="35" rx="5"/><text class="f-t" x="365" y="73.6" text-anchor="middle">2</text><text class="f-s" x="175" y="114.8" text-anchor="end">y₂=w₁−w₂</text><rect class="f-box" x="184" y="88" width="118" height="35" rx="5"/><text class="f-t" x="243" y="113.6" text-anchor="middle">1</text><rect class="f-soft" x="306" y="88" width="118" height="35" rx="5"/><text class="f-t" x="365" y="113.6" text-anchor="middle">-1</text></svg><svg class="fig-svg fig-narrow" viewBox="0 0 390 140" role="img" aria-label="출력 y1과 y2에 대한 입력별 변화율을 행으로 적어 야코비안을 만든다."><text class="f-s" x="165.5" y="28" text-anchor="middle">w₁</text><text class="f-s" x="280.5" y="28" text-anchor="middle">w₂</text><text class="f-s" x="99" y="74.8" text-anchor="end">y₁=w₁+2w₂</text><rect class="f-box" x="108" y="48" width="111" height="35" rx="5"/><text class="f-t" x="163.5" y="73.6" text-anchor="middle">1</text><rect class="f-soft" x="223" y="48" width="111" height="35" rx="5"/><text class="f-t" x="278.5" y="73.6" text-anchor="middle">2</text><text class="f-s" x="99" y="114.8" text-anchor="end">y₂=w₁−w₂</text><rect class="f-box" x="108" y="88" width="111" height="35" rx="5"/><text class="f-t" x="163.5" y="113.6" text-anchor="middle">1</text><rect class="f-soft" x="223" y="88" width="111" height="35" rx="5"/><text class="f-t" x="278.5" y="113.6" text-anchor="middle">-1</text></svg></figure>
+<p class="big">J의 크기 = 출력 수 × 입력 수</p>
+<p class="say">행 하나 = 한 출력의 입력별 편미분.</p>
+</section>
+
+<section class="slide">
+<h2>출력의 기울기를 입력까지 되돌린다</h2>
+<figure class="fig"><svg class="fig-svg fig-wide" viewBox="0 0 760 212" role="img" aria-label="출력 경사 (1,3)에 J의 전치를 곱해 입력 경사 (4,−1)을 얻는다."><rect class="f-box" x="30" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="135.66666666666669" y="66" text-anchor="middle">출력 손실 경사</text><text class="f-cap" x="135.66666666666669" y="105" text-anchor="middle">(1, 3)</text><text class="f-s" x="135.66666666666669" y="139" text-anchor="middle">두 출력에 전달</text><line class="f-line" x1="243.33333333333334" y1="105" x2="260.33333333333337" y2="105" marker-end="url(#f-arrow)"/><rect class="f-box" x="263.33333333333337" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="369.00000000000006" y="66" text-anchor="middle">야코비안 전치</text><text class="f-cap" x="369.00000000000006" y="105" text-anchor="middle">Jᵀ</text><text class="f-s" x="369.00000000000006" y="139" text-anchor="middle">열별로 합침</text><line class="f-line" x1="476.66666666666674" y1="105" x2="493.66666666666674" y2="105" marker-end="url(#f-arrow)"/><rect class="f-soft" x="496.6666666666667" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="602.3333333333334" y="66" text-anchor="middle">입력 손실 경사</text><text class="f-cap" x="602.3333333333334" y="105" text-anchor="middle">(4, −1)</text><text class="f-s" x="602.3333333333334" y="139" text-anchor="middle">1+3, 2−3</text></svg><svg class="fig-svg fig-narrow" viewBox="0 0 390 187" role="img" aria-label="출력 경사 (1,3)에 J의 전치를 곱해 입력 경사 (4,−1)을 얻는다."><rect class="f-box" x="20" y="6" width="350" height="51" rx="5"/><text class="f-s" x="34" y="25" text-anchor="start">출력 손실 경사</text><text class="f-cap" x="34" y="47" text-anchor="start">(1, 3)</text><text class="f-s" x="354" y="46" text-anchor="end">두 출력에 전달</text><line class="f-line" x1="195" y1="58" x2="195" y2="67" marker-end="url(#f-arrow)"/><rect class="f-box" x="20" y="68" width="350" height="51" rx="5"/><text class="f-s" x="34" y="87" text-anchor="start">야코비안 전치</text><text class="f-cap" x="34" y="109" text-anchor="start">Jᵀ</text><text class="f-s" x="354" y="108" text-anchor="end">열별로 합침</text><line class="f-line" x1="195" y1="120" x2="195" y2="129" marker-end="url(#f-arrow)"/><rect class="f-soft" x="20" y="130" width="350" height="51" rx="5"/><text class="f-s" x="34" y="149" text-anchor="start">입력 손실 경사</text><text class="f-cap" x="34" y="171" text-anchor="start">(4, −1)</text><text class="f-s" x="354" y="170" text-anchor="end">1+3, 2−3</text></svg></figure>
+<p class="say">한 입력이 여러 출력에 영향을 주면 그 경로를 합한다.</p>
+</section>
+
+<section class="slide check-slide">
+<h2>잠깐, 직접</h2>
+<div class="check" data-q="q3"></div>
+</section>
+
+<section class="slide">
+<h2>배열로 방향미분과 경사 확인</h2>
+<pre data-example="python"><code>import numpy as np
+grad = 2*(np.array([0, 1]) - [2, -1])
+J = np.array([[1, 2], [1, -1]])
+print(grad.tolist(), round(float(grad @ [.6, .8]), 1))
+print((J.T @ [1, 3]).tolist())</code></pre>
+<pre data-output><code>[-4, 4] 0.8
+[4, -1]</code></pre>
+<p class="say">경사와 방향의 내적은 숫자 하나, Jᵀg는 입력별 숫자 목록.</p>
+</section>
+
+<section class="slide">
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table><tbody><tr><th scope="row">편미분</th><td>다른 가중치를 고정하고 하나만 흔들기</td></tr><tr><th scope="row">기울기 벡터</th><td>편미분을 모두 모음</td></tr><tr><th scope="row">방향미분</th><td>기울기와 단위 방향의 내적</td></tr><tr><th scope="row">야코비안</th><td>출력 수 × 입력 수</td></tr></tbody></table></div>
+<p class="small muted">개념 사전 · <a href="../../learn/unit.html?u=CA04">여러 변수의 변화</a></p>
+</section>
+
+</main>
+<script src="../notes.js"></script>
+<script src="../js/core.js"></script>
+<script src="../js/deck.js"></script>
+</body>
+</html>

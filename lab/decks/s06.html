@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>틀린 만큼 고친다 · 슬라이드 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%238a4b14'/%3E%3Cpath d='M10 8l12 8-12 8z' fill='%23fff'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../style.css">
+</head>
+<body class="deck-body" data-note="S06">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../index.html">슬라이드 교재</a>
+<span class="crumb">덱 6</span>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<main class="deck">
+
+<section class="slide cover-slide">
+<p class="deck-no">덱 6</p>
+<h1>틀린 만큼 고친다</h1>
+<p class="road"><b>잔차</b> → <b>손실</b> → <b>경사하강</b> → <b>학습률</b></p>
+<p class="say">모델은 정답과 어긋난 크기를 보고 다음 가중치를 고른다.</p>
+</section>
+
+<section class="slide">
+<h2>틀린 크기를 하나의 점수로</h2>
+<figure class="fig"><svg class="fig-svg fig-wide" viewBox="0 0 760 180" role="img" aria-label="잔차 0,1,−4의 절댓값과 제곱을 비교한다."><text class="f-s" x="245" y="28" text-anchor="middle">집 1</text><text class="f-s" x="367" y="28" text-anchor="middle">집 2</text><text class="f-s" x="489" y="28" text-anchor="middle">집 3</text><text class="f-s" x="175" y="74.8" text-anchor="end">잔차</text><rect class="f-box" x="184" y="48" width="118" height="35" rx="5"/><text class="f-t" x="243" y="73.6" text-anchor="middle">0</text><rect class="f-box" x="306" y="48" width="118" height="35" rx="5"/><text class="f-t" x="365" y="73.6" text-anchor="middle">1</text><rect class="f-box" x="428" y="48" width="118" height="35" rx="5"/><text class="f-t" x="487" y="73.6" text-anchor="middle">-4</text><text class="f-s" x="175" y="114.8" text-anchor="end">|잔차|</text><rect class="f-box" x="184" y="88" width="118" height="35" rx="5"/><text class="f-t" x="243" y="113.6" text-anchor="middle">0</text><rect class="f-box" x="306" y="88" width="118" height="35" rx="5"/><text class="f-t" x="365" y="113.6" text-anchor="middle">1</text><rect class="f-box" x="428" y="88" width="118" height="35" rx="5"/><text class="f-t" x="487" y="113.6" text-anchor="middle">4</text><text class="f-s" x="175" y="154.8" text-anchor="end">제곱</text><rect class="f-box" x="184" y="128" width="118" height="35" rx="5"/><text class="f-t" x="243" y="153.6" text-anchor="middle">0</text><rect class="f-box" x="306" y="128" width="118" height="35" rx="5"/><text class="f-t" x="365" y="153.6" text-anchor="middle">1</text><rect class="f-soft" x="428" y="128" width="118" height="35" rx="5"/><text class="f-t" x="487" y="153.6" text-anchor="middle">16</text></svg><svg class="fig-svg fig-narrow" viewBox="0 0 390 180" role="img" aria-label="잔차 0,1,−4의 절댓값과 제곱을 비교한다."><text class="f-s" x="152.33333333333334" y="28" text-anchor="middle">집 1</text><text class="f-s" x="241" y="28" text-anchor="middle">집 2</text><text class="f-s" x="329.6666666666667" y="28" text-anchor="middle">집 3</text><text class="f-s" x="99" y="74.8" text-anchor="end">잔차</text><rect class="f-box" x="108" y="48" width="84.66666666666667" height="35" rx="5"/><text class="f-t" x="150.33333333333334" y="73.6" text-anchor="middle">0</text><rect class="f-box" x="196.66666666666669" y="48" width="84.66666666666667" height="35" rx="5"/><text class="f-t" x="239.00000000000003" y="73.6" text-anchor="middle">1</text><rect class="f-box" x="285.33333333333337" y="48" width="84.66666666666667" height="35" rx="5"/><text class="f-t" x="327.6666666666667" y="73.6" text-anchor="middle">-4</text><text class="f-s" x="99" y="114.8" text-anchor="end">|잔차|</text><rect class="f-box" x="108" y="88" width="84.66666666666667" height="35" rx="5"/><text class="f-t" x="150.33333333333334" y="113.6" text-anchor="middle">0</text><rect class="f-box" x="196.66666666666669" y="88" width="84.66666666666667" height="35" rx="5"/><text class="f-t" x="239.00000000000003" y="113.6" text-anchor="middle">1</text><rect class="f-box" x="285.33333333333337" y="88" width="84.66666666666667" height="35" rx="5"/><text class="f-t" x="327.6666666666667" y="113.6" text-anchor="middle">4</text><text class="f-s" x="99" y="154.8" text-anchor="end">제곱</text><rect class="f-box" x="108" y="128" width="84.66666666666667" height="35" rx="5"/><text class="f-t" x="150.33333333333334" y="153.6" text-anchor="middle">0</text><rect class="f-box" x="196.66666666666669" y="128" width="84.66666666666667" height="35" rx="5"/><text class="f-t" x="239.00000000000003" y="153.6" text-anchor="middle">1</text><rect class="f-soft" x="285.33333333333337" y="128" width="84.66666666666667" height="35" rx="5"/><text class="f-t" x="327.6666666666667" y="153.6" text-anchor="middle">16</text></svg></figure>
+<p class="say">제곱하면 큰 오차 하나가 훨씬 크게 반영된다.</p>
+</section>
+
+<section class="slide">
+<h2>MAE는 원래 단위, MSE는 제곱 단위</h2>
+<figure class="fig"><svg class="fig-svg fig-wide" viewBox="0 0 760 212" role="img" aria-label="잔차 0,1,−4의 MAE는 5/3, MSE는 17/3이고 RMSE는 그 제곱근이다."><rect class="f-box" x="30" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="135.66666666666669" y="66" text-anchor="middle">MAE</text><text class="f-cap" x="135.66666666666669" y="105" text-anchor="middle">5/3</text><text class="f-s" x="135.66666666666669" y="139" text-anchor="middle">절댓값의 평균</text><rect class="f-box" x="263.33333333333337" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="369.00000000000006" y="66" text-anchor="middle">MSE</text><text class="f-cap" x="369.00000000000006" y="105" text-anchor="middle">17/3</text><text class="f-s" x="369.00000000000006" y="139" text-anchor="middle">제곱의 평균</text><rect class="f-soft" x="496.6666666666667" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="602.3333333333334" y="66" text-anchor="middle">RMSE</text><text class="f-cap" x="602.3333333333334" y="105" text-anchor="middle">√(17/3)</text><text class="f-s" x="602.3333333333334" y="139" text-anchor="middle">MSE에 제곱근</text></svg><svg class="fig-svg fig-narrow" viewBox="0 0 390 187" role="img" aria-label="잔차 0,1,−4의 MAE는 5/3, MSE는 17/3이고 RMSE는 그 제곱근이다."><rect class="f-box" x="20" y="6" width="350" height="51" rx="5"/><text class="f-s" x="34" y="25" text-anchor="start">MAE</text><text class="f-cap" x="34" y="47" text-anchor="start">5/3</text><text class="f-s" x="354" y="46" text-anchor="end">절댓값의 평균</text><rect class="f-box" x="20" y="68" width="350" height="51" rx="5"/><text class="f-s" x="34" y="87" text-anchor="start">MSE</text><text class="f-cap" x="34" y="109" text-anchor="start">17/3</text><text class="f-s" x="354" y="108" text-anchor="end">제곱의 평균</text><rect class="f-soft" x="20" y="130" width="350" height="51" rx="5"/><text class="f-s" x="34" y="149" text-anchor="start">RMSE</text><text class="f-cap" x="34" y="171" text-anchor="start">√(17/3)</text><text class="f-s" x="354" y="170" text-anchor="end">MSE에 제곱근</text></svg></figure>
+<p class="say">예측을 훈련할 때 줄이는 손실과 성능 보고용 지표는 따로 선택할 수 있다.</p>
+</section>
+
+<section class="slide">
+<h2>최솟값과 최소를 만드는 값</h2>
+<figure class="fig"><svg class="fig-svg fig-wide" viewBox="0 0 760 212" role="img" aria-label="L=(w−3)²가 최소가 되는 가중치 3과 최소 손실 0을 구분한다."><rect class="f-box" x="30" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="135.66666666666669" y="66" text-anchor="middle">가중치 w</text><text class="f-cap" x="135.66666666666669" y="105" text-anchor="middle">정답은 3</text><text class="f-s" x="135.66666666666669" y="139" text-anchor="middle">현재 w=1</text><rect class="f-box" x="263.33333333333337" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="369.00000000000006" y="66" text-anchor="middle">최소 손실</text><text class="f-cap" x="369.00000000000006" y="105" text-anchor="middle">min L = 0</text><text class="f-s" x="369.00000000000006" y="139" text-anchor="middle">손실의 값</text><rect class="f-soft" x="496.6666666666667" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="602.3333333333334" y="66" text-anchor="middle">최소를 만든 w</text><text class="f-cap" x="602.3333333333334" y="105" text-anchor="middle">argmin L = 3</text><text class="f-s" x="602.3333333333334" y="139" text-anchor="middle">가중치의 값</text></svg><svg class="fig-svg fig-narrow" viewBox="0 0 390 187" role="img" aria-label="L=(w−3)²가 최소가 되는 가중치 3과 최소 손실 0을 구분한다."><rect class="f-box" x="20" y="6" width="350" height="51" rx="5"/><text class="f-s" x="34" y="25" text-anchor="start">가중치 w</text><text class="f-cap" x="34" y="47" text-anchor="start">정답은 3</text><text class="f-s" x="354" y="46" text-anchor="end">현재 w=1</text><rect class="f-box" x="20" y="68" width="350" height="51" rx="5"/><text class="f-s" x="34" y="87" text-anchor="start">최소 손실</text><text class="f-cap" x="34" y="109" text-anchor="start">min L = 0</text><text class="f-s" x="354" y="108" text-anchor="end">손실의 값</text><rect class="f-soft" x="20" y="130" width="350" height="51" rx="5"/><text class="f-s" x="34" y="149" text-anchor="start">최소를 만든 w</text><text class="f-cap" x="34" y="171" text-anchor="start">argmin L = 3</text><text class="f-s" x="354" y="170" text-anchor="end">가중치의 값</text></svg></figure>
+<p class="big">L = (w − 3)²</p>
+<p class="say">우리가 바꾸는 변수는 w. 기울기는 2(w−3).</p>
+</section>
+
+<section class="slide check-slide">
+<h2>잠깐, 직접</h2>
+<div class="check" data-q="q1"></div>
+</section>
+
+<section class="slide">
+<h2>경사가 음수면 오른쪽으로 한 발</h2>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 188" role="img" aria-label="w=1에서 경사 −4를 빼는 방향으로 가중치가 2로 이동한다."><line class="f-ink" x1="85" y1="106" x2="677" y2="106" marker-end="url(#f-arrow)"/><line class="f-line" x1="243.5" y1="97" x2="243.5" y2="116"/><circle class="f-fill" cx="243.5" cy="106" r="6"/><text class="f-s" x="243.5" y="134" text-anchor="middle">1</text><text class="f-t" x="243.5" y="67" text-anchor="middle">현재</text><line class="f-line" x1="380" y1="97" x2="380" y2="116"/><circle class="f-fill" cx="380" cy="106" r="6"/><text class="f-s" x="380" y="83" text-anchor="middle">2</text><text class="f-t" x="380" y="154" text-anchor="middle">갱신</text><line class="f-line" x1="516.5" y1="97" x2="516.5" y2="116"/><circle class="f-fill" cx="516.5" cy="106" r="6"/><text class="f-s" x="516.5" y="134" text-anchor="middle">3</text><text class="f-t" x="516.5" y="67" text-anchor="middle">정답</text></svg></figure>
+<p class="big">새 w = w − 학습률·기울기</p>
+<p class="say">학습률 .25, 현재 미분 −4: 1 − .25×(−4) = 2.</p>
+</section>
+
+<section class="slide">
+<h2>같은 규칙을 다시 쓴다</h2>
+<figure class="fig"><svg class="fig-svg fig-wide" viewBox="0 0 760 140" role="img" aria-label="학습률 0.25에서는 가중치가 1,2,2.5,2.75로 움직이고 손실은 4,1,.25,.0625로 줄어든다."><text class="f-s" x="245" y="28" text-anchor="middle">초기</text><text class="f-s" x="367" y="28" text-anchor="middle">1회</text><text class="f-s" x="489" y="28" text-anchor="middle">2회</text><text class="f-s" x="611" y="28" text-anchor="middle">3회</text><text class="f-s" x="175" y="74.8" text-anchor="end">w</text><rect class="f-box" x="184" y="48" width="118" height="35" rx="5"/><text class="f-t" x="243" y="73.6" text-anchor="middle">1</text><rect class="f-box" x="306" y="48" width="118" height="35" rx="5"/><text class="f-t" x="365" y="73.6" text-anchor="middle">2</text><rect class="f-box" x="428" y="48" width="118" height="35" rx="5"/><text class="f-t" x="487" y="73.6" text-anchor="middle">2.5</text><rect class="f-box" x="550" y="48" width="118" height="35" rx="5"/><text class="f-t" x="609" y="73.6" text-anchor="middle">2.75</text><text class="f-s" x="175" y="114.8" text-anchor="end">손실</text><rect class="f-box" x="184" y="88" width="118" height="35" rx="5"/><text class="f-t" x="243" y="113.6" text-anchor="middle">4</text><rect class="f-soft" x="306" y="88" width="118" height="35" rx="5"/><text class="f-t" x="365" y="113.6" text-anchor="middle">1</text><rect class="f-soft" x="428" y="88" width="118" height="35" rx="5"/><text class="f-t" x="487" y="113.6" text-anchor="middle">0.25</text><rect class="f-soft" x="550" y="88" width="118" height="35" rx="5"/><text class="f-t" x="609" y="113.6" text-anchor="middle">0.0625</text></svg><svg class="fig-svg fig-narrow" viewBox="0 0 390 140" role="img" aria-label="학습률 0.25에서는 가중치가 1,2,2.5,2.75로 움직이고 손실은 4,1,.25,.0625로 줄어든다."><text class="f-s" x="141.25" y="28" text-anchor="middle">초기</text><text class="f-s" x="207.75" y="28" text-anchor="middle">1회</text><text class="f-s" x="274.25" y="28" text-anchor="middle">2회</text><text class="f-s" x="340.75" y="28" text-anchor="middle">3회</text><text class="f-s" x="99" y="74.8" text-anchor="end">w</text><rect class="f-box" x="108" y="48" width="62.5" height="35" rx="5"/><text class="f-t" x="139.25" y="73.6" text-anchor="middle">1</text><rect class="f-box" x="174.5" y="48" width="62.5" height="35" rx="5"/><text class="f-t" x="205.75" y="73.6" text-anchor="middle">2</text><rect class="f-box" x="241" y="48" width="62.5" height="35" rx="5"/><text class="f-t" x="272.25" y="73.6" text-anchor="middle">2.5</text><rect class="f-box" x="307.5" y="48" width="62.5" height="35" rx="5"/><text class="f-t" x="338.75" y="73.6" text-anchor="middle">2.75</text><text class="f-s" x="99" y="114.8" text-anchor="end">손실</text><rect class="f-box" x="108" y="88" width="62.5" height="35" rx="5"/><text class="f-t" x="139.25" y="113.6" text-anchor="middle">4</text><rect class="f-soft" x="174.5" y="88" width="62.5" height="35" rx="5"/><text class="f-t" x="205.75" y="113.6" text-anchor="middle">1</text><rect class="f-soft" x="241" y="88" width="62.5" height="35" rx="5"/><text class="f-t" x="272.25" y="113.6" text-anchor="middle">0.25</text><rect class="f-soft" x="307.5" y="88" width="62.5" height="35" rx="5"/><text class="f-t" x="338.75" y="113.6" text-anchor="middle">0.0625</text></svg></figure>
+<p class="say">한 발 갈 때마다 새 가중치에서 기울기를 다시 잰다.</p>
+</section>
+
+<section class="slide check-slide">
+<h2>잠깐, 직접</h2>
+<div class="check" data-q="q2"></div>
+</section>
+
+<section class="slide">
+<h2>너무 큰 발걸음은 최소를 건너뛴다</h2>
+<figure class="fig"><svg class="fig-svg fig-wide" viewBox="0 0 760 212" role="img" aria-label="이 손실에서 학습률 1은 가중치 1과 5 사이를 왕복하고 .25는 오차를 줄인다."><rect class="f-box" x="30" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="135.66666666666669" y="66" text-anchor="middle">학습률 .25</text><text class="f-cap" x="135.66666666666669" y="105" text-anchor="middle">1 → 2 → 2.5</text><text class="f-s" x="135.66666666666669" y="139" text-anchor="middle">오차가 줄어듦</text><rect class="f-over" x="263.33333333333337" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="369.00000000000006" y="66" text-anchor="middle">학습률 1</text><text class="f-cap" x="369.00000000000006" y="105" text-anchor="middle">1 → 5 → 1</text><text class="f-s" x="369.00000000000006" y="139" text-anchor="middle">양쪽을 왕복</text><rect class="f-box" x="496.6666666666667" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="602.3333333333334" y="66" text-anchor="middle">학습률 0</text><text class="f-cap" x="602.3333333333334" y="105" text-anchor="middle">1 → 1 → 1</text><text class="f-s" x="602.3333333333334" y="139" text-anchor="middle">학습 없음</text></svg><svg class="fig-svg fig-narrow" viewBox="0 0 390 187" role="img" aria-label="이 손실에서 학습률 1은 가중치 1과 5 사이를 왕복하고 .25는 오차를 줄인다."><rect class="f-box" x="20" y="6" width="350" height="51" rx="5"/><text class="f-s" x="34" y="25" text-anchor="start">학습률 .25</text><text class="f-cap" x="34" y="47" text-anchor="start">1 → 2 → 2.5</text><text class="f-s" x="354" y="46" text-anchor="end">오차가 줄어듦</text><rect class="f-over" x="20" y="68" width="350" height="51" rx="5"/><text class="f-s" x="34" y="87" text-anchor="start">학습률 1</text><text class="f-cap" x="34" y="109" text-anchor="start">1 → 5 → 1</text><text class="f-s" x="354" y="108" text-anchor="end">양쪽을 왕복</text><rect class="f-box" x="20" y="130" width="350" height="51" rx="5"/><text class="f-s" x="34" y="149" text-anchor="start">학습률 0</text><text class="f-cap" x="34" y="171" text-anchor="start">1 → 1 → 1</text><text class="f-s" x="354" y="170" text-anchor="end">학습 없음</text></svg></figure>
+<p class="say">손실이 잘 줄어드는지 확인한 뒤 학습률·종료를 정한다.</p>
+</section>
+
+<section class="slide">
+<h2>언제 멈출까?</h2>
+<figure class="fig"><svg class="fig-svg fig-wide" viewBox="0 0 760 212" role="img" aria-label="손실이 차례로 1, 0.25, 0.0625이고 세 번째에 처음 0.1 이하가 된다."><rect class="f-box" x="30" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="135.66666666666669" y="66" text-anchor="middle">첫 갱신</text><text class="f-cap" x="135.66666666666669" y="105" text-anchor="middle">손실 1</text><text class="f-s" x="135.66666666666669" y="139" text-anchor="middle">0.1보다 큼</text><line class="f-line" x1="243.33333333333334" y1="105" x2="260.33333333333337" y2="105" marker-end="url(#f-arrow)"/><rect class="f-box" x="263.33333333333337" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="369.00000000000006" y="66" text-anchor="middle">두 번째</text><text class="f-cap" x="369.00000000000006" y="105" text-anchor="middle">손실 .25</text><text class="f-s" x="369.00000000000006" y="139" text-anchor="middle">0.1보다 큼</text><line class="f-line" x1="476.66666666666674" y1="105" x2="493.66666666666674" y2="105" marker-end="url(#f-arrow)"/><rect class="f-soft" x="496.6666666666667" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="602.3333333333334" y="66" text-anchor="middle">세 번째</text><text class="f-cap" x="602.3333333333334" y="105" text-anchor="middle">손실 .0625</text><text class="f-s" x="602.3333333333334" y="139" text-anchor="middle">0.1 이하</text></svg><svg class="fig-svg fig-narrow" viewBox="0 0 390 187" role="img" aria-label="손실이 차례로 1, 0.25, 0.0625이고 세 번째에 처음 0.1 이하가 된다."><rect class="f-box" x="20" y="6" width="350" height="51" rx="5"/><text class="f-s" x="34" y="25" text-anchor="start">첫 갱신</text><text class="f-cap" x="34" y="47" text-anchor="start">손실 1</text><text class="f-s" x="354" y="46" text-anchor="end">0.1보다 큼</text><line class="f-line" x1="195" y1="58" x2="195" y2="67" marker-end="url(#f-arrow)"/><rect class="f-box" x="20" y="68" width="350" height="51" rx="5"/><text class="f-s" x="34" y="87" text-anchor="start">두 번째</text><text class="f-cap" x="34" y="109" text-anchor="start">손실 .25</text><text class="f-s" x="354" y="108" text-anchor="end">0.1보다 큼</text><line class="f-line" x1="195" y1="120" x2="195" y2="129" marker-end="url(#f-arrow)"/><rect class="f-soft" x="20" y="130" width="350" height="51" rx="5"/><text class="f-s" x="34" y="149" text-anchor="start">세 번째</text><text class="f-cap" x="34" y="171" text-anchor="start">손실 .0625</text><text class="f-s" x="354" y="170" text-anchor="end">0.1 이하</text></svg></figure>
+<p class="say">목표 손실을 .1 이하로 정하면 세 번째 갱신에서 멈춘다.</p>
+</section>
+
+<section class="slide check-slide">
+<h2>잠깐, 직접</h2>
+<div class="check" data-q="q3"></div>
+</section>
+
+<section class="slide">
+<h2>경사하강 세 번과 MAE·MSE</h2>
+<pre data-example="python"><code>import numpy as np
+w = 1.
+for _ in range(3):
+    w -= .25 * 2*(w-3)
+    print(f&quot;{w:g} {(w-3)**2:g}&quot;)
+r = np.array([0, 1, -4])
+print(f&quot;{np.abs(r).mean():.3f} {(r*r).mean():.3f}&quot;)</code></pre>
+<pre data-output><code>2 1
+2.5 0.25
+2.75 0.0625
+1.667 5.667</code></pre>
+<p class="say">가중치, 손실, 두 종류의 오차 평균을 출력한다.</p>
+</section>
+
+<section class="slide">
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table><tbody><tr><th scope="row">잔차</th><td>실제 − 예측</td></tr><tr><th scope="row">MAE / MSE</th><td>절댓값 / 제곱의 평균</td></tr><tr><th scope="row">경사하강</th><td>현재값에서 기울기의 반대 쪽으로</td></tr><tr><th scope="row">학습률</th><td>한 번에 움직이는 규모</td></tr></tbody></table></div>
+<p class="small muted">개념 사전 · <a href="../../learn/unit.html?u=OP03">손실과 경사하강</a> · <a href="../../learn/unit.html?u=ML03">오차와 평가</a></p>
+</section>
+
+</main>
+<script src="../notes.js"></script>
+<script src="../js/core.js"></script>
+<script src="../js/deck.js"></script>
+</body>
+</html>
