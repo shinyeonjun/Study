@@ -36,8 +36,10 @@
 <p>TP는 실제 지연을 맞힌 12건, FN은 실제 지연을 놓친 8건이다. FP는 정상인데 알린 3건, TN은 정상이라 알리지 않은 37건이다. 같은 주문이 여러 줄인 원본 표라도 판정과 라벨을 주문마다 하나씩 만든 뒤 혼동행렬을 센다.</p>
 <h2>분모가 다르면 답하는 질문도 달라진다</h2>
 <div class="table-wrap"><table><thead><tr><th scope="col">지표</th><th scope="col">분모</th><th scope="col">이 예의 값</th></tr></thead><tbody><tr><td>정확도</td><td>전체 60건</td><td>(12+37)/60=49/60≈0.8167</td></tr><tr><td>정밀도</td><td>알림을 보낸 15건</td><td>12/(12+3)=0.8</td></tr><tr><td>재현율(민감도)</td><td>실제 지연 20건</td><td>12/(12+8)=0.6</td></tr><tr><td>특이도</td><td>실제 정상 40건</td><td>37/(37+3)=0.925</td></tr><tr><td>F1</td><td>정밀도·재현율의 조화평균</td><td>2×12/(2×12+3+8)=24/35≈0.6857</td></tr></tbody></table></div>
+<div class="box memo"><p class="box-k">공식 <span class="tag memo">외우기</span></p><p>정확도=(TP+TN)/전체, 정밀도=TP/(TP+FP), 재현율=TP/(TP+FN), 특이도=TN/(TN+FP). F1=2×정밀도×재현율/(정밀도+재현율)이고, 분자·분모를 정리하면 2TP/(2TP+FP+FN)과 같다. 이 예에서 2×0.8×0.6/(0.8+0.6)=0.96/1.4≈0.6857로 표의 값과 일치한다.</p></div>
 <div class="check" data-q="q2"></div><div class="check" data-q="q3"></div><div class="check" data-q="q4"></div>
 <p>담당자가 하루 15개 알림을 처리할 수 있다면 정밀도에서 그중 몇 개가 지연인지 읽는다. 놓친 지연이 큰 손실이라면 재현율을 먼저 확인한다. F1은 정밀도와 재현율 중 낮은 쪽에 영향을 받는다. 업무 비용에서 FP와 FN의 단가가 다르면 비용을 직접 계산할 수도 있다.</p>
+<p>둘 중 한쪽을 더 중시하려면 F<sub>β</sub>를 쓴다. F<sub>β</sub>=(1+β²)×정밀도×재현율/(β²×정밀도+재현율)이고, β&gt;1이면 재현율을, β&lt;1이면 정밀도를 더 무겁게 본다(β=1이 F1). 이 예에서 F2=5×0.48/(4×0.8+0.6)=2.4/3.8≈0.6316으로 낮은 재현율 쪽으로 끌려가고, F0.5=1.25×0.48/(0.25×0.8+0.6)=0.6/0.8=0.75로 정밀도 쪽으로 올라간다.</p>
 <div class="check" data-q="q5"></div>
 <pre data-example="python"><code>from fractions import Fraction as F
 
