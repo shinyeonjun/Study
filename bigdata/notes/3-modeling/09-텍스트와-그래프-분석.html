@@ -28,7 +28,7 @@
 <div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>문서-단어 행렬의 행과 열을 세운다.</li><li>한 가지 TF–IDF 정의에 따라 값을 계산한다.</li><li>방향 그래프에서 진입·진출 차수를 구한다.</li></ul></div>
 
 <h2>문장마다 어떤 단어가 얼마나 나오나</h2>
-<p>문의 D1은 ‘배송 배송 지연’, D2는 ‘배송 확인’, D3은 ‘주소 확인’이라고 하자. 이 예에서는 공백 단위로 토큰을 만들고 행은 문서, 열은 어휘로 둔다. ‘단어 주머니’(bag of words)는 각 어휘의 등장 수를 기록한다. 단어 순서는 사라지므로 ‘주소 확인’과 ‘확인 주소’의 빈도 벡터는 같다. 두 단어가 붙는 표현이 중요하면 순서가 있는 두 토큰 묶음(바이그램)을 특징으로 검토한다.</p>
+<p>문의 D1은 ‘배송 배송 지연’, D2는 ‘배송 확인’, D3은 ‘주소 확인’이라고 하자. 이 예에서는 공백 단위로 토큰을 만들고 행은 문서, 열은 어휘로 둔다. ‘단어 주머니’(bag of words)는 각 어휘의 등장 수를 기록한다. 단어 순서는 사라지므로 ‘주소 확인’과 ‘확인 주소’의 빈도 벡터는 같다. 두 단어가 붙는 표현이 중요하면 순서가 있는 두 토큰 묶음(바이그램)을 특징으로 검토한다. 실제 한국어 문장을 공백으로만 자르면 ‘배송이’와 ‘배송을’이 다른 토큰이 되므로, 형태소 분석으로 명사·어간을 뽑고 의미가 적은 불용어를 지우는 전처리를 먼저 한다. 문장의 긍정·부정을 판정하는 감성 분석, 빈도를 글자 크기로 보여 주는 워드 클라우드도 텍스트 마이닝의 대표 활용이다.</p>
 <div class="table-wrap"><table><thead><tr><th scope="col">문서</th><th scope="col">배송</th><th scope="col">지연</th><th scope="col">확인</th><th scope="col">주소</th></tr></thead><tbody><tr><td>D1</td><td>2</td><td>1</td><td>0</td><td>0</td></tr><tr><td>D2</td><td>1</td><td>0</td><td>1</td><td>0</td></tr><tr><td>D3</td><td>0</td><td>0</td><td>1</td><td>1</td></tr><tr><td>등장 문서 수</td><td>2</td><td>1</td><td>2</td><td>1</td></tr></tbody></table></div>
 <div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
 <h2>문서 안에서는 자주, 전체 문서에서는 드물게</h2>
@@ -55,6 +55,7 @@ for term in (&quot;배송&quot;, &quot;지연&quot;):
 <figure class="fig"><svg class="fig-svg" viewBox="0 0 760 188" role="img" aria-label="팀 A에서 B와 C로, 팀 C에서 B로 향하는 간선 세 개">
 <line class="f-ink" x1="220" y1="70" x2="546" y2="70" marker-end="url(#f-arrow)"/><line class="f-line" x1="212" y1="83" x2="350" y2="138" marker-end="url(#f-arrow)"/><line class="f-line" x1="410" y1="138" x2="557" y2="83" marker-end="url(#f-arrow)"/><circle cx="185" cy="70" r="26" class="f-box"/><text class="f-t" x="185" y="76" text-anchor="middle">A</text><circle cx="580" cy="70" r="26" class="f-box"/><text class="f-t" x="580" y="76" text-anchor="middle">B</text><circle cx="380" cy="151" r="26" class="f-box"/><text class="f-t" x="380" y="157" text-anchor="middle">C</text><text class="f-t" x="185" y="27" text-anchor="middle">진출 2</text><text class="f-t" x="580" y="27" text-anchor="middle">진입 2</text>
 </svg><figcaption>이 방향 그래프에서 차수는 관계 수를 센다. 전달 건수나 업무에 미치는 영향은 다른 지표를 정의해야 한다.</figcaption></figure>
+<p>네트워크 전체와 정점의 중요도를 재는 대표 지표도 구분한다. <strong>밀도</strong>는 실제 간선 수를 가능한 최대 간선 수로 나눈 값이다. 정점 3개인 방향 그래프의 최대 간선 수는 3×2=6이므로 이 그래프의 밀도는 3/6=0.5다(무방향 그래프라면 최대는 3×2/2=3). <strong>연결 중심성</strong>은 차수, <strong>근접 중심성</strong>은 다른 정점까지 최단거리 합의 역수(가까울수록 큼), <strong>매개 중심성</strong>은 다른 정점 쌍 사이 최단경로 위에 놓이는 정도, <strong>위세(고유벡터) 중심성</strong>은 중요한 정점과 연결될수록 커지는 값이다. 이 예를 방향 없이 보면 세 정점이 모두 서로 연결된 삼각형이라 연결 중심성(차수)이 모두 2로 같다.</p>
 <div class="check" data-q="q5"></div><div class="check" data-q="q6"></div>
 <div class="box sum"><p class="box-k">한 줄 정리</p><p>문장에는 문서와 어휘의 관계를, 그래프에는 정점과 간선의 의미를 명시한 뒤 특징을 계산한다.</p></div>
 

@@ -28,16 +28,16 @@
 <div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>로짓과 확률을 변환한다.</li><li>임계값에서 분류 경계를 계산한다.</li><li>트리, 최근접 이웃, SVM, 나이브 베이즈의 판단 근거를 구분한다.</li></ul></div>
 
 <h2>실수 점수를 확률로 바꾸기</h2>
-<p>하루 이상 밀린 주문을 Y=1이라고 하자. 경고 신호 수 x에 대해 적합한 모형의 점수가 z=−2+x라고 가정한다. 로지스틱 회귀는 시그모이드 p=1/(1+exp(−z))로 Y=1의 확률을 추정한다.</p>
+<p>하루 이상 밀린 주문을 Y=1이라고 하자. 경고 신호 수 x에 대해 적합한 모형의 점수가 z=−2+x라고 가정한다(이 z를 <strong>로짓</strong>이라 부르며, 정의는 바로 아래에서 본다). 로지스틱 회귀는 시그모이드 p=1/(1+exp(−z))로 Y=1의 확률을 추정한다.</p>
 <div class="table-wrap"><table><thead><tr><th scope="col">신호 수 x</th><th scope="col">로짓 z</th><th scope="col">양성 확률 p</th></tr></thead><tbody><tr><td>0</td><td>−2</td><td>0.1192</td></tr><tr><td>2</td><td>0</td><td>0.5000</td></tr><tr><td>4</td><td>2</td><td>0.8808</td></tr></tbody></table></div>
 <div class="check" data-q="q1"></div>
-<p>오즈는 p/(1−p), 로짓은 오즈의 자연로그다. x가 1 늘면 로짓이 1 증가하고 오즈는 e¹배가 된다. p=0.5일 때 오즈는 1이고 p=0.8일 때 오즈는 4다.</p>
+<p>오즈는 p/(1−p), 로짓은 오즈의 자연로그다. x가 1 늘면 로짓이 계수 b₁=1만큼 증가하고 오즈는 e^b₁=e¹≈2.718배가 된다. 이 배수 e^b₁을 <strong>오즈비</strong>라 한다. 계수가 음수면 오즈비는 1보다 작다. 확률이 2.718배가 되는 것이 아니라 오즈가 그만큼 곱해진다는 점에 주의한다. x가 0에서 1로 늘 때 p는 0.1192에서 0.2689로 약 2.26배가 된다. p=0.5일 때 오즈는 1이고 p=0.8일 때 오즈는 4다.</p>
 <div class="check" data-q="q2"></div>
 <figure class="fig"><svg class="fig-svg" viewBox="0 0 760 160" role="img" aria-label="신호를 확률과 판정으로 변환">
 <rect class="f-box" x="42" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="135" y="61" text-anchor="middle">특징과 계수</text><text class="f-s" x="135" y="89" text-anchor="middle">신호 수 x</text><text class="f-s" x="135" y="110" text-anchor="middle">−2 + x</text><line class="f-line" x1="235" y1="84" x2="278" y2="84" marker-end="url(#f-arrow)"/><rect class="f-soft" x="287" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="380" y="61" text-anchor="middle">양성 확률</text><text class="f-s" x="380" y="89" text-anchor="middle">시그모이드 적용</text><text class="f-s" x="380" y="110" text-anchor="middle">0과 1 사이</text><line class="f-line" x1="480" y1="84" x2="523" y2="84" marker-end="url(#f-arrow)"/><rect class="f-box" x="532" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="625" y="61" text-anchor="middle">판정</text><text class="f-s" x="625" y="89" text-anchor="middle">p ≥ 임계값</text><text class="f-s" x="625" y="110" text-anchor="middle">양성 또는 음성</text>
 </svg><figcaption>확률을 내는 모형과 알림을 보내는 운영 기준은 각각 평가할 수 있다.</figcaption></figure>
 <h2>알림이 시작되는 신호 수</h2>
-<p>양성 기준을 p ≥ 0.8로 두면 z ≥ ln 4 ≈ 1.3863이다. −2+x ≥ 1.3863이므로 x ≥ 3.3863이 필요하다. 신호 수는 정수이므로 4개부터 알림이 붙는다. 기준이 0.5라면 2개부터다. 계수의 추정에는 보통 관측한 클래스에 부여한 확률의 로그 손실을 쓴다.</p>
+<p>양성 기준을 p ≥ 0.8로 두면 z ≥ ln 4 ≈ 1.3863이다. −2+x ≥ 1.3863이므로 x ≥ 3.3863이 필요하다. 신호 수는 정수이므로 4개부터 알림이 붙는다. 기준이 0.5라면 2개부터다. 계수는 보통 <strong>최대우도추정</strong>(MLE)으로 구한다. 관측한 클래스에 모형이 부여한 확률의 로그 손실을 최소화하는 것과 같으며, 선형회귀와 달리 닫힌 식이 없어 반복 계산으로 푼다.</p>
 <div class="check" data-q="q3"></div>
 <pre data-example="python"><code>from math import ceil, exp, log
 
@@ -58,6 +58,11 @@ assert probability(minimum - 1) &lt; threshold &lt;= probability(minimum)</code>
 <div class="check" data-q="q5"></div>
 <p>확률의 <strong>보정</strong>은 비슷한 확률을 부여한 사례에서 실제 양성 비율이 그 확률과 비슷한지 살피는 일이다. 사례 순위가 잘 맞아도 확률은 지나치게 높거나 낮을 수 있다. 예상 발생률로 비용을 계산하는 업무에서는 검증 자료로 보정도 확인한다.</p>
 <div class="check" data-q="q6"></div>
+<h2>결정 트리의 분할 기준과 SVM의 마진</h2>
+<p>결정 트리는 한 노드의 자료를 둘로 나눌 때 자식 노드가 한 클래스로 더 "순수"해지는 조건을 고른다. 노드에서 클래스 k의 비율을 pₖ라 하면 <strong>지니 불순도</strong>는 1−Σpₖ², <strong>엔트로피</strong>는 −Σpₖ log₂ pₖ다. 둘 다 한 클래스만 있으면 0이고, 두 클래스가 반반일 때 가장 크다(지니 0.5, 엔트로피 1).</p>
+<div class="table-wrap"><table><thead><tr><th scope="col">노드</th><th scope="col">구성</th><th scope="col">지니</th><th scope="col">엔트로피</th></tr></thead><tbody><tr><td>부모</td><td>양성 4, 음성 4</td><td>1−(0.5²+0.5²)=0.5</td><td>1</td></tr><tr><td>왼쪽 자식</td><td>양성 3, 음성 1</td><td>1−(0.75²+0.25²)=0.375</td><td>≈0.8113</td></tr><tr><td>오른쪽 자식</td><td>양성 1, 음성 3</td><td>0.375</td><td>≈0.8113</td></tr><tr><td>자식 가중평균</td><td>각 4/8</td><td>0.375</td><td>≈0.8113</td></tr></tbody></table></div>
+<p>이 분할로 지니는 0.5에서 0.375로 0.125 줄고, 엔트로피의 감소량인 <strong>정보 이득</strong>은 1−0.8113≈0.1887이다. 트리는 후보 분할 중 감소가 가장 큰 것을 고른다. 시험 교재에서는 흔히 CART는 지니 지수, ID3·C4.5는 엔트로피 기반 정보 이득(C4.5는 정보 이득 비율), CHAID는 카이제곱 통계량을 분리 기준으로 쓴다고 정리한다(외울 것, 표현은 교재마다 조금 다를 수 있다). 목표가 수치인 회귀 트리는 분산 감소를 쓴다. 트리가 너무 깊으면 학습 자료에 과하게 맞으므로 최대 깊이·잎의 최소 표본 수 같은 정지 규칙이나 가지치기로 크기를 조절한다.</p>
+<p><strong>SVM</strong>(서포트 벡터 머신)은 두 클래스를 가르는 경계 가운데, 경계에서 가장 가까운 학습점까지의 거리인 <strong>마진</strong>이 가장 큰 것을 고른다. 경계에 가장 가까이 있어 경계의 위치를 결정하는 점들을 <strong>서포트 벡터</strong>라 한다. 완전히 나눌 수 없는 자료에서는 일부 위반을 허용하는 소프트 마진을 쓰며, 비용 C가 클수록 위반을 덜 허용한다. 직선(초평면)으로 나눌 수 없는 자료는 <strong>커널</strong>(다항, RBF 등)로 고차원 특징 공간에서의 내적을 바로 계산해 비선형 경계를 만든다.</p>
 <div class="box sum"><p class="box-k">한 줄 정리</p><p>로지스틱 회귀는 로짓을 확률로 변환하고, 운영 임계값을 적용해 판정한다.</p></div>
 
 <h2>참고 자료</h2>
