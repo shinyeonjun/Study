@@ -162,7 +162,7 @@ KeyError: 0</code></pre>
 </div>
 
 <h3>모든 짝을 차례로 보기</h3>
-<p>딕셔너리를 <code>for</code>로 돌 때는 <code>.items()</code>를 붙이면 키와 값을 한 번에 받을 수 있습니다. <code>.keys()</code>는 키만, <code>.values()</code>는 값만 줍니다. <code>del</code>은 짝 하나를 지웁니다.</p>
+<p>딕셔너리를 <code>for</code>로 돌 때는 <code>.items()</code>를 붙이면 키와 값을 한 번에 받을 수 있습니다. <code>.keys()</code>는 키만, <code>.values()</code>는 값만 줍니다. 아무것도 붙이지 않고 <code>for k in price:</code>처럼 딕셔너리를 그대로 돌면 <b>키</b>가 하나씩 나옵니다(<code>.keys()</code>를 돈 것과 같음). <code>del</code>은 짝 하나를 지웁니다.</p>
 
 <p class="small">파일 <code>03_items.py</code></p>
 <pre><code>price = {"라면": 1300, "우유": 2500, "빵": 3000}
@@ -273,7 +273,7 @@ print(s[0])</code></pre>
     print(s[0])
           ~^^^
 TypeError: 'set' object is not subscriptable</code></pre>
-<p><code>not subscriptable</code>은 "대괄호로 꺼낼 수 없다"는 뜻입니다. 순서대로 보고 싶으면 <code>sorted(s)</code>로 정렬된 <b>리스트</b>를 새로 만들어 씁니다. <code>sorted</code>는 값을 작은 것부터(글자는 가나다순) 늘어놓은 새 리스트를 돌려주는 함수입니다.</p>
+<p><code>not subscriptable</code>은 "대괄호로 꺼낼 수 없다"는 뜻입니다. 순서대로 보고 싶으면 <code>sorted(s)</code>로 정렬된 <b>리스트</b>를 새로 만들어 씁니다. <code>sorted</code>는 값을 작은 것부터(글자는 유니코드 번호순이라 한글은 가나다순) 늘어놓은 새 리스트를 돌려주는 함수입니다.</p>
 
 <h3>합집합·교집합·차집합</h3>
 <p>집합 두 개를 견주는 연산이 있습니다. 월요일 방문자 a와 화요일 방문자 b를 비교해 봅시다.</p>
@@ -327,10 +327,7 @@ print(type(set()))</code></pre>
 </table>
 </div>
 
-<p>합집합 크기를 손으로 검산해 봅시다. a가 3명, b가 3명이지만 겹치는 사람(지아, 하준)이 2명이라 두 번 세면 안 됩니다.</p>
-<p class="calc">① 3 + 3 = 6 (겹친 사람을 두 번 셈)<br>
-② 6 − 2 = 4 (겹친 2명을 한 번 빼기)<br>
-③ len(a | b) = 4와 같다</p>
+<p>합집합 크기 검산: len(a) + len(b) − len(a &amp; b) = 3 + 3 − 2 = 4로 <code>len(a | b)</code>와 같습니다. 겹친 지아·하준을 두 번 세지 않도록 교집합 크기를 한 번 뺍니다(포함·배제 원리).</p>
 
 <div class="box trap">
 <p class="box-k">흔한 실수</p>
@@ -369,7 +366,7 @@ print(a, b)</code></pre>
 <p>세 가지를 눈여겨봅니다.</p>
 <ul>
 <li><b>풀어 담기(unpacking).</b> <code>x, y = point</code>는 튜플의 첫 값을 x에, 둘째 값을 y에 나눠 담습니다. 왼쪽 이름 개수와 튜플 길이가 같아야 합니다. 앞에서 본 <code>for name, won in price.items()</code>도 같은 원리입니다. <code>.items()</code>가 내놓는 짝 하나하나가 <code>("라면", 1300)</code> 같은 튜플입니다.</li>
-<li><b>값이 하나인 튜플은 쉼표가 필요합니다.</b> <code>(7)</code>은 그냥 괄호로 감싼 숫자 7입니다. 튜플을 만드는 것은 사실 괄호가 아니라 <b>쉼표</b>입니다.</li>
+<li><b>값이 하나인 튜플은 쉼표가 필요합니다.</b> <code>(7)</code>은 그냥 괄호로 감싼 숫자 7입니다. 튜플을 만드는 것은 사실 괄호가 아니라 <b>쉼표</b>입니다(예외: 빈 튜플은 <code>()</code>).</li>
 <li><b>두 값 맞바꾸기.</b> <code>a, b = b, a</code>는 오른쪽에서 먼저 <code>(2, 1)</code>이라는 튜플을 만들고, 그것을 왼쪽 a, b에 풀어 담습니다.</li>
 </ul>
 
@@ -531,7 +528,7 @@ print(book["민수"]["수학"])</code></pre>
 
 <div class="box memo">
 <p class="box-k">외우는 법</p>
-<p>괄호 모양으로 기억합니다. <b>대괄호 [ ] = 줄 세운 목록</b>, <b>소괄호 ( ) = 묶어서 봉한 꾸러미</b>, <b>중괄호 { } = 순서 없이 찾는 것</b>(집합, 딕셔너리). 중괄호 안에 콜론(<code>:</code>)이 있으면 딕셔너리, 없으면 집합입니다.</p>
+<p>괄호 모양으로 기억합니다. <b>대괄호 [ ] = 줄 세운 목록</b>, <b>소괄호 ( ) = 묶어서 봉한 꾸러미</b>, <b>중괄호 { } = 순서 없이 찾는 것</b>(집합, 딕셔너리). 중괄호 안에 쌍점(<code>:</code>)이 있으면 딕셔너리, 없으면 집합입니다.</p>
 </div>
 
 <div class="why">

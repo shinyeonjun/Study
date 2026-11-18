@@ -268,15 +268,16 @@ for i in range(len(body)):
     line_no = i + 2
     if len(row) != len(header):
         print(line_no, "번째 줄 칸 수가 다름:", row)
-    for j in range(len(header)):
-        if row[j] == "":
-            print(line_no, "번째 줄", header[j], "칸이 비었음")</code></pre>
+    else:
+        for j in range(len(header)):
+            if row[j] == "":
+                print(line_no, "번째 줄", header[j], "칸이 비었음")</code></pre>
 <p class="small">실행 결과</p>
 <pre><code>열 이름: ['이름', '반', '국어', '수학']
 행 수: 4 열 수: 4
 4 번째 줄 수학 칸이 비었음</code></pre>
 
-<p><code>line_no = i + 2</code>인 까닭: body의 0번 행은 파일의 2번째 줄입니다(1번째 줄은 머리글). 그래서 i에 2를 더해야 메모장에서 보는 줄 번호와 맞습니다. 하준은 body[2], 곧 파일의 4번째 줄입니다.</p>
+<p>칸 수가 다른 줄은 알리기만 하고 빈 칸 검사는 <code>else</code> 쪽, 곧 칸 수가 맞는 줄에서만 합니다. 칸이 모자란 줄에서 <code>row[j]</code>를 읽으면 IndexError로 멈추기 때문입니다. <code>line_no = i + 2</code>인 까닭: body의 0번 행은 파일의 2번째 줄입니다(1번째 줄은 머리글). 그래서 i에 2를 더해야 메모장에서 보는 줄 번호와 맞습니다. 하준은 body[2], 곧 파일의 4번째 줄입니다.</p>
 
 <div class="table-wrap">
 <table>
