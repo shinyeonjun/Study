@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>단조수렴·Fatou·지배수렴으로 적분의 극한 바꾸기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e8c'/%3E%3Cpath d='M8 22V10m8 12V14m8 8V6' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="RA04-3">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+
+<header class="chapter">
+<p class="chap-sub">해석학 · RA04 측도와 르베그 적분</p>
+<p class="chap-num">RA04·3</p>
+<h1>단조수렴·Fatou·지배수렴으로 적분의 극한 바꾸기</h1>
+<p class="lead">함수값이 올라가는 경우와 들쑥날쑥해도 같은 함수 아래에 묶이는 경우를 나눕니다. 단순함수와 가산 가법성에서 출발해 두 수렴 정리를 증명합니다.</p>
+</header>
+
+<div class="goal">
+<h2>이 장을 읽고 나면</h2>
+<ul>
+<li>증가 집합의 측도와 비음수 함수의 단조수렴을 연결한다.</li>
+<li>단조수렴에서 Fatou 보조정리, 이어서 지배수렴을 증명한다.</li>
+<li>공통 지배함수의 적분 가능성과 거의 모든 곳 수렴을 계산에서 확인한다.</li>
+</ul>
+</div>
+<h2>가산 개의 집합이 커질 때 측도도 함께 간다</h2>
+
+<p><var>E₁⊆E₂⊆⋯</var>가 가측이고 <var>E=⋃ₙEₙ</var>라고 합시다. 처음 조각 <var>B₁=E₁</var>와 새로 생긴 조각 <var>Bₙ=Eₙ∖Eₙ₋₁</var> (<var>n≥2</var>)는 서로소입니다. <var>μ(Eₙ)=Σ<sub>j≤n</sub>μ(Bⱼ)</var>이고, 가산 가법성에서 <var>μ(E)=Σ<sub>j≥1</sub>μ(Bⱼ)</var>입니다. 따라서 <var>μ(Eₙ)↑μ(E)</var>입니다. 합의 극한이 무한대여도 성립합니다.</p>
+<p><var>[0,1]</var>에서 <var>Eₙ=(1/n,1]</var>의 지시함수는 비음수이며 증가합니다. 길이 <var>1-1/n</var>은 1로 가고 합집합은 <var>(0,1]</var>이라 그 길이도 1입니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 267" role="img" aria-label="증가하는 세 구간 (1/2,1], (1/4,1], (1/8,1]의 길이가 1/2,3/4,7/8이다">
+<text class="f-cap" x="380" y="28" text-anchor="middle">지시함수의 단조수렴은 집합이 커지는 경우다</text>
+<line class="f-grid" x1="170" y1="85" x2="651" y2="85"/>
+<line class="f-line" x1="410.5" y1="85" x2="651" y2="85"/>
+<circle class="f-box" cx="410.5" cy="85" r="5"/>
+<circle class="f-fill" cx="651" cy="85" r="5"/>
+<text class="f-s" x="111" y="89" text-anchor="middle">n = 2</text>
+<text class="f-s" x="410.5" y="107" text-anchor="middle">1/2</text>
+<text class="f-cap" x="690" y="89" text-anchor="middle">1/2</text>
+<line class="f-grid" x1="170" y1="139" x2="651" y2="139"/>
+<line class="f-line" x1="290.25" y1="139" x2="651" y2="139"/>
+<circle class="f-box" cx="290.25" cy="139" r="5"/>
+<circle class="f-fill" cx="651" cy="139" r="5"/>
+<text class="f-s" x="111" y="143" text-anchor="middle">n = 4</text>
+<text class="f-s" x="290.25" y="161" text-anchor="middle">1/4</text>
+<text class="f-cap" x="690" y="143" text-anchor="middle">3/4</text>
+<line class="f-grid" x1="170" y1="193" x2="651" y2="193"/>
+<line class="f-line" x1="230.125" y1="193" x2="651" y2="193"/>
+<circle class="f-box" cx="230.125" cy="193" r="5"/>
+<circle class="f-fill" cx="651" cy="193" r="5"/>
+<text class="f-s" x="111" y="197" text-anchor="middle">n = 8</text>
+<text class="f-s" x="230.125" y="215" text-anchor="middle">1/8</text>
+<text class="f-cap" x="690" y="197" text-anchor="middle">7/8</text>
+<text class="f-s" x="170" y="230" text-anchor="middle">0</text>
+<text class="f-s" x="651" y="230" text-anchor="middle">1</text>
+<text class="f-s" x="690" y="57" text-anchor="middle">길이</text>
+</svg>
+<figcaption>왼쪽 끝은 제외되고 오른쪽 끝은 포함됩니다. 합집합은 (0,1]이고 길이는 1입니다.</figcaption>
+</figure>
+<p>가측 함수 두 개가 어떤 가측 영집합 <var>N</var> 밖에서 같으면 적분도 같습니다. 비음수 함수에서 어떤 단순함수 <var>s</var>를 밑에 넣을 때, N을 잘라낸 <var>s·1<sub>Ω∖N</sub></var>도 같은 적분을 가지며 두 함수 모두의 아래에 놓을 수 있습니다. 단순함수 적분의 상한을 취하면 같은 적분을 얻습니다. 부호 있는 함수에서는 양·음의 부분에 각각 적용합니다. 아래의 거의 모든 곳 조건은 예외의 합집합을 모아 그 가측 영집합에서 함수들을 0으로 정한 뒤 증명할 수 있습니다.</p>
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+
+<h2>단순함수의 높이를 조금 낮춰 단조수렴을 증명한다</h2>
+
+<div class="box"><p class="box-k">단조수렴 정리</p><p>측도 공간에서 비음수 가측 함수 <var>fₙ</var>이 거의 모든 곳에서 증가하여 <var>f</var>로 가고 <var>f</var>도 가측이면 <var>limₙ ∫fₙ dμ=∫f dμ</var>입니다. 양쪽에 무한대 값을 허용합니다.</p></div>
+<p>예외를 0으로 바꿔 모든 점에서 <var>0≤fₙ↑f</var>라 둡니다. <var>fₙ≤f</var>이고 <var>∫fₙ</var>도 증가하므로 <var>L=limₙ∫fₙ≤∫f</var>입니다. 남은 부등식을 보려고 임의의 비음수 단순함수 <var>s≤f</var>와 실수 <var>0&lt;c&lt;1</var>을 고릅니다. <var>Eₙ={fₙ≥cs}</var>는 가측이고 증가합니다. <var>s(x)=0</var>인 점은 언제나 들어갑니다. <var>s(x)&gt;0</var>인 점에서는 <var>f(x)≥s(x)&gt;cs(x)</var>라, <var>fₙ(x)</var>가 증가하며 f에 가까워지면 결국 이 문턱을 넘습니다. 그러므로 <var>⋃ₙEₙ=Ω</var>입니다.</p>
+<p><var>fₙ≥cs·1<sub>Eₙ</sub></var>이므로 <var>∫fₙ≥c∫s 1<sub>Eₙ</sub></var>입니다. s의 각 높이 조각 <var>Aⱼ</var>에서 <var>Eₙ∩Aⱼ↑Aⱼ</var>입니다. 직전 절의 증가 집합 성질을 조각의 측도마다 적용하면 <var>∫s 1<sub>Eₙ</sub>↑∫s</var>입니다. 따라서 <var>L≥c∫s</var>이고, <var>c↑1</var>로 보내 <var>L≥∫s</var>입니다. <var>∫s=∞</var>이면 양의 c를 하나만 골라도 L이 무한대임을 얻습니다. 모든 s의 상한을 취해 <var>L≥∫f</var>를 보였습니다.</p>
+<p><b>왜 낮추는가?</b> <var>fₙ(x)</var>가 <var>s(x)</var>로 아래에서 가까워지면서도 그 높이에 영원히 닿지 않을 수 있습니다. 1보다 작은 c를 곱하면 그보다 낮은 문턱에는 결국 도착합니다.</p>
+<p><b>적분의 가법성도 얻는다.</b> 앞 장에서 비음수 가측 <var>f,g</var>를 각각 단순함수 <var>sₙ↑f,tₙ↑g</var>로 근사했습니다. 합도 단순하고 <var>sₙ+tₙ↑f+g</var>입니다. 세 곳에 단조수렴을 쓰면 <var>∫(f+g)=lim(∫sₙ+∫tₙ)=∫f+∫g</var>입니다. 부호 있는 적분 가능한 함수에서는 <var>f⁺+g⁺+(f+g)⁻=(f+g)⁺+f⁻+g⁻</var>를 사용합니다. <var>(f+g)⁺≤f⁺+g⁺</var>이고 음의 부분에도 같은 상계가 있어 모든 항의 적분이 유한합니다. 양변에 비음수 가법성을 적용하고 항을 옮기면 <var>∫(f+g)=∫f+∫g</var>를 얻습니다.</p>
+<div class="check" data-q="q3"></div>
+<div class="check" data-q="q4"></div>
+
+<h2>꼬리의 하한을 이용하면 Fatou의 부등식이 된다</h2>
+
+<p>비음수 가측 <var>fₙ</var>이 증가한다는 가정을 빼 봅시다. <var>hₙ(x)=inf<sub>k≥n</sub>fₖ(x)</var>를 잡으면, 꼬리에서 앞쪽 항을 빼 갈수록 하한은 증가합니다. <var>{hₙ&lt;a}=⋃<sub>k≥n</sub>{fₖ&lt;a}</var>라 이 함수는 가측입니다. 극한은 <var>liminf fₙ</var>으로 정의됩니다. <var>hₙ≤fₖ</var>가 모든 <var>k≥n</var>에서 성립하므로 <var>∫hₙ≤inf<sub>k≥n</sub>∫fₖ</var>입니다. 양변을 극한으로 보내면 단조수렴에 의해</p>
+<div class="calc"><var>∫ liminfₙ fₙ dμ ≤ liminfₙ ∫ fₙ dμ</var></div>
+<p>입니다. 이것이 <b class="key">Fatou 보조정리</b>입니다. 등호를 보장하는 정리가 아닙니다. 폭이 줄고 높이가 커져 각 넓이가 1인 앞 단원의 삼각형에서는 왼쪽이 0, 오른쪽이 1입니다.</p>
+<div class="check" data-q="q5"></div>
+
+<h2>한 적분 가능한 함수가 모든 항을 지배한다</h2>
+
+<div class="box"><p class="box-k">지배수렴 정리</p><p>가측 실수 함수 <var>fₙ→f</var>가 거의 모든 곳에서 성립하고 <var>f</var>도 가측이라고 합시다. 하나의 비음수 가측 함수 <var>g</var>가 있어 <var>∫g dμ&lt;∞</var>이고 모든 n에서 <var>|fₙ|≤g</var>가 거의 모든 곳에서 성립하면, fₙ과 f는 적분 가능하고 <var>∫fₙ→∫f</var>입니다.</p></div>
+<p>예외들을 가산 합집합으로 모아 제외하면 <var>|f|≤g</var>도 얻습니다. g가 무한대인 집합은 영집합입니다. 그 위에 임의의 높이 M인 단순함수를 넣어도 <var>∫g</var> 이하여야 하기 때문입니다. 그 영집합도 함께 제외하고 값을 0으로 정할 수 있습니다. g의 적분이 유한하므로 fₙ, f의 양·음의 부분이 각각 유한합니다. <var>g+fₙ≥0</var>에 Fatou를 쓰면 <var>∫g+∫f≤∫g+liminf∫fₙ</var>입니다. <var>g-fₙ≥0</var>에도 쓰면 <var>∫g-∫f≤∫g-limsup∫fₙ</var>입니다. 유한한 공통항 <var>∫g</var>를 양변에서 빼고 정리하면 <var>limsup∫fₙ≤∫f≤liminf∫fₙ</var>입니다. 아래극한은 위극한 이하이므로 모두 같은 값입니다.</p>
+<p><b>적용.</b> <var>xⁿ</var>의 [0,1] 위 극한은 1에서만 1이고 나머지에서 0입니다. <var>0≤xⁿ≤1</var>이며 이 구간에서 <var>∫1=1</var>입니다. 따라서 균등수렴이 없어도 지배수렴으로 적분은 0에 갑니다. 직접 계산 <var>1/(n+1)→0</var>과 일치합니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 211" role="img" aria-label="증가 지시함수와 x 거듭제곱 그리고 실수 전체에서 움직이는 길이 1 구간에 대해 적분 교환 조건 비교">
+<text class="f-cap" x="380" y="33" text-anchor="middle">극한과 적분을 바꾸기 전에 충분조건을 확인한다</text>
+<text class="f-t" x="180" y="82" text-anchor="end">Eₙ = (1/n, 1]</text>
+<rect class="f-box" x="206" y="58" width="246" height="38" rx="3"/>
+<text class="f-t" x="329" y="83" text-anchor="middle">비음수·증가</text>
+<rect class="f-box" x="458" y="58" width="246" height="38" rx="3"/>
+<text class="f-t" x="581" y="83" text-anchor="middle">면적 1−1/n → 1</text>
+<text class="f-t" x="180" y="128" text-anchor="end">xⁿ, [0,1]</text>
+<rect class="f-box" x="206" y="104" width="246" height="38" rx="3"/>
+<text class="f-t" x="329" y="129" text-anchor="middle">공통 지배함수 1</text>
+<rect class="f-box" x="458" y="104" width="246" height="38" rx="3"/>
+<text class="f-t" x="581" y="129" text-anchor="middle">면적 1/(n+1) → 0</text>
+<text class="f-t" x="180" y="174" text-anchor="end">Iₙ = [n,n+1]</text>
+<rect class="f-box" x="206" y="150" width="246" height="38" rx="3"/>
+<text class="f-t" x="329" y="175" text-anchor="middle">상계 1은 적분 불가</text>
+<rect class="f-box" x="458" y="150" width="246" height="38" rx="3"/>
+<text class="f-t" x="581" y="175" text-anchor="middle">면적 항상 1</text>
+</svg>
+<figcaption>마지막 행의 각 함수는 실수 전체에서 유계입니다. 하지만 모든 함수를 덮는 1의 실수 전체 적분은 무한합니다.</figcaption>
+</figure>
+<p><b>적분 가능한 상계가 빠진 경우.</b> 실수 전체에서 <var>fₙ=1<sub>[n,n+1]</sub></var>은 고정한 점에서 결국 0이지만 적분은 모두 1입니다. 절댓값은 공통으로 1 이하이나 <var>∫<sub>ℝ</sub>1=∞</var>입니다. 어떤 공통 g가 모든 항을 지배한다면 <var>⋃[n,n+1]=[1,∞)</var>에서 거의 모든 곳에 g≥1이어야 해서 적분이 무한합니다. 유한 구간에서도 높아지는 봉우리 반례처럼 적분 가능한 공통 상계가 없다면 극한 교환은 실패할 수 있습니다.</p>
+<div class="check" data-q="q6"></div>
+<h2>손계산을 Python으로 검산한다</h2>
+<pre data-example="python"><code>from fractions import Fraction as F
+
+for n in [2, 4, 8, 20]:
+    increasing_set_mass = 1-F(1, n)
+    power_integral = F(1, n+1)
+    translated_set_mass = (n+1)-n
+    print(n, increasing_set_mass, power_integral, translated_set_mass)</code></pre>
+<pre data-output><code>2 1/2 1/3 1
+4 3/4 1/5 1
+8 7/8 1/9 1
+20 19/20 1/21 1</code></pre>
+<p class="small">Python 3.14.6으로 실행했습니다. 열은 n, 증가하는 구간의 길이, 거듭제곱의 적분, 이동하는 구간의 길이입니다. 표본 몇 개가 아니라 위의 정리의 조건으로 극한 교환을 판단합니다.</p>
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://terrytao.wordpress.com/2010/09/25/245a-notes-3-integration-on-abstract-measure-spaces-and-the-convergence-theorems/">Terence Tao, UCLA 245A Notes 3 · Monotone Convergence, Fatou and Dominated Convergence</a></li>
+<li><a href="https://terrytao.wordpress.com/2010/09/19/245a-notes-2-the-lebesgue-integral/">Terence Tao, UCLA 245A Notes 2 · The Lebesgue Integral</a></li>
+<li><a href="ra03-2.html">RA03-2 균등수렴과 봉우리 반례</a></li>
+</ul>
+
+<h2>확인 문제</h2>
+<p>아직 풀지 않은 문제입니다. 먼저 식이나 근거를 적어 보고 해설을 확인합니다.</p>
+<div id="quiz"></div>
+
+<section class="work" id="tools"></section>
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

@@ -250,6 +250,20 @@ window.BDA_CHAPTERS = {
     {"id": "CS10-2", "title": "힙의 아래부터 구성하고 선형 시간 상계 세우기", "href": "notes/cs/cs10-2.html"},
     {"id": "CS10-3", "title": "서로소 집합의 합치기와 경로 압축을 비용으로 확인하기", "href": "notes/cs/cs10-3.html"}
   ],
+  CS11: [
+    {"id": "CS11-1", "title": "다익스트라가 확정한 거리를 되돌리지 않아도 되는 이유", "href": "notes/cs/cs11-1.html"},
+    {"id": "CS11-2", "title": "음수 가중치에서 간선 수와 위상 순서로 정확성 증명하기", "href": "notes/cs/cs11-2.html"},
+    {"id": "CS11-3", "title": "가장 싼 신장 트리를 컷과 교환으로 검증하기", "href": "notes/cs/cs11-3.html"}
+  ],
+  CS12: [
+    {"id": "CS12-1", "title": "되돌릴 수 있는 유량에서 최적성 증명으로", "href": "notes/cs/cs12-1.html"},
+    {"id": "CS12-2", "title": "서로 겹치지 않는 배정과 가장 늦은 작업 줄이기", "href": "notes/cs/cs12-2.html"}
+  ],
+  CS13: [
+    {"id": "CS13-1", "title": "결정 문제, 검증기, 증명서의 크기", "href": "notes/cs/cs13-1.html"},
+    {"id": "CS13-2", "title": "3-SAT을 독립집합과 정점 덮개로 바꾸기", "href": "notes/cs/cs13-2.html"},
+    {"id": "CS13-3", "title": "어려운 문제의 작은 예산을 정확히 풀기", "href": "notes/cs/cs13-3.html"}
+  ],
   SY01: [
     {"id": "SY01-1", "title": "같은 비트를 어떤 정수로 읽을지 정한다", "href": "notes/sy/sy01-1.html"},
     {"id": "SY01-2", "title": "문자·픽셀·소리를 바이트로 기록한다", "href": "notes/sy/sy01-2.html"}
@@ -282,6 +296,11 @@ window.BDA_CHAPTERS = {
     {"id": "SY08-1", "title": "같은 값을 동시에 고칠 때 락으로 순서를 정한다", "href": "notes/sy/sy08-1.html"},
     {"id": "SY08-2", "title": "입출력을 기다리는 동안 다른 태스크를 진행한다", "href": "notes/sy/sy08-2.html"},
     {"id": "SY08-3", "title": "연산 시간과 데이터 이동 비용을 따로 잰다", "href": "notes/sy/sy08-3.html"}
+  ],
+  SY09: [
+    {"id": "SY09-1", "title": "페이지 테이블 조회를 TLB에서 줄이기", "href": "notes/sy/sy09-1.html"},
+    {"id": "SY09-2", "title": "같은 캐시 용량에서 충돌을 줄이는 배치", "href": "notes/sy/sy09-2.html"},
+    {"id": "SY09-3", "title": "페이지 교체 순서와 더 많은 프레임의 효과", "href": "notes/sy/sy09-3.html"}
   ],
   NW01: [
     {"id": "NW01-1", "title": "호스트가 어떻게 역할을 나눠 통신하는가", "href": "notes/nw/nw01-1.html"},
@@ -496,10 +515,33 @@ window.BDA_CHAPTERS = {
     {"id": "CA10-2", "title": "Stokes 정리로 공간 경계의 순환을 계산하기", "href": "notes/ca/ca10-2.html"},
     {"id": "CA10-3", "title": "발산정리로 닫힌 표면과 입체 내부를 비교하기", "href": "notes/ca/ca10-3.html"}
   ],
+  CA11: [
+    {"id": "CA11-1", "title": "분리형과 일차 선형 미분방정식 풀기", "href": "notes/ca/ca11-1.html"},
+    {"id": "CA11-2", "title": "이차 선형식을 위상평면과 고유값으로 풀기", "href": "notes/ca/ca11-2.html"},
+    {"id": "CA11-3", "title": "외력이 있는 초기값 문제를 Laplace 변환으로 풀기", "href": "notes/ca/ca11-3.html"}
+  ],
+  CA12: [
+    {"id": "CA12-1", "title": "Euler·중점·Runge–Kutta의 오차 차수 검산하기", "href": "notes/ca/ca12-1.html"},
+    {"id": "CA12-2", "title": "수치 안정성 영역과 뻣뻣한 식에서의 보폭 선택", "href": "notes/ca/ca12-2.html"}
+  ],
   RA01: [
     {"id": "RA01-1", "title": "상계와 상한에서 실수의 완비성 읽기", "href": "notes/ra/ra01-1.html"},
     {"id": "RA01-2", "title": "ε–N으로 수렴을 증명하고 단조수렴을 유도하기", "href": "notes/ra/ra01-2.html"},
     {"id": "RA01-3", "title": "부분수열과 Cauchy 조건으로 극한의 존재를 판단하기", "href": "notes/ra/ra01-3.html"}
+  ],
+  RA02: [
+    {"id": "RA02-1", "title": "ε–δ 연속과 균등 연속을 증명하기", "href": "notes/ra/ra02-1.html"},
+    {"id": "RA02-2", "title": "열린 덮개와 수열로 콤팩트성의 힘 증명하기", "href": "notes/ra/ra02-2.html"},
+    {"id": "RA02-3", "title": "최대·최소에서 Rolle과 평균값 정리 유도하기", "href": "notes/ra/ra02-3.html"}
+  ],
+  RA03: [
+    {"id": "RA03-1", "title": "Darboux 상합과 하합으로 리만 적분의 존재 보이기", "href": "notes/ra/ra03-1.html"},
+    {"id": "RA03-2", "title": "점별·균등수렴과 연속·적분의 극한 교환", "href": "notes/ra/ra03-2.html"}
+  ],
+  RA04: [
+    {"id": "RA04-1", "title": "σ-대수와 측도에서 사건과 영집합을 정하기", "href": "notes/ra/ra04-1.html"},
+    {"id": "RA04-2", "title": "가측 함수에서 단순함수 적분과 기대값 만들기", "href": "notes/ra/ra04-2.html"},
+    {"id": "RA04-3", "title": "단조수렴·Fatou·지배수렴으로 적분의 극한 바꾸기", "href": "notes/ra/ra04-3.html"}
   ],
   PR01: [
     {"id": "PR01-1", "title": "가능한 결과와 그중에 묻는 사건", "href": "notes/pr/pr01-1.html"}
@@ -602,6 +644,16 @@ window.BDA_CHAPTERS = {
     {"id": "ST13-2", "title": "경험분포를 다시 뽑아 표준오차와 구간 얻기", "href": "notes/st/st13-2.html"},
     {"id": "ST13-3", "title": "쌍과 군집을 통째로 다시 뽑아 의존을 보존하기", "href": "notes/st/st13-3.html"}
   ],
+  ST14: [
+    {"id": "ST14-1", "title": "부분 풀링에서 관측 수가 수축의 크기를 정하는 이유", "href": "notes/st/st14-1.html"},
+    {"id": "ST14-2", "title": "공통 평균의 불확실성과 사후예측에서 무엇을 점검하는가", "href": "notes/st/st14-2.html"},
+    {"id": "ST14-3", "title": "MCMC 체인의 일치와 유효 표본 수를 따로 진단하기", "href": "notes/st/st14-3.html"}
+  ],
+  ST15: [
+    {"id": "ST15-1", "title": "표준화로 목표 모집단의 평균 인과효과를 구하기", "href": "notes/st/st15-1.html"},
+    {"id": "ST15-2", "title": "역확률 가중으로 비교 집단을 만들고 겹침을 점검하기", "href": "notes/st/st15-2.html"},
+    {"id": "ST15-3", "title": "미측정 교란을 남겨 두고 표준화와 민감도를 검증하기", "href": "notes/st/st15-3.html"}
+  ],
   OP01: [
     {"id": "OP01-1", "title": "부동소수점으로 값을 저장할 때 생기는 반올림", "href": "notes/op/op01-1.html"},
     {"id": "OP01-2", "title": "상쇄와 표현 범위를 피하는 계산식 고르기", "href": "notes/op/op01-2.html"}
@@ -638,6 +690,16 @@ window.BDA_CHAPTERS = {
     {"id": "OP08-2", "title": "중요도 추출과 가중치의 쏠림", "href": "notes/op/op08-2.html"},
     {"id": "OP08-3", "title": "사후분포를 최적화로 근사하기", "href": "notes/op/op08-3.html"}
   ],
+  OP09: [
+    {"id": "OP09-1", "title": "라그랑주 함수가 원래 최소값의 하한을 만드는 이유", "href": "notes/op/op09-1.html"},
+    {"id": "OP09-2", "title": "KKT 조건으로 경계의 해를 증명하고 승수를 해석하기", "href": "notes/op/op09-2.html"},
+    {"id": "OP09-3", "title": "엄격한 가능점이 승수의 존재를 보장하는 과정", "href": "notes/op/op09-3.html"}
+  ],
+  OP10: [
+    {"id": "OP10-1", "title": "경사하강에서 한 걸음이 실제로 손실을 낮추는 조건", "href": "notes/op/op10-1.html"},
+    {"id": "OP10-2", "title": "강볼록성에서 기울기를 최적값 오차로 바꾸기", "href": "notes/op/op10-2.html"},
+    {"id": "OP10-3", "title": "모멘텀의 두 단계 반복에서 감쇠와 진동을 구분하기", "href": "notes/op/op10-3.html"}
+  ],
   AI01: [
     {"id": "AI01-1", "title": "인공지능이 푸는 문제와 출력 읽기", "href": "notes/ai/ai01-1.html"},
     {"id": "AI01-2", "title": "규칙과 학습을 구분하고 AI 계열 연결하기", "href": "notes/ai/ai01-2.html"}
@@ -667,6 +729,12 @@ window.BDA_CHAPTERS = {
     {"id": "AI07-1", "title": "확률표를 다 만들지 않고 숨은 변수를 제거하기", "href": "notes/ai/ai07-1.html"},
     {"id": "AI07-2", "title": "같은 주변확률을 구하는데 제거 순서가 왜 계산량을 바꾸는가", "href": "notes/ai/ai07-2.html"},
     {"id": "AI07-3", "title": "드문 관측에서 거절 표본과 우도 가중치를 비교하기", "href": "notes/ai/ai07-3.html"}
+  ],
+  AI08: [
+    {"id": "AI08-1", "title": "숨은 상태의 전방 필터링과 후방 스무딩", "href": "notes/ai/ai08-1.html"},
+    {"id": "AI08-2", "title": "Viterbi로 전체 상태열의 최빈값 찾기", "href": "notes/ai/ai08-2.html"},
+    {"id": "AI08-3", "title": "정규분포를 완전제곱해 칼만 이득 구하기", "href": "notes/ai/ai08-3.html"},
+    {"id": "AI08-4", "title": "입자 필터의 가중치와 재표집을 계산하기", "href": "notes/ai/ai08-4.html"}
   ],
   ML01: [
     {"id": "ML01-1", "title": "한 행의 뜻과 예측할 값부터 정하기", "href": "notes/ml/ml01-1.html"},
@@ -722,6 +790,16 @@ window.BDA_CHAPTERS = {
     {"id": "ML12-2", "title": "마진으로 분류하는 SVM과 커널의 내적", "href": "notes/ml/ml12-2.html"},
     {"id": "ML12-3", "title": "가우시안 혼합 모형과 EM의 책임도", "href": "notes/ml/ml12-3.html"},
     {"id": "ML12-4", "title": "관측 주변의 밀도를 더하는 커널 밀도 추정", "href": "notes/ml/ml12-4.html"}
+  ],
+  ML13: [
+    {"id": "ML13-1", "title": "분류 경계의 점수와 실제 거리를 구분하기", "href": "notes/ml/ml13-1.html"},
+    {"id": "ML13-2", "title": "마진 위반의 비용에서 SVM 쌍대 문제를 유도하기", "href": "notes/ml/ml13-2.html"},
+    {"id": "ML13-3", "title": "커널이 유효한 내적인지 증명하고 새 점을 분류하기", "href": "notes/ml/ml13-3.html"}
+  ],
+  ML14: [
+    {"id": "ML14-1", "title": "보이지 않는 집단의 소속을 확률표로 계산하기", "href": "notes/ml/ml14-1.html"},
+    {"id": "ML14-2", "title": "Jensen 부등식으로 EM이 우도를 낮추지 않음을 보이기", "href": "notes/ml/ml14-2.html"},
+    {"id": "ML14-3", "title": "가우시안 혼합에서 분산이 붕괴하는 이유와 계산을 막는 조건", "href": "notes/ml/ml14-3.html"}
   ],
   DL01: [
     {"id": "DL01-1", "title": "텐서의 모양과 배치 축 읽기", "href": "notes/dl/dl01-1.html"},

@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>미측정 교란을 남겨 두고 표준화와 민감도를 검증하기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="ST15-3">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">통계 · ST15 인과효과의 추정과 민감도</p>
+<p class="chap-num">ST15·3</p>
+<h1>미측정 교란을 남겨 두고 표준화와 민감도를 검증하기</h1>
+<p class="lead">관측된 준비도 비중을 두 집단에서 같게 만들어도, 적지 않은 요인이 남아 있을 수 있습니다. 생성 규칙의 참 효과를 알고 숨은 변수를 일부러 제외해, 표준화와 역확률 가중의 가정을 따로 검증합니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2>
+<ul>
+<li>측정한 변수의 균형과 미측정 교란의 부재를 구별한다.</li>
+<li>가산 효과 모형에서 관측 차이가 γδ만큼 움직이는 이유를 유도한다.</li>
+<li>민감도 결과와 실제 모의 참가자 효과를 따로 보고한다.</li>
+</ul></div>
+<h2>눈에 보이는 준비도와 보이지 않는 경험을 나눈다</h2>
+<p>장비 시험에서 새 도구 A, 준비도 L, 성공 Y의 의미는 앞과 같습니다. 이번 합성 모집단에는 평소 점검 경험 <var>U</var>가 있습니다. <var>L,U∈{0,1}</var>이고 모든 조합의 비중이 1/4입니다. 경험이 많으면 도구를 더 쓰고, 도구와 무관하게 성공률도 높습니다. 생성자만 U를 알고, 첫 분석자는 L만 관측한다고 둡니다.</p>
+<p>잠재 성공률은 <var>P(Y(a)=1|L,U)=.10+.20L+.30U+.20a</var>입니다. 각 <var>L,U</var>에서 사용자 선택은 잠재 결과를 정하는 난수와 독립입니다. 네 층에서의 도구 사용확률은 아래와 같습니다. 모든 층에서 양성이 성립하고 도구의 참 성공확률차는 항상 .20입니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 253" role="img" aria-label="L,U의 네 조합의 사용확률은 1/8,3/8,5/8,7/8이고 잠재 성공률 차이는 전부 .20이다.">
+<text class="f-cap" x="380" y="30" text-anchor="middle">조건에 따라 도구 선택과 기본 성공률이 달라진다</text>
+<rect class="f-soft" x="40.5" y="49" width="109" height="38"/>
+<text class="f-t" x="95" y="73" text-anchor="middle">L</text>
+<rect class="f-soft" x="149.5" y="49" width="109" height="38"/>
+<text class="f-t" x="204" y="73" text-anchor="middle">U</text>
+<rect class="f-soft" x="258.5" y="49" width="154" height="38"/>
+<text class="f-t" x="335.5" y="73" text-anchor="middle">도구 사용확률</text>
+<rect class="f-soft" x="412.5" y="49" width="153" height="38"/>
+<text class="f-t" x="489" y="73" text-anchor="middle">미사용 잠재율</text>
+<rect class="f-soft" x="565.5" y="49" width="154" height="38"/>
+<text class="f-t" x="642.5" y="73" text-anchor="middle">사용 잠재율</text>
+<rect class="f-box" x="40.5" y="87" width="109" height="38"/>
+<text class="f-s" x="95" y="111" text-anchor="middle">0</text>
+<rect class="f-box" x="149.5" y="87" width="109" height="38"/>
+<text class="f-s" x="204" y="111" text-anchor="middle">0</text>
+<rect class="f-box" x="258.5" y="87" width="154" height="38"/>
+<text class="f-s" x="335.5" y="111" text-anchor="middle">1/8</text>
+<rect class="f-box" x="412.5" y="87" width="153" height="38"/>
+<text class="f-s" x="489" y="111" text-anchor="middle">.10</text>
+<rect class="f-box" x="565.5" y="87" width="154" height="38"/>
+<text class="f-s" x="642.5" y="111" text-anchor="middle">.30</text>
+<rect class="f-box" x="40.5" y="125" width="109" height="38"/>
+<text class="f-s" x="95" y="149" text-anchor="middle">0</text>
+<rect class="f-box" x="149.5" y="125" width="109" height="38"/>
+<text class="f-s" x="204" y="149" text-anchor="middle">1</text>
+<rect class="f-box" x="258.5" y="125" width="154" height="38"/>
+<text class="f-s" x="335.5" y="149" text-anchor="middle">3/8</text>
+<rect class="f-box" x="412.5" y="125" width="153" height="38"/>
+<text class="f-s" x="489" y="149" text-anchor="middle">.40</text>
+<rect class="f-box" x="565.5" y="125" width="154" height="38"/>
+<text class="f-s" x="642.5" y="149" text-anchor="middle">.60</text>
+<rect class="f-box" x="40.5" y="163" width="109" height="38"/>
+<text class="f-s" x="95" y="187" text-anchor="middle">1</text>
+<rect class="f-box" x="149.5" y="163" width="109" height="38"/>
+<text class="f-s" x="204" y="187" text-anchor="middle">0</text>
+<rect class="f-box" x="258.5" y="163" width="154" height="38"/>
+<text class="f-s" x="335.5" y="187" text-anchor="middle">5/8</text>
+<rect class="f-box" x="412.5" y="163" width="153" height="38"/>
+<text class="f-s" x="489" y="187" text-anchor="middle">.30</text>
+<rect class="f-box" x="565.5" y="163" width="154" height="38"/>
+<text class="f-s" x="642.5" y="187" text-anchor="middle">.50</text>
+<rect class="f-box" x="40.5" y="201" width="109" height="38"/>
+<text class="f-s" x="95" y="225" text-anchor="middle">1</text>
+<rect class="f-box" x="149.5" y="201" width="109" height="38"/>
+<text class="f-s" x="204" y="225" text-anchor="middle">1</text>
+<rect class="f-box" x="258.5" y="201" width="154" height="38"/>
+<text class="f-s" x="335.5" y="225" text-anchor="middle">7/8</text>
+<rect class="f-box" x="412.5" y="201" width="153" height="38"/>
+<text class="f-s" x="489" y="225" text-anchor="middle">.60</text>
+<rect class="f-box" x="565.5" y="201" width="154" height="38"/>
+<text class="f-s" x="642.5" y="225" text-anchor="middle">.80</text>
+</svg><figcaption>실제 자료인 것처럼 분석할 때는 U와 받지 않은 도구의 잠재 결과를 숨긴다.</figcaption></figure>
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+<h2>적은 가정만으로는 같은 층이 여전히 다르다</h2>
+<p>L=0에서 A=1의 U=1 비중은 <var>(3/8)/(1/8+3/8)=3/4</var>입니다. A=0의 U=1 비중은 <var>(5/8)/(7/8+5/8)=5/12</var>입니다. 차이가 <var>1/3</var>입니다. L=1에서도 해당 비중 <var>7/12</var>와 <var>1/4</var>의 차이가 <var>1/3</var>입니다. 관측 표에서 L만 같게 두어도 U의 구성이 다릅니다.</p>
+<p>이 예의 잠재 성공률을 <var>α_l+τa+γU</var>로 씁니다. 주어진 <var>L=l</var>에서 사용군과 미사용군의 U 비중 차를 <var>δ_l</var>로 두면 관심 결과의 관측 차이는</p>
+<div class="eq"><var>E[Y|A=1,L=l]−E[Y|A=0,L=l] = τ+γδ<sub>l</sub>.</var></div>
+<p>일치성과 L,U를 준 교환가능성을 사용해 각 군 안에서 잠재식을 평균한 결과입니다. <var>α_l</var>는 차에서 없어지고, U에 붙은 γ는 두 군에서 평균한 U의 차에 곱해집니다. 이 예는 <var>τ=.20,γ=.30,δ_l=1/3</var>이라 각 L에서 관측 차이는 .30입니다. L만 사용하는 표준화와 IPW는 이 차이에 같은 목표 비중을 적용하므로 둘 다 .30을 냅니다. 두 방법이 서로 같다는 사실만으로 인과 식별을 확인할 수는 없습니다.</p>
+<div class="check" data-q="q3"></div>
+<div class="check" data-q="q4"></div>
+<h2>얼마나 강한 숨은 차이가 결론을 바꾸는가</h2>
+<p>실측에는 U와 생성 참값이 없다고 생각해 봅시다. 숨은 변수 효과의 크기 γ와 두 군 사이 비중 차 δ에 타당한 범위를 넣어, <var>.30−γδ</var>를 계산합니다. 단순화를 위해 두 L 층에서 같은 δ를 둔 경우입니다. 이 <b class="key">민감도 분석</b>은 여러 가상의 편향 아래 추정값이 어디로 가는지 기록합니다. γ와 δ를 이 자료가 정해 준다는 뜻은 아닙니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 253" role="img" aria-label="관측 표준화 차이 .30에서 γδ를 뺀다. .30×1/3에서 효과 .20이고 .60×.50에서는 0이다.">
+<text class="f-cap" x="380" y="30" text-anchor="middle">추정 차이 .30이 숨은 차이 가정에 따라 변한다</text>
+<rect class="f-soft" x="75.5" y="49" width="153" height="38"/>
+<text class="f-t" x="152" y="73" text-anchor="middle">γ</text>
+<rect class="f-soft" x="228.5" y="49" width="145" height="38"/>
+<text class="f-t" x="301" y="73" text-anchor="middle">δ</text>
+<rect class="f-soft" x="373.5" y="49" width="137" height="38"/>
+<text class="f-t" x="442" y="73" text-anchor="middle">편향 γδ</text>
+<rect class="f-soft" x="510.5" y="49" width="174" height="38"/>
+<text class="f-t" x="597.5" y="73" text-anchor="middle">조정값 .30−γδ</text>
+<rect class="f-box" x="75.5" y="87" width="153" height="38"/>
+<text class="f-s" x="152" y="111" text-anchor="middle">.30</text>
+<rect class="f-box" x="228.5" y="87" width="145" height="38"/>
+<text class="f-s" x="301" y="111" text-anchor="middle">0</text>
+<rect class="f-box" x="373.5" y="87" width="137" height="38"/>
+<text class="f-s" x="442" y="111" text-anchor="middle">.00</text>
+<rect class="f-box" x="510.5" y="87" width="174" height="38"/>
+<text class="f-s" x="597.5" y="111" text-anchor="middle">.30</text>
+<rect class="f-box" x="75.5" y="125" width="153" height="38"/>
+<text class="f-s" x="152" y="149" text-anchor="middle">.30</text>
+<rect class="f-box" x="228.5" y="125" width="145" height="38"/>
+<text class="f-s" x="301" y="149" text-anchor="middle">1/3</text>
+<rect class="f-box" x="373.5" y="125" width="137" height="38"/>
+<text class="f-s" x="442" y="149" text-anchor="middle">.10</text>
+<rect class="f-box" x="510.5" y="125" width="174" height="38"/>
+<text class="f-s" x="597.5" y="149" text-anchor="middle">.20</text>
+<rect class="f-box" x="75.5" y="163" width="153" height="38"/>
+<text class="f-s" x="152" y="187" text-anchor="middle">.30</text>
+<rect class="f-box" x="228.5" y="163" width="145" height="38"/>
+<text class="f-s" x="301" y="187" text-anchor="middle">1/2</text>
+<rect class="f-box" x="373.5" y="163" width="137" height="38"/>
+<text class="f-s" x="442" y="187" text-anchor="middle">.15</text>
+<rect class="f-box" x="510.5" y="163" width="174" height="38"/>
+<text class="f-s" x="597.5" y="187" text-anchor="middle">.15</text>
+<rect class="f-box" x="75.5" y="201" width="153" height="38"/>
+<text class="f-s" x="152" y="225" text-anchor="middle">.60</text>
+<rect class="f-box" x="228.5" y="201" width="145" height="38"/>
+<text class="f-s" x="301" y="225" text-anchor="middle">1/2</text>
+<rect class="f-box" x="373.5" y="201" width="137" height="38"/>
+<text class="f-s" x="442" y="225" text-anchor="middle">.30</text>
+<rect class="f-box" x="510.5" y="201" width="174" height="38"/>
+<text class="f-s" x="597.5" y="225" text-anchor="middle">.00</text>
+</svg><figcaption>둘의 가능한 범위는 실제 모형과 결과의 단위를 고려해 정한다.</figcaption></figure>
+<p>마지막 조합은 효과가 0이 되는 조건의 예입니다. 실제 U의 효과나 구성 비중을 발견한 결과가 아닙니다. 큰 γ는 다른 확률들과 함께 놓았을 때 <var>0≤α_l+τa+γU≤1</var>인지도 확인합니다. 같은 γ가 모든 층과 처리에서 유지되지 않거나, U와 결과의 관련성이 다르면 편향의 항을 층별로 다시 정해야 합니다. 보고서에는 목표 효과, 조정에 사용한 자료, 미측정 요인에 대한 시나리오, 겹침과 불확실성을 따로 적습니다.</p>
+<div class="check" data-q="q5"></div>
+<div class="check" data-q="q6"></div>
+<h2>이어 풀기와 증명</h2>
+<p>미측정 변수를 포함했을 때만 보이는 참값과, 실측에서 실제로 계산 가능한 값을 나눠 적습니다. 같은 가정이 언제 깨지는지도 질문합니다.</p>
+<div class="check" data-q="q7"></div>
+<div class="check" data-q="q8"></div>
+<div class="check" data-q="q9"></div>
+<h2>파이썬으로 같은 계산 검산하기</h2>
+<pre data-example="python"><code>from fractions import Fraction as F
+from itertools import product
+
+rows = []
+for l,u,h,r in product((0,1), (0,1), range(10), range(8)):
+    a = int(r &lt; 1+4*l+2*u)
+    y0 = int(h &lt; 1+2*l+3*u)
+    y1 = int(h &lt; 3+2*l+3*u)
+    rows.append((l,u,a,(y0,y1)[a],y0,y1))
+
+def average(values):
+    return F(sum(values), len(values))
+
+crude = average([y for _,_,a,y,_,_ in rows if a]) - average([y for _,_,a,y,_,_ in rows if not a])
+standard = [sum(average([y for x,_,b,y,_,_ in rows if x==l and b==a])
+                for l in (0,1))/2 for a in (0,1)]
+weights = {(l,a): F(4, ((1,3)[l] if a else (3,1)[l])) for l,a in product((0,1), repeat=2)}
+ipw = [sum(weights[l,a]*y for l,_,b,y,_,_ in rows if a==b)/len(rows)
+       for a in (0,1)]
+full = [sum(average([y for x,v,b,y,_,_ in rows if (x,v,b)==(l,u,a)])
+            for l,u in product((0,1), repeat=2))/4 for a in (0,1)]
+truth = average([y1-y0 for _,_,_,_,y0,y1 in rows])
+assert standard == ipw
+assert full[1]-full[0] == truth
+print(&quot;rows and crude:&quot;, len(rows), crude)
+print(&quot;L-adjusted standard/IPW:&quot;, standard[1]-standard[0], ipw[1]-ipw[0])
+print(&quot;L,U-adjusted and truth:&quot;, full[1]-full[0], truth)
+print(&quot;bias under known gamma and delta:&quot;, F(3,10)*F(1,3))</code></pre>
+<p class="aside">실행 결과</p>
+<pre data-output><code>rows and crude: 320 3/8
+L-adjusted standard/IPW: 3/10 3/10
+L,U-adjusted and truth: 1/5 1/5
+bias under known gamma and delta: 1/10</code></pre>
+<p>조건부 교환가능성이 주어지는 L,U를 함께 쓰면 표준화가 다시 참값을 냅니다. 실제 관측 연구에서는 모든 변수를 편의대로 추가하기보다, 어떤 변수에 조건을 걸어야 하는지를 시간 순서와 인과 가정으로 정해야 합니다.</p>
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://miguelhernan.org/whatifbook">Hernán·Robins · Causal Inference: What If, Exchangeability</a></li>
+<li><a href="../sp/sp04-3.html">SP04-3 미측정 교란과 민감도</a></li>
+<li><a href="st15-2.html">ST15-2 가중치와 겹침</a></li>
+</ul>
+<h2>확인 문제</h2>
+<p>조건과 단위를 먼저 적은 뒤 해설을 확인합니다.</p>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

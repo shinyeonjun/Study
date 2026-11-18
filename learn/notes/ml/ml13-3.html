@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>커널이 유효한 내적인지 증명하고 새 점을 분류하기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="ML13-3">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">머신러닝 · 최대 마진</p>
+<p class="chap-num">ML13·3</p>
+<h1>커널이 유효한 내적인지 증명하고 새 점을 분류하기</h1>
+<p class="lead">직선으로 가를 수 없는 네 점을 새 특징에서 가릅니다. 특징을 먼저 만든 결과와 원래 좌표에서 내적의 제곱만 계산한 결과가 일치하는지 확인합니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>특징 공간의 내적과 커널 계산을 연결할 수 있다.</li><li>Gram 행렬이 양의 준정부호여야 하는 이유를 증명할 수 있다.</li><li>다항 커널로 분리 가능한 작은 문제의 훈련과 예측을 정확히 검산할 수 있다.</li></ul></div>
+
+<h2>원래 평면에서 직선이 실패하는 네 점</h2>
+<p>(1,1),(−1,−1)은 두 좌표의 부호가 같아서 +1, (1,−1),(−1,1)은 서로 달라 −1로 표시합니다. 네 점을 직선으로 결정하려고 s(x)=wᵀx+b를 씁니다. 양성 두 점에 대해 점수가 모두 양수라면 두 점수의 합 2b도 양수여야 합니다. 음성 두 점도 좌표 합이 영벡터라 점수 합이 역시 2b입니다. 이번에는 두 점수 모두 음수여야 하므로 2b&lt;0입니다. 두 요구는 동시에 만족할 수 없습니다.</p>
+<p>하지만 새 특징 x₁x₂ 하나를 쓰면 양성은 1, 음성은 −1입니다. 직선으로 가를 수 있느냐는 어떤 특징 공간에서 보느냐에 따라 달라집니다.</p>
+<div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
+<h2>새 특징을 통째로 쓰지 않고 내적을 계산한다</h2>
+<p>두 변수의 곱과 제곱을 담는 특징 변환을 φ(x)=(x₁²,√2 x₁x₂,x₂²)로 잡습니다. 두 점 x,z의 이 공간에서의 내적은 x₁²z₁²+2x₁x₂z₁z₂+x₂²z₂²입니다. 이것은 (x₁z₁+x₂z₂)²=(xᵀz)²입니다. 따라서 매번 φ(x)와 φ(z)의 세 성분을 직접 저장하지 않아도 원래 내적의 제곱으로 같은 값을 얻습니다.</p>
+<p><b class="key">커널</b> K(x,z)는 이런 특징 내적을 나타냅니다. 앞 장의 SVM 쌍대 목적함수에는 훈련점 쌍의 내적 xᵢᵀxⱼ만 들어갑니다. 원래 x 대신 φ(x)를 쓰면서, 그 공간의 내적만 K로 평가할 수 있습니다. 훈련 후 새 점의 점수도 ΣαᵢyᵢK(xᵢ,x)+b입니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 160" role="img" aria-label="선형 분리가 불가능한 원래 네 점을 곱 특징으로 바꾸고 새 내적을 커널로 계산">
+<rect class="f-box" x="42" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="135" y="61" text-anchor="middle">원래 좌표</text><text class="f-s" x="135" y="89" text-anchor="middle">부호가 섞인 네 꼭짓점</text><text class="f-s" x="135" y="110" text-anchor="middle">한 직선은 실패</text><line class="f-line" x1="235" y1="84" x2="278" y2="84" marker-end="url(#f-arrow)"/><rect class="f-soft" x="287" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="380" y="61" text-anchor="middle">특징의 변화</text><text class="f-s" x="380" y="89" text-anchor="middle">φ(x)에 x₁x₂ 성분 포함</text><text class="f-s" x="380" y="110" text-anchor="middle">새 공간에서 분리</text><line class="f-line" x1="480" y1="84" x2="523" y2="84" marker-end="url(#f-arrow)"/><rect class="f-box" x="532" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="625" y="61" text-anchor="middle">내적만 계산</text><text class="f-s" x="625" y="89" text-anchor="middle">K(x,z)=(xᵀz)²</text><text class="f-s" x="625" y="110" text-anchor="middle">쌍대 목적과 예측에 대입</text>
+</svg><figcaption>내적의 제곱을 쓰는 이유는 새 특징 내적과 정확히 같은 수가 나오기 때문입니다.</figcaption></figure>
+<div class="check" data-q="q3"></div>
+<h2>대칭이면 아무 유사도나 커널로 써도 되는가</h2>
+<p>점 x₁,…,xₙ에 대해 Kᵢⱼ=K(xᵢ,xⱼ)인 표를 <b class="key">Gram 행렬</b>이라고 합니다. K가 어떤 φ의 내적이라면, 임의의 실수 계수 c에 대해</p>
+<p class="calc">cᵀKc = ΣᵢΣⱼ cᵢcⱼ φ(xᵢ)ᵀφ(xⱼ) = ‖Σᵢ cᵢ φ(xᵢ)‖² ≥ 0</p>
+<p>입니다. 따라서 모든 유한 표에서 K는 대칭 양의 준정부호여야 합니다. 대칭인 [[1,2],[2,1]]도 c=(1,−1)로 계산하면 cᵀKc=−2라 이런 내적 표가 될 수 없습니다. 한 자료에서 검사에 통과했다는 사실만으로 어떤 새 자료에서도 항상 유효하다고 결론 내릴 수는 없습니다. (xᵀz)²의 경우에는 φ를 명시하여 어떤 점에서도 성립함을 보였습니다.</p>
+<div class="check" data-q="q4"></div><div class="check" data-q="q5"></div>
+<h2>네 점에서 쌍대해와 원래 비용을 손으로 맞춘다</h2>
+<p>같은 표지 쪽의 점끼리는 원래 내적이 2 또는 −2여서 K 값이 4입니다. 반대 표지 쪽이면 내적이 0입니다. 네 점에 α를 모두 1/8로 두면 양·음성 수가 같아 Σαᵢyᵢ=0을 만족합니다. 각 훈련점에 대해 같은 표지의 두 항만 산식에 남아 s(xᵢ)=2×(1/8)×4×yᵢ=yᵢ입니다. b는 0으로 둡니다.</p>
+<p>또 w=Σαᵢyᵢφ(xᵢ)는 첫째·셋째 성분이 0이고 둘째가 √2/2입니다. 따라서 ‖w‖²=1/2, 원래 비용은 1/4입니다. Σαᵢ=1/2이고 쌍대 목적함수에서 빼는 값은 ‖w‖²/2=1/4이므로 쌍대값도 1/4입니다. 원래 가능한 후보와 쌍대 하한이 같으므로 이 조합이 최적입니다. C≥1/8인 소프트 마진에서도 이 α와 슬랙 0이 가능하며 같은 최적값을 줍니다.</p>
+<pre data-example="python"><code>from fractions import Fraction as F
+
+points = ((1,1),(-1,-1),(1,-1),(-1,1))
+labels = (1,1,-1,-1)
+alpha = F(1,8)
+def kernel(x,z):
+    return sum(a*b for a,b in zip(x,z))**2
+
+gram = [[kernel(x,z) for z in points] for x in points]
+scores = [sum(alpha * y * k for y,k in zip(labels, row)) for row in gram]
+squared_norm = sum(alpha * y * score for y,score in zip(labels,scores))
+dual = 4*alpha-squared_norm/2
+assert scores == list(labels) and dual == squared_norm/2
+def predict_score(x):
+    return sum(alpha*y*kernel(z,x) for y,z in zip(labels,points))
+
+print(&quot;Gram 첫 행:&quot;, gram[0])
+print(&quot;훈련 점수:&quot;, *scores)
+print(&quot;최적 비용:&quot;, dual)
+print(&quot;새 점 (2,-1)의 점수:&quot;, predict_score((2,-1)))</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>Gram 첫 행: [4, 4, 0, 0]
+훈련 점수: 1 1 -1 -1
+최적 비용: 1/4
+새 점 (2,-1)의 점수: -2</code></pre>
+<div class="check" data-q="q6"></div>
+<p>이 계산이 특징 공간의 전체 배열을 만들 필요를 줄여도, 훈련점 n개 사이의 Gram 행렬을 전부 보관하면 n²개의 값이 듭니다. 특징 수가 큰 상황에 좋은 선택과 관측 수가 아주 많은 상황에 좋은 선택은 다를 수 있습니다. 비교하려면 데이터 분할을 고정한 뒤 정확도, 계산 시간, 저장 공간을 함께 측정합니다.</p>
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table><thead><tr><th scope="col">항목</th><th scope="col">검산할 것</th></tr></thead><tbody><tr><td>특징 공간</td><td>새 표현 φ에서 어떤 분리가 가능해지는가.</td></tr><tr><td><b class='key'>Gram 행렬</b></td><td>cᵀKc가 어떤 c에서도 음이 아니어야 한다.</td></tr><tr><td>예측 점수</td><td>ΣαᵢyᵢK(xᵢ,x)+b의 부호와 크기를 실제로 계산한다.</td></tr></tbody></table></div>
+
+<h2>참고 자료</h2>
+<ul><li><a href="https://cs229.stanford.edu/notes_archive/cs229-notes3.pdf">Stanford CS229 · Support Vector Machines와 kernels</a></li></ul>
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

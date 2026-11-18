@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>숨은 상태의 전방 필터링과 후방 스무딩 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="AI08-1">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">인공지능의 기본 문제 · AI08 시간에 따른 상태 추론</p>
+<p class="chap-num">AI08·1</p>
+<h1>숨은 상태의 전방 필터링과 후방 스무딩</h1>
+<p class="lead">창밖을 볼 수 없는 방에서 출입 기록만 읽어 날씨를 가늠해 봅시다. 오늘까지의 기록으로 내는 답과 사흘째 기록까지 확인한 뒤 둘째 날을 추정하는 답은 달라질 수 있습니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>전이확률과 관측 가능도를 서로 다른 항으로 쓴다.</li><li>전방·후방 점화식을 전체확률과 조건부 독립에서 도출한다.</li><li>두 상태 예에서 필터링과 스무딩을 분수로 검산한다.</li></ul></div>
+
+<h2>상태가 움직이고 관측이 기록된다</h2>
+<p>숨은 상태 <var>Zₜ</var>는 0 또는 1, 관측 <var>Yₜ</var>도 0 또는 1입니다. 첫 상태는 균등합니다. <b class="key">은닉 마르코프 모형(HMM)</b>에서는 다음 상태의 분포가 현재 상태에 의해 정해집니다. 그리고 상태열을 알면 각 시점의 관측은 그때 상태에만 의존해 서로 독립입니다. 한 상태가 유지될 확률은 3/4이며 바뀔 확률은 1/4입니다.</p>
+<div class="table-wrap"><table><thead><tr><th scope="col">현재 상태</th><th scope="col">P(다음 0)</th><th scope="col">P(다음 1)</th><th scope="col">P(관측 1)</th></tr></thead><tbody><tr><td>0</td><td>3/4</td><td>1/4</td><td>1/4</td></tr><tr><td>1</td><td>1/4</td><td>3/4</td><td>3/4</td></tr></tbody></table></div>
+<p>전이 <var>Tᵢⱼ</var>는 이전 상태 i에서 다음 j로 갈 확률, <var>bⱼ(y)</var>는 현재 상태 j에서 y가 기록될 확률입니다. 표의 전이 두 열은 행마다 합이 1입니다. 관측 열의 나머지 확률은 같은 상태에서 관측 0이 나올 확률입니다.</p>
+<div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
+<h2>이전 상태를 합쳐서 전방으로 보낸다</h2>
+<p><var>αₜ(j)=P(Y₁=y₁,…,Yₜ=yₜ,Zₜ=j)</var>로 정의합니다. 첫 값은 <var>α₁(j)=P(Z₁=j)bⱼ(y₁)</var>입니다. 둘째부터는 이전의 서로 배반인 상태별로 결합확률을 쪼갠 뒤 합칩니다. 조건부 독립으로 이전 상태에서 새 상태로 가는 확률 T와 새 상태에서 관측이 생길 확률 b가 곱으로 붙습니다.</p>
+<p class="calc">αₜ(j) = bⱼ(yₜ) · ∑ᵢ αₜ₋₁(i) Tᵢⱼ</p>
+<p>관측열 1,0,1에서 α₁은 (1/8,3/8)입니다. 둘째 날 0 상태의 관측 전 질량은 (1/8)(3/4)+(3/8)(1/4)=3/16입니다. 여기에 상태 0에서 관측 0의 확률 3/4를 곱하면 9/64입니다. 같은 방식으로 상태 1은 5/64입니다. <b class="key">필터링</b>은 그날까지의 관측으로 조건을 걸어 정규화합니다. 둘째 상태가 1일 필터링 확률은 5/(9+5)=5/14입니다.</p>
+<div class="check" data-q="q3"></div><div class="check" data-q="q4"></div><div class="check" data-q="q5"></div>
+<h2>나중 관측의 가능도를 뒤에서 곱한다</h2>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 160" role="img" aria-label="둘째 날 상태 0에 대한 전방 질량 9/64와 후방 가능도 3/8을 곱하면 모든 관측과 그 상태의 결합확률이 27/512가 된다.">
+<rect class="f-box" x="42" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="135" y="61" text-anchor="middle">전방 α₂</text><text class="f-s" x="135" y="89" text-anchor="middle">1, 0을 봄</text><text class="f-s" x="135" y="110" text-anchor="middle">상태 0: 9/64</text><line class="f-line" x1="235" y1="84" x2="278" y2="84" marker-end="url(#f-arrow)"/><rect class="f-soft" x="287" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="380" y="61" text-anchor="middle">후방 β₂</text><text class="f-s" x="380" y="89" text-anchor="middle">남은 1이 나올 확률</text><text class="f-s" x="380" y="110" text-anchor="middle">상태 0: 3/8</text><line class="f-line" x1="480" y1="84" x2="523" y2="84" marker-end="url(#f-arrow)"/><rect class="f-box" x="532" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="625" y="61" text-anchor="middle">결합 α₂β₂</text><text class="f-s" x="625" y="89" text-anchor="middle">전체 관측과 상태</text><text class="f-s" x="625" y="110" text-anchor="middle">상태 0: 27/512</text>
+</svg><figcaption>후방 항은 둘째 날 관측을 다시 넣지 않는다.</figcaption></figure>
+<p><var>βₜ(i)=P(Yₜ₊₁=yₜ₊₁,…,Yₙ=yₙ | Zₜ=i)</var>입니다. 마지막의 β는 모두 1입니다. 다음 상태 j에 대해 먼저 전이하고, 그때 관측을 곱하고, 뒤의 관측 가능도를 곱한 뒤 j별 값을 더합니다.</p>
+<p class="calc">βₜ(i) = ∑ⱼ Tᵢⱼ bⱼ(yₜ₊₁) βₜ₊₁(j)</p>
+<p>β₂는 (3/8,5/8)입니다. 시점 t의 상태를 알고 있을 때 그 뒤 관측은 지금까지의 관측과 독립이므로 αₜ(i)βₜ(i)는 전체 관측과 그 상태의 결합확률입니다. 이를 합한 52/512=13/128로 나눕니다. 그 결과 <b class="key">스무딩</b>이 주는 둘째 상태 1의 확률은 25/52입니다. 관측열이 길 때 작은 수의 연속 곱이 표현 범위 밑으로 갈 수 있으므로 실제 구현에서는 시점별 정규화 계수 또는 로그 계산을 사용합니다.</p>
+<div class="check" data-q="q6"></div><div class="check" data-q="q7"></div>
+<h2>분수로 재현하기</h2>
+<pre data-example="python"><code>from fractions import Fraction as F
+
+T = ((F(3,4), F(1,4)), (F(1,4), F(3,4)))
+B = ((F(3,4), F(1,4)), (F(1,4), F(3,4)))
+a = [F(1,2) * B[j][1] for j in range(2)]
+for y in (0,):
+    a = [B[j][y] * sum(a[i] * T[i][j] for i in range(2)) for j in range(2)]
+beta = [sum(T[i][j] * B[j][1] for j in range(2)) for i in range(2)]
+joint = [a[i] * beta[i] for i in range(2)]
+print(*a)
+print(*beta)
+print(a[1]/sum(a), sum(joint), joint[1]/sum(joint))</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>9/64 5/64
+3/8 5/8
+5/14 13/128 25/52</code></pre>
+<div class="check" data-q="q8"></div>
+
+<h2>참고 자료</h2>
+<ul><li><a href="https://www.cs.cmu.edu/~durand/03-711/Readings/Rabiner89.pdf">Rabiner · HMM의 전방·후방 절차, III절</a></li></ul>
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

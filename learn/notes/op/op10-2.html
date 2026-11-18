@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>강볼록성에서 기울기를 최적값 오차로 바꾸기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="OP10-2">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">최적화 · 수렴</p>
+<p class="chap-num">OP10·2</p>
+<h1>강볼록성에서 기울기를 최적값 오차로 바꾸기</h1>
+<p class="lead">기울기가 작다는 말만으로는 얼마만큼 최적값에 다가갔는지 알기 어렵습니다. 함수가 모든 방향에서 일정한 곡률을 가진다는 가정을 더해, 경사하강의 오차가 어느 비율 이하로 줄어드는지 증명합니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>강볼록 하계에서 함수값 오차와 기울기 노름의 부등식을 유도할 수 있다.</li><li>경사하강의 기하급수 수렴률에 L과 μ가 어떻게 들어가는지 설명할 수 있다.</li><li>최적화 오차의 이론적 상계와 실제 좌표의 감소율을 구분할 수 있다.</li></ul></div>
+
+<h2>곡률이 가장 작은 방향에도 하한을 둔다</h2>
+<p>앞 장에서는 기울기가 얼마나 빠르게 바뀔 수 있는지 L로 제한했습니다. 이번에는 반대쪽으로, 접평면보다 적어도 얼마만큼 더 높아지는지도 제한합니다. 미분 가능한 f가 다음 부등식을 모든 x,y에서 만족하면 μ-<b class="key">강볼록</b>이라고 합니다.</p>
+<p class="calc">f(y) ≥ f(x)+∇f(x)ᵀ(y−x)+(μ/2)‖y−x‖², μ&gt;0</p>
+<p>이차함수 f(x)=(1/2)xᵀAx에서 위 식과 앞 장의 상계는 1/2·dᵀAd 항을 양쪽에서 제한합니다. A가 실대칭 양의 정부호라면 최소 고유값을 μ, 최대 고유값을 L로 사용할 수 있습니다. f(x,y)=(x²+100y²)/2에서는 μ=1, L=100입니다. y 방향이 훨씬 가파릅니다.</p>
+<div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
+<h2>아래쪽 포물선의 최솟값도 직접 구한다</h2>
+<p>최적점 x*가 존재한다고 하고 위 부등식에 y=x*를 넣습니다. 오른쪽에서 가능한 변화량 d=y−x에 대한 이차식의 최솟값을 구하면 실제 y를 모르는 상태에서 오른쪽을 아래에서 제한할 수 있습니다. 완전제곱으로 쓰면</p>
+<p class="calc">gᵀd+(μ/2)‖d‖² = (μ/2)‖d+g/μ‖² − ‖g‖²/(2μ), g=∇f(x)</p>
+<p>입니다. 따라서 f(x*)≥f(x)−‖∇f(x)‖²/(2μ)입니다. 이를 옮기면</p>
+<p class="calc">‖∇f(x)‖² ≥ 2μ[f(x)−f(x*)]</p>
+<p>가 됩니다. 식의 방향을 확인하세요. 일정한 최적값 차가 남아 있으면 기울기도 어느 정도 커야 한다는 의미입니다. 기울기가 아주 작은데 비용이 많이 남는 평평한 영역은 이 전제에서는 허용되지 않습니다.</p>
+<div class="check" data-q="q3"></div>
+<h2>한 걸음의 감소식을 연결한다</h2>
+<p>L-매끄러운 함수에 α=1/L를 쓰면 앞 장에서 f(x′)≤f(x)−‖∇f(x)‖²/(2L)을 증명했습니다. 이번 부등식을 여기에 대입하면</p>
+<p class="calc">f(x′)−f(x*) ≤ (1−μ/L)[f(x)−f(x*)]</p>
+<p>입니다. 같은 부등식을 k번 쓰면 f(xₖ)−f(x*)≤(1−μ/L)<sup>k</sup>[f(x₀)−f(x*)]입니다. 이를 <b class="key">기하급수 수렴</b>이라고 합니다. 최적값 차에 대한 상계이며, 매번 정확히 같은 비율로 줄어든다고 말하지 않습니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 160" role="img" aria-label="강볼록성의 기울기 하계와 매끄러움의 하강 상계로 기하급수 수렴률을 유도">
+<rect class="f-box" x="42" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="135" y="61" text-anchor="middle">강볼록 하계</text><text class="f-s" x="135" y="89" text-anchor="middle">‖∇f(x)‖² ≥ 2μ·오차</text><text class="f-s" x="135" y="110" text-anchor="middle">오차를 기울기로 연결</text><line class="f-line" x1="235" y1="84" x2="278" y2="84" marker-end="url(#f-arrow)"/><rect class="f-soft" x="287" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="380" y="61" text-anchor="middle">경사하강 한 걸음</text><text class="f-s" x="380" y="89" text-anchor="middle">감소 ≥ ‖∇f(x)‖²/(2L)</text><text class="f-s" x="380" y="110" text-anchor="middle">α=1/L일 때</text><line class="f-line" x1="480" y1="84" x2="523" y2="84" marker-end="url(#f-arrow)"/><rect class="f-box" x="532" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="625" y="61" text-anchor="middle">나머지 오차</text><text class="f-s" x="625" y="89" text-anchor="middle">최대 (1−μ/L)배</text><text class="f-s" x="625" y="110" text-anchor="middle">같은 부등식을 반복</text>
+</svg><figcaption>μ/L가 작을수록 이 상계의 한 걸음 보장은 느슨합니다.</figcaption></figure>
+<div class="check" data-q="q4"></div><div class="check" data-q="q5"></div>
+<h2>예제에서 느린 좌표와 빠른 좌표를 분리해 본다</h2>
+<p>(x²+100y²)/2에서 α=0.01을 쓰면 x는 매번 0.99배로 줄고, y는 한 번에 0이 됩니다. 초기값 (1,1)의 첫걸음에서 비용은 50.5에서 0.49005로 줄지만, 이후에는 남은 x가 천천히 줄어듭니다. 처음부터 (1,0)이었다면 빠른 방향이 없어 첫 스텝부터 느립니다. 같은 L,μ여도 처음의 방향이 실제 경로에 영향을 줍니다.</p>
+<pre data-example="python"><code>from fractions import Fraction as F
+
+def cost(point):
+    x, y = point
+    return (x*x + 100*y*y) / 2
+
+x, y = F(1), F(1)
+initial = cost((x, y))
+for k in range(1, 11):
+    old = cost((x, y))
+    x, y = F(99,100)*x, F(0)
+    current = cost((x, y))
+    assert current &lt;= F(99,100)*old
+    if k in (1,10):
+        print(f&quot;{k}단계: x={float(x):.6f}, y={float(y):.1f}, 비용={float(current):.6f}&quot;)
+print(f&quot;첫 비용: {float(initial):.1f}&quot;)</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>1단계: x=0.990000, y=0.0, 비용=0.490050
+10단계: x=0.904382, y=0.0, 비용=0.408953
+첫 비용: 50.5</code></pre>
+<p>이 예에 적용한 상계의 비율은 1−1/100=0.99입니다. 하지만 y가 0이 된 후의 실제 함수값 비율은 (0.99)²입니다. 좌표 x가 0.99배이고 손실에 x²이 들어가기 때문입니다. 함수값과 좌표 오차를 혼동하면 같은 숫자라도 의미가 달라집니다.</p>
+<div class="check" data-q="q6"></div>
+<h2>계산을 쉽게 만드는 좌표가 따로 있다</h2>
+<p>이 예에서는 y와 x의 곡률 크기가 크게 다릅니다. y를 다른 단위로 표현해 두 방향의 이차항을 비슷한 크기로 만들면 같은 스텝으로 둘 다 빠르게 줄일 수 있습니다. 다변수에서 상호작용까지 있다면 단순히 각 축을 바꾸는 것만으로 해결되지 않을 수 있습니다. <a href="../la/la14-3.html">대각 스케일로 조건을 바꾸는 실습</a>에 같은 구조가 등장합니다.</p>
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table><thead><tr><th scope="col">전제</th><th scope="col">얻는 것</th></tr></thead><tbody><tr><td>μ-강볼록</td><td>기울기 노름 제곱이 2μ×최적값 차 이상.</td></tr><tr><td>L-매끄러움</td><td>α=1/L의 감소량이 기울기 제곱을 2L로 나눈 값 이상.</td></tr><tr><td>두 조건을 결합</td><td>남은 최적값 차가 최대 1−μ/L배.</td></tr><tr><td>실제 경로</td><td>초기 방향과 좌표 스케일에 따라 이론 상계보다 빨라질 수 있다.</td></tr></tbody></table></div>
+
+<h2>참고 자료</h2>
+<ul><li><a href="https://web.mit.edu/~gfarina/www/notes/">MIT 6.7220 · Convex Optimization</a></li><li><a href="https://web.stanford.edu/~boyd/cvxbook/">Boyd·Vandenberghe · Convex Optimization, 순차 하강</a></li></ul>
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

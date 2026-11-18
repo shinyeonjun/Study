@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ε–δ 연속과 균등 연속을 증명하기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e8c'/%3E%3Cpath d='M8 22V10m8 12V14m8 8V6' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="RA02-1">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+
+<header class="chapter">
+<p class="chap-sub">해석학 · RA02 연속성과 콤팩트성</p>
+<p class="chap-num">RA02·1</p>
+<h1>ε–δ 연속과 균등 연속을 증명하기</h1>
+<p class="lead">입력 오차를 얼마나 줄이면 원하는 출력 오차가 나올까요? 기준점마다 다른 범위를 써도 되는 연속과 영역 전체에 같은 범위가 필요한 균등 연속을 구분합니다.</p>
+</header>
+
+<div class="goal">
+<h2>이 장을 읽고 나면</h2>
+<ul>
+<li>정의역에 상대적인 연속의 ε–δ 정의와 수열 판정을 증명한다.</li>
+<li>x²의 한 점 연속 및 유계 구간의 균등 연속을 직접 보인다.</li>
+<li>영역 전체에서 δ 하나를 고르는 조건이 실패하는 반례를 구성한다.</li>
+</ul>
+</div>
+<h2>출력 허용 폭을 먼저 정한다</h2>
+
+<p>값이 손잡이를 조금 움직였을 때 얼마나 바뀌는지 알고 싶다고 합시다. 입력 <var>x</var>가 기준 <var>c</var>에 가까우면 출력 <var>f(x)</var>도 <var>f(c)</var>에 가깝다는 것이 연속의 출발점입니다. 거리에는 절댓값을 쓰고, 출력의 허용 거리 <var>ε</var>를 먼저 정해 입력에서 쓸 거리 <var>δ</var>를 고릅니다.</p>
+<div class="box"><p class="box-k">정의 · 한 점에서의 연속</p><p>정의역 <var>D⊆ℝ</var>, <var>c∈D</var>에서 <var>f:D→ℝ</var>가 연속이라는 것은 <var>∀ε&gt;0 ∃δ&gt;0 ∀x∈D, |x−c|&lt;δ ⇒ |f(x)−f(c)|&lt;ε</var>입니다.</p></div>
+<p><var>x</var>는 <var>D</var> 안에서만 움직입니다. <var>[0,1]</var>의 끝점 0에서는 오른쪽에서만 접근합니다. D 안에서 <var>c</var>가 주변의 유일한 점이면 충분히 작은 δ에서 <var>x=c</var>만 확인하므로 자동으로 연속입니다. 이 정의는 실제 함수값 <var>f(c)</var>를 사용하므로 주변의 극한이 존재해도 그 값이 <var>f(c)</var>와 다르면 불연속입니다.</p>
+<p>예로 <var>g(x)=0</var> (<var>x≠0</var>), <var>g(0)=1</var>이면 0에서 불연속입니다. <var>ε=1/2</var>를 고정하세요. 어떤 <var>δ&gt;0</var>에서도 <var>x=δ/2</var>는 0과 δ보다 가깝지만 <var>|g(x)-g(0)|=1</var>입니다.</p>
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+
+<h2>부등식을 거꾸로 풀어 δ를 만든다</h2>
+
+<p><var>f(x)=x²</var>가 <var>c=2</var>에서 연속임을 보이겠습니다. 목표는 <var>|x²-4|=|x-2||x+2|&lt;ε</var>입니다. 둘째 인수가 무한히 커질 수 있으므로 우선 <var>|x-2|&lt;1</var>을 요구합니다. 그러면 <var>1&lt;x&lt;3</var>이고 <var>|x+2|&lt;5</var>입니다. 남은 <var>|x-2|</var>를 <var>ε/5</var> 아래로 묶으면 됩니다. 두 요구를 동시에 만족하는 <var>δ=min(1,ε/5)</var>를 고르면</p>
+<div class="calc"><var>|x²−4| &lt; 5δ ≤ ε</var></div>
+<p>입니다. <var>x=2</var>에서는 차가 0이어서 바로 만족합니다. 이 δ는 가능한 선택 중 하나입니다. <var>ε=.5</var>이면 δ=.1이고, <var>x</var>가 1.9와 2.1 사이일 때 출력은 4에서 .5 미만으로 떨어져 있습니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 330" role="img" aria-label="x=2에서 x 제곱의 입출력 범위. x가 1.9와 2.1 사이면 y는 3.5와 4.5 사이">
+<text class="f-cap" x="380" y="30" text-anchor="middle">x=2 근처에서 δ=.1이면 출력 오차는 ε=.5보다 작다</text>
+<rect class="f-soft" x="242.99999999999986" y="103.90000000000003" width="216.0000000000002" height="117"/>
+<line class="f-grid" x1="135" y1="256" x2="599.3999999999999" y2="256" marker-end="url(#f-arrow)"/>
+<line class="f-grid" x1="135" y1="256" x2="135" y2="59.440000000000026" marker-end="url(#f-arrow)"/>
+<line class="f-grid" x1="135" y1="220.90000000000003" x2="491.39999999999986" y2="220.90000000000003"/>
+<text class="f-s" x="115" y="224.90000000000003" text-anchor="end">3.5</text>
+<line class="f-grid" x1="135" y1="162.40000000000003" x2="491.39999999999986" y2="162.40000000000003"/>
+<text class="f-s" x="115" y="166.40000000000003" text-anchor="end">4</text>
+<line class="f-grid" x1="135" y1="103.90000000000003" x2="491.39999999999986" y2="103.90000000000003"/>
+<text class="f-s" x="115" y="107.90000000000003" text-anchor="end">4.5</text>
+<line class="f-grid" x1="242.99999999999986" y1="256" x2="242.99999999999986" y2="98.05000000000004"/>
+<text class="f-s" x="242.99999999999986" y="282" text-anchor="middle">1.9</text>
+<line class="f-grid" x1="350.99999999999994" y1="256" x2="350.99999999999994" y2="98.05000000000004"/>
+<text class="f-s" x="350.99999999999994" y="282" text-anchor="middle">2</text>
+<line class="f-grid" x1="459.00000000000006" y1="256" x2="459.00000000000006" y2="98.05000000000004"/>
+<text class="f-s" x="459.00000000000006" y="282" text-anchor="middle">2.1</text>
+<polyline class="f-line" fill="none" points="135.00,251.32 153.00,244.27 171.00,237.15 189.00,229.97 207.00,222.72 225.00,215.41 243.00,208.03 261.00,200.59 279.00,193.08 297.00,185.51 315.00,177.87 333.00,170.17 351.00,162.40 369.00,154.57 387.00,146.67 405.00,138.71 423.00,130.68 441.00,122.59 459.00,114.43 477.00,106.21 495.00,97.92 513.00,89.57 531.00,81.15 549.00,72.67 567.00,64.12"/>
+<circle class="f-fill" cx="350.99999999999994" cy="162.40000000000003" r="4"/>
+<text class="f-s" x="534.5999999999999" y="72.5" text-anchor="middle">f(x)=x²</text>
+<text class="f-s" x="380" y="309" text-anchor="middle">가로축은 입력 x, 세로축은 출력 f(x)</text>
+</svg>
+<figcaption>가로 범위는 2±.1, 세로 범위는 4±.5입니다. 1.9²=3.61과 2.1²=4.41도 흰 경계 사이에 보입니다.</figcaption>
+</figure>
+<p>다른 기준점 <var>c</var>에서도 <var>|x-c|&lt;1</var>이면 <var>|x+c|≤|x-c|+2|c|&lt;1+2|c|</var>입니다. <var>δ=min(1,ε/(1+2|c|))</var>가 그 점에는 통합니다. 기준점이 움직일 때 이 식에서 고른 δ도 달라집니다.</p>
+<div class="check" data-q="q3"></div>
+<div class="check" data-q="q4"></div>
+
+<h2>수열로 검사하는 정의는 같은 결론을 준다</h2>
+
+<p><var>f</var>가 <var>c</var>에서 연속이라면 <var>D</var> 안의 임의 수열 <var>xₙ→c</var>에 대해 <var>f(xₙ)→f(c)</var>입니다. 출력 ε에 대해 연속 정의의 δ를 고릅니다. <var>xₙ→c</var>이므로 어느 <var>N</var>부터 <var>|xₙ-c|&lt;δ</var>입니다. 그 이후 출력은 ε보다 가까워져 수렴합니다.</p>
+<p>반대로 연속이 아니면 어떤 <var>ε₀&gt;0</var>에서 <var>δ&gt;0</var>를 어떻게 정해도 <var>|x-c|&lt;δ</var>이면서 <var>|f(x)-f(c)|≥ε₀</var>인 <var>x∈D</var>를 찾을 수 있습니다. <var>δ=1/n</var>으로 각각 정해 그 점을 <var>xₙ</var>이라 부르면 <var>xₙ→c</var>입니다. 하지만 출력은 항상 <var>ε₀</var> 이상 멀어 <var>f(c)</var>로 수렴하지 않습니다. 따라서 <strong>모든 입력 수열</strong>이 출력을 보존한다는 조건과 연속은 동치입니다.</p>
+<p>이 방법은 불연속을 보이는 데 편리합니다. 예로 <var>g(0)=1</var>, 나머지 점에서 <var>g=0</var>인 위의 함수에서는 <var>xₙ=1/n→0</var>인데 <var>g(xₙ)=0</var>이므로 1로 가지 않습니다.</p>
+<div class="check" data-q="q5"></div>
+
+<h2>모든 위치에 δ 하나를 고른다</h2>
+
+<p><b class="key">균등 연속</b>은 다음 순서를 요구합니다.</p>
+<div class="calc"><var>∀ε&gt;0 ∃δ&gt;0 ∀x,y∈D, |x−y|&lt;δ ⇒ |f(x)−f(y)|&lt;ε.</var></div>
+<p>여기서는 한 δ를 정한 뒤에 두 위치를 고릅니다. <var>[-3,3]</var>에서 <var>f(x)=x²</var>라면 <var>|x+y|≤6</var>이고 <var>|x²-y²|≤6|x-y|</var>입니다. 그러므로 전체 구간에서 <var>δ=ε/6</var> 하나면 됩니다.</p>
+<p><b>반례.</b> 실수 전체에서 <var>xₙ=n</var>, <var>yₙ=n+1/n</var>을 택하면 <var>|xₙ-yₙ|=1/n→0</var>입니다. 그러나 제곱의 차는 <var>yₙ²-xₙ²=2+1/n²</var>입니다. <var>ε=1</var>에 대해 어떤 δ를 내더라도, <var>n&gt;1/δ</var>를 고르면 입력 거리는 δ 안이고 출력 거리는 1 이상입니다. 모든 점에서 연속인 같은 함수라도 실수 전체에서는 균등 연속에 실패합니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 211" role="img" aria-label="입력차는 작아지나 제곱의 출력차는 2보다 크며 2에 다가간다.">
+<text class="f-cap" x="380" y="33" text-anchor="middle">큰 입력에서는 작은 간격으로도 제곱의 차이가 남는다</text>
+<text class="f-t" x="180" y="82" text-anchor="end">n</text>
+<rect class="f-box" x="206" y="58" width="162" height="38" rx="3"/>
+<text class="f-t" x="287" y="83" text-anchor="middle">2</text>
+<rect class="f-box" x="374" y="58" width="162" height="38" rx="3"/>
+<text class="f-t" x="455" y="83" text-anchor="middle">4</text>
+<rect class="f-box" x="542" y="58" width="162" height="38" rx="3"/>
+<text class="f-t" x="623" y="83" text-anchor="middle">10</text>
+<text class="f-t" x="180" y="128" text-anchor="end">입력 차이 1/n</text>
+<rect class="f-box" x="206" y="104" width="162" height="38" rx="3"/>
+<text class="f-t" x="287" y="129" text-anchor="middle">1/2</text>
+<rect class="f-box" x="374" y="104" width="162" height="38" rx="3"/>
+<text class="f-t" x="455" y="129" text-anchor="middle">1/4</text>
+<rect class="f-box" x="542" y="104" width="162" height="38" rx="3"/>
+<text class="f-t" x="623" y="129" text-anchor="middle">1/10</text>
+<text class="f-t" x="180" y="174" text-anchor="end">출력 차이 2+1/n²</text>
+<rect class="f-box" x="206" y="150" width="162" height="38" rx="3"/>
+<text class="f-t" x="287" y="175" text-anchor="middle">9/4</text>
+<rect class="f-box" x="374" y="150" width="162" height="38" rx="3"/>
+<text class="f-t" x="455" y="175" text-anchor="middle">33/16</text>
+<rect class="f-box" x="542" y="150" width="162" height="38" rx="3"/>
+<text class="f-t" x="623" y="175" text-anchor="middle">201/100</text>
+</svg>
+<figcaption>입력 쌍은 n과 n+1/n입니다. 오른쪽으로 갈수록 두 입력은 가까워지지만 두 점의 제곱 차이는 사라지지 않습니다.</figcaption>
+</figure>
+<p>유계가 아닌 정의역에서도 균등 연속인 예가 있습니다. <var>f(x)=√x</var>에서 <var>x≥y≥0</var>이면 <var>(√x-√y)²=x+y-2√xy≤x-y</var>입니다. <var>√xy≥y</var>이기 때문입니다. 따라서 양쪽 순서를 모두 포함해 <var>|√x-√y|≤√|x-y|</var>입니다. <var>δ=ε²</var>가 <var>[0,∞)</var> 전체에 통합니다.</p>
+<div class="check" data-q="q6"></div>
+<h2>손계산을 Python으로 검산한다</h2>
+<pre data-example="python"><code>from fractions import Fraction as F
+
+epsilon = F(1, 2)
+delta = min(F(1), epsilon/5)
+for x in [F(19, 10), F(2), F(21, 10)]:
+    print(x, x*x, &quot;output error:&quot;, abs(x*x-4))
+print(&quot;worked delta:&quot;, delta)
+
+for n in [2, 4, 10]:
+    x = F(n)
+    y = x + F(1, n)
+    print(n, &quot;input gap:&quot;, y-x, &quot;output gap:&quot;, y*y-x*x)</code></pre>
+<pre data-output><code>19/10 361/100 output error: 39/100
+2 4 output error: 0
+21/10 441/100 output error: 41/100
+worked delta: 1/10
+2 input gap: 1/2 output gap: 9/4
+4 input gap: 1/4 output gap: 33/16
+10 input gap: 1/10 output gap: 201/100</code></pre>
+<p class="small">Python 3.14.6으로 계산했습니다. 첫 출력은 설명한 입력 구간의 양 끝과 가운데를 비교합니다. 정의는 열린 허용 범위를 쓰며 모든 내부 점에 대한 증명은 본문의 부등식입니다.</p>
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://www.jirka.org/ra/html/lim_chapter.html">Jiří Lebl, Basic Analysis I Ch. 3 Continuous Functions</a></li>
+<li><a href="https://www.jirka.org/ra/html/sec_unifcont.html">Jiří Lebl, §3.4 Uniform Continuity</a></li>
+<li><a href="ra01-2.html">RA01-2 수열의 ε–N 정의</a></li>
+</ul>
+
+<h2>확인 문제</h2>
+<p>아직 풀지 않은 문제입니다. 먼저 식이나 근거를 적어 보고 해설을 확인합니다.</p>
+<div id="quiz"></div>
+
+<section class="work" id="tools"></section>
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

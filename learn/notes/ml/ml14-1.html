@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>보이지 않는 집단의 소속을 확률표로 계산하기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="ML14-1">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">머신러닝 · 혼합모형</p>
+<p class="chap-num">ML14·1</p>
+<h1>보이지 않는 집단의 소속을 확률표로 계산하기</h1>
+<p class="lead">기록마다 두 번 시험해 성공 횟수만 적었습니다. 어떤 방식으로 시험했는지는 보이지 않습니다. 하나의 기록이 여러 집단에 얼마나 속할지 계산하고, 그 확률을 사용해 각 집단의 성공률을 다시 추정합니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>혼합 가중치와 조건부 관측분포가 결합·주변 확률을 만드는 과정을 쓸 수 있다.</li><li>잠재 소속의 사후확률인 책임도를 손으로 계산할 수 있다.</li><li>책임도의 합을 사용해 두 이항 성분의 매개변수를 한 번 갱신할 수 있다.</li></ul></div>
+
+<h2>시험 방식은 기록 사이에 바뀔 수 있다</h2>
+<p>부품 검사 기록마다 한 번 A 또는 B라는 방식을 고른 뒤, 같은 방식으로 독립 시험을 두 번 한다고 합시다. 기록에는 성공 횟수 k∈{0,1,2}만 남습니다. 어느 방식을 골랐는지 z∈{A,B}는 직접 기록되지 않았습니다. 이 변수를 <b class="key">잠재 변수</b>라고 합니다. 모형에는 방식 B를 고를 확률 π와 각 방식의 한 시험 성공 확률 p<sub>A</sub>,p<sub>B</sub>가 있습니다. 기록들은 서로 독립이라는 가정을 둡니다.</p>
+<p>조건부 확률 P(K=k|Z=B)는 C(2,k)p<sub>B</sub><sup>k</sup>(1−p<sub>B</sub>)<sup>2−k</sup>입니다. C(2,k)는 두 번 중 성공한 k개의 위치를 고르는 수입니다. 성공 횟수만 보이므로, 관측 확률은 방식별 결합확률을 더한 값입니다.</p>
+<p class="calc">P(K=k) = (1−π)·P(K=k|A) + π·P(K=k|B)</p>
+<p>가중치 π가 클수록 기록이 방식 B에서 왔을 가능성이 사전에 큽니다. 하지만 실제로 k가 어떤 값으로 나왔는지를 보고 나면 그 기록에 대한 B의 사후확률은 달라집니다.</p>
+<div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
+<h2>성공 횟수를 본 뒤의 사후 소속</h2>
+<p>시작 값을 π=1/2, p<sub>A</sub>=1/4, p<sub>B</sub>=3/4로 둡니다. k=0일 때 A라면 (3/4)²=9/16, B라면 (1/4)²=1/16입니다. 둘의 사전 확률이 같아, B에서 이 기록이 나올 결합확률 1/32를 관측 확률 10/32로 나누면 P(B|K=0)=1/10입니다.</p>
+<div class="table-wrap"><table><thead><tr><th scope="col">k</th><th scope="col">P(K=k|A)</th><th scope="col">P(K=k|B)</th><th scope="col">P(B|K=k)</th></tr></thead><tbody><tr><td>0</td><td>9/16</td><td>1/16</td><td>1/10</td></tr><tr><td>1</td><td>3/8</td><td>3/8</td><td>1/2</td></tr><tr><td>2</td><td>1/16</td><td>9/16</td><td>9/10</td></tr></tbody></table></div>
+<p>각 기록 i의 이 사후확률을 <b class="key">책임도</b> rᵢ라고 합니다. 기록 하나가 어느 성분에 얼마나 기여하는지 계산하는 무게로 씁니다. k=1이면 두 방식에서 그 횟수가 나타날 확률이 같으므로 사전 확률 1/2이 그대로 유지됩니다.</p>
+<div class="check" data-q="q3"></div><div class="check" data-q="q4"></div>
+<h2>정수 개수 대신 기대 개수로 매개변수를 갱신한다</h2>
+<p>네 기록의 성공 횟수가 (0,0,1,2)라고 합시다. B에 대한 책임도는 (1/10,1/10,1/2,9/10)이며 합은 8/5입니다. 이 합을 방식 B로 분류된 기대 기록 수로 해석합니다. 전체가 네 기록이므로 새 가중치 π는 (8/5)/4=2/5입니다.</p>
+<p>B에서는 기록마다 두 시험을 했으므로 기대 시험 수는 2Σrᵢ=16/5입니다. 기대 성공 수는 Σrᵢkᵢ=1/2+2×(9/10)=23/10입니다. 기대 성공 수를 기대 시험 수로 나누면 새 p<sub>B</sub>는 (23/10)/(16/5)=23/32입니다. A에서는 책임도가 1−rᵢ입니다. 기대 기록 수 12/5, 기대 성공 수 7/10에서 새 p<sub>A</sub>=7/48입니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 160" role="img" aria-label="관측 횟수에서 잠재 소속의 책임도를 구해 기대 시험 수로 매개변수를 갱신">
+<rect class="f-box" x="42" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="135" y="61" text-anchor="middle">관측 k만 있음</text><text class="f-s" x="135" y="89" text-anchor="middle">기존 π, pₐ, pᵦ</text><text class="f-s" x="135" y="110" text-anchor="middle">조건부 횟수 확률 계산</text><line class="f-line" x1="235" y1="84" x2="278" y2="84" marker-end="url(#f-arrow)"/><rect class="f-soft" x="287" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="380" y="61" text-anchor="middle">책임도 rᵢ</text><text class="f-s" x="380" y="89" text-anchor="middle">P(B | 기록의 k)</text><text class="f-s" x="380" y="110" text-anchor="middle">기록을 확률만큼 나눔</text><line class="f-line" x1="480" y1="84" x2="523" y2="84" marker-end="url(#f-arrow)"/><rect class="f-box" x="532" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="625" y="61" text-anchor="middle">새 매개변수</text><text class="f-s" x="625" y="89" text-anchor="middle">기대 기록/성공/시험 수</text><text class="f-s" x="625" y="110" text-anchor="middle">비율로 갱신</text>
+</svg><figcaption>k=1인 기록의 책임도가 1/2이면 A와 B에 절반씩 기여합니다.</figcaption></figure>
+<p>이 갱신이 어디서 나오는지 확인합시다. 만약 모든 기록의 z를 알았다면 방식 B의 전체 로그우도에서 π에 관한 항은 n<sub>B</sub>log π+n<sub>A</sub>log(1−π)입니다. 최댓값을 주는 π는 n<sub>B</sub>/(n<sub>A</sub>+n<sub>B</sub>)입니다. z를 모르는 경우에는 앞 책임도를 조건부 평균에 사용해 n<sub>B</sub>를 Σrᵢ로 바꿉니다. 각 성공률의 로그우도도 성분별 기대 성공과 실패 수를 써서 미분하면 기대 비율이 나옵니다. 둘 다 양수인 내부 해를 다뤘으며, 기대 기록이 0인 성분은 분모가 0이어서 같은 갱신을 바로 적용할 수 없습니다.</p>
+<div class="check" data-q="q5"></div><div class="check" data-q="q6"></div>
+<h2>분수 그대로 한 번 실행하기</h2>
+<pre data-example="python"><code>from fractions import Fraction as F
+from math import comb
+
+def prob(k, p):
+    return comb(2, k) * p**k * (1-p)**(2-k)
+
+records = (0,0,1,2)
+pi, p_a, p_b = F(1,2), F(1,4), F(3,4)
+responsibility = []
+for k in records:
+    a = (1-pi) * prob(k,p_a)
+    b = pi * prob(k,p_b)
+    responsibility.append(b/(a+b))
+mass_b = sum(responsibility)
+mass_a = len(records)-mass_b
+success_b = sum(r*k for r,k in zip(responsibility,records))
+success_a = sum(records)-success_b
+updated = (mass_b/len(records), success_a/(2*mass_a), success_b/(2*mass_b))
+assert updated == (F(2,5),F(7,48),F(23,32))
+print(&quot;책임도:&quot;, *responsibility)
+print(&quot;성분별 기대 기록 A,B:&quot;, mass_a, mass_b)
+print(&quot;π, p_A, p_B:&quot;, *updated)</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>책임도: 1/10 1/10 1/2 9/10
+성분별 기대 기록 A,B: 12/5 8/5
+π, p_A, p_B: 2/5 7/48 23/32</code></pre>
+<p>처음의 확률로 각 기록이 얼마나 속하는지 계산하는 단계가 E, 그 결과를 고정해 매개변수를 갱신하는 단계가 M입니다. 실제 방식의 소속을 알아냈다고 볼 수는 없습니다. 축적된 횟수에 맞는 하나의 혼합모형을 업데이트한 것입니다. 다음 장에서는 왜 이 두 단계가 관측 로그우도를 낮추지 않는지 증명하고, 높은 우도가 잠재 구조의 유일성을 보장하지 않는 예를 봅니다.</p>
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table><thead><tr><th scope="col">수치</th><th scope="col">어떻게 계산하는가</th></tr></thead><tbody><tr><td>관측 확률</td><td>각 성분의 결합확률을 합한다.</td></tr><tr><td><b class='key'>책임도</b></td><td>성분의 결합확률을 관측 확률로 나눈다.</td></tr><tr><td>새 성분 가중치</td><td>기대 소속 기록 수를 전체 기록 수로 나눈다.</td></tr><tr><td>새 성공률</td><td>기대 성공 수를 기대 시험 수로 나눈다.</td></tr></tbody></table></div>
+
+<h2>참고 자료</h2>
+<ul><li><a href="https://cs229.stanford.edu/notes_archive/cs229-notes8.pdf">Stanford CS229 · Expectation-Maximization</a></li></ul>
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

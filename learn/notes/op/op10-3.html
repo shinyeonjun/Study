@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>모멘텀의 두 단계 반복에서 감쇠와 진동을 구분하기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="OP10-3">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">최적화 · 수렴</p>
+<p class="chap-num">OP10·3</p>
+<h1>모멘텀의 두 단계 반복에서 감쇠와 진동을 구분하기</h1>
+<p class="lead">이전 이동을 다음 이동에 섞으면 같은 기울기에서도 다른 경로를 따라갑니다. 단순 이차함수에서 그 규칙을 고유방향별로 분해하고, 빠른 장기 감소와 첫 단계의 손실 증가가 어떻게 함께 일어나는지 계산합니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>Heavy-ball 모멘텀을 2차 점화식으로 바꿀 수 있다.</li><li>특성근의 절댓값과 반복의 수렴·진동을 연결할 수 있다.</li><li>스텝과 모멘텀을 바꿀 때 실제 비용까지 따로 측정할 수 있다.</li></ul></div>
+
+<h2>방금 이동한 방향을 얼마나 더 얹는가</h2>
+<p>Heavy-ball 방식의 <b class="key">모멘텀</b>은 x<sub>k+1</sub>=xₖ−α∇f(xₖ)+β(xₖ−xₖ₋₁)입니다. α는 스텝 크기, β는 직전 이동을 더하는 비율입니다. x₋₁=x₀로 두면 첫 스텝에는 이전 이동이 0이므로 일반 경사하강과 같습니다. 이후에는 현재 기울기가 같더라도 직전 위치가 다르면 다음 위치가 달라집니다.</p>
+<p>이차함수 f(x)=xᵀAx/2에서 A를 실대칭이라고 둡니다. A의 고유값 λ에 해당하는 한 방향의 좌표를 z라고 하면 그 방향의 기울기는 λz입니다. 직교 고유기저에서는 다른 방향이 계산에 섞이지 않으므로 각 방향은 다음의 독립적인 점화식입니다.</p>
+<p class="calc">z<sub>k+1</sub> = (1−αλ+β)zₖ−βzₖ₋₁</p>
+<div class="check" data-q="q1"></div>
+<h2>특성근을 구해 움직임의 모양을 읽는다</h2>
+<p>zₖ=rᵏ 꼴이 점화식을 만족할 조건을 넣으면 r²−(1−αλ+β)r+β=0입니다. 서로 다른 두 근이면 일반해는 두 거듭제곱의 선형결합입니다. 중근 r≠0이면 (a+bk)rᵏ 꼴이 됩니다. 실제로 이 꼴을 점화식에 넣으면 두 계수 a,b가 모두 상쇄됩니다. 처음 두 좌표가 어느 결합인지 결정합니다.</p>
+<p>근들이 모두 단위원 안에 있으면 각 거듭제곱이 0으로 가고, 중근에서 생기는 k도 |r|&lt;1의 감소를 이기지 못합니다. 음의 실근이나 허수부가 있는 복소근은 방향이 바뀌는 움직임을 만들 수 있습니다. 어떤 근의 절댓값이 1보다 크면 그 성분을 갖는 초기조건에서 크기가 커집니다. 따라서 모든 초기조건에서 수렴을 말하려면 모든 고유방향의 특성근을 확인해야 합니다.</p>
+<div class="check" data-q="q2"></div><div class="check" data-q="q3"></div>
+<h2>곡률 1과 9에서 근이 어떻게 달라지는가</h2>
+<p>f(x,y)=(x²+9y²)/2에서 α=1/4, β=1/4를 씁니다. x의 곡률 1에서는 1−αλ+β=1이라 특성다항식이 (r−1/2)²입니다. y의 곡률 9에서는 1−9/4+1/4=−1이라 (r+1/2)²입니다. 두 근의 절댓값은 모두 1/2이지만 y 방향은 부호가 번갈아 바뀔 수 있습니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 160" role="img" aria-label="두 좌표의 모멘텀 점화식에서 각각 양과 음의 중근이 나타남">
+<rect class="f-box" x="42" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="135" y="61" text-anchor="middle">작은 곡률 λ=1</text><text class="f-s" x="135" y="89" text-anchor="middle">특성근 +1/2가 중근</text><text class="f-s" x="135" y="110" text-anchor="middle">부호를 유지하며 감쇠</text><line class="f-line" x1="235" y1="84" x2="278" y2="84" marker-end="url(#f-arrow)"/><rect class="f-soft" x="287" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="380" y="61" text-anchor="middle">큰 곡률 λ=9</text><text class="f-s" x="380" y="89" text-anchor="middle">특성근 −1/2가 중근</text><text class="f-s" x="380" y="110" text-anchor="middle">부호가 번갈며 감쇠</text><line class="f-line" x1="480" y1="84" x2="523" y2="84" marker-end="url(#f-arrow)"/><rect class="f-box" x="532" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="625" y="61" text-anchor="middle">같은 한계</text><text class="f-s" x="625" y="89" text-anchor="middle">두 방향 모두 0으로 수렴</text><text class="f-s" x="625" y="110" text-anchor="middle">초기 손실은 오를 수 있음</text>
+</svg><figcaption>장기 감쇠의 절댓값이 같아도 부호와 처음 몇 단계의 비용은 달라집니다.</figcaption></figure>
+<p>초깃값 x₋₁=x₀=1, y₋₁=y₀=1로 둡니다. 첫 결과는 x₁=3/4, y₁=−5/4입니다. 대입하면 xₖ=(1+k/2)(1/2)ᵏ, yₖ=(1+3k/2)(−1/2)ᵏ입니다. k=0과 k=1이 맞고 두 식이 각각 점화식을 만족하므로 모든 k에서도 맞습니다.</p>
+<div class="check" data-q="q4"></div><div class="check" data-q="q5"></div>
+<h2>수렴해도 매번 비용이 줄지는 않는다</h2>
+<p>초기 비용은 5입니다. 첫 단계 비용은 [(3/4)²+9(−5/4)²]/2=117/16으로 더 큽니다. 첫 스텝에는 모멘텀 항이 없으며, α=1/4는 이 문제에서 일반 경사하강의 감소 충분조건 α&lt;2/9보다 큽니다. 그래도 이후 두 단계 규칙을 적용하면 두 방향이 결국 0으로 갑니다. 단조 감소와 장기 수렴은 다른 속성입니다.</p>
+<pre data-example="python"><code>from fractions import Fraction as F
+
+older = current = (F(1), F(1))
+alpha = beta = F(1,4)
+for k in range(1,11):
+    new = tuple((1-alpha*curvature+beta)*value-beta*previous
+                for curvature,value,previous in zip((1,9),current,older))
+    expected = ((1+F(k,2))*F(1,2)**k, (1+F(3*k,2))*F(-1,2)**k)
+    assert new == expected
+    older,current = current,new
+    if k in (1,2,3,10):
+        x,y = current
+        print(f&quot;{k}단계: x={x}, y={y}, 비용={(x*x+9*y*y)/2}&quot;)</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>1단계: x=3/4, y=-5/4, 비용=117/16
+2단계: x=1/2, y=1, 비용=37/8
+3단계: x=5/16, y=-11/16, 비용=557/256
+10단계: x=3/512, y=1/64, 비용=585/524288</code></pre>
+<div class="check" data-q="q6"></div>
+<p>확인 실습으로 β를 0으로 바꾸면 점화식에 이전 항이 사라집니다. β를 유지하고 α만 바꿀 때는 어떤 고유방향의 근이 단위원 밖으로 가는지 먼저 계산해 보세요. 일반 신경망의 손실이 고정 이차함수라는 가정은 없으므로, 여기의 숫자를 모든 자료에 적용하는 스텝 처방으로 쓰기보다 초기 과도 현상과 진행 속도를 분리해서 관찰합니다.</p>
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table><thead><tr><th scope="col">계산 항목</th><th scope="col">봐야 하는 것</th></tr></thead><tbody><tr><td>점화식</td><td>현재 좌표와 이전 좌표가 모두 다음 위치에 들어간다.</td></tr><tr><td>특성근</td><td>절댓값은 장기 감쇠, 부호나 위상은 진동과 연결.</td></tr><tr><td>실행의 품질</td><td>초기 비용, 장기 수렴, 스텝과 곡률을 따로 비교.</td></tr></tbody></table></div>
+
+<h2>참고 자료</h2>
+<ul><li><a href="https://distill.pub/2017/momentum/">Gabriel Goh · Why Momentum Really Works</a></li><li><a href="https://web.mit.edu/~gfarina/www/notes/">MIT 6.7220 · Convex Optimization</a></li></ul>
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

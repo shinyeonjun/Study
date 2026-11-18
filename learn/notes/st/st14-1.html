@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>부분 풀링에서 관측 수가 수축의 크기를 정하는 이유 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="ST14-1">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">통계 · ST14 계층 베이즈와 예측 점검</p>
+<p class="chap-num">ST14·1</p>
+<h1>부분 풀링에서 관측 수가 수축의 크기를 정하는 이유</h1>
+<p class="lead">같은 종류의 장치라도 조건별 평균은 다를 수 있습니다. 조건 평균마다 따로 추정할 때와 공통 기준으로 완전히 합칠 때의 사이에서, 관측 수를 반영하는 사후평균을 유도합니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2>
+<ul>
+<li>완전 풀링·무풀링·부분 풀링을 모형의 차이로 구분한다.</li>
+<li>정규 계층 모형의 조건별 사후평균과 분산을 완전제곱으로 유도한다.</li>
+<li>조건별 표본 수와 조건 사이 분산이 수축에 주는 효과를 정량화한다.</li>
+</ul></div>
+<h2>어느 단위에서 값이 함께 달라지는가</h2>
+<p>장비를 같은 방식으로 작동시킨 두 실험실이 있습니다. 합성 자료로 A의 반복 측정은 한 건 <var>14</var>, B는 네 건 <var>5,6,6,7</var>이라고 둡니다. 두 실험실이 같은 평균을 공유한다고 놓으면 모든 측정값을 합쳐 <var>38/5=7.6</var>이라는 하나의 평균을 적합합니다. 이것이 <b class="key">완전 풀링</b>입니다. 각각의 실험실 평균을 따로 적합하면 A는 14, B는 6입니다. 이를 <b class="key">무풀링</b>이라 합니다. A의 14는 관측이 하나뿐이라 변동이 크고, 완전 풀링은 서로 다른 평균을 숨길 수 있습니다.</p>
+<p>실험실마다 고유한 평균 <var>θ<sub>j</sub></var>를 두되, 같은 종류의 실험실이 공통 분포에서 나왔다고 가정합니다. 각 실험실의 평균이 독립 <var>N(m,τ²)</var>, 해당 평균을 주었을 때 측정이 독립 <var>N(θ<sub>j</sub>,σ²)</var>입니다. <var>σ²</var>는 같은 실험실 안의 측정 변동, <var>τ²</var>는 실험실 평균 사이의 변동입니다. 이 예는 계산을 보이기 위해 별도 사전 지식에서 <var>m=10, τ²=1, σ²=4</var>를 이미 고정했다고 가정합니다.</p>
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+<h2>로그밀도에서 θ가 들어간 제곱항을 모은다</h2>
+<p>실험실 j의 관측 수 <var>n<sub>j</sub></var>와 평균 <var>ȳ<sub>j</sub></var>를 적습니다. 정규 우도에서 θ가 붙은 제곱합은 <var>n<sub>j</sub>(ȳ<sub>j</sub>−θ<sub>j</sub>)²</var>와 θ에 무관한 나머지로 나뉩니다. 사전밀도의 제곱항과 합치면 로그 사후에서 θ가 들어간 부분은</p>
+<div class="eq"><var>−1/2 · [(θ<sub>j</sub>−m)²/τ²+n<sub>j</sub>(θ<sub>j</sub>−ȳ<sub>j</sub>)²/σ²] .</var></div>
+<p>분산의 역수인 <b>정밀도</b>를 사용합니다. 완전제곱으로 만들 때 θ²의 계수는 <var>h<sub>j</sub>=1/τ²+n<sub>j</sub>/σ²</var>, −2θ 앞에는 <var>k<sub>j</sub>=m/τ²+n<sub>j</sub>ȳ<sub>j</sub>/σ²</var>가 있습니다. 그래서 이 제곱식은 <var>h<sub>j</sub>(θ<sub>j</sub>−k<sub>j</sub>/h<sub>j</sub>)²</var>에 θ와 무관한 항을 더한 식입니다. 사후분포는 평균 <var>k<sub>j</sub>/h<sub>j</sub></var>, 분산 <var>1/h<sub>j</sub></var>인 정규분포입니다.</p>
+<div class="eq"><var>E[θ<sub>j</sub>|자료,m,τ²,σ²]=(1−w<sub>j</sub>)m+w<sub>j</sub>ȳ<sub>j</sub>, w<sub>j</sub>=n<sub>j</sub>/(n<sub>j</sub>+σ²/τ²).</var></div>
+<p>관측 평균이 중심 m에 가까워지는 현상을 <b class="key">수축</b>이라고 합니다. A에선 <var>w=1/5</var>여서 <var>10+(14−10)/5=10.8</var>, B에선 <var>w=1/2</var>여서 <var>10+(6−10)/2=8</var>입니다. A의 사후 분산은 <var>1/(1+1/4)=.8</var>, B는 <var>1/(1+4/4)=.5</var>입니다. 관측 수가 많은 쪽에서 관측 평균을 더 크게 반영합니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 177" role="img" aria-label="A와 B의 관측 평균은 각각 14와 6, 사후 평균은 10.8과 8, 사후 분산은 .8과 .5다.">
+<text class="f-cap" x="380" y="30" text-anchor="middle">같은 사전 중심에서 실험실마다 달라지는 비중</text>
+<rect class="f-soft" x="51" y="49" width="137" height="38"/>
+<text class="f-t" x="119.5" y="73" text-anchor="middle">실험실</text>
+<rect class="f-soft" x="188" y="49" width="101" height="38"/>
+<text class="f-t" x="238.5" y="73" text-anchor="middle">n</text>
+<rect class="f-soft" x="289" y="49" width="135" height="38"/>
+<text class="f-t" x="356.5" y="73" text-anchor="middle">관측 평균</text>
+<rect class="f-soft" x="424" y="49" width="150" height="38"/>
+<text class="f-t" x="499" y="73" text-anchor="middle">사후 평균</text>
+<rect class="f-soft" x="574" y="49" width="135" height="38"/>
+<text class="f-t" x="641.5" y="73" text-anchor="middle">사후 분산</text>
+<rect class="f-box" x="51" y="87" width="137" height="38"/>
+<text class="f-s" x="119.5" y="111" text-anchor="middle">A</text>
+<rect class="f-box" x="188" y="87" width="101" height="38"/>
+<text class="f-s" x="238.5" y="111" text-anchor="middle">1</text>
+<rect class="f-box" x="289" y="87" width="135" height="38"/>
+<text class="f-s" x="356.5" y="111" text-anchor="middle">14</text>
+<rect class="f-box" x="424" y="87" width="150" height="38"/>
+<text class="f-s" x="499" y="111" text-anchor="middle">10.8</text>
+<rect class="f-box" x="574" y="87" width="135" height="38"/>
+<text class="f-s" x="641.5" y="111" text-anchor="middle">0.8</text>
+<rect class="f-box" x="51" y="125" width="137" height="38"/>
+<text class="f-s" x="119.5" y="149" text-anchor="middle">B</text>
+<rect class="f-box" x="188" y="125" width="101" height="38"/>
+<text class="f-s" x="238.5" y="149" text-anchor="middle">4</text>
+<rect class="f-box" x="289" y="125" width="135" height="38"/>
+<text class="f-s" x="356.5" y="149" text-anchor="middle">6</text>
+<rect class="f-box" x="424" y="125" width="150" height="38"/>
+<text class="f-s" x="499" y="149" text-anchor="middle">8.0</text>
+<rect class="f-box" x="574" y="125" width="135" height="38"/>
+<text class="f-s" x="641.5" y="149" text-anchor="middle">0.5</text>
+</svg><figcaption>사후분산은 실험실 평균 θ에 대한 양이며 다음 측정 한 건의 분산은 더 크다.</figcaption></figure>
+<div class="check" data-q="q3"></div>
+<div class="check" data-q="q4"></div>
+<div class="check" data-q="q5"></div>
+<h2>수축 비율을 바꾸는 조건을 비교한다</h2>
+<p><var>σ²</var>가 커지면 한 관측에서 평균을 읽는 정보가 줄어 <var>w</var>가 작아집니다. <var>τ²</var>가 커지면 실험실들이 크게 다를 수 있다고 놓으므로 <var>w</var>가 커집니다. 중심을 고정한 같은 식에서 <var>τ²↓0</var>이면 모든 평균은 m으로 모이고, <var>τ²→∞</var>이면 <var>n&gt;0</var>인 조건의 사후평균이 관측 평균을 향합니다. 처음의 7.6은 그 다섯 관측으로 공통 평균을 추정한 별도 완전 풀링 적합이고, 이 극한에서 m은 미리 정해진 값입니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 264" role="img" aria-label="관측 수가 같으면 조건간 분산 τ²=4의 관측 가중치가 τ²=1보다 높다.">
+<text class="f-cap" x="380" y="29" text-anchor="middle">관측 평균에 주는 가중치 w</text>
+<line class="f-ink" x1="136" y1="190" x2="644" y2="190" marker-end="url(#f-arrow)"/>
+<line class="f-ink" x1="136" y1="190" x2="136" y2="49" marker-end="url(#f-arrow)"/>
+<line class="f-ink" x1="136" y1="190" x2="136" y2="196"/>
+<text class="f-s" x="136" y="212" text-anchor="middle">0</text>
+<line class="f-ink" x1="259.5" y1="190" x2="259.5" y2="196"/>
+<text class="f-s" x="259.5" y="212" text-anchor="middle">3</text>
+<line class="f-ink" x1="383" y1="190" x2="383" y2="196"/>
+<text class="f-s" x="383" y="212" text-anchor="middle">6</text>
+<line class="f-ink" x1="506.5" y1="190" x2="506.5" y2="196"/>
+<text class="f-s" x="506.5" y="212" text-anchor="middle">9</text>
+<line class="f-ink" x1="630" y1="190" x2="630" y2="196"/>
+<text class="f-s" x="630" y="212" text-anchor="middle">12</text>
+<line class="f-grid" x1="131" y1="190" x2="630" y2="190"/>
+<text class="f-s" x="125" y="194" text-anchor="end">0</text>
+<line class="f-grid" x1="131" y1="122" x2="630" y2="122"/>
+<text class="f-s" x="125" y="126" text-anchor="end">.5</text>
+<line class="f-grid" x1="131" y1="54" x2="630" y2="54"/>
+<text class="f-s" x="125" y="58" text-anchor="end">1</text>
+<polyline class="f-line" fill="none" points="136,190 152.467,177.636 168.933,167.333 185.4,158.615 201.867,151.143 218.333,144.667 234.8,139 251.267,134 267.733,129.556 284.2,125.579 300.667,122 317.133,118.762 333.6,115.818 350.067,113.13 366.533,110.667 383,108.4 399.467,106.308 415.933,104.37 432.4,102.571 448.867,100.897 465.333,99.333 481.8,97.871 498.267,96.5 514.733,95.212 531.2,94 547.667,92.857 564.133,91.778 580.6,90.757 597.067,89.789 613.533,88.872 630,88"/>
+<polyline class="f-dash" fill="none" points="136,190 152.467,151.143 168.933,129.556 185.4,115.818 201.867,106.308 218.333,99.333 234.8,94 251.267,89.789 267.733,86.381 284.2,83.565 300.667,81.2 317.133,79.185 333.6,77.448 350.067,75.935 366.533,74.606 383,73.429 399.467,72.378 415.933,71.436 432.4,70.585 448.867,69.814 465.333,69.111 481.8,68.468 498.267,67.878 514.733,67.333 531.2,66.83 547.667,66.364 564.133,65.93 580.6,65.525 597.067,65.148 613.533,64.794 630,64.462"/>
+<text class="f-s" x="650" y="236" text-anchor="middle">관측 수 n</text>
+<text class="f-s" x="120" y="44" text-anchor="end">가중치 w</text>
+</svg><figcaption>실선은 τ²=1, 점선은 τ²=4이며 두 경우 모두 측정 분산 σ²=4를 고정했다. n=0의 가중치 0은 받은 측정이 없다는 뜻이다.</figcaption></figure>
+<p>정규성, 공통 실험실 분포, 측정 오류의 독립이 필요한 모형입니다. 서로 다른 종류의 실험실을 한 중심으로 수축하면 중요한 차이가 줄어들 수 있습니다. 실제 계층 분석에서 <var>m,τ²</var>도 자료에서 배우면 한 실험실의 정보가 공통 모수의 추정을 통해 다른 실험실에 영향을 줍니다. 다음 장에서는 공통 모수의 불확실성을 통해서도 결합된 사후를 읽습니다.</p>
+<div class="check" data-q="q6"></div>
+<h2>이어 풀기와 증명</h2>
+<p>어느 분산이 실험실 안의 값이고 어느 분산이 실험실 사이의 값인지 적습니다. 마지막에는 완전제곱 전후의 θ 항을 직접 맞춥니다.</p>
+<div class="check" data-q="q7"></div>
+<div class="check" data-q="q8"></div>
+<div class="check" data-q="q9"></div>
+<h2>파이썬으로 같은 계산 검산하기</h2>
+<pre data-example="python"><code>from fractions import Fraction as F
+
+groups = {&quot;A&quot;: (14,), &quot;B&quot;: (5, 6, 6, 7)}
+centre, within, between = F(10), F(4), F(1)
+for name, data in groups.items():
+    n = len(data)
+    mean = F(sum(data), n)
+    prior_precision = 1 / between
+    data_precision = n / within
+    variance = 1 / (prior_precision + data_precision)
+    posterior_mean = variance * (prior_precision*centre + data_precision*mean)
+    w = data_precision * variance
+    assert posterior_mean == (1-w)*centre + w*mean
+    print(name, &quot;mean, w, posterior mean, posterior variance:&quot;,
+          mean, w, posterior_mean, variance)
+all_values = [v for group in groups.values() for v in group]
+print(&quot;common fitted mean:&quot;, F(sum(all_values), len(all_values)))</code></pre>
+<p class="aside">실행 결과</p>
+<pre data-output><code>A mean, w, posterior mean, posterior variance: 14 1/5 54/5 4/5
+B mean, w, posterior mean, posterior variance: 6 1/2 8 1/2
+common fitted mean: 38/5</code></pre>
+<p>A의 <var>54/5=10.8</var>과 B의 8은 모수 자체의 사후 기대값입니다. A의 정밀도가 B보다 작아서 사후분산도 더 큽니다. 이 값들은 실험실 사이 분산을 이미 알고 있다고 둔 조건부 결과입니다.</p>
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://sites.stat.columbia.edu/gelman/book/">Gelman 외 · Bayesian Data Analysis, 계층 모형</a></li>
+<li><a href="st10-2.html">ST10-2 반복 측정의 독립 단위</a></li>
+<li><a href="st09-1.html">ST09-1 사후분포</a></li>
+</ul>
+<h2>확인 문제</h2>
+<p>조건과 단위를 먼저 적은 뒤 해설을 확인합니다.</p>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

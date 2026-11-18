@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>정규분포를 완전제곱해 칼만 이득 구하기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="AI08-3">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">인공지능의 기본 문제 · AI08 시간에 따른 상태 추론</p>
+<p class="chap-num">AI08·3</p>
+<h1>정규분포를 완전제곱해 칼만 이득 구하기</h1>
+<p class="lead">이전 기록이 위치 2 근처를 가리키고 잡음이 있는 새 센서는 7을 읽었습니다. 어느 쪽을 얼마나 믿을지 두 오차의 분산으로 정합니다. 정규분포의 곱과 평균제곱오차라는 두 방법으로 같은 이득을 얻습니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>독립 정규 관측에서 사후분포를 완전제곱으로 도출한다.</li><li>이득이 어떤 분산에 따라 커지는지 설명한다.</li><li>선형 상태 변화에서 다음 시점의 평균과 분산을 구한다.</li></ul></div>
+
+<h2>한 위치를 두 조건으로 생각한다</h2>
+<p>관측 전 상태를 <var>X∼N(m,P)</var>로 두고, 센서는 <var>Y=X+V</var>를 읽습니다. <var>V∼N(0,R)</var>이고 X와 독립이라고 가정합니다. N의 두 번째 값은 분산이며 P와 R은 양수입니다. 관측 y를 고정하면 가능도는 x와 y의 거리가 커질수록 낮습니다. 상태가 원래 m에 가깝다고 본 사전분포와 함께 곱하면 사후밀도에 비례합니다.</p>
+<p class="calc">p(x|y) ∝ exp{ −[ (x−m)²/P + (y−x)²/R ]/2 }</p>
+<div class="check" data-q="q1"></div>
+<h2>x의 제곱과 일차항을 모으면 이득이 나온다</h2>
+<p>대괄호 안에서 x²의 계수는 (1/P+1/R), x의 계수는 −2(m/P+y/R)입니다. 제곱 하나와 x와 무관한 상수로 묶으면 평균은 두 번째 계수에서 −2를 떼고 첫째 계수로 나눈 값이며, 분산은 첫째 계수의 역수입니다.</p>
+<div class="table-wrap"><table><thead><tr><th scope="col">항</th><th scope="col">정리한 결과</th></tr></thead><tbody><tr><td>갱신 분산 P⁺</td><td>(P⁻¹+R⁻¹)⁻¹ = PR/(P+R)</td></tr><tr><td>갱신 평균 m⁺</td><td>(Rm+Py)/(P+R) = m + K(y−m)</td></tr><tr><td>칼만 이득 K</td><td>P/(P+R)</td></tr></tbody></table></div>
+<p><b class="key">혁신(innovation)</b>은 새 관측이 예측한 관측에서 얼마나 벗어났는지 나타내는 y−m입니다. K는 그 차이를 상태 평균에 얼마나 반영할지 정합니다. 사전분산 P가 커질수록 센서 쪽으로 더 많이 이동하고, 센서분산 R이 커질수록 적게 이동합니다. P=4, R=1, m=2, y=7이면 차이가 5, 이득이 4/5이므로 평균은 6에 이릅니다. 사후분산은 4/5입니다.</p>
+<div class="check" data-q="q2"></div><div class="check" data-q="q3"></div><div class="check" data-q="q4"></div>
+<h2>제곱오차를 직접 줄여도 같은 K를 얻는다</h2>
+<p>한 후보 추정량을 <var>m+k(Y−m)</var>로 잡습니다. 실제 상태에서 이를 빼면 <var>(1−k)(X−m)−kV</var>입니다. 평균이 0인 두 항이 독립이라 제곱의 교차항의 기대값은 0입니다. 남는 평균제곱오차는 (1−k)²P+k²R입니다. 이를 미분하면 −2(1−k)P+2kR이고, P+R&gt;0이므로 최소점은 유일하게 k=P/(P+R)입니다. 이 선형 추정량의 도출에서는 정규성 없이도 두 오차가 무상관이면 같은 결과를 얻습니다. 조건부 분포 전체가 위의 정규분포가 된다는 결론에는 정규 가정을 사용했습니다.</p>
+<div class="check" data-q="q5"></div><div class="check" data-q="q6"></div>
+<h2>새 상태로 예측해 다음 관측을 기다린다</h2>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 160" role="img" aria-label="사전 정보를 관측으로 갱신한 다음 선형 상태 전이로 다음 시점의 평균과 분산을 구한다.">
+<rect class="f-box" x="42" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="135" y="61" text-anchor="middle">사전 예측</text><text class="f-s" x="135" y="89" text-anchor="middle">m=2, P=4</text><text class="f-s" x="135" y="110" text-anchor="middle">새 관측 y=7</text><line class="f-line" x1="235" y1="84" x2="278" y2="84" marker-end="url(#f-arrow)"/><rect class="f-soft" x="287" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="380" y="61" text-anchor="middle">관측 갱신</text><text class="f-s" x="380" y="89" text-anchor="middle">m⁺=6</text><text class="f-s" x="380" y="110" text-anchor="middle">P⁺=4/5</text><line class="f-line" x1="480" y1="84" x2="523" y2="84" marker-end="url(#f-arrow)"/><rect class="f-box" x="532" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="625" y="61" text-anchor="middle">다음 시점 예측</text><text class="f-s" x="625" y="89" text-anchor="middle">X′=2X+W</text><text class="f-s" x="625" y="110" text-anchor="middle">m′=12, P′=31/5</text>
+</svg><figcaption>상태 전이의 독립 잡음 분산 3을 예측 분산에 더한다.</figcaption></figure>
+<p><var>X′=aX+W</var>이고 W는 조건부 상태 및 이전 관측과 독립인 평균 0, 분산 Q의 정규 잡음이라고 둡니다. 갱신 뒤의 평균과 분산에서 다음 예측을 할 때 <var>m′=a m⁺</var>, <var>P′=a²P⁺+Q</var>입니다. a=2, Q=3이면 예측 분산은 4·(4/5)+3=31/5입니다. 정규·선형 모형에서는 이 예측과 앞의 관측 갱신을 반복해 정확하게 필터링할 수 있습니다.</p>
+<div class="check" data-q="q7"></div>
+<pre data-example="python"><code>from fractions import Fraction as F
+
+m, P, y, R = F(2), F(4), F(7), F(1)
+K = P/(P+R)
+mean = m + K*(y-m)
+variance = P*R/(P+R)
+mse = lambda k: (1-k)**2*P + k**2*R
+print(K, mean, variance)
+print(mse(F(0)), mse(K), mse(F(1)))
+print(2*mean, 4*variance+3)
+assert variance == 1/(1/P+1/R) == mse(K)</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>4/5 6 4/5
+4 4/5 1
+12 31/5</code></pre>
+<div class="check" data-q="q8"></div>
+
+<h2>참고 자료</h2>
+<ul><li><a href="https://web.stanford.edu/class/cs231a/course_notes/10-optimal-estimation.pdf">Stanford CS231A · 상태 추정의 정규분포 가정과 칼만 필터</a></li></ul>
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

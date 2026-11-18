@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>엄격한 가능점이 승수의 존재를 보장하는 과정 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="OP09-3">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">최적화 · 쌍대성</p>
+<p class="chap-num">OP09·3</p>
+<h1>엄격한 가능점이 승수의 존재를 보장하는 과정</h1>
+<p class="lead">최적값이 서로 같다는 말과, 그 값을 주는 유한한 승수가 실제로 있다는 말은 다릅니다. 엄격한 가능점이 어떤 단계에서 필요한지 증명하고, 조건이 빠진 두 사례를 계산합니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>볼록 제약문제에서 Slater 조건의 가정과 결론을 정확히 쓸 수 있다.</li><li>분리 초평면 논증에서 비용 좌표의 계수가 왜 양수인지 설명할 수 있다.</li><li>쌍대값의 일치, 쌍대해의 존재, 쌍대 간격이 양수인 상황을 구분할 수 있다.</li></ul></div>
+
+<h2>엄격하게 제약 안쪽인 점에서 출발한다</h2>
+<p>이 장에서는 전체 실수공간에서 미분 가능하고 실수값을 내는 볼록 f와 볼록 제약 g₁,…,gₘ을 사용합니다. 등식 제약은 두지 않습니다. 원래 문제의 유한한 최소값 p*는 가능해 x*에서 달성된다고 가정합니다. 만약 어떤 x̊가 모든 부등식을 엄격하게 만족해 gᵢ(x̊)&lt;0이면 <b class="key">Slater 조건</b>의 이 형태가 성립합니다. 이때 강한 쌍대성과 유한 최적 승수 λ≥0이 보장됩니다.</p>
+<p>앞 장의 삼각형 예에서 x̊=(1/2,1/2)를 택하면 x+y−3=−2, −x=−1/2, −y=−1/2가 모두 음수입니다. 이 점 자체가 최적일 필요는 없습니다. 엄격히 가능하다는 사실이 승수를 보장하기 위해 사용됩니다.</p>
+<div class="check" data-q="q1"></div>
+<h2>달성할 수 있는 상한을 다른 좌표계에 모은다</h2>
+<p>제약마다 허용하는 보조 상한 uᵢ와 목표한 비용 위의 값 t를 좌표로 씁니다. 집합 D에 (u,t)가 속한다는 뜻은 어떤 x가 있어 gᵢ(x)&lt;uᵢ가 모두 성립하고 f(x)&lt;t라는 것입니다. D는 열려 있습니다. 각 x에서 가능한 (u,t)의 조건이 모두 엄격한 상계이므로 열린 집합들의 합집합입니다. D는 볼록하기도 합니다. 두 점에 대응하는 x를 같은 비율로 섞으면, f와 gᵢ의 볼록성으로 섞인 상계를 엄격히 밑도는 x를 얻습니다.</p>
+<p>(0,p*)는 D에 속할 수 없습니다. 속한다면 어떤 점에서 모든 gᵢ가 음수이고 f(x)&lt;p*라서 p*가 원래 최소값이라는 사실과 충돌합니다. 이제 <b class="key">분리 초평면 정리</b>를 사용합니다. 공집합이 아닌 열린 볼록집합 D가 바깥의 점을 포함하지 않으면, 어떤 0이 아닌 법선 (a,b)로 다음과 같이 한쪽을 구분할 수 있습니다.</p>
+<p class="calc">모든 (u,t)∈D에서 aᵀu + bt ≥ bp*</p>
+<div class="check" data-q="q2"></div><div class="check" data-q="q3"></div>
+<h2>비용 좌표의 계수로 나눌 수 있어야 한다</h2>
+<p>D에서는 (u,t)의 어느 좌표를 큰 쪽으로 늘려도 여전히 D에 있습니다. 따라서 a의 어느 성분이나 b가 음수라면, 그 좌표를 계속 올려 왼쪽을 한없이 낮출 수 있습니다. 그러면 분리 부등식이 무너지므로 모든 계수는 음이 아닙니다.</p>
+<p>b=0이라고 가정하면 법선이 영이 아니어서 a에 양의 성분이 적어도 하나 있습니다. 엄격한 가능점 x̊에서 각 gᵢ(x̊)보다 크면서 0보다 작은 uᵢ를 고르고, t를 f(x̊)보다 크게 잡으면 (u,t)∈D입니다. 그러면 aᵀu&lt;0인데 분리 부등식 오른쪽은 0이라 모순입니다. 그래서 b&gt;0이고 λ=a/b로 나눌 수 있습니다.</p>
+<p>임의의 x에서 각 uᵢ를 gᵢ(x)보다 조금 크게, t를 f(x)보다 조금 크게 잡습니다. 이 여분을 0으로 줄이면 aᵀg(x)+bf(x)≥bp*입니다. b로 나누면 모든 x에 대해 L(x,λ)≥p*입니다. 따라서 q(λ)≥p*이고, 약한 쌍대성에서는 반대로 q(λ)≤p*이므로 q(λ)=p*입니다. 이렇게 쌍대값뿐 아니라 그 값을 주는 λ도 실제로 얻었습니다.</p>
+<p>원래 최적점 x*에서는 p*=q(λ)≤L(x*,λ)≤f(x*)=p*이므로 이 값들이 모두 같습니다. 따라서 합 ∑ᵢλᵢgᵢ(x*)가 0이며, 음이 아닌 λᵢ와 0 이하인 gᵢ(x*)를 곱한 각 항도 0이어야 합니다. x*는 미분 가능한 L의 전역 최소점이므로 ∇ₓL(x*,λ)=0입니다. 이로써 이 장의 가정 아래 최적점에는 KKT 조건을 만족하는 승수가 존재합니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 160" role="img" aria-label="상한 좌표로 문제를 옮겨 분리한 뒤 엄격한 가능점으로 비용 계수의 양수를 증명">
+<rect class="f-box" x="42" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="135" y="61" text-anchor="middle">상한의 집합 D</text><text class="f-s" x="135" y="89" text-anchor="middle">가능한 (u,t)의 볼록집합</text><text class="f-s" x="135" y="110" text-anchor="middle">(0,p*)는 바깥</text><line class="f-line" x1="235" y1="84" x2="278" y2="84" marker-end="url(#f-arrow)"/><rect class="f-soft" x="287" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="380" y="61" text-anchor="middle">초평면 분리</text><text class="f-s" x="380" y="89" text-anchor="middle">aᵀu + bt ≥ bp*</text><text class="f-s" x="380" y="110" text-anchor="middle">엄격한 가능점으로 b&gt;0</text><line class="f-line" x1="480" y1="84" x2="523" y2="84" marker-end="url(#f-arrow)"/><rect class="f-box" x="532" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="625" y="61" text-anchor="middle">λ=a/b</text><text class="f-s" x="625" y="89" text-anchor="middle">모든 x에서 L(x,λ) ≥ p*</text><text class="f-s" x="625" y="110" text-anchor="middle">약한 쌍대성과 합쳐 등호</text>
+</svg><figcaption>엄격한 가능점은 초평면에 비용 좌표가 실제로 들어가도록 보장합니다.</figcaption></figure>
+<div class="check" data-q="q4"></div>
+<h2>값은 같지만 승수를 얻지 못하는 볼록 사례</h2>
+<p>f(x)=x를 최소화하되 g(x)=x²≤0이라고 합시다. x=0만 가능이라 p*=0입니다. 엄격한 가능점은 없습니다. λ&gt;0에서 L=x+λx²를 최소로 하는 x는 −1/(2λ), q(λ)=−1/(4λ)입니다. λ=0에서는 L=x의 아래에 유한한 하한이 없어 q(0)=−∞입니다. λ를 크게 하면 q는 0에 접근하지만 유한 λ에서 0이 되지 않습니다.</p>
+<p>따라서 쌍대 문제의 <em>상한</em> d*=0은 원래 값과 같고, 쌍대 간격도 0입니다. 그래도 그 상한을 달성하는 유한 쌍대해는 없습니다. 원래 최적점 x=0에서 L의 x방향 미분은 1+2λ·0=1이라 정지성을 확인할 수도 없습니다. 이는 적절한 조건 없이 모든 최적점에서 KKT 승수를 찾을 수 있다고 주장하면 안 되는 예입니다.</p>
+<div class="check" data-q="q5"></div><div class="check" data-q="q6"></div>
+<h2>쌍대 간격이 실제로 남는 이산 사례와 비교한다</h2>
+<p>이번에는 선택 집합이 세 가지인 이산 문제입니다. 세 선택의 (비용 f, 제약값 g) 쌍을 (2,0),(3,−1),(0,1)로 둡니다. 앞의 두 선택만 가능이라 p*=2입니다. q(λ)는 세 식 2,3−λ,λ 중 최솟값입니다. λ와 3−λ를 비교하면 두 값 중 작은 값은 1.5를 넘을 수 없습니다. λ=1.5에서 세 식의 최솟값도 1.5이므로 d*=1.5이고 간격은 0.5입니다. 약한 쌍대성은 이산 문제에서도 맞지만, 위에서 증명한 볼록 조건은 적용되지 않습니다.</p>
+<pre data-example="python"><code>from fractions import Fraction as F
+
+for multiplier in (1, 10, 100):
+    x = F(-1, 2 * multiplier)
+    bound = x + multiplier * x*x
+    assert bound == F(-1, 4 * multiplier)
+    print(f&quot;볼록 예 λ={multiplier}: 하한 {bound}&quot;)
+
+lam = F(3, 2)
+choices = ((2, 0), (3, -1), (0, 1))
+primal = min(f for f, g in choices if g &lt;= 0)
+dual = min(f + lam*g for f, g in choices)
+print(f&quot;이산 예 원래값 {primal}, 쌍대값 {dual}, 간격 {primal-dual}&quot;)</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>볼록 예 λ=1: 하한 -1/4
+볼록 예 λ=10: 하한 -1/40
+볼록 예 λ=100: 하한 -1/400
+이산 예 원래값 2, 쌍대값 3/2, 간격 1/2</code></pre>
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table><thead><tr><th scope="col">확인하는 값</th><th scope="col">이 장의 예가 보여 준 것</th></tr></thead><tbody><tr><td>원래 최소와 쌍대 상한이 같은가?</td><td>엄격한 가능점이 있는 볼록 조건에서 같다.</td></tr><tr><td>유한 승수가 실제로 달성하는가?</td><td>엄격한 가능점의 보장 덕분에 위 증명에서 λ가 존재한다. 조건이 빠지면 값이 같아도 승수가 없을 수 있다.</td></tr><tr><td>값이 다를 수 있는가?</td><td>이산 선택 예에서는 약한 쌍대성만으로 1/2의 간격이 남는다.</td></tr></tbody></table></div>
+
+<h2>참고 자료</h2>
+<ul><li><a href="https://web.stanford.edu/~boyd/cvxbook/">Boyd·Vandenberghe · Convex Optimization §5.2–5.3</a></li></ul>
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

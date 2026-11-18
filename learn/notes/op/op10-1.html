@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>경사하강에서 한 걸음이 실제로 손실을 낮추는 조건 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="OP10-1">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">최적화 · 수렴</p>
+<p class="chap-num">OP10·1</p>
+<h1>경사하강에서 한 걸음이 실제로 손실을 낮추는 조건</h1>
+<p class="lead">기울기의 반대 방향을 골랐어도 너무 멀리 움직이면 손실이 올라갈 수 있습니다. 기울기가 얼마나 빨리 변하는지로 다음 함수값의 상계를 만들고, 안전한 스텝 범위를 유도합니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>기울기의 Lipschitz 조건을 식과 예로 해석할 수 있다.</li><li>선분 적분을 이용해 하강 보조정리를 유도할 수 있다.</li><li>스텝 크기가 감소, 경계, 진동을 각각 만들 수 있음을 검산할 수 있다.</li></ul></div>
+
+<h2>기울기가 하나의 숫자처럼 고정되어 있지 않다</h2>
+<p>한 점 x의 기울기는 그 점에서 어느 쪽으로 손실이 가장 가파르게 증가하는지 알려 줍니다. 다음 점까지 이동하면 기울기도 바뀝니다. 기울기의 변화가 제한되어 있으면 처음 기울기로 만든 직선이 실제 함수와 어느 정도 차이가 날지 예측할 수 있습니다.</p>
+<div class="box "><p class="box-k">정의 · L-매끄러움</p><p>미분 가능 함수 f에서 모든 x,y에 대해 ‖∇f(y)−∇f(x)‖₂ ≤ L‖y−x‖₂이면, 기울기가 L-Lipschitz 연속 또는 <b class="key">L-매끄럽다</b>고 합니다. L은 기울기의 크기가 아니라 두 점 사이에서 그 기울기가 변하는 속도의 상계입니다.</p></div>
+<p>예를 들어 f(x,y)=(1/2)x²+2y²의 기울기는 (x,4y)입니다. 두 입력의 차가 (a,b)이면 기울기의 차는 (a,4b)이고 그 노름은 4√(a²+b²) 이하입니다. y 방향에서 정확히 4배가 되므로 L=4를 쓸 수 있고 그보다 작은 전역 상계는 불가능합니다.</p>
+<div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
+<h2>선분 위에서 생긴 오차를 적분한다</h2>
+<p>이동 벡터를 d라 놓고 x에서 x+d로 가는 선분의 점을 x+td (0≤t≤1)로 적습니다. 한 변수 함수 h(t)=f(x+td)의 도함수는 ∇f(x+td)ᵀd입니다. 기본정리로 h(1)−h(0)을 적분한 뒤, 처음 기울기 ∇f(x)ᵀd를 분리합니다.</p>
+<p class="calc">f(x+d)−f(x)−∇f(x)ᵀd = ∫₀¹ [∇f(x+td)−∇f(x)]ᵀd dt</p>
+<p>내적의 크기는 두 노름 곱 이하이고, 기울기 차의 노름은 Lt‖d‖ 이하입니다. 그러므로 적분되는 양은 Lt‖d‖² 이하입니다. t의 적분이 1/2이어서 다음 상계를 얻습니다.</p>
+<p class="calc">f(x+d) ≤ f(x)+∇f(x)ᵀd+(L/2)‖d‖²</p>
+<p>이것이 <b class="key">하강 보조정리</b>입니다. 곡선을 위에서 감싸는 이차식으로 다음 값을 비교합니다. 이 증명에는 볼록성을 쓰지 않고, 선분에서의 매끄러움과 미적분의 기본정리를 썼습니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 160" role="img" aria-label="함수값 차이를 선분에서 적분하고 기울기 변화의 상계로 이차 보정항을 유도">
+<rect class="f-box" x="42" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="135" y="61" text-anchor="middle">선분 설정</text><text class="f-s" x="135" y="89" text-anchor="middle">x에서 x+d까지</text><text class="f-s" x="135" y="110" text-anchor="middle">기울기의 방향 성분 적분</text><line class="f-line" x1="235" y1="84" x2="278" y2="84" marker-end="url(#f-arrow)"/><rect class="f-soft" x="287" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="380" y="61" text-anchor="middle">오차를 제한</text><text class="f-s" x="380" y="89" text-anchor="middle">L‖td‖ · ‖d‖</text><text class="f-s" x="380" y="110" text-anchor="middle">적분하면 L‖d‖²/2</text><line class="f-line" x1="480" y1="84" x2="523" y2="84" marker-end="url(#f-arrow)"/><rect class="f-box" x="532" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="625" y="61" text-anchor="middle">다음 점의 상계</text><text class="f-s" x="625" y="89" text-anchor="middle">f(x)+∇f(x)ᵀd</text><text class="f-s" x="625" y="110" text-anchor="middle">이차 보정항을 추가</text>
+</svg><figcaption>다음 점의 값을 직접 알지 못해도 기울기와 L을 이용해 얼마 이하인지 비교할 수 있습니다.</figcaption></figure>
+<div class="check" data-q="q3"></div><div class="check" data-q="q4"></div>
+<h2>어떤 스텝을 넣어야 감소하는가</h2>
+<p>경사하강에서는 d=−α∇f(x)입니다. 상계에 대입하면</p>
+<p class="calc">f(x−α∇f(x)) ≤ f(x) − α(1−Lα/2)‖∇f(x)‖²</p>
+<p>입니다. L&gt;0이고 0&lt;α&lt;2/L이면 α(1−Lα/2)&gt;0입니다. 현재 기울기가 0이 아니라면 한 걸음 뒤 값은 엄격히 작아집니다. α=1/L이면 감소량 하한이 ‖∇f(x)‖²/(2L)입니다. 이 값을 쓰고 전체 손실이 f<sub>low</sub> 아래로 내려가지 않는다면 첫 k개 스텝의 감소를 더해</p>
+<p class="calc">Σ<sub>i=0</sub><sup>k−1</sup> ‖∇f(xᵢ)‖² ≤ 2L[f(x₀)−f<sub>low</sub>]</p>
+<p>를 얻습니다. 각 항이 음이 아니므로 처음 k개에서 가장 작은 기울기 노름 제곱은 오른쪽을 k로 나눈 값 이하입니다. 이 결과만으로 비볼록 함수의 전역 최소에 갔다고 주장할 수는 없습니다. 어느 점에서 기울기가 작아지는지 보장하는 식입니다.</p>
+<div class="check" data-q="q5"></div><div class="check" data-q="q6"></div>
+<h2>같은 손실에서 세 스텝을 실행한다</h2>
+<p>f(x,y)=(1/2)x²+2y²에서 이동식은 x′=(1−α)x, y′=(1−4α)y입니다. α=1/4에서는 y가 한 번에 0이 됩니다. α=1/2에서는 y가 −y가 되므로 y만 있는 방향의 비용은 변하지 않습니다. α=3/4에서는 y가 −2y라 절댓값이 커집니다.</p>
+<pre data-example="python"><code>from fractions import Fraction as F
+
+def value(x, y):
+    return x*x/2 + 2*y*y
+
+def step(x, y, alpha):
+    return (1-alpha)*x, (1-4*alpha)*y
+
+for alpha, point in ((F(1,4), (F(2), F(2))),
+                     (F(1,2), (F(0), F(2))),
+                     (F(3,4), (F(0), F(2)))):
+    updated = step(*point, alpha)
+    print(f&quot;α={alpha}: {point[0]},{point[1]} → {updated[0]},{updated[1]}&quot;)
+    print(&quot;비용:&quot;, value(*point), &quot;→&quot;, value(*updated))</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>α=1/4: 2,2 → 3/2,0
+비용: 10 → 9/8
+α=1/2: 0,2 → 0,-2
+비용: 8 → 8
+α=3/4: 0,2 → 0,-4
+비용: 8 → 32</code></pre>
+<p>실습에서 L을 미리 알 수 없는 경우에는 스텝을 줄여 보며 충분한 감소를 만족하는지 검사할 수 있습니다. 실험으로 선택한 스텝을 다른 자료에 적용하기 전에는 스케일이 바뀌었는지 살핍니다. 사례의 x,y 단위가 바뀌면 같은 스텝이 같은 정도로 움직인다는 보장이 없기 때문입니다.</p>
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table><thead><tr><th scope="col">확인 대상</th><th scope="col">결론</th></tr></thead><tbody><tr><td>기울기 변화의 상계 L</td><td>이동 d에 대해 1차 근사 오차가 위로 (L/2)‖d‖² 이하다.</td></tr><tr><td>스텝이 작을 때</td><td>0&lt;α&lt;2/L이면 비영 기울기에서 감소.</td></tr><tr><td>장기 제어</td><td>하한이 있으면 일부 스텝의 작은 기울기를 보장한다.</td></tr></tbody></table></div>
+
+<h2>참고 자료</h2>
+<ul><li><a href="https://web.mit.edu/~gfarina/www/notes/">MIT 6.7220 · Convex Optimization</a></li><li><a href="https://web.stanford.edu/~boyd/cvxbook/">Boyd·Vandenberghe · Convex Optimization, 경사하강</a></li></ul>
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

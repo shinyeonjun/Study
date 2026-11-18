@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>σ-대수와 측도에서 사건과 영집합을 정하기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e8c'/%3E%3Cpath d='M8 22V10m8 12V14m8 8V6' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="RA04-1">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+
+<header class="chapter">
+<p class="chap-sub">해석학 · RA04 측도와 르베그 적분</p>
+<p class="chap-num">RA04·1</p>
+<h1>σ-대수와 측도에서 사건과 영집합을 정하기</h1>
+<p class="lead">한 점의 확률은 0이어도 구간에는 양의 확률이 있을 수 있습니다. 합쳐도 다룰 수 있는 사건들의 모임을 정하고, 길이와 확률이 함께 만족하는 가산성 조건을 증명에 사용합니다.</p>
+</header>
+
+<div class="goal">
+<h2>이 장을 읽고 나면</h2>
+<ul>
+<li>σ-대수의 닫힘 조건과 측도의 가산 가법성을 구분한다.</li>
+<li>르베그 길이에서 가산 집합이 영집합임을 보인다.</li>
+<li>측도 공간을 확률 공간으로 읽고 거의 확실한 사건을 해석한다.</li>
+</ul>
+</div>
+<h2>어떤 부분집합까지 사건으로 다루는가</h2>
+
+<p>주사위 한 번의 모든 결과를 <var>Ω={1,2,3,4,5,6}</var>라고 합시다. 결과 전체는 항상 일어난다는 사건이고, “짝수”와 “짝수가 아님”도 함께 다루고 싶습니다. 전체 공간의 모든 부분집합을 사용할 수도 있고, 관측할 수 있는 종류만 남긴 작은 사건 모임을 쓸 수도 있습니다. 무엇을 사건이라고 부를지 먼저 정합니다.</p>
+<div class="box"><p class="box-k">정의 · σ-대수</p>
+<p><var>𝓕</var>가 <var>Ω</var>의 부분집합들의 모임일 때, (1) <var>Ω∈𝓕</var>, (2) <var>A∈𝓕</var>이면 <var>Ω∖A∈𝓕</var>, (3) <var>A₁,A₂,…∈𝓕</var>이면 <var>⋃ₙAₙ∈𝓕</var>를 만족하면 <b class="key">σ-대수</b>입니다.</p></div>
+<p>전체의 여집합을 취하면 공집합이 들어갑니다. 뒤에 빈 집합들을 이어 붙이면 유한 합집합도 허용됩니다. De Morgan 법칙으로 <var>⋂ₙAₙ=Ω∖⋃ₙ(Ω∖Aₙ)</var>도 들어갑니다. 따라서 가산 개의 조건을 모두 만족하는 사건이나 적어도 하나를 만족하는 사건도 다룰 수 있습니다. <strong>가산</strong>은 번호를 붙여 나열할 수 있는 경우이며 유한한 경우도 포함합니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 238" role="img" aria-label="주사위 결과 {1,3,5}와 {2,4,6}을 두 덩어리로 적은 짝홀 사건 모임. 덩어리 하나를 나누는 단일 결과 사건은 이 모임에 없다">
+<text class="f-cap" x="380" y="28" text-anchor="middle">짝인지 홀인지만 관측할 때의 사건 모임</text>
+<rect class="f-box" x="91" y="57" width="578" height="149" rx="3"/>
+<rect class="f-soft" x="111" y="80" width="259" height="89" rx="3"/>
+<rect class="f-soft" x="390" y="80" width="259" height="89" rx="3"/>
+<text class="f-cap" x="241" y="106" text-anchor="middle">홀수 O</text>
+<text class="f-cap" x="519" y="106" text-anchor="middle">짝수 E</text>
+<circle class="f-box" cx="174" cy="139" r="18"/>
+<text class="f-t" x="174" y="145" text-anchor="middle">1</text>
+<circle class="f-box" cx="241" cy="139" r="18"/>
+<text class="f-t" x="241" y="145" text-anchor="middle">3</text>
+<circle class="f-box" cx="307" cy="139" r="18"/>
+<text class="f-t" x="307" y="145" text-anchor="middle">5</text>
+<circle class="f-box" cx="451" cy="139" r="18"/>
+<text class="f-t" x="451" y="145" text-anchor="middle">2</text>
+<circle class="f-box" cx="519" cy="139" r="18"/>
+<text class="f-t" x="519" y="145" text-anchor="middle">4</text>
+<circle class="f-box" cx="586" cy="139" r="18"/>
+<text class="f-t" x="586" y="145" text-anchor="middle">6</text>
+<text class="f-s" x="380" y="191" text-anchor="middle">Ω에서 가측인 부분집합: ∅, O, E, Ω</text>
+</svg>
+<figcaption>두 덩어리는 합치거나 통째로 제외할 수 있습니다. 사건 {2}는 짝수 덩어리의 일부만 떼므로 이 σ-대수에 속하지 않습니다.</figcaption>
+</figure>
+<p><b>유한 조건만으로 부족한 예.</b> <var>Ω=ℕ</var>에서 유한 집합과 여집합이 유한인 집합만 모으면 전체와 여집합, 유한 합집합에는 닫힙니다. 하지만 <var>{2},{4},{6},…</var>을 하나씩 넣어 만든 가산 합집합은 짝수 전체입니다. 짝수도 무한하고 홀수도 무한이므로 이 합집합은 그 모임에 없습니다.</p>
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+
+<h2>서로 겹치지 않는 사건은 크기를 더한다</h2>
+
+<p><var>𝓕</var>를 정했다면 크기를 지정합니다. <b class="key">측도</b>는 함수 <var>μ:𝓕→[0,∞]</var>로 <var>μ(∅)=0</var>이며, 서로소인 가측 집합 <var>A₁,A₂,…</var>에 대해 <var>μ(⋃ₙAₙ)=Σₙμ(Aₙ)</var>입니다. 가측 집합은 <var>𝓕</var>에 속한 집합입니다. 일반 측도는 공간 전체에 1을 줄 필요가 없고 무한대인 값도 허용합니다. <var>(Ω,𝓕,μ)</var>를 <b>측도 공간</b>이라고 합니다.</p>
+<p><b>단조성.</b> <var>A⊆B</var>이면 <var>B=A∪(B∖A)</var>는 서로소 합집합이므로 <var>μ(B)=μ(A)+μ(B∖A)≥μ(A)</var>입니다.</p>
+<p><b>가산 부분가법성.</b> 집합들이 겹치면 가법성 식을 곧바로 쓰지 않습니다. <var>B₁=A₁, B₂=A₂∖A₁, B₃=A₃∖(A₁∪A₂), …</var>처럼 같은 점을 처음 세었을 때만 넣습니다. 이 B들은 서로소이고 합집합은 원래와 같으며 <var>Bₙ⊆Aₙ</var>입니다. 따라서 <var>μ(⋃ₙAₙ)=Σₙμ(Bₙ)≤Σₙμ(Aₙ)</var>입니다. 이 부등식은 예외 사건을 모을 때 사용합니다.</p>
+<div class="check" data-q="q3"></div>
+<div class="check" data-q="q4"></div>
+
+<h2>길이에서 크기 0인 집합을 확인한다</h2>
+
+<p>실수에서 열린 집합들을 포함하는 가장 작은 σ-대수를 <b class="key">Borel σ-대수</b>라고 합니다. 모든 σ-대수의 교집합은 다시 σ-대수이므로, 열린 집합들을 포함하는 σ-대수들을 전부 교차시키는 방식으로 이 모임을 정의할 수 있습니다. 실수의 <b class="key">르베그 측도</b> <var>m</var>는 이 집합들과 더 많은 집합에 정의되며 <var>m([a,b])=b-a</var>라는 길이 성질을 갖습니다.</p>
+<p>구성의 출발점은 임의의 집합 E를 가산 개의 열린 구간으로 덮고 길이 합의 하한 <var>m*(E)</var>을 잡는 것입니다. <var>m*</var>를 <strong>외측도</strong>라고 합니다. Carathéodory의 구성은 모든 집합 A를 E 안과 밖으로 쪼갤 때 <var>m*(A)=m*(A∩E)+m*(A∖E)</var>가 성립하는 E들을 모아 σ-대수를 만들고, 그 위에서 <var>m*</var>가 가산 가법적임을 증명합니다. 이 장에서는 이 구성 정리를 바탕으로 앞의 가법성과 구간 길이를 사용합니다.</p>
+<p><b>영집합.</b> 가측 집합 <var>N</var>이 <var>m(N)=0</var>이면 <b class="key">영집합</b>입니다. 닫힌 한 점 집합 <var>{x}</var>는 길이가 원하는 만큼 작은 구간 안에 들어가므로 측도가 0입니다. 따라서 가산 개의 점은 부분가법성으로 0입니다. 직접 덮을 수도 있습니다. <var>{q₁,q₂,…}</var>에서 임의의 <var>ε&gt;0</var>에 대해 각 qₙ 주위에 폭 <var>ε/2ⁿ</var>인 열린 구간을 놓으면 폭의 합은 ε입니다. 외측도는 임의로 작은 양수 이하이므로 0입니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 211" role="img" aria-label="가산 개의 점마다 작은 구간을 배정하고 전체 길이 합을 엡실론으로 맞춘다">
+<text class="f-cap" x="380" y="33" text-anchor="middle">가산 개의 점을 길이 합 ε로 덮는다</text>
+<text class="f-t" x="180" y="82" text-anchor="end">번호 n</text>
+<rect class="f-box" x="206" y="58" width="120" height="38" rx="3"/>
+<text class="f-t" x="266" y="83" text-anchor="middle">1</text>
+<rect class="f-box" x="332" y="58" width="120" height="38" rx="3"/>
+<text class="f-t" x="392" y="83" text-anchor="middle">2</text>
+<rect class="f-box" x="458" y="58" width="120" height="38" rx="3"/>
+<text class="f-t" x="518" y="83" text-anchor="middle">3</text>
+<rect class="f-box" x="584" y="58" width="120" height="38" rx="3"/>
+<text class="f-t" x="644" y="83" text-anchor="middle">…</text>
+<text class="f-t" x="180" y="128" text-anchor="end">점 qₙ 주위 폭</text>
+<rect class="f-box" x="206" y="104" width="120" height="38" rx="3"/>
+<text class="f-t" x="266" y="129" text-anchor="middle">ε/2</text>
+<rect class="f-box" x="332" y="104" width="120" height="38" rx="3"/>
+<text class="f-t" x="392" y="129" text-anchor="middle">ε/4</text>
+<rect class="f-box" x="458" y="104" width="120" height="38" rx="3"/>
+<text class="f-t" x="518" y="129" text-anchor="middle">ε/8</text>
+<rect class="f-box" x="584" y="104" width="120" height="38" rx="3"/>
+<text class="f-t" x="644" y="129" text-anchor="middle">…</text>
+<text class="f-t" x="180" y="174" text-anchor="end">ε=1/4의 예</text>
+<rect class="f-box" x="206" y="150" width="120" height="38" rx="3"/>
+<text class="f-t" x="266" y="175" text-anchor="middle">1/8</text>
+<rect class="f-box" x="332" y="150" width="120" height="38" rx="3"/>
+<text class="f-t" x="392" y="175" text-anchor="middle">1/16</text>
+<rect class="f-box" x="458" y="150" width="120" height="38" rx="3"/>
+<text class="f-t" x="518" y="175" text-anchor="middle">1/32</text>
+<rect class="f-box" x="584" y="150" width="120" height="38" rx="3"/>
+<text class="f-t" x="644" y="175" text-anchor="middle">…</text>
+</svg>
+<figcaption>qₙ의 위치와 관계없이 폭이 ε/2ⁿ인 열린 구간을 각 점 중심으로 잡습니다.</figcaption>
+</figure>
+<p>르베그 측도에서는 외측도가 0인 집합의 모든 부분집합도 가측이며 0입니다. 이유는 <var>N′⊆N</var>이면 단조성 때문에 <var>m*(N′)=0</var>이고, <var>A∩N′</var>도 외측도가 0이어서 부분가법성과 단조성으로 앞의 분할 등식이 성립하기 때문입니다. 일반적인 측도 공간에서 가측 영집합의 모든 부분집합까지 가측인 것을 <strong>완비 측도</strong>의 성질이라고 합니다.</p>
+<div class="check" data-q="q5"></div>
+
+<h2>총크기가 1이면 확률로 읽는다</h2>
+
+<p>측도 <var>P</var>가 <var>P(Ω)=1</var>이면 <b>확률측도</b>이고 <var>(Ω,𝓕,P)</var>는 확률 공간입니다. 공정한 주사위에서 원소 6개에 각각 <var>1/6</var>을 주고, 가측 사건의 확률을 합으로 정합니다. 전부를 기록하는 사건 모임에서는 <var>P({2})=1/6</var>입니다. 짝과 홀만 기록하는 사건 모임에서는 <var>P(E)=P(O)=1/2</var>를 정의하지만 <var>{2}</var>는 그 모임의 사건이 아닙니다.</p>
+<p><var>[0,1]</var>에서 균등하게 수를 뽑는다면 구간의 길이가 확률입니다. 한 점마다 확률은 0이지만 [0,1]은 셀 수 없을 만큼 많은 점을 포함합니다. 가산 가법성은 가산 합집합에 대해 적용됩니다. 유리수 전체는 가산이라 <var>P(X∈ℚ)=0</var>입니다.</p>
+<p>명제의 예외들이 어떤 가측 영집합 안에 들어가면 그 명제가 <b class="key">거의 모든 곳</b>(a.e.)에서 성립한다고 합니다. 확률측도에서는 <b>거의 확실히</b>(almost surely)라고 부릅니다. 따라서 균등한 수가 무리수라는 사건은 거의 확실히 성립합니다. 가산 개의 성질이 각각 거의 확실히 성립하면, 그 예외 집합들의 가산 합집합도 측도 0이라 모든 성질이 한꺼번에 거의 확실히 성립합니다.</p>
+<div class="check" data-q="q6"></div>
+<h2>손계산을 Python으로 검산한다</h2>
+<pre data-example="python"><code>from fractions import Fraction as F
+
+outcomes = set(range(1, 7))
+even = {x for x in outcomes if x % 2 == 0}
+odd = outcomes - even
+events = [set(), odd, even, outcomes]
+print(&quot;coarse events:&quot;, [sorted(event) for event in events])
+print(&quot;masses:&quot;, [str(F(len(event), 6)) for event in events])
+print(&quot;singleton {2} is measurable here:&quot;, {2} in events)
+
+epsilon = F(1, 4)
+for count in [1, 3, 5]:
+    width = sum(epsilon / 2**n for n in range(1, count+1))
+    print(count, &quot;cover widths:&quot;, width, &quot;remaining budget:&quot;, epsilon-width)</code></pre>
+<pre data-output><code>coarse events: [[], [1, 3, 5], [2, 4, 6], [1, 2, 3, 4, 5, 6]]
+masses: ['0', '1/2', '1/2', '1']
+singleton {2} is measurable here: False
+1 cover widths: 1/8 remaining budget: 1/8
+3 cover widths: 7/32 remaining budget: 1/32
+5 cover widths: 31/128 remaining budget: 1/128</code></pre>
+<p class="small">Python 3.14.6으로 실행했습니다. 폭의 합은 몇 개를 더한 뒤 남은 몫까지 추적합니다. 무한히 이어지는 덮개에서 합이 ε인 이유는 등비합 공식입니다.</p>
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://terrytao.wordpress.com/2010/09/09/245a-notes-1-lebesgue-measure/">Terence Tao, UCLA 245A Notes 1 · Lebesgue Measure</a></li>
+<li><a href="https://terrytao.wordpress.com/2010/09/25/245a-notes-3-integration-on-abstract-measure-spaces-and-the-convergence-theorems/">Terence Tao, UCLA 245A Notes 3 · Abstract Measure Spaces</a></li>
+<li><a href="../pr/pr06-1.html">PR06-1 연속 확률과 길이</a></li>
+</ul>
+
+<h2>확인 문제</h2>
+<p>아직 풀지 않은 문제입니다. 먼저 식이나 근거를 적어 보고 해설을 확인합니다.</p>
+<div id="quiz"></div>
+
+<section class="work" id="tools"></section>
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Viterbi로 전체 상태열의 최빈값 찾기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="AI08-2">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">인공지능의 기본 문제 · AI08 시간에 따른 상태 추론</p>
+<p class="chap-num">AI08·2</p>
+<h1>Viterbi로 전체 상태열의 최빈값 찾기</h1>
+<p class="lead">각 날 가장 그럴듯한 상태를 줄지어 적어도, 가장 그럴듯한 사흘짜리 경로가 된다는 보장은 없습니다. 상태 사이 전이확률이 경로 전체의 점수에 들어가기 때문입니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>전체 상태열과 시점별 최빈값의 손실 기준을 비교한다.</li><li>가장 큰 이전 경로를 택하는 점화식 및 포인터를 유도한다.</li><li>경로 열거와 동적 계획으로 분수 결과를 비교한다.</li></ul></div>
+
+<h2>경로 질량은 상태마다 조건을 이어 곱한다</h2>
+<p>앞 장과 같은 모형에서 관측은 1,0,1입니다. 숨은 경로가 (1,1,1)인 경우 관측까지의 결합확률은 (1/2)·(3/4)·(3/4)·(1/4)·(3/4)·(3/4)=81/2048입니다. 관측은 고정되므로 어떤 경로의 사후확률을 구할 때도 모두 같은 관측열 가능도 13/128로 나눕니다. 따라서 조건부확률이 가장 큰 경로는 결합확률이 가장 큰 경로입니다. 이를 <b class="key">최대 사후 확률(MAP) 경로</b>라고 합니다.</p>
+<p>상태 두 개에 길이 n이면 후보가 2ⁿ개입니다. 같은 끝 상태를 공유하는 두 경로의 뒤에 동일한 나머지 상태를 붙인다고 가정합시다. 마르코프 조건에 따라 미래 부분은 끝 상태만 보므로 붙이는 조건부 확률은 같습니다. 그래서 같은 끝 상태 뒤에서는 더 큰 질량을 가진 접두만 보존해도 최댓값을 잃지 않습니다.</p>
+<h2>끝 상태별 최고를 저장하고 거꾸로 찾는다</h2>
+<p><var>δₜ(j)</var>는 시점 t까지 j로 끝나는 경로 가운데 가장 큰 관측 포함 질량입니다. 초기값은 전방 계산과 같습니다. 다음 상태 j로 올 수 있는 각 이전 상태 i를 비교하고, 가장 큰 위치를 <var>backₜ(j)</var>에 적습니다.</p>
+<p class="calc">δₜ(j)= bⱼ(yₜ) · maxᵢ[δₜ₋₁(i) Tᵢⱼ]</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 160" role="img" aria-label="끝 상태마다 최고 질량과 이전 상태 포인터를 저장하고 마지막 최고 상태에서 포인터를 거꾸로 읽는다.">
+<rect class="f-box" x="42" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="135" y="61" text-anchor="middle">이전 δ</text><text class="f-s" x="135" y="89" text-anchor="middle">끝 상태별로</text><text class="f-s" x="135" y="110" text-anchor="middle">최고 질량을 저장</text><line class="f-line" x1="235" y1="84" x2="278" y2="84" marker-end="url(#f-arrow)"/><rect class="f-soft" x="287" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="380" y="61" text-anchor="middle">현재 상태 j</text><text class="f-s" x="380" y="89" text-anchor="middle">전이 후 최댓값</text><text class="f-s" x="380" y="110" text-anchor="middle">이전 상태를 기록</text><line class="f-line" x1="480" y1="84" x2="523" y2="84" marker-end="url(#f-arrow)"/><rect class="f-box" x="532" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="625" y="61" text-anchor="middle">복원</text><text class="f-s" x="625" y="89" text-anchor="middle">마지막 최고에서</text><text class="f-s" x="625" y="110" text-anchor="middle">포인터를 역순으로</text>
+</svg><figcaption>최대 질량만 저장하면 끝 부분 이전의 경로를 되찾을 수 없다.</figcaption></figure>
+<p>관측 가능도가 0인 상태의 경로는 질량을 0으로 둡니다. 양의 관측열 가능도가 전제된 실습에서는 마지막에 양의 최댓값이 있습니다. 최댓값을 만드는 여러 이전 상태가 동점일 때 이 코드는 작은 상태 번호를 먼저 골라 결과를 고정합니다. 상태가 K개이면 조밀한 전이의 경우 시점마다 K개의 끝점에 K개의 이전 상태를 비교해 전체 O(nK²)번 계산합니다.</p>
+<div class="check" data-q="q1"></div><div class="check" data-q="q2"></div><div class="check" data-q="q3"></div><div class="check" data-q="q4"></div>
+<h2>보고서에 무엇이 맞아야 하는가</h2>
+<div class="table-wrap"><table><thead><tr><th scope="col">선택할 답</th><th scope="col">실패에 매기는 손실</th><th scope="col">이 예의 둘째 상태</th></tr></thead><tbody><tr><td>Viterbi MAP 경로</td><td>경로 전체가 다르면 손실 1</td><td>1</td></tr><tr><td>시점별 사후 최빈값</td><td>잘못 쓴 시점마다 손실 1</td><td>0</td></tr></tbody></table></div>
+<p>둘째 상태의 사후확률은 0이 27/52, 1이 25/52입니다. 따라서 날짜마다 하나씩 채점하면 둘째에 0이 유리합니다. 전체 경로에 대해 한 자리만 달라도 틀렸다고 하면 사후 질량이 가장 큰 1,1,1이 유리합니다. 상태열에 허용되지 않은 전이가 있다면 시점별 최빈을 각각 이은 결과가 실제 가능한 경로인지도 확인합니다.</p>
+<div class="check" data-q="q5"></div><div class="check" data-q="q6"></div><div class="check" data-q="q7"></div>
+<h2>모든 경로를 별도로 열거해 확인하기</h2>
+<pre data-example="python"><code>from fractions import Fraction as F
+from itertools import product
+from math import prod
+
+states = (0, 1)
+y = (1, 0, 1)
+T = ((F(3,4), F(1,4)), (F(1,4), F(3,4)))
+B = ((F(3,4), F(1,4)), (F(1,4), F(3,4)))
+scores = [F(1,2)*B[j][y[0]] for j in states]
+back = []
+for obs in y[1:]:
+    incoming = [[scores[i]*T[i][j] for i in states] for j in states]
+    pointers = [max(states, key=row.__getitem__) for row in incoming]
+    scores = [incoming[j][pointers[j]]*B[j][obs] for j in states]
+    back.append(pointers)
+j = max(states, key=scores.__getitem__)
+path = [j]
+for pointers in reversed(back):
+    path.append(pointers[path[-1]])
+path = tuple(reversed(path))
+
+def mass(z):
+    return F(1,2)*B[z[0]][y[0]]*prod(
+        T[z[t-1]][z[t]]*B[z[t]][y[t]] for t in range(1,len(y)))
+
+pairs = [(mass(z), z) for z in product(states, repeat=len(y))]
+assert mass(path) == scores[j] == max(p for p,z in pairs)
+total = sum(p for p,z in pairs)
+second_zero = sum(p for p,z in pairs if z[1]==0)
+print(path, scores[j], scores[j]/total)
+print(total, second_zero/total)</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>(1, 1, 1) 81/2048 81/208
+13/128 27/52</code></pre>
+<div class="check" data-q="q8"></div>
+
+<h2>참고 자료</h2>
+<ul><li><a href="https://inst.eecs.berkeley.edu/~cs188/textbook/hmms/viterbi.html">UC Berkeley CS188 · Viterbi 알고리즘</a></li></ul>
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

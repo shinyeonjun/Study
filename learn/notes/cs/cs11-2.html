@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>음수 가중치에서 간선 수와 위상 순서로 정확성 증명하기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e8c'/%3E%3Cpath d='M8 22V10m8 12V14m8 8V6' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="CS11-2">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+
+<header class="chapter">
+<p class="chap-sub">자료구조·알고리즘 · CS11 최단경로와 그래프 알고리즘의 정확성</p>
+<p class="chap-num">CS11·2</p>
+<h1>음수 가중치에서 간선 수와 위상 순서로 정확성 증명하기</h1>
+<p class="lead">비용이 나중에 낮아질 수 있으므로 가장 작은 후보를 먼저 확정한다는 규칙은 쓰기 어렵습니다. 허용 간선 수 또는 그래프의 순서를 이용합니다.</p>
+</header>
+
+<div class="goal">
+<h2>이 장을 읽고 나면</h2>
+<ul>
+<li>간선을 k개 이하로 쓰는 보행의 동기 Bellman–Ford 점화식을 증명한다.</li>
+<li>도달 가능한 음수 순환의 영향을 구분한다.</li>
+<li>DAG의 위상 순서에서 음수 간선도 한 번씩 완화하는 이유를 설명한다.</li>
+</ul>
+</div>
+
+<h2>최대 몇 간선까지 고려했는지 거리를 구분합니다</h2>
+<p>방향 간선이 S→A(4), S→B(5), A→B(−2), A→T(4), B→T(3)인 그래프입니다. <b class="key">보행</b>(walk)은 방향 간선을 따라 이동하는 정점의 나열이며, 같은 정점이나 간선을 여러 번 지날 수 있습니다. 정점을 반복하지 않는 보행은 단순 경로입니다. dₖ(v)는 S에서 v까지 간선을 최대 k개 쓰는 보행의 최저 비용입니다. 처음에는 S의 0 외에 모두 ∞입니다. k+1번째에서 기존 dₖ(v)를 그대로 쓰거나, 마지막 간선 u→v를 붙여 dₖ(u)+w(u,v)를 후보로 쓸 수 있습니다. 모든 마지막 간선과 기존 값을 비교하는 것이 <b class="key">Bellman–Ford</b>의 동기 점화식입니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 178" role="img" aria-label="최대 간선 수별 S,A,B,T 거리 후보">
+<rect class="f-box" x="29" y="16" width="702" height="25" rx="3"/>
+<text class="f-s" x="117" y="35" text-anchor="middle">간선 수</text>
+<text class="f-s" x="244" y="35" text-anchor="middle">S</text>
+<text class="f-s" x="364" y="35" text-anchor="middle">A</text>
+<text class="f-s" x="492" y="35" text-anchor="middle">B</text>
+<text class="f-s" x="629" y="35" text-anchor="middle">T</text>
+<rect class="f-box" x="29" y="46" width="702" height="25" rx="3"/>
+<text class="f-t" x="117" y="65" text-anchor="middle">0</text>
+<text class="f-t" x="244" y="65" text-anchor="middle">0</text>
+<text class="f-t" x="364" y="65" text-anchor="middle">∞</text>
+<text class="f-t" x="492" y="65" text-anchor="middle">∞</text>
+<text class="f-t" x="629" y="65" text-anchor="middle">∞</text>
+<rect class="f-box" x="29" y="76" width="702" height="25" rx="3"/>
+<text class="f-t" x="117" y="95" text-anchor="middle">1</text>
+<text class="f-t" x="244" y="95" text-anchor="middle">0</text>
+<text class="f-t" x="364" y="95" text-anchor="middle">4</text>
+<text class="f-t" x="492" y="95" text-anchor="middle">5</text>
+<text class="f-t" x="629" y="95" text-anchor="middle">∞</text>
+<rect class="f-box" x="29" y="106" width="702" height="25" rx="3"/>
+<text class="f-t" x="117" y="125" text-anchor="middle">2</text>
+<text class="f-t" x="244" y="125" text-anchor="middle">0</text>
+<text class="f-t" x="364" y="125" text-anchor="middle">4</text>
+<text class="f-t" x="492" y="125" text-anchor="middle">2</text>
+<text class="f-t" x="629" y="125" text-anchor="middle">8</text>
+<rect class="f-soft" x="29" y="136" width="702" height="25" rx="3"/>
+<text class="f-t" x="117" y="155" text-anchor="middle">3</text>
+<text class="f-t" x="244" y="155" text-anchor="middle">0</text>
+<text class="f-t" x="364" y="155" text-anchor="middle">4</text>
+<text class="f-t" x="492" y="155" text-anchor="middle">2</text>
+<text class="f-t" x="629" y="155" text-anchor="middle">5</text>
+</svg>
+<figcaption>벨만–포드 예제는 한 행을 만들 때 직전 행만 읽습니다. 새 행에 적힌 값을 같은 행에서 바로 쓰지 않습니다.</figcaption>
+</figure>
+<p>값이 맞다는 증명은 k에 대해 귀납적입니다. 간선을 하나도 쓰지 않으면 S만 갈 수 있습니다. 간선을 k+1개 이하로 쓰는 보행은 이미 k개 이하를 쓰거나, 마지막 간선을 제거하면 k개 이하를 쓰는 보행이 됩니다. 반대로 기존 비용과 마지막 간선을 붙인 비용은 모두 간선을 k+1개 이하로 쓰는 보행으로부터 나옵니다. 예제의 마지막 교체는 S→A→B의 2에 B→T의 3을 더한 5입니다.</p>
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+<div class="check" data-q="q3"></div>
+<h2>더 줄어드는 값이 있으면 순환까지 살핍니다</h2>
+<p>도달 가능한 음수 순환이 없으면, 보행에서 같은 정점으로 돌아오는 부분의 비용은 0 이상입니다. 이런 부분을 제거해도 비용이 커지지 않으므로, 도달 가능한 정점에는 |V|−1개 이하의 간선을 쓰는 단순 경로로 최저 비용에 도달할 수 있습니다. 그 뒤 한 번 더 완화해 값이 실제로 낮아지는 정점이 있으면, S에서 갈 수 있는 쪽에 음수 순환이 있습니다. 음수 순환을 거쳐 갈 수 있는 정점들은 순환을 반복해 비용을 계속 낮출 수 있습니다. 출발점이 순환까지 도달하는가와 순환에서 어느 정점까지 다시 갈 수 있는가를 각각 확인합니다.</p>
+<p>반대로 도달 가능한 음수 순환이 있는데도 추가 완화에서 아무 값도 줄지 않았다고 합시다. 도달 가능한 정점은 비용을 무시하고 정점 반복을 제거하면 |V|−1개 이하의 간선으로 갈 수 있으므로, 직전 행에서 모두 유한한 값을 가집니다. 추가 완화가 일어나지 않았다면 순환의 모든 간선 u→v에서 d(v)≤d(u)+w(u,v)입니다. 순환을 한 바퀴 돌며 이 부등식을 합치면 각 d가 양변에서 상쇄되어 0≤순환 비용을 얻습니다. 따라서 음수라는 가정과 모순입니다.</p>
+<p>예제에 T→A(−4)를 붙이면 A→B→T→A의 합은 −2+3−4=−3입니다. S에서 A로 갈 수 있어 이 순환은 접근 가능합니다. 세 번의 동기 완화 뒤 T의 5로부터 A에 다음 후보 1이 생기므로 값이 계속 변합니다. S로 돌아오는 간선은 없으므로 S의 값 0은 이 순환 때문에 내려가지 않습니다.</p>
+<div class="check" data-q="q4"></div>
+<div class="check" data-q="q5"></div>
+<div class="check" data-q="q6"></div>
+<h2>순환이 없으면 위상 순서대로 한 번씩 봅니다</h2>
+<p>원래 그래프에는 순환이 없고 S,A,B,T는 가능한 <b class="key">위상 순서</b>입니다. 모든 간선이 앞 정점에서 뒤 정점으로만 향합니다. 처리할 v의 어떤 경로도 마지막에 먼저 처리한 u에서 와야 합니다. 따라서 v에 들어올 후보는 v 차례 전에 모두 완화됐습니다. 가중치가 음수여도 이 구조에서는 귀납적으로 정확합니다. 위상 순서를 구하는 비용까지 포함하면 한 번 순회로 O(|V|+|E|)입니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 152" role="img" aria-label="위상 순서 S,A,B,T와 각 정점의 최단 거리 0,4,2,5">
+<rect class="f-box" x="27" y="57" width="131" height="40" rx="3"/>
+<text class="f-t" x="92" y="81" text-anchor="middle">S · 0</text>
+<rect class="f-box" x="219" y="57" width="131" height="40" rx="3"/>
+<text class="f-t" x="284" y="81" text-anchor="middle">A · 4</text>
+<rect class="f-box" x="411" y="57" width="131" height="40" rx="3"/>
+<text class="f-t" x="476" y="81" text-anchor="middle">B · 2</text>
+<rect class="f-soft" x="603" y="57" width="131" height="40" rx="3"/>
+<text class="f-t" x="668" y="81" text-anchor="middle">T · 5</text>
+<line class="f-ink" x1="158" y1="77" x2="214" y2="77" marker-end="url(#f-arrow)"/>
+<text class="f-s" x="186" y="63" text-anchor="middle">4</text>
+<line class="f-ink" x1="350" y1="77" x2="406" y2="77" marker-end="url(#f-arrow)"/>
+<text class="f-s" x="378" y="63" text-anchor="middle">-2</text>
+<line class="f-ink" x1="542" y1="77" x2="598" y2="77" marker-end="url(#f-arrow)"/>
+<text class="f-s" x="570" y="63" text-anchor="middle">3</text>
+<text class="f-s" x="380" y="124" text-anchor="middle">추가 링크 S→B=5, A→T=4도 앞에서 뒤로 향함</text>
+</svg>
+<figcaption>위상 순서에서는 가능한 선행 경로들이 먼저 반영되어 각 정점을 한 번씩 처리할 수 있습니다.</figcaption>
+</figure>
+<h2>동기 완화행과 DAG 한 번 계산을 대조합니다</h2>
+<pre data-example="python"><code>from math import inf
+
+edges = [(&quot;S&quot;,&quot;A&quot;,4),(&quot;S&quot;,&quot;B&quot;,5),(&quot;A&quot;,&quot;B&quot;,-2),(&quot;A&quot;,&quot;T&quot;,4),(&quot;B&quot;,&quot;T&quot;,3)]
+nodes = &quot;SABT&quot;
+initial = dict.fromkeys(nodes,inf)
+initial[&quot;S&quot;] = 0
+
+def step(known, edges):
+    updated = known.copy()
+    for u,v,w in edges:
+        updated[v] = min(updated[v], known[u]+w)
+    return updated
+
+known = initial
+print(0, list(known.values()))
+for k in range(1,len(nodes)):
+    known = step(known,edges)
+    print(k,list(known.values()))
+
+dag = initial.copy()
+outgoing = {u: [] for u in nodes}
+for u,v,w in edges:
+    outgoing[u].append((v,w))
+for u in nodes:
+    for v,w in outgoing[u]:
+        dag[v] = min(dag[v],dag[u]+w)
+assert dag == known
+print(&quot;DAG:&quot;, list(dag.values()))
+
+cyclic = edges + [(&quot;T&quot;,&quot;A&quot;,-4)]
+known = initial
+for _ in range(len(nodes)-1):
+    known = step(known,cyclic)
+extra = step(known,cyclic)
+print(&quot;improved after extra pass:&quot;, [u for u in nodes if extra[u] &lt; known[u]])</code></pre>
+<pre data-output><code>0 [0, inf, inf, inf]
+1 [0, 4, 5, inf]
+2 [0, 4, 2, 8]
+3 [0, 4, 2, 5]
+DAG: [0, 4, 2, 5]
+improved after extra pass: ['A']</code></pre>
+<p>문제마다 구조를 먼저 확인합니다. 무가중치면 BFS로 간선 수를 줄일 수 있고, 비음수 가중치 일반 그래프에는 다익스트라 확정이 성립합니다. 음수 간선이 있는 DAG에는 위상 순서, 순환 가능 그래프에는 거리 반복과 음수 순환 검사처럼 전제에 맞는 방법이 필요합니다.</p>
+
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table>
+<thead><tr><th scope="col">핵심어</th><th scope="col">기억할 기준</th></tr></thead>
+<tbody>
+<tr><td><b class="key">dₖ</b></td><td>최대 k개 간선으로 도달하는 후보 비용</td></tr>
+<tr><td><b class="key">동기 완화</b></td><td>직전 행과 마지막 간선에서 다음 행을 만듦</td></tr>
+<tr><td><b class="key">음수 순환</b></td><td>시작점에서 갈 수 있으면 뒤쪽 경로 비용이 한없이 작아질 수 있음</td></tr>
+<tr><td><b class="key">위상 순서</b></td><td>방향 간선의 선행 정점을 모두 처리한 뒤 값을 확정</td></tr>
+</tbody></table></div>
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>음수 간선은 그래프 구조와 순환 가능성을 함께 확인한 뒤 다룹니다.</p></div>
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://ocw.mit.edu/courses/6-006-introduction-to-algorithms-spring-2020/pages/lecture-notes/">MIT 6.006 · 최단 경로와 음수 가중치</a></li>
+</ul>
+
+<h2>확인 문제</h2>
+<p>아직 풀지 않은 문제입니다. 먼저 식이나 근거를 적어 보고 해설을 확인합니다.</p>
+<div id="quiz"></div>
+
+<section class="work" id="tools"></section>
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

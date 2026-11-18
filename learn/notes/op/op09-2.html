@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>KKT 조건으로 경계의 해를 증명하고 승수를 해석하기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="OP09-2">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">최적화 · 쌍대성</p>
+<p class="chap-num">OP09·2</p>
+<h1>KKT 조건으로 경계의 해를 증명하고 승수를 해석하기</h1>
+<p class="lead">가능한 삼각형 안에서 목표점에 가장 가까운 곳을 찾습니다. 어떤 제약이 실제로 해를 막는지, 그 경계를 조금 움직이면 최적값이 어떻게 변하는지 따로 계산합니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>가능성, 정지성, 상보적 느슨함을 구분해 KKT 조건을 쓸 수 있다.</li><li>볼록 문제에서 조건이 모이면 전역 최적임을 증명할 수 있다.</li><li>두 변수의 제약문제를 직접 풀고 자원 한 단위의 가치를 해석할 수 있다.</li></ul></div>
+
+<h2>식 하나씩 확인하는 네 가지 조건</h2>
+<p>정의역이 전체 실수공간인 미분 가능한 볼록 문제를 둡니다. f를 최소화하면서 gᵢ(x)≤0을 모두 만족해야 하고, 각 gᵢ도 볼록하다고 가정합니다. 라그랑주 함수는 L(x,λ)=f(x)+Σλᵢgᵢ(x)입니다. <b class="key">KKT 조건</b>은 다음 네 가지입니다.</p>
+<div class="table-wrap"><table><thead><tr><th scope="col">이름</th><th scope="col">식</th><th scope="col">확인하는 것</th></tr></thead><tbody><tr><td>원래 가능성</td><td>gᵢ(x*)≤0</td><td>x*가 금지 영역에 있지 않다.</td></tr><tr><td>쌍대 가능성</td><td>λᵢ≥0</td><td>부등식이 라그랑주 하한을 보존한다.</td></tr><tr><td>정지성</td><td>∇f(x*)+Σλᵢ∇gᵢ(x*)=0</td><td>승수를 고정한 L에서 더 낮추는 기울기가 없다.</td></tr><tr><td>상보적 느슨함</td><td>λᵢgᵢ(x*)=0</td><td>여유가 남은 제약에는 양의 승수가 필요하지 않다.</td></tr></tbody></table></div>
+<p>gᵢ(x*)&lt;0이면 제약에 여유가 있어 λᵢ=0입니다. 반대로 λᵢ=0만 보고 제약에 여유가 있다고 추정할 수는 없습니다. 값이 정확히 0인 제약에 승수도 0일 수 있습니다.</p>
+<div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
+<h2>네 조건이 전역 최적을 충분히 보여 주는 이유</h2>
+<p>λᵢ≥0이면 L은 볼록 함수의 음이 아닌 조합이므로 볼록합니다. 미분 가능한 볼록함수는 접평면이 전체 함수의 하한입니다. 따라서 ∇ₓL(x*,λ)=0이면 모든 x에 대해 L(x,λ)≥L(x*,λ)입니다. 이 점에서 상보적 느슨함을 써 L(x*,λ)=f(x*)를 얻습니다.</p>
+<p>어느 다른 가능해 x에서든 L(x,λ)≤f(x)입니다. 이제 f(x*)=L(x*,λ)≤L(x,λ)≤f(x)이므로 x*가 전역 최소입니다. 이 증명은 KKT 조건을 만족하는 쌍을 이미 찾았을 때의 충분성입니다. “모든 최적점에 그런 λ가 반드시 존재하는가?”는 별도의 질문이며, 가령 볼록 문제에서 엄격한 가능점이 존재하는지 확인할 수 있습니다.</p>
+<div class="check" data-q="q3"></div>
+<h2>삼각형에서 목표점에 가장 가깝게 접근한다</h2>
+<p>목표점 (3,2)에 대한 제곱거리의 절반 f(x,y)=[(x−3)²+(y−2)²]/2를 줄입니다. 제약은 x+y≤3, x≥0, y≥0입니다. 제약들을 각각 g₁=x+y−3, g₂=−x, g₃=−y로 적습니다. 목표점은 제약 밖에 있으므로 삼각형 안에서 그 점과 가장 가까운 점을 찾습니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 280" role="img" aria-label="원점과 (3,0), (0,3)으로 이루어진 가능 삼각형에서 (3,2)를 (2,1)로 직교 사영">
+<polygon class="f-soft" points="155,250 335,250 155,70"/>
+<line class="f-ink" x1="120" y1="250" x2="380" y2="250" marker-end="url(#f-arrow)"/><line class="f-ink" x1="155" y1="266" x2="155" y2="44" marker-end="url(#f-arrow)"/>
+<line class="f-dash" x1="275" y1="190" x2="335" y2="130"/>
+<circle class="f-fill" cx="275" cy="190" r="5"/><circle class="f-fill" cx="335" cy="130" r="5"/>
+<text class="f-t" x="206" y="217" text-anchor="middle">가능 영역</text><text class="f-t" x="349" y="121" text-anchor="start">(3, 2)</text><text class="f-t" x="287" y="208" text-anchor="start">(2, 1)</text>
+<text class="f-t" x="386" y="251" text-anchor="middle">x</text><text class="f-t" x="153" y="34" text-anchor="middle">y</text>
+<text class="f-t" x="456" y="166" text-anchor="middle">x + y = 3</text><text class="f-s" x="517" y="195" text-anchor="middle">두 점을 잇는 방향은 (1, 1)</text>
+</svg><figcaption>경계의 법선 방향을 따라 이동해 제약 밖의 목표점에서 가장 가까운 가능점에 닿습니다.</figcaption></figure>
+<p>후보 (2,1)에서는 g₁=0, g₂=−2, g₃=−1입니다. 따라서 λ₂=λ₃=0이어야 합니다. 이 점에서 비용의 기울기는 (−1,−1)이고 첫 제약의 기울기는 (1,1)입니다. λ₁=1이면 정지성이 맞습니다. 세 λ가 음이 아니고 상보 곱도 0입니다. 그러므로 후보가 최적점입니다. 비용이 엄격히 볼록하므로 이 문제의 최적점은 하나입니다.</p>
+<div class="check" data-q="q4"></div><div class="check" data-q="q5"></div>
+<h2>경계를 움직이면 얼마가 달라지는가</h2>
+<p>첫 제약을 x+y≤c로 바꾸되 1&lt;c&lt;5라고 둡니다. 그 범위에서는 해의 두 좌표가 양수이고, 첫 제약이 꽉 찹니다. ∂L/∂x=0과 ∂L/∂y=0에서 x=3−λ, y=2−λ입니다. 합 x+y=c를 넣으면 λ=(5−c)/2입니다. 이를 비용에 대입하면 v(c)=(5−c)²/4입니다. 미분하면 v′(c)=−(5−c)/2=−λ입니다.</p>
+<p>c=3에서 승수 1의 뜻은, 경계를 아주 조금 느슨하게 할 때 늘린 양의 단위당 비용이 처음에 약 1만큼 줄어든다는 것입니다. c를 3에서 4까지 통째로 올리면 비용은 1에서 1/4로 3/4만 줄어듭니다. 기울기가 이동 내내 일정하지 않아서입니다. 적용 범위를 넘어 활성 제약이 바뀌면 식을 다시 구해야 합니다.</p>
+<pre data-example="python"><code>from fractions import Fraction as F
+
+for budget in (2, 3, 4):
+    multiplier = F(5 - budget, 2)
+    x, y = 3 - multiplier, 2 - multiplier
+    residues = (x+y-budget, -x, -y)
+    multipliers = (multiplier, 0, 0)
+    assert max(residues) &lt;= 0 and min(multipliers) &gt;= 0
+    assert all(g*l == 0 for g,l in zip(residues, multipliers))
+    assert (x-3+multiplier, y-2+multiplier) == (0,0)
+    value = ((x-3)**2 + (y-2)**2) / 2
+    print(f&quot;c={budget}: 해 ({x}, {y}), λ={multiplier}, 비용={value}&quot;)</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>c=2: 해 (3/2, 1/2), λ=3/2, 비용=9/4
+c=3: 해 (2, 1), λ=1, 비용=1
+c=4: 해 (5/2, 3/2), λ=1/2, 비용=1/4</code></pre>
+<div class="check" data-q="q6"></div>
+<h2>가능점과 승수를 함께 제시한다</h2>
+<p>보고서에서는 해만 적는 대신 후보와 제약의 값을 먼저 적고, 승수와 정지성의 잔차를 확인합니다. 값이 거의 0으로 보인다고 어떤 제약이 작동 중이라는 결론을 바로 내리기보다, 소수 계산의 허용 오차와 제약이 변할 때 해의 변화도 살핍니다.</p>
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table><thead><tr><th scope="col">검산할 항목</th><th scope="col">이 예에서의 결과</th></tr></thead><tbody><tr><td>가능성</td><td>(2,1)에서 첫 제약은 0, 나머지는 음수.</td></tr><tr><td>정지성과 상보성</td><td>λ=(1,0,0)이 비용 기울기와 제약 기울기를 맞춘다.</td></tr><tr><td>국소 민감도</td><td>1&lt;c&lt;5에서 v′(c)=−λ(c).</td></tr></tbody></table></div>
+
+<h2>참고 자료</h2>
+<ul><li><a href="https://web.stanford.edu/~boyd/cvxbook/">Boyd·Vandenberghe · Convex Optimization, KKT와 민감도</a></li></ul>
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

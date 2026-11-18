@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>라그랑주 함수가 원래 최소값의 하한을 만드는 이유 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="OP09-1">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">최적화 · 쌍대성</p>
+<p class="chap-num">OP09·1</p>
+<h1>라그랑주 함수가 원래 최소값의 하한을 만드는 이유</h1>
+<p class="lead">제약이 있는 최소화에서 좋은 해를 찾으면 최소값에 대한 상한을 얻습니다. 반대로 어느 해도 넘어 내려갈 수 없는 하한을 만들면, 두 값이 만나 최적임을 검증할 수 있습니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>부등식 방향과 승수 부호에서 약한 쌍대성의 증명을 쓸 수 있다.</li><li>한 변수 예에서 쌍대함수를 직접 구하고 최대화할 수 있다.</li><li>원래 문제와 쌍대 문제의 값이 같을 때 무엇이 확인되는지 설명할 수 있다.</li></ul></div>
+
+<h2>최소값이 어디에 있는지 두 방향에서 조인다</h2>
+<p>f(x)=(x−2)²를 최소화하되 x≤1만 허용하겠습니다. x=0은 가능하고 f(0)=4입니다. 더 나은 해가 있을 수도 있으므로 4는 최적값의 상한입니다. x=1까지 가면 비용 1을 얻습니다. 이 값이 최적이라면 1보다 낮은 비용은 불가능하다는 다른 방향의 근거도 필요합니다.</p>
+<p>부등식을 g(x)=x−1≤0으로 적습니다. <b class="key">라그랑주 함수</b> L(x,λ)=f(x)+λg(x)를 만들고 λ≥0으로 제한합니다. 가능한 x에서는 g(x)≤0이므로 λg(x)≤0입니다. 그 x에서 L(x,λ)≤f(x)입니다. “값을 더하니 반드시 원래 비용보다 커진다”라고 읽으면 승수의 부호와 제약 방향을 놓치게 됩니다. 여기서는 가능한 x에 대해 하한을 만드는 데 씁니다.</p>
+<div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
+<h2>어떤 λ에 대해서도 하한을 증명한다</h2>
+<p>제약을 잠시 떼어 x 전체에서 L의 하한값 q(λ)=inf<sub>x</sub>L(x,λ)를 구합니다. x에 다른 정의역 제약을 남겨 두는 경우에는 양쪽에서 일관되게 그 정의역을 사용합니다. 어떤 가능한 x에 대해서도 q(λ)≤L(x,λ)≤f(x)입니다. 따라서 λ≥0인 q(λ)의 값은 가능한 모든 비용의 하한입니다. 이 논증을 <b class="key">약한 쌍대성</b>이라 부릅니다. 여기까지 f가 볼록이라는 가정은 쓰지 않았습니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 160" role="img" aria-label="약한 쌍대성에서 q(λ), 가능한 x의 L, 가능한 x의 비용 f(x) 순으로 값이 커짐">
+<rect class="f-box" x="42" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="135" y="61" text-anchor="middle">쌍대값 q(λ)</text><text class="f-s" x="135" y="89" text-anchor="middle">L의 전체 최솟값 또는 하한</text><text class="f-s" x="135" y="110" text-anchor="middle">어느 x의 L 이하</text><line class="f-line" x1="235" y1="84" x2="278" y2="84" marker-end="url(#f-arrow)"/><rect class="f-soft" x="287" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="380" y="61" text-anchor="middle">가능한 x의 L</text><text class="f-s" x="380" y="89" text-anchor="middle">λ≥0, g(x)≤0</text><text class="f-s" x="380" y="110" text-anchor="middle">f(x)보다 크지 않음</text><line class="f-line" x1="480" y1="84" x2="523" y2="84" marker-end="url(#f-arrow)"/><rect class="f-box" x="532" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="625" y="61" text-anchor="middle">원래 비용 f(x)</text><text class="f-s" x="625" y="89" text-anchor="middle">가능한 x라면 비용의 상한</text><text class="f-s" x="625" y="110" text-anchor="middle">두 값의 차이가 증거</text>
+</svg><figcaption>두 부등식을 각각 보이면 어떤 가능해를 골라도 쌍대값은 하한입니다.</figcaption></figure>
+<p>쌍대 문제는 이 하한 중 가장 큰 것을 구하는 일입니다. 원래 문제(주 문제)의 최적값 p*와 쌍대 문제의 값 d*에 대해 d*≤p*입니다. 차이 p*−d*를 <b class="key">쌍대 간격</b>이라 합니다. 알고 있는 가능해와 가능한 승수로도 f(x)−q(λ)를 계산해 최적값 주변의 남은 폭을 얻습니다.</p>
+<div class="check" data-q="q3"></div>
+<h2>한 변수 예에서 같은 값을 직접 얻는다</h2>
+<p>이번에는 L(x,λ)=(x−2)²+λ(x−1)입니다. λ를 고정하고 x로 미분하면 2(x−2)+λ=0입니다. 이차식이 위로 열려서 x=2−λ/2가 전체 최소입니다. 다시 L에 넣으면</p>
+<p class="calc">q(λ) = (λ/2)² + λ(1−λ/2) = λ−λ²/4</p>
+<p>를 얻습니다. 이 아래로 열린 포물선은 λ=2에서 최대입니다. q(2)=1입니다. 가능한 x=1의 원래 비용 f(1)도 1입니다. 따라서 p*는 1 이상이면서 1 이하라 1입니다. 어느 다른 x가 더 좋은지 하나씩 조사할 필요 없이 하한과 상한이 만난 것입니다.</p>
+<div class="table-wrap"><table><thead><tr><th scope="col">λ</th><th scope="col">L을 최소로 하는 x</th><th scope="col">q(λ)</th></tr></thead><tbody><tr><td>0</td><td>2</td><td>0</td></tr><tr><td>1</td><td>1.5</td><td>0.75</td></tr><tr><td>2</td><td>1</td><td>1</td></tr><tr><td>3</td><td>0.5</td><td>0.75</td></tr></tbody></table></div>
+<div class="check" data-q="q4"></div><div class="check" data-q="q5"></div>
+<h2>함수값을 직접 대입해 증명과 대조하기</h2>
+<pre data-example="python"><code>from fractions import Fraction as F
+
+def objective(x):
+    return (x - 2)**2
+
+def lagrangian(x, multiplier):
+    return objective(x) + multiplier * (x - 1)
+
+for multiplier in range(4):
+    x = 2 - F(multiplier, 2)
+    bound = lagrangian(x, multiplier)
+    assert bound == multiplier - F(multiplier**2, 4)
+    print(f&quot;λ={multiplier}, x={x}, 하한={bound}&quot;)
+
+feasible = F(1)
+certificate = lagrangian(feasible, 2)
+assert feasible &lt;= 1 and objective(feasible) == certificate
+print(&quot;원래 비용과 하한:&quot;, objective(feasible), certificate)</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>λ=0, x=2, 하한=0
+λ=1, x=3/2, 하한=3/4
+λ=2, x=1, 하한=1
+λ=3, x=1/2, 하한=3/4
+원래 비용과 하한: 1 1</code></pre>
+<p>λ=0의 L을 최소로 한 x=2는 원래 제약을 위반합니다. 그래도 q(0)=0은 원래 문제의 유효한 하한입니다. x=2가 원래 해라는 뜻은 아닙니다. 최적임을 결론 내릴 때는 x가 원래 문제에서 가능한지와 비용이 하한에 닿는지를 둘 다 확인합니다.</p>
+<div class="check" data-q="q6"></div>
+<h2>하한이 꼭 닿는가</h2>
+<p>모든 문제에서 강한 쌍대성 d*=p*가 자동으로 성립하지는 않습니다. 이 예에서는 직접 계산해 값이 같았습니다. 여러 제약에서도 가능한 x에서 각 λᵢgᵢ(x)≤0이면 약한 쌍대성은 이어집니다. 다음 장에서는 볼록 문제에서 언제 유한 승수와 함께 최적을 검증할 수 있는지 확인합니다.</p>
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table><thead><tr><th scope="col">항목</th><th scope="col">확인할 식</th></tr></thead><tbody><tr><td>가능해 비용</td><td>x가 원래 제약을 만족하면 f(x)가 최적값의 상한.</td></tr><tr><td>쌍대값</td><td>λ≥0에서 q(λ)=infₓ L(x,λ)가 하한.</td></tr><tr><td>최적성 인증</td><td>가능한 x,λ에서 f(x)=q(λ)이면 둘 사이에 다른 최적값은 없다.</td></tr></tbody></table></div>
+
+<h2>참고 자료</h2>
+<ul><li><a href="https://web.stanford.edu/~boyd/cvxbook/">Boyd·Vandenberghe · Convex Optimization, 쌍대성</a></li></ul>
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

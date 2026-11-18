@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>공통 평균의 불확실성과 사후예측에서 무엇을 점검하는가 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="ST14-2">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">통계 · ST14 계층 베이즈와 예측 점검</p>
+<p class="chap-num">ST14·2</p>
+<h1>공통 평균의 불확실성과 사후예측에서 무엇을 점검하는가</h1>
+<p class="lead">평균 모수를 추정하는 폭과 새 측정의 폭은 다릅니다. 공통 중심에도 분포를 두면 두 실험실의 사후 추정이 연결됩니다. 모형에서 다시 만든 자료로 관측의 어느 특징이 잘 재현되는지 확인합니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2>
+<ul>
+<li>같은 실험실과 새 실험실의 사후예측 분포를 구별한다.</li>
+<li>공통 평균을 적분한 사후의 공분산을 전공분산으로 유도한다.</li>
+<li>사전 민감도와 사후예측 점검의 의미와 한계를 비교한다.</li>
+</ul></div>
+<h2>이미 관측한 실험실에서 다음 값을 예측한다</h2>
+<p>실험실 A의 목표가 다음 관측 <var>Y<sub>new</sub></var>를 예측하는 것이라고 합시다. 앞 장의 고정된 <var>m=10,τ²=1,σ²=4</var>를 쓰면 A의 관측 14 한 개가 주는 평균 모수의 사후는 <var>N(10.8,.8)</var>입니다. <var>Y<sub>new</sub>=θ<sub>A</sub>+ε<sub>new</sub></var>에서 오차는 자료 및 θ와 독립인 <var>N(0,4)</var>입니다. 사후예측은 가능한 θ마다 새 관측 분포를 평균합니다.</p>
+<div class="eq"><var>Y<sub>new</sub>|자료 ∼ N(10.8,.8+4)=N(10.8,4.8).</var></div>
+<p>새 관측의 중앙 95% 사후예측구간은 약 <var>[6.5059,15.0941]</var>입니다. 기존 실험실 A의 평균 모수에 대한 구간에는 사후분산 .8만 들어갑니다. 한 번도 측정하지 않은 새 실험실 C는 아직 자기 자료가 없으므로 <var>θ<sub>C</sub>∼N(10,1)</var>이고 예측은 <var>N(10,1+4)</var>입니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 215" role="img" aria-label="고정 중심일 때 A의 평균 모수 분산은 .8, A의 새 관측은 4.8, 새 실험실 관측은 5다.">
+<text class="f-cap" x="380" y="30" text-anchor="middle">이미 본 집단과 아직 보지 않은 집단</text>
+<rect class="f-soft" x="72" y="49" width="280" height="38"/>
+<text class="f-t" x="212" y="73" text-anchor="middle">대상</text>
+<rect class="f-soft" x="352" y="49" width="166" height="38"/>
+<text class="f-t" x="435" y="73" text-anchor="middle">사후 중심</text>
+<rect class="f-soft" x="518" y="49" width="170" height="38"/>
+<text class="f-t" x="603" y="73" text-anchor="middle">사후 분산</text>
+<rect class="f-box" x="72" y="87" width="280" height="38"/>
+<text class="f-s" x="212" y="111" text-anchor="middle">이미 본 A의 평균 θ</text>
+<rect class="f-box" x="352" y="87" width="166" height="38"/>
+<text class="f-s" x="435" y="111" text-anchor="middle">10.8</text>
+<rect class="f-box" x="518" y="87" width="170" height="38"/>
+<text class="f-s" x="603" y="111" text-anchor="middle">0.8</text>
+<rect class="f-box" x="72" y="125" width="280" height="38"/>
+<text class="f-s" x="212" y="149" text-anchor="middle">이미 본 A의 새 측정 하나</text>
+<rect class="f-box" x="352" y="125" width="166" height="38"/>
+<text class="f-s" x="435" y="149" text-anchor="middle">10.8</text>
+<rect class="f-box" x="518" y="125" width="170" height="38"/>
+<text class="f-s" x="603" y="149" text-anchor="middle">4.8</text>
+<rect class="f-box" x="72" y="163" width="280" height="38"/>
+<text class="f-s" x="212" y="187" text-anchor="middle">처음 본 실험실의 새 측정 하나</text>
+<rect class="f-box" x="352" y="163" width="166" height="38"/>
+<text class="f-s" x="435" y="187" text-anchor="middle">10</text>
+<rect class="f-box" x="518" y="163" width="170" height="38"/>
+<text class="f-s" x="603" y="187" text-anchor="middle">5</text>
+</svg><figcaption>새 측정에는 한 건 자체의 변동 4도 들어간다.</figcaption></figure>
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+<h2>같은 공통 평균을 모르게 두면 두 사후가 결합된다</h2>
+<p>이번에는 <var>m∼N(10,4)</var>, <var>τ²=1,σ²=4</var>라고 놓습니다. 실험실 평균은 <var>ȳ<sub>j</sub>=m+(θ<sub>j</sub>−m)+(ȳ<sub>j</sub>−θ<sub>j</sub>)</var>입니다. m을 고정한 두 잡음이 독립 정규이므로 <var>ȳ<sub>j</sub>|m∼N(m,τ²+σ²/n<sub>j</sub>)</var>입니다. A의 평균 14는 분산 5, B의 평균 6은 분산 2의 관측으로 m에 정보를 줍니다. 각 실험실 안의 편차 제곱합은 σ²를 이미 알 때 m이나 θ의 비교에 영향을 주지 않습니다.</p>
+<p>정밀도를 모으면 <var>h=1/4+1/5+1/2=19/20</var>, <var>k=10/4+14/5+6/2=83/10</var>입니다. <var>m|자료∼N(166/19,20/19)</var>입니다. 결합 사후는 <var>p(m|자료)·p(θ<sub>A</sub>|m,자료)·p(θ<sub>B</sub>|m,자료)</var>입니다. 뒤 두 항은 m이 주어졌을 때 앞 장의 정규 사후를 사용합니다. 그러므로 실험실별 기댓값과 분산을 각각 m에 조건부인 형태로 그리고, m의 사후를 평균 내면 됩니다.</p>
+<p>m이 주어졌을 때 A와 B의 사후평균은 <var>.8m+2.8</var>과 <var>.5m+3</var>입니다. 두 조건부 사후는 독립이므로, 결합 사후에서 공분산은 이 두 조건부 평균의 공분산 <var>.8·.5·(20/19)=8/19</var>입니다. 같은 이유로 A의 분산은 <var>.8+.8²·20/19=28/19</var>입니다. m을 사후평균 하나로 고정하면 이 추가 분산과 두 θ 사이 의존을 놓칩니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 253" role="img" aria-label="공통 평균 m을 적분하면 Eθ_A=186/19, Eθ_B=140/19, Cov=8/19이다.">
+<text class="f-cap" x="380" y="30" text-anchor="middle">결합 사후를 평균과 공분산으로 요약하기</text>
+<rect class="f-soft" x="60" y="49" width="310" height="38"/>
+<text class="f-t" x="215" y="73" text-anchor="middle">양</text>
+<rect class="f-soft" x="370" y="49" width="330" height="38"/>
+<text class="f-t" x="535" y="73" text-anchor="middle">계산값</text>
+<rect class="f-box" x="60" y="87" width="310" height="38"/>
+<text class="f-s" x="215" y="111" text-anchor="middle">A 및 B 평균 모수의 사후평균</text>
+<rect class="f-box" x="370" y="87" width="330" height="38"/>
+<text class="f-s" x="535" y="111" text-anchor="middle">186/19, 140/19</text>
+<rect class="f-box" x="60" y="125" width="310" height="38"/>
+<text class="f-s" x="215" y="149" text-anchor="middle">두 평균 모수의 공분산</text>
+<rect class="f-box" x="370" y="125" width="330" height="38"/>
+<text class="f-s" x="535" y="149" text-anchor="middle">8/19</text>
+<rect class="f-box" x="60" y="163" width="310" height="38"/>
+<text class="f-s" x="215" y="187" text-anchor="middle">A 평균 모수의 사후분산</text>
+<rect class="f-box" x="370" y="163" width="330" height="38"/>
+<text class="f-s" x="535" y="187" text-anchor="middle">28/19</text>
+<rect class="f-box" x="60" y="201" width="310" height="38"/>
+<text class="f-s" x="215" y="225" text-anchor="middle">A의 새 측정 분산</text>
+<rect class="f-box" x="370" y="201" width="330" height="38"/>
+<text class="f-s" x="535" y="225" text-anchor="middle">4 + 28/19 = 104/19</text>
+</svg><figcaption>두 실험실이 공유하는 공통 중심의 불확실성은 결합 사후에 남는다.</figcaption></figure>
+<div class="check" data-q="q3"></div>
+<div class="check" data-q="q4"></div>
+<h2>반복자료를 만들어 모형이 놓친 특징을 찾는다</h2>
+<p><b class="key">사후예측 점검</b>은 사후에서 모수를 뽑은 뒤, 실제와 같은 표집 단위와 표본 수로 <var>y<sup>rep</sup></var>를 다시 만들고, <var>T(y<sup>rep</sup>)</var>와 관측 <var>T(y)</var>를 비교합니다. 관심 있는 T에 실험실 사이 범위, 과도하게 큰 값의 개수, 같은 실험실 안의 연속된 값 등을 사용할 수 있습니다. 전체 평균만 비슷하다고 실험실 안의 변동이나 상관도 잘 맞는다고 판단하지 않습니다.</p>
+<p>고정 중심 모형으로 돌아가 A의 실제 측정과 같이 한 건을 복제합니다. <var>T(y)=y</var>라면 사전예측에서 14 이상 확률이 .03682, 사후예측에선 .07206입니다. 첫 확률은 자료를 보기 전에 이 모형이 큰 값을 얼마나 만드는지, 둘째는 14를 본 뒤 같은 디자인에서 다시 큰 값이 얼마나 나오는지 보여 줍니다. 후자는 기존 자료를 적합과 점검에 함께 사용합니다. 일반적으로 이 꼬리 수를 빈도주의 검정의 균등 p값으로 해석할 수 없으며, 모형에 맞는지 진단하는 한 항목입니다. 새 실험실 예측 성능이 질문이라면 실험실 단위로 보류한 값을 따로 평가합니다.</p>
+<p><b class="key">사전 민감도</b>를 보려면 같은 자료와 우도를 유지하고 사전 가정을 바꿉니다. 고정 중심 m=10에서 τ²를 1에서 9로 바꾸면 A의 관측 평균 가중치가 <var>1/5</var>에서 <var>9/13</var>으로 커지고, 사후평균은 10.8에서 <var>166/13≈12.77</var>로 움직입니다. 이 변화는 실험실 사이 변동을 얼마나 허용하느냐에 관한 결과입니다. 자료가 적을 때는 어떤 사전이 타당한지와 검토한 범위를 보고합니다.</p>
+<div class="check" data-q="q5"></div>
+<div class="check" data-q="q6"></div>
+<h2>이어 풀기와 증명</h2>
+<p>어느 부분을 적분하고 어느 분산을 더하는지 구별해 식을 작성합니다. 마지막에는 데이터에 잘 맞는지와 새 환경에서 예측하는지를 따로 설명합니다.</p>
+<div class="check" data-q="q7"></div>
+<div class="check" data-q="q8"></div>
+<div class="check" data-q="q9"></div>
+<h2>파이썬으로 같은 계산 검산하기</h2>
+<pre data-example="python"><code>from fractions import Fraction as F
+from math import sqrt
+from statistics import NormalDist
+
+conditional = NormalDist(10.8, sqrt(4.8))
+lower, upper = conditional.inv_cdf(.025), conditional.inv_cdf(.975)
+prior_predictive = NormalDist(10, sqrt(5))
+print(f&quot;A next observation: {lower:.4f} to {upper:.4f}&quot;)
+print(f&quot;prior/posterior replicate tail at 14: &quot;
+      f&quot;{1-prior_predictive.cdf(14):.5f} {1-conditional.cdf(14):.5f}&quot;)
+
+weights = [F(1, 5), F(1, 2)]
+ybar = [14, 6]
+hyper_variance = 1 / (F(1, 4) + F(1, 5) + F(1, 2))
+hyper_mean = hyper_variance * (F(10, 4) + F(14, 5) + F(6, 2))
+means = [(1-w)*hyper_mean + w*y for w, y in zip(weights, ybar)]
+covariance = (1-weights[0])*(1-weights[1])*hyper_variance
+var_a = F(4, 5) + (1-weights[0])**2 * hyper_variance
+print(&quot;hyper mean, variance:&quot;, hyper_mean, hyper_variance)
+print(&quot;group means, covariance:&quot;, *means, covariance)
+print(&quot;A mean variance, A future variance:&quot;, var_a, 4+var_a)
+
+for tau2 in (F(1), F(9)):
+    w = tau2 / (tau2 + 4)
+    print(&quot;A prior sensitivity:&quot;, tau2, w, 10 + w*4)</code></pre>
+<p class="aside">실행 결과</p>
+<pre data-output><code>A next observation: 6.5059 to 15.0941
+prior/posterior replicate tail at 14: 0.03682 0.07206
+hyper mean, variance: 166/19 20/19
+group means, covariance: 186/19 140/19 8/19
+A mean variance, A future variance: 28/19 104/19
+A prior sensitivity: 1 1/5 54/5
+A prior sensitivity: 9 9/13 166/13</code></pre>
+<p>정규 사후와 정규 사후예측을 사용할 수 있는 작은 예라 모든 수를 닫힌 식으로 계산했습니다. <var>τ²</var>나 여러 산포도 동시에 배울 때는 적분이 더 복잡해집니다. 다음 장에서는 MCMC 출력에서 확인할 수 있는 성질을 배웁니다.</p>
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://mc-stan.org/docs/stan-users-guide/posterior-predictive-checks.html">Stan · Posterior and Prior Predictive Checks</a></li>
+<li><a href="https://arxiv.org/abs/2011.01808">Gelman 외 · Bayesian Workflow</a></li>
+<li><a href="st14-1.html">ST14-1 정규 부분 풀링</a></li>
+</ul>
+<h2>확인 문제</h2>
+<p>조건과 단위를 먼저 적은 뒤 해설을 확인합니다.</p>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

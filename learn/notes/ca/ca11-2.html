@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>이차 선형식을 위상평면과 고유값으로 풀기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e8c'/%3E%3Cpath d='M8 22V10m8 12V14m8 8V6' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="CA11-2">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+
+<header class="chapter">
+<p class="chap-sub">미적분 · CA11 상미분방정식</p>
+<p class="chap-num">CA11·2</p>
+<h1>이차 선형식을 위상평면과 고유값으로 풀기</h1>
+<p class="lead">위치만으로는 흔들리는 물체의 다음 상태가 정해지지 않습니다. 속도를 함께 좌표로 두어 이차식을 일차 선형계로 바꾸고, 고유값으로 감쇠와 진동을 계산합니다.</p>
+</header>
+
+<div class="goal">
+<h2>이 장을 읽고 나면</h2>
+<ul>
+<li>이차 선형 ODE에서 상태벡터와 2×2 계수행렬을 만든다.</li>
+<li>고유값과 특성방정식의 근이 일치함을 증명한다.</li>
+<li>감쇠 마디·안장·진동·겹근을 구분하고 예제의 위상 궤적을 계산한다.</li>
+</ul>
+</div>
+<h2>위치와 속도를 동시에 적는다</h2>
+
+<p>위치 <var>q</var>와 속도 <var>v=q′</var>에서 <var>q″+a q′+b q=0</var>을 생각합시다. 이는 예로 질량을 1로 둔 선형 감쇠계의 움직임입니다. 위치가 같아도 속도가 다르면 이후 위치가 달라집니다. <var>X=(q,v)<sup>⊤</sup></var>라는 두 성분 상태를 쓰면 <var>q′=v</var>, <var>v′=-bq-av</var>이므로</p>
+<div class="calc"><var>X′=AX, A=[[0,1], [−b,−a]].</var></div>
+<p>초기 상태는 두 값 <var>q(0),v(0)</var>으로 정합니다. 원점에서는 <var>AX=0</var>라 머물러 있습니다. 상태 <var>(q,v)</var>를 점으로 그리고 그 점에서의 변화율 <var>(v,-bq-av)</var>를 작은 화살표로 그린 그림을 <b class="key">위상평면</b>(phase plane)의 벡터장이라 합니다. 상태의 변화 경로를 그 위에 이으면 위상 궤적입니다.</p>
+<p>예를 들어 <var>a=3,b=2</var>일 때 상태 (1,0)의 화살표는 <var>(0,-2)</var>입니다. 위치는 그 순간에 증가하거나 감소하지 않지만 속도는 음으로 바뀌기 시작합니다. 시간을 세 번째 축으로 추가하지 않고도 현재의 변화 방향을 읽을 수 있습니다.</p>
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+
+<h2>고유값이 두 개라면 초기값을 고유벡터에 나눈다</h2>
+
+<p><var>q=e<sup>λt</sup></var>를 이차식에 넣으면 <var>(λ²+aλ+b)e<sup>λt</sup>=0</var>이라 <var>λ²+aλ+b=0</var>을 얻습니다. 이 식은 <var>det(λI-A)=λ(λ+a)+b</var>와 같습니다. 근 <var>λ</var>의 고유벡터를 <var>u=(1,λ)<sup>⊤</sup></var>로 고르면 <var>Au=(λ,-b-aλ)<sup>⊤</sup>=λu</var>입니다. 따라서 초기 상태가 이 방향에 있으면 해는 <var>e<sup>λt</sup>u</var> 방향으로 배율만 바꿉니다.</p>
+<p>두 근 <var>λ₁≠λ₂</var>이면 <var>(1,λ₁),(1,λ₂)</var>의 행렬식은 <var>λ₂−λ₁</var>이라 독립입니다. 초기 상태 <var>X₀</var>를 <var>c₁u₁+c₂u₂</var>로 나누면 <var>X(t)=c₁e<sup>λ₁t</sup>u₁+c₂e<sup>λ₂t</sup>u₂</var>입니다. 이 함수를 직접 미분하면 <var>X′=AX</var>, t=0을 넣으면 초기값을 확인합니다. 두 모드의 합과 상수배가 해인 이유는 ODE가 동차 선형이기 때문입니다.</p>
+<p><b>손계산.</b> <var>q″+3q′+2q=0</var>, <var>q(0)=1,q′(0)=0</var>에서 근은 −1, −2입니다. <var>c₁+c₂=1</var>, <var>-c₁-2c₂=0</var>을 풀면 <var>c₁=2,c₂=-1</var>입니다. 즉 <var>q(t)=2e<sup>−t</sup>−e<sup>−2t</sup></var>, <var>v(t)=-2e<sup>−t</sup>+2e<sup>−2t</sup></var>입니다. <var>t=log 2</var>에서는 <var>(q,v)=(3/4,-1/2)</var>입니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 289" role="img" aria-label="상태 (q,v) 위상평면에서 해는 (1,0)에서 출발해 (3/4,−1/2)를 지나 원점으로 간다. 고유방향은 v=−q와 v=−2q이다">
+<text class="f-cap" x="380" y="30" text-anchor="middle">위상평면에서는 가로에 위치, 세로에 속도를 둔다</text>
+<line class="f-grid" x1="107.3" y1="92" x2="408.28999999999996" y2="92" marker-end="url(#f-arrow)"/>
+<line class="f-grid" x1="131" y1="245" x2="131" y2="51.2" marker-end="url(#f-arrow)"/>
+<line class="f-grid" x1="131" y1="92" x2="377.48" y2="162.72"/>
+<line class="f-grid" x1="131" y1="92" x2="377.48" y2="233.44"/>
+<polyline class="f-line" fill="none" points="368.00,92.00 365.85,103.71 360.21,112.18 352.08,118.11 342.24,122.05 331.31,124.46 319.75,125.68 307.94,126.00 296.13,125.65 284.54,124.81 273.30,123.63 262.52,122.20 252.27,120.62 242.58,118.96 233.47,117.27 224.96,115.57 217.04,113.91 209.68,112.31 202.88,110.76 196.59,109.30 190.81,107.91 185.49,106.61 180.61,105.40 176.14,104.27 172.05,103.22 168.31,102.25 164.90,101.35 161.78,100.53 158.95,99.77 156.36,99.07 154.01,98.43 151.87,97.85 149.93,97.32 148.16,96.83 146.55,96.39 145.10,95.98 143.77,95.61 142.57,95.28 141.49,94.97 140.50,94.70 139.60,94.45"/>
+<line class="f-line" x1="233.47497606614482" y1="117.26701857902884" x2="215.52214022717342" y2="113.58793334190935" marker-end="url(#f-arrow)"/>
+<circle class="f-fill" cx="368" cy="92" r="5"/>
+<circle class="f-fill" cx="308.75" cy="126" r="5"/>
+<text class="f-t" x="419" y="99" text-anchor="middle">q</text>
+<text class="f-t" x="127" y="54" text-anchor="middle">v</text>
+<text class="f-s" x="412" y="72" text-anchor="middle">t=0</text>
+<text class="f-s" x="340" y="147" text-anchor="middle">t=log 2</text>
+<text class="f-cap" x="492" y="122" text-anchor="start">(1,0) → (3/4, −1/2)</text>
+<text class="f-s" x="492" y="151" text-anchor="start">두 직선 v=−q, v=−2q</text>
+<text class="f-s" x="492" y="184" text-anchor="start">원점으로 수렴</text>
+<text class="f-s" x="413" y="222" text-anchor="middle">v=−2q</text>
+<text class="f-s" x="412" y="170" text-anchor="middle">v=−q</text>
+</svg>
+<figcaption>시간은 축으로 그리지 않았습니다. 벡터 하나 (q,v)가 현재 상태이며, 같은 해의 상태들을 시간 순서대로 이었습니다.</figcaption>
+</figure>
+<p>두 고유값이 모두 음수이면 초기값에서 어느 모드가 섞여도 두 모드가 감소해 원점으로 수렴합니다. 고유방향에서는 각 궤적이 직선 위에 머무릅니다. 두 고유값의 부호가 다르면 한 방향은 원점으로 접근하고 다른 방향은 시간에 따라 원점에서 멀어지는 <strong>안장점</strong>입니다. 두 경우를 구분하려면 봐야 할 값은 고유값의 부호입니다.</p>
+<div class="check" data-q="q3"></div>
+<div class="check" data-q="q4"></div>
+
+<h2>복소근은 실수 진동으로 바꾸고 겹근은 사슬을 찾는다</h2>
+
+<p>복소근 <var>α±iω</var>에서 실수 계수의 식에 <var>e<sup>(α+iω)t</sup></var>를 넣은 뒤 실수부와 허수부를 각각 떼면 두 실수 해를 얻습니다. Euler 공식에서 <var>q(t)=e<sup>αt</sup>(C cos(ωt)+D sin(ωt))</var>입니다. 예로 <var>q″+2q′+5q=0</var>은 근 <var>-1±2i</var>여서 진동하면서 감쇠합니다. <var>q(0)=1,q′(0)=0</var>이면 <var>C=1</var>, <var>-C+2D=0</var>이라 <var>D=1/2</var>입니다.</p>
+<p>겹근 <var>λ</var>에서는 독립 고유벡터가 둘인지 확인합니다. 위 이차식의 동반행렬 A에서 첫 행의 둘째 성분은 1이어서 <var>A=λI</var>가 아닙니다. 따라서 고유방향이 하나이고, <a href="../la/la10-2.html">LA10-2 조르당 사슬</a>에서 본 대로 <var>N=A-λI</var>는 <var>N²=0</var>입니다. 다음 식을 미분해 볼 수 있습니다.</p>
+<div class="calc"><var>X(t)=e<sup>λt</sup>(I+tN)X(0).</var></div>
+<p>미분해서 <var>λe<sup>λt</sup>(I+tN)+e<sup>λt</sup>N</var>을 얻습니다. <var>(λI+N)(I+tN)=λ(I+tN)+N</var>라 이것은 <var>AX(t)</var>의 행렬계수와 같습니다. 위치 성분은 <var>(C+Dt)e<sup>λt</sup></var>가 됩니다. <var>q″+2q′+q=0,q(0)=1,q′(0)=0</var>에서는 <var>q(t)=(1+t)e<sup>−t</sup></var>입니다. 속도는 <var>-te<sup>−t</sup></var>입니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 257" role="img" aria-label="두 고유값 쌍에 따라 안정 마디 안장점 안정 나선 및 멱영 항을 포함한 겹근을 구분">
+<text class="f-cap" x="380" y="33" text-anchor="middle">두 상태의 선형계에서는 고유값이 운동의 모양을 가른다</text>
+<text class="f-t" x="180" y="82" text-anchor="end">실수 −1, −2</text>
+<rect class="f-box" x="206" y="58" width="246" height="38" rx="3"/>
+<text class="f-t" x="329" y="83" text-anchor="middle">두 음의 지수 모드</text>
+<rect class="f-box" x="458" y="58" width="246" height="38" rx="3"/>
+<text class="f-t" x="581" y="83" text-anchor="middle">안정 마디</text>
+<text class="f-t" x="180" y="128" text-anchor="end">실수 −2, 1</text>
+<rect class="f-box" x="206" y="104" width="246" height="38" rx="3"/>
+<text class="f-t" x="329" y="129" text-anchor="middle">감쇠·성장 모드 공존</text>
+<rect class="f-box" x="458" y="104" width="246" height="38" rx="3"/>
+<text class="f-t" x="581" y="129" text-anchor="middle">안장점</text>
+<text class="f-t" x="180" y="174" text-anchor="end">복소 −1 ± 2i</text>
+<rect class="f-box" x="206" y="150" width="246" height="38" rx="3"/>
+<text class="f-t" x="329" y="175" text-anchor="middle">진동과 지수 감쇠</text>
+<rect class="f-box" x="458" y="150" width="246" height="38" rx="3"/>
+<text class="f-t" x="581" y="175" text-anchor="middle">안정 나선</text>
+<text class="f-t" x="180" y="220" text-anchor="end">반복 −1 (사슬 2)</text>
+<rect class="f-box" x="206" y="196" width="246" height="38" rx="3"/>
+<text class="f-t" x="329" y="221" text-anchor="middle">e⁻ᵗ와 te⁻ᵗ</text>
+<rect class="f-box" x="458" y="196" width="246" height="38" rx="3"/>
+<text class="f-t" x="581" y="221" text-anchor="middle">감쇠하는 겹근</text>
+</svg>
+<figcaption>겹근은 고유벡터의 개수를 확인해야 합니다. 지수항에 붙는 t는 조르당 사슬에서 나옵니다.</figcaption>
+</figure>
+<div class="check" data-q="q5"></div>
+<div class="check" data-q="q6"></div>
+
+<h2>안정과 발산을 구분하는 조건</h2>
+
+<p>상수 2×2 계수의 동차 선형계에서 고유값이 모두 실수부 0 미만이면 모든 상태가 원점으로 갑니다. 서로 다른 실근에서는 지수 감쇠, 복소쌍에서는 진동에 곱한 지수 감쇠, 겹근에서는 <var>t e<sup>λt</sup></var>까지 0으로 감쇠하기 때문입니다. 세 경우 모두 해를 만드는 시간의 행렬이 유계여서, 초기값이 충분히 작으면 궤적도 계속 원점 가까이에 머뭅니다. 이 두 조건을 합쳐 원점이 <b>점근 안정</b>이라고 합니다.</p>
+<p>정확히 실수부가 0인 고유값이 있으면 이 결론의 가정에서 벗어납니다. 예로 <var>q″+q=0</var>에서 <var>q=cos t, v=-sin t</var>는 원점 둘레를 계속 돌고 원점으로 수렴하지 않습니다. 또 <var>q″=0</var>의 겹근 0은 <var>q=C+Dt</var>에서 속도가 조금만 있어도 위치가 계속 벗어날 수 있습니다. 같은 ‘실수부 0’에서도 고유벡터와 사슬 구조를 구분해야 합니다.</p>
+
+<h2>손계산을 Python으로 검산한다</h2>
+<pre data-example="python"><code>from fractions import Fraction as F
+from math import exp
+
+# 두 실근의 해를 z=exp(-t)로 표현
+for label, z in [(&quot;0&quot;, F(1)), (&quot;log 2&quot;, F(1, 2)), (&quot;log 4&quot;, F(1, 4))]:
+    q = 2*z - z*z
+    v = -2*z + 2*z*z
+    acceleration = 2*z - 4*z*z
+    print(label, q, v, &quot;residual:&quot;, acceleration + 3*v + 2*q)
+
+# 겹근 −1의 정확해를 t=1에서 검사
+q, v = 2*exp(-1), -exp(-1)
+print(&quot;repeated root:&quot;, f&quot;{q:.6f}&quot;, f&quot;{v:.6f}&quot;)</code></pre>
+<pre data-output><code>0 1 0 residual: 0
+log 2 3/4 -1/2 residual: 0
+log 4 7/16 -3/8 residual: 0
+repeated root: 0.735759 -0.367879</code></pre>
+<p class="small">Python 3.14.6으로 실행했습니다. 잔차는 운동 방정식의 왼쪽에 상태와 미분을 넣은 값입니다. <var>t=log 2</var>처럼 <var>e<sup>−t</sup></var>가 분수인 곳을 골라 반올림 없이 검사했습니다.</p>
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://ocw.mit.edu/courses/18-03sc-differential-equations-fall-2011/pages/unit-iv-first-order-systems/">MIT 18.03SC, First-order Systems and Phase Portraits</a></li>
+<li><a href="../la/la10-1.html">LA10-1 복소 고유값</a></li>
+<li><a href="ca11-1.html">CA11-1 일차 방정식의 초기값</a></li>
+</ul>
+
+<h2>확인 문제</h2>
+<p>아직 풀지 않은 문제입니다. 먼저 식이나 근거를 적어 보고 해설을 확인합니다.</p>
+<div id="quiz"></div>
+
+<section class="work" id="tools"></section>
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

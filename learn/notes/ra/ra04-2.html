@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>가측 함수에서 단순함수 적분과 기대값 만들기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e8c'/%3E%3Cpath d='M8 22V10m8 12V14m8 8V6' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="RA04-2">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+
+<header class="chapter">
+<p class="chap-sub">해석학 · RA04 측도와 르베그 적분</p>
+<p class="chap-num">RA04·2</p>
+<h1>가측 함수에서 단순함수 적분과 기대값 만들기</h1>
+<p class="lead">높이가 일정한 구역의 크기를 알고 있다면 적분을 합으로 계산할 수 있습니다. 함수값을 아래쪽에서 더 촘촘히 근사해 일반 함수를 적분하는 정의를 만듭니다.</p>
+</header>
+
+<div class="goal">
+<h2>이 장을 읽고 나면</h2>
+<ul>
+<li>가측 함수와 가측 집합·지시함수의 관계를 설명한다.</li>
+<li>단순함수의 적분이 조각의 표현에 무관함을 증명한다.</li>
+<li>비음수 함수의 적분과 확률에서의 기대값을 작은 사례로 계산한다.</li>
+</ul>
+</div>
+<h2>출력 범위를 묻는 질문에 가측 사건이 돌아온다</h2>
+
+<p>측도 공간 <var>(Ω,𝓕,μ)</var>에서 함수 <var>f</var>의 출력이 어느 범위에 있을지 알고 싶습니다. 모든 실수 <var>a</var>에 대해 <var>{ω:f(ω)&gt;a}∈𝓕</var>이면 f는 <b class="key">가측 함수</b>입니다. 측도가 이미 정해진 사건으로 질문을 돌려보낼 수 있어야 크기를 부여할 수 있습니다.</p>
+<p>다른 범위도 이 조건에서 구할 수 있습니다. <var>{f≥a}=⋂ₙ{f&gt;a-1/n}</var>, <var>{f&lt;a}=Ω∖{f≥a}</var>입니다. 따라서 임의의 열린 구간으로 가는 점들의 집합도 가측입니다. 열린 집합은 서로 다른 유리수 끝점을 갖는 열린 구간의 가산 합집합으로 쓸 수 있으므로, 실수값 함수에서는 “모든 열린 출력 집합의 원상이 가측이다”라는 조건도 같습니다. <var>f</var>가 연속이고 입력 공간의 Borel σ-대수를 쓰면 열린 집합의 원상이 열려 가측입니다.</p>
+<p>어떤 가측 집합 A에 대해 그 안에서는 1, 밖에서는 0을 주는 <b class="key">지시함수</b> <var>1<sub>A</sub></var>는 가장 단순한 예입니다. 문턱 <var>a</var>가 0 이상 1 미만이면 <var>{1<sub>A</sub>&gt;a}=A</var>이고, 나머지 문턱에서는 전체나 빈 집합입니다. 역으로 지시함수가 가측이면 <var>A={1<sub>A</sub>&gt;1/2}</var>가 가측입니다. <var>Ω</var>가 확률 공간이면 실수값 가측 함수를 <strong>확률변수</strong>라고 합니다. <a href="ra04-1.html">주사위의 짝·홀 사건만 남긴 공간</a>에서 2와 4를 구별하는 확률변수는 이 작은 σ-대수에 대해 가측일 수 없습니다.</p>
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+
+<h2>높이가 유한 종류면 측도와 곱해서 더한다</h2>
+
+<p>가측 함수 <var>s≥0</var>가 유한 개의 값만 가지면 <b class="key">비음수 단순함수</b>입니다. 값이 같은 서로소인 가측 집합 <var>A_j</var>에서 높이 <var>c_j≥0</var>를 갖는다면 <var>s=Σⱼ cⱼ1<sub>Aⱼ</sub></var>입니다. 값 0인 조각도 포함해서 공간 전체를 분할할 수 있습니다. 그 적분의 정의는</p>
+<div class="calc"><var>∫ s dμ = Σⱼ cⱼ μ(Aⱼ).</var></div>
+<p>높이 0인 조각은 측도가 무한이어도 기여를 0으로 정합니다. <var>∫1<sub>A</sub>dμ=μ(A)</var>입니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 257" role="img" aria-label="세 서로소 조각에서 높이 0,2,5와 측도 1/2,1/4,1/4를 곱하면 적분이 7/4">
+<text class="f-cap" x="380" y="33" text-anchor="middle">어느 값에 얼마나 많은 크기가 붙는가</text>
+<text class="f-t" x="180" y="82" text-anchor="end">가측 영역</text>
+<rect class="f-box" x="206" y="58" width="162" height="38" rx="3"/>
+<text class="f-t" x="287" y="83" text-anchor="middle">A₀</text>
+<rect class="f-box" x="374" y="58" width="162" height="38" rx="3"/>
+<text class="f-t" x="455" y="83" text-anchor="middle">A₁</text>
+<rect class="f-box" x="542" y="58" width="162" height="38" rx="3"/>
+<text class="f-t" x="623" y="83" text-anchor="middle">A₂</text>
+<text class="f-t" x="180" y="128" text-anchor="end">함수값</text>
+<rect class="f-box" x="206" y="104" width="162" height="38" rx="3"/>
+<text class="f-t" x="287" y="129" text-anchor="middle">0</text>
+<rect class="f-box" x="374" y="104" width="162" height="38" rx="3"/>
+<text class="f-t" x="455" y="129" text-anchor="middle">2</text>
+<rect class="f-box" x="542" y="104" width="162" height="38" rx="3"/>
+<text class="f-t" x="623" y="129" text-anchor="middle">5</text>
+<text class="f-t" x="180" y="174" text-anchor="end">측도</text>
+<rect class="f-box" x="206" y="150" width="162" height="38" rx="3"/>
+<text class="f-t" x="287" y="175" text-anchor="middle">1/2</text>
+<rect class="f-box" x="374" y="150" width="162" height="38" rx="3"/>
+<text class="f-t" x="455" y="175" text-anchor="middle">1/4</text>
+<rect class="f-box" x="542" y="150" width="162" height="38" rx="3"/>
+<text class="f-t" x="623" y="175" text-anchor="middle">1/4</text>
+<text class="f-t" x="180" y="220" text-anchor="end">적분 항</text>
+<rect class="f-box" x="206" y="196" width="162" height="38" rx="3"/>
+<text class="f-t" x="287" y="221" text-anchor="middle">0</text>
+<rect class="f-soft" x="374" y="196" width="162" height="38" rx="3"/>
+<text class="f-t" x="455" y="221" text-anchor="middle">1/2</text>
+<rect class="f-soft" x="542" y="196" width="162" height="38" rx="3"/>
+<text class="f-t" x="623" y="221" text-anchor="middle">5/4</text>
+</svg>
+<figcaption>값과 그 값이 유지되는 집합의 측도를 곱해 모두 더합니다.</figcaption>
+</figure>
+<p><b>표현에 따라 답이 바뀌지 않는다.</b> 같은 s를 서로소인 다른 조각 <var>B_k</var>들로 다시 표현했으면, 모든 교집합 <var>A_j∩B_k</var>를 새 조각으로 씁니다. 한 교집합이 비어 있지 않으면 s의 높이는 두 표현에서 같고, 옛 조각의 측도는 새 조각들의 측도를 더한 값입니다. 따라서 어느 표현에서 시작해도 동일한 공통 분할의 합을 얻습니다. 같은 공통 분할에서 두 단순함수를 놓으면, <var>s≤t</var>에서 높이를 비교해 <var>∫s≤∫t</var>를 얻고, 높이를 조각별로 더해 <var>∫(s+t)=∫s+∫t</var>도 얻습니다.</p>
+<div class="check" data-q="q3"></div>
+<div class="check" data-q="q4"></div>
+
+<h2>비음수 함수를 아래에서 근사한다</h2>
+
+<p>비음수 가측 함수 <var>f</var>의 적분은 <var>f</var>보다 작거나 같은 모든 비음수 단순함수의 적분 중 상한으로 정의합니다. 이 상한은 0 이상이며 무한대일 수 있습니다.</p>
+<div class="calc"><var>∫ f dμ = sup{∫ s dμ : s는 단순함수, 0≤s≤f}.</var></div>
+<p>이에 따라 <var>f≤g</var>라면 f를 재는 데 쓸 수 있는 수준들이 g에도 통하므로 <var>∫f≤∫g</var>입니다. <var>f</var> 자체가 단순함수일 때에는 <var>s=f</var>도 후보이고 다른 후보의 값은 그 이하라 두 적분 정의가 일치합니다.</p>
+<p>구체적으로 <var>f</var>를 <var>n</var>으로 잘라 <var>2<sup>−n</sup></var> 간격의 아래쪽 눈금으로 내리면 <var>sₙ=2<sup>−n</sup>⌊2ⁿ min(f,n)⌋</var>입니다. 높이가 유한 종류이고 각 높이를 갖는 집합은 <var>f</var>의 범위로 조건을 쓸 수 있어 가측입니다. 다음 눈금의 간격은 절반이라 예전 눈금이 그대로 포함되고 위쪽 잘라낸 경계 n도 커집니다. 그래서 <var>sₙ≤sₙ₊₁≤f</var>입니다. f가 유한한 점에서는 충분히 큰 n에서 자르지 않고 내림 오차도 <var>2<sup>−n</sup></var> 미만입니다. f가 무한인 점에서는 <var>sₙ=n→∞</var>입니다. 이렇게 비음수 가측 함수를 단순함수의 증가 극한으로 만들 수 있습니다.</p>
+<p><b>손계산.</b> <var>[0,1]</var>에서 <var>f(x)=x</var>, 격자수 <var>d=2ⁿ</var>일 때 <var>sₙ</var>은 <var>[j/d,(j+1)/d)</var>에서 <var>j/d</var>입니다. <var>x=1</var>에서 1을 넣어도 그 점은 측도 0입니다. 높이와 폭을 곱해 <var>∫sₙ=[0+1+⋯+(d−1)]/d²=(d−1)/(2d)</var>입니다. 점마다 <var>sₙ≤f≤sₙ+1/d</var>이고 오른쪽도 단순함수입니다. 그 적분은 <var>∫sₙ+1/d</var>라 양쪽이 모두 1/2로 좁혀집니다. 따라서 <var>∫<sub>[0,1]</sub>x dm=1/2</var>입니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 302" role="img" aria-label="네 반열린 구간에서 x를 아래로 근사. 폭은 모두 1/4이며 각 구간 높이는 0,1/4,1/2,3/4다. x=1에서의 높이는 1이다">
+<text class="f-cap" x="380" y="28" text-anchor="middle">x를 아래쪽에서 1/4 단위 높이로 자른다</text>
+<rect class="f-soft" x="143" y="237" width="112.25" height="0" rx="3"/>
+<rect class="f-soft" x="255.25" y="196.5" width="112.25" height="40.5" rx="3"/>
+<rect class="f-soft" x="367.5" y="156" width="112.25" height="81" rx="3"/>
+<rect class="f-soft" x="479.75" y="115.5" width="112.25" height="121.5" rx="3"/>
+<line class="f-grid" x1="143" y1="237" x2="636.9000000000001" y2="237" marker-end="url(#f-arrow)"/>
+<line class="f-grid" x1="143" y1="237" x2="143" y2="63.66" marker-end="url(#f-arrow)"/>
+<line class="f-line" x1="143" y1="237" x2="592" y2="75"/>
+<text class="f-s" x="143" y="263" text-anchor="middle">0</text>
+<text class="f-s" x="255.25" y="263" text-anchor="middle">1/4</text>
+<text class="f-s" x="367.5" y="263" text-anchor="middle">1/2</text>
+<text class="f-s" x="479.75" y="263" text-anchor="middle">3/4</text>
+<text class="f-s" x="592" y="263" text-anchor="middle">1</text>
+<text class="f-s" x="627" y="90" text-anchor="middle">f(x)=x</text>
+<text class="f-s" x="640" y="150" text-anchor="middle">칸 폭 1/4</text>
+<text class="f-cap" x="380" y="289" text-anchor="middle">계단의 면적 3/8, 직선 아래 면적 1/2</text>
+</svg>
+<figcaption>구간마다 같은 높이를 배정한 계단은 단순함수입니다. x=1 한 점의 값은 계단과 직선 둘 다 1로 정했습니다.</figcaption>
+</figure>
+<div class="check" data-q="q5"></div>
+
+<h2>부호 있는 함수, 영집합, 기대값</h2>
+
+<p>실수값 함수에서는 양의 부분 <var>f⁺=max(f,0)</var>과 음의 부분의 크기 <var>f⁻=max(-f,0)</var>를 나눕니다. 적어도 하나가 유한하면 <var>∫f=∫f⁺−∫f⁻</var>로 정합니다. 양의 부분만 무한하면 적분은 <var>+∞</var>, 음의 부분만 무한하면 <var>−∞</var>입니다. 두 적분이 모두 무한하면 <var>∞−∞</var>이어서 적분을 정의하지 않습니다. 이 장에서 <b>적분 가능</b>이라고 부를 때에는 두 적분이 모두 유한하여 <var>∫|f|&lt;∞</var>인 경우를 뜻합니다. 확률측도 <var>P</var>에서 <var>∫X dP</var>는 확률변수 X의 기댓값이고, 단순함수이면 바로 <var>Σ(값)×P(그 값)</var>입니다. 예로 공정한 주사위의 짝수에 2점, 홀수에 0점을 주면 기대점수는 <var>2·(1/2)=1</var>입니다.</p>
+<p>측도 0인 가측 집합에서만 양수인 비음수 함수는 적분이 0입니다. 그 아래의 단순함수마다 양의 높이를 갖는 조각들이 모두 영집합에 들어가므로 적분 후보가 전부 0입니다. 따라서 <a href="ra03-1.html">리만 적분이 없던 유리수 지시함수</a>는 르베그 적분이 0입니다. 르베그 적분에서는 구간마다 유리수가 들어 있는지만 보지 않고, 유리수 집합의 실제 측도를 사용합니다.</p>
+<p>연속 확률의 밀도 <var>p</var>를 쓰는 경우에는 사건 <var>A</var>의 확률이 <var>∫1<sub>A</sub>p dm</var>입니다. 예로 [0,1] 위 <var>p(x)=2x</var>는 <var>∫p=1</var>이며 반 구간 <var>[0,1/2]</var>의 확률은 <var>1/4</var>입니다. 같은 계단 계산을 [0,1/2]에 적용하면 폭과 높이가 둘 다 절반이 되어 <var>x</var>의 적분은 <var>1/8</var>, 높이를 2배 한 <var>2x</var>의 적분은 <var>1/4</var>입니다.</p>
+<div class="check" data-q="q6"></div>
+<h2>손계산을 Python으로 검산한다</h2>
+<pre data-example="python"><code>from fractions import Fraction as F
+
+for n in [1, 2, 4]:
+    d = 2**n
+    area = sum((F(j, d)*F(1, d) for j in range(d)), F(0))
+    print(n, &quot;intervals:&quot;, d, &quot;lower area:&quot;, area, &quot;upper bound:&quot;, area + F(1, d))
+
+heights = [0, 2, 5]
+masses = [F(1, 2), F(1, 4), F(1, 4)]
+expected = sum(h*m for h, m in zip(heights, masses))
+print(&quot;simple-function integral:&quot;, expected)</code></pre>
+<pre data-output><code>1 intervals: 2 lower area: 1/4 upper bound: 3/4
+2 intervals: 4 lower area: 3/8 upper bound: 5/8
+4 intervals: 16 lower area: 15/32 upper bound: 17/32
+simple-function integral: 7/4</code></pre>
+<p class="small">Python 3.14.6으로 실행했습니다. 위쪽 값은 아래로 내린 단순함수에 같은 폭을 더한 상계입니다. 계산마다 양쪽이 가까워지는 이유는 오차가 <var>1/d</var>이기 때문입니다.</p>
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://terrytao.wordpress.com/2010/09/19/245a-notes-2-the-lebesgue-integral/">Terence Tao, UCLA 245A Notes 2 · The Lebesgue Integral</a></li>
+<li><a href="https://terrytao.wordpress.com/2010/09/25/245a-notes-3-integration-on-abstract-measure-spaces-and-the-convergence-theorems/">Terence Tao, UCLA 245A Notes 3 · Abstract Integration</a></li>
+<li><a href="ra04-1.html">RA04-1 σ-대수·측도와 영집합</a></li>
+</ul>
+
+<h2>확인 문제</h2>
+<p>아직 풀지 않은 문제입니다. 먼저 식이나 근거를 적어 보고 해설을 확인합니다.</p>
+<div id="quiz"></div>
+
+<section class="work" id="tools"></section>
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

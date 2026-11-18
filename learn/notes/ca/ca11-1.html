@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>분리형과 일차 선형 미분방정식 풀기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e8c'/%3E%3Cpath d='M8 22V10m8 12V14m8 8V6' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="CA11-1">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+
+<header class="chapter">
+<p class="chap-sub">미적분 · CA11 상미분방정식</p>
+<p class="chap-num">CA11·1</p>
+<h1>분리형과 일차 선형 미분방정식 풀기</h1>
+<p class="lead">시간이 주어졌을 때 상태의 변화율을 안다고 합시다. 초기값을 넣어 상태를 복원하고, 방정식이 풀려도 해의 범위와 유일성을 따로 확인해야 하는 이유를 살펴봅니다.</p>
+</header>
+
+<div class="goal">
+<h2>이 장을 읽고 나면</h2>
+<ul>
+<li>상미분방정식과 초기값 문제, 해가 성립하는 구간을 설명한다.</li>
+<li>분리형과 일차 선형의 적분 공식을 미분으로 유도한다.</li>
+<li>존재·유일성의 조건과 무한대로 발산하는 해를 구분한다.</li>
+</ul>
+</div>
+<h2>초기값과 함께 어느 구간의 함수를 찾는가</h2>
+
+<p>물체의 온도나 장치의 잔량처럼 시간 <var>t</var>의 함수 <var>y(t)</var>가 있다고 합시다. 현재 시각과 현재 상태가 바뀌는 속도를 <var>f(t,y)</var>로 주면 <var>y′=f(t,y)</var>입니다. 변수가 시간 하나이므로 <b class="key">상미분방정식</b>(ODE)입니다. 식 안에서 가장 높은 미분이 일차이면 일차 ODE입니다. 이 식을 만족하는 미분 가능한 함수마다 해가 될 수 있습니다. 시각과 상태 <var>y(t₀)=y₀</var>를 함께 주고 그 조건을 만족하는 해를 찾으면 <b class="key">초기값 문제</b>입니다.</p>
+<p>풀이를 확인할 때에는 (1) 해가 정의되는 구간이 <var>t₀</var>를 포함하는지, (2) 부드러움과 식이 구간에서 성립하는지, (3) 시작값을 만족하는지를 봅니다. 식의 계수나 해의 분모가 0인 곳은 해가 끊길 수 있습니다. 예를 들어 <var>y′=y²</var>, <var>y(0)=1</var>에서 <var>y(t)=1/(1−t)</var>는 <var>t&lt;1</var>에서 성립하지만 <var>t→1</var>에서 왼쪽으로부터 값이 무한히 커집니다. 같은 식을 <var>t&gt;1</var>에도 계산할 수 있어도, 1을 지나도록 하나의 미분 가능한 해로 연장할 수는 없습니다.</p>
+<p>미분방정식 속의 <var>y</var>는 수 하나가 아니라 찾고 있는 함수입니다. 실제 값을 손에 넣기 전에는 도함수의 기호와 초기값이 같이 주어져 있어도 시간에 따른 전체 궤적을 알아내야 합니다.</p>
+<div class="check" data-q="q1"></div>
+
+<h2>분리할 때 평형해를 먼저 확인한다</h2>
+
+<p><var>y′=g(t)h(y)</var>인 <strong>분리형</strong>에서는 <var>h(y)=0</var>인 값 <var>y=c</var>가 있으면 상수함수 <var>y(t)=c</var>가 해입니다. 이 값을 먼저 기록하세요. <var>h(y)≠0</var>인 구간에서는 <var>H′(y)=1/h(y)</var>인 원시함수를 쓰면 연쇄법칙에 의해 <var>d[H(y(t))]/dt=g(t)</var>입니다. 변수분리의 기호 <var>dy/h(y)=g(t)dt</var>는 이 연쇄법칙을 적분하는 약식입니다.</p>
+<p><b>손계산.</b> <var>y′=y(1−y)</var>, <var>y(0)=1/4</var>를 풉니다. 평형해는 0과 1입니다. 처음에는 <var>0&lt;y&lt;1</var>이므로 <var>1/[y(1−y)]=1/y+1/(1−y)</var>를 적분해 <var>log y−log(1−y)=t+C</var>입니다. <var>t=0</var>의 오즈가 <var>(1/4)/(3/4)=1/3</var>이라 <var>C=log(1/3)</var>입니다. 원래 변수로 바꾸면</p>
+<div class="calc"><var>y(t)=1/(1+3e<sup>−t</sup>).</var></div>
+<p>이 식은 모든 실수 t에서 0과 1 사이이고 직접 미분하면 <var>3e<sup>−t</sup>/(1+3e<sup>−t</sup>)²=y(1−y)</var>입니다. <var>t→∞</var>이면 1에 가까워지고 <var>t→−∞</var>이면 0에 가까워집니다. 초기값이 0 또는 1인 경우에는 첫 단계에서 따로 얻은 상수해를 씁니다. 0으로 나눠서 그 해를 잃지 않도록 합니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 203" role="img" aria-label="로지스틱 방정식의 위상선에서 y가 음수이면 왼쪽, 0과 1 사이이면 오른쪽, 1보다 크면 왼쪽">
+<text class="f-cap" x="380" y="28" text-anchor="middle">y′ = y(1−y)에서 현재 위치가 움직임을 정한다</text>
+<line class="f-grid" x1="100" y1="104" x2="677" y2="104" marker-end="url(#f-arrow)"/>
+<line class="f-line" x1="205" y1="104" x2="112" y2="104" marker-end="url(#f-arrow)"/>
+<line class="f-line" x1="307" y1="104" x2="429" y2="104" marker-end="url(#f-arrow)"/>
+<line class="f-line" x1="630" y1="104" x2="517" y2="104" marker-end="url(#f-arrow)"/>
+<circle class="f-fill" cx="255" cy="104" r="7"/>
+<circle class="f-fill" cx="478" cy="104" r="7"/>
+<text class="f-t" x="255" y="136" text-anchor="middle">0</text>
+<text class="f-t" x="478" y="136" text-anchor="middle">1</text>
+<text class="f-t" x="687" y="109" text-anchor="middle">y</text>
+<text class="f-s" x="159" y="81" text-anchor="middle">y′ &lt; 0</text>
+<text class="f-s" x="363" y="81" text-anchor="middle">y′ &gt; 0</text>
+<text class="f-s" x="582" y="81" text-anchor="middle">y′ &lt; 0</text>
+<text class="f-cap" x="255" y="174" text-anchor="middle">평형 0</text>
+<text class="f-cap" x="478" y="174" text-anchor="middle">평형 1</text>
+</svg>
+<figcaption>0과 1에서는 미분값이 0입니다. 0과 1 사이에서 시작한 해는 시간이 증가하면 오른쪽으로 움직입니다.</figcaption>
+</figure>
+<div class="check" data-q="q2"></div>
+<div class="check" data-q="q3"></div>
+
+<h2>일차 선형식은 곱의 미분으로 바꾼다</h2>
+
+<p>열린 구간 <var>I</var>에서 <var>p,q</var>가 연속인 <var>y′+p(t)y=q(t)</var>를 생각하세요. 양변에 양의 함수 <var>m(t)</var>를 곱했을 때 왼쪽이 <var>(my)′=my′+m′y</var>가 되려면 <var>m′=pm</var>이어야 합니다. <var>t₀∈I</var>에서 <var>m(t₀)=1</var>이 되도록 다음 함수를 고릅니다.</p>
+<div class="calc"><var>m(t)=exp(∫<sub>t₀</sub><sup>t</sup>p(s)ds).</var></div>
+<p>이를 <b class="key">적분인자</b>라고 합니다. <var>(my)′=mq</var>를 적분하면</p>
+<div class="calc"><var>y(t)=[y₀+∫<sub>t₀</sub><sup>t</sup>m(s)q(s)ds]/m(t).</var></div>
+<p>연속 적분과 양의 분모라 <var>I</var>에서 함수가 정의됩니다. 기본정리로 곱을 미분하면 원래 식으로 돌아가고, <var>t=t₀</var>를 넣으면 초기값을 얻으므로 <strong>존재</strong>합니다. 같은 초기값인 모든 해에 적분인자를 곱하면 이 식을 얻으므로 <strong>유일</strong>합니다. 또는 두 해의 차 <var>w</var>가 <var>(mw)′=0</var>, <var>w(t₀)=0</var>이라 전체에서 0이라고 볼 수 있습니다.</p>
+<p><b>손계산.</b> <var>y′+2y/(1+t)=t</var>, <var>y(0)=1</var>에서 구간을 <var>(−1,∞)</var>로 잡습니다. <var>m=(1+t)²</var>를 곱하면 <var>[(1+t)²y]′=t(1+t)²=t+2t²+t³</var>입니다. 따라서 <var>y=[1+t²/2+2t³/3+t⁴/4]/(1+t)²</var>입니다. <var>t=1</var>을 넣으면 분자는 <var>29/12</var>, 분모는 4라 <var>y(1)=29/48</var>입니다.</p>
+<div class="check" data-q="q4"></div>
+<div class="check" data-q="q5"></div>
+
+<h2>연속 기울기만으로 유일성이 따라오지는 않는다</h2>
+
+<p>일반식 <var>y′=f(t,y)</var>에서 초기점의 작은 직사각형 안에 <var>f</var>가 연속이고, 같은 <var>t</var>에서 <var>|f(t,y)-f(t,z)|≤L|y-z|</var>인 상수 <var>L</var>이 있으면, Picard–Lindelöf 정리가 초기시각 근처에서 해의 존재와 유일성을 보장합니다. 이 부등식을 상태변수에 대한 <strong>Lipschitz 조건</strong>이라고 합니다. 예컨대 <var>∂f/∂y</var>가 그 직사각형에서 존재하고 유계면 평균값 정리로 이 부등식을 얻습니다. 보장되는 해는 초기시각 근처에서 시작합니다. 앞의 <var>y′=y²</var>처럼 유일해도 먼 시각까지 계속 정의된다는 결론은 따로 확인합니다.</p>
+<p>유일성이 생기는 이유는 초기값이 같은 두 해 <var>y,z</var>에 대해 <var>|y(t)-z(t)|≤L∫<sub>t₀</sub><sup>t</sup>|y(s)-z(s)|ds</var>이기 때문입니다. <var>t≥t₀</var>인 길이 <var>h</var>의 구간에서 두 해의 최대 거리 <var>M</var>을 잡으면 <var>M≤LhM</var>입니다. <var>Lh&lt;1</var>이도록 구간을 짧게 택하면 <var>M=0</var>입니다. <var>t≤t₀</var> 쪽도 같은 방식으로 적분 방향을 바꾸어 보일 수 있습니다.</p>
+<p><b>반례.</b> <var>y′=2√|y|</var>, <var>y(0)=0</var>에서 <var>f</var>는 연속입니다. 하지만 <var>|f(t,y)-f(t,0)|/|y|=2/√y</var>는 양수 y가 0으로 가면 유계가 아닙니다. <var>y≡0</var>도 해이고, 원하는 <var>a≥0</var>에 대해 <var>t≤a</var>에서 0, <var>t&gt;a</var>에서 <var>(t-a)²</var>인 함수도 해입니다. 붙이는 곳에서 양쪽 미분값이 0이고, 이후에는 <var>y′=2(t-a)=2√y</var>입니다. 기다리는 시간이 여러 가지여서 초기값이 같아도 해가 여러 개입니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 257" role="img" aria-label="제곱근 방정식에서 항상 영인 해에 비해 시각 1과 2에 출발하는 두 해가 t 3에 값 4와 1을 가진다">
+<text class="f-cap" x="380" y="33" text-anchor="middle">초기값 y(0)=0을 공유하는 서로 다른 해</text>
+<text class="f-t" x="180" y="82" text-anchor="end">t</text>
+<rect class="f-box" x="206" y="58" width="120" height="38" rx="3"/>
+<text class="f-t" x="266" y="83" text-anchor="middle">0</text>
+<rect class="f-box" x="332" y="58" width="120" height="38" rx="3"/>
+<text class="f-t" x="392" y="83" text-anchor="middle">1</text>
+<rect class="f-box" x="458" y="58" width="120" height="38" rx="3"/>
+<text class="f-t" x="518" y="83" text-anchor="middle">2</text>
+<rect class="f-box" x="584" y="58" width="120" height="38" rx="3"/>
+<text class="f-t" x="644" y="83" text-anchor="middle">3</text>
+<text class="f-t" x="180" y="128" text-anchor="end">항상 0</text>
+<rect class="f-box" x="206" y="104" width="120" height="38" rx="3"/>
+<text class="f-t" x="266" y="129" text-anchor="middle">0</text>
+<rect class="f-box" x="332" y="104" width="120" height="38" rx="3"/>
+<text class="f-t" x="392" y="129" text-anchor="middle">0</text>
+<rect class="f-box" x="458" y="104" width="120" height="38" rx="3"/>
+<text class="f-t" x="518" y="129" text-anchor="middle">0</text>
+<rect class="f-box" x="584" y="104" width="120" height="38" rx="3"/>
+<text class="f-t" x="644" y="129" text-anchor="middle">0</text>
+<text class="f-t" x="180" y="174" text-anchor="end">y₁(t)</text>
+<rect class="f-box" x="206" y="150" width="120" height="38" rx="3"/>
+<text class="f-t" x="266" y="175" text-anchor="middle">0</text>
+<rect class="f-box" x="332" y="150" width="120" height="38" rx="3"/>
+<text class="f-t" x="392" y="175" text-anchor="middle">0</text>
+<rect class="f-box" x="458" y="150" width="120" height="38" rx="3"/>
+<text class="f-t" x="518" y="175" text-anchor="middle">1</text>
+<rect class="f-box" x="584" y="150" width="120" height="38" rx="3"/>
+<text class="f-t" x="644" y="175" text-anchor="middle">4</text>
+<text class="f-t" x="180" y="220" text-anchor="end">y₂(t)</text>
+<rect class="f-box" x="206" y="196" width="120" height="38" rx="3"/>
+<text class="f-t" x="266" y="221" text-anchor="middle">0</text>
+<rect class="f-box" x="332" y="196" width="120" height="38" rx="3"/>
+<text class="f-t" x="392" y="221" text-anchor="middle">0</text>
+<rect class="f-box" x="458" y="196" width="120" height="38" rx="3"/>
+<text class="f-t" x="518" y="221" text-anchor="middle">0</text>
+<rect class="f-box" x="584" y="196" width="120" height="38" rx="3"/>
+<text class="f-t" x="644" y="221" text-anchor="middle">1</text>
+</svg>
+<figcaption>yₐ는 시각 a까지 0으로 있다가 (t−a)²를 따라 움직입니다. 출발점에서도 왼쪽과 오른쪽 도함수가 모두 0입니다.</figcaption>
+</figure>
+<div class="check" data-q="q6"></div>
+<h2>손계산을 Python으로 검산한다</h2>
+<pre data-example="python"><code>from fractions import Fraction as F
+from math import exp
+
+def integrating_solution(t):
+    integral = t*t/2 + 2*t**3/3 + t**4/4
+    numerator, denominator = 1 + integral, (1 + t)**2
+    numerator_prime, denominator_prime = t + 2*t*t + t**3, 2*(1+t)
+    derivative = (numerator_prime*denominator - numerator*denominator_prime) / denominator**2
+    return numerator / denominator, derivative
+
+for t in [F(0), F(1), F(2)]:
+    y, derivative = integrating_solution(t)
+    print(t, y, &quot;equation:&quot;, derivative + 2*y/(1+t) == t)
+
+for t in [0, 1, 2]:
+    value = 1 / (1 + 3*exp(-t))
+    print(&quot;logistic&quot;, t, f&quot;{value:.6f}&quot;)
+
+print(&quot;two delayed roots at t=3:&quot;, *(max(0, 3-a)**2 for a in [1, 2]))</code></pre>
+<pre data-output><code>0 1 equation: True
+1 29/48 equation: True
+2 37/27 equation: True
+logistic 0 0.250000
+logistic 1 0.475367
+logistic 2 0.711235
+two delayed roots at t=3: 4 1</code></pre>
+<p class="small">Python 3.14.6으로 실행했습니다. 선형식은 분수로 정확히, 지수함수는 소수 여섯 자리로 기록합니다. 해가 유일하다는 사실은 출력된 몇 점이 아니라 적분인자를 곱한 식에서 따릅니다.</p>
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://ocw.mit.edu/courses/18-03sc-differential-equations-fall-2011/pages/unit-i-first-order-differential-equations/basic-de-and-separable-equations/">MIT 18.03SC, Basic DE’s and Separable Equations</a></li>
+<li><a href="https://ocw.mit.edu/courses/18-03sc-differential-equations-fall-2011/pages/unit-i-first-order-differential-equations/first-order-linear-odes/">MIT 18.03SC, First Order Linear ODE’s</a></li>
+<li><a href="ca06-1.html">CA06-1 곱의 미분과 부분적분</a></li>
+</ul>
+
+<h2>확인 문제</h2>
+<p>아직 풀지 않은 문제입니다. 먼저 식이나 근거를 적어 보고 해설을 확인합니다.</p>
+<div id="quiz"></div>
+
+<section class="work" id="tools"></section>
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

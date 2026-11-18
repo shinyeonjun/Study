@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>가우시안 혼합에서 분산이 붕괴하는 이유와 계산을 막는 조건 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="ML14-3">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">머신러닝 · 혼합모형</p>
+<p class="chap-num">ML14·3</p>
+<h1>가우시안 혼합에서 분산이 붕괴하는 이유와 계산을 막는 조건</h1>
+<p class="lead">연속 자료를 정규분포 여럿으로 설명할 때, 성분 하나가 데이터 한 점에 바짝 달라붙으면 우도는 계속 올라갈 수 있습니다. 분산 하한이 무엇을 바꾸는지 수식과 실제로 작동하는 반복으로 확인합니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>가우시안 성분의 평균과 분산 갱신을 책임도 가중식으로 유도할 수 있다.</li><li>분산이 0에 접근하는 혼합모형에서 우도가 위로 제한되지 않는 사례를 설명할 수 있다.</li><li>분산 하한을 적용한 M 단계와 안정적인 로그 합 계산을 구현하고 검산할 수 있다.</li></ul></div>
+
+<h2>담당 확률만큼 평균과 분산에 반영한다</h2>
+<p>실수 자료 x₁,…,xₙ에 대해 정규 성분 K개를 섞습니다. 성분 k에는 혼합 무게 πₖ, 평균 μₖ, 분산 vₖ&gt;0가 있습니다. 각 성분에서의 정규 밀도에 무게를 곱한 값 πₖφ(xᵢ;μₖ,vₖ)를 모든 성분의 합으로 나누면 책임도 rᵢₖ입니다. 책임도는 E에서 계산하고 M에서는 그 값들을 고정합니다.</p>
+<p>한 성분의 기대 로그밀도에서 상수항을 빼면, 평균과 분산에 의존하는 부분은 −(1/2)Σᵢrᵢₖ[log vₖ+(xᵢ−μₖ)²/vₖ]입니다. μₖ로 미분해 0을 두면 새 μₖ는 Σrᵢₖxᵢ/Σrᵢₖ입니다. 새 평균을 사용한 가중 제곱편차의 합을 Sₖ, 가중치 합을 Nₖ라 놓으면 분산 부분은 −(Nₖ log vₖ+Sₖ/vₖ)/2입니다. 미분값 (Sₖ−Nₖvₖ)/(2vₖ²)는 vₖ=Sₖ/Nₖ 앞뒤에서 양에서 음으로 바뀌므로 가중 분산인 이 값이 기대 로그밀도를 최대로 만듭니다. 여기서는 Nₖ&gt;0이고 Sₖ&gt;0인 내부 해를 우선 다룹니다.</p>
+<div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
+<h2>우도가 무한히 커지는 한 방향</h2>
+<p>성분을 두 개 사용합니다. 한 성분은 어느 관측 x₁에 평균을 놓고, 분산 v를 0에 가까워지게 합니다. 그 성분에서 x₁의 밀도는 1/√(2πv)라 위로 제한되지 않습니다. 혼합 무게가 고정된 양수라 x₁의 로그 혼합 밀도도 무한히 커집니다. 다른 성분을 분산이 양수인 고정 정규분포로 두면 나머지 관측들에서 혼합 밀도가 일정한 양의 값 아래로 떨어지지 않습니다. 따라서 함께 더한 로그우도 역시 위로 제한되지 않습니다.</p>
+<p>이는 매우 뾰족한 성분이 실제로 존재한다는 증거와는 다릅니다. 매개변수 공간에서 임의로 작은 분산을 허용했을 때 생기는 <b class="key">분산 붕괴</b>입니다. 우도만 높이는 것을 목표로 삼으면 업데이트나 초기값에 따라 이 경계 근처를 지나갈 수 있습니다.</p>
+<div class="check" data-q="q3"></div>
+<h2>분산 하한을 문제에 포함한다</h2>
+<p>이 예에서는 모든 분산에 vₖ≥0.16을 부과합니다. 앞의 도함수 부호를 보면 제약을 만족하는 최적 M 값은 max(0.16,Sₖ/Nₖ)입니다. 가중 분산이 하한 아래라면 허용되는 범위에서는 v가 증가할수록 기대 로그밀도가 줄어드므로 경계가 최대입니다. 따라서 이 단순한 분산 하한은 제약을 포함한 M 문제의 해이고, 임의로 분산에 숫자를 더해 주는 변화와 다릅니다.</p>
+<p>벡터를 다루는 혼합모형에서는 각 성분의 가중 공분산을 계산합니다. 가령 어떤 방향의 고유값이 매우 작아지면 그 방향에 질량이 지나치게 몰릴 수 있습니다. 고유값 하한, 대각 공분산, 여러 성분에서 공분산을 공유하는 선택은 서로 다른 문제를 만듭니다. 여기서 증명한 1차원 계산은 그중 분산 하한입니다. 결과를 비교할 때 어떤 모형 제약을 적용했는지 함께 적습니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 160" role="img" aria-label="가우시안 혼합의 M 단계에서 분산 하한을 적용하고 관측 우도를 다시 검사">
+<rect class="f-box" x="42" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="135" y="61" text-anchor="middle">성분별 계산</text><text class="f-s" x="135" y="89" text-anchor="middle">rᵢₖ로 질량과 평균을 구함</text><text class="f-s" x="135" y="110" text-anchor="middle">가중 분산 Sₖ/Nₖ</text><line class="f-line" x1="235" y1="84" x2="278" y2="84" marker-end="url(#f-arrow)"/><rect class="f-soft" x="287" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="380" y="61" text-anchor="middle">하한을 적용</text><text class="f-s" x="380" y="89" text-anchor="middle">vₖ≥0.16인 범위에서 최대</text><text class="f-s" x="380" y="110" text-anchor="middle">max(0.16, Sₖ/Nₖ)</text><line class="f-line" x1="480" y1="84" x2="523" y2="84" marker-end="url(#f-arrow)"/><rect class="f-box" x="532" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="625" y="61" text-anchor="middle">관측에서 검산</text><text class="f-s" x="625" y="89" text-anchor="middle">책임도와 로그우도 재계산</text><text class="f-s" x="625" y="110" text-anchor="middle">초기값을 바꿔 비교</text>
+</svg><figcaption>하한을 둘 때는 표준편차와 분산의 단위를 먼저 구분합니다.</figcaption></figure>
+<div class="check" data-q="q4"></div><div class="check" data-q="q5"></div>
+<h2>수치적으로 안전하게 로그 합을 계산한다</h2>
+<p>성분별 로그 밀도와 로그 무게를 더한 점수를 aₖ라 합시다. 관측 로그밀도는 log Σexp(aₖ)입니다. 매우 작은 a를 그대로 지수화하면 부동소수점에서 0으로 내려갈 수 있습니다. 대신 m=max aₖ를 먼저 빼면 가장 큰 exp(aₖ−m)은 1입니다. log Σexp(aₖ)=m+log Σexp(aₖ−m)이라는 등식으로 로그밀도를 복구하고, 책임도를 계산할 때는 공통 배율 eᵐ이 분자와 분모에서 상쇄됩니다.</p>
+<pre data-example="python"><code>import numpy as np
+
+data = np.array([-3.4,-3.,-2.6,2.7,3.,3.3])[:, None]
+floor = 0.16
+
+def estep(weights, means, variances):
+    scores = np.log(weights) - 0.5 * (
+        np.log(2*np.pi*variances) + (data-means)**2/variances)
+    shift = scores.max(axis=1, keepdims=True)
+    unnormalized = np.exp(scores-shift)
+    total = unnormalized.sum(axis=1, keepdims=True)
+    likelihood = float((shift + np.log(total)).sum())
+    return unnormalized/total, likelihood
+
+for name, start in ((&quot;나눈 초기값&quot;, [-1.,1.]), (&quot;같은 초기값&quot;, [0.,0.])):
+    w = np.array([.5,.5])
+    mean = np.array(start)
+    var = np.ones(2)
+    r, previous = estep(w,mean,var)
+    for _ in range(12):
+        count = r.sum(axis=0)
+        assert np.all(count &gt; 0)
+        w = count / len(data)
+        mean = (r*data).sum(axis=0) / count
+        var = np.maximum((r*(data-mean)**2).sum(axis=0)/count, floor)
+        r, current = estep(w,mean,var)
+        assert current &gt;= previous-1e-12
+        previous = current
+    print(name)
+    print(&quot;평균:&quot;, mean.round(3).tolist(), &quot;분산:&quot;, var.round(3).tolist())
+    print(f&quot;로그우도: {previous:.4f}&quot;)</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>나눈 초기값
+평균: [-3.0, 3.0] 분산: [0.16, 0.16]
+로그우도: -5.7373
+같은 초기값
+평균: [0.0, 0.0] 분산: [9.083, 9.083]
+로그우도: -15.1330</code></pre>
+<p>모든 초기 성분이 같으면 이 대칭을 깨는 정보가 없어 같은 방식으로 갱신합니다. 서로 다른 평균으로 시작하면 주어진 자료에서는 두 덩어리로 갈라집니다. 둘 다 각 단계의 훈련 우도가 줄지 않았습니다. 예에서는 초기 평균을 나눈 쪽이 더 높은 훈련 우도를 보였지만 어느 성분 수와 분산 하한이 좋은지 판단하려면, 검증 자료에서의 점수와 정체되거나 붕괴한 결과도 같이 비교합니다.</p>
+<div class="check" data-q="q6"></div>
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table><thead><tr><th scope="col">조건</th><th scope="col">정확히 무엇을 계산하는가</th></tr></thead><tbody><tr><td>책임도로 가중한 M</td><td>성분별 가중 평균과 가중 분산.</td></tr><tr><td>분산 하한</td><td>0에 접근하는 경계에서 멀어지도록 제한하고, 같은 모형 안에서 제약 최적화를 수행.</td></tr><tr><td>로그 합 안정화</td><td>최대 성분 로그값을 빼고, 결과 로그에 그 값을 다시 더한다.</td></tr><tr><td>선택의 근거</td><td>초기화, 하한, 검증 분할과 평가값을 같이 기록한다.</td></tr></tbody></table></div>
+
+<h2>참고 자료</h2>
+<ul><li><a href="https://cs229.stanford.edu/notes_archive/cs229-notes8.pdf">Stanford CS229 · EM과 가우시안 혼합</a></li></ul>
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

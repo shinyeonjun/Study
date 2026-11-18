@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>분류 경계의 점수와 실제 거리를 구분하기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="ML13-1">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">머신러닝 · 최대 마진</p>
+<p class="chap-num">ML13·1</p>
+<h1>분류 경계의 점수와 실제 거리를 구분하기</h1>
+<p class="lead">자료를 완전히 맞히는 선은 여럿일 수 있습니다. 경계의 어느 쪽인지 정하는 점수에서 실제 거리를 구하고, 거리의 가장 작은 값을 최대로 만드는 문제를 유도합니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>선형분류의 기능 마진과 기하 마진을 구분할 수 있다.</li><li>모든 분류 점수를 함께 키워도 경계는 바뀌지 않는 이유를 설명할 수 있다.</li><li>1차원 최대 마진 분류의 해, 경계, 지지벡터를 손으로 구할 수 있다.</li></ul></div>
+
+<h2>경계에서 어느 쪽에 놓였는가</h2>
+<p>분류 점수를 s(x)=wᵀx+b로 놓습니다. w는 특징들의 가중치, b는 절편입니다. 점수가 양수인 쪽을 +1, 음수인 쪽을 −1로 분류합니다. 실제 표지가 y∈{−1,+1}일 때 y·s(x)&gt;0이면 예측 쪽이 맞습니다. <b class="key">기능 마진</b>은 이 부호 있는 점수 y·s(x)입니다.</p>
+<p>그러나 w와 b를 둘 다 10배 하면 경계 s(x)=0과 분류 쪽은 그대로이고 기능 마진만 10배가 됩니다. 점수를 키웠다는 사실만으로 자료와 경계가 더 멀어졌다고 말할 수 없습니다. 실제 거리를 알려면 w의 크기로 나누어야 합니다.</p>
+<div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
+<h2>문제에서 원하는 것은 가장 가까운 점까지의 거리</h2>
+<p>w≠0라고 합시다. x를 경계 쪽으로 w 방향만큼 움직여 x₀=x−t w로 놓으면 wᵀx₀+b= wᵀx+b−t‖w‖²입니다. 이를 0으로 만드는 t는 (wᵀx+b)/‖w‖²입니다. x−x₀=t w의 길이는 |wᵀx+b|/‖w‖입니다. w에 수직인 다른 성분까지 붙이면 길이 제곱이 늘어나므로 이 수직 이동이 가장 짧습니다. 표지에 따라 방향 부호를 붙인 <b class="key">기하 마진</b>은 y(wᵀx+b)/‖w‖입니다.</p>
+<p>훈련 자료에 두 표지가 모두 있고 선형으로 분리되어 모든 기능 마진을 양수로 만들 수 있다면, w와 b를 양수 하나로 함께 곱해 가장 작은 기능 마진을 1로 맞출 수 있습니다. 이 기준에서 가장 작은 기하 마진은 1/‖w‖입니다. 따라서 그 거리를 최대로 하는 것은 ‖w‖를 최소로 하는 일입니다. 미분이 쉬운 제곱을 써 양의 상수 1/2을 곱하더라도 최적 w는 같습니다.</p>
+<div class="box "><p class="box-k">하드 마진 문제</p><p>모든 표지에 대해 yᵢ(wᵀxᵢ+b)≥1을 유지하면서 ‖w‖²/2를 최소화합니다. 점수가 1 또는 −1인 두 기준면 사이 거리는 2/‖w‖이고, 결정 경계에서 가까운 점까지의 거리와는 두 배 관계입니다.</p></div>
+<div class="check" data-q="q3"></div>
+<h2>가장 가까운 음성과 양성 두 점을 사용한다</h2>
+<p>직선 위에 음성 x=−4,−2와 양성 x=1,3을 둡니다. 가장 가까운 두 점 −2와 1에서 제약을 적으면, 2w−b≥1와 w+b≥1입니다. 합이 3w≥2이므로 w≥2/3입니다. 목적함수 w²/2가 가장 작아지려면 w=2/3이어야 합니다. 이때 두 식에서 b≤1/3과 b≥1/3을 얻으므로 b=1/3입니다. x=−4와 x=3에서도 기능 마진이 1 이상인지 확인해야 합니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 188" role="img" aria-label="수직선에서 −2와 1이 경계 −0.5에서 같은 거리이며 마진 전체 폭은 3">
+<line class="f-ink" x1="50" y1="115" x2="685" y2="115" marker-end="url(#f-arrow)"/><line class="f-line" x1="230" y1="72" x2="230" y2="148"/><line class="f-dash" x1="350" y1="59" x2="350" y2="150"/><line class="f-line" x1="470" y1="72" x2="470" y2="148"/>
+<circle class="f-fill" cx="70" cy="115" r="4"/><circle class="f-fill" cx="230" cy="115" r="5"/><circle class="f-fill" cx="470" cy="115" r="5"/><circle class="f-fill" cx="630" cy="115" r="4"/>
+<text class="f-t" x="70" y="144" text-anchor="middle">−4</text><text class="f-t" x="230" y="166" text-anchor="middle">−2</text><text class="f-t" x="350" y="166" text-anchor="middle">−0.5</text><text class="f-t" x="470" y="166" text-anchor="middle">1</text><text class="f-t" x="630" y="144" text-anchor="middle">3</text>
+<text class="f-s" x="230" y="55" text-anchor="middle">−1 쪽 마진</text><text class="f-b f-t" x="350" y="40" text-anchor="middle">결정 경계</text><text class="f-s" x="470" y="55" text-anchor="middle">+1 쪽 마진</text>
+</svg><figcaption>기능 점수가 −1인 점과 +1인 점은 결정 경계에서 각각 1.5만큼 떨어져 있습니다.</figcaption></figure>
+<p>결정 경계는 wx+b=0을 만족하는 −b/w=−1/2입니다. 기하 마진은 1/(2/3)=3/2이고 폭은 3입니다. 기능 마진이 1에 딱 맞는 −2와 1이 이 예의 <b class="key">지지벡터</b>입니다. 두 점만 보더라도 원래 만든 제약이 최솟값의 하계를 강제하고, 나머지 자료는 후보가 그 제약을 어기지 않는지 확인하는 데 쓰입니다.</p>
+<div class="check" data-q="q4"></div><div class="check" data-q="q5"></div>
+<h2>정확한 값으로 점수와 거리 확인하기</h2>
+<pre data-example="python"><code>from fractions import Fraction as F
+
+samples = [(-4,-1), (-2,-1), (1,1), (3,1)]
+w, b = F(2,3), F(1,3)
+scores = [(x, y*(w*x+b)) for x,y in samples]
+assert min(margin for _,margin in scores)==1
+assert 2*w-b==1 and w+b==1
+scaled = [(x, y*(10*w*x+10*b)/abs(10*w)) for x,y in samples]
+assert scaled == [(x, margin/abs(w)) for x,margin in scores]
+print(&quot;경계:&quot;, -b/w)
+print(&quot;기능 마진:&quot;, *(f&quot;{x}:{margin}&quot; for x,margin in scores))
+print(&quot;지지벡터:&quot;, *(x for x,margin in scores if margin==1))
+print(&quot;한쪽 기하 마진:&quot;, 1/abs(w), &quot;전체 폭:&quot;, 2/abs(w))</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>경계: -1/2
+기능 마진: -4:7/3 -2:1 1:1 3:7/3
+지지벡터: -2 1
+한쪽 기하 마진: 3/2 전체 폭: 3</code></pre>
+<div class="check" data-q="q6"></div>
+<p>같은 x에 서로 다른 두 표지가 붙어 있으면, 하나의 같은 점수에 두 부호를 모두 요구하게 됩니다. 완전히 분리해야 하는 하드 마진은 그런 예에서 해가 없습니다. 다음 장에서는 마진을 어긴 만큼 비용을 내는 방식으로 조건을 바꾸고, 어떤 점의 영향이 승수로 남는지 계산합니다.</p>
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table><thead><tr><th scope="col">용어</th><th scope="col">뜻</th></tr></thead><tbody><tr><td>기능 마진</td><td>같은 양수로 점수를 늘리면 함께 늘어나는 y(wᵀx+b).</td></tr><tr><td>기하 마진</td><td>기능 마진을 ‖w‖로 나눈 경계까지의 부호 있는 거리.</td></tr><tr><td>하드 마진</td><td>기능 마진의 최솟값을 1로 정하고 ‖w‖²/2를 최소화.</td></tr><tr><td>지지벡터</td><td>이 예에서는 최대 마진 경계의 위치를 제한한 가장 가까운 점.</td></tr></tbody></table></div>
+
+<h2>참고 자료</h2>
+<ul><li><a href="https://cs229.stanford.edu/notes_archive/cs229-notes3.pdf">Stanford CS229 · Support Vector Machines</a></li></ul>
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

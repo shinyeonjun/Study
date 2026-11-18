@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MCMC 체인의 일치와 유효 표본 수를 따로 진단하기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="ST14-3">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">통계 · ST14 계층 베이즈와 예측 점검</p>
+<p class="chap-num">ST14·3</p>
+<h1>MCMC 체인의 일치와 유효 표본 수를 따로 진단하기</h1>
+<p class="lead">사후를 정확히 적분하기 어려울 때는 여러 체인의 출력으로 모수와 예측을 요약합니다. 체인이 서로 다른 곳에 머무르는 문제와, 같은 곳에 있어도 표본이 많이 닮은 문제를 나누어 계산합니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2>
+<ul>
+<li>체인 안과 체인 사이의 변동으로 고전 R̂가 측정하는 바를 계산한다.</li>
+<li>자기상관이 평균의 몬테카를로 오차를 키우는 이유를 유도한다.</li>
+<li>사후의 근사·자료 적합·새 관측 예측의 검사를 구분한다.</li>
+</ul></div>
+<h2>무엇에 대한 불확실성을 줄일 수 있는가</h2>
+<p><a href="st09-3.html">Metropolis–Hastings</a>에서 본 것처럼 MCMC 수행은 목표 사후분포를 갖는 전이 규칙에서 상태를 차례로 저장합니다. 초기 상태의 영향이 남을 수 있고, 상태들이 이어져 있어 보통 독립 추출은 아닙니다. 반복 횟수를 늘려 줄이는 것은 관심 사후 요약의 <b class="key">몬테카를로 오차</b>입니다. 사후분포가 나타내는 원자료의 정보 부족이나 모형의 잘못된 가정은 그대로 남을 수 있습니다.</p>
+<p>서로 다른 시작점을 사용한 여러 체인을 보되, 적응과 준비 단계 이후의 표본을 비교합니다. 시점대로 놓은 <b>흔적 그림</b>에서는 한 곳에 오래 머무는지, 시간에 따라 위치나 퍼짐이 변하는지, 체인끼리 탐색 범위가 다른지 확인합니다. 아래는 계산을 보여 주는 인공 숫자라 실제 사후의 표본이라고 가정하지 않습니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 264" role="img" aria-label="체인 A는 0,2,0,2, 체인 B는 4,6,4,6에 머문다.">
+<text class="f-cap" x="380" y="29" text-anchor="middle">체인 내부 변동은 작지만 체인 사이 위치가 다르다</text>
+<line class="f-ink" x1="136" y1="190" x2="644" y2="190" marker-end="url(#f-arrow)"/>
+<line class="f-ink" x1="136" y1="190" x2="136" y2="49" marker-end="url(#f-arrow)"/>
+<line class="f-ink" x1="136" y1="190" x2="136" y2="196"/>
+<text class="f-s" x="136" y="212" text-anchor="middle">1</text>
+<line class="f-ink" x1="300.66666666666663" y1="190" x2="300.66666666666663" y2="196"/>
+<text class="f-s" x="300.66666666666663" y="212" text-anchor="middle">2</text>
+<line class="f-ink" x1="465.3333333333333" y1="190" x2="465.3333333333333" y2="196"/>
+<text class="f-s" x="465.3333333333333" y="212" text-anchor="middle">3</text>
+<line class="f-ink" x1="630" y1="190" x2="630" y2="196"/>
+<text class="f-s" x="630" y="212" text-anchor="middle">4</text>
+<line class="f-grid" x1="131" y1="190" x2="630" y2="190"/>
+<text class="f-s" x="125" y="194" text-anchor="end">0</text>
+<line class="f-grid" x1="131" y1="144.66666666666666" x2="630" y2="144.66666666666666"/>
+<text class="f-s" x="125" y="148.66666666666666" text-anchor="end">2</text>
+<line class="f-grid" x1="131" y1="99.33333333333333" x2="630" y2="99.33333333333333"/>
+<text class="f-s" x="125" y="103.33333333333333" text-anchor="end">4</text>
+<line class="f-grid" x1="131" y1="54" x2="630" y2="54"/>
+<text class="f-s" x="125" y="58" text-anchor="end">6</text>
+<polyline class="f-line" fill="none" points="136,190 300.667,144.667 465.333,190 630,144.667"/>
+<circle class="f-fill" cx="136" cy="190" r="3.5"/>
+<circle class="f-fill" cx="300.667" cy="144.667" r="3.5"/>
+<circle class="f-fill" cx="465.333" cy="190" r="3.5"/>
+<circle class="f-fill" cx="630" cy="144.667" r="3.5"/>
+<polyline class="f-dash" fill="none" points="136,99.333 300.667,54 465.333,99.333 630,54"/>
+<circle class="f-fill" cx="136" cy="99.333" r="3.5"/>
+<circle class="f-fill" cx="300.667" cy="54" r="3.5"/>
+<circle class="f-fill" cx="465.333" cy="99.333" r="3.5"/>
+<circle class="f-fill" cx="630" cy="54" r="3.5"/>
+<text class="f-s" x="650" y="236" text-anchor="middle">반복 번호</text>
+<text class="f-s" x="120" y="44" text-anchor="end">저장값</text>
+</svg><figcaption>실선은 체인 A, 점선은 체인 B다. 짧은 숫자열은 진단 계산을 설명하는 자료다.</figcaption></figure>
+<div class="check" data-q="q1"></div>
+<h2>안에서 흔들리는 폭과 체인 평균의 차이를 비교한다</h2>
+<p>각각 n개의 값이 있는 m≥2개의 체인이 있고 n≥2라 합시다. 한 체인의 표본분산을 평균한 값이 <var>W</var>, 체인 평균들의 표본분산에 n을 곱한 값이 <var>B</var>입니다. 표본분산은 계산하는 목록의 개수에서 하나를 뺀 값으로 나눕니다. 고전적인 동일 길이 <b class="key">R̂</b>의 쉬운 꼴은</p>
+<div class="eq"><var>v⁺=((n−1)/n)W+B/n, R̂=√(v⁺/W) (W&gt;0).</var></div>
+<p>자료에서 A 평균은 1, B 평균은 5이고 각각의 표본분산은 <var>4/3</var>입니다. <var>W=4/3</var>, 체인 평균의 분산은 8, <var>B=4·8=32</var>입니다. 그래서 <var>v⁺=9</var>, <var>R̂=√(27/4)≈2.59808</var>입니다. 각 체인 안에서 보이는 변동으로는 체인 사이 차이를 설명하기 어렵습니다. W=0이면 이 수식으로 값을 비교할 수 없습니다. 값이 거의 같게 반복되고 있는지, 변수 자체가 상수인 설계인지 구분합니다.</p>
+<p>Vehtari 등이 제안한 R̂에는 두 계산이 들어갑니다. 각 체인을 앞·뒤로 나누고, 첫 계산에서는 분할 체인의 전체 표본을 모아 값의 순위를 매깁니다. 같은 값에는 평균 순위를 주고, 순위에 대응하는 확률을 구해 표준정규분포의 분위수로 바꿉니다. 변환한 체인들에 R̂를 계산하면 앞뒤의 변화나 체인마다 위치가 다른 점을 살필 수 있습니다. 두 번째 계산에서는 값 대신 전체 표본 중앙값과의 절대거리 <var>|θ−median(θ)|</var>를 써서 같은 순위 정규화 및 분할 계산을 합니다. 이 <b>접기(folding)</b>는 중심이 비슷해도 산포가 다른 체인을 잡는 데 도움이 됩니다. 모수마다 두 R̂ 값 중 큰 값을 보고합니다.</p>
+<p>R̂가 1에 가깝고 흔적이 섞여도 모든 체인이 아직 안 가 본 영역이 있거나, 계산한 목표분포의 구현이 틀릴 수 있습니다.</p>
+<div class="check" data-q="q2"></div>
+<div class="check" data-q="q3"></div>
+<div class="check" data-q="q4"></div>
+<h2>자기상관을 포함한 평균의 분산을 계산한다</h2>
+<p>정상상태에 있는 길이 n의 스칼라 표본 <var>x₁,…,xₙ</var>에서 개별 분산은 <var>s²</var>, k칸 떨어진 상관은 <var>ρ<sub>k</sub></var>라 둡니다. 평균의 분산에 변량 하나의 분산이 n개, 거리 k인 서로 다른 쌍의 공분산 <var>s²ρ<sub>k</sub></var>가 <var>2(n−k)</var>개 들어갑니다. 이를 더해 n²으로 나눕니다.</p>
+<div class="eq"><var>Var(x̄)= (s²/n)·[1+2Σ<sub>k=1</sub><sup>n−1</sup>(1−k/n)ρ<sub>k</sub>].</var></div>
+<p>상관들이 충분히 빠르게 줄고 n이 크면 대괄호를 <var>1+2Σρ<sub>k</sub></var>로 근사합니다. 독립 표본 <var>N<sub>eff</sub></var>개를 모았을 때와 평균 분산이 같도록 맞춘 수가 <b class="key">유효 표본 수(ESS)</b>입니다. 양의 상관이 크면 저장된 횟수보다 작을 수 있습니다. 예를 들어 두 상태 ±1이 현재 값에 남을 확률 .95, 반대쪽으로 갈 확률 .05인 대칭 체인은 정상분포가 반반입니다. 다음 상태의 조건부 기대값이 <var>.9x</var>라 반복하면 <var>ρ<sub>k</sub>=.9<sup>k</sup></var>가 됩니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 264" role="img" aria-label="정상인 두 상태 체인에서 상관은 시차 k에 따라 .9를 k번 곱한 값이다.">
+<text class="f-cap" x="380" y="29" text-anchor="middle">같은 체인의 근접한 저장값은 서로 닮을 수 있다</text>
+<line class="f-ink" x1="136" y1="190" x2="644" y2="190" marker-end="url(#f-arrow)"/>
+<line class="f-ink" x1="136" y1="190" x2="136" y2="49" marker-end="url(#f-arrow)"/>
+<line class="f-ink" x1="136" y1="190" x2="136" y2="196"/>
+<text class="f-s" x="136" y="212" text-anchor="middle">0</text>
+<line class="f-ink" x1="259.5" y1="190" x2="259.5" y2="196"/>
+<text class="f-s" x="259.5" y="212" text-anchor="middle">5</text>
+<line class="f-ink" x1="383" y1="190" x2="383" y2="196"/>
+<text class="f-s" x="383" y="212" text-anchor="middle">10</text>
+<line class="f-ink" x1="506.5" y1="190" x2="506.5" y2="196"/>
+<text class="f-s" x="506.5" y="212" text-anchor="middle">15</text>
+<line class="f-ink" x1="630" y1="190" x2="630" y2="196"/>
+<text class="f-s" x="630" y="212" text-anchor="middle">20</text>
+<line class="f-grid" x1="131" y1="190" x2="630" y2="190"/>
+<text class="f-s" x="125" y="194" text-anchor="end">0</text>
+<line class="f-grid" x1="131" y1="122" x2="630" y2="122"/>
+<text class="f-s" x="125" y="126" text-anchor="end">.5</text>
+<line class="f-grid" x1="131" y1="54" x2="630" y2="54"/>
+<text class="f-s" x="125" y="58" text-anchor="end">1</text>
+<polyline class="f-line" fill="none" points="136,54 160.7,67.6 185.4,79.84 210.1,90.856 234.8,100.77 259.5,109.693 284.2,117.724 308.9,124.952 333.6,131.456 358.3,137.311 383,142.58 407.7,147.322 432.4,151.59 457.1,155.431 481.8,158.888 506.5,161.999 531.2,164.799 555.9,167.319 580.6,169.587 605.3,171.628 630,173.466"/>
+<text class="f-s" x="650" y="236" text-anchor="middle">거리 k</text>
+<text class="f-s" x="120" y="44" text-anchor="end">상관 ρₖ</text>
+</svg><figcaption>시차 5의 상관도 약 .590이다. 떨어진 모든 쌍의 상관이 평균의 오차에 들어간다.</figcaption></figure>
+<p>합 <var>Σ<sub>k≥1</sub>.9<sup>k</sup>=9</var>라 긴 체인의 평균에 대한 ESS 근사는 <var>n/19</var>입니다. n=100이면 약 5.263입니다. 상관을 이미 알고 있다고 가정한 유한길이 계산에서는 <var>1−k/n</var>을 그대로 두므로 ESS가 약 5.814입니다. 실제 MCMC 결과에서는 상관을 표본으로부터 추정합니다. 사후평균의 몬테카를로 표준오차는 사후 표준편차를 그 평균에 해당하는 <var>√ESS</var>로 나누어 근사할 수 있습니다.</p>
+<p><b>Bulk-ESS</b>는 순위 정규화한 표본으로 분포 중심부의 표집 효율을 살핍니다. <b>Tail-ESS</b>는 추정한 5% 및 95% 분위수 각각에서 값이 그 경계 이하인지 나타내는 지시변수의 ESS를 구하고, 둘 중 작은 값을 택합니다. 중심부에 표본이 충분해 보여도 양쪽 꼬리 분위수의 추정 정밀도는 다를 수 있습니다.</p>
+<div class="check" data-q="q5"></div>
+<div class="check" data-q="q6"></div>
+<h2>수치 진단과 모형 점검을 나란히 기록한다</h2>
+<p>계층 모형에서는 산포가 0에 가까운 곳처럼 모수화에 따라 탐색이 어려운 영역이 생길 수 있습니다. HMC 같은 특정 알고리즘이 경로 계산 실패를 알리는 발산 경고가 있다면 발생 위치가 어느 모수에 몰리는지 확인합니다. 산포나 공통 중심의 사후 요약, 체인 진단, 사후예측 점검을 함께 기록합니다. 단순히 반복 수만 높이기 전에 모수화와 사전·우도, 계산 절차 및 시작 상태를 점검할 수 있습니다.</p>
+<h2>이어 풀기와 증명</h2>
+<p>고전 R̂와 ESS의 계산 예제는 각각 무엇을 모른 상태인지 구별합니다. 진단이 좋을 때에도 남는 질문을 한 문장으로 적습니다.</p>
+<div class="check" data-q="q7"></div>
+<div class="check" data-q="q8"></div>
+<div class="check" data-q="q9"></div>
+<h2>파이썬으로 같은 계산 검산하기</h2>
+<pre data-example="python"><code>from fractions import Fraction as F
+from math import sqrt
+from statistics import variance
+
+chains = [[F(x) for x in chain] for chain in ([0, 2, 0, 2], [4, 6, 4, 6])]
+n = len(chains[0])
+means = [sum(c)/n for c in chains]
+W = sum(variance(c) for c in chains)/len(chains)
+B = n*variance(means)
+v_plus = F(n-1, n)*W + B/n
+print(&quot;W, B, v_plus:&quot;, W, B, v_plus)
+print(&quot;classical Rhat:&quot;, f&quot;{sqrt(v_plus/W):.6f}&quot;)
+
+n, rho = 100, 0.9
+inflation = 1 + 2*sum((1-k/n)*rho**k for k in range(1, n))
+long_run = 1 + 2*rho/(1-rho)
+print(f&quot;ESS finite, long-run approximation: {n/inflation:.6f}, {n/long_run:.6f}&quot;)
+print(f&quot;mean MCSE when marginal SD=1: {sqrt(inflation/n):.6f}&quot;)</code></pre>
+<p class="aside">실행 결과</p>
+<pre data-output><code>W, B, v_plus: 4/3 32 9
+classical Rhat: 2.598076
+ESS finite, long-run approximation: 5.813937, 5.263158
+mean MCSE when marginal SD=1: 0.414729</code></pre>
+<p>한 모형이 타당한지 살피려면 관측을 어떻게 만들었는지와 복제 자료가 무엇을 보여 주는지 읽습니다. 체인 진단은 그 가정에서 정한 사후를 얼마나 잘 계산했는지의 일부를 보여 줍니다.</p>
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://arxiv.org/abs/1903.08008">Vehtari 외 · Rank-normalization, folding, and localization</a></li>
+<li><a href="https://mc-stan.org/docs/2_36/reference-manual/analysis.html">Stan Reference Manual · Posterior Analysis</a></li>
+<li><a href="st14-2.html">ST14-2 사전과 사후예측 점검</a></li>
+</ul>
+<h2>확인 문제</h2>
+<p>조건과 단위를 먼저 적은 뒤 해설을 확인합니다.</p>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

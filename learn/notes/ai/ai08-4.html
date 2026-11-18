@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>입자 필터의 가중치와 재표집을 계산하기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="AI08-4">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">인공지능의 기본 문제 · AI08 시간에 따른 상태 추론</p>
+<p class="chap-num">AI08·4</p>
+<h1>입자 필터의 가중치와 재표집을 계산하기</h1>
+<p class="lead">상태가 많아 표의 모든 칸에 확률을 저장하기 어렵다면, 표본을 여러 개 움직여 분포를 근사할 수 있습니다. 표본 수가 여덟인 작은 모형으로 예측, 관측 가중치, 다시 뽑기를 분리합니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>표본 전파와 가능도 가중치의 역할을 구별한다.</li><li>정규화된 가중치에서 유효 표본 크기를 손으로 계산한다.</li><li>재표집과 표본 손실의 경계를 정확한 필터 값과 비교한다.</li></ul></div>
+
+<h2>분포를 상태 표본 여러 개로 저장한다</h2>
+<p>한 시점에서 각 입자는 숨은 상태의 후보입니다. 가중치가 같으면 상태별 입자 비율로 확률을 근사합니다. 가중치가 다르면 각 상태에 있는 입자의 가중치 합을 사용합니다. <b class="key">부트스트랩 입자 필터</b>는 먼저 입자 각각을 다음 상태로 전이시킵니다. 이어 실제 관측을 그 상태에서 볼 가능도를 곱합니다. 바로 앞에서 모든 입자를 같은 무게로 재표집했다면, 이번 원시 가중치는 가능도에 비례합니다.</p>
+<p>앞 상태 0과 1의 비율이 정확히 절반이고, 유지 확률이 3/4라면 다음 상태 1의 정확한 예측 확률은 (1/2)(1/4)+(1/2)(3/4)=1/2입니다. 연습에서는 각 타입에서 4개 중 3개가 실제로 유지된 한 번의 전이 결과를 사용합니다. 실제 모의실험에서 매번 유지되는 개수가 3개라고 강제하지 않습니다.</p>
+<div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
+<h2>정규화와 가중치가 치우친 정도</h2>
+<div class="table-wrap"><table><thead><tr><th scope="col">예측 상태</th><th scope="col">입자 수</th><th scope="col">관측 1의 가능도</th><th scope="col">입자 하나 정규화 가중치</th></tr></thead><tbody><tr><td>0</td><td>4</td><td>1/4</td><td>1/16</td></tr><tr><td>1</td><td>4</td><td>3/4</td><td>3/16</td></tr></tbody></table></div>
+<p>여덟 입자의 원시 가중치 합은 4·(1/4)+4·(3/4)=4입니다. 따라서 상태 1의 가중 질량은 4·(3/16)=3/4입니다. 이 작은 모형에서는 정확한 Bayes 갱신과 우연히 일치합니다. 보통 입력 표본의 무작위 변동은 정규화한 추정에 남습니다.</p>
+<p>정규화한 가중치 wᵢ를 사용해 <b class="key">유효 표본 크기</b>의 흔한 지표 <var>ESS=1/∑ᵢwᵢ²</var>를 구합니다. 가중치가 전부 같으면 N, 하나에만 몰리면 1입니다. 이는 가중치 쏠림을 보여 주는 지표입니다. 상태의 중복이나 시간에 따른 의존성까지 측정하는 실제 독립 표본 수로 해석하면 안 됩니다. 여기서는 ESS=1/[4·(1/16)²+4·(3/16)²]=32/5입니다.</p>
+<div class="check" data-q="q3"></div><div class="check" data-q="q4"></div><div class="check" data-q="q5"></div>
+<h2>누적 구간에서 뽑아 같은 무게로 바꾼다</h2>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 160" role="img" aria-label="상태 0의 누적 가중치 구간에는 표집점 2개, 상태 1의 구간에는 6개가 들어간다.">
+<rect class="f-box" x="42" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="135" y="61" text-anchor="middle">상태 0</text><text class="f-s" x="135" y="89" text-anchor="middle">누적 구간 [0,1/4)</text><text class="f-s" x="135" y="110" text-anchor="middle">2개 위치가 들어감</text><line class="f-line" x1="235" y1="84" x2="278" y2="84" marker-end="url(#f-arrow)"/><rect class="f-soft" x="287" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="380" y="61" text-anchor="middle">상태 1</text><text class="f-s" x="380" y="89" text-anchor="middle">누적 구간 [1/4,1)</text><text class="f-s" x="380" y="110" text-anchor="middle">6개 위치가 들어감</text><line class="f-line" x1="480" y1="84" x2="523" y2="84" marker-end="url(#f-arrow)"/><rect class="f-box" x="532" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="625" y="61" text-anchor="middle">재표집 후 같은 시점</text><text class="f-s" x="625" y="89" text-anchor="middle">8개를 같은 무게로</text><text class="f-s" x="625" y="110" text-anchor="middle">입자 번호는 중복 가능</text>
+</svg><figcaption>같은 상태가 복제될 수 있으므로 가중치를 균등화해도 상태 다양성이 복구되는 것은 아니다.</figcaption></figure>
+<p><b class="key">계통 재표집</b>은 그릴 표본이 N개일 때 [0,1/N)에서 시작 위치 하나를 뽑고, 그 뒤로 1/N 간격으로 늘어놓습니다. 0에서 1까지의 누적 가중치 구간에서 각 위치가 가리키는 입자를 고릅니다. 연습은 시작 위치 1/32를 고정해 어느 칸을 고르는지 재현합니다. 실제 알고리즘에서는 시작 위치를 균등하게 뽑습니다.</p>
+<p>설령 전파 후 입자가 모두 0이라면 같은 상태에서 가능도만 곱하는 연산과 재표집으로 상태 1을 다시 만들 수 없습니다. 이 경우 정규화된 가중치가 고르게 보여 ESS가 높더라도 상태 1의 확률을 놓칩니다. 전파 단계의 제안 분포와 표본 수를 함께 확인해야 합니다. 모든 입자의 가능도가 0이면 재표집할 분포도 정의되지 않습니다. 실제 관측이 모형에서 불가능한지, 표본이 지지집합을 놓쳤는지 구분해야 합니다.</p>
+<div class="check" data-q="q6"></div><div class="check" data-q="q7"></div>
+<pre data-example="python"><code>from bisect import bisect_right
+from fractions import Fraction as F
+from itertools import accumulate
+
+# 가능한 전이 결과 하나를 고정한다.
+predicted = [0,0,0,1,0,1,1,1]
+predicted.sort()
+raw = [F(1,4) if s == 0 else F(3,4) for s in predicted]
+total = sum(raw)
+weight = [w/total for w in raw]
+ess = 1/sum(w*w for w in weight)
+cumulative = list(accumulate(weight))
+positions = [F(1,32) + F(k,8) for k in range(8)]
+drawn = [predicted[bisect_right(cumulative, u)] for u in positions]
+p = sum(w for s,w in zip(predicted,weight) if s == 1)
+print(weight[0], weight[-1], ess)
+print(p, drawn.count(0), drawn.count(1))
+assert p == F(drawn.count(1),8) == F(3,4)</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>1/16 3/16 32/5
+3/4 2 6</code></pre>
+<div class="check" data-q="q8"></div>
+
+<h2>참고 자료</h2>
+<ul><li><a href="https://inst.eecs.berkeley.edu/~cs188/textbook/hmms/particle-filtering.html">UC Berkeley CS188 · 입자 필터</a></li><li><a href="https://web.stanford.edu/group/sisl/public/dmu.pdf">Stanford · Decision Making Under Uncertainty, 상태 불확실성</a></li></ul>
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Euler·중점·Runge–Kutta의 오차 차수 검산하기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e8c'/%3E%3Cpath d='M8 22V10m8 12V14m8 8V6' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="CA12-1">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+
+<header class="chapter">
+<p class="chap-sub">미적분 · CA12 시간 적분의 오차와 안정성</p>
+<p class="chap-num">CA12·1</p>
+<h1>Euler·중점·Runge–Kutta의 오차 차수 검산하기</h1>
+<p class="lead">정확한 해를 모르더라도 현재 기울기로 한 걸음 움직일 수 있습니다. 기울기를 어디에서 몇 번 재느냐가 한 걸음과 전체 구간의 오차에 어떤 차이를 만드는지 계산합니다.</p>
+</header>
+
+<div class="goal">
+<h2>이 장을 읽고 나면</h2>
+<ul>
+<li>한걸음 방법의 Euler, 명시적 중점, 고전 RK4 갱신식을 계산한다.</li>
+<li>국소 한걸음 오차와 전역 오차의 차수를 가정과 함께 유도한다.</li>
+<li>정확한 해에 대해 보폭을 반으로 줄여 관측 차수를 검산한다.</li>
+</ul>
+</div>
+<h2>현재 기울기로 움직이는 방법에서 시작한다</h2>
+
+<p>초기값 <var>y(0)=y₀</var>와 미분방정식 <var>y′=f(t,y)</var>가 있습니다. 관심 구간 <var>[0,T]</var>를 길이 <var>h=T/N</var>의 보폭 N개로 나눕니다. 정확한 해를 <var>y(t)</var>, <var>tₙ=nh</var>에서의 근사값을 <var>Yₙ</var>이라고 쓰겠습니다. 다음 값을 현재 값과 함수 <var>f</var>로 계산하는 규칙을 <strong>한걸음 방법</strong>이라고 합니다.</p>
+<p>시작에서의 기울기 <var>f(tₙ,Yₙ)</var>가 한 보폭 동안 이어진다고 보면, <b class="key">명시적 Euler 방법</b>은 <var>Yₙ₊₁=Yₙ+h f(tₙ,Yₙ)</var>입니다. 기울기는 실제 해가 어디에 있을지 모르는 상태에서 근사점 <var>Yₙ</var>을 넣어 계산합니다. 해가 충분히 매끄러우면 정확점에서의 Taylor 전개는 <var>y(t+h)=y(t)+h y′(t)+O(h²)</var>입니다. 정확점에서 시작한 Euler는 앞의 두 항을 맞추므로 한걸음 차이는 보통 <var>O(h²)</var>입니다.</p>
+<p><var>y′=y,y(0)=1</var>에서 첫 보폭 <var>h=1/2</var>이면 <var>Y₁=1+(1/2)·1=3/2</var>, 둘째는 <var>Y₂=(3/2)·(3/2)=9/4</var>입니다. 정확한 값 <var>y(1)=e</var>에서 이것을 빼면 약 0.46828입니다. 첫 보폭이 끝났을 때 이미 차이가 생겨 다음 보폭의 기울기에도 그 차이가 들어갑니다.</p>
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+
+<h2>중점에서 기울기를 한 번 더 재면 2차 항이 생긴다</h2>
+
+<p>보폭 중간의 근사 상태를 <var>Yₙ+(h/2)k₁</var>, <var>k₁=f(tₙ,Yₙ)</var>로 예상합니다. 그곳의 기울기 <var>k₂=f(tₙ+h/2,Yₙ+(h/2)k₁)</var>로 한 보폭 전체를 옮기면 <var>Yₙ₊₁=Yₙ+h k₂</var>입니다. 이 규칙은 <b>명시적 중점 방법</b>입니다. 반 보폭 값은 중간 기울기를 읽는 임시 상태이며 최종 갱신은 원래 <var>Yₙ</var>부터 시작합니다.</p>
+<p>정확한 <var>y(t)</var>에서 시작해 <var>f(t+h/2,y+(h/2)f)</var>를 두 변수 Taylor 전개하면 <var>f+(h/2)(fₜ+fᵧ f)+O(h²)</var>입니다. 또 <var>y′=f(t,y(t))</var>를 시간에 대해 미분하면 <var>y″=fₜ+fᵧy′=fₜ+fᵧf</var>입니다. 따라서 <var>Y+h k₂</var>의 <var>h²/2</var> 항도 정확해와 같습니다. 해 근방에서 편미분들이 충분히 매끄럽고 관련 도함수가 유계이면 정확점에서 시작한 한걸음 차이는 <var>O(h³)</var>입니다.</p>
+<p><var>y′=y</var>에서는 <var>k₁=Y</var>, <var>k₂=(1+h/2)Y</var>라 한걸음의 배수는 <var>1+h+h²/2</var>입니다. <var>h=1/2</var>를 대입하면 <var>13/8</var>이며 두 보폭 뒤에는 <var>169/64</var>입니다.</p>
+<div class="check" data-q="q3"></div>
+
+<h2>고전 RK4는 기울기 네 개를 섞는다</h2>
+
+<p>이 장에서는 <var>k</var>를 <strong>기울기</strong>로 적습니다. 각 기울기에 <var>h</var>를 아직 곱하지 않았다는 뜻입니다. 시각 <var>t</var>와 근사점 <var>Y</var>에서 고전적인 4차 Runge–Kutta(RK4)의 순서는 다음과 같습니다.</p>
+<ol>
+<li><var>k₁=f(t,Y)</var></li>
+<li><var>k₂=f(t+h/2,Y+h k₁/2)</var></li>
+<li><var>k₃=f(t+h/2,Y+h k₂/2)</var></li>
+<li><var>k₄=f(t+h,Y+h k₃)</var></li>
+</ol>
+<div class="calc"><var>Y<sub>새</sub>=Y+(h/6)(k₁+2k₂+2k₃+k₄).</var></div>
+<p><b>선형 예에서 네 항을 검사한다.</b> <var>y′=y</var>라면 <var>k₁=Y</var>, <var>k₂=(1+h/2)Y</var>, <var>k₃=(1+h/2+h²/4)Y</var>, <var>k₄=(1+h+h²/2+h³/4)Y</var>입니다. 이들을 가중합하면 배수가 <var>1+h+h²/2+h³/6+h⁴/24</var>입니다. 이는 정확한 한걸음 배수 <var>e<sup>h</sup></var>의 Taylor 전개에서 4차 항까지입니다. 일반적인 충분히 매끄러운 <var>f</var>에서도 이 가중치와 중간점 계수는 정확한 해의 4차 항까지 맞춥니다. 그 일반 차수 정리의 전개는 참고 자료에 이어지고, 이 장에서는 직접 확인한 선형 예에 적용합니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 211" role="img" aria-label="Euler와 중점법과 RK4로 y'=y를 풀 때 0,1/2,1에서 얻는 세 근사값">
+<text class="f-cap" x="380" y="33" text-anchor="middle">같은 보폭 h=1/2로 t=1까지 두 번 움직인다</text>
+<text class="f-t" x="180" y="82" text-anchor="end">Euler</text>
+<rect class="f-box" x="206" y="58" width="162" height="38" rx="3"/>
+<text class="f-t" x="287" y="83" text-anchor="middle">1</text>
+<rect class="f-box" x="374" y="58" width="162" height="38" rx="3"/>
+<text class="f-t" x="455" y="83" text-anchor="middle">3/2</text>
+<rect class="f-box" x="542" y="58" width="162" height="38" rx="3"/>
+<text class="f-t" x="623" y="83" text-anchor="middle">9/4</text>
+<text class="f-t" x="180" y="128" text-anchor="end">중점</text>
+<rect class="f-box" x="206" y="104" width="162" height="38" rx="3"/>
+<text class="f-t" x="287" y="129" text-anchor="middle">1</text>
+<rect class="f-box" x="374" y="104" width="162" height="38" rx="3"/>
+<text class="f-t" x="455" y="129" text-anchor="middle">13/8</text>
+<rect class="f-box" x="542" y="104" width="162" height="38" rx="3"/>
+<text class="f-t" x="623" y="129" text-anchor="middle">169/64</text>
+<text class="f-t" x="180" y="174" text-anchor="end">RK4</text>
+<rect class="f-box" x="206" y="150" width="162" height="38" rx="3"/>
+<text class="f-t" x="287" y="175" text-anchor="middle">1</text>
+<rect class="f-box" x="374" y="150" width="162" height="38" rx="3"/>
+<text class="f-t" x="455" y="175" text-anchor="middle">211/128</text>
+<rect class="f-box" x="542" y="150" width="162" height="38" rx="3"/>
+<text class="f-t" x="623" y="175" text-anchor="middle">44521/16384</text>
+</svg>
+<figcaption>왼쪽부터 t=0, 1/2, 1입니다. 정확한 t=1 값은 e≈2.718281828이고 오른쪽 열에서 각각의 오차를 구할 수 있습니다.</figcaption>
+</figure>
+<div class="check" data-q="q4"></div>
+<div class="check" data-q="q5"></div>
+
+<h2>한걸음 손실이 쌓여 전역 차수가 만들어진다</h2>
+
+<p>국소 오차 <var>δₙ=y(tₙ₊₁)-Φₕ(tₙ,y(tₙ))</var>는 <strong>정확점에서 다시 시작한</strong> 한걸음 차이입니다. 여기서는 <var>h</var>로 나누지 않은 정의를 사용합니다. 전역 오차 <var>eₙ=|y(tₙ)-Yₙ|</var>는 처음부터 연속해서 근사값을 사용해 얻은 전체 오차입니다. 갱신 함수 <var>Φₕ</var>가 해와 계산값이 놓인 영역에서 <var>|Φₕ(t,u)-Φₕ(t,v)|≤(1+Lh)|u-v|</var>이고, 국소 오차가 모든 <var>n</var>에서 <var>|δₙ|≤Ch<sup>p+1</sup></var>라 가정합시다. Euler에서는 <var>f</var>가 상태에 대해 Lipschitz이면 이 한걸음 조건을 바로 얻습니다.</p>
+<p>중간에 <var>Φₕ(tₙ,y(tₙ))</var>를 끼워 두 오차를 더하면 <var>eₙ₊₁≤(1+Lh)eₙ+Ch<sup>p+1</sup></var>입니다. 시작값이 같아 <var>e₀=0</var>이므로, 이 부등식을 반복해 만든 항은 최대 N개입니다. 각각의 증폭인자 <var>(1+Lh)<sup>j</sup>≤e<sup>Lj h</sup>≤e<sup>LT</sup></var>라서 <var>eₙ≤C T e<sup>LT</sup>h<sup>p</sup></var>입니다. 즉 고정된 <var>T</var>에서 각 보폭 오차가 p+1차라면 쌓인 전체 오차는 p차 이하입니다. 이 결론에서 보폭이 줄어도 같은 상수와 같은 해의 주변 범위가 사용되어야 합니다.</p>
+<p>끝점 오차가 <var>E(h)≈A h<sup>p</sup></var>인 범위에서는 반 보폭의 오차가 대략 <var>E(h)/2<sup>p</sup></var>입니다. 따라서 <var>p̂=log₂(E(h)/E(h/2))</var>를 계산할 수 있습니다. 여기서는 같은 미분방정식, 같은 끝점과 정확해를 사용합니다. 보폭이 아주 크면 점근적인 비율에 가까워지지 않을 수 있고, 너무 작으면 두 거의 같은 부동소수점 수의 뺄셈에 반올림이 두드러질 수 있습니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 317" role="img" aria-label="보폭을 반으로 줄일 때 끝점 오차 로그 그래프. Euler 곡선보다 중점 곡선이, 중점보다 RK4 곡선이 더 빠르게 내려간다">
+<text class="f-cap" x="380" y="29" text-anchor="middle">끝점 오차를 로그 눈금으로 비교한다</text>
+<line class="f-grid" x1="129" y1="250" x2="685" y2="250" marker-end="url(#f-arrow)"/>
+<line class="f-grid" x1="133" y1="250" x2="133" y2="54" marker-end="url(#f-arrow)"/>
+<line class="f-grid" x1="133" y1="77" x2="673" y2="77"/>
+<text class="f-s" x="122" y="82" text-anchor="end">10⁻¹</text>
+<line class="f-grid" x1="133" y1="113" x2="673" y2="113"/>
+<text class="f-s" x="122" y="118" text-anchor="end">10⁻³</text>
+<line class="f-grid" x1="133" y1="149" x2="673" y2="149"/>
+<text class="f-s" x="122" y="154" text-anchor="end">10⁻⁵</text>
+<line class="f-grid" x1="133" y1="185" x2="673" y2="185"/>
+<text class="f-s" x="122" y="190" text-anchor="end">10⁻⁷</text>
+<line class="f-grid" x1="133" y1="221" x2="673" y2="221"/>
+<text class="f-s" x="122" y="226" text-anchor="end">10⁻⁹</text>
+<text class="f-s" x="158" y="275" text-anchor="middle">10</text>
+<text class="f-s" x="309" y="275" text-anchor="middle">20</text>
+<text class="f-s" x="460" y="275" text-anchor="middle">40</text>
+<text class="f-s" x="611" y="275" text-anchor="middle">80</text>
+<polyline class="f-line" fill="none" points="158,75.284 309,80.369 460,85.615 611,90.946"/>
+<circle class="f-fill" cx="158" cy="75.28447815679192" r="4"/>
+<circle class="f-fill" cx="309" cy="80.36946964044708" r="4"/>
+<circle class="f-fill" cx="460" cy="85.61527969963458" r="4"/>
+<circle class="f-fill" cx="611" cy="90.94588019415255" r="4"/>
+<polyline class="f-dash" fill="none" points="158,101.780 309,112.321 460,123.010 611,133.774"/>
+<circle class="f-fill" cx="158" cy="101.77968522713013" r="4"/>
+<circle class="f-fill" cx="309" cy="112.32077400633386" r="4"/>
+<circle class="f-fill" cx="460" cy="123.01045343629669" r="4"/>
+<circle class="f-fill" cx="611" cy="133.774025182757" r="4"/>
+<polyline class="f-line" fill="none" points="158,161.259 309,182.608 460,204.119 611,225.712"/>
+<circle class="f-fill" cx="158" cy="161.25862587348502" r="3"/>
+<circle class="f-fill" cx="309" cy="182.6076487175678" r="3"/>
+<circle class="f-fill" cx="460" cy="204.11909228484038" r="3"/>
+<circle class="f-fill" cx="611" cy="225.71187194512535" r="3"/>
+<text class="f-s" x="666" y="103" text-anchor="middle">Euler</text>
+<text class="f-s" x="666" y="151" text-anchor="middle">중점</text>
+<text class="f-s" x="666" y="233" text-anchor="middle">RK4</text>
+<text class="f-s" x="608" y="299" text-anchor="middle">보폭 수 N</text>
+</svg>
+<figcaption>가로 N의 눈금마다 보폭 h=1/N이 절반이 됩니다. y축은 끝점 절대오차입니다. RK4는 한 보폭에 f를 네 번 평가합니다.</figcaption>
+</figure>
+<div class="check" data-q="q6"></div>
+<h2>손계산을 Python으로 검산한다</h2>
+<pre data-example="python"><code>from math import e, log2
+
+def euler(f, t, y, h):
+    return y + h*f(t, y)
+
+def midpoint(f, t, y, h):
+    k1 = f(t, y)
+    return y + h*f(t + h/2, y + h*k1/2)
+
+def rk4(f, t, y, h):
+    k1 = f(t, y)
+    k2 = f(t + h/2, y + h*k1/2)
+    k3 = f(t + h/2, y + h*k2/2)
+    k4 = f(t + h, y + h*k3)
+    return y + h*(k1 + 2*k2 + 2*k3 + k4)/6
+
+def error(step, n):
+    h, y = 1/n, 1.0
+    for i in range(n):
+        y = step(lambda t, y: y, i*h, y, h)
+    return abs(e - y)
+
+methods = (euler, midpoint, rk4)
+for n in [10, 20, 40, 80]:
+    print(n, *(f&quot;{error(step, n):.6e}&quot; for step in methods))
+print(&quot;p-hat:&quot;, *(f&quot;{log2(error(step, 40)/error(step, 80)):.3f}&quot; for step in methods))</code></pre>
+<pre data-output><code>10 1.245394e-01 4.200982e-03 2.084324e-06
+20 6.498412e-02 1.090774e-03 1.358027e-07
+40 3.321799e-02 2.778841e-04 8.666190e-09
+80 1.679689e-02 7.012736e-05 5.473049e-10
+p-hat: 0.984 1.986 3.985</code></pre>
+<p class="small">Python 3.14.6으로 실행했습니다. 각 행은 Euler, 중점, RK4 순서의 끝점 오차입니다. 마지막 줄은 <var>h=1/40</var>과 <var>1/80</var>을 비교한 관측 차수입니다.</p>
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://fncbook.com/chapter6-2/">Driscoll·Braun, Fundamentals of Numerical Computation Ch. 6</a></li>
+<li><a href="https://fncbook.com/julia/rk/">Driscoll·Braun, §6.4 Runge–Kutta Methods</a></li>
+<li><a href="ca11-1.html">CA11-1 초기값 문제와 정확한 해</a></li>
+</ul>
+
+<h2>확인 문제</h2>
+<p>아직 풀지 않은 문제입니다. 먼저 식이나 근거를 적어 보고 해설을 확인합니다.</p>
+<div id="quiz"></div>
+
+<section class="work" id="tools"></section>
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

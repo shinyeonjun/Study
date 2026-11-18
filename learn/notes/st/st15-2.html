@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>역확률 가중으로 비교 집단을 만들고 겹침을 점검하기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="ST15-2">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">통계 · ST15 인과효과의 추정과 민감도</p>
+<p class="chap-num">ST15·2</p>
+<h1>역확률 가중으로 비교 집단을 만들고 겹침을 점검하기</h1>
+<p class="lead">희귀한 배정이 한 건 관측됐을 때 많은 장비를 대신하도록 가중할 수 있습니다. 가중 평균을 표준화와 대조하고, 큰 가중치를 제한할 때 어떤 대가가 생기는지 계산합니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2>
+<ul>
+<li>역확률 가중의 식별 항등식과 가중 균형을 유도한다.</li>
+<li>가중치와 유효 표본 수를 유한 모집단에서 계산한다.</li>
+<li>겹침 부족, 가중치 상한, 목표 집단 제한의 차이를 설명한다.</li>
+</ul></div>
+<h2>드문 배정의 기록이 같은 층의 더 많은 단위를 대표한다</h2>
+<p>장비의 준비도 <var>L</var>와 도구 사용 <var>A=1,0</var>을 관측합니다. 목표는 준비도가 낮은 장비와 높은 장비가 절반씩인 전체의 평균 처리 효과입니다. 준비도가 낮으면 네 대 중 한 대가 도구를 쓰고, 높으면 네 대 중 세 대가 씁니다. 실제 값을 관측한 한 대가 얼마나 많은 장비를 대표하는지 계산합니다.</p>
+<p><b class="key">성향점수</b> <var>e(l)=P(A=1|L=l)</var>를 사용합니다. 도구 사용자의 가중치는 <var>1/e(l)</var>, 미사용자는 <var>1/(1−e(l))</var>입니다. e가 .25인 층의 사용자는 4대의 대표가 됩니다. e가 .75인 층의 사용자는 4/3의 비중을 갖습니다. 가중치의 합으로 늘어난 것은 계산의 비중입니다. 독립적으로 관측한 장비의 수는 동일합니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 177" role="img" aria-label="낮은 준비도의 처리 n10, 대조 n30. 높은 준비도 처리 n30, 대조 n10. 각 군에서 L 층별 역확률 가중 합은 40이다.">
+<text class="f-cap" x="380" y="30" text-anchor="middle">가중 뒤 각 군에 같은 준비도 비중이 생긴다</text>
+<rect class="f-soft" x="80" y="49" width="130" height="38"/>
+<text class="f-t" x="145" y="73" text-anchor="middle">준비도 L</text>
+<rect class="f-soft" x="210" y="49" width="110" height="38"/>
+<text class="f-t" x="265" y="73" text-anchor="middle">사용 수</text>
+<rect class="f-soft" x="320" y="49" width="110" height="38"/>
+<text class="f-t" x="375" y="73" text-anchor="middle">사용 w</text>
+<rect class="f-soft" x="430" y="49" width="110" height="38"/>
+<text class="f-t" x="485" y="73" text-anchor="middle">미사용 수</text>
+<rect class="f-soft" x="540" y="49" width="140" height="38"/>
+<text class="f-t" x="610" y="73" text-anchor="middle">미사용 w</text>
+<rect class="f-box" x="80" y="87" width="130" height="38"/>
+<text class="f-s" x="145" y="111" text-anchor="middle">낮음</text>
+<rect class="f-box" x="210" y="87" width="110" height="38"/>
+<text class="f-s" x="265" y="111" text-anchor="middle">10</text>
+<rect class="f-box" x="320" y="87" width="110" height="38"/>
+<text class="f-s" x="375" y="111" text-anchor="middle">4</text>
+<rect class="f-box" x="430" y="87" width="110" height="38"/>
+<text class="f-s" x="485" y="111" text-anchor="middle">30</text>
+<rect class="f-box" x="540" y="87" width="140" height="38"/>
+<text class="f-s" x="610" y="111" text-anchor="middle">4/3</text>
+<rect class="f-box" x="80" y="125" width="130" height="38"/>
+<text class="f-s" x="145" y="149" text-anchor="middle">높음</text>
+<rect class="f-box" x="210" y="125" width="110" height="38"/>
+<text class="f-s" x="265" y="149" text-anchor="middle">30</text>
+<rect class="f-box" x="320" y="125" width="110" height="38"/>
+<text class="f-s" x="375" y="149" text-anchor="middle">4/3</text>
+<rect class="f-box" x="430" y="125" width="110" height="38"/>
+<text class="f-s" x="485" y="149" text-anchor="middle">10</text>
+<rect class="f-box" x="540" y="125" width="140" height="38"/>
+<text class="f-s" x="610" y="149" text-anchor="middle">4</text>
+</svg><figcaption>처리군에서 낮은 층은 10·4, 높은 층은 30·4/3으로 각각 40이다. 미처리군도 같다.</figcaption></figure>
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+<h2>가중 결과의 기대값이 무엇인지 계산한다</h2>
+<p><var>e<sub>a</sub>(L)=P(A=a|L)</var>라고 씁니다. 관측 Y 앞에 <var>1{A=a}</var>를 곱하면 도구 a를 가진 행만 남습니다. 층 L에서 <var>E[1{A=a}Y|L]=e<sub>a</sub>(L)E[Y|A=a,L]</var>입니다. 양성이 성립해 e가 양수이면 이 안에서 나눌 수 있습니다.</p>
+<div class="eq"><var>E[1{A=a}Y/e<sub>a</sub>(L)] = E[E[Y|A=a,L]] = E[Y(a)].</var></div>
+<p>마지막 등식에는 앞 장의 일치성과 조건부 교환가능성도 들어갑니다. 같은 계산에서 Y 대신 <var>1{L=l}</var>를 넣으면 도구 a의 가중된 층별 질량이 <var>P(L=l)</var>가 되어, 목표의 준비도 분포와 맞습니다. 이 균형 등식은 참 성향점수 e를 쓴 모집단의 기대값에 대한 결과입니다. 유한한 표본에서는 표본 변동이나 성향점수 모형의 부적합으로 불균형이 남을 수 있으므로 가중한 뒤 실제 층 비중을 확인합니다.</p>
+<p>표본 N개 전체를 분모로 쓰는 평균 <var>Σ 1{A=a}wY/N</var>은 Horvitz–Thompson 형태입니다. 각 도구에서 가중치 합을 분모로 쓰는 <var>Σ 1{A=a}wY/Σ 1{A=a}w</var>은 정규화한 Hájek 형태입니다. 두 식은 유한 표본에서 분모가 달라질 수 있습니다. 준비도와 도구의 배정을 정확히 균형 있게 만든 이 80대의 합성 표에서는 두 도구의 가중치 합이 모두 N=80이라 두 방법이 같습니다.</p>
+<div class="check" data-q="q3"></div>
+<div class="check" data-q="q4"></div>
+<h2>상한을 두면 분산의 신호와 목표 비중이 함께 달라진다</h2>
+<p>참 확률에서 0 또는 1에 가까운 e가 있으면 한 도구의 표본이 거의 없을 수 있습니다. 이것이 <b class="key">겹침 부족</b>입니다. 정확히 0 또는 1이면 양성이 깨지고 그 층의 비교를 같은 목표로 바로 추정할 수 없습니다. 양쪽 행이 있어도 가중치가 크면 평균이 소수 행에 매우 민감합니다. 비음수 가중치의 집중을 살피는 계산으로 <var>ESS=(Σw)²/Σw²</var>를 도구별로 볼 수 있습니다. 이는 가중 집중을 요약한 수이며, 훈련 반복이나 유한표본 추론의 모든 불확실성을 나타내는 통계량은 아닙니다.</p>
+<p>같은 자료에서 도구 사용자의 가중치는 10개가 4, 30개가 4/3입니다. 가중 합이 80이라 ESS는 <var>80²/[10·16+30·(16/9)]=30</var>입니다. <var>w≤2</var>라는 임의의 상한으로 큰 값을 잘라 내고 각 처리군 내부에서 다시 정규화하면, 가중 집중은 작아지지만 층 비중이 더는 목표와 같지 않습니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 177" role="img" aria-label="정규화 가중치에서 원 효과는 1/5, 상한 2는 11/30이다. 두 군의 ESS는 각각 30에서 270/7로 오른다.">
+<text class="f-cap" x="380" y="30" text-anchor="middle">상한을 걸기 전후의 균형과 추정값</text>
+<rect class="f-soft" x="53.5" y="49" width="215" height="38"/>
+<text class="f-t" x="161" y="73" text-anchor="middle">가중 방식</text>
+<rect class="f-soft" x="268.5" y="49" width="158" height="38"/>
+<text class="f-t" x="347.5" y="73" text-anchor="middle">사용군 높은 층</text>
+<rect class="f-soft" x="426.5" y="49" width="150" height="38"/>
+<text class="f-t" x="501.5" y="73" text-anchor="middle">미사용 높은 층</text>
+<rect class="f-soft" x="576.5" y="49" width="130" height="38"/>
+<text class="f-t" x="641.5" y="73" text-anchor="middle">효과</text>
+<rect class="f-box" x="53.5" y="87" width="215" height="38"/>
+<text class="f-s" x="161" y="111" text-anchor="middle">원래 가중</text>
+<rect class="f-box" x="268.5" y="87" width="158" height="38"/>
+<text class="f-s" x="347.5" y="111" text-anchor="middle">1/2</text>
+<rect class="f-box" x="426.5" y="87" width="150" height="38"/>
+<text class="f-s" x="501.5" y="111" text-anchor="middle">1/2</text>
+<rect class="f-box" x="576.5" y="87" width="130" height="38"/>
+<text class="f-s" x="641.5" y="111" text-anchor="middle">1/5</text>
+<rect class="f-box" x="53.5" y="125" width="215" height="38"/>
+<text class="f-s" x="161" y="149" text-anchor="middle">상한 2 후 정규화</text>
+<rect class="f-box" x="268.5" y="125" width="158" height="38"/>
+<text class="f-s" x="347.5" y="149" text-anchor="middle">2/3</text>
+<rect class="f-box" x="426.5" y="125" width="150" height="38"/>
+<text class="f-s" x="501.5" y="149" text-anchor="middle">1/3</text>
+<rect class="f-box" x="576.5" y="125" width="130" height="38"/>
+<text class="f-s" x="641.5" y="149" text-anchor="middle">11/30</text>
+</svg><figcaption>참 효과는 1/5다. 가중치의 유효 수가 좋아져도 남은 교란으로 추정이 멀어질 수 있다.</figcaption></figure>
+<p>상한을 건 사용군 성공률은 <var>(.30·20+.90·40)/60=.70</var>, 미사용군 성공률은 <var>(.20·40+.60·20)/60=1/3</var>입니다. 차이는 <var>11/30</var>입니다. 가중치 상한 기록에는 상한 적용 전후의 겹침·균형·효과를 함께 적습니다. 양쪽 도구를 비교할 수 있는 L 범위로 대상을 제한하는 접근은 그 제한된 목표 집단의 효과를 정의합니다. 가중치만 제한한 결과를 자동으로 그 집단의 효과라고 볼 수는 없습니다.</p>
+<div class="check" data-q="q5"></div>
+<div class="check" data-q="q6"></div>
+<h2>이어 풀기와 증명</h2>
+<p>가중하기 전의 관측 수와 가중치 합, ESS를 따로 적습니다. 어느 층을 비교하는지와 각 군의 가중 층 비중이 같은지도 확인합니다.</p>
+<div class="check" data-q="q7"></div>
+<div class="check" data-q="q8"></div>
+<div class="check" data-q="q9"></div>
+<h2>파이썬으로 같은 계산 검산하기</h2>
+<pre data-example="python"><code>from fractions import Fraction as F
+from itertools import product
+
+rows = []
+for l,u,r in product((0,1), range(10), range(4)):
+    e = F((1,3)[l],4)
+    a = int(r &lt; (1,3)[l])
+    y = int(u &lt; ((2,3),(6,9))[l][a])
+    rows.append((l,a,y,1/(e if a else 1-e)))
+
+for max_weight in (None,F(2)):
+    means, high_props = [], []
+    for a in (0,1):
+        group = [(l,y,w if max_weight is None else min(w,max_weight))
+                 for l,b,y,w in rows if b==a]
+        total = sum(w for _,_,w in group)
+        means.append(sum(w*y for _,y,w in group)/total)
+        high_props.append(sum(w for l,_,w in group if l==1)/total)
+        ess = total**2/sum(w*w for _,_,w in group)
+    print(&quot;cap:&quot;, max_weight, &quot;means:&quot;, *means, &quot;high:&quot;, *high_props)
+    print(&quot;effect:&quot;, means[1]-means[0], &quot;ESS in treated:&quot;, ess)</code></pre>
+<p class="aside">실행 결과</p>
+<pre data-output><code>cap: None means: 2/5 3/5 high: 1/2 1/2
+effect: 1/5 ESS in treated: 30
+cap: 2 means: 1/3 7/10 high: 1/3 2/3
+effect: 11/30 ESS in treated: 270/7</code></pre>
+<p>두 군의 ESS는 상한을 쓰는 방식마다 서로 같습니다. 표에서는 같은 수의 장비를 관측했지만 어느 군에 드문 준비도인지가 반대로 나타납니다. 추정값이 참값과 다른 이유를 균형 수치로 확인할 수 있습니다.</p>
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://miguelhernan.org/whatifbook">Hernán·Robins · Causal Inference: What If, Inverse Probability Weighting</a></li>
+<li><a href="st15-1.html">ST15-1 표준화와 모의 참값</a></li>
+<li><a href="../../unit.html?u=OP08">OP08 중요도 가중의 지지와 ESS</a></li>
+</ul>
+<h2>확인 문제</h2>
+<p>조건과 단위를 먼저 적은 뒤 해설을 확인합니다.</p>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>
