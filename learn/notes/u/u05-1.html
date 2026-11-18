@@ -72,15 +72,13 @@
 <figcaption>코드 파일 혼자서는 아무 일도 일어나지 않는다. 가운데 칸이 있어야 결과가 나온다.</figcaption>
 </figure>
 
-<div class="side"><b>용어</b> <b>프로그램</b>은 컴퓨터가 할 일을 순서대로 적어 둔 것입니다. 메모장, 브라우저, 계산기 앱이 모두 프로그램입니다. 프로그램을 이루는 글자를 <b>코드</b>(또는 소스 코드, source code)라고 합니다.</div>
-
 <div class="box">
 <p class="box-k">정의 <span class="tag memo">외우기</span></p>
 <p><b class="key">프로그래밍 언어</b>: 사람이 컴퓨터에게 할 일을 적기 위해 정해 둔 글쓰기 규칙. Python은 그런 언어 가운데 하나입니다.<br>
 <b class="key">인터프리터(interpreter)</b>: 코드를 읽고 그 자리에서 실행해 주는 프로그램. Windows에서는 <code>python.exe</code>라는 파일이 Python 인터프리터입니다.</p>
 </div>
 
-<p>영어 interpreter는 원래 <b>통역사</b>라는 뜻입니다. 통역사가 한 문장을 듣고 곧바로 다른 말로 옮겨 주듯, Python 인터프리터는 코드를 읽고 곧바로 컴퓨터가 할 수 있는 동작으로 옮겨 실행합니다. 그래서 코드를 고친 뒤 별도의 빌드 단계 없이 바로 다시 실행할 수 있습니다. C처럼 소스 전체를 실행 파일로 미리 번역하는 <b>컴파일러</b> 방식과 대비되는 점입니다(자세한 구분은 SY03).</p>
+<p>interpreter(통역사)라는 이름대로, Python 인터프리터는 코드를 읽어 곧바로 실행합니다. 그래서 코드를 고친 뒤 별도의 빌드 단계 없이 바로 다시 실행할 수 있습니다. C처럼 소스 전체를 실행 파일로 미리 번역해 두는 <b>컴파일러</b> 방식과 대비되는 점입니다(자세한 구분은 SY03).</p>
 
 <div class="more">
 <p class="box-k">더 알아보기 · 비유가 틀어지는 곳</p>
@@ -103,7 +101,7 @@
 
 <div class="box warn">
 <p class="box-k">현재 권장 설치 방법</p>
-<p>먼저 PowerShell에서 <code>python --version</code>을 실행하세요. 쓸 수 있는 Python 3의 버전이 나오면 이미 설치되어 있습니다. 새로 설치한다면 <a href="https://docs.python.org/3/using/windows.html">Python 공식 Windows 안내</a>의 <b>Python install manager</b>를 따르세요. 설치가 끝나면 새 PowerShell 창에서 버전을 확인합니다. 아래의 PATH 확인 그림은 기존 방식의 <code>.exe</code> 설치 프로그램을 사용할 때 해당합니다.</p>
+<p>먼저 PowerShell에서 <code>python --version</code>을 실행하세요. 쓸 수 있는 Python 3의 버전이 나오면 이미 설치되어 있습니다. 새로 설치한다면 <a href="https://docs.python.org/3/using/windows.html">Python 공식 Windows 안내</a>의 <b>Python install manager</b>를 따르세요. 설치가 끝나면 새 PowerShell 창에서 버전을 확인합니다. 아래의 PATH 확인 그림은 기존 방식의 <code>.exe</code> 설치 프로그램을 사용할 때 해당합니다. 공식 문서(3.14판)는 이 기존 설치 프로그램을 3.14부터 사용 중단 예정(deprecated)으로 표시하고 3.16부터는 만들지 않는다고 적고 있으며, 뒤에서 볼 예전 실행 도우미 <code>py.exe</code>도 install manager의 <code>py</code> 명령으로 대체되었다고 적고 있습니다.</p>
 </div>
 
 <h3>첫 화면의 체크 상자 <span class="tag memo">외우기</span></h3>
@@ -135,7 +133,7 @@
 
 <ol>
 <li><b>"Add python.exe to PATH"에 체크합니다.</b> 이것이 이 화면에서 가장 중요한 한 가지입니다. 이유는 바로 다음 절에서 설명합니다.</li>
-<li>"Use admin privileges when installing py.exe"는 처음 보인 상태 그대로 둡니다. <code>py.exe</code>는 뒤에서 볼 "Python 실행 도우미"이고, 이 상자는 그것을 컴퓨터의 모든 사용자에게 설치할지 정하는 것입니다.</li>
+<li>첫째 상자는 처음 보인 상태 그대로 둡니다. 3.13 무렵까지의 설치 프로그램에서는 "Use admin privileges when installing py.exe"로, 뒤에서 볼 실행 도우미 <code>py.exe</code>를 모든 사용자용으로 설치할지 정하는 상자였습니다. 3.14 설치 프로그램에서는 이 자리의 선택이 install manager 설치와 관련된 것으로 바뀌었으므로(공식 문서 기준) 문구가 그림과 다를 수 있습니다.</li>
 <li><b>Install Now</b>를 누릅니다. 회사 컴퓨터처럼 관리자 허락을 묻는 창이 뜨면 "예"를 누르거나 관리자에게 부탁합니다.</li>
 <li>"Setup was successful"이 보이면 끝입니다. 그 화면에 "Disable path length limit"라는 단추가 보일 수 있는데, Windows의 경로 길이 260자 제한을 푸는 설정으로, 지금은 누르지 않아도 됩니다.</li>
 </ol>
@@ -225,7 +223,7 @@ PS C:\Users\me&gt; py -0
  -V:3.14 *        Python 3.14 (64-bit)</code></pre>
 </div>
 
-<p><code>py -0</code>은 "설치된 Python 목록을 보여 줘"라는 옵션입니다(숫자 0입니다). 별표(<code>*</code>)는 <code>py</code>만 쳤을 때 고르는 기본 버전입니다. Python을 여러 버전 설치했다면 <code>py -3.14</code>처럼 버전을 골라 실행할 수 있습니다.</p>
+<p><code>py -0</code>은 "설치된 Python 목록을 보여 줘"라는 옵션입니다(숫자 0입니다). 별표(<code>*</code>)는 <code>py</code>만 쳤을 때 고르는 기본 버전입니다. Python을 여러 버전 설치했다면 <code>py -3.14</code>처럼 버전을 골라 실행할 수 있습니다. 위 결과는 예전 설치 프로그램이 넣은 실행 도우미의 것이고, install manager로 설치했다면 <code>py -0</code>은 남아 있지만 목록 모양이 다를 수 있습니다.</p>
 
 <div class="table-wrap">
 <table>

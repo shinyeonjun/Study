@@ -100,7 +100,7 @@ It's me
                   ^
 SyntaxError: unterminated string literal (detected at line 1)</code></pre></div>
 
-<p>마지막 줄의 <code>SyntaxError</code>는 "문법 오류", <code>unterminated string literal</code>은 "끝나지 않은 문자열"이라는 뜻입니다. Python 눈에는 <code>s me</code> 뒤의 작은따옴표가 <b>새 문자열을 여는 따옴표</b>로 보이고, 그 문자열을 닫는 따옴표가 줄 끝까지 없으니 "끝나지 않았다"고 알립니다. 해결은 간단합니다. 글 속에 작은따옴표가 있으면 바깥을 큰따옴표로, 글 속에 큰따옴표가 있으면 바깥을 작은따옴표로 둘러쌉니다. 앞의 셋째·넷째 줄이 그렇게 한 것입니다. 오류 메시지를 읽는 법은 PY02·3에서 더 자세히 다룹니다.</p>
+<p>마지막 줄의 <code>SyntaxError</code>는 "문법 오류", <code>unterminated string literal</code>은 "끝나지 않은 문자열"이라는 뜻입니다. Python 눈에는 <code>s me</code> 뒤의 작은따옴표가 <b>새 문자열을 여는 따옴표</b>로 보이고, 그 문자열을 닫는 따옴표가 줄 끝까지 없으니 "끝나지 않았다"고 알립니다. 글 속에 작은따옴표가 있으면 바깥을 큰따옴표로, 글 속에 큰따옴표가 있으면 바깥을 작은따옴표로 둘러쌉니다. 앞의 셋째·넷째 줄이 그렇게 한 것입니다. 오류 메시지를 읽는 법은 PY02·3에서 더 자세히 다룹니다.</p>
 
 <div class="box trap">
 <p class="box-k">흔한 실수</p>
@@ -290,7 +290,7 @@ print(len("a\nb"))</code></pre>
 
 <p>하나씩 확인해 봅시다.</p>
 <ul>
-<li><code>"데이터"</code>: <code>len()</code>은 바이트 수가 아니라 <b>글자(유니코드 코드 포인트) 수</b>를 셉니다. UTF-8로 저장하면 한글 한 글자는 3바이트지만 len은 1로 셉니다(인코딩은 SY01).</li>
+<li><code>"데이터"</code>: <code>len()</code>은 바이트 수가 아니라 <b>글자(유니코드 코드 포인트) 수</b>를 셉니다. UTF-8로 저장하면 한글 한 글자는 3바이트지만 len은 1로 셉니다(인코딩은 SY01). 다만 코드 포인트 수는 사람 눈에 보이는 글자 수와 항상 같지는 않습니다. 예를 들어 e 뒤에 결합용 악센트 부호(U+0301)를 붙인 <code>"é"</code>은 화면에 é 한 글자로 보이지만 <code>len</code>은 2입니다.</li>
 <li><code>"빅 데이터"</code>: 빅, 빈칸, 데, 이, 터로 5입니다. <b>빈칸도 한 글자</b>입니다.</li>
 <li><code>""</code>: 따옴표 사이에 아무것도 없는 문자열을 <b>빈 문자열</b>이라고 합니다. 길이는 0입니다. 빈칸 한 글자짜리 <code>" "</code>(길이 1)와 다릅니다.</li>
 <li><code>"a\nb"</code>: a, 줄바꿈, b로 3입니다. 앞 그림의 <code>\n</code>이 한 글자라는 것을 <code>len()</code>으로 확인한 셈입니다.</li>

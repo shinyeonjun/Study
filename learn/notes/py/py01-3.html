@@ -134,10 +134,9 @@ print(hours, "시간", rest, "분")</code></pre>
 <p class="sample-k">실행 결과</p>
 <pre><code>2 시간 5 분</code></pre>
 </div>
-<p class="calc">① 1시간 = 60분이므로 60으로 나눈다<br>
-② 몫: 125 // 60 → 60이 몇 번 들어가나? 60 × 2 = 120 ≤ 125, 60 × 3 = 180 &gt; 125 → <b>2</b><br>
-③ 나머지: 125 % 60 → 125 − 120 = <b>5</b><br>
-④ 검산: 60 × 2 + 5 = 120 + 5 = 125 ✓</p>
+<p class="calc">① 몫: 125 // 60 = ⌊2.08…⌋ = <b>2</b> (60 × 2 = 120 ≤ 125 &lt; 180)<br>
+② 나머지: 125 % 60 = 125 − 120 = <b>5</b><br>
+③ 검산: 60 × 2 + 5 = 125 ✓</p>
 <p>결과 줄의 "2 시간 5 분"에 빈칸이 끼어 있는 것은 print에 쉼표로 네 값을 넣었기 때문입니다(PY01·1). 빈칸 없이 "2시간 5분"으로 붙이는 법은 PY02의 문자열에서 배웁니다.</p>
 </div>
 
@@ -224,7 +223,7 @@ print("나누기만 하면:", bill / people)</code></pre>
 <p>규칙은 두 줄로 정리됩니다.</p>
 <ol>
 <li><b><code>/</code>는 재료가 무엇이든 결과가 float</b>입니다. "나누면 소수가 나올 수 있다"를 늘 전제하기 때문입니다.</li>
-<li><b>나머지 연산자(<code>+ - * // % **</code>)는 재료가 모두 int면 int, 하나라도 float면 float</b>입니다. 그래서 <code>7.0 // 2</code>는 몫이지만 <code>3.0</code>(float)으로 나옵니다.</li>
+<li><b>그 밖의 연산자(<code>+ - * // % **</code>)는 재료가 모두 int면 int, 하나라도 float면 float</b>입니다. 그래서 <code>7.0 // 2</code>는 몫이지만 <code>3.0</code>(float)으로 나옵니다.</li>
 </ol>
 <p>(<code>**</code>는 지수가 음수일 때 예외입니다. <code>2 ** -1</code>은 int끼리지만 <code>0.5</code>가 나옵니다. 아래 거듭제곱 절에서 봅니다.)</p>
 
@@ -259,7 +258,7 @@ print("나누기만 하면:", bill / people)</code></pre>
 <ul>
 <li><code>2 ** 10</code> = 1,024는 1KB를 1,024바이트로 셀 때의 그 수이고, <code>1024 ** 2</code> = 1,048,576은 그렇게 셀 때 1MB의 바이트 수입니다(1-01은 시험 관례에 따라 1KB = 1,024B로 계산했습니다. 국제 표준에서는 1kB = 1,000B, 1KiB = 1,024B로 구분합니다. U04에서 자세히).</li>
 <li>0제곱은 1입니다(<code>5 ** 0</code> → <code>1</code>).</li>
-<li>지수가 0.5면 제곱근(√2 ≈ 1.414…), 음수면 역수(2<sup>−1</sup> = 1/2 = 0.5)가 됩니다. 이런 지수는 AR·AL 단원에서 다시 다룹니다.</li>
+<li>지수가 0.5면 제곱근(√2 ≈ 1.414…), 음수면 역수(2<sup>−1</sup> = 1/2 = 0.5)가 됩니다. 이런 지수는 AL07 지수와 로그에서 다시 다룹니다.</li>
 </ul>
 
 <div class="box trap">
@@ -281,6 +280,8 @@ print("나누기만 하면:", bill / people)</code></pre>
 <tr><td>5 (가장 나중)</td><td><code>+</code> <code>-</code></td><td>왼쪽부터</td></tr>
 </table>
 </div>
+
+<p>표의 2와 3에는 예외가 하나 있습니다. <code>**</code>는 <b>왼쪽</b>의 부호보다는 먼저지만, <b>오른쪽</b>(지수 자리)의 부호보다는 나중입니다. 그래서 <code>-2 ** 2</code>는 −(2 ** 2) = −4이고, <code>2 ** -1</code>은 2 ** (−1) = 0.5입니다(공식 문서: "binds more tightly than unary operators on its left; it binds less tightly than unary operators on its right").</p>
 
 <figure class="fig">
 <svg class="fig-svg" viewBox="0 0 760 240" role="img" aria-label="계산 나무 두 개. (가) 2 + 3 * 4: 맨 위 + 아래에 2와 *가 있고, * 아래에 3과 4가 있다. ① 3 * 4 = 12를 먼저, ② 2 + 12 = 14. (나) (2 + 3) * 4: 맨 위 * 아래에 +와 4가 있고, + 아래에 2와 3이 있다. ① 2 + 3 = 5를 먼저, ② 5 * 4 = 20.">
@@ -407,7 +408,7 @@ print("나누기만 하면:", bill / people)</code></pre>
 <ul>
 <li><b>PY02</b>: 입력받은 문자열을 수로 바꿔 계산하고, 결과를 비교(<code>&lt;</code>, <code>==</code>)합니다.</li>
 <li><b>PY04</b>: <code>i % 2 == 0</code>처럼 나머지로 짝수 번째만 고르고, 누적 합을 구합니다.</li>
-<li><b>AR10 지수와 로그</b>: <code>**</code>로 계산한 거듭제곱의 뜻을 자세히 다룹니다.</li>
+<li><b>AL07 지수와 로그</b>: 분수 지수와 로그 등 <code>**</code>로 계산한 거듭제곱의 뜻을 자세히 다룹니다.</li>
 </ul>
 
 <h2>한눈에 정리</h2>
@@ -418,7 +419,7 @@ print("나누기만 하면:", bill / people)</code></pre>
 <tr><td>일곱 연산자</td><td><code>+ - * /</code> 와 <b class="key">//</b>(몫) <b class="key">%</b>(나머지) <b class="key">**</b>(거듭제곱)</td></tr>
 <tr><td><code>7 / 2</code>, <code>7 // 2</code>, <code>7 % 2</code></td><td><code>3.5</code>, <code>3</code>, <code>1</code></td></tr>
 <tr><td>관계식</td><td>나뉘는 수 = 나누는 수 × <b class="key">몫</b> + <b class="key">나머지</b> (125 = 60 × 2 + 5)</td></tr>
-<tr><td>결과 자료형</td><td><code>/</code>는 <b class="key">항상 float</b>. 나머지 연산자는 int끼리면 int, float가 섞이면 float</td></tr>
+<tr><td>결과 자료형</td><td><code>/</code>는 <b class="key">항상 float</b>. 그 밖의 연산자는 int끼리면 int, float가 섞이면 float</td></tr>
 <tr><td>0으로 나누기</td><td><code>/ // %</code> 모두 <b class="key">ZeroDivisionError</b></td></tr>
 <tr><td>계산 순서</td><td>괄호 → <code>**</code>(오른쪽부터) → 부호 → <code>* / // %</code> → <code>+ -</code> (같은 줄은 왼쪽부터)</td></tr>
 <tr><td>함정</td><td><code>-2 ** 2</code> = −4, <code>2 ** 3 ** 2</code> = 512, <code>2 ^ 10</code> = 8 (거듭제곱 아님)</td></tr>

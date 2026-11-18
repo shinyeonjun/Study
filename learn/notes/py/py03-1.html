@@ -111,23 +111,22 @@ print("기온 확인 끝")</code></pre>
 <text class="f-s" x="30" y="84" text-anchor="end">2</text>
 <text class="f-s" x="30" y="116" text-anchor="end">3</text>
 <text class="f-s" x="30" y="146" text-anchor="end">4</text>
-<text class="f-s" x="30" y="180" text-anchor="end">5</text>
+<text class="f-s" x="30" y="196" text-anchor="end">5</text>
 <text class="f-t" x="40" y="50" font-family="Consolas, monospace">temp = int(input(…))</text>
 <text class="f-t" x="40" y="84" font-family="Consolas, monospace">if temp &gt;= 30:</text>
 <text class="f-t" x="74" y="116" font-family="Consolas, monospace">print("더운 날입니다.")</text>
 <text class="f-t" x="74" y="146" font-family="Consolas, monospace">print("물을 자주 마시세요.")</text>
-<text class="f-t" x="40" y="180" font-family="Consolas, monospace">print("기온 확인 끝")</text>
+<text class="f-t" x="40" y="196" font-family="Consolas, monospace">print("기온 확인 끝")</text>
 <path class="f-ink" d="M40 162 V168 H70 V162"/>
-<text class="f-s" x="55" y="214" text-anchor="middle">빈칸 4개</text>
-<line class="f-ink" x1="55" y1="200" x2="55" y2="172"/>
+<text class="f-s" x="78" y="173">빈칸 4개</text>
 <line class="f-ink" x1="166" y1="80" x2="470" y2="80"/>
 <text class="f-s f-ink-t" x="478" y="84">쌍점(:) → 블록이 시작된다</text>
 <line class="f-ink" x1="404" y1="127" x2="470" y2="127"/>
 <text class="f-s f-ink-t" x="478" y="122">들여쓴 줄 = if의 블록</text>
 <text class="f-s" x="478" y="140">조건이 True일 때만 실행</text>
-<line class="f-ink" x1="250" y1="176" x2="470" y2="176"/>
-<text class="f-s f-ink-t" x="478" y="180">다시 왼쪽 끝 = if 밖</text>
-<text class="f-s" x="478" y="198">조건과 상관없이 늘 실행</text>
+<line class="f-ink" x1="250" y1="192" x2="470" y2="192"/>
+<text class="f-s f-ink-t" x="478" y="196">다시 왼쪽 끝 = if 밖</text>
+<text class="f-s" x="478" y="214">조건과 상관없이 늘 실행</text>
 </svg>
 <figcaption>들여쓰기가 끝나는 줄에서 블록도 끝난다. 블록을 닫는 기호는 따로 없다.</figcaption>
 </figure>
@@ -145,7 +144,7 @@ print("기온 확인 끝")</code></pre>
 
 <div class="box trap">
 <p class="box-k">흔한 실수</p>
-<p><b>빈칸과 탭(Tab 키)을 섞어 쓰는 것.</b> 화면에서는 똑같이 밀려 보여도 Python에게는 다른 글자입니다. 섞으면 들여쓰기 깊이를 다르게 읽어 오류가 납니다. VS Code 같은 편집기는 Tab 키를 누르면 빈칸 4개를 넣도록 기본 설정되어 있는 경우가 많으니(U05), 들여쓰기는 <b>Tab 키를 누르되 실제로는 빈칸 4개가 들어가게</b> 쓰는 것이 가장 안전합니다. 설정이 다를 수 있으니 편집기 오른쪽 아래의 "Spaces: 4" 같은 표시를 한 번 확인하세요.</p>
+<p><b>빈칸과 탭(Tab 키)을 섞어 쓰는 것.</b> 화면에서는 똑같이 밀려 보여도 Python에게는 다른 글자입니다. 한 블록 안에서 섞으면 <code>TabError: inconsistent use of tabs and spaces in indentation</code>이 납니다(실행해 확인함). VS Code 같은 편집기는 Tab 키를 누르면 빈칸 4개를 넣도록 기본 설정되어 있는 경우가 많으니(U05), 들여쓰기는 <b>Tab 키를 누르되 실제로는 빈칸 4개가 들어가게</b> 쓰는 것이 가장 안전합니다. 설정이 다를 수 있으니 편집기 오른쪽 아래의 "Spaces: 4" 같은 표시를 한 번 확인하세요.</p>
 </div>
 
 <div class="check" data-q="q2"></div>
@@ -154,7 +153,7 @@ print("기온 확인 끝")</code></pre>
 
 <p>조건이 False일 때 할 일도 따로 있다면 <code>else</code>(그렇지 않으면)를 붙입니다. 정수가 짝수인지 홀수인지 알려 주는 프로그램입니다.</p>
 
-<div class="side"><b>용어</b> <code>%</code>는 나머지 연산자입니다. Python의 <code>a % b</code>는 결과의 부호가 <code>b</code>를 따르므로 <code>-3 % 2</code>는 1입니다(실행해 확인함, C·Java에서는 -1). 그래서 음수에서도 <code>n % 2 == 0</code>으로 짝수를 판정할 수 있습니다.</div>
+<div class="side"><b>복습</b> PY01·3에서 본 대로 Python의 <code>a % b</code>는 결과의 부호가 <code>b</code>를 따르므로 <code>-3 % 2</code>는 1입니다(실행해 확인함, C·Java에서는 -1). 그래서 음수에서도 <code>n % 2 == 0</code>으로 짝수를 판정할 수 있습니다.</div>
 
 <pre><code>n = int(input("정수: "))
 if n % 2 == 0:
@@ -187,10 +186,10 @@ print("끝")</code></pre>
 <text class="f-s" x="550" y="94" text-anchor="middle">False</text>
 <rect class="f-box" x="90" y="160" width="140" height="40" rx="4"/>
 <text class="f-t" x="160" y="185" text-anchor="middle">"짝수"</text>
-<text class="f-s" x="160" y="218" text-anchor="middle">if 블록</text>
+<text class="f-s" x="82" y="185" text-anchor="end">if 블록</text>
 <rect class="f-box" x="530" y="160" width="140" height="40" rx="4"/>
 <text class="f-t" x="600" y="185" text-anchor="middle">"홀수"</text>
-<text class="f-s" x="600" y="218" text-anchor="middle">else 블록</text>
+<text class="f-s" x="678" y="185">else 블록</text>
 <path class="f-line" d="M160 200 V232 H374" marker-end="url(#f-arrow)"/>
 <path class="f-line" d="M600 200 V232 H386" marker-end="url(#f-arrow)"/>
 <line class="f-line" x1="380" y1="232" x2="380" y2="242" marker-end="url(#f-arrow)"/>

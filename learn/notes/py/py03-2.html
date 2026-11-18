@@ -54,7 +54,7 @@ False
 True
 False</code></pre></div>
 
-<div class="side"><b>용어</b> <b>논리 연산자</b>(logical operator)는 True/False 값을 받아 새 True/False를 만드는 연산자입니다. Python의 논리 연산자는 영어 낱말 그대로 <code>and</code>(그리고), <code>or</code>(또는), <code>not</code>(아니다) 세 개입니다. 다른 언어의 <code>&amp;&amp;</code>, <code>||</code>, <code>!</code>에 해당합니다.</div>
+<div class="side"><b>용어</b> <b>논리 연산자</b>(logical operator)는 True/False 값을 받아 새 True/False를 만드는 연산자입니다(and·or가 실제로 돌려주는 값의 정확한 규칙은 이 장 뒤의 "더 알아보기"). Python의 논리 연산자는 영어 낱말 그대로 <code>and</code>(그리고), <code>or</code>(또는), <code>not</code>(아니다) 세 개입니다. 다른 언어의 <code>&amp;&amp;</code>, <code>||</code>, <code>!</code>에 해당합니다.</div>
 
 <ul>
 <li>둘째 줄 <code>age &gt;= 30 and has_ticket</code>: 표는 있지만 30 이상이 아니라서 False입니다. <b>and는 양쪽이 모두 참이어야</b> 참입니다.</li>
@@ -112,7 +112,7 @@ False</code></pre></div>
 
 <div class="box trap">
 <p class="box-k">흔한 실수</p>
-<p><b>일상 말의 "또는"은 "둘 중 하나만"일 때가 많습니다.</b> "커피 또는 차를 드립니다"는 둘 다 주지는 않는다는 뜻이지요. 하지만 Python의 <code>or</code>는 <b>둘 다 참이어도 참</b>입니다(진리표 (나)의 첫 줄). "둘 중 정확히 하나만"이 필요하면 따로 <code>a != b</code>처럼 써야 합니다. 이 뜻은 DM01 "집합과 논리"에서 배우는 합집합과 같습니다.</p>
+<p><b>일상 말의 "또는"은 "둘 중 하나만"일 때가 많습니다.</b> "커피 또는 차를 드립니다"는 둘 다 주지는 않는다는 뜻이지요. 하지만 Python의 <code>or</code>는 <b>둘 다 참이어도 참</b>입니다(진리표 (나)의 첫 줄). "둘 중 정확히 하나만"(배타적 논리합, XOR)이 필요하면 a, b가 불 값일 때 따로 <code>a != b</code>처럼 써야 합니다. 이 뜻은 DM01 "집합과 논리"에서 배우는 합집합과 같습니다.</p>
 </div>
 
 <div class="check" data-q="q1"></div>
