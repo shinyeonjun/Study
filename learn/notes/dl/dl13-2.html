@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>확산의 전방 정규분포를 유도하고 역방향 시작 분포를 비교하기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="DL13-2">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">딥러닝 · DL13 생성모형의 목적함수와 추론</p>
+<p class="chap-num">DL13·2</p>
+<h1>확산의 전방 정규분포를 유도하고 역방향 시작 분포를 비교하기</h1>
+<p class="lead">정상 신호에 잡음을 두 번 넣는 대신 한 번에 같은 분포를 만들 수 있습니다. 작은 정규 자료로 잡음을 맞히는 학습을 해 보고, 되돌리기를 시작하는 분포가 다르면 결과가 어떻게 달라지는지 비교합니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>독립 Gaussian 잡음의 전방 평균과 분산을 귀납으로 구한다.</li><li>작은 정규 모형의 잡음 예측과 역방향 분포를 대조한다.</li><li>같은 역방향 함수에서 시작 분포의 영향만 비교한다.</li></ul></div>
+
+<h2>매번 독립 잡음이 같은 방식으로 더해진다</h2>
+<p>0&lt;βₜ&lt;1, αₜ=1−βₜ이고 εₜ는 서로 독립인 표준정규이며, 초기 x₀가 확률변수라면 x₀와도 독립이라고 둡니다. 전방 변화는 xₜ=√αₜ xₜ₋₁+√βₜ εₜ입니다. x₀를 고정하고 ᾱₜ=∏ᵢ₌₁ᵗαᵢ라 쓰면 평균은 √ᾱₜ x₀, 분산은 1−ᾱₜ입니다. 평균은 매 스텝 √αₜ를 곱하고, 분산은 독립 잡음이라 αₜ(1−ᾱₜ₋₁)+βₜ=1−ᾱₜ가 됩니다.</p>
+<p>(β₁,β₂)=(.25,.2)에서는 ᾱ₂=.75·.8=.6입니다. 따라서 x₀를 고정한 두 번째 값은 바로 <var>√.6 x₀+√.4 ε</var>로 그릴 수 있습니다. 여러 전방 잡음의 선형결합이 다시 정규라는 성질을 사용했습니다. 합쳐 놓은 ε도 초기 x₀와 독립입니다.</p>
+<div class="check" data-q="q1"></div><div class="check" data-q="q2"></div><div class="check" data-q="q3"></div>
+<h2>모형은 어떤 잡음이 섞였는지 맞힌다</h2>
+<p>이 생성 학습의 한 방법은 학습 시점 t와 xₜ에서, 한 번에 섞었던 표준 잡음 ε를 예측하고 제곱오차를 줄이는 것입니다. 제곱오차의 최적 함수는 조건부 평균입니다. 이 예에서 x₀가 N(2,1)이면 각 시점의 주변분산이 1, 평균이 mₜ=2√ᾱₜ입니다. Cov(ε,xₜ)=√(1−ᾱₜ)라 공동정규의 조건부 평균은 <var>ε̂=√(1−ᾱₜ)(xₜ−mₜ)</var>입니다.</p>
+<p>다음 코드는 독립 중심 잡음의 1·2차 모멘트가 맞는 네 점으로 직선 기울기를 맞춥니다. 그 뒤 표집을 할 때는 실제 정규 난수를 사용합니다. 두 시점의 손실을 같은 비중으로 평균하므로 잡음 일정이 바뀌면 손실의 비교 조건도 바뀝니다.</p>
+<div class="check" data-q="q4"></div><div class="check" data-q="q5"></div>
+<h2>이 예의 정확한 역방향 평균과 시작 조건</h2>
+<p>공동정규에서 Cov(xₜ₋₁,xₜ)=√αₜ이고 Var(xₜ)=1입니다. 그래서 xₜ를 주었을 때 이전 값의 평균은 mₜ₋₁+√αₜ(xₜ−mₜ), 분산은 1−αₜ=βₜ입니다. 이는 이 자료 모형에서 구한 역방향 <var>q(xₜ₋₁|xₜ)</var>입니다. 원래 x₀까지 안다는 조건의 <var>q(xₜ₋₁|xₜ,x₀)</var>는 정보가 다르며 일반적으로 분산도 다릅니다. 잡음 예측에서 쓰는 평균식 <var>(xₜ−βₜ ε̂/√(1−ᾱₜ))/√αₜ</var>에 위 ε̂를 넣으면 이 예의 참 역방향 평균이 됩니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 160" role="img" aria-label="역방향 조건식을 똑같이 사용해도 마지막 시점의 참 주변 분포와 표준 정규 분포는 서로 다른 평균으로 복원한다.">
+<rect class="f-box" x="42" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="135" y="61" text-anchor="middle">같은 역방향 함수</text><text class="f-s" x="135" y="89" text-anchor="middle">정확한 Gaussian</text><text class="f-s" x="135" y="110" text-anchor="middle">시점별 평균과 분산</text><line class="f-line" x1="235" y1="84" x2="278" y2="84" marker-end="url(#f-arrow)"/><rect class="f-soft" x="287" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="380" y="61" text-anchor="middle">참 마지막 분포에서</text><text class="f-s" x="380" y="89" text-anchor="middle">평균 2√ᾱ_T</text><text class="f-s" x="380" y="110" text-anchor="middle">돌아오면 평균 2</text><line class="f-line" x1="480" y1="84" x2="523" y2="84" marker-end="url(#f-arrow)"/><rect class="f-box" x="532" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="625" y="61" text-anchor="middle">표준 정규에서</text><text class="f-s" x="625" y="89" text-anchor="middle">초기 평균 0</text><text class="f-s" x="625" y="110" text-anchor="middle">돌아오면 2(1−ᾱ_T)</text>
+</svg><figcaption>차이는 시작 평균의 차이에 역순 단계의 기울기를 모두 곱한 값이다.</figcaption></figure>
+<p>참 마지막 주변값에서 시작하면 평균 2로 돌아옵니다. 대신 N(0,1)에서 시작하면 마지막 평균의 차이 −2√ᾱ<sub>T</sub>가 역방향에서 각 √α를 거쳐 −2ᾱ<sub>T</sub>가 됩니다. 최종 평균은 2(1−ᾱ<sub>T</sub>)입니다. 실제로 ᾱ<sub>T</sub>=.6이면 .8, ᾱ<sub>T</sub>=.05면 1.9입니다.</p>
+<div class="check" data-q="q6"></div><div class="check" data-q="q7"></div>
+<pre data-example="python"><code>from itertools import product
+from math import sqrt
+from random import Random
+from statistics import mean
+
+def fitted_steps(betas, location=2.):
+    alpha_bar = 1.
+    learned = []
+    for beta in betas:
+        alpha_bar *= 1-beta
+        # Four exact first/second-moment design points for z0, eps.
+        points = [(sqrt(alpha_bar)*(location+z0)+sqrt(1-alpha_bar)*eps,eps)
+                  for z0,eps in product((-1.,1.),repeat=2)]
+        center = mean(x for x,_ in points)
+        avg_eps = mean(eps for _,eps in points)
+        slope = (sum((x-center)*(eps-avg_eps) for x,eps in points)
+                 /sum((x-center)**2 for x,_ in points))
+        bias = avg_eps-slope*center
+        loss = mean((slope*x+bias-eps)**2 for x,eps in points)
+        assert abs(slope-sqrt(1-alpha_bar)) &lt; 1e-12
+        assert abs(loss-alpha_bar) &lt; 1e-12
+        learned.append((beta,alpha_bar,slope,bias,loss))
+    return learned
+
+def generate(learned, matched_prior, generator, size=20_000):
+    prior_mean = 2*sqrt(learned[-1][1]) if matched_prior else 0.
+    for _ in range(size):
+        x = prior_mean + generator.gauss(0,1)
+        for beta,abar,slope,bias,_ in reversed(learned):
+            eps = slope*x+bias
+            reverse_mean = (x-beta*eps/sqrt(1-abar))/sqrt(1-beta)
+            x = reverse_mean + sqrt(beta)*generator.gauss(0,1)
+        yield x
+
+for betas in ((.25,.2),(.75,.8)):
+    learned = fitted_steps(betas)
+    terminal_abar = learned[-1][1]
+    correct = mean(generate(learned,True,Random(2027)))
+    standard = mean(generate(learned,False,Random(2027)))
+    # Common random numbers isolate the algebraic shift.
+    assert abs((correct-standard)-2*terminal_abar)&lt;1e-12
+    print(&quot;diffusion&quot;,f&quot;abar={terminal_abar:.2f}&quot;,
+          f&quot;avg epsilon MSE={mean(row[-1] for row in learned):.3f}&quot;,
+          f&quot;N(mT,1) empirical mean={correct:.4f}&quot;,
+          f&quot;N(0,1) empirical mean={standard:.4f}&quot;,
+          f&quot;N(0,1) analytic mean={2*(1-terminal_abar):.3f}&quot;)</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>diffusion abar=0.60 avg epsilon MSE=0.675 N(mT,1) empirical mean=1.9964 N(0,1) empirical mean=0.7964 N(0,1) analytic mean=0.800
+diffusion abar=0.05 avg epsilon MSE=0.150 N(mT,1) empirical mean=1.9974 N(0,1) empirical mean=1.8974 N(0,1) analytic mean=1.900</code></pre>
+<p>두 시작 조건에 같은 난수열을 사용해 시작 평균만 바꾼 차이가 드러납니다. 이는 Gaussian 한 차원의 생성 평균 실험입니다. 복잡한 자료에서 낮은 잡음 예측 손실이 표본 품질을 곧바로 뜻하는지는 재구성과 보류 표본으로 별도 평가가 필요합니다.</p>
+<div class="check" data-q="q8"></div>
+
+<h2>참고 자료</h2>
+<ul><li><a href="https://arxiv.org/pdf/2006.11239">Ho·Jain·Abbeel · Denoising Diffusion Probabilistic Models</a></li></ul>
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

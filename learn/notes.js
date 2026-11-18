@@ -313,6 +313,20 @@ window.BDA_CHAPTERS = {
     {"id": "SY09-2", "title": "같은 캐시 용량에서 충돌을 줄이는 배치", "href": "notes/sy/sy09-2.html"},
     {"id": "SY09-3", "title": "페이지 교체 순서와 더 많은 프레임의 효과", "href": "notes/sy/sy09-3.html"}
   ],
+  SY10: [
+    {"id": "SY10-1", "title": "겹쳐 실행되는 상태 전이를 열거하고 잠금의 범위 정하기", "href": "notes/sy/sy10-1.html"},
+    {"id": "SY10-2", "title": "조건변수의 대기 조건과 잠금 순서로 교착을 막기", "href": "notes/sy/sy10-2.html"}
+  ],
+  SY11: [
+    {"id": "SY11-1", "title": "입출력을 기다리는 시간과 전체 처리량을 분리해 계산하기", "href": "notes/sy/sy11-1.html"},
+    {"id": "SY11-2", "title": "파일 읽기 호출 수와 실행 시간을 따로 계측하기", "href": "notes/sy/sy11-2.html"}
+  ],
+  SY12: [
+    {"id": "SY12-1", "title": "겹친 읽기·쓰기의 일관성과 과반 교집합을 검산하기", "href": "notes/sy/sy12-1.html"}
+  ],
+  SY13: [
+    {"id": "SY13-1", "title": "작은 언어의 타입 보존과 루프의 정답을 증명하기", "href": "notes/sy/sy13-1.html"}
+  ],
   NW01: [
     {"id": "NW01-1", "title": "호스트가 어떻게 역할을 나눠 통신하는가", "href": "notes/nw/nw01-1.html"},
     {"id": "NW01-2", "title": "집의 LAN에서 여러 네트워크로 건너가기", "href": "notes/nw/nw01-2.html"}
@@ -426,6 +440,13 @@ window.BDA_CHAPTERS = {
   DB09: [
     {"id": "DB09-1", "title": "슬롯 페이지의 레코드 주소와 B+트리의 페이지 분할", "href": "notes/db/db09-1.html"},
     {"id": "DB09-2", "title": "버퍼 고정, 교체, 수정 페이지 쓰기를 추적하기", "href": "notes/db/db09-2.html"}
+  ],
+  DB10: [
+    {"id": "DB10-1", "title": "같은 조인을 여러 연산으로 실행하고 계획 비용 비교하기", "href": "notes/db/db10-1.html"}
+  ],
+  DB11: [
+    {"id": "DB11-1", "title": "충돌 그래프로 직렬화 순서를 찾고 스냅샷의 한계를 계산하기", "href": "notes/db/db11-1.html"},
+    {"id": "DB11-2", "title": "미리 쓴 로그에서 커밋의 효과를 되살리고 미완료 변경 되돌리기", "href": "notes/db/db11-2.html"}
   ],
   LA01: [
     {"id": "LA01-1", "title": "벡터와 성분: 한 관측을 숫자 여러 개로 나타내기", "href": "notes/la/la01-1.html"},
@@ -895,6 +916,20 @@ window.BDA_CHAPTERS = {
     {"id": "DL10-1", "title": "사전학습 표현을 고정하고 새 출력층 학습하기", "href": "notes/dl/dl10-1.html"},
     {"id": "DL10-2", "title": "자기지도 대조학습에서 가까워질 표현 정하기", "href": "notes/dl/dl10-2.html"},
     {"id": "DL10-3", "title": "모델 크기와 추론 지연·처리량을 따로 재기", "href": "notes/dl/dl10-3.html"}
+  ],
+  DL11: [
+    {"id": "DL11-1", "title": "벡터 출력의 역전파와 선형층 기울기를 손으로 구하기", "href": "notes/dl/dl11-1.html"},
+    {"id": "DL11-2", "title": "LayerNorm의 세 경로와 활성함수의 스케일 검산", "href": "notes/dl/dl11-2.html"}
+  ],
+  DL12: [
+    {"id": "DL12-1", "title": "작은 자기회귀 언어모델을 학습하고 처음 보는 조합 평가하기", "href": "notes/dl/dl12-1.html"}
+  ],
+  DL13: [
+    {"id": "DL13-1", "title": "VAE의 재구성과 KL에서 변분 하계를 유도하기", "href": "notes/dl/dl13-1.html"},
+    {"id": "DL13-2", "title": "확산의 전방 정규분포를 유도하고 역방향 시작 분포를 비교하기", "href": "notes/dl/dl13-2.html"}
+  ],
+  DL14: [
+    {"id": "DL14-1", "title": "대조 손실이 보존하는 정보를 동결 평가로 확인하기", "href": "notes/dl/dl14-1.html"}
   ],
   RL01: [
     {"id": "RL01-1", "title": "에이전트와 환경: 무엇을 보고 무엇을 바꾸나", "href": "notes/rl/rl01-1.html"},

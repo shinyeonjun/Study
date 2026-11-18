@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>작은 언어의 타입 보존과 루프의 정답을 증명하기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="SY13-1">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">컴퓨터 시스템 · SY13 프로그래밍 언어와 프로그램 증명</p>
+<p class="chap-num">SY13·1</p>
+<h1>작은 언어의 타입 보존과 루프의 정답을 증명하기</h1>
+<p class="lead">조건문의 조건에는 참·거짓을, 덧셈에는 숫자를 넣습니다. 계산이 한 단계 진행될 때도 이 약속이 지켜지는지 확인합니다. 그다음 반복문의 각 단계에 대해 결과와 종료를 따로 증명합니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>귀납적으로 정의한 구문에서 작은 단계 실행을 재현한다.</li><li>진행·타입 보존을 규칙의 경우를 나누어 증명한다.</li><li>반복문의 불변식과 종료량을 찾아 전체 정확성을 확인한다.</li></ul></div>
+
+<h2>식이 무엇을 포함할 수 있는지 작은 규칙으로 정한다</h2>
+<p>우리 식의 기본 값은 정수와 참·거짓입니다. 두 식을 더한 식 또는 ‘조건이면 왼쪽, 아니면 오른쪽’인 식도 포함합니다. 이 작은 언어에는 변수가 없으며 모든 식은 여기 적은 기본 값과 두 조립 규칙으로 만들어집니다. 타입은 종이에 나무처럼 아래 조건을 붙여 유도할 수 있습니다.</p>
+<div class="table-wrap"><table><thead><tr><th scope="col">식</th><th scope="col">타입을 정할 조건</th><th scope="col">결과 타입</th></tr></thead><tbody><tr><td>정수 n</td><td>기본값</td><td>Int</td></tr><tr><td>참·거짓</td><td>기본값</td><td>Bool</td></tr><tr><td>e₁+e₂</td><td>양쪽이 Int</td><td>Int</td></tr><tr><td>if c then e₁ else e₂</td><td>c는 Bool, 양쪽은 같은 타입 T</td><td>T</td></tr></tbody></table></div>
+<p><b class="key">작은 단계 의미론</b>은 식 하나를 다음 식 하나로 바꾸는 규칙입니다. 덧셈에서는 왼쪽을 먼저 값으로 만들고 오른쪽으로 갑니다. 두 값이 정수이면 그 합으로 바꿉니다. 조건문에서는 조건을 먼저 값을 만들고, 참·거짓이 나오면 해당 가지로 바꿉니다. 선택되지 않은 가지는 실행하지 않습니다.</p>
+<div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
+<h2>타입 있는 식이 막히지 않고 같은 타입을 유지한다</h2>
+<p><b class="key">진행</b>은 타입 있는 식이 이미 값이거나 다음 규칙을 적용할 수 있다는 뜻입니다. 구문에서 작은 식에도 성립한다고 귀납 가정합니다. 덧셈이면 아직 값이 아닌 인자에서 한 단계 진행할 수 있고, 모두 값이면 타입 규칙 때문에 둘 다 정수여서 덧셈 규칙이 있습니다. 조건문이면 조건 자체를 진행시키거나, 이미 Bool 값이어서 한 가지를 선택합니다.</p>
+<p><b class="key">보존</b>은 실행 한 단계 뒤에도 같은 타입이 남는다는 뜻입니다. 덧셈 인자를 줄일 때 그 인자의 타입이 그대로라는 귀납 가정으로 덧셈 전체를 같은 규칙으로 검사합니다. 값들의 합은 Int입니다. 조건을 줄이면 Bool이 그대로이고 두 가지의 타입은 행동 전에 같았습니다. 조건 값을 읽고 가지로 바꾸면 그 가지가 원래 결과 타입을 갖습니다. 여기서는 닫힌 작은 언어의 경우를 모두 다뤘습니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 160" role="img" aria-label="조건을 참으로 확인해 한 가지를 고르고, 왼쪽 덧셈과 마지막 덧셈을 한 단계씩 실행해 6이 된다.">
+<rect class="f-box" x="42" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="135" y="61" text-anchor="middle">if true</text><text class="f-s" x="135" y="89" text-anchor="middle">참이므로 가지 선택</text><text class="f-s" x="135" y="110" text-anchor="middle">(1+2)+3</text><line class="f-line" x1="235" y1="84" x2="278" y2="84" marker-end="url(#f-arrow)"/><rect class="f-soft" x="287" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="380" y="61" text-anchor="middle">왼쪽부터 계산</text><text class="f-s" x="380" y="89" text-anchor="middle">1+2를 한 단계</text><text class="f-s" x="380" y="110" text-anchor="middle">3+3</text><line class="f-line" x1="480" y1="84" x2="523" y2="84" marker-end="url(#f-arrow)"/><rect class="f-box" x="532" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="625" y="61" text-anchor="middle">마지막 계산</text><text class="f-s" x="625" y="89" text-anchor="middle">3+3에서 6</text><text class="f-s" x="625" y="110" text-anchor="middle">모든 단계 Int</text>
+</svg><figcaption>각 변환 뒤 식이 여전히 Int인지 별도로 검사한다.</figcaption></figure>
+<div class="check" data-q="q3"></div><div class="check" data-q="q4"></div><div class="check" data-q="q5"></div>
+<h2>반복문에서는 계산 도중의 문장을 고른다</h2>
+<p>음이 아닌 정수 n까지 합하는 코드에서 i=0, total=0으로 시작해 i&lt;n일 때 i를 1 올리고 total에 i를 더합니다. 반복문의 머리에서 <var>0≤i≤n, total=i(i+1)/2</var>가 불변식입니다. 처음 i=0이므로 맞습니다. 반복 직전 맞았다면 새 값은 이전 i에서 쌓은 합에 i+1을 더한 <var>i(i+1)/2+(i+1)=(i+1)(i+2)/2</var>입니다. 그리고 검사 i&lt;n으로 새 i≤n입니다. 반복이 끝나면 i≥n과 i≤n을 합쳐 i=n이므로 답이 맞습니다.</p>
+<p>반복할 때마다 <var>n−i</var>라는 음이 아닌 정수가 1씩 줄어듭니다. 무한히 감소할 수 없으므로 반복이 종료됩니다. 불변식 증명은 ‘종료하면 맞는 결과’를, 이 별도 계산은 ‘실제로 끝남’을 줍니다.</p>
+<div class="check" data-q="q6"></div><div class="check" data-q="q7"></div>
+<pre data-example="python"><code>def type_of(e):
+    tag,*parts=e
+    if tag in (&quot;int&quot;,&quot;bool&quot;):
+        return tag
+    if tag==&quot;add&quot; and all(type_of(x)==&quot;int&quot; for x in parts):
+        return &quot;int&quot;
+    if tag==&quot;if&quot;:
+        c,left,right=parts
+        if type_of(c)==&quot;bool&quot; and type_of(left)==type_of(right):
+            return type_of(left)
+    raise TypeError(&quot;타입 규칙 위반&quot;)
+
+def value(e):
+    return e[0] in (&quot;int&quot;,&quot;bool&quot;)
+
+def step(e):
+    tag,*parts=e
+    if tag==&quot;add&quot;:
+        left,right=parts
+        if not value(left):
+            return (&quot;add&quot;,step(left),right)
+        if not value(right):
+            return (&quot;add&quot;,left,step(right))
+        return (&quot;int&quot;,left[1]+right[1])
+    c,left,right=parts
+    return (left if c[1] else right) if value(c) else (&quot;if&quot;,step(c),left,right)
+
+e=(&quot;if&quot;,(&quot;bool&quot;,True),
+   (&quot;add&quot;,(&quot;add&quot;,(&quot;int&quot;,1),(&quot;int&quot;,2)),(&quot;int&quot;,3)),(&quot;int&quot;,0))
+steps=0
+while not value(e):
+    old=type_of(e)
+    e=step(e)
+    assert old==type_of(e)
+    steps+=1
+print(steps, *e)
+
+def triangle(n):
+    i=total=0
+    while i&lt;n:
+        assert total==i*(i+1)//2
+        i+=1
+        total+=i
+    return total
+for n in range(101):
+    assert triangle(n)==n*(n+1)//2
+print([triangle(n) for n in (0,1,5,100)])</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>3 int 6
+[0, 1, 15, 5050]</code></pre>
+<p>문법대로 만든 구문 트리의 타입을 검사한 뒤, 그 검사를 통과한 식에 실행 함수를 적용합니다. 예제마다 값을 대조하는 테스트와, 모든 표현에 대해 귀납하는 증명은 각각 다른 확인 방법입니다.</p>
+<div class="check" data-q="q8"></div>
+
+<h2>참고 자료</h2>
+<ul><li><a href="https://softwarefoundations.cis.upenn.edu/plf-current/Types.html">Pierce 외 · Software Foundations, 타입과 작은 단계 의미론</a></li><li><a href="https://softwarefoundations.cis.upenn.edu/plf-current/Hoare.html">Pierce 외 · Hoare Logic, while과 불변식</a></li></ul>
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

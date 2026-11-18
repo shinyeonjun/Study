@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>VAE의 재구성과 KL에서 변분 하계를 유도하기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="DL13-1">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">딥러닝 · DL13 생성모형의 목적함수와 추론</p>
+<p class="chap-num">DL13·1</p>
+<h1>VAE의 재구성과 KL에서 변분 하계를 유도하기</h1>
+<p class="lead">관측값이 어떤 숨은 값에서 만들어졌는지 모르므로 가능한 숨은 값 전체를 평균해야 합니다. 정확한 평균을 다루기 어려울 때, 근사 분포를 써서 로그우도의 하한을 만들고 작은 정규 예에서 그 차이까지 계산합니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>결합 모델, 사후분포, 근사 분포를 각각 쓴다.</li><li>변분 하계의 두 항과 로그우도 차이를 유도한다.</li><li>재매개화에서 분산과 표준편차의 관계를 검산한다.</li></ul></div>
+
+<h2>숨은 값 전체를 평균하고 싶은 이유</h2>
+<p>생성 모델은 먼저 z∼p(z)를 선택한 뒤 x∼pθ(x|z)를 냅니다. 결합밀도는 pθ(x,z)=p(z)pθ(x|z)입니다. 실제 관측 x의 밀도는 z 전체에 대해 이 결합밀도를 적분한 pθ(x)입니다. z의 사후밀도를 직접 계산하기 어려우면 관측 x마다 쉽게 표본을 뽑을 수 있는 근사 qφ(z|x)를 사용합니다.</p>
+<p>pθ(x)&gt;0이며 q가 질량을 두는 곳에서 로그비와 기대값이 정의되는 경우를 다룹니다. pθ(x,z)=pθ(z|x)pθ(x)에서 로그를 취하고, log q를 빼고 더해 기대하면 다음 등식이 나옵니다.</p>
+<p class="calc">log pθ(x)=E<sub>q</sub>[log pθ(x,z)−log q(z|x)] + KL(q(z|x)‖pθ(z|x))</p>
+<p>마지막 KL은 0 이상이므로 앞 항은 <b class="key">증거 하계(ELBO)</b>입니다. 앞 항을 결합밀도의 곱으로 펼치면 <var>E<sub>q</sub>[log pθ(x|z)]−KL(q(z|x)‖p(z))</var>입니다. 첫 항은 재구성 로그우도이고, 둘째는 근사가 사전분포와 얼마나 다른지를 벌점으로 사용합니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 160" role="img" aria-label="재구성 기댓값에서 사전과의 KL을 빼면 하계가 되고, 참 로그우도와의 차이는 근사와 사후 사이의 KL이다.">
+<rect class="f-box" x="42" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="135" y="61" text-anchor="middle">로그 주변우도</text><text class="f-s" x="135" y="89" text-anchor="middle">log pθ(x)</text><text class="f-s" x="135" y="110" text-anchor="middle">숨은 z를 적분</text><line class="f-line" x1="235" y1="84" x2="278" y2="84" marker-end="url(#f-arrow)"/><rect class="f-soft" x="287" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="380" y="61" text-anchor="middle">계산하는 하계</text><text class="f-s" x="380" y="89" text-anchor="middle">재구성 − KL</text><text class="f-s" x="380" y="110" text-anchor="middle">사전과 비교</text><line class="f-line" x1="480" y1="84" x2="523" y2="84" marker-end="url(#f-arrow)"/><rect class="f-box" x="532" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="625" y="61" text-anchor="middle">하계와의 차이</text><text class="f-s" x="625" y="89" text-anchor="middle">사후와의 KL</text><text class="f-s" x="625" y="110" text-anchor="middle">q가 참이면 0</text>
+</svg><figcaption>하계의 두 KL을 같은 분포 쌍으로 착각하지 않는다.</figcaption></figure>
+<div class="check" data-q="q1"></div><div class="check" data-q="q2"></div><div class="check" data-q="q3"></div>
+<h2>대각 정규분포의 KL은 평균과 분산으로 계산한다</h2>
+<p>p(z)=N(0,I), q=N(μ,diag σ²)라 둡니다. 로그 밀도의 차이에서 q로 평균할 때 E[(zⱼ−μⱼ)²/σⱼ²]=1이고 E[zⱼ²]=μⱼ²+σⱼ²입니다. 따라서 KL(q‖p)=½∑ⱼ(μⱼ²+σⱼ²−1−log σⱼ²)입니다. 분산을 양수로 표현하기 위해 lⱼ=log σⱼ²를 쓰면 표준편차는 exp(lⱼ/2)입니다.</p>
+<p><b class="key">재매개화</b>에서는 z=μ+exp(l/2)⊙ε, ε∼N(0,I)로 씁니다. ε의 법칙은 φ에 의존하지 않습니다. 따라서 미분과 기대를 바꿀 수 있는 조건에서 같은 ε 표본으로 z가 변하는 경로의 미분을 계산합니다. 고정 분산의 정규 디코더에서 재구성 항과 제곱오차가 상수 차이와 배율로 연결되지만, 다른 관측분포에서는 해당 로그밀도를 사용합니다.</p>
+<div class="check" data-q="q4"></div><div class="check" data-q="q5"></div>
+<h2>정확한 사후로 하계와의 차이를 검산한다</h2>
+<p>x=2, z∼N(0,1), x|z∼N(z,1), q=N(1,4)로 둡니다. x=z+독립 잡음이라 주변분포는 N(0,2)입니다. 사후는 z²+(2−z)²=2(z−1)²+2이므로 N(1,1/2)입니다. q 아래 재구성 제곱항은 (2−1)²+4=5입니다. 다음 표에서 하계는 참 로그우도보다 2.460279 낮고, 그 차이는 q에서 사후로의 KL과 같습니다.</p>
+<div class="table-wrap"><table><thead><tr><th scope="col">항</th><th scope="col">스칼라 값</th></tr></thead><tbody><tr><td>재구성 로그우도</td><td>−3.418939</td></tr><tr><td>사전과의 KL</td><td>1.306853</td></tr><tr><td>ELBO</td><td>−4.725791</td></tr><tr><td>참 로그우도</td><td>−2.265512</td></tr><tr><td>사후와의 KL</td><td>2.460279</td></tr></tbody></table></div>
+<div class="check" data-q="q6"></div><div class="check" data-q="q7"></div>
+<pre data-example="python"><code>from math import log, pi
+
+x, m, variance = 2., 1., 4.
+reconstruction = -0.5*(log(2*pi)+(x-m)**2+variance)
+kl_prior = 0.5*(m*m+variance-1-log(variance))
+marginal = -0.5*(log(4*pi)+x*x/2)
+gap = 0.5*(variance/.5-1+log(.5/variance))
+elbo = reconstruction-kl_prior
+assert abs(marginal-elbo-gap) &lt; 1e-12
+print(&quot;VAE&quot;, *(f&quot;{v:.6f}&quot; for v in (reconstruction, kl_prior, elbo, marginal, gap)))</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>VAE -3.418939 1.306853 -4.725791 -2.265512 2.460279</code></pre>
+<div class="check" data-q="q8"></div>
+
+<h2>참고 자료</h2>
+<ul><li><a href="https://arxiv.org/pdf/1312.6114">Kingma와 Welling · Auto-Encoding Variational Bayes</a></li></ul>
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

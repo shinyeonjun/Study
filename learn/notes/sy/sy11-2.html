@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>파일 읽기 호출 수와 실행 시간을 따로 계측하기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="SY11-2">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">컴퓨터 시스템 · SY11 입출력과 성능 분석 실습</p>
+<p class="chap-num">SY11·2</p>
+<h1>파일 읽기 호출 수와 실행 시간을 따로 계측하기</h1>
+<p class="lead">같은 파일을 작은 컵으로 여러 번 떠 오거나 큰 컵으로 적게 떠 옵니다. 바이트 수와 읽기 호출 수는 정확히 셀 수 있지만, 시간은 워밍업과 기계의 상태에 따라 달라집니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>응용 프로그램 읽기 호출, 전송 바이트, 실제 지연을 다른 열로 기록한다.</li><li>준비 실행과 순서 교대를 둔 비교를 실행한다.</li><li>운영체제의 페이지 캐시와 Python 버퍼를 구분한다.</li></ul></div>
+
+<h2>어떤 층에서 일어난 일을 세는지 먼저 쓴다</h2>
+<p>Python 파일 API에 읽기를 100번 요청한 것과 저장 장치가 실제로 100번 읽은 것은 다릅니다. 운영체제는 이전에 읽은 파일 데이터가 메모리에 있으면 다시 장치에 가지 않을 수 있습니다. Python의 버퍼도 일부 요청을 여러 번에 나누거나 모을 수 있습니다. 이번 예제는 <code>open(…, buffering=0)</code>으로 이진 파일 객체의 Python 버퍼를 끄고, 우리가 직접 호출한 읽기 횟수와 반환된 바이트를 셉니다.</p>
+<p>임시 파일은 16,384바이트입니다. 한 번의 읽기 크기가 64바이트라 모두 채워서 돌아오면 값이 든 호출 256번, 256바이트면 64번입니다. 양쪽에 파일 끝을 확인한 빈 호출이 한 번 더 있습니다. 예제는 0바이트보다 많이 반환한 호출만 셉니다. 다른 입출력에선 끝이 오기 전에 읽기가 요청보다 짧을 수 있어, 실제 반환 길이를 함께 남깁니다.</p>
+<div class="check" data-q="q1"></div><div class="check" data-q="q2"></div><div class="check" data-q="q3"></div>
+<h2>워밍업 뒤 두 실행 순서를 모두 확인한다</h2>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 160" role="img" aria-label="첫 실행과 측정을 나누고 두 설정을 순서를 바꾸어 실행해 순서에 의한 흔들림을 확인한다.">
+<rect class="f-box" x="42" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="135" y="61" text-anchor="middle">준비</text><text class="f-s" x="135" y="89" text-anchor="middle">동일한 파일을 읽음</text><text class="f-s" x="135" y="110" text-anchor="middle">첫 실행을 별도 표시</text><line class="f-line" x1="235" y1="84" x2="278" y2="84" marker-end="url(#f-arrow)"/><rect class="f-soft" x="287" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="380" y="61" text-anchor="middle">측정 A→B</text><text class="f-s" x="380" y="89" text-anchor="middle">64 뒤 256바이트</text><text class="f-s" x="380" y="110" text-anchor="middle">소요 시간 저장</text><line class="f-line" x1="480" y1="84" x2="523" y2="84" marker-end="url(#f-arrow)"/><rect class="f-box" x="532" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="625" y="61" text-anchor="middle">측정 B→A</text><text class="f-s" x="625" y="89" text-anchor="middle">역순도 반복</text><text class="f-s" x="625" y="110" text-anchor="middle">바이트와 호출 대조</text>
+</svg><figcaption>버퍼·캐시·다른 작업이 시간에 주는 영향을 호출 횟수와 별개로 기록한다.</figcaption></figure>
+<p>하나를 항상 먼저 두면 먼저 실행한 방법이 환경 준비 비용을 더 부담할 수 있습니다. 이번 코드는 준비 실행 뒤 A→B와 B→A를 반복합니다. 같은 파일을 다시 읽으므로 운영체제 캐시에 이미 올라온 읽기가 섞일 수 있습니다. 코드에서 <code>perf_counter_ns()</code>로 구한 시간은 하드웨어와 현재 부하에 따라 다릅니다. 딱 한 번의 실행이나 환경이 바뀐 두 실행의 빠르기를 일반화하지 않습니다.</p>
+<p>우선 확인할 값은 같은 바이트 수를 읽었는지, 비교 중 입력이 변하지 않았는지, 횟수가 계획과 맞는지입니다. 시간은 두 설정의 개별 측정과 중앙값을 비교할 수 있습니다. 프로그램이 쓰기 완료를 보고해도 저장 장치와 로그까지 반영된 조건은 별도라는 점은 데이터베이스 복구와 이어집니다.</p>
+<div class="check" data-q="q4"></div><div class="check" data-q="q5"></div><div class="check" data-q="q6"></div><div class="check" data-q="q7"></div>
+<pre data-example="python"><code>from pathlib import Path
+from tempfile import TemporaryDirectory
+from time import perf_counter_ns
+from statistics import median
+
+def measure(path,chunk):
+    start = perf_counter_ns()
+    count = total = 0
+    with path.open(&quot;rb&quot;,buffering=0) as handle:
+        while data := handle.read(chunk):
+            count+=1
+            total+=len(data)
+    return count,total,perf_counter_ns()-start
+
+with TemporaryDirectory() as tmp:
+    path=Path(tmp)/&quot;example.bin&quot;
+    path.write_bytes(bytes(range(256))*64)
+    measure(path,256)
+    stats={64:[],256:[]}
+    for order in ((64,256),(256,64),(64,256),(256,64)):
+        for chunk in order:
+            stats[chunk].append(measure(path,chunk))
+    for chunk,samples in stats.items():
+        pairs=sorted({(calls,bytes_read) for calls,bytes_read,_ in samples})
+        elapsed=[time for _,_,time in samples]
+        print(chunk,pairs,len(samples), median(elapsed)&gt;=0)
+        assert pairs==[(16384//chunk,16384)]
+        # 실제 시간 표를 보고 싶다면 print(chunk, elapsed)로 확인한다.</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>64 [(256, 16384)] 4 True
+256 [(64, 16384)] 4 True</code></pre>
+<div class="check" data-q="q8"></div>
+
+<h2>참고 자료</h2>
+<ul><li><a href="https://docs.python.org/3/library/functions.html#open">Python · open의 buffering 규약</a></li><li><a href="https://docs.python.org/3/library/time.html#time.perf_counter_ns">Python · perf_counter_ns</a></li></ul>
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

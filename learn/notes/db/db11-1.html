@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>충돌 그래프로 직렬화 순서를 찾고 스냅샷의 한계를 계산하기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="DB11-1">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">데이터베이스와 SQL · DB11 트랜잭션 스케줄과 복구</p>
+<p class="chap-num">DB11·1</p>
+<h1>충돌 그래프로 직렬화 순서를 찾고 스냅샷의 한계를 계산하기</h1>
+<p class="lead">두 거래가 서로 다른 순서로 같은 정보를 읽고 바꿉니다. 겹쳐 진행해도 한 거래씩 끝낸 결과로 설명할 수 있는지, 읽은 값과 쓰기의 앞뒤를 찾아봅니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>같은 항목에 읽기·쓰기가 섞일 때 충돌 간선을 구성한다.</li><li>충돌 직렬 가능성과 위상 순서 관계를 증명한다.</li><li>여러 버전에서 공통 조건이 깨지는 쓰기 비대칭 사례를 계산한다.</li></ul></div>
+
+<h2>같은 값에 앞선 연산이 다음 연산에 영향을 줄 수 있다</h2>
+<p>한 버전의 표에 대한 연산 순서를 먼저 생각합니다. 서로 다른 트랜잭션의 두 연산이 같은 항목을 보고 적어도 하나가 쓰기라면 <b class="key">충돌</b>입니다. 앞 연산의 트랜잭션에서 뒤 연산의 트랜잭션으로 간선을 긋습니다. 서로 다른 항목을 다루거나 둘 다 읽으면 이 모형에서는 둘의 순서를 바꿔도 충돌을 바꾸지 않습니다.</p>
+<div class="table-wrap"><table><thead><tr><th scope="col">실행 순서</th><th scope="col">x에서 생긴 간선</th><th scope="col">y에서 생긴 간선</th></tr></thead><tbody><tr><td>r₁(x), r₂(y), w₁(y), w₂(x)</td><td>T₁→T₂</td><td>T₂→T₁</td></tr><tr><td>r₁(x), w₁(y), r₂(y), w₂(x)</td><td>T₁→T₂</td><td>T₁→T₂</td></tr></tbody></table></div>
+<p><b class="key">충돌 직렬 가능</b>이란 모든 충돌 쌍의 순서를 유지한 채 트랜잭션을 하나씩 실행한 순서를 찾을 수 있다는 뜻입니다. 찾을 수 있다면 그 순서가 모든 그래프 간선을 지켜야 하므로 순환은 없어야 합니다. 반대로 비순환이면 위상 순서가 있어 그 순서대로 트랜잭션 각각을 통째로 실행할 때 각 충돌의 앞뒤가 원래와 같습니다. 이 조건에서는 첫 예는 불가능, 두 번째는 T₁을 먼저 두면 가능합니다.</p>
+<div class="check" data-q="q1"></div><div class="check" data-q="q2"></div><div class="check" data-q="q3"></div>
+<h2>스냅샷을 따로 읽으면 공통 규칙을 각각 깰 수 있다</h2>
+<p><b class="key">MVCC</b>는 값을 여러 버전으로 가지고 어떤 시점의 버전이 한 거래에 보일지 다루는 방식입니다. 스냅샷 격리에서는 두 거래가 과거의 같은 상태를 보면서 서로 다른 항목만 쓰고 커밋할 수 있는 경우가 있습니다. 이때 같은 행을 동시에 쓰는 충돌이 없어도 두 판단이 함께 공통 조건을 깨뜨릴 수 있습니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 160" role="img" aria-label="두 트랜잭션이 공통 스냅샷을 읽은 뒤 각각 다른 항목을 0으로 바꾸면, 적어도 하나가 1이어야 하는 불변식이 깨진다.">
+<rect class="f-box" x="42" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="135" y="61" text-anchor="middle">공통 스냅샷</text><text class="f-s" x="135" y="89" text-anchor="middle">x=1, y=1</text><text class="f-s" x="135" y="110" text-anchor="middle">적어도 하나는 1</text><line class="f-line" x1="235" y1="84" x2="278" y2="84" marker-end="url(#f-arrow)"/><rect class="f-soft" x="287" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="380" y="61" text-anchor="middle">동시에 결정</text><text class="f-s" x="380" y="89" text-anchor="middle">T₁은 y=0</text><text class="f-s" x="380" y="110" text-anchor="middle">T₂는 x=0</text><line class="f-line" x1="480" y1="84" x2="523" y2="84" marker-end="url(#f-arrow)"/><rect class="f-box" x="532" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="625" y="61" text-anchor="middle">두 변경을 적용</text><text class="f-s" x="625" y="89" text-anchor="middle">x=0, y=0</text><text class="f-s" x="625" y="110" text-anchor="middle">공통 조건 위반</text>
+</svg><figcaption>같은 항목을 덮어쓴 경우와 달리 읽기에 쓰인 과거 버전에 의존해서 생기는 효과다.</figcaption></figure>
+<p>초기 x=y=1입니다. T₁은 x=1일 때만 y=0으로 쓰고, T₂는 y=1일 때만 x=0으로 씁니다. 두 트랜잭션이 같은 시간의 (1,1)을 읽으면 각각 다른 항목을 0으로 만들어 둘 다 0이 될 수 있습니다. 어느 쪽을 먼저 끝내더라도 뒤 거래는 상대가 0임을 읽어 더는 쓰지 않으므로 직렬 실행은 이 결과를 만들지 않습니다. 이런 형태를 <b>쓰기 비대칭(write skew)</b>이라고 합니다.</p>
+<p>다중 버전에서 거래가 실제로 읽은 값을 사용하려면 버전과 읽기 의존성까지 고려해야 합니다. 한 버전의 위 충돌 그래프를 보이는 것만으로 스냅샷 검사의 동작을 구현할 수는 없습니다. PostgreSQL에서 제공하는 직렬화 격리 수준은 충돌 검출로 일부 거래에 재시도를 요청할 수 있습니다.</p>
+<div class="check" data-q="q4"></div><div class="check" data-q="q5"></div><div class="check" data-q="q6"></div><div class="check" data-q="q7"></div>
+<pre data-example="python"><code>from itertools import permutations
+
+def edges(history):
+    return {(a,b) for i,(a,kind,x) in enumerate(history)
+            for b,mode,y in history[i+1:]
+            if a!=b and x==y and &quot;w&quot; in (kind,mode)}
+
+a = [(1,&quot;r&quot;,&quot;x&quot;),(2,&quot;r&quot;,&quot;y&quot;),(1,&quot;w&quot;,&quot;y&quot;),(2,&quot;w&quot;,&quot;x&quot;)]
+b = [(1,&quot;r&quot;,&quot;x&quot;),(1,&quot;w&quot;,&quot;y&quot;),(2,&quot;r&quot;,&quot;y&quot;),(2,&quot;w&quot;,&quot;x&quot;)]
+for history in (a,b):
+    graph=edges(history)
+    orders=[o for o in permutations((1,2))
+            if all(o.index(i)&lt;o.index(j) for i,j in graph)]
+    print(sorted(graph),orders)
+
+def apply(state,transaction):
+    x,y=state
+    if transaction==1 and x==1:
+        return x,0
+    if transaction==2 and y==1:
+        return 0,y
+    return state
+
+initial=(1,1)
+_,y=apply(initial,1)
+x,_=apply(initial,2)
+print((x,y), apply(apply(initial,1),2),apply(apply(initial,2),1))</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>[(1, 2), (2, 1)] []
+[(1, 2)] [(1, 2)]
+(0, 0) (1, 0) (0, 1)</code></pre>
+<div class="check" data-q="q8"></div>
+
+<h2>참고 자료</h2>
+<ul><li><a href="https://www.microsoft.com/en-us/research/people/philbe/book/">Bernstein 외 · Concurrency Control and Recovery in Database Systems</a></li><li><a href="https://arxiv.org/abs/cs/0701157">Berenson 외 · A Critique of ANSI SQL Isolation Levels</a></li><li><a href="https://www.postgresql.org/docs/18/transaction-iso.html">PostgreSQL · Transaction Isolation</a></li></ul>
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

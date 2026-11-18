@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>벡터 출력의 역전파와 선형층 기울기를 손으로 구하기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="DL11-1">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">딥러닝 · DL11 역전파를 유도하고 구현으로 검증하기</p>
+<p class="chap-num">DL11·1</p>
+<h1>벡터 출력의 역전파와 선형층 기울기를 손으로 구하기</h1>
+<p class="lead">한 입력이 여러 출력으로 퍼지면 손실을 바꾸는 길도 여러 개가 됩니다. 위 층에서 내려오는 경사를 받아 각 길의 기여를 더하고, 작은 배열에서 해석식·수치미분·자동미분을 대조합니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>야코비안의 행과 열을 고정하고 벡터–야코비안 곱을 유도한다.</li><li>배치 선형층의 dX, dW, db 모양과 계산식을 직접 쓴다.</li><li>중심차분과 자동미분으로 같은 손실의 기울기를 검산한다.</li></ul></div>
+
+<h2>출력의 각 변화를 입력까지 돌려보낸다</h2>
+<p>f:ℝⁿ→ℝᵐ이고 y=f(x), 최종 손실 L은 스칼라라고 둡니다. 야코비안 J의 (i,j) 성분은 ∂yᵢ/∂xⱼ입니다. 출력 경사 u=∇ᵧL을 알고 있고 작은 입력 변화가 v이면 출력 변화는 Jv입니다. 손실의 일차 변화는 uᵀ(Jv)입니다. 이를 v의 내적으로 쓰면 (Jᵀu)ᵀv이므로 입력 경사는 Jᵀu입니다.</p>
+<p>행벡터로 쓰면 같은 계산을 uᵀJ라고 하며 <b class="key">벡터–야코비안 곱(VJP)</b>이라고 부릅니다. 야코비안 전체를 기록하지 않고도, 어떤 출력 경사를 입력 쪽으로 보낼지 계산할 수 있습니다. 반대로 입력 방향 하나 v에서 출력이 어떻게 변하는지 묻는 Jv에서는 곱의 방향이 다릅니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 160" role="img" aria-label="입력 방향으로는 Jv가 출력으로 가고, 스칼라 손실의 출력 경사는 J의 전치를 이용해 원래 입력 차원으로 돌아온다.">
+<rect class="f-box" x="42" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="135" y="61" text-anchor="middle">입력 x</text><text class="f-s" x="135" y="89" text-anchor="middle">n차원 열 벡터</text><text class="f-s" x="135" y="110" text-anchor="middle">작은 변화 v</text><line class="f-line" x1="235" y1="84" x2="278" y2="84" marker-end="url(#f-arrow)"/><rect class="f-soft" x="287" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="380" y="61" text-anchor="middle">출력 y=f(x)</text><text class="f-s" x="380" y="89" text-anchor="middle">m차원 열 벡터</text><text class="f-s" x="380" y="110" text-anchor="middle">순방향 변화 Jv</text><line class="f-line" x1="480" y1="84" x2="523" y2="84" marker-end="url(#f-arrow)"/><rect class="f-box" x="532" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="625" y="61" text-anchor="middle">역전파</text><text class="f-s" x="625" y="89" text-anchor="middle">출력 경사 u에서</text><text class="f-s" x="625" y="110" text-anchor="middle">입력 경사 Jᵀu</text>
+</svg><figcaption>손실 그라디언트의 차원은 x의 차원과 일치한다.</figcaption></figure>
+<div class="check" data-q="q1"></div><div class="check" data-q="q2"></div><div class="check" data-q="q3"></div>
+<h2>배치 선형층에서 세 가지 기울기를 분리한다</h2>
+<p>X의 모양을 [B,D], W를 [D,M], b를 [M]이라 둡니다. H=XW+1bᵀ의 모양은 [B,M]입니다. G를 H에 대한 경사라 둡니다. H의 작은 변화는 ΔX·W+X·ΔW+1·Δbᵀ입니다. 이를 ΔL=∑ᵢⱼGᵢⱼΔHᵢⱼ에 넣습니다. 예를 들어 ΔW<sub>km</sub>의 계수는 배치 전체 ∑ᵢX<sub>ik</sub>G<sub>im</sub>입니다.</p>
+<div class="table-wrap"><table><thead><tr><th scope="col">구하려는 경사</th><th scope="col">식</th><th scope="col">모양</th></tr></thead><tbody><tr><td>∇ₓL</td><td>GWᵀ</td><td>[B,D]</td></tr><tr><td>∇wL</td><td>XᵀG</td><td>[D,M]</td></tr><tr><td>∇bL</td><td>배치 행마다 G를 더함</td><td>[M]</td></tr></tbody></table></div>
+<p>같은 b가 모든 행에 쓰였으므로 그 경사는 배치에서 더합니다. 평균 손실을 사용했다면 G를 만들 때 이미 그 평균 배율이 들어갑니다. PyTorch <code>nn.Linear</code>가 저장하는 가중치의 모양은 [M,D]라 위 표의 W와 전치 관계입니다.</p>
+<div class="check" data-q="q4"></div><div class="check" data-q="q5"></div><div class="check" data-q="q6"></div>
+<h2>수치미분은 같은 손실을 살짝 옮겨 대조한다</h2>
+<p>f(x)=(x₀²+x₁,x₀x₁), x=(2,3), u=(5,−2)를 사용하면 y=(7,6), J의 두 행은 (4,1), (3,2)입니다. 그래서 Jᵀu=(14,1)입니다. 수치 검산은 u를 고정하고 스칼라 uᵀf(x)를 좌표마다 ±ε만큼 바꿔 두 값의 차이를 2ε로 나눕니다. 입력을 아주 작게 바꾸면 뺄셈 반올림이 커질 수 있으므로, 매끄러운 점과 허용 오차를 잡아 비교합니다.</p>
+<pre data-example="python"><code>import torch
+from torch.func import jacrev, vjp
+
+torch.set_num_threads(1)
+d = torch.float64
+x = torch.tensor([2.,3.], dtype=d)
+u = torch.tensor([5.,-2.], dtype=d)
+def f(x):
+    return torch.stack((x[0].square()+x[1], x[0]*x[1]))
+
+y, pullback = vjp(f, x)
+(grad,) = pullback(u)
+J = jacrev(f)(x)
+eps = 1e-5
+dirs = torch.eye(2, dtype=d)
+numeric = torch.stack([((u @ f(x+eps*e))-(u @ f(x-eps*e)))/(2*eps) for e in dirs])
+assert torch.equal(grad, J.T @ u)
+assert torch.allclose(grad, numeric, atol=1e-8, rtol=0)
+print(&quot;y&quot;,y.tolist(),&quot;J&quot;,J.tolist(),&quot;grad&quot;,grad.tolist())
+
+a = torch.tensor([[1.,2.],[3.,4.]], dtype=d, requires_grad=True)
+w = torch.tensor([[2.,0.],[-1.,1.]], dtype=d, requires_grad=True)
+b = torch.tensor([1.,-1.], dtype=d, requires_grad=True)
+g = torch.tensor([[1.,2.],[-1.,3.]], dtype=d)
+out = a @ w+b
+da,dw,db = torch.autograd.grad(out, (a,w,b), grad_outputs=g)
+assert torch.equal(da,g@w.T) and torch.equal(dw,a.T@g) and torch.equal(db,g.sum(0))
+print(&quot;affine&quot;,out.tolist(),da.tolist(),dw.tolist(),db.tolist())</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>y [7.0, 6.0] J [[4.0, 1.0], [3.0, 2.0]] grad [14.0, 1.0]
+affine [[1.0, 1.0], [3.0, 3.0]] [[2.0, 1.0], [-2.0, 4.0]] [[-2.0, 11.0], [-2.0, 16.0]] [0.0, 5.0]</code></pre>
+<p>이 예제는 Python 3.14.6과 PyTorch 2.14.1 CPU 연산에서 검증했습니다. 부동소수점으로 읽는 검산은 출력의 모든 숫자를 같은 문자열로 비교하는 대신 식에 대한 절대 허용 오차를 함께 확인합니다.</p>
+<div class="check" data-q="q7"></div><div class="check" data-q="q8"></div>
+
+<h2>참고 자료</h2>
+<ul><li><a href="https://docs.pytorch.org/docs/stable/generated/torch.func.vjp.html">PyTorch · torch.func.vjp</a></li><li><a href="https://docs.pytorch.org/docs/stable/generated/torch.nn.Linear.html">PyTorch · Linear</a></li><li><a href="https://docs.pytorch.org/docs/stable/notes/gradcheck.html">PyTorch · 수치 경사 검산</a></li></ul>
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

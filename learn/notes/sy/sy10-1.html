@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>겹쳐 실행되는 상태 전이를 열거하고 잠금의 범위 정하기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="SY10-1">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">컴퓨터 시스템 · SY10 스레드와 동시성의 불변식</p>
+<p class="chap-num">SY10·1</p>
+<h1>겹쳐 실행되는 상태 전이를 열거하고 잠금의 범위 정하기</h1>
+<p class="lead">두 사람이 같은 카운터에 각각 1을 더했는데 결과가 1일 수 있습니다. 읽기, 자기 칸에 더하기, 쓰기 세 단계로 나누고, 두 순서를 가능한 만큼 모두 맞춰 보며 이유를 찾습니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>스레드 안의 순서와 스레드 사이의 배치를 구별한다.</li><li>전체 20개 배치를 생성해 잃어버린 갱신을 설명한다.</li><li>상호 배제 아래 공유 상태의 불변식을 유지한다.</li></ul></div>
+
+<h2>한 줄 읽기와 한 줄 쓰기 사이에 다른 스레드가 온다</h2>
+<p>공유 카운터 x는 0입니다. 각 스레드는 x를 자기 레지스터에 읽고, 레지스터에 1을 더하고, 그 값을 x에 씁니다. 세 단계는 해당 스레드의 프로그램 순서를 유지합니다. 아래는 개별 읽기·쓰기는 원자적으로 진행되지만 그 사이에서 다른 스레드가 실행될 수 있다고 정한 모형입니다.</p>
+<div class="table-wrap"><table><thead><tr><th scope="col">순서</th><th scope="col">A의 지역 값</th><th scope="col">B의 지역 값</th><th scope="col">공유 x</th></tr></thead><tbody><tr><td>A가 먼저 읽음</td><td>0</td><td>—</td><td>0</td></tr><tr><td>B도 읽음</td><td>0</td><td>0</td><td>0</td></tr><tr><td>두 스레드가 자기 값에 1을 더함</td><td>1</td><td>1</td><td>0</td></tr><tr><td>A와 B가 차례로 씀</td><td>1</td><td>1</td><td>1</td></tr></tbody></table></div>
+<p>공유 x에 대한 두 결과는 이전 읽기값을 사용하므로 나중 쓰기가 앞 갱신을 덮습니다. 필요한 불변식은 각 증가 연산이 완료되는 경계에서 공유 값이 완료된 증가 횟수와 같다는 것입니다. 이 배치의 마지막에서 완료는 두 번인데 x가 1입니다.</p>
+<div class="check" data-q="q1"></div><div class="check" data-q="q2"></div><div class="check" data-q="q3"></div>
+<h2>각 스레드의 세 자리를 지키는 배치를 센다</h2>
+<p>총 6자리 중 A가 들어갈 3자리를 고르면 그 자리에서 A의 R→Add→W 순서는 정해지고 나머지 세 자리에는 B의 순서가 정해집니다. C(6,3)=20개입니다. 결과가 2가 되려면 나중 읽기가 앞 쓰기 뒤여야 합니다. 중간 순서가 허용된 전체를 열거하면 연달아 A를 끝내고 B를 하거나, 그 반대인 두 경우만 2를 냅니다.</p>
+<div class="check" data-q="q4"></div><div class="check" data-q="q5"></div>
+<h2>상호 배제로 하나의 연산처럼 보이게 만든다</h2>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 160" role="img" aria-label="잠금을 읽기 전에 잡고 공유 값에 다시 쓸 때까지 유지하면 두 스레드가 세 단계를 겹쳐 수행할 수 없다.">
+<rect class="f-box" x="42" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="135" y="61" text-anchor="middle">잠금 획득</text><text class="f-s" x="135" y="89" text-anchor="middle">다른 스레드는 대기</text><text class="f-s" x="135" y="110" text-anchor="middle">공유 값 읽기 전</text><line class="f-line" x1="235" y1="84" x2="278" y2="84" marker-end="url(#f-arrow)"/><rect class="f-soft" x="287" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="380" y="61" text-anchor="middle">임계 구역</text><text class="f-s" x="380" y="89" text-anchor="middle">읽기·증가·쓰기</text><text class="f-s" x="380" y="110" text-anchor="middle">세 단계를 한쪽만</text><line class="f-line" x1="480" y1="84" x2="523" y2="84" marker-end="url(#f-arrow)"/><rect class="f-box" x="532" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="625" y="61" text-anchor="middle">잠금 해제</text><text class="f-s" x="625" y="89" text-anchor="middle">연산 한 번 완료</text><text class="f-s" x="625" y="110" text-anchor="middle">다음 스레드 진입</text>
+</svg><figcaption>같은 공유 값을 읽고 갱신하는 모든 참여자가 같은 규칙을 지켜야 한다.</figcaption></figure>
+<p><b class="key">뮤텍스</b>는 한 순간에 한 실행만 임계 구역에 들어가도록 제한합니다. 읽기와 쓰기 각각에서만 잠금을 걸었다 풀면 중간에 둘 다 옛 값을 읽는 배치를 막지 못합니다. 셋 전체를 보호하면 두 증가 구역은 순서대로 실행되므로, 임계 구역에 들어갈 때의 값에서 정확히 1을 더하고 끝납니다. 공유 변수에 접근하는 다른 경로도 같은 규칙이 필요합니다.</p>
+<p>이 계산은 프로그램 단계의 순서를 지키는 순차 일관 모형입니다. 실제 언어와 기계의 메모리 가시성은 동기화 규약도 필요합니다. Python에서도 특정 연산이 한 번에 끝나는지 전제하지 않고, 여러 연산이 같이 지켜야 할 조건을 스레드 동기화로 보호합니다.</p>
+<div class="check" data-q="q6"></div><div class="check" data-q="q7"></div>
+<pre data-example="python"><code>from collections import Counter
+from itertools import combinations
+
+def run(slots):
+    x=0
+    local=[None,None]
+    pc=[0,0]
+    for i in range(6):
+        t=int(i not in slots)
+        if pc[t]==0:
+            local[t]=x
+        elif pc[t]==1:
+            local[t]+=1
+        else:
+            x=local[t]
+        pc[t]+=1
+    return x
+
+results=Counter(run(slots) for slots in combinations(range(6),3))
+print(sorted(results.items()))
+print(run((0,1,2)),run((3,4,5)))
+assert sum(results.values())==20</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>[(1, 18), (2, 2)]
+2 2</code></pre>
+<div class="check" data-q="q8"></div>
+
+<h2>참고 자료</h2>
+<ul><li><a href="https://pages.cs.wisc.edu/~remzi/OSTEP/">Arpaci-Dusseau와 Arpaci-Dusseau · OSTEP, 스레드와 락</a></li><li><a href="https://docs.python.org/3/library/threading.html">Python · Lock과 Condition</a></li></ul>
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>
