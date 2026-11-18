@@ -4,20 +4,11 @@
 
   function link(cls, text, href) { var a = el("a", cls, text); a.href = href; return a; }
 
-  // ---- 왼쪽: 검색, 경로, 분야, 공부한 날, 백업 ----
+  // ---- 왼쪽: 검색, 지금 할 공부, 공부 순서·전체 목차, (맨 아래) 공부한 날·기록 백업. 단순하게 둔다 ----
   function drawNav() {
-    var paths = document.getElementById("nav-paths"), areas = document.getElementById("nav-areas");
-    // 분야 목록은 오른쪽 목차에 이미 있으므로 왼쪽에는 목차로 가는 링크 하나만 둔다
+    var areas = document.getElementById("nav-areas");
     areas.appendChild(link("nv", "공부 순서", "#plan"));
     areas.appendChild(link("nv", "전체 목차", "#all"));
-    M.paths.forEach(function (p) {
-      var ids = G.expand(p.targets), ready = ids.filter(function (id) { return G.chapters(id).length; }).length;
-      var a = link("nv", "", "#path-" + p.id);
-      a.appendChild(el("span", "", p.name));
-      a.appendChild(el("span", "cnt", ready + " / " + ids.length));
-      a.title = "본문 있는 단원 / 앞내용까지 포함한 단원";
-      paths.appendChild(a);
-    });
   }
 
   function drawDays() { document.querySelectorAll(".days").forEach(drawDaysIn); }
@@ -75,46 +66,29 @@
     box.appendChild(msg);
   }
 
-  // ---- 오른쪽 위: 오늘 상태 한 줄 (이어서 읽기 · 복습 · 오답 · 시험) ----
+  // ---- 오른쪽 위: 오늘 상태 한 줄 (복습 · 오답 · 시험) ----
   function drawStatus() {
     var box = document.getElementById("status");
     box.textContent = "";
-    var t = B.today(), cell;
-    // 다음에 읽을 장은 왼쪽 '지금 할 공부'에 있다. 여기는 오늘 복습·오답·시험만
-
-    // 오늘 복습과 오답
-    var due = 0, wrong = 0, nextDay = null;
+    var t = B.today(), due = 0, wrong = 0;
     B.allNotes().forEach(function (n) {
       due += B.noteStatus(n.id, S).due;
       (B.QUIZ[n.id] || []).forEach(function (q) {
         var st = S.q[n.id + "#" + q.id];
-        if (!st || !st.last) return;
-        if (st.wrong) wrong++;
-        if (!st.open && st.due > t && (nextDay === null || st.due < nextDay)) nextDay = st.due;
+        if (st && st.last && st.wrong) wrong++;
       });
     });
-    cell = el("div", "cell");
-    cell.appendChild(el("p", "label", "오늘 복습"));
-    if (due) cell.appendChild(link("cell-main", due + "문제 풀기", "review.html"));
-    else cell.appendChild(el("p", "cell-main dim", "없음"));
-    cell.appendChild(el("p", "cell-sub", due ? "책 말고 문제부터" : nextDay ? "다음 " + B.dayText(nextDay) : "푼 문제가 생기면 잡힘"));
-    box.appendChild(cell);
-
-    cell = el("div", "cell");
-    cell.appendChild(el("p", "label", "오답"));
-    if (wrong) cell.appendChild(link("cell-main", wrong + "문제 다시", "review.html?wrong=1"));
-    else cell.appendChild(el("p", "cell-main dim", "없음"));
-    cell.appendChild(el("p", "cell-sub", wrong ? "틀린 문제만 섞어서" : "틀리면 여기에 모임"));
-    box.appendChild(cell);
-
-    cell = el("div", "cell");
-    cell.appendChild(el("p", "label", "시험"));
+    box.appendChild(el("span", "st-k", "오늘 복습"));
+    box.appendChild(due ? link("st-v", due + "문제", "review.html") : el("span", "st-v dim", "없음"));
+    box.appendChild(el("span", "st-k", "오답"));
+    box.appendChild(wrong ? link("st-v", wrong + "문제", "review.html?wrong=1") : el("span", "st-v dim", "없음"));
+    box.appendChild(el("span", "st-k", "시험"));
+    var d = el("details", "plain st-exam"), inp = el("input", "q-input"), sum;
     if (S.exam) {
       var p = S.exam.split("-"), day = Math.floor(Date.UTC(+p[0], +p[1] - 1, +p[2]) / 86400000), left = day - t;
-      cell.appendChild(el("p", "cell-main", left > 0 ? "D-" + left : left === 0 ? "D-DAY" : "D+" + (-left)));
-    } else cell.appendChild(el("p", "cell-main dim", "날짜 없음"));
-    var d = el("details", "plain"), inp = el("input", "q-input");
-    d.appendChild(el("summary", "", S.exam ? (+S.exam.split("-")[1]) + "월 " + (+S.exam.split("-")[2]) + "일 · 바꾸기" : "날짜 정하기"));
+      sum = (left > 0 ? "D-" + left : left === 0 ? "D-DAY" : "D+" + (-left)) + " (" + (+p[1]) + "/" + (+p[2]) + ")";
+    } else sum = "날짜 정하기";
+    d.appendChild(el("summary", "", sum));
     inp.type = "date";
     inp.value = S.exam || "";
     inp.onchange = function () {
@@ -125,8 +99,7 @@
       drawStatus();
     };
     d.appendChild(inp);
-    cell.appendChild(d);
-    box.appendChild(cell);
+    box.appendChild(d);
   }
 
   // ---- 왼쪽 위: 지금 할 공부 (공부 순서에서 아직 안 마친 장) ----
@@ -165,18 +138,10 @@
     fill.style.width = (cur.pr.total ? Math.round(cur.pr.done / cur.pr.total * 100) : 0) + "%";
     bar.appendChild(fill);
     box.appendChild(bar);
-    cur.pr.todo.slice(0, 3).forEach(function (item, i) {
-      var a = chapterLink(item);
-      if (i === 0) a.classList.add("first");
+    if (cur.pr.todo[0]) {
+      var a = chapterLink(cur.pr.todo[0]);
+      a.classList.add("first");
       box.appendChild(a);
-    });
-    var side = G.plan().filter(function (p) { return !p.main; })[0];
-    if (side) {
-      var sp = G.phaseProgress(side, S);
-      if (sp.todo.length) {
-        box.appendChild(el("p", "now-side-h", "가벼운 날"));
-        box.appendChild(chapterLink(sp.todo[0]));
-      }
     }
   }
 
@@ -205,36 +170,42 @@
     var day = el("div"), one = el("div");
     day.appendChild(el("h2", "", "하루"));
     var dl = el("ol");
-    ["위쪽 '오늘 복습'과 '오답'부터 풉니다. 복습이 언제나 새 장보다 먼저입니다.",
-     "새 장은 왼쪽 '지금 할 공부' 맨 위 하나만 합니다. 하루 1장이 기본입니다.",
-     "피곤한 날은 복습만 하거나 '가벼운 날' 한 장을 읽습니다.",
-     "일주일에 한 번 '기록 내보내기'로 기록을 파일로 받아 둡니다."].forEach(function (t) { dl.appendChild(el("li", "", t)); });
+    ["오늘 복습·오답부터 풉니다.",
+     "새 장은 '지금 할 공부'의 한 장만 합니다.",
+     "피곤한 날은 복습만, 또는 9단계 곁가지 한 장.",
+     "일주일에 한 번 기록 내보내기."].forEach(function (t) { dl.appendChild(el("li", "", t)); });
     day.appendChild(dl);
     one.appendChild(el("h2", "", "한 장"));
     var ol = el("ol");
-    ["장 끝 확인 문제를 먼저 3분 훑어봅니다. 못 풀어도 됩니다.",
-     "절 끝의 문제는 그 자리에서 풉니다. 틀리면 그 절만 다시 읽습니다.",
-     "증명은 덮고, 어떤 가정을 어디서 썼는지 내 공책에 한 줄로 적습니다.",
-     "코드는 숫자 하나를 바꿔 돌려 보고, 결과가 왜 바뀌는지 한 문장으로 적습니다.",
-     "장 끝 문제까지 풀면 그 장을 마친 것입니다. 막힌 곳은 '?'로 표시하고 넘어갑니다."].forEach(function (t) { ol.appendChild(el("li", "", t)); });
+    ["끝 문제를 먼저 훑어봅니다.",
+     "절 끝 문제는 그 자리에서 풉니다.",
+     "증명은 덮고, 쓴 가정을 공책에 한 줄로.",
+     "코드는 숫자를 바꿔 다시 돌려 봅니다.",
+     "끝 문제까지 풀면 마침. 막히면 '?' 표시하고 넘어갑니다."].forEach(function (t) { ol.appendChild(el("li", "", t)); });
     one.appendChild(ol);
     how.appendChild(day);
     how.appendChild(one);
     view.appendChild(how);
 
-    phases.forEach(function (p, i) {
-      var pr = prs[i], sec = el("section", "plan-phase" + (cur && cur.phase.id === p.id ? " now-on" : ""));
-      sec.id = "plan-" + p.id;
-      var h = el("h2", "", p.no + "단계 · " + p.name);
-      if (cur && cur.phase.id === p.id) h.appendChild(el("span", "now-tag", "지금"));
-      h.appendChild(el("span", "sec-meta", pr.done + " / " + pr.total + "장 · 약 " + weeks(pr.total) + "주"));
-      sec.appendChild(h);
-      if (p.note) sec.appendChild(el("p", "plan-note small muted", p.note));
-      var blk = el("div", "area-block");
-      p.items.forEach(function (it) { blk.appendChild(G.row(it.id, S, { tag: it.pulled ? "앞내용" : "" })); });
-      sec.appendChild(blk);
-      view.appendChild(sec);
-    });
+  }
+
+  // #plan-x: 단계 하나만. 이유 한 줄과 단원 줄
+  function drawPhase(view, pid) {
+    var phases = G.plan(), i = phases.map(function (p) { return p.id; }).indexOf(pid);
+    if (i < 0) return drawPlan(view);
+    var p = phases[i], pr = G.phaseProgress(p, S), cur = currentPhase();
+    view.appendChild(link("view-back small", "← 공부 순서", "#plan"));
+    var h = head(p.no + "단계 · " + p.name, pr.done + " / " + pr.total + "장 · 약 " + weeks(pr.total) + "주");
+    if (cur && cur.phase.id === p.id) h.querySelector("h1").appendChild(el("span", "now-tag", "지금"));
+    view.appendChild(h);
+    if (p.note) view.appendChild(el("p", "plan-note muted", p.note));
+    var blk = el("div", "area-block");
+    p.items.forEach(function (it) { blk.appendChild(G.row(it.id, S, { tag: it.pulled ? "앞내용" : "" })); });
+    view.appendChild(blk);
+    var nav = el("p", "phase-pager small");
+    if (i > 0) nav.appendChild(link("", "← " + phases[i - 1].no + "단계 " + phases[i - 1].name, "#plan-" + phases[i - 1].id));
+    if (i < phases.length - 1) nav.appendChild(link("", phases[i + 1].no + "단계 " + phases[i + 1].name + " →", "#plan-" + phases[i + 1].id));
+    view.appendChild(nav);
   }
 
   // ---- 목차 ----
@@ -410,12 +381,8 @@
     var key = h;
     view.textContent = "";
     if (q) drawSearch(view, q);
-    else if (h === "plan" || h.indexOf("plan-") === 0) {
-      drawPlan(view);
-      key = "plan";
-      var sec = h !== "plan" && document.getElementById(h);
-      if (sec) setTimeout(function () { sec.scrollIntoView({ block: "start" }); }, 0);
-    }
+    else if (h === "plan") { drawPlan(view); key = "plan"; }
+    else if (h.indexOf("plan-") === 0) { drawPhase(view, h.slice(5)); key = "plan"; }
     else if (h.indexOf("path-") === 0) drawPath(view, h.slice(5));
     else if (h.indexOf("area-") === 0) { drawArea(view, h.slice(5)); key = "all"; }
     else if (h.indexOf("cat-") === 0 && findCat(h.slice(4))) { drawCat(view, findCat(h.slice(4))); key = "all"; }
