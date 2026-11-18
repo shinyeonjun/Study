@@ -20,7 +20,7 @@
 <main class="page">
 <svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
 <header class="chapter">
-<p class="chap-sub">딥러닝</p>
+<p class="chap-sub">딥러닝 · DL09 생성모형</p>
 <p class="chap-num">DL09·4</p>
 <h1>확산 모형에서 잡음을 더하고 예측해 걷어내기</h1>
 <p class="lead">한 데이터에 잡음을 더하는 규칙과, 잡음이 섞인 데이터에서 무엇을 학습하는지 나눕니다. 스칼라 한 개로 원본 추정을 검산합니다.</p>
@@ -28,14 +28,16 @@
 <div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>잡음 일정과 누적 신호 크기의 뜻을 설명한다.</li><li>고정된 잡음으로 한 단계의 값을 계산한다.</li><li>잡음 예측 학습과 여러 번의 역방향 생성을 구분한다.</li></ul></div>
 
 <h2>단계마다 사용할 잡음 크기를 정한다</h2>
-<p>확산 모형은 여러 단계에 걸쳐 원래 상태 x₀에 잡음을 섞는 전방 과정을 정합니다. 정규 잡음을 쓰는 DDPM의 경우 0과 1 사이의 단계별 신호 계수 α를 누적 곱해서 āₜ를 만듭니다. t에서의 상태를 직접 뽑는 식은 <strong>xₜ=√āₜ·x₀+√(1−āₜ)·ε</strong>입니다. ε는 평균 0, 분산 1인 정규 난수입니다. 배열 데이터를 쓰면 성분과 모양을 맞는 잡음 배열을 사용합니다.</p>
-<p>이 장은 손계산을 위해 x₀=2, āₜ=0.64, ε=−0.5로 정합니다. 원본 계수는 √0.64=0.8이고 잡음 계수는 √0.36=0.6입니다. 따라서 xₜ=0.8×2+0.6×(−0.5)=1.3입니다.</p>
+<p>확산 모형은 여러 단계에 걸쳐 원래 상태 x₀에 잡음을 섞는 전방 과정을 정합니다. 정규 잡음을 쓰는 DDPM(Ho 외 2020)의 전방 과정은 다음과 같습니다.</p>
+<div class="box"><p class="box-k">정의 · DDPM 전방 과정</p><p>한 단계: q(xₜ | xₜ₋₁) = N(√(1−βₜ)·xₜ₋₁, βₜI), &nbsp;t=1, …, T<br>αₜ = 1−βₜ, &nbsp;āₜ = α₁α₂⋯αₜ (논문 기호 ᾱₜ)<br>한 번에 뽑기: q(xₜ | x₀) = N(√āₜ·x₀, (1−āₜ)I), 즉 <strong>xₜ=√āₜ·x₀+√(1−āₜ)·ε</strong>, ε~N(0, I)</p><p>βₜ는 단계마다 더하는 잡음의 분산으로, 0과 1 사이의 작은 값을 미리 정해 둔 <b class="key">잡음 일정</b>(noise schedule)입니다(원 논문은 T=1000, β를 10⁻⁴에서 0.02까지 선형으로 늘렸습니다). āₜ는 t가 커질수록 0에 가까워져 x<sub>T</sub>는 거의 표준정규 잡음이 됩니다. 각 단계의 정규 잡음이 합쳐져도 정규분포이므로 중간 단계를 거치지 않고 xₜ를 바로 뽑을 수 있습니다.</p></div>
+<p>ε는 평균 0, 분산 1인 정규 난수입니다. 배열 데이터에는 x₀와 모양이 같은 잡음 배열을 씁니다.</p>
+<p>이 장은 손계산을 위해 x₀=2, āₜ=0.64, ε=−0.5로 정합니다. 원본 계수는 √0.64=0.8이고 잡음 계수는 √0.36=0.6입니다. 따라서 xₜ=0.8×2+0.6×(−0.5)=1.3입니다.</p>
 <div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
 <figure class="fig"><svg class="fig-svg" viewBox="0 0 760 160" role="img" aria-label="확산의 전방 잡음, 학습용 잡음 예측, 역방향 생성">
 <rect class="f-box" x="42" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="135" y="61" text-anchor="middle">전방 과정</text><text class="f-s" x="135" y="89" text-anchor="middle">원본 x₀에 잡음 추가</text><text class="f-s" x="135" y="110" text-anchor="middle">단계 t에서 xₜ</text><line class="f-line" x1="235" y1="84" x2="278" y2="84" marker-end="url(#f-arrow)"/><rect class="f-soft" x="287" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="380" y="61" text-anchor="middle">학습</text><text class="f-s" x="380" y="89" text-anchor="middle">xₜ와 t를 모델에 줌</text><text class="f-s" x="380" y="110" text-anchor="middle">추가한 잡음과 예측 비교</text><line class="f-line" x1="480" y1="84" x2="523" y2="84" marker-end="url(#f-arrow)"/><rect class="f-box" x="532" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="625" y="61" text-anchor="middle">생성</text><text class="f-s" x="625" y="89" text-anchor="middle">큰 잡음 상태부터</text><text class="f-s" x="625" y="110" text-anchor="middle">역방향을 여러 번 적용</text>
 </svg><figcaption>훈련에서 가한 잡음과 단계는 알지만, 생성할 때의 실제 원본은 주어지지 않습니다.</figcaption></figure>
 <h2>잡음을 예측하면 원래 값도 추정할 수 있다</h2>
-<p>정확한 ε를 알고 있고 āₜ&gt;0이라면 전방식을 정리해 (xₜ−√(1−āₜ)·ε)/√āₜ로 x₀를 계산합니다. xₜ=1.3에서 예제의 참 잡음 −0.5를 쓰면 (1.3+0.3)/0.8=2입니다. 모형이 ε̂=−0.4를 냈다면 (1.3+0.24)/0.8=1.925입니다. 잡음 오차가 원본 추정에도 영향을 줍니다.</p>
+<p>정확한 ε를 알고 있고 āₜ&gt;0이라면 전방식을 정리해 (xₜ−√(1−āₜ)·ε)/√āₜ로 x₀를 계산합니다. xₜ=1.3에서 예제의 참 잡음 −0.5를 쓰면 (1.3+0.3)/0.8=2입니다. 모형이 ε̂=−0.4를 냈다면 (1.3+0.24)/0.8=1.925입니다. 잡음 오차가 원본 추정에도 영향을 줍니다.</p>
 <div class="table-wrap"><table><thead><tr><th scope="col">사용한 잡음</th><th scope="col">원래 값 추정</th><th scope="col">원래 2와의 절대 차이</th></tr></thead><tbody><tr><td>실제 −0.5</td><td>2.000</td><td>0.000</td></tr><tr><td>예측 −0.4</td><td>1.925</td><td>0.075</td></tr></tbody></table></div>
 <div class="check" data-q="q3"></div><div class="check" data-q="q4"></div>
 <pre data-example="python"><code>from math import sqrt
@@ -57,7 +59,7 @@ print(&quot;예측 잡음으로:&quot;, f&quot;{estimate_original(-0.4):.4f}&quo
 예측 잡음으로: 1.9250</code></pre>
 <div class="check" data-q="q5"></div>
 <h2>학습의 목표와 생성 절차를 구분한다</h2>
-<p>훈련에서는 자료에서 원본을 뽑고, 단계와 잡음도 뽑아 xₜ를 만듭니다. 잡음 예측 방식에서는 모형의 입력으로 xₜ와 t를 주고, 실제 ε와 예측 ε̂ 사이의 제곱오차를 학습에 쓸 수 있습니다. 생성은 끝 쪽 잡음 상태에서 시작해 앞쪽으로 여러 번 이동합니다. 위의 계산은 한 단계의 추정을 이해하기 위한 것입니다. 여러 단계를 되돌리는 실제 샘플러에는 역방향 분포와 단계 규칙도 필요합니다.</p>
+<p>훈련에서는 자료에서 원본을 뽑고, 단계와 잡음도 뽑아 xₜ를 만듭니다. 잡음 예측 방식에서는 모형의 입력으로 xₜ와 t를 주고, 실제 ε와 예측 ε̂ 사이의 제곱오차를 학습에 쓸 수 있습니다. DDPM 논문의 단순화한 손실은 L = E<sub>x₀, t, ε</sub>‖ε − ε<sub>θ</sub>(√āₜx₀ + √(1−āₜ)ε, t)‖²이고, 이는 VAE와 같은 변분 하한(ELBO)에서 항별 가중치를 떼어 낸 형태입니다. 생성은 끝 쪽 잡음 상태에서 시작해 앞쪽으로 여러 번 이동합니다. 위의 계산은 한 단계의 추정을 이해하기 위한 것입니다. 여러 단계를 되돌리는 실제 샘플러에는 역방향 분포와 단계 규칙도 필요합니다.</p>
 <div class="check" data-q="q6"></div>
 <div class="box sum"><p class="box-k">한 줄 정리</p><p>확산은 어떤 잡음을 넣는지 정하고 그 잡음을 예측하도록 학습합니다. 새 자료는 잡음 상태에서 단계별로 생성합니다.</p></div>
 

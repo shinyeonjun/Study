@@ -20,7 +20,7 @@
 <main class="page">
 <svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
 <header class="chapter">
-<p class="chap-sub">딥러닝</p>
+<p class="chap-sub">딥러닝 · DL09 생성모형</p>
 <p class="chap-num">DL09·1</p>
 <h1>오토인코더에서 잠재값 하나로 두 값을 복원하기</h1>
 <p class="lead">입력을 작은 벡터로 줄였다가 다시 늘려 봅니다. 원래 값을 얼마나 잘 되돌리는지와 새로운 데이터를 어떻게 만들 수 있는지는 다른 질문입니다.</p>
@@ -29,11 +29,13 @@
 
 <h2>기록을 줄이고 나중에 다시 펼친다</h2>
 <p>센서가 두 개 내놓은 값 (a,b)을 하나의 값으로 줄인다고 합시다. 인코더가 z=(a+b)/2로 줄이고 디코더가 (z,z)로 펼칩니다. z는 압축된 표현을 담은 <strong>잠재값</strong>입니다. 연습용 매개변수는 미리 정해 두었습니다. 실제 오토인코더는 두 변환의 매개변수를 복원 오차에 맞춰 학습합니다.</p>
+<div class="box"><p class="box-k">정의 · 오토인코더(autoencoder)</p><p>인코더 f<sub>φ</sub>가 입력 x를 잠재값 z=f<sub>φ</sub>(x)로, 디코더 g<sub>θ</sub>가 z를 복원 x̂=g<sub>θ</sub>(z)로 보냅니다. 정답 라벨 없이 입력 자신을 목표로 삼아, 복원 손실 L=‖x−g<sub>θ</sub>(f<sub>φ</sub>(x))‖²(또는 그 평균)을 최소화하도록 φ, θ를 함께 학습합니다. z의 차원이 x보다 작으면 이 좁은 자리를 <b class="key">병목</b>(bottleneck)이라 하고, z가 놓이는 공간을 <b class="key">잠재 공간</b>(latent space)이라 합니다.</p></div>
+<p>인코더·디코더가 모두 편향 없는 선형이고 손실이 제곱오차이면, 학습된 오토인코더가 복원하는 부분공간은 주성분 분석(PCA)의 상위 주성분이 펼치는 공간과 같아집니다. 비선형 층을 쓰면 곡면 위에 놓인 자료도 줄일 수 있다는 점이 PCA와 다릅니다.</p>
 <div class="table-wrap"><table><thead><tr><th scope="col">입력</th><th scope="col">잠재 z</th><th scope="col">복원</th><th scope="col">특징당 평균제곱오차</th></tr></thead><tbody><tr><td>(2,4)</td><td>3</td><td>(3,3)</td><td>(1²+1²)/2=1</td></tr><tr><td>(3,3)</td><td>3</td><td>(3,3)</td><td>0</td></tr><tr><td>(5,1)</td><td>3</td><td>(3,3)</td><td>(2²+2²)/2=4</td></tr></tbody></table></div>
 <div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
 <figure class="fig"><svg class="fig-svg" viewBox="0 0 760 241" role="img" aria-label="두 센서 값 (2,4)와 (5,1)은 디코더에서 같은 대각선의 점 (3,3)으로 복원">
 <line class="f-line" x1="157" y1="212" x2="635.8" y2="212" marker-end="url(#f-arrow)"/><line class="f-line" x1="157" y1="212" x2="157" y2="25" marker-end="url(#f-arrow)"/><line class="f-dash" x1="157" y1="212" x2="577" y2="42"/><line class="f-ink" x1="325" y1="76" x2="409" y2="110" marker-end="url(#f-arrow)"/><line class="f-ink" x1="577" y1="178" x2="409" y2="110" marker-end="url(#f-arrow)"/><circle cx="325" cy="76" r="5" class="f-fill"/><circle cx="409" cy="110" r="5" class="f-fill"/><circle cx="577" cy="178" r="5" class="f-fill"/><text class="f-s" x="291" y="63" text-anchor="middle">입력 (2,4)</text><text class="f-s" x="431" y="91" text-anchor="middle">복원 (3,3)</text><text class="f-s" x="602" y="162" text-anchor="middle">입력 (5,1)</text><text class="f-s" x="654" y="215" text-anchor="middle">센서 a</text><text class="f-s" x="156" y="17" text-anchor="middle">센서 b</text>
-</svg><figcaption>두 센서 값의 평균이 같으면 같은 z가 저장됩니다. 센서 사이의 차이는 이 디코더로 복구하지 못합니다.</figcaption></figure>
+</svg><figcaption>두 센서 값의 평균이 같으면 같은 z가 저장됩니다. 센서 사이의 차이는 이 디코더로 복구하지 못합니다. 점선은 a=b인 대각선이고, 가로 1칸과 세로 1칸의 길이를 다르게 그렸습니다.</figcaption></figure>
 <h2>여러 원본이 같은 좌표에 모일 수 있다</h2>
 <p>세 기록 모두 잠재값 3이므로 디코더가 어떤 입력을 받았든 복원은 (3,3)입니다. 입력 (2,4)와 (5,1)을 알아보려면 평균 이외의 정보도 보존해야 합니다. 차원을 줄이면 모델이 무엇을 버려도 되는지 복원 손실과 데이터가 알려 줍니다. 잡음 제거처럼 일부 정보를 버리는 것이 목표인 문제도 있습니다.</p>
 <div class="check" data-q="q3"></div><div class="check" data-q="q4"></div>

@@ -20,7 +20,7 @@
 <main class="page">
 <svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
 <header class="chapter">
-<p class="chap-sub">딥러닝</p>
+<p class="chap-sub">딥러닝 · DL09 생성모형</p>
 <p class="chap-num">DL09·2</p>
 <h1>변분 오토인코더의 잠재분포와 ELBO 계산하기</h1>
 <p class="lead">입력을 하나의 잠재값에 붙이는 대신 잠재값의 분포를 정합니다. 복원 우도와 그 분포를 사전에서 멀어지게 하는 비용을 가우스 예제로 검산합니다.</p>
@@ -34,6 +34,7 @@
 </svg><figcaption>학습은 복원·사전 관계의 균형을 사용합니다. 새로 생성할 때는 보통 사전에서 z를 뽑아 디코더를 적용합니다.</figcaption></figure>
 <div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
 <h2>재구성과 사전 차이를 더해 점수화한다</h2>
+<div class="box"><p class="box-k">정의 · ELBO(증거 하한)</p><p>ELBO(x) = E<sub>z~q(z|x)</sub>[ln p(x|z)] − KL(q(z|x) ∥ p(z))<br>ln p(x) = ELBO(x) + KL(q(z|x) ∥ p(z|x)) ≥ ELBO(x)</p><p>p(x)는 관측의 주변확률(증거, evidence)이고 p(z|x)는 참 사후분포입니다. KL은 항상 0 이상이므로 ELBO는 ln p(x)의 하한이며, 두 값의 간격은 q와 참 사후의 KL입니다. VAE는 인코더 매개변수와 디코더 매개변수를 함께 움직여 ELBO를 최대화합니다.</p></div>
 <p>VAE의 한 예에서 최대화할 ELBO는 q에서의 평균 로그복원 우도에서 KL(q(z|x) ∥ p(z))를 뺀 값입니다. 부호를 바꾸면 최소화할 수 있습니다. 디코더의 분산이 1이라 음의 로그복원 우도의 평균은 ½[E[(x−z)²]+ln(2π)]입니다. E[(x−z)²]=(x−μ)²+v이고, 이 예에서는 1+0.5=1.5입니다.</p>
 <p>가우스 q와 표준정규 사전의 KL은 ½(μ²+v−1−ln v)입니다. μ=1, v=0.5를 넣으면 ½(0.5+ln 2)≈0.596574입니다. 재구성 비용 약 1.668939와 더하면 약 2.265512입니다. 앞 항은 관측의 평균 부적합, 뒤 항은 잠재분포와 사전의 차이입니다.</p>
 <div class="table-wrap"><table><thead><tr><th scope="col">항</th><th scope="col">이 예의 값</th></tr></thead><tbody><tr><td>기대 제곱오차</td><td>1.5</td></tr><tr><td>음의 로그복원 우도 평균</td><td>1.668939</td></tr><tr><td>KL(q ∥ 사전)</td><td>0.596574</td></tr><tr><td>음의 ELBO</td><td>2.265512</td></tr></tbody></table></div>
@@ -56,7 +57,7 @@ KL: 0.596574
 <div class="check" data-q="q5"></div>
 <p>이 작은 정규 문제에서는 정확한 사후가 N(1,0.5)에 해당하고 x의 주변분포는 N(0,2)입니다. 그래서 q와 실제 사후의 KL 간격이 0입니다. 일반적인 신경망 디코더에서는 이처럼 정확한 주변확률을 구하기 어려우며 간격이 남을 수 있습니다.</p>
 <h2>난수가 달라도 평균과 표준편차를 학습할 길을 만든다</h2>
-<p>z를 q에서 직접 뽑는 대신 ε를 표준정규에서 뽑아 z=μ+√v·ε로 만들 수 있습니다. 이는 평균 μ, 분산 v인 같은 분포를 얻는 계산입니다. <strong>재매개변수화</strong>를 쓰면 ε를 고정한 한 번의 계산에서 z가 μ·√v에 어떻게 의존하는지 미분할 수 있습니다. 복원 비용을 여러 표본으로 근사할 때 시드와 표본 수를 기록합니다.</p>
+<p>z를 q에서 직접 뽑는 대신 ε를 표준정규에서 뽑아 z=μ+√v·ε로 만들 수 있습니다. 이는 평균 μ, 분산 v인 같은 분포를 얻는 계산입니다. z를 q에서 곧바로 뽑으면 "뽑기"라는 과정에는 μ나 v에 대한 미분이 정의되지 않아 역전파가 끊깁니다. <strong>재매개변수화</strong>(reparameterization)를 쓰면 무작위성은 μ, v와 무관한 ε에만 있고 z는 μ와 √v의 미분 가능한 함수가 되므로, ε를 고정한 한 번의 계산에서 ∂z/∂μ=1, ∂z/∂√v=ε처럼 기울기를 구할 수 있습니다. 실제 구현의 인코더는 분산 v 대신 ln v를 내놓아 v가 항상 양수가 되게 하는 경우가 많습니다. 복원 비용을 여러 표본으로 근사할 때 시드와 표본 수를 기록합니다.</p>
 <div class="check" data-q="q6"></div>
 <div class="box sum"><p class="box-k">한 줄 정리</p><p>VAE는 잠재분포의 표본으로 관측을 복원하고, 사전과의 KL도 함께 고려합니다.</p></div>
 

@@ -128,7 +128,7 @@
 <div class="check" data-q="q4"></div>
 
 <h2>호출하는 함수가 bool 마스크를 어떻게 해석하는지 확인한다</h2>
-<p>PyTorch의 함수 <code>scaled_dot_product_attention</code>에서 bool 마스크의 <code>True</code>는 옆 키를 <em>사용한다</em>는 뜻입니다. <code>nn.MultiheadAttention</code>의 bool <code>key_padding_mask</code>는 (B,S)이며 <code>True</code>가 그 키를 <em>무시한다</em>는 뜻입니다. 그 모듈의 bool <code>attn_mask</code>도 True가 금지입니다. 같은 이름의 마스크라도 호출 규약이 달라 그대로 넘기면 결과가 뒤집힐 수 있습니다.</p>
+<p>PyTorch의 함수 <code>scaled_dot_product_attention</code>에서 bool 마스크의 <code>True</code>는 그 자리의 키를 <em>사용한다</em>(참조 허용)는 뜻입니다. <code>nn.MultiheadAttention</code>의 bool <code>key_padding_mask</code>는 (B,S)이며 <code>True</code>가 그 키를 <em>무시한다</em>는 뜻입니다. 그 모듈의 bool <code>attn_mask</code>도 True가 금지입니다. 같은 이름의 마스크라도 호출 규약이 달라 그대로 넘기면 결과가 뒤집힐 수 있습니다.</p>
 <div class="check" data-q="q5"></div>
 <div class="check" data-q="q6"></div>
 <pre data-example="python"><code>import torch
@@ -161,7 +161,7 @@ allow second sample: [[1, 0, 0], [1, 1, 0], [1, 1, 0]]
 first sample, head 0: [2.0, 3.0, 4.666667]
 second sample, head 0: [3.0, 6.0, 6.0]
 remove padded queries: [3.0, 6.0, 0.0]</code></pre>
-<p class="small">실행 환경은 Python 3.14.6과 PyTorch 2.14.1+cu130의 CPU입니다. 입력과 계산에 쓰는 값을 직접 정했습니다.</p><p>함수형 어텐션은 <code>dropout_p</code>로 받은 값에 따라 가림을 적용합니다. 평가에서는 0을 넘깁니다. 이 예에서는 인과 조건까지 직접 마스크에 결합했으므로 <code>is_causal</code>은 따로 켜지 않습니다.</p>
+<p class="small">실행 환경은 Python 3.14.6과 PyTorch 2.14.0+cu130의 CPU입니다. 입력과 계산에 쓰는 값을 직접 정했습니다.</p><p>함수형 어텐션은 모듈의 <code>train()</code>/<code>eval()</code> 상태를 알지 못하고, <code>dropout_p</code>가 0보다 크면 언제나 어텐션 가중치에 드롭아웃을 적용합니다. 그래서 평가할 때는 직접 0을 넘깁니다(기본값도 0.0입니다). 이 예에서는 인과 조건까지 직접 마스크에 결합했으므로 <code>is_causal</code>은 따로 켜지 않습니다.</p>
 
 <h2>참고 자료</h2>
 <ul>

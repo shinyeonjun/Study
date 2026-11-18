@@ -20,7 +20,7 @@
 <main class="page">
 <svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
 <header class="chapter">
-<p class="chap-sub">딥러닝</p>
+<p class="chap-sub">딥러닝 · DL09 생성모형</p>
 <p class="chap-num">DL09·3</p>
 <h1>GAN에서 생성 분포와 판별기의 목표 분리하기</h1>
 <p class="lead">생성 모형이 두 결과 중 하나를 만들고, 판별기는 그 결과의 출처를 맞힙니다. 두 분포를 알고 있는 아주 작은 예에서 판별기와 생성기의 역할을 계산합니다.</p>
@@ -34,7 +34,8 @@
 </svg><figcaption>분포가 다르므로 한 결과 A와 B를 보고도 어느 쪽에서 더 자주 나오는지 비교할 수 있습니다.</figcaption></figure>
 <div class="check" data-q="q1"></div>
 <h2>두 분포를 고정하고 판별기만 최적화한다</h2>
-<p>원래 GAN의 목적을 간단히 쓰면 V=자료에서의 평균 ln D + 생성 예에서의 평균 ln(1−D)입니다. 판별기는 V를 크게 하고 생성기는 원래 최소·최대 게임에서 V를 작게 합니다. 이 장에서는 먼저 생성기를 고정합니다.</p>
+<div class="box"><p class="box-k">정의 · GAN의 최소·최대 목적 (Goodfellow 외 2014)</p><p>min<sub>G</sub> max<sub>D</sub> V(D, G) = E<sub>x~p자료</sub>[ln D(x)] + E<sub>z~p(z)</sub>[ln(1 − D(G(z)))]</p><p>생성기 G는 정규분포 같은 간단한 분포 p(z)에서 뽑은 잡음 z를 표본 G(z)로 바꾸고, 그 표본들의 분포를 p생성이라 합니다. 판별기 D(x)∈(0,1)은 x가 자료에서 왔을 확률로 해석되는 점수입니다. V는 "자료를 1, 생성 표본을 0으로 맞히는 이진 분류"의 로그우도이므로, 판별기는 V를 키우고 생성기는 V를 줄이려 합니다. 실제 학습은 두 신경망을 번갈아 몇 걸음씩 경사법으로 갱신합니다.</p></div>
+<p>결과가 A, B 두 가지뿐인 이 예에서는 기댓값이 확률 가중합이 되어 V=Σ<sub>x</sub>[p자료(x) ln D(x) + p생성(x) ln(1−D(x))]입니다. 이 장에서는 먼저 생성기를 고정합니다.</p>
 <p>A에 대해 D(A)=d라고 놓으면 V의 A 항은 0.75 ln d+0.25 ln(1−d)입니다. 미분해 0을 놓으면 0.75/d=0.25/(1−d)여서 d=0.75입니다. 일반적으로 두 확률의 합이 양수인 결과 x에서 최적 값은 D*(x)=p자료(x)/(p자료(x)+p생성(x))입니다. B에서는 0.25입니다.</p>
 <div class="check" data-q="q2"></div><div class="check" data-q="q3"></div>
 <div class="table-wrap"><table><thead><tr><th scope="col">결과</th><th scope="col">자료의 확률</th><th scope="col">생성기의 확률</th><th scope="col">최적 D</th></tr></thead><tbody><tr><td>A</td><td>0.75</td><td>0.25</td><td>0.75</td></tr><tr><td>B</td><td>0.25</td><td>0.75</td><td>0.25</td></tr></tbody></table></div>
@@ -55,9 +56,10 @@ print(&quot;최적 판별기에서:&quot;, f&quot;{objective(optimal):.6f}&quot;
 <pre data-output><code>판별기: [0.75, 0.25]
 D=0.5일 때: -1.386294
 최적 판별기에서: -1.124670</code></pre>
+<p>최적 판별기를 넣은 V는 두 분포의 차이를 재는 값이 됩니다. 원 논문은 V(D*, G) = −ln 4 + 2·JSD(p자료 ∥ p생성)임을 보였습니다. JSD는 옌센-섀넌 발산으로, 두 분포가 같을 때만 0이고 그 밖에는 양수입니다. 이 예에서 −ln 4 ≈ −1.386294이므로 JSD = (−1.124670 + 1.386294)/2 ≈ 0.130812입니다. 그래서 생성기가 V(D*, G)를 줄이는 것은 JSD를 줄여 p생성을 p자료에 맞추는 것이고, 최솟값 −ln 4는 p생성=p자료일 때 얻습니다.</p>
 <div class="check" data-q="q4"></div><div class="check" data-q="q5"></div>
 <h2>좋은 판별기가 나왔다고 생성이 잘된 것은 아니다</h2>
-<p>상대적으로 뚜렷한 차이가 있으면 판별 점수가 자료와 생성 예를 더 잘 구분합니다. 반대로 두 분포가 같으면 위 계산의 D*는 등장하는 모든 결과에서 0.5입니다. 실제 학습에서는 생성기 업데이트에 다른 형태의 손실을 택하기도 합니다. 원 논문은 초기에 기울기가 약해지는 것을 피하기 위한 손실 변형도 제안합니다.</p>
+<p>상대적으로 뚜렷한 차이가 있으면 판별 점수가 자료와 생성 예를 더 잘 구분합니다. 반대로 두 분포가 같으면 위 계산의 D*는 등장하는 모든 결과에서 0.5입니다. 실제 학습에서는 생성기 업데이트에 다른 형태의 손실을 택하기도 합니다. 원 논문은 초기에 기울기가 약해지는 것을 피하기 위한 손실 변형도 제안합니다. 학습 초기에는 판별기가 생성 표본을 쉽게 가려내 D(G(z))≈0이 되고, 그러면 ln(1−D(G(z)))는 거의 평평해 생성기에 기울기가 거의 가지 않습니다. 그래서 생성기는 ln(1−D(G(z)))를 줄이는 대신 ln D(G(z))를 키우는 손실(포화하지 않는 손실, non-saturating loss)을 흔히 씁니다. 고정점은 같지만 초기 기울기가 큽니다.</p>
 <p>생성기가 A만 계속 내면 A 자료와 비슷하게 보이는 예를 만들 수도 있지만, B가 전혀 없는 분포는 원래 자료와 다릅니다. 여러 종류가 있어야 할 자료에서 소수 결과만 반복하는 현상을 모드 붕괴라 합니다. 그럴듯한 사례 하나에 더해 전체 생성 예의 다양성도 확인합니다.</p>
 <div class="check" data-q="q6"></div>
 <div class="box sum"><p class="box-k">한 줄 정리</p><p>판별기는 출처를 구분하고 생성기는 그 차이를 줄이는 방향으로 업데이트합니다. 분포 전체가 닮는지를 따로 확인합니다.</p></div>

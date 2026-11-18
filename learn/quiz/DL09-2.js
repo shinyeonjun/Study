@@ -106,5 +106,6 @@
     "type": "short",
     "q": "음의 ELBO에서 KL을 뺐다고 생각하면 왜 혼동인가?",
     "a": "ELBO 자체는 로그복원 우도에서 KL을 뺍니다. 최소화하기 위해 전체 부호를 바꾼 음의 ELBO는 음의 로그복원 우도에 KL을 더합니다."
-  }
+  },
+  {"id": "q9", "type": "mc", "q": "ln p(x)와 ELBO의 관계로 옳은 것은?", "answer": 2, "options": [{"t": "ELBO는 언제나 ln p(x)보다 크다", "why": "반대입니다. ELBO는 증거의 하한(lower bound)입니다."}, {"t": "두 값의 차이는 KL(q(z|x) ∥ p(z))이다", "why": "그 KL은 ELBO 안에 들어 있는 항입니다. 간격은 q와 참 사후 p(z|x)의 KL입니다."}, {"t": "ln p(x) = ELBO + KL(q(z|x) ∥ p(z|x))이고 그 KL은 0 이상이다", "why": "그래서 ELBO ≤ ln p(x)이고, q가 참 사후와 같을 때 등호가 성립합니다."}]}
 ];

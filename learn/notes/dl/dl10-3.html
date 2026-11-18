@@ -20,7 +20,7 @@
 <main class="page">
 <svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
 <header class="chapter">
-<p class="chap-sub">딥러닝</p>
+<p class="chap-sub">딥러닝 · DL10 전이와 자기지도</p>
 <p class="chap-num">DL10·3</p>
 <h1>모델 크기와 추론 지연·처리량을 따로 재기</h1>
 <p class="lead">모델이 작으면 어떤 자원을 덜 쓰는지, 묶음으로 처리하면 누가 더 오래 기다리는지 계산합니다. 자료 수와 평가 분할까지 맞춰 실제 비교를 준비합니다.</p>
@@ -32,6 +32,7 @@
 <div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
 <h2>한 번에 몇 건을 처리하는지 기록한다</h2>
 <p>가상 측정에서 한 건만 처리하면 6ms, 여덟 건을 한 묶음으로 처리하면 40ms라고 합시다. 묶음 가운데 각 요청이 완성 결과를 받는 시점은 40ms입니다. 초당 처리량은 8/0.040=200건입니다. 한 건씩에서는 1/0.006≈166.67건/초입니다. 이 계산은 연속으로 가득 처리할 때의 수치이며, 요청이 충분히 모이기까지 기다리는 시간은 따로 잽니다.</p>
+<p><b class="key">지연</b>(latency)은 요청 하나가 들어와 결과가 나올 때까지의 시간, <b class="key">처리량</b>(throughput)은 단위 시간에 끝내는 건수입니다. 지연은 요청마다 다르므로 평균 하나보다 분포로 보고합니다. 흔히 중앙값(p50)과 느린 쪽 꼬리인 95·99 백분위수(p95, p99)를 함께 적습니다. 예를 들어 p95=50ms는 요청의 95%가 50ms 안에 끝났다는 뜻입니다.</p>
 <div class="table-wrap"><table><thead><tr><th scope="col">가상 방식</th><th scope="col">묶음 크기</th><th scope="col">묶음 시간</th><th scope="col">연속 처리량</th></tr></thead><tbody><tr><td>개별 처리</td><td>1</td><td>6ms</td><td>166.67건/초</td></tr><tr><td>일괄 처리</td><td>8</td><td>40ms</td><td>200건/초</td></tr></tbody></table></div>
 <div class="check" data-q="q3"></div><div class="check" data-q="q4"></div>
 <pre data-example="python"><code>from fractions import Fraction as F
@@ -53,7 +54,7 @@ for batch, milliseconds in ((1, 6), (8, 40)):
 <figure class="fig"><svg class="fig-svg" viewBox="0 0 760 160" role="img" aria-label="추론 효율의 조건, 비용, 품질을 이어 평가">
 <rect class="f-box" x="42" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="135" y="61" text-anchor="middle">조건 고정</text><text class="f-s" x="135" y="89" text-anchor="middle">입출력 길이·배치</text><text class="f-s" x="135" y="110" text-anchor="middle">장치·버전·정밀도</text><line class="f-line" x1="235" y1="84" x2="278" y2="84" marker-end="url(#f-arrow)"/><rect class="f-soft" x="287" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="380" y="61" text-anchor="middle">따로 재기</text><text class="f-s" x="380" y="89" text-anchor="middle">첫 응답과 끝 시간</text><text class="f-s" x="380" y="110" text-anchor="middle">처리량과 메모리</text><line class="f-line" x1="480" y1="84" x2="523" y2="84" marker-end="url(#f-arrow)"/><rect class="f-box" x="532" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="625" y="61" text-anchor="middle">품질 확인</text><text class="f-s" x="625" y="89" text-anchor="middle">동일한 평가 자료</text><text class="f-s" x="625" y="110" text-anchor="middle">정확도·오류 사례</text>
 </svg><figcaption>가중치 메모리가 줄어도 특정 장치에서 빨라질지는 시스템 옵션과 실제 측정에 달려 있습니다.</figcaption></figure>
-<p>생성 모형을 비교할 때는 입력을 읽고 첫 토큰이 나오기까지의 시간과, 그 이후 남은 토큰들을 생성하는 시간을 나눌 수 있습니다. 같은 모델도 입력과 출력 길이에 따라 속도가 달라집니다. 첫 실행과 충분히 실행한 뒤 결과가 다른지도 봅니다.</p>
+<p>생성 모형을 비교할 때는 입력을 읽고 첫 토큰이 나오기까지의 시간과, 그 이후 남은 토큰들을 생성하는 시간을 나눌 수 있습니다. 같은 모델도 입력과 출력 길이에 따라 속도가 달라집니다. 첫 실행과 충분히 실행한 뒤 결과가 다른지도 봅니다. 첫 몇 번은 메모리 할당·커널 준비 때문에 느리므로 버리고(워밍업) 잽니다. GPU 연산은 비동기로 실행되어 Python 쪽 시계가 계산이 끝나기 전에 멈출 수 있으므로, 시간을 읽기 전에 <code>torch.cuda.synchronize()</code>를 부르거나 <code>torch.utils.benchmark</code>를 씁니다.</p>
 <p>훈련 자료 규모를 바꿀 때는 고유한 자료 수와 중복, 학습 횟수 및 모델 크기도 기록합니다. 자료의 개수가 많았다는 사실만으로 평가 향상의 원인을 알 수 없습니다. 다른 정밀도나 작은 모델을 검토할 때에는 실제로 줄인 자원과 같은 평가에서의 품질을 같이 보고합니다.</p>
 <div class="check" data-q="q6"></div>
 <div class="box sum"><p class="box-k">한 줄 정리</p><p>저장 크기, 대기 시간, 초당 건수, 모델 품질을 따로 측정하고 같은 입력·장치 조건에서 해석합니다.</p></div>

@@ -146,7 +146,7 @@ print(&quot;mean square:&quot;, masked_loss.item())</code></pre>
 last array column: [8.5, 1.25]
 last valid and packed: [8.5, 5.0] [8.5, 5.0]
 mean square: 31.5625</code></pre>
-<p class="small">실행 환경은 Python 3.14.6과 PyTorch 2.14.1+cu130의 CPU입니다. 난수 시드는 43입니다. 같은 시드를 써도 PyTorch 버전이나 장치가 바뀌면 난수열과 세부 결과가 달라질 수 있습니다.</p><p><code>pack_padded_sequence</code>의 길이 텐서는 CPU에 둡니다. 이 함수는 양의 길이를 기대합니다. 길이가 0인 샘플을 허용하는 일에서는 제외할지, 별도의 빈 상태 값을 줄지 먼저 정합니다. 입력을 배치로 묶을 때 순서 내부가 정말 시간순인지와 샘플과 길이의 배치 순서가 일치하는지도 봅니다.</p>
+<p class="small">실행 환경은 Python 3.14.6과 PyTorch 2.14.0+cu130의 CPU입니다. 난수 시드는 43입니다. 같은 시드를 써도 PyTorch 버전이나 장치가 바뀌면 난수열과 세부 결과가 달라질 수 있습니다.</p><p><code>pack_padded_sequence</code>의 길이 텐서는 CPU에 둡니다. 이 함수는 양의 길이를 기대합니다. 길이가 0인 샘플을 허용하는 일에서는 제외할지, 별도의 빈 상태 값을 줄지 먼저 정합니다. 입력을 배치로 묶을 때 순서 내부가 정말 시간순인지와 샘플과 길이의 배치 순서가 일치하는지도 봅니다.</p>
 
 <h2>참고 자료</h2>
 <ul>

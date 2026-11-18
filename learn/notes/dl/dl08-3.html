@@ -20,7 +20,7 @@
 <main class="page">
 <svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
 <header class="chapter">
-<p class="chap-sub">딥러닝</p>
+<p class="chap-sub">딥러닝 · DL08 Transformer</p>
 <p class="chap-num">DL08·3</p>
 <h1>PyTorch 블록에서 차원과 미래 토큰 차단을 확인하기</h1>
 <p class="lead">앞 장의 마스크를 작은 Transformer 블록에서 직접 씁니다. 마지막 토큰만 바꿔 앞 위치의 출력이 그대로인지 검사합니다.</p>
@@ -29,9 +29,10 @@
 
 <h2>세 위치가 각각 네 개의 특징을 가진다</h2>
 <p>배치 하나에서 세 토큰을 처리하고 표현 차원은 4라고 둡니다. 입력 배열은 (배치, 위치, 특징)=(1,3,4)입니다. attention 머리를 두 개로 두면 각 머리의 질의·키·값은 특징 차원 2로 계산됩니다. 이를 다시 합쳐 길이 4의 표현을 만들 수 있으므로 입력과 더하는 잔차의 형태가 맞습니다.</p>
+<p><code>nn.MultiheadAttention(embed_dim, num_heads)</code>는 embed_dim이 num_heads로 나누어떨어져야 하며, 머리 하나의 차원은 embed_dim/num_heads입니다. 내부에서는 Q·K·V 투영을 (3×embed_dim, embed_dim) 모양의 <code>in_proj_weight</code> 하나에 모아 두고, 머리 출력을 이어 붙인 뒤 <code>out_proj</code>(DL08-1의 W<sup>O</sup>)를 곱합니다. 기본값 <code>average_attn_weights=True</code>이면 돌려주는 가중치를 머리끼리 평균해 (배치, 쿼리, 키)로 주므로, 아래 예제는 False로 두어 머리별 가중치를 받습니다.</p>
 <div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
 <figure class="fig"><svg class="fig-svg" viewBox="0 0 760 160" role="img" aria-label="작은 Transformer에서 배치·토큰·특징 모양과 마스크 확인">
-<rect class="f-box" x="42" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="135" y="61" text-anchor="middle">배치 입력</text><text class="f-s" x="135" y="89" text-anchor="middle">모양 (1, 3, 4)</text><text class="f-s" x="135" y="110" text-anchor="middle">위치별 특징 벡터</text><line class="f-line" x1="235" y1="84" x2="278" y2="84" marker-end="url(#f-arrow)"/><rect class="f-soft" x="287" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="380" y="61" text-anchor="middle">자기 attention</text><text class="f-s" x="380" y="89" text-anchor="middle">머리 2개, 머리당 2</text><text class="f-s" x="380" y="110" text-anchor="middle">미래 위치를 차단</text><line class="f-line" x1="480" y1="84" x2="523" y2="84" marker-end="url(#f-arrow)"/><rect class="f-box" x="532" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="625" y="61" text-anchor="middle">출력</text><text class="f-s" x="625" y="89" text-anchor="middle">잔차와 Token별 변환</text><text class="f-s" x="625" y="110" text-anchor="middle">모양 (1, 3, 4)</text>
+<rect class="f-box" x="42" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="135" y="61" text-anchor="middle">배치 입력</text><text class="f-s" x="135" y="89" text-anchor="middle">모양 (1, 3, 4)</text><text class="f-s" x="135" y="110" text-anchor="middle">위치별 특징 벡터</text><line class="f-line" x1="235" y1="84" x2="278" y2="84" marker-end="url(#f-arrow)"/><rect class="f-soft" x="287" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="380" y="61" text-anchor="middle">자기 attention</text><text class="f-s" x="380" y="89" text-anchor="middle">머리 2개, 머리당 2</text><text class="f-s" x="380" y="110" text-anchor="middle">미래 위치를 차단</text><line class="f-line" x1="480" y1="84" x2="523" y2="84" marker-end="url(#f-arrow)"/><rect class="f-box" x="532" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="625" y="61" text-anchor="middle">출력</text><text class="f-s" x="625" y="89" text-anchor="middle">잔차와 토큰별 변환</text><text class="f-s" x="625" y="110" text-anchor="middle">모양 (1, 3, 4)</text>
 </svg><figcaption>아래 모델은 블록 동작을 확인합니다. 토큰 임베딩, 출력 어휘층과 실제 훈련은 포함하지 않습니다.</figcaption></figure>
 <h2>같은 마스크라도 라이브러리의 참·거짓 의미를 확인한다</h2>
 <p>이 예의 <code>torch.nn.MultiheadAttention</code>에서 불리언 마스크가 True인 쿼리·키 위치는 attend하지 않도록 차단합니다. <code>triu(diagonal=1)</code>로 대각선 위만 True를 만듭니다. 각 머리의 첫 위치는 자기 첫 위치만 볼 수 있으므로, 평가 모드에서는 그 행의 가중치가 [1,0,0]이어야 합니다.</p>

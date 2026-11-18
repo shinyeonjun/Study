@@ -38,7 +38,9 @@
 </div>
 <h2>한 번 읽을 때 바로 전의 상태를 입력으로 더 받는다</h2>
 <p>센서값 2,4,6이 순서대로 들어옵니다. 매 시점에 입력 xₜ와 이전 상태 hₜ₋₁을 받아 새 상태 hₜ를 만드는 모형을 <b class="key">순환 신경망(RNN)</b>이라고 합니다. 가장 작은 그림에서는 h₀=0, hₜ=xₜ+0.5hₜ₋₁로 둡니다. 새 숫자에 앞 요약의 절반을 더합니다. 정해 둔 이 규칙에서는 h₁=2, h₂=5, h₃=8.5입니다. 입력만 [6,4,2]로 바꾸면 6,7,5.5입니다.</p>
-<p>일반적인 RNN에는 입력을 곱하는 행렬, 이전 상태를 곱하는 행렬, 편향과 비선형 활성함수가 있습니다. 같은 매개변수를 매 시점에 씁니다. 이 장의 <code>nn.RNN</code> 예제는 활성함수 ReLU를 선택합니다. 두 양수 입력 순서에서 활성화 앞 수가 모두 양수라 ReLU가 값을 그대로 넘기고 단순 식과 일치합니다.</p>
+<p>일반적인 RNN에는 입력을 곱하는 행렬, 이전 상태를 곱하는 행렬, 편향과 비선형 활성함수가 있습니다. 같은 매개변수를 매 시점에 씁니다.</p>
+<div class="box"><p class="box-k">정의 · 기본 RNN(Elman RNN)</p><p>hₜ = φ(W<sub>ih</sub>xₜ + b<sub>ih</sub> + W<sub>hh</sub>hₜ₋₁ + b<sub>hh</sub>), h₀는 보통 0벡터.<br>xₜ는 길이 F인 입력, hₜ는 길이 H인 숨은 상태(hidden state)입니다. W<sub>ih</sub>는 H×F, W<sub>hh</sub>는 H×H 행렬이고, 이 네 매개변수는 모든 시점 t에서 같습니다. φ는 활성함수로, PyTorch <code>nn.RNN</code>의 기본값은 tanh이고 <code>nonlinearity="relu"</code>로 바꿀 수 있습니다.</p></div>
+<p>위의 hₜ=xₜ+0.5hₜ₋₁은 F=H=1, W<sub>ih</sub>=1, W<sub>hh</sub>=0.5, 편향 0, φ가 항등함수인 특수한 경우입니다. 이 장의 <code>nn.RNN</code> 예제는 활성함수 ReLU를 선택합니다. 두 양수 입력 순서에서 활성화 앞 수가 모두 양수라 ReLU가 값을 그대로 넘기고 단순 식과 일치합니다.</p>
 <figure class="fig">
 <svg class="fig-svg" viewBox="0 0 760 303" role="img" aria-label="0에서 시작한 0.5 순환 상태는 입력 2,4,6을 읽어 8.5, 입력 6,4,2를 읽어 5.5가 된다.">
 <text class="f-cap" x="380" y="33" text-anchor="middle">같은 합 12, 순서를 바꾸면 다른 상태</text>
@@ -106,7 +108,7 @@
 <text class="f-t" x="455" y="83" text-anchor="middle">x₂=4</text>
 <rect class="f-box" x="542" y="58" width="162" height="38" rx="3"/>
 <text class="f-t" x="623" y="83" text-anchor="middle">x₃=6</text>
-<text class="f-t" x="180" y="128" text-anchor="end">거친 재귀 경로</text>
+<text class="f-t" x="180" y="128" text-anchor="end">곱해진 재귀 계수</text>
 <rect class="f-box" x="206" y="104" width="162" height="38" rx="3"/>
 <text class="f-t" x="287" y="129" text-anchor="middle">0.5×0.5</text>
 <rect class="f-box" x="374" y="104" width="162" height="38" rx="3"/>
@@ -155,7 +157,7 @@ reverse: [6.0, 7.0, 5.5]
 shapes: (1, 3, 1) (1, 1, 1)
 input grad: [0.25, 0.5, 1.0]
 recurrent grad: 6.0</code></pre>
-<p class="small">실행 환경은 Python 3.14.6과 PyTorch 2.14.1+cu130의 CPU입니다. 난수 시드는 37입니다. 같은 시드를 써도 PyTorch 버전이나 장치가 바뀌면 난수열과 세부 결과가 달라질 수 있습니다.</p><p>긴 학습에서는 여러 단계의 미분이 반복되어 오래 전 입력의 기울기가 지나치게 작거나 클 수 있습니다. 그래프를 나눠 중간 상태의 기울기 연결을 끊는 절단 BPTT는 비용을 제한합니다. 그 경우 상태 값은 다음 구간에 줄 수 있지만, 잘린 경계를 넘어가는 기울기는 계산하지 않습니다.</p>
+<p class="small">실행 환경은 Python 3.14.6과 PyTorch 2.14.0+cu130의 CPU입니다. 난수 시드는 37입니다. 같은 시드를 써도 PyTorch 버전이나 장치가 바뀌면 난수열과 세부 결과가 달라질 수 있습니다.</p><p>긴 순서에서는 ∂hₜ/∂hₜ₋₁ 꼴의 미분이 시점 수만큼 곱해집니다. 이 곱의 크기가 1보다 작으면 오래 전 입력의 기울기가 0에 가까워지는 <b class="key">기울기 소실</b>(vanishing gradient), 1보다 크면 커져 터지는 <b class="key">기울기 폭발</b>(exploding gradient)이 생깁니다. 위 예에서 계수 0.5가 T번 곱해지면 0.5ᵀ이 되는 것과 같은 모양입니다. 폭발은 기울기 크기를 잘라 내는 기울기 클리핑으로 흔히 막고, 소실은 다음 장의 LSTM·GRU 같은 구조로 줄입니다. 그래프를 나눠 중간 상태의 기울기 연결을 끊는 절단 BPTT는 비용을 제한합니다. 그 경우 상태 값은 다음 구간에 줄 수 있지만, 잘린 경계를 넘어가는 기울기는 계산하지 않습니다.</p>
 
 <h2>참고 자료</h2>
 <ul>
