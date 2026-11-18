@@ -42,6 +42,7 @@
 <div class="check" data-q="q5"></div><div class="check" data-q="q6"></div>
 <h2>가중치의 합으로 나누는 방법은 다른 추정량이다</h2>
 <p>원래 중요도 표본 평균은 가중 결과의 합을 <var>n</var>으로 나눕니다. <b class="key">자기정규화</b>는 가중 결과의 합을 가중치의 합으로 나눕니다. 이 비율은 한 번의 표본에서는 가중치가 양수라면 그대로 g(X)가 됩니다. 위의 Q에서 그 평균은 1/2입니다. 목표가 1/10인 상황의 유한표본 편향을 바로 확인할 수 있습니다. 표본의 가중치 합이 0이면 이 비율은 정의되지 않습니다. Q의 독립 동일분포 표본을 쓰고, P의 질량이 모두 Q의 지지집합에 있으며 E<sub>P</sub>|g(X)|가 유한하면 분자의 표본평균은 μ로, 분모의 표본평균은 E<sub>Q</sub>[w]=1로 수렴합니다. 그때 자기정규화 추정량은 큰 표본에서 μ로 수렴합니다.</p>
+<p>가중치가 몇 개 표본에 몰리면 n개를 뽑았어도 실제로는 그보다 적은 표본만 쓴 것과 비슷해집니다. 이 쏠림을 재는 흔한 지표가 <b class="key">유효표본크기</b>(ESS)입니다. 가중치 w₁,…,wₙ에 대해 ESS=(∑wᵢ)²/∑wᵢ²이고, 정규화한 무게 w̃ᵢ=wᵢ/∑wⱼ로 쓰면 1/∑w̃ᵢ²입니다. 무게가 모두 같으면 n, 한 표본에 모두 몰리면 1입니다. 위의 P, Q에서 X=0이 두 번, X=1이 두 번 나왔다면 가중치는 w(0)=(9/10)/(1/2)=9/5 두 개와 w(1)=1/5 두 개입니다.</p>
 <figure class="fig"><svg class="fig-svg" viewBox="0 0 760 160" role="img" aria-label="가중치 네 개를 정규화하고 제곱합의 역수를 구하면 유효 표본 크기 100/41이 나온다.">
 <rect class="f-box" x="42" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="135" y="61" text-anchor="middle">가중치 원본</text><text class="f-s" x="135" y="89" text-anchor="middle">9/5, 9/5</text><text class="f-s" x="135" y="110" text-anchor="middle">1/5, 1/5</text><line class="f-line" x1="235" y1="84" x2="278" y2="84" marker-end="url(#f-arrow)"/><rect class="f-soft" x="287" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="380" y="61" text-anchor="middle">정규화한 무게</text><text class="f-s" x="380" y="89" text-anchor="middle">9/20, 9/20</text><text class="f-s" x="380" y="110" text-anchor="middle">1/20, 1/20</text><line class="f-line" x1="480" y1="84" x2="523" y2="84" marker-end="url(#f-arrow)"/><rect class="f-box" x="532" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="625" y="61" text-anchor="middle">쏠림 지표</text><text class="f-s" x="625" y="89" text-anchor="middle">1 / 제곱합</text><text class="f-s" x="625" y="110" text-anchor="middle">100/41</text>
 </svg><figcaption>ESS는 가중치 쏠림을 보여 주며 함수 g와 표집 의존성에 관한 모든 오차를 재는 값은 아니다.</figcaption></figure>
@@ -65,6 +66,8 @@ assert mu == p[1]</code></pre>
 <pre data-output><code>1/10 9/100 1/100
 1/2 100/41</code></pre>
 <div class="check" data-q="q8"></div>
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table><thead><tr><th scope="col">항목</th><th scope="col">식과 조건</th></tr></thead><tbody><tr><td>몬테카를로 표준오차</td><td>독립·유한분산이면 σ/√n. 절반으로 줄이려면 n을 네 배.</td></tr><tr><td>중요도 표본</td><td>p(x)g(x)≠0인 곳에서 q(x)>0이면 E<sub>Q</sub>[wg]=E<sub>P</sub>[g], w=p/q.</td></tr><tr><td>분산</td><td>좋은 Q는 분산을 줄이지만 q가 너무 작은 곳이 있으면 w²가 커져 분산이 늘 수 있다.</td></tr><tr><td>자기정규화</td><td>∑wᵢg(Xᵢ)/∑wᵢ. 유한 표본에서 편향이 있지만 큰 표본에서 μ로 수렴.</td></tr><tr><td>ESS</td><td>(∑wᵢ)²/∑wᵢ². 가중치 쏠림만 재고 모든 오차를 재지는 않는다.</td></tr></tbody></table></div>
 
 <h2>참고 자료</h2>
 <ul><li><a href="https://doi.org/10.1080/01621459.2000.10473909">Owen와 Zhou · Safe and Effective Importance Sampling</a></li></ul>

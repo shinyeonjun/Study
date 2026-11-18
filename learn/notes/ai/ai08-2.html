@@ -78,6 +78,8 @@ print(total, second_zero/total)</code></pre>
 <pre data-output><code>(1, 1, 1) 81/2048 81/208
 13/128 27/52</code></pre>
 <div class="check" data-q="q8"></div>
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table><thead><tr><th scope="col">항목</th><th scope="col">핵심</th></tr></thead><tbody><tr><td><b class="key">Viterbi</b> 점화식</td><td>δₜ(j)=bⱼ(yₜ)·maxᵢ δₜ₋₁(i)Tᵢⱼ, 최대를 준 i를 포인터로 저장.</td></tr><tr><td>복원</td><td>마지막 최대 상태에서 포인터를 거꾸로 따라간다. 비용 O(nK²).</td></tr><tr><td>MAP 경로</td><td>경로 전체를 맞히는 기준. 이 예에서 (1,1,1).</td></tr><tr><td>시점별 최빈값</td><td>틀린 시점 수의 기댓값을 줄이는 기준. 이 예의 둘째 상태는 0.</td></tr></tbody></table></div>
 
 <h2>참고 자료</h2>
 <ul><li><a href="https://inst.eecs.berkeley.edu/~cs188/textbook/hmms/viterbi.html">UC Berkeley CS188 · Viterbi 알고리즘</a></li></ul>

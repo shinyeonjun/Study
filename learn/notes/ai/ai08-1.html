@@ -63,6 +63,8 @@ print(a[1]/sum(a), sum(joint), joint[1]/sum(joint))</code></pre>
 3/8 5/8
 5/14 13/128 25/52</code></pre>
 <div class="check" data-q="q8"></div>
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table><thead><tr><th scope="col">항목</th><th scope="col">핵심</th></tr></thead><tbody><tr><td>HMM 가정</td><td>다음 상태는 현재 상태에만, 관측은 그 시점 상태에만 의존.</td></tr><tr><td><b class="key">전방</b> α</td><td>αₜ(j)=P(y₁..yₜ, Zₜ=j)=bⱼ(yₜ)∑ᵢαₜ₋₁(i)Tᵢⱼ. 정규화하면 필터링.</td></tr><tr><td><b class="key">후방</b> β</td><td>βₜ(i)=P(yₜ₊₁..yₙ | Zₜ=i)=∑ⱼTᵢⱼbⱼ(yₜ₊₁)βₜ₊₁(j), 마지막은 1.</td></tr><tr><td><b class="key">스무딩</b></td><td>αₜβₜ를 전체 관측 확률로 나눈다. 이 예에서 P(Z₂=1|1,0,1)=25/52.</td></tr></tbody></table></div>
 
 <h2>참고 자료</h2>
 <ul><li><a href="https://www.cs.cmu.edu/~durand/03-711/Readings/Rabiner89.pdf">Rabiner · HMM의 전방·후방 절차, III절</a></li></ul>

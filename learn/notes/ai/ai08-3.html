@@ -43,7 +43,7 @@
 <figure class="fig"><svg class="fig-svg" viewBox="0 0 760 160" role="img" aria-label="사전 정보를 관측으로 갱신한 다음 선형 상태 전이로 다음 시점의 평균과 분산을 구한다.">
 <rect class="f-box" x="42" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="135" y="61" text-anchor="middle">사전 예측</text><text class="f-s" x="135" y="89" text-anchor="middle">m=2, P=4</text><text class="f-s" x="135" y="110" text-anchor="middle">새 관측 y=7</text><line class="f-line" x1="235" y1="84" x2="278" y2="84" marker-end="url(#f-arrow)"/><rect class="f-soft" x="287" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="380" y="61" text-anchor="middle">관측 갱신</text><text class="f-s" x="380" y="89" text-anchor="middle">m⁺=6</text><text class="f-s" x="380" y="110" text-anchor="middle">P⁺=4/5</text><line class="f-line" x1="480" y1="84" x2="523" y2="84" marker-end="url(#f-arrow)"/><rect class="f-box" x="532" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="625" y="61" text-anchor="middle">다음 시점 예측</text><text class="f-s" x="625" y="89" text-anchor="middle">X′=2X+W</text><text class="f-s" x="625" y="110" text-anchor="middle">m′=12, P′=31/5</text>
 </svg><figcaption>상태 전이의 독립 잡음 분산 3을 예측 분산에 더한다.</figcaption></figure>
-<p><var>X′=aX+W</var>이고 W는 조건부 상태 및 이전 관측과 독립인 평균 0, 분산 Q의 정규 잡음이라고 둡니다. 갱신 뒤의 평균과 분산에서 다음 예측을 할 때 <var>m′=a m⁺</var>, <var>P′=a²P⁺+Q</var>입니다. a=2, Q=3이면 예측 분산은 4·(4/5)+3=31/5입니다. 정규·선형 모형에서는 이 예측과 앞의 관측 갱신을 반복해 정확하게 필터링할 수 있습니다.</p>
+<p><var>X′=aX+W</var>이고 W는 조건부 상태 및 이전 관측과 독립인 평균 0, 분산 Q의 정규 잡음이라고 둡니다. 갱신 뒤의 평균과 분산에서 다음 예측을 할 때 <var>m′=a m⁺</var>, <var>P′=a²P⁺+Q</var>입니다. a=2, Q=3이면 예측 분산은 4·(4/5)+3=31/5입니다. 정규·선형 모형에서는 이 예측과 앞의 관측 갱신을 반복해 정확하게 필터링할 수 있습니다. 상태가 벡터이고 관측이 Y=HX+V(V의 공분산 R)이면 같은 계산이 K=PHᵀ(HPHᵀ+R)⁻¹, m⁺=m+K(y−Hm), P⁺=(I−KH)P가 되고, 예측은 m′=Am⁺, P′=AP⁺Aᵀ+Q입니다. H=1, A=a인 스칼라에서는 위의 식과 같습니다.</p>
 <div class="check" data-q="q7"></div>
 <pre data-example="python"><code>from fractions import Fraction as F
 
@@ -61,6 +61,8 @@ assert variance == 1/(1/P+1/R) == mse(K)</code></pre>
 4 4/5 1
 12 31/5</code></pre>
 <div class="check" data-q="q8"></div>
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table><thead><tr><th scope="col">항목</th><th scope="col">핵심</th></tr></thead><tbody><tr><td>관측 갱신</td><td>m⁺=m+K(y−m), P⁺=PR/(P+R).</td></tr><tr><td><b class="key">칼만 이득</b></td><td>K=P/(P+R). P가 크면 커지고 R이 크면 작아진다.</td></tr><tr><td>두 유도</td><td>정규분포의 완전제곱, 또는 선형 추정량의 평균제곱오차 최소화(무상관이면 충분).</td></tr><tr><td>예측</td><td>X′=aX+W이면 m′=am⁺, P′=a²P⁺+Q.</td></tr></tbody></table></div>
 
 <h2>참고 자료</h2>
 <ul><li><a href="https://web.stanford.edu/class/cs231a/course_notes/10-optimal-estimation.pdf">Stanford CS231A · 상태 추정의 정규분포 가정과 칼만 필터</a></li></ul>
