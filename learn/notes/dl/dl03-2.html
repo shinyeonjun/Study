@@ -77,7 +77,7 @@
 <div class="check" data-q="q4"></div>
 
 <h2>모듈의 모드와 미분 기록은 별개로 바꾼다</h2>
-<p><code>model.train()</code>은 학습할 때 모듈이 적용할 동작을 고릅니다. 예를 들어 드롭아웃을 가진 모듈은 학습 중 일부 값을 무작위로 제외하고, <code>model.eval()</code>에서는 그 동작을 중지합니다. 이 장의 모델은 선형층만 있어서 두 모드의 순전파 계산 자체는 같습니다.</p>
+<p><code>model.train()</code>은 학습할 때 모듈이 적용할 동작을 고릅니다. 예를 들어 드롭아웃을 가진 모듈은 학습 중 일부 값을 무작위로 제외하고, <code>model.eval()</code>에서는 그 동작을 중지합니다. 배치 정규화(DL04·3) 층은 <code>train()</code>에서는 지금 배치의 평균·분산을 쓰고, <code>eval()</code>에서는 학습 중 모아 둔 이동 평균 통계를 씁니다. 이 장의 모델은 선형층만 있어서 두 모드의 순전파 계산 자체는 같습니다.</p>
 <figure class="fig">
 <svg class="fig-svg" viewBox="0 0 760 240" role="img" aria-label="train 또는 eval은 모듈 동작을 선택한다. 미분 기록을 켜거나 끄는 no_grad의 적용은 그와 별개다.">
 <text class="f-cap" x="355" y="43" text-anchor="middle">미분 기록 켜짐</text>
@@ -160,7 +160,7 @@ final validation MSE: 0.000008
 weight, bias: 1.9998, 0.9972
 eval records gradients: True
 no_grad records gradients: False</code></pre>
-<p class="small">실행 확인 환경 · Python 3.14.6, PyTorch 2.14.1+cu130, CPU 1스레드, 모델과 학습 로더 시드 7. 초기 w와 b는 0으로 지정했습니다.</p>
+<p class="small">실행 확인 환경 · Python 3.14.6, PyTorch 2.14.0+cu130, CPU 1스레드, 모델과 학습 로더 시드 7. 초기 w와 b는 0으로 지정했습니다.</p>
 <p>학습 여덟 번 순회에서 얻은 w와 b가 2와 1에 가깝습니다. 초기값과 셔플 순서, 자료와 학습률을 바꾸면 결과도 달라질 수 있습니다. 이 예에서는 검증 자료를 갱신에 쓰지 않고 성능만 잽니다.</p>
 
 <h2>한눈에 정리</h2>

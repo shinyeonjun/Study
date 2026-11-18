@@ -85,13 +85,13 @@
 </svg>
 <figcaption>그림의 모든 역전파는 각각 새 순전파로 만든 그래프를 쓴다.</figcaption>
 </figure>
-<p>이번 배치의 기울기만 사용하려면 이전 <code>.grad</code>를 비워야 합니다. 예는 <code>w.grad = None</code>을 사용합니다. 학습 루프에서는 최적화 도구에 등록한 파라미터를 <code>optimizer.zero_grad()</code>로 한 번에 초기화합니다. 보통 역전파가 끝난 그래프에서 계산 중간정보는 해제되므로, 다음 손실은 새 순전파에서 계산합니다.</p>
+<p>이번 배치의 기울기만 사용하려면 이전 <code>.grad</code>를 비워야 합니다. 예는 <code>w.grad = None</code>을 사용합니다. 학습 루프에서는 최적화 도구에 등록한 파라미터를 <code>optimizer.zero_grad()</code>로 한 번에 초기화합니다(PyTorch 2.x의 기본값 <code>set_to_none=True</code>는 0을 채우는 대신 <code>.grad</code>를 <code>None</code>으로 만듭니다). 보통 역전파가 끝난 그래프에서 계산 중간정보는 해제되므로, 다음 손실은 새 순전파에서 계산합니다.</p>
 <div class="check" data-q="q3"></div>
 <div class="check" data-q="q4"></div>
 
 <h2>갱신 자체를 새로 미분할 필요가 없는 경우</h2>
 <p>학습률을 0.125로 정하면 w는 0−0.125×(−8)=1입니다. x는 2 그대로입니다. 보통의 경사하강에서 이 값 수정 자체를 다음 역전파 그래프에 담지 않으므로, 파라미터를 직접 수정하는 예에서는 <code>torch.no_grad()</code> 범위를 사용합니다. 이 범위를 나오면 다시 기울기를 기록하는 연산을 할 수 있습니다.</p>
-<p>같은 입력에서 w가 1인 이제 예측은 2입니다. 손실은 2, 새 기울기는 ∂L/∂w=(2−4)×2=−4, ∂L/∂x=(2−4)×1=−2입니다. 텐서의 속성을 바꾸는 것과 실행 중 특정 범위의 기록을 끄는 것의 차이를 코드에서 비교합니다.</p>
+<p>같은 입력에서 w가 1이 되었으므로 이제 예측은 2입니다. 손실은 2, 새 기울기는 ∂L/∂w=(2−4)×2=−4, ∂L/∂x=(2−4)×1=−2입니다. <code>requires_grad</code>는 텐서마다 붙는 속성이고, <code>no_grad()</code>는 그 범위 안의 연산을 기록하지 않는 실행 문맥입니다. 아래 코드에서 w는 여전히 <code>requires_grad=True</code>지만, <code>no_grad()</code> 안에서 계산한 <code>test_prediction</code>은 기록되지 않아 <code>requires_grad</code>가 <code>False</code>로 나옵니다.</p>
 <div class="check" data-q="q5"></div>
 <div class="check" data-q="q6"></div>
 
@@ -132,7 +132,7 @@ after reset, dw: -8.0
 w, x: 1.0 2.0
 prediction recorded: False
 new loss, dw, dx: 2.0 -4.0 -2.0</code></pre>
-<p class="small">실행 확인 환경 · Python 3.14.6, PyTorch 2.14.1+cu130, CPU. w와 x는 직접 초기화했습니다. 출력의 −0.0은 부동소수점에서 표현되는 0입니다.</p>
+<p class="small">실행 확인 환경 · Python 3.14.6, PyTorch 2.14.0+cu130, CPU. w와 x는 직접 초기화했습니다. 출력의 −0.0은 부동소수점에서 표현되는 0입니다.</p>
 
 <h2>한눈에 정리</h2>
 <div class="table-wrap"><table>

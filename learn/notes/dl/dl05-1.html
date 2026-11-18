@@ -38,7 +38,7 @@
 </div>
 <h2>한 위치에서 대응하는 값들을 곱해 더한다</h2>
 <p>한 채널의 3×3 영상에 2×2 가중치 표를 겹칩니다. 영상의 좌상단 [[1,2],[0,1]]에 필터 [[1,0],[0,−1]]을 놓으면 1×1+2×0+0×0+1×(−1)=0입니다. 같은 필터를 한 칸 오른쪽으로 옮기면 2×1+0×0+1×0+3×(−1)=−1입니다. 위치마다 가중치를 새로 만들지 않고 <b class="key">필터</b> 하나를 여러 위치에 공유합니다.</p>
-<p>PyTorch의 <code>Conv2d</code>는 아래처럼 필터의 순서를 유지해 계산하는 교차 상관을 사용합니다. 수학에서 필터를 뒤집는 합성곱도 따로 정의합니다. 이 장의 CNN 계산은 PyTorch 규약에 따릅니다. 편향을 넣는 층이면 곱셈을 합한 뒤 같은 출력 채널의 편향을 모든 위치에 더합니다.</p>
+<p>PyTorch의 <code>Conv2d</code>는 아래처럼 필터의 순서를 유지해 계산하는 교차 상관을 사용합니다. 수학에서 필터를 뒤집는 합성곱도 따로 정의합니다. 이 장의 CNN 계산은 PyTorch 규약에 따릅니다. 편향을 넣는 층이면 곱셈을 합한 뒤 같은 출력 채널의 편향을 모든 위치에 더합니다. 식으로 쓰면 K×K 필터 w, 보폭 S일 때 출력 칸 (i,j)는 y[i,j]=Σ<sub>m</sub>Σ<sub>n</sub> x[S·i+m, S·j+n]·w[m,n]+b (m,n=0,…,K−1)입니다. 필터를 뒤집는 수학의 합성곱이라면 w[m,n] 자리에 w[K−1−m, K−1−n]이 들어갑니다.</p>
 <figure class="fig">
 <svg class="fig-svg" viewBox="0 0 760 260" role="img" aria-label="3×3 입력의 처음 두 행·열에 필터를 겹친 결과는 0이며 나머지 출력은 -1,-1,1이다.">
 <text class="f-cap" x="380" y="30" text-anchor="middle">stride 1 · padding 0</text>
@@ -84,6 +84,7 @@
 </figure>
 <div class="check" data-q="q1"></div>
 <div class="check" data-q="q2"></div>
+<div class="check" data-q="q6"></div>
 
 <h2>영상 가장자리를 둘러싸고 시작 위치를 띄울 수 있다</h2>
 <p><b>Stride</b>는 시작점의 이동 간격이고, <b>padding</b>은 바깥에 붙이는 칸입니다. 원래 영상에 0을 한 겹 둘러싸면 5×5가 됩니다. 보폭 2라면 시작 행과 열은 각각 0,2입니다. 다음 시작점 4에서는 2×2 필터가 온전히 들어오지 않습니다. 좌상단 출력은 0−1=−1이며, 네 위치의 출력은 [[−1,0],[−2,1]]입니다.</p>
@@ -156,11 +157,11 @@
 </figure>
 <div class="check" data-q="q3"></div>
 <div class="check" data-q="q4"></div>
+<div class="check" data-q="q5"></div>
 
 <h2>실제 Conv2d에서 가중치를 직접 넣어 검산한다</h2>
 <p>입력 모양은 (N,C,H,W)입니다. N=1은 영상 한 장, C=1은 입력 채널 하나입니다. 이 예는 필터 하나여서 가중치 모양이 (1,1,2,2)입니다. 모듈을 만든 뒤 가중치를 모두 덮어써 손계산과 같은 값을 씁니다. 같은 결과가 함수형 <code>conv2d</code>로도 나오는지 확인합니다.</p>
-<div class="check" data-q="q5"></div>
-<div class="check" data-q="q6"></div>
+<div class="check" data-q="q7"></div>
 <pre data-example="python"><code>import torch
 from torch import nn
 from torch.nn import functional as F
@@ -178,8 +179,17 @@ for stride, padding in ((1, 0), (2, 1)):
     print(stride, padding, tuple(out.shape), out[0, 0].to(torch.int64).tolist())</code></pre>
 <pre data-output><code>1 0 (1, 1, 2, 2) [[0, -1], [-1, 1]]
 2 1 (1, 1, 2, 2) [[-1, 0], [-2, 1]]</code></pre>
-<p class="small">실행 환경은 Python 3.14.6과 PyTorch 2.14.1+cu130의 CPU입니다. 난수 시드는 31입니다. 같은 시드를 써도 PyTorch 버전이나 장치가 바뀌면 난수열과 세부 결과가 달라질 수 있습니다.</p><p>두 설정의 출력 크기는 같고 각 칸이 참조한 범위는 다릅니다. 층에서 관측한 모양뿐 아니라 어떤 입력 위치가 출력에 들어갔는지 확인합니다.</p>
+<p class="small">실행 환경은 Python 3.14.6과 PyTorch 2.14.0+cu130의 CPU입니다. 난수 시드는 31입니다. 같은 시드를 써도 PyTorch 버전이나 장치가 바뀌면 난수열과 세부 결과가 달라질 수 있습니다.</p><p>두 설정의 출력 크기는 같고 각 칸이 참조한 범위는 다릅니다. 층에서 관측한 모양뿐 아니라 어떤 입력 위치가 출력에 들어갔는지 확인합니다.</p>
 
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table>
+<thead><tr><th scope="col">개념</th><th scope="col">핵심</th></tr></thead>
+<tbody>
+<tr><td><b class="key">필터</b></td><td>같은 가중치를 모든 위치에 공유한다. PyTorch Conv2d는 뒤집지 않는 교차 상관.</td></tr>
+<tr><td>stride·padding</td><td>시작점 간격과 바깥에 붙이는 칸. 출력 높이 ⌊(H+2P−K)/S⌋+1.</td></tr>
+<tr><td>모양</td><td>입력 (N,C,H,W), 가중치 (C_out,C_in,K_h,K_w).</td></tr>
+</tbody>
+</table></div>
 <h2>참고 자료</h2>
 <ul>
 <li><a href="https://docs.pytorch.org/docs/stable/generated/torch.nn.Conv2d.html">PyTorch · Conv2d의 교차 상관, stride와 출력 크기</a></li>

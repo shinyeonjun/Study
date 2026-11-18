@@ -128,7 +128,7 @@ print(&quot;shared gradient:&quot;, shared.grad.item())</code></pre>
 <pre data-output><code>forward: [5.0, 5.0, 10.0, 18.0]
 grad x,w,b,v,c: [36.0, 24.0, 12.0, 30.0, 6.0]
 shared gradient: 7.0</code></pre>
-<p class="small">실행 확인 환경 · Python 3.14.6, PyTorch 2.14.1+cu130, CPU. 초기값을 직접 정했습니다.</p>
+<p class="small">실행 확인 환경 · Python 3.14.6, PyTorch 2.14.0+cu130, CPU. 초기값을 직접 정했습니다.</p>
 <p>마지막에 <code>backward()</code>를 부르면 PyTorch가 기록한 연산을 따라 각 텐서에 대한 손실의 기울기를 계산합니다. 저장 위치와 누적 규칙은 다음 장에서 다룹니다.</p>
 
 <h2>한눈에 정리</h2>

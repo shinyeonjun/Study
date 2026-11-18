@@ -93,12 +93,12 @@
 <p>예로 특성마다 고정 값 <code>[10,20,30]</code>을 더하면 오른쪽부터 맞는 길이 3을 찾고 앞의 배치 축에 같은 값을 적용합니다. 첫 행은 [11,22,33], 둘째 행은 [14,25,36]입니다. <b>브로드캐스팅</b>의 기본 규칙은 오른쪽 축부터 길이가 같거나 한쪽 길이가 1이면 계산한다는 것입니다. 배치별 값을 행마다 더하려면 길이 2만 보지 말고, 어느 축에 놓일지도 정해야 합니다. 행별 값 두 개는 <code>(2,1)</code>로 놓습니다.</p>
 <div class="check" data-q="q3"></div>
 <div class="check" data-q="q4"></div>
+<div class="check" data-q="q6"></div>
 
 <h2>자료형과 장치는 모양과 별도로 확인한다</h2>
-<p><b class="key">dtype</b>은 원소가 컴퓨터에서 어떻게 표현되는지를 말합니다. 측정값이나 모델의 가중치에는 예로 <code>torch.float32</code>를 쓸 수 있습니다. 두 범주를 0과 1로 표시한 클래스 인덱스는 <code>torch.int64</code>로 저장할 수 있습니다. 둘 다 모양이 길이 2인 벡터일 수 있지만, 값의 뜻과 연산에 맞춰 자료형을 고릅니다. 뒤에서 분류 손실에 넣을 때도 어떤 형식의 정답을 요구하는지 확인합니다.</p>
-<p><code>device</code>는 텐서가 계산되는 장치입니다. 아래 예는 CPU 위에서 각각 명시한 자료형으로 계산합니다. 일반적으로 연산에 함께 넣는 텐서들의 장치와 필요한 자료형을 맞춥니다.</p>
+<p><b class="key">dtype</b>은 원소가 컴퓨터에서 어떻게 표현되는지를 말합니다. 측정값이나 모델의 가중치에는 예로 <code>torch.float32</code>를 쓸 수 있습니다. 두 범주를 0과 1로 표시한 클래스 인덱스는 <code>torch.int64</code>로 저장할 수 있습니다. 둘 다 모양이 길이 2인 벡터일 수 있지만, 값의 뜻과 연산에 맞춰 자료형을 고릅니다. 뒤에서 분류 손실에 넣을 때도 어떤 형식의 정답을 요구하는지 확인합니다. <code>dtype</code>을 지정하지 않으면 <code>torch.tensor([1, 2])</code>처럼 정수만 넣은 텐서는 <code>int64</code>, <code>torch.tensor([1.0, 2.0])</code>처럼 실수를 넣은 텐서는 기본 실수형인 <code>float32</code>가 됩니다.</p>
+<p><code>device</code>는 텐서가 계산되는 장치입니다. 아래 예는 CPU 위에서 각각 명시한 자료형으로 계산합니다. 연산에 함께 넣는 텐서들은 같은 장치에 있어야 합니다. CPU 텐서와 GPU 텐서를 섞으면 오류가 납니다. 자료형이 다르면 PyTorch가 더 넓은 쪽으로 올려서 계산하기도 하지만(예: int64 + float32 → float32), 결과 자료형을 예상할 수 있도록 미리 맞추는 편이 안전합니다.</p>
 <div class="check" data-q="q5"></div>
-<div class="check" data-q="q6"></div>
 
 <h2>모양과 축에 따른 결과를 함께 출력한다</h2>
 <pre data-example="python"><code>import torch
@@ -121,7 +121,7 @@ dim=0 mean: [2.5, 3.5, 4.5]
 dim=1 sum: [6.0, 15.0]
 keepdim: (2, 1)
 broadcast: [[11.0, 22.0, 33.0], [14.0, 25.0, 36.0]]</code></pre>
-<p class="small">실행 확인 환경 · Python 3.14.6, PyTorch 2.14.1+cu130, CPU. 이 예는 난수를 사용하지 않습니다.</p>
+<p class="small">실행 확인 환경 · Python 3.14.6, PyTorch 2.14.0+cu130, CPU. 이 예는 난수를 사용하지 않습니다.</p>
 
 <h2>한눈에 정리</h2>
 <div class="table-wrap"><table>

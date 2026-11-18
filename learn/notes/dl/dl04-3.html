@@ -37,7 +37,7 @@
 </ul>
 </div>
 <h2>한 줄 안에서 묶을지, 배치의 같은 열을 묶을지 정한다</h2>
-<p>[[1,3],[2,6]]은 샘플 두 개와 특성 두 개를 담은 (N,C) 배열입니다. 평균 μ와 분산 σ²를 구하고, 각 x를 (x−μ)/√(σ²+ε)로 바꿉니다. 분모가 0이 되지 않게 작은 양수 ε를 넣습니다. 학습 가능한 스케일과 편향이 있는 설정에서는 여기에 다시 값을 곱하고 더할 수 있습니다.</p>
+<p>이 장의 <b class="key">정규화</b>는 normalization, 곧 값들의 평균을 0, 분산을 1 근처로 맞춰 척도를 고르게 하는 연산입니다. DL04·2에서 과적합을 줄이는 방법을 가리킨 정규화(regularization)와는 다른 말입니다. [[1,3],[2,6]]은 샘플 두 개와 특성 두 개를 담은 (N,C) 배열입니다. 평균 μ와 분산 σ²를 구하고, 각 x를 (x−μ)/√(σ²+ε)로 바꿉니다. 분모가 0이 되지 않게 작은 양수 ε를 넣습니다. 학습 가능한 스케일과 편향이 있는 설정에서는 여기에 다시 값을 곱하고 더할 수 있습니다.</p>
 <p><code>LayerNorm(2)</code>는 샘플마다 마지막 특성 두 개를 함께 봅니다. 첫 행의 평균은 2, 둘째 행은 4입니다. 행마다 정규화 값은 약 [−1,1]입니다. 이 장의 2차원 <code>BatchNorm1d(2)</code>는 훈련 중 같은 열의 두 샘플을 함께 봅니다. 특성별 평균은 [1.5,4.5]이고 훈련 출력 행은 각각 약 [−1,−1], [1,1]입니다.</p>
 <figure class="fig">
 <svg class="fig-svg" viewBox="0 0 760 257" role="img" aria-label="2×2 배열 1,3 / 2,6에서 행 평균 2,4는 LayerNorm, 열 평균 1.5,4.5는 BatchNorm에 쓰인다.">
@@ -67,10 +67,17 @@
 </figure>
 <div class="check" data-q="q1"></div>
 <div class="check" data-q="q2"></div>
+<div class="check" data-q="q7"></div>
 
 <h2>같은 층이라도 평가에서 어떤 통계를 쓰는지 확인한다</h2>
-<p>기본 <code>track_running_stats=True</code>인 BatchNorm은 훈련 중 얻은 평균과 분산의 이동 통계를 버퍼에 남깁니다. 평가에서는 이 축적된 값을 사용합니다. PyTorch의 훈련 순전파 분산은 N으로 나누고, 버퍼에 반영하는 배치 분산은 N−1로 나눕니다. 이 장은 차이를 보이려고 모멘텀을 1로 두어 이번 배치 통계로 바로 바꿉니다. 첫 열 [1,2]의 평균은 1.5이고 분산은 훈련에서 0.25, 버퍼에 0.5가 기록됩니다.</p>
+<p>기본 <code>track_running_stats=True</code>인 BatchNorm은 훈련 중 얻은 평균과 분산의 이동 통계를 버퍼에 남깁니다. 평가에서는 이 축적된 값을 사용합니다. PyTorch의 훈련 순전파 분산은 N으로 나누고, 버퍼에 반영하는 배치 분산은 N−1로 나눕니다. 이동 통계는 running←(1−momentum)×running+momentum×(이번 배치 통계)로 갱신되며 PyTorch 기본 momentum은 0.1입니다(처음 버퍼 값은 평균 0, 분산 1). 이 장은 차이를 보이려고 모멘텀을 1로 두어 이번 배치 통계로 바로 바꿉니다. 첫 열 [1,2]의 평균은 1.5이고 분산은 훈련에서 0.25, 버퍼에 0.5가 기록됩니다.</p>
 <p>기본 LayerNorm은 훈련과 평가 모두 현재 입력의 지정 축에서 통계를 냅니다. 배치를 섞었을 때 결과가 달라진다면 입력, 상태, 사용하는 축부터 확인합니다. BatchNorm의 이동 통계는 <code>state_dict()</code>에 포함되는 버퍼여서 저장한 가중치를 평가에 불러올 때 함께 복원합니다.</p>
+<div class="check" data-q="q3"></div>
+<div class="check" data-q="q4"></div>
+<div class="check" data-q="q5"></div>
+
+<h2>입력을 더하는 길을 하나 추가한다</h2>
+<p><b class="key">잔차 연결</b>은 같은 모양의 입력 x를 변환 F(x)에 더해 y=x+F(x)를 만듭니다. 스칼라에서는 dy/dx=1+F′(x)이고, 벡터라면 항등 행렬 I와 F의 야코비안을 더합니다. 변환 쪽의 미분이 작더라도 직접 경로에서 1이 더해질 수 있습니다. 이 경로가 모든 모델의 폭주나 소실을 자동으로 해결하지는 않습니다. 축 크기가 다르면 그대로 더할 수 있는지 확인하고 필요한 경우 별도 변환을 둡니다.</p>
 <figure class="fig">
 <svg class="fig-svg" viewBox="0 0 760 257" role="img" aria-label="x=2에서 F(x)=1인 경로와 x=2를 그대로 더해 3이다. 기울기는 0.5+1=1.5다.">
 <text class="f-cap" x="380" y="33" text-anchor="middle">F(x)=0.5x인 잔차 연결</text>
@@ -95,12 +102,6 @@
 </svg>
 <figcaption>같은 출력으로 들어가는 계산 경로가 두 개일 때 입력에 대한 미분 항도 더해집니다.</figcaption>
 </figure>
-<div class="check" data-q="q3"></div>
-<div class="check" data-q="q4"></div>
-
-<h2>입력을 더하는 길을 하나 추가한다</h2>
-<p><b class="key">잔차 연결</b>은 같은 모양의 입력 x를 변환 F(x)에 더해 y=x+F(x)를 만듭니다. 스칼라에서는 dy/dx=1+F′(x)이고, 벡터라면 항등 행렬 I와 F의 야코비안을 더합니다. 변환 쪽의 미분이 작더라도 직접 경로에서 1이 더해질 수 있습니다. 이 경로가 모든 모델의 폭주나 소실을 자동으로 해결하지는 않습니다. 축 크기가 다르면 그대로 더할 수 있는지 확인하고 필요한 경우 별도 변환을 둡니다.</p>
-<div class="check" data-q="q5"></div>
 <div class="check" data-q="q6"></div>
 <pre data-example="python"><code>import torch
 from torch import nn
@@ -132,8 +133,17 @@ running mean: [1.5, 4.5]
 running var: [0.5, 4.5]
 batch eval: [[-0.707, -0.707], [0.707, 0.707]]
 residual: 3.0 grad: 1.5</code></pre>
-<p class="small">실행 환경은 Python 3.14.6과 PyTorch 2.14.1+cu130의 CPU입니다. 입력과 계산에 쓰는 값을 직접 정했습니다.</p><p>예제의 LayerNorm·BatchNorm은 스케일과 편향을 빼고 집계 축만 비교합니다. 평가에서는 실행 결과와 함께 <code>batch.training</code> 상태도 확인할 수 있습니다.</p>
+<p class="small">실행 환경은 Python 3.14.6과 PyTorch 2.14.0+cu130의 CPU입니다. 입력과 계산에 쓰는 값을 직접 정했습니다.</p><p>예제의 LayerNorm·BatchNorm은 스케일과 편향을 빼고 집계 축만 비교합니다. 평가에서는 실행 결과와 함께 <code>batch.training</code> 상태도 확인할 수 있습니다.</p>
 
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table>
+<thead><tr><th scope="col">구조</th><th scope="col">핵심</th></tr></thead>
+<tbody>
+<tr><td>LayerNorm</td><td>샘플마다 지정한 마지막 축들에서 평균·분산을 낸다. 훈련과 평가가 같다.</td></tr>
+<tr><td>BatchNorm</td><td>특성(채널)마다 배치를 따라 평균·분산을 낸다. 평가에서는 이동 통계 버퍼를 쓴다.</td></tr>
+<tr><td><b class="key">잔차 연결</b></td><td>y=x+F(x), dy/dx=1+F′(x). 직접 경로가 기울기에 1을 더한다.</td></tr>
+</tbody>
+</table></div>
 <h2>참고 자료</h2>
 <ul>
 <li><a href="https://docs.pytorch.org/docs/stable/generated/torch.nn.LayerNorm.html">PyTorch · 마지막 축의 LayerNorm</a></li>
