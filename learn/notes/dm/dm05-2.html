@@ -22,7 +22,7 @@
 <svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
 
 <header class="chapter">
-<p class="chap-sub">이산수학 · DM05 그래프라는 표현</p>
+<p class="chap-sub">논리·이산수학·증명 · DM05 그래프라는 표현</p>
 <p class="chap-num">DM05·2</p>
 <h1>트리와 인접 리스트·행렬</h1>
 <p class="lead">같은 관계를 그림, 이웃 목록, 숫자 표로 각각 읽어 봅니다. 고리가 없는 연결 구조를 다루면서, 가중치가 0인 간선까지 컴퓨터에 어떻게 기록하는지 살펴봅니다.</p>
@@ -81,7 +81,7 @@
 <svg class="fig-svg" viewBox="0 0 760 250" role="img" aria-label="A에서 B로 비용 0, B에서 C로 비용 4, C에서 A로 비용 2인 그래프와 행이 출발, 열이 도착인 가중치 행렬. 없는 간선은 대시다.">
 <line class="f-line" x1="162" y1="77" x2="258" y2="77" marker-end="url(#f-arrow)"/>
 <line class="f-line" x1="266" y1="95" x2="215" y2="158" marker-end="url(#f-arrow)"/>
-<line class="f-line" x1="183" y1="162" x2="133" y2="96" marker-end="url(#f-arrow)"/>
+<line class="f-line" x1="187" y1="158" x2="152" y2="99" marker-end="url(#f-arrow)"/>
 <circle class="f-box" cx="139" cy="77" r="23"/><text class="f-cap" x="139" y="82" text-anchor="middle">A</text>
 <circle class="f-box" cx="281" cy="77" r="23"/><text class="f-cap" x="281" y="82" text-anchor="middle">B</text>
 <circle class="f-box" cx="199" cy="178" r="23"/><text class="f-cap" x="199" y="183" text-anchor="middle">C</text>
@@ -127,6 +127,7 @@ names = (&quot;A&quot;, &quot;B&quot;, &quot;C&quot;)
 matrix = [[weights.get((u, v)) for v in names] for u in names]
 for row in matrix:
     print(row)</code></pre>
+<p class="small">실행 결과</p>
 <pre data-output><code>A ['B', 'C']
 B ['A']
 C ['A', 'D']

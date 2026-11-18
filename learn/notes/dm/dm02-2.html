@@ -40,10 +40,11 @@
 <h2>대우로 방향을 돌리기</h2>
 <p>“n²이 짝수이면 n은 짝수”를 증명합니다. 제곱에서 n으로 거슬러 올라가기보다 대우 “n이 짝수가 아니면 n²도 짝수가 아니다”를 봅니다. 정수 n이 홀수라면 n = 2k + 1이므로</p>
 <p class="calc">n² = 4k² + 4k + 1 = 2(2k² + 2k) + 1</p>
-<p>입니다. 제곱도 홀수입니다. 대우가 원래 명제와 같은 진리값을 가지므로 증명이 끝납니다. “n이 짝수이면 n²이 짝수” 역시 참이지만 이것은 원래 명제의 역이며, 이를 보인 것만으로 원래 명제를 얻을 수 없습니다.</p>
+<p>입니다. 제곱도 홀수입니다. 대우가 원래 명제와 같은 진리값을 가지므로 증명이 끝납니다. 이렇게 대우를 직접증명하는 방법을 <b class="key">대우 증명</b>이라고 합니다. “n이 짝수이면 n²이 짝수” 역시 참이지만 이것은 원래 명제의 역이며, 이를 보인 것만으로 원래 명제를 얻을 수 없습니다.</p>
 <div class="check" data-q="q3"></div>
 <div class="check" data-q="q4"></div>
 <h2>반대편을 가정하고 모순으로 가기</h2>
+<div class="box "><p class="box-k">귀류법</p><p>증명하려는 명제 R의 부정 NOT R을 가정하고, 그 가정에서 이미 참인 사실과 맞지 않는 결론(모순)을 끌어냅니다. NOT R이 거짓이므로 R이 참입니다. 이 방법을 <b class="key">귀류법</b>(모순에 의한 증명)이라고 합니다. 대우 증명은 NOT Q에서 NOT P를 이끄는 직접증명이고, 귀류법은 모순 자체를 목표로 한다는 점이 다릅니다.</p></div>
 <p>정수 전체에 가장 큰 정수가 없음을 보입니다. 반대로 가장 큰 정수 M이 있다고 가정합니다. M + 1도 정수이며 M + 1 &gt; M입니다. 가장 큰 정수라는 가정과 이를 넘어서는 정수를 얻은 사실이 서로 맞지 않습니다. 따라서 가장 큰 정수가 있다는 가정을 버립니다.</p>
 <figure class="fig"><svg class="fig-svg" viewBox="0 0 760 160" role="img" aria-label="가장 큰 정수 M이 있다고 가정하면 정수 M+1이 더 커서 모순이 생긴다.">
 <rect class="f-box" x="42" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="135" y="61" text-anchor="middle">결론을 부정</text><text class="f-s" x="135" y="89" text-anchor="middle">가장 큰 정수 M이 있다</text><text class="f-s" x="135" y="110" text-anchor="middle">반대로 가정한다</text><line class="f-line" x1="235" y1="84" x2="278" y2="84" marker-end="url(#f-arrow)"/><rect class="f-soft" x="287" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="380" y="61" text-anchor="middle">가정에서 진행</text><text class="f-s" x="380" y="89" text-anchor="middle">M + 1도 정수</text><text class="f-s" x="380" y="110" text-anchor="middle">M보다 크다</text><line class="f-line" x1="480" y1="84" x2="523" y2="84" marker-end="url(#f-arrow)"/><rect class="f-box" x="532" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="625" y="61" text-anchor="middle">모순</text><text class="f-s" x="625" y="89" text-anchor="middle">M이 최대라는 말과 충돌</text><text class="f-s" x="625" y="110" text-anchor="middle">가정이 거짓</text>

@@ -20,7 +20,7 @@
 <main class="page">
 <svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
 <header class="chapter">
-<p class="chap-sub">이산수학</p>
+<p class="chap-sub">논리·이산수학·증명 · DM04 귀납과 재귀</p>
 <p class="chap-num">DM04·1</p>
 <h1>시작 사례와 귀납 단계로 합 공식 증명하기</h1>
 <p class="lead">몇 가지 목록에서 합 공식이 맞아도 모두에게 맞는지는 남습니다. 첫 입력을 확인하고 이전 입력의 식에서 다음 입력의 식으로 넘어가는 방법을 배웁니다.</p>
@@ -41,6 +41,7 @@
 <strong>S(k+1)=k(k+1)/2+(k+1)=(k+1)(k+2)/2</strong>입니다. 마지막 식은 원래 공식에서 n을 k+1로 바꾼 식입니다. 따라서 P(k)에서 P(k+1)이 따라옵니다.</p>
 <div class="check" data-q="q2"></div><div class="check" data-q="q3"></div>
 <p>이 증명에서 P(k)를 가정한 것은 모든 k에서 이미 참이라고 선언한 것이 아닙니다. 임의의 k에 대해 ‘앞이 참이면 뒤도 참’이라는 규칙을 증명했습니다. 기저 사례가 출발점이 되어 조건을 계속 적용할 수 있습니다.</p>
+<div class="box trap"><p class="box-k">흔한 오해: 귀납 단계만 확인하기</p><p>틀린 주장 “S(n) = n(n+1)/2 + 1”을 봅시다. S(k) = k(k+1)/2 + 1이라고 가정하면 S(k+1) = k(k+1)/2 + 1 + (k+1) = (k+1)(k+2)/2 + 1이므로 귀납 단계는 통과합니다. 그러나 n=0에서 왼쪽은 0, 오른쪽은 1이라 기저가 거짓입니다. 기저가 없으면 넘겨 줄 참이 없으므로 아무것도 증명되지 않습니다.</p></div>
 <div class="check" data-q="q4"></div>
 <pre data-example="python"><code>def triangular(n):
     return n*(n + 1)//2

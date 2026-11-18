@@ -54,7 +54,7 @@ print(len(records), comb(5, 2))</code></pre>
 <h2>한 대상을 포함하는지 나누면 파스칼 관계</h2>
 <p>5명에서 두 사람을 고르는 팀을 A가 들어간 팀과 A가 빠진 팀으로 나눕니다. A가 들어가면 4명 중 1명만 더 고릅니다. A가 빠지면 나머지 4명에서 2명을 고릅니다. 두 갈래는 겹치지 않습니다.</p>
 <figure class="fig"><svg class="fig-svg" viewBox="0 0 760 160" role="img" aria-label="A를 포함하는 팀 4개와 제외한 팀 6개로 나누면 5명 중 두 사람을 고르는 10팀이 된다.">
-<rect class="f-box" x="42" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="135" y="61" text-anchor="middle">A 포함</text><text class="f-s" x="135" y="89" text-anchor="middle">A를 한 자리로 고정</text><text class="f-s" x="135" y="110" text-anchor="middle">C(4,1) = 4</text><line class="f-line" x1="235" y1="84" x2="278" y2="84" marker-end="url(#f-arrow)"/><rect class="f-soft" x="287" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="380" y="61" text-anchor="middle">A 제외</text><text class="f-s" x="380" y="89" text-anchor="middle">다른 네 명만 사용</text><text class="f-s" x="380" y="110" text-anchor="middle">C(4,2) = 6</text><line class="f-line" x1="480" y1="84" x2="523" y2="84" marker-end="url(#f-arrow)"/><rect class="f-box" x="532" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="625" y="61" text-anchor="middle">두 갈래 합</text><text class="f-s" x="625" y="89" text-anchor="middle">4 + 6 = 10</text><text class="f-s" x="625" y="110" text-anchor="middle">C(5,2) 검산</text>
+<rect class="f-box" x="42" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="135" y="61" text-anchor="middle">A 포함</text><text class="f-s" x="135" y="89" text-anchor="middle">A를 한 자리로 고정</text><text class="f-s" x="135" y="110" text-anchor="middle">C(4,1) = 4</text><text class="f-t f-b" x="257" y="90" text-anchor="middle">+</text><rect class="f-soft" x="287" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="380" y="61" text-anchor="middle">A 제외</text><text class="f-s" x="380" y="89" text-anchor="middle">다른 네 명만 사용</text><text class="f-s" x="380" y="110" text-anchor="middle">C(4,2) = 6</text><line class="f-line" x1="480" y1="84" x2="523" y2="84" marker-end="url(#f-arrow)"/><rect class="f-box" x="532" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="625" y="61" text-anchor="middle">두 갈래 합</text><text class="f-s" x="625" y="89" text-anchor="middle">4 + 6 = 10</text><text class="f-s" x="625" y="110" text-anchor="middle">C(5,2) 검산</text>
 </svg><figcaption>기준 대상 하나를 정해 포함 여부로 나누면 두 합을 쉽게 셀 수 있다.</figcaption></figure>
 <p>이를 일반화하면 1 ≤ r &lt; n에서 C(n, r) = C(n−1, r−1) + C(n−1, r)입니다. 같은 수가 (a + b)<sup>n</sup>을 전개할 때도 나옵니다. 각 괄호에서 b를 고르는 위치를 r개 정하면 a<sup>n−r</sup>b<sup>r</sup> 항이 생깁니다.</p>
 <div class="check" data-q="q4"></div>
@@ -70,7 +70,7 @@ print(len(choices))</code></pre>
 <p class="small">실행 결과</p>
 <pre data-output><code>['AA', 'AB', 'AC', 'BB', 'BC', 'CC']
 6</code></pre>
-<p>같은 종류를 여러 번 골라도 되는 순서 없는 경우는 종류별 개수를 정하는 문제로 바꿀 수 있습니다. 두 스쿱이라면 각 맛의 개수는 0 이상이고 세 개의 합이 2입니다. 다음에는 가능한 기록을 셀 뿐 아니라 그 기록이 나올 확률도 계산합니다.</p>
+<p>같은 종류를 여러 번 골라도 되는 순서 없는 경우는 종류별 개수를 정하는 문제로 바꿀 수 있습니다. 두 스쿱이라면 각 맛의 개수는 0 이상이고 세 개의 합이 2입니다. 스쿱 r개를 ●로, 맛 사이의 칸막이 n−1개를 |로 적으면 한 선택은 ● r개와 | n−1개의 나열 하나입니다. 예로 ●|●| 는 A 1개, B 1개, C 0개입니다. 전체 n+r−1자리에서 ● 자리 r개를 고르므로, n종류에서 중복을 허용해 순서 없이 r개를 고르는 수(<b class="key">중복조합</b>)는 C(n+r−1, r)입니다. 여기서는 C(3+2−1, 2) = C(4, 2) = 6으로 표의 개수와 같습니다. 다음에는 가능한 기록을 셀 뿐 아니라 그 기록이 나올 확률도 계산합니다.</p>
 <div class="check" data-q="q6"></div>
 
 <h2>참고 자료</h2>
