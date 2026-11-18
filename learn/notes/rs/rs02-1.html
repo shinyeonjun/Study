@@ -32,7 +32,7 @@
 </ul></div>
 
 <h2>질문에서 검색어 골라내기</h2>
-<p>“강화학습 논문의 결과가 왜 달라지는가?”는 넓은 질문입니다. 심층 강화학습을 대상으로, 난수 시드와 알고리즘 구현을 조건으로, 평가 변동과 재현성을 결과로 잡습니다. 영어로 <i>deep reinforcement learning</i>, <i>random seeds</i>, <i>reproducibility</i>를 묶어 검색할 수 있습니다. 결과가 많으면 환경이나 알고리즘을 지정합니다. 너무 적으면 동의어를 쓰거나 조건을 덜어 냅니다.</p><figure class="fig">
+<p>“강화학습 논문의 결과가 왜 달라지는가?”는 넓은 질문입니다. 심층 강화학습을 대상으로, 난수 시드와 알고리즘 구현을 조건으로, 평가 변동과 재현성을 결과로 잡습니다. 영어로 <i>deep reinforcement learning</i>, <i>random seeds</i>, <i>reproducibility</i>를 묶어 검색할 수 있습니다. 결과가 많으면 환경이나 알고리즘을 지정합니다. 너무 적으면 동의어를 쓰거나 조건을 덜어 냅니다. 대부분의 학술 검색에서는 큰따옴표로 구절을 그대로 찾고(<code>"random seeds"</code>), <code>OR</code>로 동의어를 묶습니다(<code>reproducibility OR replicability</code>). 지원하는 문법은 검색 서비스마다 다르므로 도움말에서 확인합니다.</p><figure class="fig">
 <svg class="fig-svg" viewBox="0 0 760 203" role="img" aria-label="강화학습에서 시드나 구현이 바뀔 때 결과가 변하는지를 찾는다.">
 <text class="f-cap" x="380" y="31" text-anchor="middle">질문에서 검색으로</text>
 <rect class="f-box" x="50" y="62" width="182" height="51"/>
@@ -86,16 +86,16 @@
 <pre data-example="python"><code>study = {
     &quot;short_name&quot;: &quot;Henderson et al.&quot;,
     &quot;used_version&quot;: &quot;1709.06560v3&quot;,
-    &quot;evidence&quot;: [&quot;Methodology&quot;, &quot;Table 1&quot;],
+    &quot;evidence&quot;: [&quot;Experimental Analysis&quot;, &quot;Table 1&quot;],
 }
 print(&quot;source:&quot;, study[&quot;short_name&quot;], study[&quot;used_version&quot;])
 print(&quot;evidence:&quot;, &quot; / &quot;.join(study[&quot;evidence&quot;]))
 print(&quot;version URL:&quot;, &quot;https://arxiv.org/abs/&quot; + study[&quot;used_version&quot;])</code></pre>
 <p class="small">실행 결과</p>
 <pre data-output><code>source: Henderson et al. 1709.06560v3
-evidence: Methodology / Table 1
+evidence: Experimental Analysis / Table 1
 version URL: https://arxiv.org/abs/1709.06560v3</code></pre>
-<p>코드는 이미 확인한 서지 기록을 출력합니다. 표에서 가져온 근거는 출력의 URL을 열어 해당 판본의 표와 캡션을 대조합니다.</p><div class="check" data-q="q5"></div><div class="check" data-q="q6"></div><div class="check" data-q="q7"></div><div class="check" data-q="q8"></div>
+<p><code>Experimental Analysis</code>는 이 논문 v3에서 실험 설정과 Table 1이 들어 있는 절의 실제 제목입니다. 코드는 이미 확인한 서지 기록을 출력합니다. 표에서 가져온 근거는 출력의 URL을 열어 해당 판본의 표와 캡션을 대조합니다.</p><div class="check" data-q="q5"></div><div class="check" data-q="q6"></div><div class="check" data-q="q7"></div><div class="check" data-q="q8"></div>
 
 <h2>한눈에 정리</h2>
 <div class="table-wrap"><table><thead><tr><th scope="col">개념</th><th scope="col">확인할 것</th></tr></thead><tbody>

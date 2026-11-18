@@ -20,7 +20,7 @@
 <main class="page">
 <svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
 <header class="chapter">
-<p class="chap-sub">연구 방법</p>
+<p class="chap-sub">연구 기초 · RS10 연구 윤리와 데이터</p>
 <p class="chap-num">RS10·2</p>
 <h1>집단별 영향과 연구 기여·AI 도움 기록하기</h1>
 <p class="lead">전체 성능 숫자가 좋은 모델이라도 어느 집단에서는 쉽게 실패할 수 있습니다. 어떤 사람이 영향을 받는지 읽고, 결과를 만든 사람과 도구의 역할을 독자가 확인할 수 있게 기록합니다.</p>
@@ -28,7 +28,7 @@
 <div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>전체 지표와 집단별 지표를 다른 분모로 계산한다.</li><li>자료 누락과 운영 영향, 평가 규모를 고려한다.</li><li>공동 기여와 저자 책임, AI 사용 공개의 역할을 구분한다.</li></ul></div>
 
 <h2>전체 비율이 같아도 영향을 받는 집단은 다를 수 있다</h2>
-<p>도서관이 혼잡인 경우를 감지하려고 경보 모형을 씁니다. 두 지점 중 A에서는 실제 혼잡 80건 중 72건을 찾아냈습니다. B에서는 실제 혼잡 20건 중 10건을 찾아냈습니다. 재현율은 실제 혼잡 중 알아챈 비율입니다. 이는 지점의 자료 수 · 이용 상황 · 센서 상태에 따라 달라질 수 있습니다.</p>
+<p>도서관이 혼잡인 경우를 감지하려고 경보 모형을 씁니다. 두 지점 중 A에서는 실제 혼잡 80건 중 72건을 찾아냈습니다. B에서는 실제 혼잡 20건 중 10건을 찾아냈습니다. <b class="key">재현율</b>(recall)은 실제 양성 중 모형이 양성으로 찾아낸 비율, 곧 TP÷(TP+FN)입니다. 여기서는 실제 혼잡 중 경보로 알아챈 비율입니다. 이는 지점의 자료 수 · 이용 상황 · 센서 상태에 따라 달라질 수 있습니다.</p>
 <figure class="fig"><svg class="fig-svg" viewBox="0 0 760 238" role="img" aria-label="A 집단의 실제 혼잡 80건 중 72건을 탐지해 90%, B 집단의 실제 혼잡 20건 중 10건을 탐지해 50%다. 전체는 100건 중 82건으로 82%다.">
 <text class="f-t" x="223" y="98" text-anchor="end">A · 72/80</text><rect class="f-box" x="247" y="78" width="410" height="31" rx="3"/><rect class="f-soft" x="247" y="78" width="369" height="31" rx="3"/><text class="f-s" x="609" y="99" text-anchor="end">90%</text><text class="f-t" x="223" y="145" text-anchor="end">B · 10/20</text><rect class="f-box" x="247" y="125" width="410" height="31" rx="3"/><rect class="f-soft" x="247" y="125" width="205" height="31" rx="3"/><text class="f-s" x="445" y="146" text-anchor="end">50%</text><text class="f-t" x="223" y="192" text-anchor="end">전체 · 82/100</text><rect class="f-box" x="247" y="172" width="410" height="31" rx="3"/><rect class="f-soft" x="247" y="172" width="336.2" height="31" rx="3"/><text class="f-s" x="576.2" y="193" text-anchor="end">82%</text>
 </svg><figcaption>전체 재현율은 지점마다 실제 혼잡 건수가 다른 영향을 받는다. 지점별 수치와 함께 읽는다.</figcaption></figure>

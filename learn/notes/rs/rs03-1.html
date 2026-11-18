@@ -52,7 +52,7 @@
 <p>초록에서 주장을 잡고 서론의 이전 연구 맥락을 봅니다. 첫 읽기에서 궁금한 점은 질문으로 남깁니다. 예로 “시드를 다르게 한다는 말은 학습 실행을 새로 한다는 뜻인가?”를 방법에 대조할 수 있습니다.</p><div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
 
 <h2>방법에서 바뀐 조건과 반복 단위 확인</h2>
-<p>Methodology에서는 Hopper-v1과 HalfCheetah-v1이라는 두 환경의 실험을 설명합니다. 많은 비교는 OpenAI Baselines 구현을 쓰지만, 구현을 비교하는 조건도 별도로 있습니다. 평가에 서로 다른 다섯 시드의 학습 반복을 사용하고, 여러 설정의 비교에서 같은 시드 묶음을 사용했다고 설명합니다.</p><figure class="fig">
+<p>Experimental Analysis(실험 분석) 절 첫머리에서 주로 Hopper-v1과 HalfCheetah-v1이라는 두 환경을 쓴다고 설명합니다. 많은 비교는 OpenAI Baselines 구현을 쓰지만, 구현을 비교하는 조건도 별도로 있습니다. 평가에 서로 다른 다섯 시드의 학습 반복을 사용하고, 여러 설정의 비교에서 같은 시드 묶음을 사용했다고 설명합니다.</p><figure class="fig">
 <svg class="fig-svg" viewBox="0 0 760 246" role="img" aria-label="초록과 서론, 방법, 결과, 토의에서 각각 확인할 질문.">
 <text class="f-cap" x="380" y="29" text-anchor="middle">Henderson 외 논문의 읽기 지도</text>
 <rect class="f-soft" x="53" y="43" width="226" height="37"/>
@@ -64,7 +64,7 @@
 <rect class="f-box" x="279" y="80" width="428" height="37"/>
 <text class="f-t" x="493" y="103.5" text-anchor="middle">기존 강화학습 실험을 비교하기 어려운 이유</text>
 <rect class="f-box" x="53" y="117" width="226" height="37"/>
-<text class="f-t" x="166" y="140.5" text-anchor="middle">Methodology</text>
+<text class="f-t" x="166" y="140.5" text-anchor="middle">Experimental Analysis</text>
 <rect class="f-box" x="279" y="117" width="428" height="37"/>
 <text class="f-t" x="493" y="140.5" text-anchor="middle">환경·구현·시드·요약 단위</text>
 <rect class="f-box" x="53" y="154" width="226" height="37"/>
@@ -78,16 +78,16 @@
 </svg>
 <figcaption>논문의 새 기여를 주장한 문장과 그 주장을 뒷받침하는 실험을 연결합니다.</figcaption>
 </figure>
-<p>Table 1의 한 숫자는 200만 학습 타임스텝 이후 마지막 100개 궤적 수익을 평가한 다섯 실행으로부터 요약됩니다. 숫자가 어디에서 계산되었는지 적으면 궤적과 학습 반복을 섞기 어렵습니다. 표를 확인한 뒤 별도로 부록과 실험 코드를 봅니다.</p><div class="check" data-q="q3"></div><div class="check" data-q="q4"></div>
+<p>Table 1의 한 숫자는 200만 학습 샘플(타임스텝) 뒤, 각 실행의 마지막 100개 궤적 수익을 평균한 값을 다섯 실행에 걸쳐 요약한 것입니다(캡션: 평균 ± 표준오차). 숫자가 어디에서 계산되었는지 적으면 궤적과 학습 반복을 섞기 어렵습니다. 표를 확인한 뒤 별도로 부록과 실험 코드를 봅니다.</p><div class="check" data-q="q3"></div><div class="check" data-q="q4"></div>
 
 <h2>증거를 읽는 데 필요한 개념을 거슬러 가기</h2>
 <p>표의 결과가 “평균 ± 표준오차”라고 되어 있고 그 단어가 생소하다면, 먼저 <a href="../../unit.html?u=ST03">표준오차</a>를 확인합니다. 수익의 대상이 궁금하면 <a href="../../unit.html?u=RL03">강화학습의 수익</a> 정의와 원문의 평가 절차를 읽습니다. 이해에 필요한 선행 개념을 확인하면 같은 표에 돌아와 질문을 계속할 수 있습니다.</p>
 <p class="small">실행 예제</p>
 <pre data-example="python"><code>training_steps = 2_000_000
 trials = 5
-evaluation_trajectories_per_trial = 100
+last_trajectories_per_trial = 100
 print(&quot;training steps per trial:&quot;, training_steps)
-print(&quot;trajectory entries:&quot;, trials * evaluation_trajectories_per_trial)
+print(&quot;trajectory entries:&quot;, trials * last_trajectories_per_trial)
 print(&quot;trial-level SE count:&quot;, trials)</code></pre>
 <p class="small">실행 결과</p>
 <pre data-output><code>training steps per trial: 2000000
