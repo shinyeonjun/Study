@@ -37,14 +37,16 @@
 <p><code>#table</code>은 일반 웹 요청의 목적 문자열에 넣지 않습니다. 서버에 원하는 경로와 쿼리를 보내고, 브라우저가 응답을 읽은 뒤 스스로 <code>table</code> 위치를 찾을 수 있습니다.</p>
 <div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
 <h2>HTTP/1.1 메시지는 어떤 줄로 나뉘나</h2>
-<p>브라우저가 예시 자료를 읽어 온다고 합시다. <b class="key">HTTP</b>는 이 요청과 응답이 어떤 뜻을 갖는지 정한 웹 통신의 프로토콜입니다. 예를 들어 <code>GET</code>은 대상 자원의 표현을 받으려는 요청에 쓰고, <code>POST</code>는 요청에 담긴 데이터를 대상 자원의 규칙대로 처리하도록 요청할 때 씁니다.</p>
+<p>브라우저가 예시 자료를 읽어 온다고 합시다. <b class="key">HTTP</b>는 이 요청과 응답이 어떤 뜻을 갖는지 정한 웹 통신의 프로토콜입니다. 예를 들어 <code>GET</code>은 대상 자원의 표현을 받으려는 요청에 쓰고, <code>POST</code>는 요청에 담긴 데이터를 대상 자원의 규칙대로 처리하도록 요청할 때 씁니다. 이 밖에 본문 없이 헤더만 받는 <code>HEAD</code>, 대상 자원을 보낸 내용으로 만들거나 바꾸는 <code>PUT</code>, 대상 자원을 지우는 <code>DELETE</code>가 자주 쓰입니다. GET·HEAD는 서버 상태를 바꾸지 않는 것이 약속이고(안전한 메서드), GET·HEAD·PUT·DELETE는 같은 요청을 여러 번 보내도 한 번 보낸 것과 결과가 같도록 정의됩니다(멱등). POST는 둘 다 보장하지 않으므로 함부로 다시 보내면 주문이 두 번 들어가는 식의 문제가 생길 수 있습니다.</p>
 <p>설명용으로, 위 주소의 자원에 HTTP/1.1 방식으로 보내는 메시지를 보여 줍니다. 명시한 포트를 포함한 접속 대상을 <code>Host</code>에 적고 <code>Accept</code>로 희망 응답 형식을 표시합니다.</p>
 <pre><code>GET /notes?page=2 HTTP/1.1
 Host: study.example:8443
 Accept: application/json
 
 </code></pre>
-<p>맨 위는 요청 줄입니다. 두 헤더 줄이 이어지고 빈 줄이 헤더의 끝을 표시합니다. 이 GET에는 요청 본문이 없습니다. 서버는 자료를 찾아 상태코드와 응답 본문을 보낼 수 있습니다. 여기서는 JSON 문자열의 길이가 11바이트입니다.</p>
+<p>맨 위는 요청 줄(메서드, 요청 대상, 버전)입니다. 두 헤더 줄이 이어지고 빈 줄이 헤더의 끝을 표시합니다. 실제 HTTP/1.1에서는 각 줄 끝이 CR LF 두 바이트(<code>
+</code>)이고, 빈 줄은 <code>
+</code> 하나뿐인 줄입니다. 이 GET에는 요청 본문이 없습니다. 서버는 자료를 찾아 상태코드와 응답 본문을 보낼 수 있습니다. 여기서는 JSON 문자열의 길이가 11바이트입니다.</p>
 <pre><code>HTTP/1.1 200 OK
 Content-Type: application/json
 Content-Length: 11
@@ -56,7 +58,8 @@ Content-Length: 11
 <p><b class="key">헤더</b>는 메시지와 전달할 데이터의 형식 등에 관한 항목을 담습니다. <b>본문</b>은 실제로 보내는 메시지 데이터입니다. HTTP/1.1에서는 위처럼 문자 줄을 읽어도 되지만, HTTP/2나 HTTP/3의 전송 형식은 다릅니다. 상태코드와 요청 메서드 등 HTTP가 주고받는 내용의 의미는 버전 사이에서 공통됩니다.</p>
 <div class="check" data-q="q3"></div><div class="check" data-q="q4"></div>
 <h2>상태코드가 알려 주는 응답의 종류</h2>
-<div class="table-wrap"><table><thead><tr><th scope="col">대표 코드</th><th scope="col">어떤 경우인가</th><th scope="col">예</th></tr></thead><tbody><tr><td>200</td><td>요청을 성공적으로 처리</td><td>자료를 조회해 본문에 담음</td></tr><tr><td>204</td><td>성공했으며 응답 내용 없음</td><td>설정을 적용하고 별도 본문은 돌려주지 않음</td></tr><tr><td>304</td><td>조건부 조회에서 예전 자료를 재사용 가능</td><td>조건부 GET에 응답하고 브라우저는 보관한 값 사용</td></tr><tr><td>404</td><td>요청한 자원의 현재 표현을 찾을 수 없거나 공개하지 않음</td><td>없는 장 주소를 요청</td></tr><tr><td>500</td><td>서버에서 요청 처리를 막는 예기치 않은 조건 발생</td><td>응답을 만드는 내부 프로그램 오류</td></tr></tbody></table></div>
+<p>상태코드는 세 자리 수이고 첫 자리가 종류를 정합니다. <span class="tag memo">외우기</span> 1xx는 정보(처리 중), <b class="key">2xx는 성공</b>, <b class="key">3xx는 리다이렉션</b>(다른 곳을 보거나 보관한 것을 쓰라는 안내), <b class="key">4xx는 클라이언트 오류</b>(요청 쪽 문제), <b class="key">5xx는 서버 오류</b>(요청은 정상인데 서버가 처리하지 못함)입니다. 처음 보는 코드라도 첫 자리로 큰 뜻을 읽을 수 있습니다.</p>
+<div class="table-wrap"><table><thead><tr><th scope="col">대표 코드</th><th scope="col">어떤 경우인가</th><th scope="col">예</th></tr></thead><tbody><tr><td>200</td><td>요청을 성공적으로 처리</td><td>자료를 조회해 본문에 담음</td></tr><tr><td>204</td><td>성공했으며 응답 내용 없음</td><td>설정을 적용하고 별도 본문은 돌려주지 않음</td></tr><tr><td>304</td><td>조건부 조회에서 예전 자료를 재사용 가능</td><td>조건부 GET에 응답하고 브라우저는 보관한 값 사용</td></tr><tr><td>301</td><td>자원이 영구히 다른 URL로 옮겨짐</td><td>응답의 Location 헤더에 새 주소가 있어 브라우저가 따라감</td></tr><tr><td>400</td><td>요청 형식이 잘못되어 처리할 수 없음</td><td>문법이 깨진 요청</td></tr><tr><td>401</td><td>인증 정보가 없거나 유효하지 않음</td><td>로그인 토큰 없이 API 호출</td></tr><tr><td>403</td><td>요청을 이해했지만 허용하지 않음</td><td>로그인은 했지만 그 자료에 권한이 없음</td></tr><tr><td>404</td><td>요청한 자원의 현재 표현을 찾을 수 없거나 공개하지 않음</td><td>없는 장 주소를 요청</td></tr><tr><td>500</td><td>서버에서 요청 처리를 막는 예기치 않은 조건 발생</td><td>응답을 만드는 내부 프로그램 오류</td></tr><tr><td>503</td><td>서버가 일시적으로 요청을 처리할 수 없음</td><td>과부하나 점검 중</td></tr></tbody></table></div>
 <p>예를 들어 404가 실제 HTTP 응답으로 돌아왔다면, 브라우저는 어느 응답자에게서 HTTP 메시지를 받았습니다. ‘아무 서버에도 연결하지 못했다’는 브라우저 오류와 구분할 수 있습니다. 중간 서비스가 404를 돌려줬다면 원래 의도한 응답자와 다를 수 있습니다.</p>
 <div class="check" data-q="q5"></div><div class="check" data-q="q6"></div>
 <h2>파이썬으로 주소가 잘리는 위치 확인하기</h2>

@@ -38,7 +38,34 @@
 </div>
 
 <h2>TCP는 먼저 연결 상태를 맞춘다</h2>
-<p>IP는 목적지 방향으로 패킷을 전달합니다. <b class="key">TCP</b>는 그 위에서 두 끝점이 양방향으로 나눠 보낼 <b>바이트 스트림</b>을 제공합니다. 보통 연결을 시작할 때 첫 끝점이 SYN을 보내고, 상대가 SYN과 ACK를 함께 보낸 뒤, 첫 끝점이 ACK로 확인합니다. 이 세 단계로 양쪽은 연결을 열고 각 방향의 시작 순서 번호를 맞춥니다.</p>
+<p>IP는 목적지 방향으로 패킷을 전달합니다. <b class="key">TCP</b>는 그 위에서 두 끝점이 양방향으로 나눠 보낼 <b>바이트 스트림</b>을 제공합니다. 보통 연결을 시작할 때 첫 끝점이 SYN을 보내고, 상대가 SYN과 ACK를 함께 보낸 뒤, 첫 끝점이 ACK로 확인합니다. 이 세 단계로 양쪽은 연결을 열고 각 방향의 시작 순서 번호(ISN)를 맞춥니다. 이것을 <b class="key">3-way handshake</b>라 합니다. SYN과 FIN은 데이터가 없어도 순서 번호를 하나씩 차지하므로, 시작 번호가 1000이면 첫 데이터 바이트는 1001번이고 상대는 ack=1001로 SYN을 받았음을 알립니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 420" role="img" aria-label="TCP 연결 수립과 종료. 클라이언트가 SYN seq=1000을 보내고, 서버가 SYN+ACK seq=5000 ack=1001로 답하고, 클라이언트가 ACK ack=5001로 확인한다. 데이터를 주고받은 뒤 클라이언트가 FIN seq=u, 서버가 ACK ack=u+1, 서버가 FIN seq=w, 클라이언트가 ACK ack=w+1을 보내고 클라이언트는 TIME_WAIT로 기다린다.">
+<rect class="f-box" x="130" y="20" width="140" height="36" rx="3"/><text class="f-t" x="200" y="43" text-anchor="middle">클라이언트</text>
+<rect class="f-soft" x="490" y="20" width="140" height="36" rx="3"/><text class="f-t" x="560" y="43" text-anchor="middle">서버</text>
+<line class="f-dash" x1="200" y1="58" x2="200" y2="400"/><line class="f-dash" x1="560" y1="58" x2="560" y2="400"/>
+<text class="f-s" x="70" y="122" text-anchor="middle">연결 수립</text>
+<text class="f-s" x="380" y="80" text-anchor="middle">SYN · seq=1000</text>
+<line class="f-line" x1="202" y1="88" x2="557" y2="88" marker-end="url(#f-arrow)"/>
+<text class="f-s" x="380" y="120" text-anchor="middle">SYN+ACK · seq=5000, ack=1001</text>
+<line class="f-line" x1="558" y1="128" x2="203" y2="128" marker-end="url(#f-arrow)"/>
+<text class="f-s" x="380" y="160" text-anchor="middle">ACK · ack=5001</text>
+<line class="f-line" x1="202" y1="168" x2="557" y2="168" marker-end="url(#f-arrow)"/>
+<text class="f-s" x="380" y="208" text-anchor="middle">… 데이터 바이트 1001번부터, 5001번부터 양방향 …</text>
+<text class="f-s" x="70" y="300" text-anchor="middle">연결 종료</text>
+<text class="f-s" x="380" y="245" text-anchor="middle">FIN · seq=u</text>
+<line class="f-line" x1="202" y1="253" x2="557" y2="253" marker-end="url(#f-arrow)"/>
+<text class="f-s" x="380" y="283" text-anchor="middle">ACK · ack=u+1</text>
+<line class="f-line" x1="558" y1="291" x2="203" y2="291" marker-end="url(#f-arrow)"/>
+<text class="f-s" x="380" y="321" text-anchor="middle">FIN · seq=w</text>
+<line class="f-line" x1="558" y1="329" x2="203" y2="329" marker-end="url(#f-arrow)"/>
+<text class="f-s" x="380" y="359" text-anchor="middle">ACK · ack=w+1</text>
+<line class="f-line" x1="202" y1="367" x2="557" y2="367" marker-end="url(#f-arrow)"/>
+<line class="f-ink" x1="192" y1="372" x2="192" y2="400"/><text class="f-s" x="182" y="392" text-anchor="end">TIME_WAIT</text>
+</svg>
+<figcaption>시작 번호 1000과 5000은 설명용이다. 실제 시작 번호는 연결마다 예측하기 어렵게 고른다. u, w는 각 방향 마지막 데이터 다음 번호다.</figcaption>
+</figure>
+<p>닫을 때는 방향마다 따로 끝냅니다. 더 보낼 것이 없는 쪽이 FIN을 보내고 상대가 ACK로 확인하면 그 방향만 닫힙니다(반대 방향은 아직 보낼 수 있습니다). 상대도 FIN을 보내고 확인받으면 연결이 끝나므로 보통 네 번 오갑니다(서버의 ACK와 FIN이 한 세그먼트로 합쳐지면 세 번). 먼저 닫은 쪽은 마지막 ACK가 사라졌을 때 다시 보내 주려고, 그리고 늦게 도착한 옛 세그먼트가 새 연결에 섞이지 않게 하려고 <b>TIME_WAIT</b> 상태로 최대 세그먼트 수명의 두 배(2MSL) 동안 기다립니다. 비정상 상황에서는 RST로 연결을 즉시 끊습니다.</p>
 <p>TCP는 데이터에 대응하는 바이트 순서 번호를 써서 빠진 부분이나 중복을 구별합니다. 다음 그림에서는 데이터 시작을 상대 오프셋 0으로 두고, 첫 3바이트가 빠진 동안 뒤의 4바이트가 도착했다고 가정합니다. 수신쪽이 먼저 온 뒤쪽 바이트를 저장해 둘 공간이 있습니다.</p>
 <figure class="fig">
 <svg class="fig-svg" viewBox="0 0 760 302" role="img" aria-label="데이터의 첫 바이트 0~2가 손실된다. 바이트 3~6을 받은 수신자는 ACK 0을 알리고, 바이트 0~2가 재전송되면 ACK 7을 알린다.">
@@ -64,8 +91,20 @@
 </figure>
 <p><b class="key">ACK</b>는 수신 TCP가 확인하는 번호입니다. 3~6이 와도 먼저 필요한 0이 빠져 있으면 누적 확인 번호는 0에 남습니다. 송신 TCP가 재전송 타이머와 확인 응답 등의 신호로 손실을 판단해 0~2를 다시 보낼 수 있습니다. 빠진 0~2가 도착하면 0~6이 이어져 수신 TCP는 애플리케이션에 순서대로 바이트를 내줄 수 있습니다.</p>
 <p>TCP의 신뢰성은 연결이 작동할 때 바이트를 순서대로 전달하고 손실과 중복을 복구하는 전송의 성질입니다. 오래 끊겨 연결이 실패하면 끝까지 성공할 수 없습니다. 수신 TCP가 ACK를 보냈다는 사실로 상대 앱이 읽기나 저장을 끝냈다고 판단할 수도 없습니다. 그런 확인이 필요하면 애플리케이션의 규칙으로 따로 만듭니다.</p>
+<p>이런 일을 하려고 TCP는 세그먼트마다 헤더를 붙입니다. <span class="tag memo">외우기</span> 옵션이 없으면 TCP 헤더는 20바이트(옵션을 넣으면 최대 60바이트), UDP 헤더는 늘 8바이트입니다.</p>
+<div class="table-wrap"><table><thead><tr><th scope="col">TCP 헤더 필드</th><th scope="col">크기</th><th scope="col">UDP 헤더 필드</th><th scope="col">크기</th></tr></thead><tbody>
+<tr><td>출발 포트 / 도착 포트</td><td>16비트씩</td><td>출발 포트 / 도착 포트</td><td>16비트씩</td></tr>
+<tr><td>순서 번호(이 세그먼트 첫 바이트의 번호)</td><td>32비트</td><td>길이(헤더+데이터, 바이트)</td><td>16비트</td></tr>
+<tr><td>확인 번호(다음에 받을 바이트 번호)</td><td>32비트</td><td>체크섬</td><td>16비트</td></tr>
+<tr><td>헤더 길이(32비트 단어 수) · 예약</td><td>4비트 · 4비트</td><td></td><td></td></tr>
+<tr><td>제어 비트(SYN·ACK·FIN·RST·PSH·URG 등)</td><td>8비트</td><td></td><td></td></tr>
+<tr><td>윈도(받을 수 있는 바이트 수, 다음 장)</td><td>16비트</td><td></td><td></td></tr>
+<tr><td>체크섬 / 긴급 포인터</td><td>16비트씩</td><td></td><td></td></tr>
+</tbody></table></div>
+<p>TCP 칸을 더하면 16+16+32+32+4+4+8+16+16+16 = 160비트 = 20바이트입니다. 헤더 길이 칸은 4비트라 최대 15이고, 단위가 4바이트이므로 최대 60바이트까지 표현합니다. UDP 체크섬은 IPv4에서는 0으로 두어 생략할 수 있지만 IPv6에서는 반드시 계산합니다.</p>
 <div class="check" data-q="q1"></div>
 <div class="check" data-q="q2"></div>
+<div class="check" data-q="q9"></div>
 
 <h2>TCP 스트림에는 앱이 쓴 경계가 없다</h2>
 <p>앱이 줄바꿈을 붙인 <code>hi</code>와 <code>cat</code>을 각각 쓴다면 전체 데이터는 줄바꿈까지 7바이트입니다. 받는 쪽의 한 번 읽기에 같은 크기의 덩어리가 오리라는 보장은 없습니다. 예를 들어 받는 프로그램이 처음 1바이트, 다음 4바이트, 끝의 2바이트를 따로 얻을 수 있습니다.</p>
@@ -117,6 +156,7 @@ assert not buffer
 arrived_datagrams = [writes[1], writes[0]]
 for datagram in arrived_datagrams:
     print(&quot;UDP datagram:&quot;, repr(datagram))</code></pre>
+<p class="small">실행 결과</p>
 <pre data-output><code>TCP read lengths: [1, 4, 2]
 app message: hi
 app message: cat

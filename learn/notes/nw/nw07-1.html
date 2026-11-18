@@ -29,6 +29,16 @@
 
 <h2>링크 안에서 전달하는 단위</h2>
 <p>이더넷에서 프레임 하나는 링크에서 보낼 데이터 단위입니다. 헤더에는 출발지와 목적지 MAC 주소가 들어가고 그 안에 IP 패킷을 실을 수 있습니다. IP 패킷의 목적지 주소는 통신하려는 끝 장치를 나타냅니다. 이더넷 프레임의 목적지 MAC은 지금 링크에서 먼저 받아야 할 장치를 나타냅니다. 라우터가 다음 링크로 보낼 때 그 링크의 주소와 규칙으로 다시 감쌉니다.</p>
+<p><b class="key">MAC 주소</b>는 네트워크 인터페이스(랜카드, Wi-Fi 칩)에 붙은 48비트 링크 계층 주소로, <code>02:00:00:00:00:25</code>처럼 16진수 두 자리씩 여섯 묶음으로 씁니다. 제조사가 넣는 주소는 앞 24비트가 IEEE가 제조사에 배정한 번호(OUI)입니다. 첫 바이트의 가장 낮은 비트가 1이면 여러 장치가 받는 그룹 주소이고, 모든 비트가 1인 <code>ff:ff:ff:ff:ff:ff</code>는 같은 링크의 모든 장치가 받는 <b class="key">브로드캐스트</b> 주소입니다. 첫 바이트의 둘째 비트가 1이면 제조사 번호가 아니라 소프트웨어가 정한 주소(로컬 관리)이며, 요즘 휴대폰이 Wi-Fi마다 무작위로 바꿔 쓰는 MAC이 이런 주소입니다. 이 장의 <code>02:…</code> 주소도 이 표시가 붙은 예입니다. IP 주소가 망을 옮기면 바뀌는 것과 달리, MAC은 같은 링크 안에서 장치를 구별하는 데만 씁니다.</p>
+<p>이더넷 프레임(Ethernet II)의 칸은 다음과 같습니다. <span class="tag memo">외우기</span></p>
+<div class="table-wrap"><table><thead><tr><th scope="col">칸</th><th scope="col">크기</th><th scope="col">내용</th></tr></thead><tbody>
+<tr><td>목적지 MAC</td><td>6바이트</td><td>이 링크에서 받을 장치(또는 브로드캐스트)</td></tr>
+<tr><td>출발지 MAC</td><td>6바이트</td><td>이 링크에서 보낸 인터페이스</td></tr>
+<tr><td>타입(EtherType)</td><td>2바이트</td><td>안에 실은 것: IPv4는 0x0800, ARP는 0x0806, IPv6는 0x86DD</td></tr>
+<tr><td>데이터</td><td>46~1500바이트</td><td>IP 패킷 등. 46바이트보다 짧으면 채움 바이트를 붙인다</td></tr>
+<tr><td>FCS</td><td>4바이트</td><td>오류 검출용 CRC. 틀리면 받은 쪽이 버린다(재전송은 하지 않음)</td></tr>
+</tbody></table></div>
+<p>데이터 칸의 최대 1500바이트가 이더넷의 <b class="key">MTU</b>(한 프레임에 실을 수 있는 최대 IP 패킷 크기)입니다. 실제 선 위에서는 프레임 앞에 동기를 맞추는 8바이트(프리앰블과 시작 표시)가 더 나가고, 프레임 사이에 12바이트 길이의 쉬는 간격을 둡니다.</p>
 <p>연습에는 IPv4 하나와 이더넷 인터페이스 하나를 씁니다. 내 주소는 10.0.0.2/24, 기본 라우터는 10.0.0.1입니다. /24에서 10.0.0.37은 같은 연결 네트워크에 있습니다. 203.0.113.10은 문서 예시에 쓰는 주소이고 이 연결 네트워크에는 없습니다.</p>
 <div class="check" data-q="q1"></div>
 <div class="table-wrap"><table><thead><tr><th scope="col">최종 IPv4 목적지</th><th scope="col">다음으로 보낼 IPv4</th><th scope="col">첫 링크에서 확인할 MAC</th></tr></thead><tbody><tr><td>10.0.0.37</td><td>10.0.0.37</td><td>가까운 서버의 MAC</td></tr><tr><td>203.0.113.10</td><td>10.0.0.1</td><td>기본 라우터의 MAC</td></tr></tbody></table></div>
@@ -37,7 +47,10 @@
 <rect class="f-box" x="42" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="135" y="61" text-anchor="middle">경로 선택</text><text class="f-s" x="135" y="89" text-anchor="middle">목적지 IPv4로 검사</text><text class="f-s" x="135" y="110" text-anchor="middle">직접 전달 / 다음 라우터</text><line class="f-line" x1="235" y1="84" x2="278" y2="84" marker-end="url(#f-arrow)"/><rect class="f-soft" x="287" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="380" y="61" text-anchor="middle">ARP 확인</text><text class="f-s" x="380" y="89" text-anchor="middle">다음 IPv4의 MAC</text><text class="f-s" x="380" y="110" text-anchor="middle">같은 링크의 장치</text><line class="f-line" x1="480" y1="84" x2="523" y2="84" marker-end="url(#f-arrow)"/><rect class="f-box" x="532" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="625" y="61" text-anchor="middle">프레임 전송</text><text class="f-s" x="625" y="89" text-anchor="middle">MAC으로 링크를 전달</text><text class="f-s" x="625" y="110" text-anchor="middle">패킷에 최종 목적지 IP</text>
 </svg><figcaption>네트워크 주소를 바꾸는 장치가 없는 이 예에서 라우터를 향한 프레임에도 먼 서버의 IPv4 목적지가 남습니다.</figcaption></figure>
 <h2>다음 IPv4를 알지만 MAC을 모를 때</h2>
-<p>ARP는 IPv4 주소와 링크의 하드웨어 주소를 연결합니다. 이더넷 예에서는 다음으로 받을 IPv4 주소를 넣은 ARP 요청을 같은 링크에 브로드캐스트합니다. 그 주소에 대응하는 장치가 자신의 MAC을 응답하면, 보낸 장치는 결과를 일정 시간 보관할 수 있습니다. 라우터를 넘어서 먼 서버의 MAC을 알아오는 과정은 이 예의 직접 전달 단계에 필요하지 않습니다. IPv6의 이웃 탐색은 IPv4 ARP와 다른 프로토콜을 씁니다.</p>
+<p>ARP는 IPv4 주소와 링크의 하드웨어 주소를 연결합니다. 이더넷 예에서는 다음으로 받을 IPv4 주소를 넣은 ARP 요청을 같은 링크에 브로드캐스트합니다. 그 주소에 대응하는 장치가 자신의 MAC을 응답하면, 보낸 장치는 결과를 일정 시간 보관할 수 있습니다. 라우터를 넘어서 먼 서버의 MAC을 알아오는 과정은 이 예의 직접 전달 단계에 필요하지 않습니다. IPv6에서는 같은 일을 ICMPv6의 이웃 탐색(NDP)이 브로드캐스트 대신 멀티캐스트로 합니다.</p>
+<p>ARP 응답은 요청한 장치에게만 보냅니다(유니캐스트). 보관한 대응표를 <b>ARP 캐시</b>라 하며, 항목은 일정 시간이 지나면 지워져 다시 묻게 됩니다. ARP에는 인증이 없어서 다른 장치가 거짓 응답을 보내 라우터 행세를 하는 공격(ARP 스푸핑)이 가능하다는 점도 알아 둡니다.</p>
+<h2>스위치는 MAC 주소를 배워 프레임을 골라 보낸다</h2>
+<p>오늘날 유선 이더넷은 장치들을 <b class="key">스위치</b>에 한 선씩 연결합니다. 스위치는 프레임이 들어온 포트와 그 프레임의 출발지 MAC을 표(MAC 주소 테이블)에 적어 둡니다. 이것을 <b>자기 학습</b>이라 합니다. 프레임을 내보낼 때는 목적지 MAC을 표에서 찾아 그 포트로만 보내고, 표에 없거나 브로드캐스트 주소면 들어온 포트를 뺀 모든 포트로 내보냅니다(플러딩). 스위치는 IP 주소를 보지 않는 링크 계층 장치이고, 같은 스위치들로 이어진 장치 전체가 하나의 브로드캐스트 범위를 이룹니다. 라우터는 이 범위를 넘기지 않으므로, ARP 요청은 라우터 너머로 가지 않습니다.</p>
 <div class="check" data-q="q4"></div><div class="check" data-q="q5"></div>
 <pre data-example="python"><code>from ipaddress import ip_address, ip_network
 

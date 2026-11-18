@@ -57,7 +57,8 @@
 <figcaption>/26의 끝 6비트는 0부터 63까지 변한다. 한 블록의 주소 수는 2⁶=64다.</figcaption>
 </figure>
 <p>192.0.2.77의 마지막 묶음 77을 8비트로 쓰면 <code>01001101</code>입니다. 처음 세 묶음에서 이미 24비트를 썼으므로 이 마지막 묶음에서는 앞의 <code>01</code> 두 비트를 고정합니다. 나머지를 전부 0으로 두면 <code>01000000</code> = 64, 전부 1로 두면 <code>01111111</code> = 127입니다. 따라서 주소 블록은 <code>192.0.2.64/26</code>이고 끝은 <code>192.0.2.127</code>입니다.</p>
-<p><b>서브넷 마스크</b>는 고정 부분을 1, 나머지를 0으로 채운 값입니다. /26에서 첫 세 묶음은 255, 마지막은 <code>11000000</code> = 192여서 255.255.255.192입니다. 주소와 마스크의 각 자리에서 두 비트가 모두 1인 자리만 남기면 블록의 시작 주소를 얻습니다.</p>
+<p><b>서브넷 마스크</b>는 고정 부분을 1, 나머지를 0으로 채운 값입니다. /26에서 첫 세 묶음은 255, 마지막은 <code>11000000</code> = 192여서 255.255.255.192입니다. 주소와 마스크의 각 자리에서 두 비트가 모두 1인 자리만 남기면(비트 AND) 블록의 시작 주소를 얻습니다. 77 AND 192 = <code>01001101</code> AND <code>11000000</code> = <code>01000000</code> = 64입니다.</p>
+<p>예전에는 첫 비트들로 주소의 등급(<b>클래스</b>)을 정해 A는 /8, B는 /16, C는 /24로 네트워크 크기가 고정됐습니다. 이 방식은 주소를 크게 낭비해서, 1993년부터 경계를 아무 비트에나 둘 수 있는 CIDR(Classless Inter-Domain Routing, 지금 기준은 RFC 4632)로 바뀌었습니다. 오늘날 라우팅에서는 클래스를 보지 않고 접두사 길이만 봅니다.</p>
 <div class="check" data-q="q1"></div>
 <div class="check" data-q="q2"></div>
 
@@ -114,6 +115,7 @@ print(&quot;/31:&quot;, &quot; &quot;.join(map(str, point_to_point.hosts())))
 v6 = ip_interface(&quot;2001:db8:1234:56::abcd/64&quot;)
 print(v6.ip.exploded)
 print(v6.network, v6.network.num_addresses)</code></pre>
+<p class="small">실행 결과</p>
 <pre data-output><code>192.0.2.64/26 255.255.255.192
 total: 64
 ordinary hosts: 192.0.2.65 192.0.2.126

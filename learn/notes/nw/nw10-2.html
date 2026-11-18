@@ -28,7 +28,7 @@
 <div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>RTT의 뜻과 제한 시간 내 응답률을 설명한다.</li><li>응답한 값의 중앙값과 백분위수를 계산한다.</li><li>경로 중간의 빈 응답만으로 장애를 단정하기 어려운 이유를 설명한다.</li></ul></div>
 
 <h2>가서 돌아온 시간을 잰다</h2>
-<p>네트워크 확인에서 RTT는 요청이 나간 시각부터 응답이 돌아온 시각까지의 왕복 시간입니다. 오고 가는 경로와 서비스가 응답을 만드는 시간이 다를 수 있어 RTT를 절반으로 나눠 항상 정확한 편도 시간을 얻지는 못합니다. <code>ping</code>은 흔히 ICMP 에코 요청과 응답을 이용합니다. HTTP 서비스의 경로나 응답 형식을 검사하는 작업과는 다릅니다.</p>
+<p>네트워크 확인에서 RTT는 요청이 나간 시각부터 응답이 돌아온 시각까지의 왕복 시간입니다. 오고 가는 경로와 서비스가 응답을 만드는 시간이 다를 수 있어 RTT를 절반으로 나눠 항상 정확한 편도 시간을 얻지는 못합니다. <code>ping</code>은 흔히 ICMP 에코 요청과 응답을 이용합니다. <b class="key">ICMP</b>는 IP와 함께 쓰는 오류·진단 메시지 프로토콜로, 에코 요청은 타입 8, 에코 응답은 타입 0입니다. 포트가 없는 IP 수준의 확인이므로 HTTP 서비스의 경로나 응답 형식을 검사하는 작업과는 다릅니다. 방화벽이 ICMP를 막아 두는 서버도 많아서, ping에 답이 없어도 웹 서비스는 정상일 수 있습니다.</p>
 <div class="check" data-q="q1"></div>
 <h2>미응답을 빠른 기록처럼 더하지 않는다</h2>
 <p>설명용 데이터는 시도 8개입니다. 제한 시간 내에 응답이 돌아오면 경과 시간을 기록했고, 두 번은 응답이 없어 빈 값으로 남겼습니다.</p>
@@ -36,7 +36,7 @@
 <figure class="fig"><svg class="fig-svg" viewBox="0 0 760 268" role="img" aria-label="여덟 시도에서 20,24,미응답,22,34,미응답,20,28밀리초">
 <line class="f-line" x1="91" y1="190" x2="650" y2="190"/><line class="f-line" x1="92" y1="190" x2="92" y2="38"/><line class="f-dash" x1="92" y1="190" x2="649" y2="190"/><text class="f-s" x="76" y="194" text-anchor="end">0</text><line class="f-dash" x1="92" y1="160" x2="649" y2="160"/><text class="f-s" x="76" y="164" text-anchor="end">10</text><line class="f-dash" x1="92" y1="130" x2="649" y2="130"/><text class="f-s" x="76" y="134" text-anchor="end">20</text><line class="f-dash" x1="92" y1="100" x2="649" y2="100"/><text class="f-s" x="76" y="104" text-anchor="end">30</text><line class="f-dash" x1="92" y1="70" x2="649" y2="70"/><text class="f-s" x="76" y="74" text-anchor="end">40</text><circle cx="124" cy="130" r="5" class="f-fill"/><text class="f-s" x="124" y="211" text-anchor="middle">1</text><circle cx="196" cy="118" r="5" class="f-fill"/><text class="f-s" x="196" y="211" text-anchor="middle">2</text><text class="f-t" x="268" y="184" text-anchor="middle">×</text><text class="f-s" x="268" y="211" text-anchor="middle">3</text><circle cx="340" cy="124" r="5" class="f-fill"/><text class="f-s" x="340" y="211" text-anchor="middle">4</text><circle cx="412" cy="88" r="5" class="f-fill"/><text class="f-s" x="412" y="211" text-anchor="middle">5</text><text class="f-t" x="484" y="184" text-anchor="middle">×</text><text class="f-s" x="484" y="211" text-anchor="middle">6</text><circle cx="556" cy="130" r="5" class="f-fill"/><text class="f-s" x="556" y="211" text-anchor="middle">7</text><circle cx="628" cy="106" r="5" class="f-fill"/><text class="f-s" x="628" y="211" text-anchor="middle">8</text><text class="f-s" x="99" y="26" text-anchor="middle">RTT(ms)</text><text class="f-s" x="651" y="229" text-anchor="middle">시도 번호</text><text class="f-s" x="360" y="247" text-anchor="middle">×  제한 시간 내 미응답</text>
 </svg><figcaption>×는 시간을 측정하지 못한 시도입니다. RTT 0을 뜻하지 않습니다.</figcaption></figure>
-<p>미응답은 2/8=25%입니다. 응답한 RTT만 정렬하면 20, 20, 22, 24, 28, 34ms입니다. 가운데 두 수의 평균은 23ms입니다. 이 예에서 95번째 백분위수를 가까운 순위법으로 구하면 순위는 올림(0.95×6)=6이고 값은 34ms입니다. 백분위수 계산법과 표본 수가 다르면 값이 달라질 수 있습니다.</p>
+<p>미응답은 2/8=25%입니다. 응답한 RTT만 정렬하면 20, 20, 22, 24, 28, 34ms입니다. 가운데 두 수의 평균은 23ms입니다. 이 예에서 95번째 백분위수를 가까운 순위법으로 구하면 순위는 올림(0.95×6)=6이고 값은 34ms입니다. 백분위수 계산법과 표본 수가 다르면 값이 달라질 수 있습니다. 응답한 RTT가 시도마다 얼마나 흔들리는지(이 예에서는 20~34ms)를 <b>지터</b>라 부르며, 음성·영상 통화에서는 평균보다 이 변동이 더 문제가 됩니다.</p>
 <div class="check" data-q="q2"></div><div class="check" data-q="q3"></div><div class="check" data-q="q4"></div>
 <pre data-example="python"><code>from math import ceil
 from statistics import median
@@ -55,7 +55,7 @@ print(&quot;가까운 순위 p95:&quot;, observed[rank - 1], &quot;ms&quot;)</co
 중앙값: 23.0 ms
 가까운 순위 p95: 34 ms</code></pre>
 <h2>중간 장치의 응답과 서비스 장애를 나눈다</h2>
-<p>경로를 관찰하는 traceroute 계열 도구는 먼저 도달할 수 있는 홉 수를 제한한 요청을 보내고, 그 범위를 단계별로 늘립니다. 중간 라우터가 제한이 끝났음을 알려 주면 어느 홉에서 답이 돌아왔는지 표시할 수 있습니다. 한 홉이 답을 내지 않아도 그 뒤의 홉은 답할 수 있습니다. 중간 장치가 이런 확인 응답을 제한하거나, 서로 다른 시도가 다른 경로를 지날 수 있기 때문입니다.</p>
+<p>경로를 관찰하는 traceroute 계열 도구는 IP 헤더의 TTL(IPv6는 Hop Limit)을 1로 둔 패킷부터 보내고 2, 3, …으로 늘립니다. 라우터는 패킷을 넘길 때마다 TTL을 1 줄이고, 0이 되면 패킷을 버리면서 보낸 쪽에 ICMP 시간 초과(Time Exceeded, 타입 11) 메시지를 돌려줍니다. 그래서 TTL=k인 패킷은 k번째 라우터의 주소와 그때까지의 RTT를 알려 줍니다. 리눅스·macOS의 traceroute는 보통 높은 번호의 UDP 포트로, Windows의 <code>tracert</code>는 ICMP 에코로 탐침을 보내며, 목적지에 닿으면 각각 ICMP 포트 도달 불가나 에코 응답이 돌아와 끝납니다. 보통 홉마다 세 번 재고, 답이 없으면 <code>*</code>로 표시합니다. 한 홉이 답을 내지 않아도 그 뒤의 홉은 답할 수 있습니다. 중간 장치가 이런 확인 응답을 제한하거나, 서로 다른 시도가 다른 경로를 지날 수 있기 때문입니다.</p>
 <div class="check" data-q="q5"></div>
 <p>확인 응답이 정해 둔 시간 내 돌아오지 않았다고 해서 어느 쪽 패킷이 사라졌는지 바로 정할 수는 없습니다. 측정 대상, 시각, 시도 수, 시간 제한, 응답한 시간의 중앙값이나 상위 백분위수를 함께 적습니다. 웹 요청에 문제가 있다면 마지막 단계의 HTTP 응답도 따로 확인합니다.</p>
 <div class="check" data-q="q6"></div>

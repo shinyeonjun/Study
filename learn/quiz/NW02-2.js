@@ -63,9 +63,9 @@
   {
     "id": "q4",
     "type": "num",
-    "q": "성공한 API의 JSON 본문이 {\"count\": 2}입니다. count의 값은?",
-    "answer": 2,
-    "a": "중괄호 안에서 count라는 키의 값이 정수 2입니다."
+    "q": "예제 서버는 json.dumps({\"count\": 2}).encode(\"utf-8\")로 본문을 만들어 그 길이를 Content-Length에 적습니다. Content-Length 값은? (json.dumps는 기본으로 콜론 뒤에 공백 하나를 넣습니다.)",
+    "answer": 12,
+    "a": "본문은 {\"count\": 2}입니다. 중괄호 2 + 큰따옴표 2 + count 5 + 콜론 1 + 공백 1 + 숫자 1 = 12바이트입니다. 공백이 없던 앞 장의 {\"count\":2}(11바이트)와 1바이트 차이가 납니다."
   },
   {
     "id": "q5",
