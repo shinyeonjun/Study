@@ -20,7 +20,7 @@
 <main class="page">
 <svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
 <header class="chapter">
-<p class="chap-sub">인공지능</p>
+<p class="chap-sub">인공지능 · AI01 AI의 전체 지도</p>
 <p class="chap-num">AI01·2</p>
 <h1>규칙과 학습을 구분하고 AI 계열 연결하기</h1>
 <p class="lead">식물의 수분을 보고 물 주기가 필요한지 분류하는 작은 프로그램을 만듭니다. 사람이 기준을 정할 수도 있고, 과거 기록에 기준을 맞출 수도 있습니다. 출력이 같아 보여도 그 기준을 어떻게 얻었는지에 따라 다른 질문이 생깁니다.</p>
@@ -32,7 +32,7 @@
 <p>사람이 ‘35% 이하에서 물 필요’라고 정해 프로그램에 적었다면, 기준 35는 직접 지정한 규칙입니다. 과거 기록 여러 개에서 평균적인 오류를 줄이도록 기준값을 고르게 하면 그 기준은 <b class="key">자료에서 학습</b>된 값입니다. 출력 규칙의 꼴은 두 경우 모두 <code>수분 ≤ 기준</code>입니다.</p>
 <figure class="fig"><svg class="fig-svg" viewBox="0 0 760 248" role="img" aria-label="후보 기준값은 수분 26%, 36%, 46%다. 20%와 32%는 물 필요, 40%와 52%는 물 불필요로 표시했다.">
 <line class="f-ink" x1="82" y1="166" x2="686" y2="166" marker-end="url(#f-arrow)"/><line class="f-ink" x1="105" y1="163" x2="105" y2="172"/><text class="f-s" x="105" y="190" text-anchor="middle">20</text><line class="f-ink" x1="207" y1="163" x2="207" y2="172"/><text class="f-s" x="207" y="190" text-anchor="middle">26</text><line class="f-ink" x1="309" y1="163" x2="309" y2="172"/><text class="f-s" x="309" y="190" text-anchor="middle">32</text><line class="f-ink" x1="377" y1="163" x2="377" y2="172"/><text class="f-s" x="377" y="190" text-anchor="middle">36</text><line class="f-ink" x1="445" y1="163" x2="445" y2="172"/><text class="f-s" x="445" y="190" text-anchor="middle">40</text><line class="f-ink" x1="547" y1="163" x2="547" y2="172"/><text class="f-s" x="547" y="190" text-anchor="middle">46</text><line class="f-ink" x1="649" y1="163" x2="649" y2="172"/><text class="f-s" x="649" y="190" text-anchor="middle">52</text><line class="f-dash" x1="207" y1="69" x2="207" y2="162"/><line class="f-dash" x1="377" y1="69" x2="377" y2="162"/><line class="f-dash" x1="547" y1="69" x2="547" y2="162"/><rect class="f-over" x="93" y="105" width="24" height="24" rx="3"/><rect class="f-over" x="297" y="105" width="24" height="24" rx="3"/><rect class="f-soft" x="433" y="105" width="24" height="24" rx="3"/><rect class="f-soft" x="637" y="105" width="24" height="24" rx="3"/><text class="f-cap" x="105" y="88" text-anchor="middle">물 필요</text><text class="f-cap" x="309" y="88" text-anchor="middle">물 필요</text><text class="f-cap" x="445" y="88" text-anchor="middle">물 불필요</text><text class="f-cap" x="649" y="88" text-anchor="middle">물 불필요</text><text class="f-cap" x="628" y="222" text-anchor="middle">수분 측정값 (%)</text><text class="f-s" x="377" y="50" text-anchor="middle">후보 기준값</text>
-</svg><figcaption>가운데 기준 36을 고르면 왼쪽 두 표지는 양성, 오른쪽 두 표지는 음성으로 분류된다.</figcaption></figure>
+</svg><figcaption>가운데 기준 36을 고르면 왼쪽 두 기록은 ‘물 필요’, 오른쪽 두 기록은 ‘물 불필요’로 분류된다.</figcaption></figure>
 <p>연습 기록 네 건의 측정값이 20, 32, 40, 52%이고 앞의 두 건은 사람이 ‘물 필요’로 분류했습니다. 이 판단이 현재 문제에서 맞추고 싶은 <b>정답</b>입니다. 서로 이웃한 수분 값의 중점인 26, 36, 46을 후보로 잡습니다. 예측값과 정답이 다른 개수를 하나씩 세면 다음 표가 나옵니다.</p>
 <div class="table-wrap"><table><thead><tr><th scope="col">기준</th><th scope="col">물 필요로 예측한 수분 값</th><th scope="col">잘못 분류한 건수</th></tr></thead><tbody><tr><td>26%</td><td>20</td><td>1</td></tr><tr><td>36%</td><td>20, 32</td><td>0</td></tr><tr><td>46%</td><td>20, 32, 40</td><td>1</td></tr></tbody></table></div>
 <div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
@@ -62,11 +62,33 @@ for value in (33, 36, 43):
 <div class="check" data-q="q3"></div><div class="check" data-q="q4"></div>
 <h2>네 이름은 과제와 방법을 서로 다른 기준으로 분류한다</h2>
 <div class="table-wrap"><table><thead><tr><th scope="col">이름</th><th scope="col">이름을 붙이는 기준</th><th scope="col">이 교재에서 이어지는 내용</th></tr></thead><tbody><tr><td>인공지능(AI)</td><td>판단·계획·예측·생성·행동 같은 문제의 연구 분야</td><td>학습하는 시스템과 주어진 모형으로 탐색하는 시스템</td></tr><tr><td>머신러닝(ML)</td><td>자료나 경험을 써서 과제에서 사용할 모형이나 결정을 학습</td><td>수분 값으로 사람의 분류 판단을 예측하는 학습</td></tr><tr><td>딥러닝(DL)</td><td>여러 층의 신경망을 학습해 모형을 만드는 계열</td><td>영상에서 잎 상태를 분류하는 신경망, 생성 모형</td></tr><tr><td>강화학습(RL)</td><td>행동이 보상과 이후 경험에 영향을 주는 문제의 행동 규칙을 학습</td><td>여러 번 움직여 목표에 도달하도록 경험에서 학습</td></tr></tbody></table></div>
-<p>머신러닝은 인공지능의 여러 접근 중 하나입니다. 딥러닝은 머신러닝의 모형 계열이고, 강화학습은 보상이 주어지는 상호작용에서 행동을 배우는 문제의 계열입니다. 사진 분류용 신경망은 지도학습에 딥러닝을 쓸 수 있습니다. 작은 지도에서 위치와 행동별 점수를 표에 저장하는 강화학습은 신경망 없이 실행할 수 있습니다. 상황이 복잡해 표 대신 신경망으로 행동을 평가하면 딥러닝을 사용하는 강화학습이 됩니다.</p>
+<p>머신러닝은 인공지능의 여러 접근 중 하나입니다. 자주 인용되는 정의(Mitchell, 1997)로는, 프로그램이 과제 T에서 성능 척도 P로 잰 성적이 경험 E를 쌓을수록 나아지면 E로부터 <b>학습</b>한다고 말합니다. 앞의 예에서 T는 물 필요 분류, P는 잘못 분류한 건수, E는 네 건의 기록입니다. 딥러닝은 머신러닝 안의 모형 계열(여러 층의 신경망)이고, 강화학습은 머신러닝의 세 갈래(지도학습·비지도학습·강화학습) 가운데 하나로, 보상이 주어지는 상호작용에서 행동을 배우는 문제의 계열입니다. 그래서 딥러닝과 강화학습은 포함 관계가 아니라 일부가 겹치는 관계입니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 250" role="img" aria-label="가장 바깥 칸이 인공지능, 그 안에 머신러닝 칸이 있다. 머신러닝 안에 딥러닝과 강화학습 두 칸이 일부 겹쳐 있고, 겹친 곳이 심층 강화학습이다. 인공지능 안이지만 머신러닝 밖에는 탐색·논리·계획이 있다.">
+<rect class="f-none" x="20" y="14" width="720" height="226" rx="6"/>
+<text class="f-cap" x="40" y="38">인공지능(AI)</text>
+<text class="f-s" x="720" y="38" text-anchor="end">학습 없이도 쓰는 방법: 탐색·논리·계획(AI02~AI06)</text>
+<rect class="f-soft" x="50" y="54" width="660" height="172" rx="6"/>
+<text class="f-cap" x="70" y="78">머신러닝(ML)</text>
+<text class="f-s" x="690" y="78" text-anchor="end">지도학습·비지도학습·강화학습</text>
+<rect class="f-none" x="90" y="98" width="330" height="112" rx="6"/>
+<rect class="f-none" x="330" y="98" width="340" height="112" rx="6"/>
+<text class="f-cap" x="210" y="140" text-anchor="middle">딥러닝(DL)</text>
+<text class="f-s" x="210" y="164" text-anchor="middle">여러 층 신경망</text>
+<text class="f-cap" x="545" y="140" text-anchor="middle">강화학습(RL)</text>
+<text class="f-s" x="545" y="164" text-anchor="middle">보상으로 행동 학습</text>
+<text class="f-s" x="375" y="150" text-anchor="middle">심층 RL</text>
+</svg><figcaption>칸의 넓이는 분야의 크기를 뜻하지 않는다. 표를 쓰는 강화학습은 딥러닝과 겹치지 않는 오른쪽 부분이다.</figcaption></figure>
+<p>강화학습과 딥러닝의 관계를 예로 보면 다음과 같습니다. 사진 분류용 신경망은 지도학습에 딥러닝을 쓸 수 있습니다. 작은 지도에서 위치와 행동별 점수를 표에 저장하는 강화학습은 신경망 없이 실행할 수 있습니다. 상황이 복잡해 표 대신 신경망으로 행동을 평가하면 딥러닝을 사용하는 강화학습이 됩니다.</p>
 <p>영문 <em>inference</em>도 문맥에 따라 다릅니다. 지난 장에서는 사실에서 결론을 얻는 추론을 뜻했습니다. 머신러닝 코드에서 ‘학습 뒤 추론’은 학습한 모형을 새 입력에 적용해 결과를 얻는 단계입니다. 다음에 <a href="../../unit.html?u=ML01">머신러닝의 문제 정의</a>와 <a href="../../unit.html?u=RL01">행동으로 배우기</a>를 이어 읽을 수 있습니다.</p>
 <div class="check" data-q="q5"></div><div class="check" data-q="q6"></div>
 <h2>한눈에 정리</h2>
-<ul><li>직접 정한 규칙과 학습한 모형은 같은 입력·출력을 쓸 수 있고 기준을 얻는 방법이 다르다.</li><li>새 기록을 이용해 과거 자료에 맞춘 기준의 예측을 평가한다.</li><li>딥러닝은 모형을 만드는 계열, 강화학습은 경험으로 행동을 배우는 문제의 계열이다.</li></ul>
+<div class="table-wrap"><table><thead><tr><th scope="col">핵심어</th><th scope="col">기억할 기준</th></tr></thead><tbody>
+<tr><td><b class="key">직접 정한 규칙</b></td><td>사람이 기준을 정해 프로그램에 적는다</td></tr>
+<tr><td><b class="key">학습</b></td><td>자료·경험에서 성능 기준(예: 오류 수)이 좋아지도록 기준이나 모형을 고른다</td></tr>
+<tr><td><b class="key">평가</b></td><td>학습에 쓰지 않은 새 기록에서 예측을 정답과 대조한다</td></tr>
+<tr><td><b class="key">AI ⊃ ML ⊃ DL, RL</b></td><td>DL은 모형 계열, RL은 문제 계열. 둘은 겹치는 부분(심층 RL)이 있다</td></tr>
+</tbody></table></div>
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>규칙과 학습은 기준을 얻는 방법이 다르고, 머신러닝 안에서 딥러닝(모형)과 강화학습(문제)은 서로 다른 축이다.</p></div>
 
 <h2>참고 자료</h2>
 <ul><li><a href="https://aima.cs.berkeley.edu/contents.html">Russell·Norvig · 탐색·추론·계획·학습의 장별 구성</a></li><li><a href="https://scikit-learn.org/stable/getting_started.html">scikit-learn · 학습과 예측 예제</a></li><li><a href="http://incompleteideas.net/book/the-book-2nd.html">Sutton·Barto · Reinforcement Learning 2판</a></li></ul>

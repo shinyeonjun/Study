@@ -39,7 +39,7 @@
 
 <h2>계획은 상태를 바꾸는 행동 순서다</h2>
 <p>첫 상태에서 받은 편지함에 자료가 있다. 할 일은 자료를 꺼내고, 요약하고, 보내는 것이다. 자료를 보관하는 행동도 가능하다고 하자. 보관함에서 자료를 꺼내는 행동은 이 모형의 행동 목록에 없다. 일을 진행하기 전에 현재 어떤 사실이 참인지, 각각의 행동이 가능해지려면 무엇이 참이어야 하는지 적는다.</p>
-<p>모형의 사실 이름은 <code>inbox</code>(자료가 받은 편지함에 있음), <code>raw</code>(작업 중인 원본이 있음), <code>summary</code>(요약이 있음), <code>archived</code>(원본을 보관함), <code>sent</code>(보냄)이다. 시작 상태는 {inbox}다. 목표 조건은 <code>sent</code>가 참인 상태라는 뜻의 {sent}다. 이 유한 합성 모형에서는 현재 참인 사실만 집합에 넣고, 빠진 사실은 거짓으로 해석한다. 실제 자료의 ‘아직 모름’까지 거짓으로 취급하려면 별도 가정이 필요하다.</p>
+<p>모형의 사실 이름은 <code>inbox</code>(자료가 받은 편지함에 있음), <code>raw</code>(작업 중인 원본이 있음), <code>summary</code>(요약이 있음), <code>archived</code>(원본을 보관함), <code>sent</code>(보냄)이다. 시작 상태는 {inbox}다. 목표 조건은 <code>sent</code>가 참인 상태라는 뜻의 {sent}다. 이 유한 합성 모형에서는 현재 참인 사실만 집합에 넣고, 빠진 사실은 거짓으로 해석한다. 이를 <b class="key">닫힌 세계 가정</b>(closed-world assumption)이라 한다. 실제 자료에는 ‘아직 모름’이 있을 수 있으므로, 그것까지 거짓으로 취급해도 되는지는 문제마다 따로 판단한다.</p>
 <div class="table-wrap"><table>
 <thead><tr><th scope="col">행동</th><th scope="col">전제</th><th scope="col">추가</th><th scope="col">삭제</th></tr></thead>
 <tbody>
@@ -49,7 +49,7 @@
 <tr><td>store (보관)</td><td>raw</td><td>archived</td><td>raw</td></tr>
 </tbody></table></div>
 <h2>전제가 충족되면 사실을 교체한다</h2>
-<p>행동의 전제 집합이 현재 상태의 부분집합일 때 그 행동을 할 수 있다. 다음 상태는 (현재 상태 − 삭제 집합) ∪ 추가 집합이다. 두 효과 목록에 없는 사실은 유지한다. 여기서는 전제와 목표를 긍정 사실의 집합으로 나타내는 간단한 STRIPS식 표현을 사용한다. 행동은 성공 여부가 확률로 갈리지 않는다고 가정한다.</p>
+<p>행동의 전제 집합이 현재 상태의 부분집합일 때 그 행동을 할 수 있다. 다음 상태는 (현재 상태 − 삭제 집합) ∪ 추가 집합이다. 두 효과 목록에 없는 사실은 유지한다. 행동마다 ‘바뀌지 않는 사실’을 일일이 적지 않아도 되게 하는 이 약속은, 무엇이 그대로인지를 어떻게 표현할지의 문제(프레임 문제, frame problem)를 간단히 처리하는 방법이다. 여기서는 전제와 목표를 긍정 사실의 집합으로 나타내는 간단한 STRIPS식 표현을 사용한다. Russell·Norvig 4판은 이를 넓힌 계획 언어 PDDL로 같은 구조(전제·추가·삭제)를 적는다. 행동은 성공 여부가 확률로 갈리지 않는다고 가정한다.</p>
 <figure class="fig">
 <svg class="fig-svg" viewBox="0 0 760 145" role="img" aria-label="자료 처리의 상태와 실패로 끝나는 보관 분기">
 <rect class="f-box" x="17" y="45" width="151" height="34" rx="3"/>
@@ -122,7 +122,7 @@ else:
 <pre data-output><code>receive -&gt; process -&gt; send
 actions: 3
 final facts: sent, summary</code></pre>
-<p>행동 비용이 달라지면 <a href="ai02-1.html">UCS</a>로 최소 비용 계획을 찾을 수 있다. 실행 후 상황을 관측해 그때마다 다음 행동을 바꿔야 하는 문제에서는 하나의 고정 목록 대신 관측에 따른 선택 규칙이 필요하다. <a href="ai06-2.html">AI06의 순차 결정</a>에서 그 차이를 계산한다.</p>
+<p>이 코드처럼 시작 상태에서 행동을 앞으로 적용해 가며 목표를 찾는 방법을 <b>전진 상태공간 탐색</b>(forward search)이라 한다. 반대로 목표에서 출발해 ‘이 목표를 이루려면 직전에 무엇이 참이어야 하는가’를 거꾸로 계산하는 후진 탐색(backward, regression search)도 있다. 행동 비용이 달라지면 <a href="ai02-1.html">UCS</a>로 최소 비용 계획을 찾을 수 있다. 실행 후 상황을 관측해 그때마다 다음 행동을 바꿔야 하는 문제에서는 하나의 고정 목록 대신 관측에 따른 선택 규칙이 필요하다. <a href="ai06-2.html">AI06의 순차 결정</a>에서 그 차이를 계산한다.</p>
 
 <h2>한눈에 정리</h2>
 <div class="table-wrap"><table>
