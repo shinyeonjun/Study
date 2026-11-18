@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>데이터를 수집하고 시간·중복 기준 정하기 · 빅분기 노트</title>
 <script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e8c'/%3E%3Cpath d='M8 22V10m8 12V14m8 8V6' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
 <link rel="stylesheet" href="../../style.css">
 </head>
 <body data-note="1-06">
@@ -25,13 +26,19 @@
 <h1>데이터를 수집하고 시간·중복 기준 정하기</h1>
 <p class="lead">센서에서 기록을 받았다는 말에는 언제 발생한 것인지, 누가 만든 것인지, 몇 번째 전달인지가 빠져 있습니다. 실제로 집계를 다시 계산할 수 있도록 수집 방법과 기록의 뜻을 먼저 정합니다.</p>
 </header>
-<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>수집 원천과 전달 방식을 목적에 맞춰 선택한다.</li><li>발생 시각과 수집 시각을 구별하고 늦은 기록을 다룬다.</li><li>재전송 중복과 잘못된 자료를 따로 세어 검증한다.</li></ul></div>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>수집 원천과 전달 방식을 목적에 맞춰 선택하고, ETL·Sqoop·Flume·Kafka·크롤링 같은 수집 기술의 역할을 구별한다.</li><li>발생 시각과 수집 시각을 구별하고 늦은 기록을 다룬다.</li><li>재전송 중복과 잘못된 자료를 따로 세어 검증한다.</li></ul></div>
 
 <h2>어떤 기록을 어느 곳에서 얻는가</h2>
 <p>혼잡을 파악하려면 출입 센서 기록, 좌석 예약 표, 창구 대기 기록 등 서로 다른 원천을 모을 수 있습니다. 센서는 입장을 세고, 예약 표는 방문을 계획한 사람의 수를 보여 줍니다. 둘은 같은 사람 수를 측정하는 값이 아닐 수 있습니다. 기록마다 생성 원천과 자료 한 행의 뜻, 측정 단위, 갱신 주기를 먼저 확인합니다.</p>
 <div class="table-wrap"><table><thead><tr><th scope="col">수집 방식</th><th scope="col">쓰는 경우</th><th scope="col">정할 기준</th></tr></thead><tbody><tr><td>파일 일괄 제공</td><td>매일 정리한 예약 파일을 한 번에 받는다</td><td>파일 생성일, 날짜 범위, 형식과 받아야 할 시각</td></tr><tr><td>데이터베이스 조회</td><td>허가된 업무 시스템에서 새 주문이나 변경 건을 가져온다</td><td>키, 변경 시각, 조회 범위와 접근 권한</td></tr><tr><td>API</td><td>문서화된 요청으로 필요한 항목을 가져온다</td><td>요청 입력과 응답 형태, 이용 조건과 갱신 주기</td></tr><tr><td>이벤트·스트림</td><td>기록이 계속 들어올 때 도착하는 대로 처리한다</td><td>어느 시간이 기준인지, 늦은 도착과 중복 처리</td></tr></tbody></table></div>
 <p><b class="key">배치 처리</b>에서는 묶음을 만들어 정해진 시각에 처리합니다. <b>스트림 처리</b>에서는 새 이벤트가 계속 들어오는 상황을 다룹니다. 스트림이라고 지연이 0이 되는 것은 아닙니다. 15분 이내에 안내가 필요한지, 하루 뒤 다시 계산해도 되는지에 따라 수집과 제공의 시간 목표를 정합니다.</p>
 <div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
+<h2>수집 절차와 시험에 나오는 수집 기술 <span class="tag memo">외우기</span></h2>
+<p>데이터는 출처에 따라 <b class="key">내부 데이터</b>(조직 안의 업무 시스템·센서·로그. 수집이 쉽고 형식이 비교적 일정)와 <b class="key">외부 데이터</b>(공공 데이터, 제휴사, 웹·SNS. 이용 조건과 비용, 형식 변환을 따로 검토)로 나눕니다. 교재는 수집 절차를 대략 <b>수집할 데이터 도출 → 목록 작성 → 데이터 소유 기관 파악·협의 → 데이터 유형 확인 → 수집 기술 선정 → 수집 계획서 작성 → 수집 주기 결정 → 수집 실행</b>으로 정리합니다(단계를 묶는 방식은 교재마다 다릅니다).</p>
+<div class="table-wrap"><table><thead><tr><th scope="col">기술</th><th scope="col">하는 일</th><th scope="col">주로 다루는 데이터</th></tr></thead><tbody><tr><td><b class='key'>ETL</b></td><td>원천에서 추출(Extract) → 변환(Transform) → 웨어하우스 등에 적재(Load)</td><td>정형(업무 DB)</td></tr><tr><td><b class='key'>FTP</b></td><td>네트워크로 파일을 주고받는 프로토콜</td><td>파일 단위</td></tr><tr><td><b class='key'>Open API</b></td><td>공개된 인터페이스로 요청해 필요한 항목을 받음</td><td>정형·반정형(JSON, XML)</td></tr><tr><td><b class='key'>Sqoop</b></td><td>관계형 DB와 하둡(HDFS) 사이에 대량 데이터를 옮김</td><td>정형</td></tr><tr><td><b class='key'>Flume</b></td><td>여러 서버의 로그를 이벤트 단위로 모아 저장소로 보냄(Source → Channel → Sink)</td><td>반정형(로그)</td></tr><tr><td><b class='key'>Kafka</b></td><td>발행-구독(publish-subscribe) 방식의 분산 메시징. 대량 스트림을 버퍼링해 여러 소비자에게 전달</td><td>스트림</td></tr><tr><td><b class='key'>크롤링·스크래핑</b></td><td>웹 페이지를 돌며 문서를 모으고(크롤링) 필요한 부분을 추출(스크래핑)</td><td>비정형(웹 문서)</td></tr><tr><td><b class='key'>RSS</b></td><td>사이트가 제공하는 XML 피드로 새 글을 받아 옴</td><td>반정형</td></tr></tbody></table></div>
+<p>이 밖에 Scribe, Chukwa(로그 수집), Rsync(원격 파일 동기화), DBToDB(DB 간 동기화) 등이 함께 나옵니다. 각 기술을 정형·반정형·비정형 중 어디에 넣는지는 교재마다 조금씩 달라서, 시험 대비로는 "무엇을 어디서 어디로 옮기는가"를 먼저 기억하고 분류는 공식 출제기준·교재로 확인합니다. 웹에서 수집할 때는 사이트의 이용 약관과 저작권, 개인정보 포함 여부를 함께 확인합니다.</p>
+<p>수집한 데이터는 분석에 맞게 바꾸는 <b>변환</b>을 거칩니다. 교재에 나오는 변환 기법은 <b>평활화</b>(잡음 제거로 매끄럽게), <b>집계</b>(요약해 차원을 줄임), <b>일반화</b>(특정 값을 더 넓은 범주로), <b>정규화</b>(정해진 범위로 척도 조정), <b>속성 생성</b>(새 속성 추가)입니다. 자세한 처리는 2과목 전처리에서 다룹니다.</p>
+<div class="check" data-q="q9"></div><div class="check" data-q="q10"></div><div class="check" data-q="q11"></div>
 <h2>발생한 시간과 시스템에 도착한 시간을 따로 남긴다</h2>
 <p>입장 센서가 10:12에 기록한 이벤트 e2는 통신을 거쳐 10:19에 서버에 도착했습니다. 구간의 실제 입장을 알고 싶은 분석에서는 <b class="key">발생 시각</b>을 기준으로 10:00 이상 10:15 미만 구간에 넣습니다. 수집 처리율을 살피는 보고서라면 수집 시각을 볼 수 있습니다. 시간대 정보도 남겨 다른 지역의 기록과 비교할 때 같은 기준으로 바꿀 수 있게 합니다.</p>
 <figure class="fig"><svg class="fig-svg" viewBox="0 0 760 220" role="img" aria-label="e2는 10시 12분에 발생하고 10시 19분에 수집된다. 발생 기준으로는 10시 00분에서 15분 사이 구간에 속한다.">
@@ -79,7 +86,7 @@ duplicate 1 invalid 1</code></pre>
 <p>날짜와 시간대가 같은 작은 예라 코드에서 시와 분만 사용했습니다. 원래는 들어온 다섯 줄을 그대로 보관하고, 중복 한 줄과 음수 한 줄이 제외됐다고 기록합니다. 외부 수집은 필요한 항목으로 범위를 좁히고 제공자, 이용 조건, 인가받은 방식, 갱신일을 함께 남깁니다.</p>
 <div class="check" data-q="q5"></div><div class="check" data-q="q6"></div>
 <h2>한눈에 정리</h2>
-<div class="table-wrap"><table><thead><tr><th scope="col">핵심어</th><th scope="col">기억할 뜻</th></tr></thead><tbody><tr><td><b class='key'>원천과 수집 방식</b></td><td>한 건의 의미, 제공된 방식, 시간·권한을 먼저 확인</td></tr><tr><td><b class='key'>발생 시각·수집 시각</b></td><td>업무 사건이 있었던 때와 시스템이 그 기록을 안 때</td></tr><tr><td><b class='key'>중복 제거 기준</b></td><td>값만 비교하는 대신 같은 이벤트인지 식별할 키와 정책을 확인</td></tr></tbody></table></div>
+<div class="table-wrap"><table><thead><tr><th scope="col">핵심어</th><th scope="col">기억할 뜻</th></tr></thead><tbody><tr><td><b class='key'>원천과 수집 방식</b></td><td>한 건의 의미, 제공된 방식, 시간·권한을 먼저 확인. 내부/외부 데이터 구분</td></tr><tr><td><b class='key'>수집 기술</b></td><td>ETL(추출·변환·적재), Sqoop(RDB↔HDFS), Flume(로그), Kafka(발행-구독 메시징), 크롤링, Open API, FTP, RSS</td></tr><tr><td><b class='key'>발생 시각·수집 시각</b></td><td>업무 사건이 있었던 때와 시스템이 그 기록을 안 때</td></tr><tr><td><b class='key'>중복 제거 기준</b></td><td>값만 비교하는 대신 같은 이벤트인지 식별할 키와 정책을 확인</td></tr></tbody></table></div>
 <div class="box sum"><p class="box-k">한 줄 정리</p><p>다시 집계할 수 있는 자료에는 출처, 한 행의 의미, 시간 기준과 중복 처리 기준이 함께 있다.</p></div>
 <p>JSON과 API의 역할은 <a href="../../../learn/notes/nw/nw02-2.html">웹 요청과 API</a>에서 살펴볼 수 있습니다.</p>
 

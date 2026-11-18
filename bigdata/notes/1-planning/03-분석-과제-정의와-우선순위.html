@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>분석 과제의 목표·성공 기준·우선순위 정하기 · 빅분기 노트</title>
 <script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e8c'/%3E%3Cpath d='M8 22V10m8 12V14m8 8V6' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
 <link rel="stylesheet" href="../../style.css">
 </head>
 <body data-note="1-03">
@@ -25,7 +26,7 @@
 <h1>분석 과제의 목표·성공 기준·우선순위 정하기</h1>
 <p class="lead">‘데이터로 운영을 개선하자’라는 목표를 바로 구현하기는 어렵습니다. 무엇을 바꿀지, 어떤 순간에 어떤 정보를 사용할지, 어떤 결과면 성공인지 결정해야 과제가 됩니다.</p>
 </header>
-<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>현장 목표를 관측 단위·입력·출력이 있는 분석 질문으로 옮긴다.</li><li>하향식과 상향식 과제 발굴을 비교한다.</li><li>효과와 실행 가능성, 권한을 구별하여 우선순위를 정한다.</li></ul></div>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>현장 목표를 관측 단위·입력·출력이 있는 분석 질문으로 옮긴다.</li><li>하향식과 상향식 과제 발굴을 비교한다.</li><li>분석 기획 유형(최적화·솔루션·통찰·발견)을 분석 대상·방법으로 분류한다.</li><li>시급성과 난이도로 우선순위를 정하고, 필수 제약(권한 등)은 따로 확인한다.</li></ul></div>
 
 <h2>업무 문제를 정확히 적는다</h2>
 <p>현장의 목표는 ‘도서관 이용 대기를 줄인다’입니다. 이 문장만으로 어느 자료에 모형을 맞출지 정할 수 없습니다. 운영자가 직전에 할 수 있는 결정 하나를 골라 ‘다음 15분이 혼잡할 때 보조 창구를 열지 결정한다’고 적습니다. 이제 자료가 어떤 순간에 필요하고, 틀린 예측 때문에 어떤 일이 생길지 생각할 수 있습니다.</p>
@@ -35,10 +36,18 @@
 <div class="table-wrap"><table><thead><tr><th scope="col">정할 것</th><th scope="col">예</th></tr></thead><tbody><tr><td>관측 단위</td><td>한 지점의 연속된 15분 구간 하나</td></tr><tr><td>예측 시점</td><td>그 구간이 시작되기 직전</td></tr><tr><td>입력 후보</td><td>직전 15분 입장 수, 예약 수, 요일</td></tr><tr><td>정답</td><td>다음 15분 안에 대기열이 12명을 넘으면 혼잡</td></tr><tr><td>업무 조치</td><td>당직 인원이 있는 경우 보조 창구를 열지 검토</td></tr><tr><td>확인할 값</td><td>혼잡을 놓친 비율, 불필요한 인력 투입 횟수, 실제 평균 대기시간</td></tr></tbody></table></div>
 <p>예측 기준과 업무 결과는 따로 기록합니다. 혼잡 분류를 잘해도 대응이 늦으면 대기시간이 줄지 않을 수 있습니다. 또 평가에 쓸 미래 15분의 실제 입장 수를 예측 입력으로 넣으면 실행할 때 그 값이 아직 없습니다. 정확해 보이는 모델이 만들어져도 실제로 사용할 수 없게 됩니다.</p>
 <div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
+<h2>분석 기획의 네 가지 유형 <span class="tag memo">외우기</span></h2>
+<p>과제를 정할 때 "무엇을 분석할지(분석 대상, What)"와 "어떻게 분석할지(분석 방법, How)"를 각각 알고 있는지에 따라 기획의 성격이 달라집니다. 시험에서는 이 두 축으로 만든 2×2 분류를 묻습니다.</p>
+<div class="table-wrap"><table><thead><tr><th scope="col"></th><th scope="col">분석 대상을 안다 (Known)</th><th scope="col">분석 대상을 모른다 (Un-Known)</th></tr></thead><tbody><tr><th scope="row">분석 방법을 안다</th><td><b class='key'>최적화</b>(Optimization): 대상과 방법이 모두 정해져 있어 개선·최적화에 집중</td><td><b class='key'>통찰</b>(Insight): 방법은 있지만 대상이 정해지지 않아, 기존 방법으로 새 시사점을 찾음</td></tr><tr><th scope="row">분석 방법을 모른다</th><td><b class='key'>솔루션</b>(Solution): 풀 문제는 알지만 방법을 몰라 해법을 찾아야 함</td><td><b class='key'>발견</b>(Discovery): 대상도 방법도 몰라 새로운 대상 자체를 찾아냄</td></tr></tbody></table></div>
+<p>도서관 예로 바꾸면, "다음 15분 혼잡"을 이미 쓰는 회귀식으로 더 잘 맞히려는 일은 최적화, 혼잡을 줄여야 하는데 어떤 방법이 통할지 모르는 상태는 솔루션입니다. 분석 기획 단계에서는 이 밖에 <b>가용 데이터</b>(어떤 유형의 데이터를 쓸 수 있는지), <b>적절한 유스케이스</b>(비슷한 기존 사례), <b>장애 요소</b>(비용, 사용자 교육, 조직 문화 등)를 함께 고려합니다.</p>
+<div class="check" data-q="q9"></div>
 <h2>과제를 찾는 두 방향</h2>
 <p><b class="key">하향식</b>(top-down)은 현장의 목표나 문제에서 출발합니다. ‘어떤 때 창구를 더 열어야 하는가’처럼 의사결정을 먼저 정하고 그 결정을 돕는 분석 문제와 필요한 자료를 찾습니다. 필요한 자료를 실제로 구할 수 있는지, 결과를 맡을 사람이 있는지도 점검합니다.</p>
 <p><b class="key">상향식</b>(bottom-up)은 모은 자료를 먼저 살펴 반복되는 모습이나 예상과 다른 값을 발견합니다. 예를 들어 달력의 휴일만으로 설명되지 않는 계단식 방문 패턴을 발견하고, 특정 행사 시간에 혼잡 안내가 필요하다는 과제를 세울 수 있습니다. 처음 발견에 쓴 기간과 새 기간을 구별해 같은 패턴이 나타나는지 확인합니다.</p>
-<div class="check" data-q="q3"></div><div class="check" data-q="q4"></div>
+<p>교재는 두 방식의 절차와 도구를 다음처럼 정리합니다. <span class="tag memo">외우기</span></p>
+<div class="table-wrap"><table><thead><tr><th scope="col">방식</th><th scope="col">절차·도구</th><th scope="col">어울리는 상황</th></tr></thead><tbody><tr><td><b class='key'>하향식</b></td><td><b>문제 탐색 → 문제 정의 → 해결방안 탐색 → 타당성 검토</b>. 문제 탐색에는 비즈니스 모델 캔버스(업무·제품·고객·규제와 감사·지원 인프라) 같은 틀을 쓰고, 타당성 검토는 경제적 타당성과 데이터·기술적 타당성을 본다</td><td>문제가 주어져 있고 해법을 찾는 경우</td></tr><tr><td><b class='key'>상향식</b></td><td>데이터를 먼저 보며 <b>비지도 학습</b>(정답 없이 군집·연관 등을 찾는 방법)으로 패턴을 찾고, <b>디자인 사고</b>(발산과 수렴을 반복)와 <b>프로토타이핑</b>(일단 작게 만들어 보고 고쳐 가는 방식)으로 문제를 구체화한다</td><td>문제 정의 자체가 어렵거나, 필요한 데이터가 무엇인지 처음부터 알기 어려운 경우</td></tr></tbody></table></div>
+<p>문제 정의 단계에서는 "대기를 줄인다" 같은 <b>비즈니스 문제</b>를 "다음 15분 혼잡 여부를 맞힌다" 같은 <b>데이터 분석 문제</b>로 바꿉니다. 이 장 첫 절에서 한 일이 바로 이것입니다. 실제 프로젝트에서는 두 방식을 섞어 씁니다.</p>
+<div class="check" data-q="q3"></div><div class="check" data-q="q4"></div><div class="check" data-q="q12"></div>
 <h2>점수와 반드시 확인할 제약을 구별한다</h2>
 <p>팀에서 예시용으로 효과와 실행 가능성을 각각 1~5점으로 매기고 효과에 두 배의 무게를 줍니다. 이 수식은 이 사례를 위한 가정입니다. 효과는 개선을 기대하는 정도, 실행 가능성은 자료·담당 인력·일정이 갖추어진 정도를 뜻합니다. 점수는 후보끼리 같은 방식으로 비교할 때 의미가 있습니다.</p>
 <figure class="fig"><svg class="fig-svg" viewBox="0 0 760 242" role="img" aria-label="과제 A는 효과 4, 가능성 3이라 계산값 11. 과제 B는 효과 3, 가능성 4라 10. 과제 C는 효과 5, 가능성 1이라 11이지만 필요한 권한이 확보되지 않았다.">
@@ -64,8 +73,24 @@ C 11 보류
 먼저 검토 A</code></pre>
 <p>C는 점수가 높더라도 실제 수집 권한이 확인되지 않았습니다. 별도 제약을 만족할 방법이 정해진 뒤 점수를 다시 비교합니다. 가중치를 바꾸면 순위도 바뀔 수 있으므로 선택 근거를 남기고, 아주 작은 시범으로 가장 불확실한 가정을 먼저 확인하는 것이 좋습니다.</p>
 <div class="check" data-q="q5"></div><div class="check" data-q="q6"></div>
+<h2>시험에서 쓰는 우선순위 틀: 시급성과 난이도 <span class="tag memo">외우기</span></h2>
+<p>위 점수식은 이 사례를 위해 만든 것입니다. 빅분기 교재에서 표준으로 다루는 틀은 <b>시급성</b>과 <b>난이도</b> 두 기준입니다. 이 두 기준은 빅데이터의 4V를 투자 대비 효과(ROI) 관점으로 나눈 데서 나옵니다.</p>
+<div class="table-wrap"><table><thead><tr><th scope="col">ROI 관점</th><th scope="col">4V 요소</th><th scope="col">우선순위 기준</th></tr></thead><tbody><tr><td><b class='key'>투자 비용</b> 측면</td><td>Volume(크기), Variety(다양성), Velocity(속도)</td><td><b class='key'>난이도</b>: 데이터 획득·저장·가공 비용, 분석 적용 비용, 분석 수준(쉬움 / 어려움)</td></tr><tr><td><b class='key'>비즈니스 효과</b> 측면</td><td>Value(가치)</td><td><b class='key'>시급성</b>: 전략적 중요도, 목표 가치(KPI)에 비춰 지금 필요한가(현재 / 미래)</td></tr></tbody></table></div>
+<p>두 기준을 축으로 과제를 네 칸(사분면)에 놓는 것을 <b>포트폴리오 사분면 분석</b>이라고 합니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 300" role="img" aria-label="세로축은 시급성으로 위가 현재, 아래가 미래. 가로축은 난이도로 왼쪽이 어려움, 오른쪽이 쉬움. 왼쪽 위 칸은 현재·어려움, 오른쪽 위 칸은 현재·쉬움으로 가장 먼저, 왼쪽 아래 칸은 미래·어려움으로 가장 나중, 오른쪽 아래 칸은 미래·쉬움.">
+<rect class="f-box" x="200" y="40" width="240" height="100" rx="3"/><rect class="f-soft" x="440" y="40" width="240" height="100" rx="3"/><rect class="f-over" x="200" y="140" width="240" height="100" rx="3"/><rect class="f-box" x="440" y="140" width="240" height="100" rx="3"/>
+<text class="f-t f-b" x="320" y="82" text-anchor="middle">현재 · 어려움</text><text class="f-s" x="320" y="108" text-anchor="middle">난이도를 낮춰 앞당길 수 있음</text>
+<text class="f-t f-b" x="560" y="82" text-anchor="middle">현재 · 쉬움</text><text class="f-s" x="560" y="108" text-anchor="middle">가장 먼저 적용</text>
+<text class="f-t f-b" x="320" y="182" text-anchor="middle">미래 · 어려움</text><text class="f-s" x="320" y="208" text-anchor="middle">가장 나중에 적용</text>
+<text class="f-t f-b" x="560" y="182" text-anchor="middle">미래 · 쉬움</text><text class="f-s" x="560" y="208" text-anchor="middle">기준에 따라 2·3번째</text>
+<text class="f-cap" x="100" y="95" text-anchor="middle">시급성: 현재</text><text class="f-cap" x="100" y="195" text-anchor="middle">시급성: 미래</text>
+<text class="f-cap" x="320" y="270" text-anchor="middle">난이도: 어려움</text><text class="f-cap" x="560" y="270" text-anchor="middle">난이도: 쉬움</text>
+</svg><figcaption>시급성(세로)과 난이도(가로)로 나눈 네 칸. 칸에 붙이는 번호(Ⅰ~Ⅳ)는 교재 그림을 따른다.</figcaption></figure>
+<p>양 끝은 분명합니다. <b>시급성이 현재이고 난이도가 쉬운 과제를 가장 먼저</b>, <b>시급성이 미래이고 난이도가 어려운 과제를 가장 나중에</b> 합니다. 가운데 두 칸(현재·어려움, 미래·쉬움)의 순서는 시급성과 난이도 중 무엇을 더 중시하느냐에 따라 달라집니다. 현재·어려움 과제는 데이터 양·범위를 줄여 난이도를 낮추면 앞으로 당길 수 있습니다.</p>
+<div class="box trap"><p class="box-k">시험 함정</p><p>교재는 이 칸들에 Ⅰ~Ⅳ 번호를 붙여 "시급성 기준이면 Ⅲ→Ⅳ→Ⅱ, 난이도 기준이면 Ⅲ→Ⅰ→Ⅱ"처럼 번호 순서로 묻는 경우가 많습니다. 번호를 붙이는 방식이 그림마다 다를 수 있으므로, 번호만 외우지 말고 <b>각 번호가 어떤 칸(현재/미래 × 쉬움/어려움)인지</b>를 공식 출제기준·교재 그림으로 확인해 함께 외웁니다.</p></div>
+<div class="check" data-q="q10"></div><div class="check" data-q="q11"></div>
 <h2>한눈에 정리</h2>
-<div class="table-wrap"><table><thead><tr><th scope="col">핵심어</th><th scope="col">기억할 뜻</th></tr></thead><tbody><tr><td><b class='key'>분석 과제</b></td><td>결정 시점, 관측 단위, 입력, 평가와 업무 결과를 명시</td></tr><tr><td><b class='key'>하향식·상향식</b></td><td>업무 문제에서 필요한 데이터를 찾음, 자료에서 가능성을 발견해 문제를 정함</td></tr><tr><td><b class='key'>우선순위</b></td><td>효과와 가능성을 같은 기준으로 비교하고 필수 제약은 별도로 확인</td></tr></tbody></table></div>
+<div class="table-wrap"><table><thead><tr><th scope="col">핵심어</th><th scope="col">기억할 뜻</th></tr></thead><tbody><tr><td><b class='key'>분석 과제</b></td><td>결정 시점, 관측 단위, 입력, 평가와 업무 결과를 명시</td></tr><tr><td><b class='key'>분석 기획 유형</b></td><td>대상·방법을 앎=최적화, 대상만 앎=솔루션, 방법만 앎=통찰, 둘 다 모름=발견</td></tr><tr><td><b class='key'>하향식·상향식</b></td><td>문제 탐색→문제 정의→해결방안 탐색→타당성 검토 / 데이터에서 출발해 디자인 사고·비지도 학습·프로토타이핑</td></tr><tr><td><b class='key'>우선순위</b></td><td>시급성(Value, 현재/미래)과 난이도(Volume·Variety·Velocity, 쉬움/어려움). 현재·쉬움 먼저, 미래·어려움 나중. 필수 제약은 별도 확인</td></tr></tbody></table></div>
 <div class="box sum"><p class="box-k">한 줄 정리</p><p>누가 어느 때 무엇을 결정하고, 어떤 자료로 대답하며, 성공을 어떻게 확인할지 적으면 분석 과제가 구체화된다.</p></div>
 <p>입력과 정답의 자세한 예는 <a href="../../../learn/unit.html?u=ML01">학습 문제 정의</a>와 이어집니다.</p>
 

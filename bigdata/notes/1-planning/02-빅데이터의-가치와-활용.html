@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>빅데이터의 가치와 활용에서 생기는 위험 · 빅분기 노트</title>
 <script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e8c'/%3E%3Cpath d='M8 22V10m8 12V14m8 8V6' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
 <link rel="stylesheet" href="../../style.css">
 </head>
 <body data-note="1-02">
@@ -25,7 +26,7 @@
 <h1>빅데이터의 가치와 활용에서 생기는 위험</h1>
 <p class="lead">시간대별 유동 인구를 읽을 수 있게 됐습니다. 그 사실로 무엇을 결정하고, 결과가 좋아졌는지 어떻게 알아볼 수 있을까요? 활용의 가치와 데이터에서 놓치기 쉬운 위험을 같은 사례로 다룹니다.</p>
 </header>
-<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>기술을 사용한 결과와 실제 업무 결과를 구별한다.</li><li>기술·예측·처방의 질문을 사례에서 분류한다.</li><li>누락과 편향이 활용 결과에 미치는 영향을 설명한다.</li></ul></div>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>기술을 사용한 결과와 실제 업무 결과를 구별한다.</li><li>데이터·정보·지식·지혜(DIKW)를 예시로 구분한다.</li><li>기술·진단·예측·처방의 질문을 사례에서 분류한다.</li><li>누락과 편향이 활용 결과에 미치는 영향을 설명한다.</li><li>빅데이터 위기 요인 세 가지와 통제 방안, 분석 조직 구조 세 가지를 짝지어 말한다.</li></ul></div>
 
 <h2>데이터의 가치가 나타나는 순간</h2>
 <p>도서관 입구에 있는 센서는 출입 수를 시간대별로 저장합니다. 운영자는 주말 오후에 줄이 길어지는지 알고 싶습니다. 이 자료를 시간대별로 모아 보면 어느 때 창구를 하나 더 열지 계획할 수 있습니다. 운영 결정이 바뀌고 대기시간·업무 부담 같은 결과가 달라질 때 분석의 가치를 확인할 수 있습니다.</p>
@@ -34,9 +35,16 @@
 </svg><figcaption>기록·의사결정·결과 측정이 이어질 때 분석 결과를 어떤 일에 썼는지 설명할 수 있다.</figcaption></figure>
 <p>크게 나누어 데이터로 새로운 서비스를 만들거나, 기존 운영의 낭비를 줄이거나, 사람이 보기 어려운 변화를 빠르게 찾아낼 수 있습니다. 같은 데이터라도 어떤 일이 문제인지, 이를 결정할 담당자가 누구인지에 따라 가치가 달라집니다. 기록을 많이 모았다는 사실은 활용 가능성을 보여 주지만, 그 기록을 어떻게 사용할지 역할을 정해야 실제 업무에 적용됩니다.</p>
 <div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
+<h2>데이터·정보·지식·지혜 <span class="tag memo">외우기</span></h2>
+<p>센서 기록이 곧바로 결정이 되지는 않습니다. 기록이 가공되고 해석되어 행동의 근거가 되기까지의 단계를 시험에서는 <b class="key">DIKW 피라미드</b>(Data → Information → Knowledge → Wisdom)로 정리합니다.</p>
+<div class="table-wrap"><table><thead><tr><th scope="col">단계</th><th scope="col">뜻</th><th scope="col">도서관 예</th></tr></thead><tbody><tr><td><b class='key'>데이터</b></td><td>가공하기 전의 객관적 사실(관측값)</td><td>토요일 14시대 입장 312명</td></tr><tr><td><b class='key'>정보</b></td><td>데이터를 가공·비교해 관계나 패턴을 드러낸 것</td><td>토요일 14시대가 주중 같은 시간보다 두 배 붐빈다</td></tr><tr><td><b class='key'>지식</b></td><td>정보를 구조화해 판단·예측의 근거로 삼은 것</td><td>토요일 오후에 창구를 하나 더 열면 대기가 줄 것이다</td></tr><tr><td><b class='key'>지혜</b></td><td>지식을 바탕으로 한 창의적 판단·근본 원리</td><td>행사 일정과 연동해 인력 계획을 미리 세운다</td></tr></tbody></table></div>
+<p>경계가 칼같이 나뉘는 개념은 아니고, 교재마다 예시 문장이 다릅니다. 시험에서는 "가공 전 사실 → 패턴 → 판단 근거 → 창의적 적용"의 순서와 각 낱말의 짝을 묻습니다.</p>
+<div class="check" data-q="q9"></div>
 <h2>같은 자료에서 서로 다른 질문을 한다</h2>
-<div class="table-wrap"><table><thead><tr><th scope="col">질문의 종류</th><th scope="col">도서관에서 묻는 것</th><th scope="col">결과의 예</th></tr></thead><tbody><tr><td><b class='key'>기술(記述) 분석</b></td><td>지금까지 무슨 일이 있었나?</td><td>토요일 14~15시 구간에 가장 많은 인원이 방문</td></tr><tr><td><b class='key'>예측 분석</b></td><td>다음 구간에 어떤 일이 일어날까?</td><td>다음 구간 혼잡 위험이 높을 것으로 예상</td></tr><tr><td><b class='key'>처방 분석</b></td><td>가능한 운영안 중 무엇을 택할까?</td><td>인력과 비용 조건 안에서 보조 창구를 여는 구간 추천</td></tr></tbody></table></div>
-<p>이미 지나간 구간을 요약하는 분석과 앞으로의 상태를 예측하는 분석은 평가의 기준이 다릅니다. 운영안을 추천하려면 혼잡도 같은 예측값에 인력 수와 비용, 각 결정의 불이익까지 더 고려합니다. 예를 들어 여유 직원이 한 명뿐이라면 두 곳에 동시에 배치할 수 없습니다.</p>
+<p>분석이 답하는 질문의 종류는 보통 네 단계로 나눕니다. 뒤로 갈수록 결정에 더 가깝고 필요한 가정도 많아집니다.</p>
+<div class="table-wrap"><table><thead><tr><th scope="col">질문의 종류</th><th scope="col">도서관에서 묻는 것</th><th scope="col">결과의 예</th></tr></thead><tbody><tr><td><b class='key'>기술(記述) 분석</b></td><td>지금까지 무슨 일이 있었나?</td><td>토요일 14~15시 구간에 가장 많은 인원이 방문</td></tr><tr><td><b class='key'>진단 분석</b></td><td>왜 그런 일이 일어났나?</td><td>그 시간대 혼잡은 같은 날 열린 행사 참가자 때문이었음</td></tr><tr><td><b class='key'>예측 분석</b></td><td>다음 구간에 어떤 일이 일어날까?</td><td>다음 구간 혼잡 위험이 높을 것으로 예상</td></tr><tr><td><b class='key'>처방 분석</b></td><td>가능한 운영안 중 무엇을 택할까?</td><td>인력과 비용 조건 안에서 보조 창구를 여는 구간 추천</td></tr></tbody></table></div>
+<p>이미 지나간 구간을 요약하는 분석과 앞으로의 상태를 예측하는 분석은 평가의 기준이 다릅니다. 운영안을 추천하려면 혼잡도 같은 예측값에 인력 수와 비용, 각 결정의 불이익까지 더 고려합니다. 예를 들어 여유 직원이 한 명뿐이라면 두 곳에 동시에 배치할 수 없습니다. 진단 분석은 원인을 찾는 단계라서, 관찰만으로는 "함께 일어났다"까지만 말할 수 있고 원인이라고 단정하려면 비교 조건을 갖춰야 합니다(아래 풀이 예제).</p>
+<div class="check" data-q="q13"></div>
 <div class="box ex"><p class="box-k">풀이 예제</p><p>관측한 120건의 대기시간 총합이 960분이면 평균은 960÷120=8분입니다. 시범 배치 뒤 다른 날 100건의 총합이 600분이면 평균은 6분입니다. 둘의 차이는 관찰상 2분이고, 첫 평균을 기준으로 하면 25% 감소입니다. 요일, 방문 수, 행사 같은 조건이 함께 바뀌었을 수 있으므로 이 차이를 인력 배치의 효과로 곧장 해석할 수는 없습니다.</p></div>
 <pre data-example="python"><code>before_count, before_minutes = 120, 960
 pilot_count, pilot_minutes = 100, 600
@@ -57,9 +65,23 @@ observed reduction 25%</code></pre>
 </svg><figcaption>15분 구간의 인원 기록이 없는 경우와 구간의 사람 수가 0이라는 관측을 구분한다.</figcaption></figure>
 <p>모바일 이용자만 조사하면 현장 방문자가 빠질 수 있습니다. 조사에 들어올 가능성이 집단마다 달라져 결과가 치우치는 문제가 <b class="key">선택 편향</b>입니다. 같은 방식으로 모바일 자료를 몇 배 더 모아도 현장 방문자가 빠지는 과정은 그대로일 수 있습니다. 분석 대상과 실제 데이터가 대표하는 대상이 일치하는지, 어떤 사람이 이용 결정에서 불리해지는지도 확인합니다.</p>
 <div class="check" data-q="q5"></div><div class="check" data-q="q6"></div>
+<h2>빅데이터의 가치를 미리 재기 어려운 이유 <span class="tag grasp">이해하기</span></h2>
+<p>위 예제처럼 한 가지 결정의 결과는 잴 수 있지만, 데이터 전체의 가치를 처음부터 금액으로 매기기는 어렵습니다. 교재에서는 보통 세 가지 이유를 듭니다.</p>
+<div class="table-wrap"><table><thead><tr><th scope="col">이유</th><th scope="col">뜻</th></tr></thead><tbody><tr><td><b class='key'>데이터 활용 방식의 다양화</b></td><td>같은 데이터를 재사용·재조합하고 여러 목적에 쓰므로, 누가 언제 어디에 쓸지 미리 알 수 없다</td></tr><tr><td><b class='key'>새로운 가치 창출</b></td><td>기존에 없던 서비스·사업을 만들어 내므로 비교할 기준값이 없다</td></tr><tr><td><b class='key'>분석 기술의 발전</b></td><td>지금은 쓸모없어 보이는 데이터도 새 분석 기법이 나오면 가치가 생긴다</td></tr></tbody></table></div>
+<p>빅데이터가 주는 영향은 주체별로 정리하기도 합니다. 기업은 혁신·경쟁력·생산성 향상, 정부는 환경 탐색·상황 분석·미래 대응, 개인은 목적에 맞는 서비스 이용과 기회 비용 절감 같은 효과를 얻는다고 설명합니다. 분류 낱말은 교재마다 조금씩 다르므로 공식 출제기준·교재로 확인합니다.</p>
+<h2>빅데이터 활용의 위기 요인과 통제 방안 <span class="tag memo">외우기</span></h2>
+<p>앞 절의 선택 편향은 분석 결과가 틀어지는 위험이었습니다. 시험에서는 이와 별도로, 빅데이터 활용이 사회·개인에게 주는 위기 요인 세 가지와 그 통제 방안을 짝으로 묻습니다.</p>
+<div class="table-wrap"><table><thead><tr><th scope="col">위기 요인</th><th scope="col">무엇이 문제인가</th><th scope="col">통제 방안</th></tr></thead><tbody><tr><td><b class='key'>사생활 침해</b></td><td>여러 기록을 결합하면 목적 외로 개인의 행동·성향이 드러난다</td><td>제공자의 '동의'에만 기대지 않고 데이터 <b class='key'>사용자의 책임</b>을 강화한다 (동의에서 책임으로)</td></tr><tr><td><b class='key'>책임 원칙 훼손</b></td><td>예측만으로 아직 하지 않은 행동에 불이익을 준다 (예: 범죄 가능성 예측만으로 처벌)</td><td><b class='key'>결과 기반 책임</b> 원칙을 지킨다: 실제 행동의 결과에 대해서만 책임을 묻는다</td></tr><tr><td><b class='key'>데이터 오용</b></td><td>잘못된 데이터나 알고리즘의 결론을 맹신해 피해가 생긴다</td><td>알고리즘에 대한 접근을 허용하고, 그 결과로 피해를 본 사람을 대변하는 전문가 <b class='key'>알고리즈미스트</b>(algorithmist)를 둔다</td></tr></tbody></table></div>
+<div class="box trap"><p class="box-k">시험 함정</p><p>사생활 침해의 통제 방안을 "개인의 동의를 더 철저히 받는다"로 고른 보기는 오답으로 출제되는 경우가 많습니다. 교재의 방향은 동의 절차 강화가 아니라 <b>사용 주체의 책임</b>입니다. 개인정보 보호 법령의 실제 동의 규정과는 별개인 교재상의 분류이니 섞지 않습니다(법령은 1-08장).</p></div>
+<div class="check" data-q="q10"></div><div class="check" data-q="q11"></div>
+<h2>분석을 맡는 조직 구조</h2>
+<p>분석 결과가 실제 결정에 쓰이려면 분석 인력이 조직 어디에 있는지도 중요합니다. 교재는 세 가지 구조를 비교합니다.</p>
+<div class="table-wrap"><table><thead><tr><th scope="col">구조</th><th scope="col">모습</th><th scope="col">장점과 한계</th></tr></thead><tbody><tr><td><b class='key'>집중 구조</b></td><td>전담 분석 조직이 전사 분석 업무를 맡고 우선순위를 정한다</td><td>전략적 과제에 집중할 수 있지만, 현업 부서의 분석과 이원화·중복될 수 있다</td></tr><tr><td><b class='key'>기능 구조</b></td><td>별도 조직 없이 각 현업 부서가 직접 분석한다</td><td>자기 업무에 맞는 분석은 빠르지만, 전사 관점의 핵심 분석이 어렵다</td></tr><tr><td><b class='key'>분산 구조</b></td><td>분석 전문 인력을 현업 부서에 배치해 함께 일한다</td><td>결과를 실무에 빠르게 적용하지만, 부서 간 역할 분담과 협업 체계가 분명해야 한다</td></tr></tbody></table></div>
+<p>분석 인력(데이터 사이언티스트)에게 요구되는 역량은 <b>하드 스킬</b>(빅데이터 이론 지식, 분석 기술 숙련)과 <b>소프트 스킬</b>(통찰력 있는 분석, 설득력 있는 전달, 다분야 간 협력)로 나눕니다.</p>
+<div class="check" data-q="q12"></div>
 <h2>한눈에 정리</h2>
-<div class="table-wrap"><table><thead><tr><th scope="col">핵심어</th><th scope="col">기억할 뜻</th></tr></thead><tbody><tr><td><b class='key'>분석의 가치</b></td><td>업무 의사결정과 측정할 결과가 어떻게 달라지는지 설명</td></tr><tr><td><b class='key'>기술·예측·처방</b></td><td>지난 결과의 요약, 미래나 미관측 결과의 추정, 조건을 고려한 운영안 비교</td></tr><tr><td><b class='key'>선택 편향</b></td><td>자료에 들어온 사람과 대상 전체가 다를 수 있음</td></tr></tbody></table></div>
-<div class="box sum"><p class="box-k">한 줄 정리</p><p>데이터의 활용은 무엇을 바꿀지 정하고, 관측한 결과와 자료가 빠지는 방식을 함께 점검하는 일이다.</p></div>
+<div class="table-wrap"><table><thead><tr><th scope="col">핵심어</th><th scope="col">기억할 뜻</th></tr></thead><tbody><tr><td><b class='key'>분석의 가치</b></td><td>업무 의사결정과 측정할 결과가 어떻게 달라지는지 설명</td></tr><tr><td><b class='key'>DIKW</b></td><td>데이터(사실) → 정보(패턴) → 지식(판단 근거) → 지혜(창의적 적용)</td></tr><tr><td><b class='key'>기술·진단·예측·처방</b></td><td>지난 결과의 요약, 원인 탐색, 미래나 미관측 결과의 추정, 조건을 고려한 운영안 비교</td></tr><tr><td><b class='key'>선택 편향</b></td><td>자료에 들어온 사람과 대상 전체가 다를 수 있음</td></tr><tr><td><b class='key'>가치 측정의 어려움</b></td><td>활용 방식 다양화, 새로운 가치 창출, 분석 기술 발전</td></tr><tr><td><b class='key'>위기 요인 → 통제</b></td><td>사생활 침해 → 동의에서 책임으로 · 책임 원칙 훼손 → 결과 기반 책임 · 데이터 오용 → 알고리즈미스트</td></tr><tr><td><b class='key'>조직 구조</b></td><td>집중(전담 조직) · 기능(현업 직접) · 분산(전문 인력을 현업에 배치)</td></tr></tbody></table></div>
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>데이터의 가치는 결정과 결과가 바뀔 때 드러나며, 활용할 때는 자료가 빠지는 방식과 사생활·책임·오용의 위기를 함께 관리한다.</p></div>
 <p>조건이 다른 집단을 비교할 때는 <a href="../../../learn/unit.html?u=ST01">모집단과 표본</a>을 함께 읽습니다.</p>
 
 <h2>참고 자료</h2>

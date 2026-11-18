@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>저장소 역할을 나누고 용량과 조회 범위 계산하기 · 빅분기 노트</title>
 <script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e8c'/%3E%3Cpath d='M8 22V10m8 12V14m8 8V6' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
 <link rel="stylesheet" href="../../style.css">
 </head>
 <body data-note="1-07">
@@ -25,7 +26,7 @@
 <h1>저장소 역할을 나누고 용량과 조회 범위 계산하기</h1>
 <p class="lead">파일을 오래 남길 곳, 여러 자료에 같은 규칙을 맞춰 보고할 곳, 담당자가 바로 쓸 집계는 필요한 기능이 다릅니다. 원본과 업무용 데이터의 역할을 나누고 실제 용량을 산출해 봅니다.</p>
 </header>
-<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>관계형 저장·웨어하우스·레이크·마트를 역할로 비교한다.</li><li>조회 기준이 저장 형태에 미치는 영향을 설명한다.</li><li>레코드 수, 바이트, 보존 기간, 복제 수로 저장량을 추정한다.</li></ul></div>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>관계형 저장·웨어하우스·레이크·마트를 역할로 비교한다.</li><li>HDFS 구조, NoSQL 네 유형, CAP 정리와 ACID·BASE를 설명한다.</li><li>조회 기준이 저장 형태에 미치는 영향을 설명한다.</li><li>레코드 수, 바이트, 보존 기간, 복제 수로 저장량을 추정한다.</li></ul></div>
 
 <h2>어떤 작업을 빠르고 안전하게 해야 하는가</h2>
 <p>현장의 예약 프로그램은 예약 한 건을 정확히 등록하고 바꿉니다. 분석 프로그램은 한 달의 방문과 예약을 모아 요일별로 비교합니다. 원본을 보존하는 곳에서는 형식이나 출처가 다른 파일을 나중에 다시 읽을 수 있어야 합니다. 저장에 필요한 일부터 정하면 제품이나 용어의 차이를 읽을 수 있습니다.</p>
@@ -42,8 +43,18 @@
 <rect class="f-box" x="88" y="64" width="173" height="84" rx="3"/><text class="f-t f-b" x="174.5" y="98" text-anchor="middle">11월 16일</text><text class="f-s" x="174.5" y="126" text-anchor="middle">15 MB</text><rect class="f-soft" x="287" y="64" width="173" height="84" rx="3"/><text class="f-t f-b" x="373.5" y="98" text-anchor="middle">11월 17일</text><text class="f-s" x="373.5" y="126" text-anchor="middle">15 MB</text><rect class="f-box" x="486" y="64" width="173" height="84" rx="3"/><text class="f-t f-b" x="572.5" y="98" text-anchor="middle">11월 18일</text><text class="f-s" x="572.5" y="126" text-anchor="middle">15 MB</text><line class="f-line" x1="373" y1="211" x2="373" y2="151" marker-end="url(#f-arrow)"/><text class="f-cap" x="373" y="235" text-anchor="middle">11월 17일 조회</text>
 </svg><figcaption>날짜별 구획과 날짜 조건이 맞으면 집계 대상만 읽을 수 있다. 파일 크기는 이 장의 예시 용량이다.</figcaption></figure>
 <div class="check" data-q="q3"></div><div class="check" data-q="q4"></div>
+<h2>시험에 나오는 빅데이터 저장 기술 <span class="tag memo">외우기</span></h2>
+<h3>분산 파일 시스템</h3>
+<p>한 대의 디스크에 담을 수 없는 파일을 여러 서버에 나눠 저장하고 하나의 파일 시스템처럼 쓰게 하는 것이 <b class="key">분산 파일 시스템</b>입니다. 대표가 구글의 GFS와, 이를 본뜬 하둡의 <b class="key">HDFS</b>입니다. HDFS는 파일을 큰 <b>블록</b>으로 나눠 여러 서버에 흩어 저장합니다. <b>네임노드</b>(NameNode)는 어떤 파일의 어느 블록이 어디 있는지 같은 메타데이터를 관리하고, <b>데이터노드</b>(DataNode)는 실제 블록을 저장합니다. 블록마다 기본 3개의 복제본을 서로 다른 노드에 두어(기본값은 설정으로 바꿀 수 있음) 서버 한 대가 고장 나도 데이터를 읽을 수 있게 합니다. 아래 용량 계산에서 "사본 세 벌"이 이 기본 복제 수와 같은 값입니다.</p>
+<h3>NoSQL의 네 가지 유형</h3>
+<p>앞 절에서 말한 NoSQL은 데이터 모델에 따라 보통 네 가지로 나눕니다.</p>
+<div class="table-wrap"><table><thead><tr><th scope="col">유형</th><th scope="col">저장 모습</th><th scope="col">대표 제품</th></tr></thead><tbody><tr><td><b class='key'>키-값</b>(Key-Value)</td><td>고유 키 하나에 값 하나. 구조가 가장 단순하고 키로 찾기가 빠르다</td><td>Redis, Amazon DynamoDB</td></tr><tr><td><b class='key'>열 기반</b>(Column-Family)</td><td>행 키 아래 열을 묶음(열 패밀리) 단위로 저장. 대량 쓰기와 넓은 표에 맞음</td><td>HBase, Cassandra</td></tr><tr><td><b class='key'>문서형</b>(Document)</td><td>JSON 같은 문서 하나를 한 단위로 저장. 문서마다 항목 구성이 달라도 됨</td><td>MongoDB, CouchDB</td></tr><tr><td><b class='key'>그래프</b>(Graph)</td><td>노드와 관계(간선)를 저장. 관계를 따라가는 조회에 맞음</td><td>Neo4j</td></tr></tbody></table></div>
+<h3>CAP 정리와 BASE</h3>
+<p>여러 서버에 나눠 저장하는 시스템은 다음 세 성질을 따집니다. <b>일관성</b>(Consistency: 모든 노드가 같은 시점에 같은 데이터를 보여 줌), <b>가용성</b>(Availability: 일부 노드가 고장 나도 모든 요청이 응답을 받음), <b>분할 내성</b>(Partition tolerance: 노드 사이 통신이 끊겨도 시스템이 동작함). <b class="key">CAP 정리</b>는 분산 시스템이 이 셋을 동시에 모두 완벽하게 만족할 수는 없다는 주장입니다. 네트워크 분할은 실제로 일어나므로, 분할이 생겼을 때 일관성과 가용성 중 무엇을 우선할지 고르는 문제로 이해하면 정확합니다.</p>
+<p>관계형 DB의 거래는 <b class="key">ACID</b>(원자성·일관성·고립성·지속성)를 엄격히 보장합니다. 많은 NoSQL은 대신 <b class="key">BASE</b>(Basically Available, Soft state, Eventually consistent: 기본적으로 가용하고, 상태가 잠시 달라질 수 있으며, 결국에는 일관성에 도달함)를 따라 가용성과 확장성을 얻습니다. 예약 한 건의 중복을 반드시 막아야 하는 업무는 ACID 쪽, 대량 센서 로그를 계속 받아 두는 일은 BASE 쪽이 어울리는 경우가 많습니다.</p>
+<div class="check" data-q="q9"></div><div class="check" data-q="q10"></div><div class="check" data-q="q11"></div>
 <h2>단위를 맞춰 기본 용량을 계산한다</h2>
-<p>하루 평균 50,000건, 한 건당 300바이트, 30일 보존을 가정합니다. 1 MB=1,000,000바이트, 1 GB=1,000,000,000바이트로 계산합니다. 하루 데이터는 15 MB이고 30일이면 450 MB입니다. 동일한 데이터의 완전한 사본을 세 벌 저장한다면 총 1,350 MB, 즉 1.35 GB입니다.</p>
+<p>하루 평균 50,000건, 한 건당 300바이트, 30일 보존을 가정합니다. 여기서는 국제 표준(SI)의 십진 단위인 1 MB=1,000,000바이트, 1 GB=1,000,000,000바이트로 계산합니다. 1-01장에서는 시험 관례에 따라 1 KB=1,024바이트(2의 거듭제곱)로 계산했으니, 문제에 단위 기준이 주어지면 그 기준을 따릅니다. 1,024 기준이면 450,000,000바이트는 약 429.2 MB(정확히는 MiB)가 됩니다. 하루 데이터는 15 MB이고 30일이면 450 MB입니다. 동일한 데이터의 완전한 사본을 세 벌 저장한다면 총 1,350 MB, 즉 1.35 GB입니다.</p>
 <pre data-example="python"><code>rows_per_day = 50_000
 bytes_per_row = 300
 days = 30
@@ -60,7 +71,7 @@ three copies 1.35 GB</code></pre>
 <p>이 수는 순수 자료의 예시입니다. 실제 저장 계획에서는 파일 형식·압축 효과, 인덱스, 백업, 임시 작업 공간, 자료가 늘어날 때 여유를 고려합니다. 복제는 장치 장애 때 사본을 통해 계속 운영하는 데 도움이 됩니다. 실수로 지운 값이 복제될 수 있으므로 별도로 되돌릴 시점을 갖는 백업과 목적이 다릅니다.</p>
 <div class="check" data-q="q5"></div><div class="check" data-q="q6"></div>
 <h2>한눈에 정리</h2>
-<div class="table-wrap"><table><thead><tr><th scope="col">핵심어</th><th scope="col">기억할 뜻</th></tr></thead><tbody><tr><td><b class='key'>웨어하우스·레이크·마트</b></td><td>공통 분석용 통합, 여러 형태의 보관·활용, 팀·주제별 제공</td></tr><tr><td><b class='key'>파티션</b></td><td>자주 찾는 날짜 등의 범위로 자료를 나눔</td></tr><tr><td><b class='key'>용량 산정</b></td><td>기간×건수×건당 크기×사본 수부터 시작해 실제 저장 오버헤드 확인</td></tr></tbody></table></div>
+<div class="table-wrap"><table><thead><tr><th scope="col">핵심어</th><th scope="col">기억할 뜻</th></tr></thead><tbody><tr><td><b class='key'>웨어하우스·레이크·마트</b></td><td>공통 분석용 통합, 여러 형태의 보관·활용, 팀·주제별 제공</td></tr><tr><td><b class='key'>파티션</b></td><td>자주 찾는 날짜 등의 범위로 자료를 나눔</td></tr><tr><td><b class='key'>HDFS</b></td><td>네임노드(메타데이터)·데이터노드(블록 저장), 블록 기본 복제 3</td></tr><tr><td><b class='key'>NoSQL 유형</b></td><td>키-값(Redis) · 열 기반(HBase, Cassandra) · 문서형(MongoDB) · 그래프(Neo4j)</td></tr><tr><td><b class='key'>CAP·BASE</b></td><td>일관성·가용성·분할 내성을 동시에 모두 만족할 수 없음 / 결국 일관성(BASE) 대 엄격한 거래 보장(ACID)</td></tr><tr><td><b class='key'>용량 산정</b></td><td>기간×건수×건당 크기×사본 수부터 시작해 실제 저장 오버헤드 확인</td></tr></tbody></table></div>
 <div class="box sum"><p class="box-k">한 줄 정리</p><p>저장소를 고를 때 기록 형식과 크기에 더해 누가 무엇을 변경하고 어떤 범위를 읽는지부터 확인한다.</p></div>
 
 <h2>참고 자료</h2>

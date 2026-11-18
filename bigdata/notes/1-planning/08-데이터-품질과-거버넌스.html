@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>데이터 품질·거버넌스·개인정보를 관리하기 · 빅분기 노트</title>
 <script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e8c'/%3E%3Cpath d='M8 22V10m8 12V14m8 8V6' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
 <link rel="stylesheet" href="../../style.css">
 </head>
 <body data-note="1-08">
@@ -25,12 +26,13 @@
 <h1>데이터 품질·거버넌스·개인정보를 관리하기</h1>
 <p class="lead">빠진 값 없는 표라도 잘못 측정된 숫자가 들어갈 수 있습니다. 어떤 품질을 검사하는지 구별하고, 누가 정의를 정하며 어떤 자료를 사용할지 결정하는 과정으로 연결합니다.</p>
 </header>
-<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>완전성·유일성·일관성·적시성·유효성·정확성을 구별한다.</li><li>검사마다 관측 대상과 분모를 명시한다.</li><li>데이터의 책임·권한·보존과 가명처리의 의미를 설명한다.</li></ul></div>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>완전성·유일성·일관성·적시성·유효성·정확성을 구별한다.</li><li>검사마다 관측 대상과 분모를 명시한다.</li><li>데이터 거버넌스의 구성 요소(원칙·조직·프로세스)와 책임·권한·보존을 설명한다.</li><li>개인정보·가명정보·익명정보를 구별하고, 비식별 기법 다섯 가지와 k-익명성·l-다양성·t-근접성을 적용한다.</li></ul></div>
 
 <h2>좋은 품질의 뜻은 사용 목적에 따라 달라진다</h2>
 <p>도서관 혼잡을 안내하려면 최근 기록이 필요합니다. 월말 보고에는 누락을 모두 정정한 자료가 중요합니다. 이처럼 같은 표도 사용 목적에 따라 품질 기준이 달라집니다. 품질을 숫자로 계산하기 전에 어떤 기록과 시각을 세는지 정합니다.</p>
 <div class="table-wrap"><table><thead><tr><th scope="col">품질 관점</th><th scope="col">무엇을 검사하는가</th><th scope="col">예</th></tr></thead><tbody><tr><td><b class='key'>완전성</b></td><td>기대하는 행이나 필수 항목이 들어 있는가?</td><td>예정된 센서 구간이 빠져 있음</td></tr><tr><td><b class='key'>유일성</b></td><td>서로 달라야 하는 단위가 중복되지 않는가?</td><td>같은 이벤트 ID가 다시 수신됨</td></tr><tr><td><b class='key'>일관성</b></td><td>합의한 정의와 관련 자료의 값이 충돌하지 않는가?</td><td>두 집계에서 같은 지점 코드와 시간 기준 사용</td></tr><tr><td><b class='key'>적시성</b></td><td>필요한 판단 시점까지 최신 자료인가?</td><td>10:12에 난 사건을 10:19에 알게 됨</td></tr><tr><td><b class='key'>유효성</b></td><td>형식과 허용 범위를 지키는가?</td><td>입장 인원은 0 이상의 정수</td></tr><tr><td><b class='key'>정확성</b></td><td>실제 현상과 일치하는가?</td><td>기록은 12명이지만 직접 관측한 사람은 10명</td></tr></tbody></table></div>
 <p>12라는 값은 인원 범위에 맞지만 실제 10명이었다면 정확하지 않습니다. 또 필수 값이 빈칸 없이 모두 들어 있어도 모두 맞았다고 볼 근거는 없습니다. 검사의 대상에 맞는 자료나 업무 검증으로 각각 확인합니다.</p>
+<div class="box memo"><p class="box-k">시험용 분류</p><p>빅분기 교재는 <b>정형 데이터</b>의 품질 기준으로 <b>완전성·유일성·유효성·일관성·정확성</b>을 듭니다(위 표의 적시성은 실무 지침에서 자주 함께 쓰는 관점입니다). <b>비정형 데이터</b>는 값 하나하나를 검사하기 어려워 소프트웨어 품질 특성처럼 <b>기능성·신뢰성·사용성·효율성·이식성</b>으로 봅니다. 교재·연도에 따라 항목 수와 이름이 다를 수 있으므로 공식 출제기준·교재로 확인합니다.</p></div>
 <div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
 <h2>같은 표에서 품질 지표를 따로 계산한다</h2>
 <p>ID 다섯 개가 올 것으로 예상했는데 아래처럼 기록됐습니다. e2는 정확한 재전송으로 두 번 들어왔고, e3은 아직 전혀 오지 않았습니다. e4와 e5는 도착했지만 필수 인원 조건을 만족하지 않습니다.</p>
@@ -58,13 +60,22 @@ valid IDs among expected 2/5</code></pre>
 <rect class="f-box" x="42" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="135" y="61" text-anchor="middle">정의 책임자</text><text class="f-s" x="135" y="89" text-anchor="middle">한 행·분모·승인 범위</text><text class="f-s" x="135" y="110" text-anchor="middle">변경 승인·공개 여부</text><line class="f-line" x1="235" y1="84" x2="278" y2="84" marker-end="url(#f-arrow)"/><rect class="f-soft" x="287" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="380" y="61" text-anchor="middle">관리 담당자</text><text class="f-s" x="380" y="89" text-anchor="middle">수집과 검증 이력</text><text class="f-s" x="380" y="110" text-anchor="middle">오류 발견·수정 기록</text><line class="f-line" x1="480" y1="84" x2="523" y2="84" marker-end="url(#f-arrow)"/><rect class="f-box" x="532" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="625" y="61" text-anchor="middle">데이터 이용자</text><text class="f-s" x="625" y="89" text-anchor="middle">정해진 목적에 사용</text><text class="f-s" x="625" y="110" text-anchor="middle">의미 확인·문제 보고</text>
 </svg><figcaption>누가 결정하고 누가 기록하며 누가 검토하는지를 분명히 하면, 지표 정의가 바뀌었을 때의 근거를 찾을 수 있다.</figcaption></figure>
 <p>용어와 데이터 항목의 뜻을 모아 찾을 수 있게 한 목록은 <b>데이터 카탈로그</b>에 둘 수 있습니다. 집계가 어느 원본과 어떤 변환에서 왔는지 추적하는 <b>데이터 계보</b>는 수치가 달라진 원인을 찾을 때 쓰입니다. 검사 프로그램이 오류를 표시할 수는 있어도 어떤 사용을 승인하고 어느 기준을 채택할지까지 혼자 정하는 것은 아닙니다.</p>
-<div class="check" data-q="q5"></div>
+<p>교재는 데이터 거버넌스의 <b>구성 요소</b>를 <b class="key">원칙</b>(Principle: 데이터를 유지·관리하는 지침과 가이드, 예: 보안·품질 기준), <b class="key">조직</b>(Organization: 데이터 관리자, 데이터베이스 관리자, 데이터 아키텍트 등 역할과 책임), <b class="key">프로세스</b>(Process: 데이터 관리를 위한 활동과 체계, 예: 작업 절차·측정 활동) 세 가지로 정리합니다. 거버넌스 <b>체계</b>로는 데이터 표준화(용어·명명 규칙·메타데이터·사전 구축), 데이터 관리 체계(메타데이터와 사전의 관리 원칙, 수명 주기 관리), 데이터 저장소 관리(저장소 구성·변경 영향도 평가), 표준화 활동(준수 여부 점검과 개선)을 듭니다. 빅데이터 거버넌스는 여기에 개인정보 보호·보안, 데이터 수명 주기에 따른 보존·폐기 같은 관리를 더 강조합니다.</p>
+<div class="check" data-q="q5"></div><div class="check" data-q="q12"></div>
 <h2>목적과 권한을 확인하고 필요한 범위만 사용한다</h2>
 <p>요일별 입장 수를 집계하는 데 개인 이름과 연락처가 필요하지 않다면, 처음부터 그 항목을 요청하지 않는 방식이 가능합니다. 보관할 기간과 접근할 역할을 정해 두고, 외부에 제공할 때에는 원본과 집계 표 각각의 이용 조건을 확인합니다. 개인의 이용 기록이 매우 드문 조합을 포함하면 이름을 뺀 자료에서도 개인이 드러날 가능성이 있습니다.</p>
-<p><b class="key">가명처리</b>는 개인정보의 일부를 지우거나 다른 값으로 바꾸는 등, 추가 정보 없이 특정 개인을 알아볼 수 없도록 하는 처리입니다. 원본 식별정보를 다른 코드로 바꾸고 대응 정보를 별도로 관리하는 경우가 예입니다. <b>익명정보</b>인지 판단하려면 다른 자료를 합칠 가능성, 식별에 드는 시간과 비용, 현재 기술을 합리적으로 고려해 개인이 드러날 가능성을 살핍니다. 단순히 이름 칸을 지운 것만으로 익명이라고 할 수는 없습니다. 한국의 가명정보 처리는 적용 목적과 안전조치 등을 별도로 검토하며, 상세한 절차는 공식 안내와 법령에서 확인합니다.</p>
-<div class="check" data-q="q6"></div>
+<p><b class="key">가명처리</b>는 개인정보의 일부를 지우거나 다른 값으로 바꾸는 등, 추가 정보 없이 특정 개인을 알아볼 수 없도록 하는 처리입니다. 원본 식별정보를 다른 코드로 바꾸고 대응 정보를 별도로 관리하는 경우가 예입니다. <b>익명정보</b>인지 판단하려면 다른 자료를 합칠 가능성, 식별에 드는 시간과 비용, 현재 기술을 합리적으로 고려해 개인이 드러날 가능성을 살핍니다. 단순히 이름 칸을 지운 것만으로 익명이라고 할 수는 없습니다.</p>
+<div class="table-wrap"><table><thead><tr><th scope="col">구분</th><th scope="col">뜻</th><th scope="col">법의 적용</th></tr></thead><tbody><tr><td><b class='key'>개인정보</b></td><td>살아 있는 개인을 알아볼 수 있는 정보(다른 정보와 쉽게 결합해 알아볼 수 있는 것 포함)</td><td>개인정보 보호법 적용</td></tr><tr><td><b class='key'>가명정보</b></td><td>가명처리해 추가 정보 없이는 특정 개인을 알아볼 수 없게 한 정보</td><td>여전히 개인정보. 다만 <b>통계 작성, 과학적 연구, 공익적 기록 보존</b> 등을 위해 정보주체의 동의 없이 처리할 수 있는 특례가 있다(안전조치 등 의무가 따름)</td></tr><tr><td><b class='key'>익명정보</b></td><td>시간·비용·기술을 합리적으로 고려할 때 다른 정보를 써도 더 이상 개인을 알아볼 수 없는 정보</td><td>개인정보 보호법을 적용하지 않음</td></tr></tbody></table></div>
+<p>가명정보 개념과 특례는 2020년 8월 시행된 이른바 <b>데이터 3법</b>(개인정보 보호법, 정보통신망법, 신용정보법) 개정으로 들어왔습니다. 서로 다른 처리자의 가명정보를 결합할 때는 지정된 전문기관을 거쳐야 합니다. 법령과 가이드라인은 계속 개정되므로(예: 개인정보보호위원회는 2026년 3월 가명정보 처리 가이드라인을 전면 개정했습니다), 세부 절차와 조문은 국가법령정보센터와 개인정보보호위원회의 최신 공식 안내로 확인합니다.</p>
+<h2>비식별 조치 기법 <span class="tag memo">외우기</span></h2>
+<p>개인을 알아볼 수 없게 만드는 처리를 <b class="key">비식별 조치</b>라고 합니다. 빅분기 교재는 2016년 「개인정보 비식별 조치 가이드라인」에 실린 다섯 가지 기법을 기준으로 묻습니다. 이 가이드라인은 이후 가명정보 처리 가이드라인 체계로 대체되었지만, 시험에서는 이 분류가 여전히 기본으로 나옵니다(출제 범위는 공식 출제기준으로 확인).</p>
+<div class="table-wrap"><table><thead><tr><th scope="col">기법</th><th scope="col">뜻</th><th scope="col">예</th></tr></thead><tbody><tr><td><b class='key'>가명처리</b></td><td>식별자를 다른 값으로 바꾼다</td><td>홍길동 → 이용자A, 회원번호 → 임의 코드</td></tr><tr><td><b class='key'>총계처리</b></td><td>개별 값 대신 합계·평균 같은 통계값으로 보여 준다</td><td>각 이용자의 대출 수 → 지점 전체 평균 대출 수</td></tr><tr><td><b class='key'>데이터 삭제</b></td><td>식별자나 민감한 항목을 지운다</td><td>주민등록번호 열 삭제, 연락처 뒷자리 삭제</td></tr><tr><td><b class='key'>데이터 범주화</b></td><td>값을 구간이나 상위 범주로 바꾼다</td><td>나이 34세 → 30대, 상세 주소 → 시·구</td></tr><tr><td><b class='key'>데이터 마스킹</b></td><td>값의 일부를 다른 문자로 가린다</td><td>010-1234-5678 → 010-****-5678, 홍길동 → 홍**</td></tr></tbody></table></div>
+<p>비식별 처리가 충분한지 평가하는 <b>프라이버시 보호 모델</b>도 함께 나옵니다. 먼저 낱말 하나: <b>준식별자</b>는 하나만으로는 개인을 가리키지 못하지만 여러 개를 조합하면 개인을 특정할 수 있는 항목(나이대, 우편번호, 성별 등)입니다. 준식별자 값이 같은 레코드 묶음을 <b>동질 집합</b>이라고 합니다.</p>
+<div class="table-wrap"><table><thead><tr><th scope="col">모델</th><th scope="col">조건</th><th scope="col">막으려는 공격</th></tr></thead><tbody><tr><td><b class='key'>k-익명성</b></td><td>모든 동질 집합에 레코드가 k개 이상 있다</td><td>연결 공격(다른 자료와 결합해 특정 개인 찾기)</td></tr><tr><td><b class='key'>l-다양성</b></td><td>각 동질 집합의 민감 정보가 서로 다른 값 l개 이상을 가진다</td><td>동질성 공격(집합 안의 민감 정보가 모두 같아 바로 드러남), 배경지식 공격</td></tr><tr><td><b class='key'>t-근접성</b></td><td>각 동질 집합의 민감 정보 분포가 전체 분포와 t 이하로만 차이 난다</td><td>쏠림 공격, 유사성 공격(값은 달라도 뜻이 비슷해 드러남)</td></tr></tbody></table></div>
+<div class="box ex"><p class="box-k">풀이 예제</p><p>준식별자가 (나이대, 우편번호 앞 세 자리)인 표에 (30대, 135)가 3명, (40대, 136)이 3명 있습니다. 가장 작은 동질 집합의 크기가 3이므로 이 표는 <b>3-익명성</b>을 만족합니다. 그런데 (40대, 136) 세 명의 진단명이 모두 "당뇨"라면, 이웃이 그 묶음에 속한다는 것만 알아도 진단명이 드러납니다. 이 집합의 서로 다른 민감 값은 1개뿐이므로 2-다양성을 만족하지 않습니다. k-익명성만으로는 부족한 이유입니다.</p></div>
+<div class="check" data-q="q6"></div><div class="check" data-q="q9"></div><div class="check" data-q="q10"></div><div class="check" data-q="q11"></div>
 <h2>한눈에 정리</h2>
-<div class="table-wrap"><table><thead><tr><th scope="col">핵심어</th><th scope="col">기억할 뜻</th></tr></thead><tbody><tr><td><b class='key'>자료 품질</b></td><td>완전성·유일성·일관성·적시성·유효성·정확성은 검사 목적이 다름</td></tr><tr><td><b class='key'>거버넌스</b></td><td>정의·품질·권한·보존에서 의사결정·책임을 정하는 운영</td></tr><tr><td><b class='key'>가명처리</b></td><td>식별 위험을 낮추면서 남는 위험과 접근·관리 조건을 확인</td></tr></tbody></table></div>
+<div class="table-wrap"><table><thead><tr><th scope="col">핵심어</th><th scope="col">기억할 뜻</th></tr></thead><tbody><tr><td><b class='key'>자료 품질</b></td><td>완전성·유일성·일관성·적시성·유효성·정확성은 검사 목적이 다름</td></tr><tr><td><b class='key'>거버넌스</b></td><td>정의·품질·권한·보존에서 의사결정·책임을 정하는 운영. 구성 요소는 원칙·조직·프로세스</td></tr><tr><td><b class='key'>개인정보·가명정보·익명정보</b></td><td>가명정보는 여전히 개인정보(통계·연구·공익 기록 보존 특례), 익명정보는 법 적용 제외</td></tr><tr><td><b class='key'>비식별 기법</b></td><td>가명처리·총계처리·데이터 삭제·데이터 범주화·데이터 마스킹</td></tr><tr><td><b class='key'>프라이버시 보호 모델</b></td><td>k-익명성(집합 크기 k 이상), l-다양성(민감 값 l종 이상), t-근접성(분포 차이 t 이하)</td></tr></tbody></table></div>
 <div class="box sum"><p class="box-k">한 줄 정리</p><p>자료의 품질을 계산하고, 올바른 사람이 올바른 목적에서 쓸 수 있는 기준까지 정해 둔다.</p></div>
 <p>중복, 누락, 단위 점검의 좀 더 긴 예는 <a href="../../../learn/unit.html?u=DA02">데이터 구조와 품질을 살피는 공부 교재</a>에서 읽습니다.</p>
 

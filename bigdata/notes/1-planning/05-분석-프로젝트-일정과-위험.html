@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>분석 프로젝트의 작업·일정·위험 계획하기 · 빅분기 노트</title>
 <script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e8c'/%3E%3Cpath d='M8 22V10m8 12V14m8 8V6' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
 <link rel="stylesheet" href="../../style.css">
 </head>
 <body data-note="1-05">
@@ -25,10 +26,11 @@
 <h1>분석 프로젝트의 작업·일정·위험 계획하기</h1>
 <p class="lead">‘두 주 안에 분석을 끝낸다’라는 문장만으로 작업을 시작하면 어떤 일을 서로 기다려야 하는지 보이지 않습니다. 산출물과 선후 관계를 써서 기간을 계산하고, 불확실한 일을 미리 다룹니다.</p>
 </header>
-<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>로드맵과 개별 프로젝트 계획의 역할을 구별한다.</li><li>작업의 선후 관계로 가장 이른 완료일과 임계경로를 구한다.</li><li>검토 기준과 대책을 포함해 분석 위험을 기록한다.</li></ul></div>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>로드맵과 개별 프로젝트 계획의 역할을 구별한다.</li><li>작업의 선후 관계로 가장 이른 완료일과 임계경로를 구한다.</li><li>검토 기준과 대책을 포함해 분석 위험을 기록하고, 회피·전이·완화·수용을 구별한다.</li><li>분석 프로젝트에서 따로 관리할 다섯 가지 특성을 말한다.</li></ul></div>
 
 <h2>언제 어떤 산출물을 받을지 적는다</h2>
 <p><b class="key">로드맵</b>은 여러 개선 과제의 순서와 큰 시점을 보여 줍니다. 예를 들어 이번 달에는 자료 품질을 확인하고, 다음 달에 혼잡 예측을 시범 운영한 뒤 다른 지점으로 넓히는 관계를 표시합니다. <b>개별 프로젝트 계획</b>에서는 어떤 일의 산출물이 무엇이고 누가 언제 맡을지 더 작게 정합니다.</p>
+<p>교재에서는 여러 과제의 우선순위를 정하고(1-03장의 시급성·난이도) 이를 단계별로 배치한 중장기 계획을 <b>분석 마스터 플랜</b>이라고 부릅니다. 로드맵은 보통 <b>데이터 분석 체계 도입 → 데이터 분석 유효성 검증 → 데이터 분석 확산 및 고도화</b>처럼 단계로 나눠 그립니다(단계 이름은 교재마다 조금씩 다릅니다).</p>
 <p>큰 목표를 산출물과 작업 묶음으로 쪼갠 구조를 <b class="key">작업분해구조</b>(WBS)라고 합니다. 예를 들어 ‘자료 준비’ 아래에 파일 목록 확보, 수집 권한 확인, 누락 검증이라는 작업을 놓습니다. 작업마다 산출물의 완료 기준을 적고, 작업 기간과 선후 관계는 일정표에서 함께 확인합니다.</p>
 <div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
 <h2>의존 작업 중 가장 늦게 끝나는 때를 기다린다</h2>
@@ -37,8 +39,8 @@
 <figure class="fig"><svg class="fig-svg" viewBox="0 0 760 298" role="img" aria-label="업무 범위 A는 0일부터 2일, 자료 확보 B는 2일부터 5일, 품질 C는 5일부터 7일, 운영안 설계 D는 2일부터 6일, 시범 E는 7일부터 9일.">
 <text class="f-cap" x="469" y="28" text-anchor="middle">프로젝트 시작 후 경과 일수</text><line class="f-ink" x1="244" y1="49" x2="689" y2="49" marker-end="url(#f-arrow)"/><line class="f-ink" x1="244" y1="45" x2="244" y2="54"/><text class="f-s" x="244" y="72" text-anchor="middle">0</text><line class="f-ink" x1="291" y1="45" x2="291" y2="54"/><text class="f-s" x="291" y="72" text-anchor="middle">1</text><line class="f-ink" x1="338" y1="45" x2="338" y2="54"/><text class="f-s" x="338" y="72" text-anchor="middle">2</text><line class="f-ink" x1="385" y1="45" x2="385" y2="54"/><text class="f-s" x="385" y="72" text-anchor="middle">3</text><line class="f-ink" x1="432" y1="45" x2="432" y2="54"/><text class="f-s" x="432" y="72" text-anchor="middle">4</text><line class="f-ink" x1="479" y1="45" x2="479" y2="54"/><text class="f-s" x="479" y="72" text-anchor="middle">5</text><line class="f-ink" x1="526" y1="45" x2="526" y2="54"/><text class="f-s" x="526" y="72" text-anchor="middle">6</text><line class="f-ink" x1="573" y1="45" x2="573" y2="54"/><text class="f-s" x="573" y="72" text-anchor="middle">7</text><line class="f-ink" x1="620" y1="45" x2="620" y2="54"/><text class="f-s" x="620" y="72" text-anchor="middle">8</text><line class="f-ink" x1="667" y1="45" x2="667" y2="54"/><text class="f-s" x="667" y="72" text-anchor="middle">9</text><text class="f-t" x="225" y="102" text-anchor="end">A 과제 범위</text><rect class="f-soft" x="244" y="84" width="94" height="27" rx="3"/><text class="f-t" x="225" y="140" text-anchor="end">B 자료 확보</text><rect class="f-soft" x="338" y="122" width="141" height="27" rx="3"/><text class="f-t" x="225" y="178" text-anchor="end">C 품질 확인</text><rect class="f-soft" x="479" y="160" width="94" height="27" rx="3"/><text class="f-t" x="225" y="216" text-anchor="end">D 운영안 설계</text><rect class="f-box" x="338" y="198" width="188" height="27" rx="3"/><text class="f-t" x="225" y="254" text-anchor="end">E 시범 운영</text><rect class="f-soft" x="573" y="236" width="94" height="27" rx="3"/><line class="f-dash" x1="573" y1="78" x2="573" y2="274"/>
 </svg><figcaption>D는 B·C와 일부 겹쳐 진행된다. E는 C와 D가 모두 끝난 뒤 시작한다.</figcaption></figure>
-<p>C는 7일, D는 6일에 끝납니다. 둘을 기다리는 E의 시작은 두 값 중 큰 7일입니다. E에 다시 2일을 더해 9일에 완료할 수 있습니다. 이 전제에서 기간을 결정하는 경로는 A→B→C→E입니다. 전체 기간에 여유가 없는 이런 경로를 <b class="key">임계경로</b>라고 합니다. D가 1일 늦어 7일에 끝나는 동안은 총 일정이 같지만, 더 늦으면 E가 기다려야 합니다.</p>
-<div class="check" data-q="q3"></div><div class="check" data-q="q4"></div>
+<p>C는 7일, D는 6일에 끝납니다. 둘을 기다리는 E의 시작은 두 값 중 큰 7일입니다. E에 다시 2일을 더해 9일에 완료할 수 있습니다. 이 전제에서 기간을 결정하는 경로는 A→B→C→E입니다. 시작부터 끝까지 이어지는 경로 가운데 <b>가장 긴</b> 경로, 즉 전체 기간에 여유가 없는 경로를 <b class="key">임계경로</b>(critical path)라고 합니다. A→D→E는 2+4+2=8일이라 9일보다 1일 짧습니다. 이 1일처럼 전체 완료일을 늦추지 않고 작업이 미뤄질 수 있는 시간을 <b>여유 시간</b>(float, slack)이라고 합니다. 그래서 D가 1일 늦어 7일에 끝나는 동안은 총 일정이 같지만, 더 늦으면 E가 기다려야 합니다. 임계경로 위의 작업은 여유 시간이 0입니다.</p>
+<div class="check" data-q="q3"></div><div class="check" data-q="q4"></div><div class="check" data-q="q11"></div>
 <pre data-example="python"><code>tasks = {
     &quot;A&quot;: (2, ()),
     &quot;B&quot;: (3, (&quot;A&quot;,)),
@@ -64,9 +66,16 @@ E 7 9</code></pre>
 <rect class="f-box" x="42" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="135" y="61" text-anchor="middle">위험을 기술</text><text class="f-s" x="135" y="89" text-anchor="middle">센서 자료 확보 지연</text><text class="f-s" x="135" y="110" text-anchor="middle">영향 · 시범 일정 영향</text><line class="f-line" x1="235" y1="84" x2="278" y2="84" marker-end="url(#f-arrow)"/><rect class="f-soft" x="287" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="380" y="61" text-anchor="middle">대응을 정한다</text><text class="f-s" x="380" y="89" text-anchor="middle">대체 자료를 미리 확인</text><text class="f-s" x="380" y="110" text-anchor="middle">책임 · 데이터 담당자</text><line class="f-line" x1="480" y1="84" x2="523" y2="84" marker-end="url(#f-arrow)"/><rect class="f-box" x="532" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="625" y="61" text-anchor="middle">확인 시점</text><text class="f-s" x="625" y="89" text-anchor="middle">파일 형식 점검일</text><text class="f-s" x="625" y="110" text-anchor="middle">기준을 넘으면 계획 변경</text>
 </svg><figcaption>위험이 현실이 되기 전에 관찰할 조건을 정하면 대응 시점을 놓치지 않는다.</figcaption></figure>
 <p>예를 들어 자료가 하루에 한 번만 갱신된다면 그 자료만으로는 최근 15분의 변화를 반영하기 어렵습니다. 점검일을 정해 최신 시각과 누락을 확인하고, 지연이 계속되면 더 느린 의사결정으로 목표를 조정하거나 다른 허가된 자료를 검토합니다. 성공 기준과 중단·전개 조건을 초기에 적어 두면 평가를 보고 나서 유리한 기준으로 바꾸는 일을 줄일 수 있습니다.</p>
-<div class="check" data-q="q5"></div><div class="check" data-q="q6"></div>
+<p>확인한 위험에는 보통 네 가지 대응 전략 중 하나를 고릅니다. <span class="tag memo">외우기</span></p>
+<div class="table-wrap"><table><thead><tr><th scope="col">대응</th><th scope="col">뜻</th><th scope="col">도서관 예</th></tr></thead><tbody><tr><td><b class='key'>회피</b>(Avoid)</td><td>위험이 생기는 원인 자체를 없앤다(계획 변경)</td><td>개인별 이동 기록이 필요한 과제를 범위에서 뺀다</td></tr><tr><td><b class='key'>전이</b>(Transfer)</td><td>위험의 결과와 책임을 제3자에게 넘긴다</td><td>센서 납품 지연에 대한 보상 조항을 계약에 넣는다</td></tr><tr><td><b class='key'>완화</b>(Mitigate)</td><td>발생 가능성이나 영향을 줄인다</td><td>대체 자료를 미리 확보해 지연 영향을 줄인다</td></tr><tr><td><b class='key'>수용</b>(Accept)</td><td>대응 비용이 더 크면 위험을 받아들이고 발생 시 대처한다</td><td>하루 정도의 지연은 일정 여유로 흡수한다</td></tr></tbody></table></div>
+<div class="check" data-q="q5"></div><div class="check" data-q="q6"></div><div class="check" data-q="q9"></div>
+<h2>분석 프로젝트에서 따로 관리할 것 <span class="tag memo">외우기</span></h2>
+<p>분석 프로젝트도 일반 프로젝트처럼 관리하지만, 데이터와 모형 때문에 생기는 특성을 따로 관리합니다. 교재는 다섯 가지 주요 관리 대상을 듭니다.</p>
+<div class="table-wrap"><table><thead><tr><th scope="col">관리 대상</th><th scope="col">무엇을 고려하나</th></tr></thead><tbody><tr><td><b class='key'>Data Size</b></td><td>데이터 양이 처리 방식과 일정에 주는 영향</td></tr><tr><td><b class='key'>Data Complexity</b></td><td>정형·비정형이 섞이고 여러 시스템에 흩어진 데이터의 통합 난도</td></tr><tr><td><b class='key'>Speed</b></td><td>결과가 필요한 시점(일 단위 보고인지, 실시간인지)에 맞는 처리 속도</td></tr><tr><td><b class='key'>Analytic Complexity</b></td><td>모형이 복잡할수록 정확도는 오를 수 있지만 해석이 어려워진다. 둘 사이의 균형점을 찾는다</td></tr><tr><td><b class='key'>Accuracy &amp; Precision</b></td><td>정확도(Accuracy: 실제값과의 차이가 작음)와 정밀도(Precision: 반복했을 때 결과가 일관됨)는 서로 트레이드오프가 될 수 있다</td></tr></tbody></table></div>
+<p>관리 영역 자체는 KS A ISO 21500(프로젝트 관리 지침)의 10개 주제 그룹으로 나누는 경우가 많습니다: <b>통합, 이해관계자, 범위, 자원, 시간, 원가, 리스크, 품질, 조달, 의사소통</b>. 이 장에서 다룬 WBS는 범위, 일정표와 임계경로는 시간, 위험 기록은 리스크 관리에 해당합니다. 교재에 따라 영역 이름이 조금씩 다르므로 공식 출제기준·교재로 확인합니다.</p>
+<div class="check" data-q="q10"></div>
 <h2>한눈에 정리</h2>
-<div class="table-wrap"><table><thead><tr><th scope="col">핵심어</th><th scope="col">기억할 뜻</th></tr></thead><tbody><tr><td><b class='key'>로드맵</b></td><td>여러 과제의 우선순위와 큰 시점</td></tr><tr><td><b class='key'>작업분해구조</b></td><td>큰 과제를 산출물과 작업 묶음으로 분해</td></tr><tr><td><b class='key'>임계경로</b></td><td>주어진 선후 관계에서 전체 기간을 결정하는 길이</td></tr></tbody></table></div>
+<div class="table-wrap"><table><thead><tr><th scope="col">핵심어</th><th scope="col">기억할 뜻</th></tr></thead><tbody><tr><td><b class='key'>로드맵</b></td><td>여러 과제의 우선순위와 큰 시점</td></tr><tr><td><b class='key'>작업분해구조</b></td><td>큰 과제를 산출물과 작업 묶음으로 분해</td></tr><tr><td><b class='key'>임계경로</b></td><td>주어진 선후 관계에서 가장 긴 경로. 전체 기간을 결정하고 여유 시간이 0</td></tr><tr><td><b class='key'>위험 대응</b></td><td>회피·전이·완화·수용</td></tr><tr><td><b class='key'>분석 프로젝트 특성</b></td><td>Data Size, Data Complexity, Speed, Analytic Complexity, Accuracy &amp; Precision</td></tr></tbody></table></div>
 <div class="box sum"><p class="box-k">한 줄 정리</p><p>무엇을 완료해야 하는지, 무엇을 기다리는지, 어디서 계획을 다시 검토할지를 함께 적는다.</p></div>
 
 <h2>참고 자료</h2>
