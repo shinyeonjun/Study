@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>재사용할 데이터와 예측 질문을 고정하고 시험 시기를 보류하기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="DA10-1">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">데이터 분석 · DA10 공개 데이터 분석 프로젝트</p>
+<p class="chap-num">DA10·1</p>
+<h1>재사용할 데이터와 예측 질문을 고정하고 시험 시기를 보류하기</h1>
+<p class="lead">마우나로아 연평균 30개로 다음 해를 한 해씩 예측합니다. 프로젝트의 데이터, 알려진 시점, 검증 구간과 지표를 먼저 고정하면 결과가 나온 뒤 판단을 바꾸는 일을 줄일 수 있습니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2>
+<ul>
+<li>공개 자료의 버전과 관측 단위, 출처의 이용 안내를 확인한다.</li>
+<li>시계열 예측의 원점과 대상 시점을 적고 적용 한계를 설명한다.</li>
+<li>탐색·선택·구간 조정·보류 평가를 시간상으로 분리한다.</li>
+</ul></div>
+<h2>지표로 답할 수 있는 질문을 먼저 적는다</h2>
+<p>이 프로젝트의 질문은 <b>마우나로아에서 작년까지의 연평균이 알려졌을 때, 마지막 값을 반복하는 기준보다 최근 변화량을 보탠 예측이 다음 해의 절대오차를 줄이는가</b>입니다. 목적은 관측된 두 규칙의 예측 비교입니다. 자료의 한 행은 관측소 한 곳의 연평균이고, 오차 단위는 ppm입니다. 다른 관측소 및 전 지구 농도, CO₂ 변화의 원인은 별개의 질문입니다.</p>
+<p>NOAA Global Monitoring Laboratory의 Xin Lan 및 Scripps Institution of Oceanography의 Ralph Keeling 자료 가운데 2026-10-09 생성본의 1990–2019년을 사용합니다. <a href="../../labs/mauna-loa/SOURCE.md">수록 자료 설명</a>에 선택한 열과 변환을 기록했습니다. 실제 수치를 반올림하거나 보간하지 않았습니다. NOAA GML은 이 자료를 공개하며 연구 발표에 관련 출처를 적도록 안내합니다. 수록 CSV는 분석에 필요한 열과 기간만 옮긴 실습본입니다. <a href="https://gml.noaa.gov/ccgg/data/datause.html">NOAA GML 자료 이용 정책</a> · <a href="https://gml.noaa.gov/about/disclaimer.html">이용 조건과 출처 표기 안내</a></p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 264" role="img" aria-label="1990년 354.45ppm부터 2019년 411.65ppm까지 수록된 마우나로아 연평균 30개.">
+<text class="f-cap" x="380" y="29" text-anchor="middle">마우나로아 CO₂ 연평균의 수록 구간</text>
+<line class="f-ink" x1="136" y1="190" x2="644" y2="190" marker-end="url(#f-arrow)"/>
+<line class="f-ink" x1="136" y1="190" x2="136" y2="49" marker-end="url(#f-arrow)"/>
+<line class="f-ink" x1="136" y1="190" x2="136" y2="196"/>
+<text class="f-s" x="136" y="212" text-anchor="middle">1990</text>
+<line class="f-ink" x1="221.17241379310343" y1="190" x2="221.17241379310343" y2="196"/>
+<text class="f-s" x="221.17241379310343" y="212" text-anchor="middle">1995</text>
+<line class="f-ink" x1="306.34482758620686" y1="190" x2="306.34482758620686" y2="196"/>
+<text class="f-s" x="306.34482758620686" y="212" text-anchor="middle">2000</text>
+<line class="f-ink" x1="391.51724137931035" y1="190" x2="391.51724137931035" y2="196"/>
+<text class="f-s" x="391.51724137931035" y="212" text-anchor="middle">2005</text>
+<line class="f-ink" x1="476.6896551724138" y1="190" x2="476.6896551724138" y2="196"/>
+<text class="f-s" x="476.6896551724138" y="212" text-anchor="middle">2010</text>
+<line class="f-ink" x1="561.8620689655172" y1="190" x2="561.8620689655172" y2="196"/>
+<text class="f-s" x="561.8620689655172" y="212" text-anchor="middle">2015</text>
+<line class="f-ink" x1="630" y1="190" x2="630" y2="196"/>
+<text class="f-s" x="630" y="212" text-anchor="middle">2019</text>
+<line class="f-grid" x1="131" y1="190" x2="630" y2="190"/>
+<text class="f-s" x="125" y="194" text-anchor="end">350</text>
+<line class="f-grid" x1="131" y1="151.14285714285714" x2="630" y2="151.14285714285714"/>
+<text class="f-s" x="125" y="155.14285714285714" text-anchor="end">370</text>
+<line class="f-grid" x1="131" y1="112.28571428571429" x2="630" y2="112.28571428571429"/>
+<text class="f-s" x="125" y="116.28571428571429" text-anchor="end">390</text>
+<line class="f-grid" x1="131" y1="73.42857142857143" x2="630" y2="73.42857142857143"/>
+<text class="f-s" x="125" y="77.42857142857143" text-anchor="end">410</text>
+<line class="f-grid" x1="131" y1="54" x2="630" y2="54"/>
+<text class="f-s" x="125" y="58" text-anchor="end">420</text>
+<polyline class="f-line" fill="none" points="136,181.354 153.034,178.926 170.069,177.294 187.103,175.992 204.138,172.592 221.172,168.687 238.207,165.248 255.241,163.033 272.276,157.282 289.31,153.979 306.345,151.706 323.379,148.578 340.414,144.44 357.448,139.525 374.483,136.183 391.517,131.753 408.552,127.654 425.586,123.904 442.621,120.387 459.655,116.871 476.69,112.091 493.724,108.691 510.759,104.398 527.793,99.191 544.828,95.169 561.862,90.895 578.897,84.289 595.931,79.723 612.966,75.915 630,70.223"/>
+<text class="f-s" x="650" y="236" text-anchor="middle">연도</text>
+<text class="f-s" x="120" y="44" text-anchor="end">연평균 (ppm)</text>
+</svg><figcaption>범위와 입력 스냅샷을 설명하는 전체 그림이다. 정식 예측 비교에서는 다음 절의 시간 구간을 사용한다.</figcaption></figure>
+<p>그림에서 전체 시계열을 이미 공개하고 있으므로 이 프로젝트는 새로운 비공개 시험이 아니라 <b class="key">고정 계획을 재실행하는 교육용 후향 분석</b>입니다. 실제 연구라면 탐색에 보는 연도와 가려 둘 연도를 먼저 나누고 선택 단계에서는 보류값을 열지 않습니다. 다음 장에서도 보류 점수를 모델 선택 계산에 사용하지 않습니다.</p>
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+<h2>다음 해를 예측할 때 어떤 해를 입력할 수 있는가</h2>
+<p>대상 연도를 t라 하면 예측의 원점은 <var>t−1</var>의 값까지 알려진 시점입니다. 예로 2002년을 예측할 때 2001년까지의 값을 사용합니다. 2002년의 실제 값은 예측을 기록한 뒤 점수를 계산하는 데 사용합니다. 이후 2003년 예측 때는 2002년의 관측을 추가할 수 있습니다. 매년 목표를 하나씩 앞으로 옮기는 <b class="key">이동 원점</b> 평가입니다. 2001년에 한 번에 2002–2019년 전체를 내다보는 장기 예측과는 정보 사용 방식이 다릅니다.</p>
+<p>현재 파일은 개정된 수록본 하나입니다. 연구 조건에서 ‘이전 연도가 관측되어 이용 가능하다’라고 두지만, 과거의 실제 최초 발표일 및 개정 전 숫자를 갖고 있지는 않습니다. 뒤 해의 행이 들어가는 누출은 막을 수 있지만, 실제 각 시점에 알려진 과거 수치와 같은지까지 검증한 실시간 평가는 아닙니다.</p>
+<div class="check" data-q="q3"></div>
+<div class="check" data-q="q4"></div>
+<h2>어떤 구간에서 어떤 선택을 하는지 고정한다</h2>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 253" role="img" aria-label="1990–2001은 탐색과 초기값, 2002–2006은 모델 선택, 2007–2011은 구간 조정, 2012–2019는 보류 평가다.">
+<text class="f-cap" x="380" y="30" text-anchor="middle">연속한 시기를 용도별로 나눈다</text>
+<rect class="f-soft" x="73.5" y="49" width="151" height="38"/>
+<text class="f-t" x="149" y="73" text-anchor="middle">목표 연도</text>
+<rect class="f-soft" x="224.5" y="49" width="132" height="38"/>
+<text class="f-t" x="290.5" y="73" text-anchor="middle">연도 수</text>
+<rect class="f-soft" x="356.5" y="49" width="330" height="38"/>
+<text class="f-t" x="521.5" y="73" text-anchor="middle">사용 목적</text>
+<rect class="f-box" x="73.5" y="87" width="151" height="38"/>
+<text class="f-s" x="149" y="111" text-anchor="middle">1990–2001</text>
+<rect class="f-box" x="224.5" y="87" width="132" height="38"/>
+<text class="f-s" x="290.5" y="111" text-anchor="middle">12</text>
+<rect class="f-box" x="356.5" y="87" width="330" height="38"/>
+<text class="f-s" x="521.5" y="111" text-anchor="middle">질문과 입력 단위 확인</text>
+<rect class="f-box" x="73.5" y="125" width="151" height="38"/>
+<text class="f-s" x="149" y="149" text-anchor="middle">2002–2006</text>
+<rect class="f-box" x="224.5" y="125" width="132" height="38"/>
+<text class="f-s" x="290.5" y="149" text-anchor="middle">5</text>
+<rect class="f-box" x="356.5" y="125" width="330" height="38"/>
+<text class="f-s" x="521.5" y="149" text-anchor="middle">후보 3년과 6년 중 절대오차로 선택</text>
+<rect class="f-box" x="73.5" y="163" width="151" height="38"/>
+<text class="f-s" x="149" y="187" text-anchor="middle">2007–2011</text>
+<rect class="f-box" x="224.5" y="163" width="132" height="38"/>
+<text class="f-s" x="290.5" y="187" text-anchor="middle">5</text>
+<rect class="f-box" x="356.5" y="163" width="330" height="38"/>
+<text class="f-s" x="521.5" y="187" text-anchor="middle">선택한 규칙의 오차 폭 계산</text>
+<rect class="f-box" x="73.5" y="201" width="151" height="38"/>
+<text class="f-s" x="149" y="225" text-anchor="middle">2012–2019</text>
+<rect class="f-box" x="224.5" y="201" width="132" height="38"/>
+<text class="f-s" x="290.5" y="225" text-anchor="middle">8</text>
+<rect class="f-box" x="356.5" y="201" width="330" height="38"/>
+<text class="f-s" x="521.5" y="225" text-anchor="middle">잠근 규칙의 점 예측과 구간 평가</text>
+</svg><figcaption>각 시기에 앞선 해의 관측은 다음 원점이 된 뒤 사용할 수 있다. 평가에 사용한 시기는 후보 선택으로 되돌리지 않는다.</figcaption></figure>
+<p>기준선은 <var>ŷ<sub>t</sub>=y<sub>t−1</sub></var>입니다. 후보는 최근 k년의 평균 연간 변화량을 마지막 값에 더하며 k=3 또는 k=6만 비교합니다. 선택 기준은 2002–2006년에 얻은 평균 절대오차(MAE)이고 동점이면 기간이 짧은 후보를 고릅니다. 보류 평가에는 MAE와 큰 오류를 더 크게 반영하는 제곱평균제곱근오차(RMSE)를 적습니다. 구간 폭을 설정하는 기준과 범위를 다음 장에서도 바꾸지 않습니다.</p>
+<div class="check" data-q="q5"></div>
+<div class="check" data-q="q6"></div>
+<h2>이어 풀기와 증명</h2>
+<p>자료 검사와 모형 평가를 두 단계로 기록합니다. 다음 해의 값을 안다는 가정을 무엇으로 검증할 수 있는지도 적습니다.</p>
+<div class="check" data-q="q7"></div>
+<div class="check" data-q="q8"></div>
+<div class="check" data-q="q9"></div>
+<h2>파이썬으로 같은 계산 검산하기</h2>
+<p><a href="../../labs/mauna-loa/annual_co2.csv" download>연평균 관측 CSV</a>를 저장하고 아래 코드를 그 파일과 같은 작업 폴더에서 실행합니다.</p>
+<pre data-example="python"><code>from csv import DictReader
+from decimal import Decimal as D
+from hashlib import sha256
+from io import StringIO
+from pathlib import Path
+
+path = Path(&quot;annual_co2.csv&quot;)
+text = path.read_text(encoding=&quot;utf8&quot;)
+reader = DictReader(StringIO(text))
+assert reader.fieldnames == [&quot;year&quot;, &quot;mean_ppm&quot;, &quot;uncertainty_ppm&quot;]
+rows = [(int(r[&quot;year&quot;]), D(r[&quot;mean_ppm&quot;]), D(r[&quot;uncertainty_ppm&quot;])) for r in reader]
+years = [year for year, _, _ in rows]
+assert years == list(range(1990, 2020))
+assert all(m.is_finite() and u.is_finite() and 300 &lt;= m &lt;= 500 and u &gt;= 0
+           for _, m, u in rows)
+print(&quot;first and last:&quot;, rows[0][0], rows[0][1], rows[-1][0], rows[-1][1])
+print(&quot;observed rows:&quot;, len(rows))
+print(&quot;normalized text SHA-256:&quot;, sha256(text.encode(&quot;utf8&quot;)).hexdigest())
+for label, start, stop in (
+    (&quot;development&quot;, 1990, 2001), (&quot;selection&quot;, 2002, 2006),
+    (&quot;calibration&quot;, 2007, 2011), (&quot;holdout&quot;, 2012, 2019),
+):
+    ids = [year for year in years if start &lt;= year &lt;= stop]
+    print(label, len(ids), ids[0], ids[-1])</code></pre>
+<p class="aside">실행 결과</p>
+<pre data-output><code>first and last: 1990 354.45 2019 411.65
+observed rows: 30
+normalized text SHA-256: 434137320f75320a6dbbd6cdb713fc11e85b8f8d5e257369c3b358bfd27e10f4
+development 12 1990 2001
+selection 5 2002 2006
+calibration 5 2007 2011
+holdout 8 2012 2019</code></pre>
+<p>저장소 최상위에서 실행합니다. 해시는 UTF-8로 읽고 줄바꿈을 표준으로 통일한 텍스트에 적용합니다. 이 실습의 현재 입력을 식별하며, 해시가 같아도 당시 공개일이나 자료의 대표성까지 보장하지는 않습니다.</p>
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://gml.noaa.gov/ccgg/trends/data.html">NOAA GML · Trends in Atmospheric Carbon Dioxide 자료</a></li>
+<li><a href="https://gml.noaa.gov/webdata/ccgg/trends/co2/co2_annmean_mlo.txt">NOAA GML · 연평균 원자료와 생성본</a></li>
+<li><a href="https://otexts.com/fpp3/toolbox.html#time-series-cross-validation">Hyndman·Athanasopoulos · Time Series Cross-Validation</a></li>
+<li><a href="da09-3.html">DA09-3 자료 계약 실습</a></li>
+</ul>
+<h2>확인 문제</h2>
+<p>조건과 단위를 먼저 적은 뒤 해설을 확인합니다.</p>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

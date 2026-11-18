@@ -130,6 +130,15 @@ window.BDA_CHAPTERS = {
     {"id": "PY12-2", "title": "반복자와 생성기로 값이 필요할 때 하나씩 만들기", "href": "notes/py/py12-2.html"},
     {"id": "PY12-3", "title": "계산과 출력 코드를 모듈로 나누고 타입 적기", "href": "notes/py/py12-3.html"}
   ],
+  PY13: [
+    {"id": "PY13-1", "title": "정수 범위와 실수 반올림을 계산 전에 확인하기", "href": "notes/py/py13-1.html"},
+    {"id": "PY13-2", "title": "결측을 제외하고 가중평균과 가중분산 계산하기", "href": "notes/py/py13-2.html"}
+  ],
+  PY14: [
+    {"id": "PY14-1", "title": "위치와 라벨을 구별하고 없는 값을 추적하기", "href": "notes/py/py14-1.html"},
+    {"id": "PY14-2", "title": "긴 표와 넓은 표를 오가며 집계의 분모 지키기", "href": "notes/py/py14-2.html"},
+    {"id": "PY14-3", "title": "최근 세 행과 최근 사흘을 구별해 시간 집계하기", "href": "notes/py/py14-3.html"}
+  ],
   DA01: [
     {"id": "DA01-1", "title": "관측과 변수, 행과 열", "href": "notes/da/da01-1.html"},
     {"id": "DA01-2", "title": "한 행의 단위와 수집 맥락", "href": "notes/da/da01-2.html"}
@@ -161,6 +170,16 @@ window.BDA_CHAPTERS = {
   DA08: [
     {"id": "DA08-1", "title": "모집단·표본·선택 편향: 결과를 어디까지 말할 수 있나", "href": "notes/da/da08-1.html"},
     {"id": "DA08-2", "title": "표본을 반복해서 뽑아 보면: 정확한 계산과 시뮬레이션", "href": "notes/da/da08-2.html"}
+  ],
+  DA09: [
+    {"id": "DA09-1", "title": "관측 단위와 결합 입도, 실제로 알 수 있었던 시각을 구분하기", "href": "notes/da/da09-1.html"},
+    {"id": "DA09-2", "title": "결측이 생기는 방식과 결측값 범위의 민감도를 비교하기", "href": "notes/da/da09-2.html"},
+    {"id": "DA09-3", "title": "자료 계약으로 형식과 기대 키를 먼저 검사하기", "href": "notes/da/da09-3.html"}
+  ],
+  DA10: [
+    {"id": "DA10-1", "title": "재사용할 데이터와 예측 질문을 고정하고 시험 시기를 보류하기", "href": "notes/da/da10-1.html"},
+    {"id": "DA10-2", "title": "다음 해의 기준선과 최근 변화량을 시간순으로 비교하기", "href": "notes/da/da10-2.html"},
+    {"id": "DA10-3", "title": "보정 구간의 오차 폭을 평가하고 재실행 보고서를 남기기", "href": "notes/da/da10-3.html"}
   ],
   DM01: [
     {"id": "DM01-1", "title": "집합과 연산: 조건을 만족하는 행 모으기", "href": "notes/dm/dm01-1.html"},
@@ -1015,6 +1034,8 @@ window.BDA_MAP = {
     {"id": "PY10", "area": "PY", "title": "수치 배열", "concepts": "NumPy 배열·shape·dtype·인덱싱, 원소별 연산, broadcasting, 난수", "pre": ["PY06", "AR10"]},
     {"id": "PY11", "area": "PY", "title": "표와 시각화 코드", "concepts": "pandas 선택·필터·집계·결합, matplotlib 축·범례·오차 막대의 기초", "pre": ["PY07", "PY10", "DA02"]},
     {"id": "PY12", "area": "PY", "title": "코드가 커질 때", "concepts": "객체·클래스 기초, 반복자·생성기, 모듈 분리, 읽기 쉬운 코드와 간단한 타입 표기", "pre": ["PY09"]},
+    {"id": "PY13", "area": "PY", "title": "수치 계산 검증", "concepts": "NumPy 정수 넘침과 실수 간격·결합 순서, dtype 변환, 결측 마스크, 유효 가중치와 가중분산", "pre": ["PY10", "DA05"]},
+    {"id": "PY14", "area": "PY", "title": "신뢰할 수 있는 표 연산", "concepts": "pandas 위치와 라벨 정렬, 결측 정수, 긴 표와 넓은 표, 집계의 분모, 날짜 창과 행 창", "pre": ["PY11", "PY13"]},
     {"id": "DA01", "area": "DA", "title": "질문을 데이터로 바꾸기", "concepts": "관측·측정·변수·행·열, 한 행의 단위, 분석 목적과 수집 맥락", "pre": ["U03"]},
     {"id": "DA02", "area": "DA", "title": "데이터의 종류", "concepts": "수치·범주·순서·시간, 정형·반정형·비정형, 결측과 0의 차이", "pre": ["DA01"]},
     {"id": "DA03", "area": "DA", "title": "표와 그림 읽기", "concepts": "도수·비율, 막대·히스토그램·산점도·선 그래프, 축·분모·표본 수", "pre": ["DA02", "AR07"]},
@@ -1023,7 +1044,7 @@ window.BDA_MAP = {
     {"id": "DA06", "area": "DA", "title": "데이터 품질", "concepts": "중복·누락·단위 혼동·잘못된 범주, 관측 시점, 정답 정보의 유출", "pre": ["DA02", "PY07"]},
     {"id": "DA07", "area": "DA", "title": "탐색 보고서", "concepts": "정리·집계·분포 비교·그림 선택, 발견과 추측 구분, 변환 기록", "pre": ["DA05", "DA06", "PY11"]},
     {"id": "DA08", "area": "DA", "title": "표본과 시뮬레이션", "concepts": "모집단·표본, 선택 편향, 상관과 인과의 첫 구분, 반복 추출 실험", "pre": ["DA04", "PY04"]},
-    {"id": "DA09", "area": "DA", "title": "데이터를 분석 단위로 설계하기", "concepts": "데이터 생성 과정·관측 단위·반복 측정, 조인 입도·시간 기준, 결측 패턴과 민감도, 데이터 계약 실습", "pre": ["DA07", "DB07", "ST13"]},
+    {"id": "DA09", "area": "DA", "title": "데이터를 분석 단위로 설계하기", "concepts": "데이터 생성 과정·관측 단위·반복 측정, 조인 입도·시간 기준, 결측 패턴과 민감도, 데이터 계약 실습", "pre": ["DA07", "PY14", "DB07", "ST13"]},
     {"id": "DA10", "area": "DA", "title": "공개 데이터 분석 프로젝트", "concepts": "연구 질문·사전 설정, 원자료 검사, 지표와 기준선, 보류 자료 평가·불확실성, 재실행 보고서와 결과 지적", "pre": ["DA09", "RS06", "RS07", "ML11"]},
     {"id": "DM01", "area": "DM", "title": "집합과 논리", "concepts": "원소·부분집합·합집합·교집합, 명제·and/or/not, 조건과 논리식", "pre": ["AL01"]},
     {"id": "DM02", "area": "DM", "title": "정확한 주장", "concepts": "모든/어떤, 필요·충분조건, 역·대우, 예와 반례, 직접증명·귀류법", "pre": ["DM01"]},
@@ -1251,7 +1272,7 @@ window.BDA_MAP = {
   ],
   paths: [
     {"id": "start", "name": "공통 출발", "targets": ["U01", "U02", "U03", "U04", "U05", "AR01", "AR02", "AR03", "AR04", "AR05", "AR06", "AR07", "AR10", "PY01", "PY02", "PY03", "PY04", "PY05", "PY06", "PY07", "PY08", "AL01", "AL02", "AL03", "AL04", "AL05", "DA01", "DA02", "DA03", "DA04", "U06", "RS01"]},
-    {"id": "analysis", "name": "데이터 분석 실습", "targets": ["PY09", "PY10", "PY11", "DA05", "DA06", "DA07", "DA08"]},
+    {"id": "analysis", "name": "데이터 분석 실습", "targets": ["PY09", "PY10", "PY11", "PY13", "PY14", "DA05", "DA06", "DA07", "DA08", "DA09", "DA10"]},
     {"id": "bd", "name": "빅분기", "targets": ["BD01", "BD02", "BD03", "BD04", "BD05"]},
     {"id": "data", "name": "데이터·통계", "targets": ["DA01", "DA02", "DA03", "DA04", "DA05", "DA06", "DA07", "DA08", "DA09", "DA10", "ST01", "ST02", "ST03", "ST04", "ST05", "ST06", "ST07", "ST08", "ST09", "ST10", "ST11", "ST12", "ST13", "ST14", "ST15", "DB02", "ML02", "ML10", "ML11", "RS05", "RS06", "RS07", "RS08", "RS09"]},
     {"id": "ml", "name": "머신러닝", "targets": ["ML01", "ML02", "ML03", "ML04", "ML05", "ML06", "ML07", "ML08", "ML09", "ML10", "ML11", "ML12", "ML13", "ML14", "ML15", "ML16"]},

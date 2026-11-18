@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>최근 세 행과 최근 사흘을 구별해 시간 집계하기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="PY14-3">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">Python과 프로그래밍 사고 · PY14 신뢰할 수 있는 표 연산</p>
+<p class="chap-num">PY14·3</p>
+<h1>최근 세 행과 최근 사흘을 구별해 시간 집계하기</h1>
+<p class="lead">하루에 한 번 기록할 예정이었어도 며칠 빠지면 최근 세 번의 측정이 최근 사흘에 들어오지 않습니다. 날짜를 정렬하고, 현재 행을 포함할지 결정해서 과거 정보만 보는 평균을 구합니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>행 개수와 달력 시간으로 정한 창을 구별한다.</li><li>닫힌 끝점을 읽고 평균에 들어갈 날짜를 적는다.</li><li>누락된 날짜와 현재 행을 보고서에 올바르게 처리한다.</li></ul></div>
+
+<h2>창은 과거를 자르는 규칙이다</h2>
+<p>센서 하나에서 4월 1일에 10, 2일에 20, 4일에 8, 5일에 16을 관측했습니다. 하루 전 값이라는 질문과 직전 관측값이라는 질문은 다릅니다. 4일에 직전 관측은 2일의 20입니다. 3일에는 관측이 없습니다. 행 번호만 보면 2일과 4일 값이 나란히 붙어 있습니다.</p>
+<div class="table-wrap"><table><thead><tr><th scope="col">기준일</th><th scope="col">이전 세 행에 있는 날짜</th><th scope="col">직전 사흘의 관측 날짜</th></tr></thead><tbody><tr><td>4월 4일</td><td>1일, 2일</td><td>1일, 2일</td></tr><tr><td>4월 5일</td><td>1일, 2일, 4일</td><td>2일, 4일</td></tr></tbody></table></div>
+<p>이 예의 직전 사흘은 날짜 <var>t</var>에 대해 <var>[t−3일, t)</var>입니다. 왼쪽 끝은 들어가고 오른쪽 끝은 빠집니다. 5일에는 2일과 4일이 들어가지만, 1일은 너무 멀고 5일은 지금의 값이라 제외합니다. 날짜는 시간대가 없는 날짜형으로 통일하고 각 기록이 해당 날짜 00:00에 놓인 것으로 계산합니다.</p>
+<div class="check" data-q="q1"></div><div class="check" data-q="q2"></div><div class="check" data-q="q3"></div>
+<h2>정렬, 창의 크기, 현재 행의 위치</h2>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 160" role="img" aria-label="4월 5일을 제외한 직전 사흘에는 4월 2일과 4일 값이 포함되므로 두 값의 평균을 낸다.">
+<rect class="f-box" x="42" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="135" y="61" text-anchor="middle">4월 5일이 기준</text><text class="f-s" x="135" y="89" text-anchor="middle">현재 관측 16</text><text class="f-s" x="135" y="110" text-anchor="middle">집계에서 제외</text><line class="f-line" x1="235" y1="84" x2="278" y2="84" marker-end="url(#f-arrow)"/><rect class="f-soft" x="287" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="380" y="61" text-anchor="middle">직전 사흘</text><text class="f-s" x="380" y="89" text-anchor="middle">4월 2일: 20</text><text class="f-s" x="380" y="110" text-anchor="middle">4월 4일: 8</text><line class="f-line" x1="480" y1="84" x2="523" y2="84" marker-end="url(#f-arrow)"/><rect class="f-box" x="532" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="625" y="61" text-anchor="middle">관측값 집계</text><text class="f-s" x="625" y="89" text-anchor="middle">분자 28</text><text class="f-s" x="625" y="110" text-anchor="middle">분모 2</text>
+</svg><figcaption>누락된 4월 3일을 0으로 채우면 계산하는 질문이 달라진다.</figcaption></figure>
+<p><code>rolling("3D", closed="left", min_periods=1)</code>에서 <code>"3D"</code>는 날짜 인덱스에 적용할 3일의 시간 길이입니다. <code>closed="left"</code>는 왼쪽 끝을 포함하고 오른쪽 끝을 제외합니다. <code>min_periods=1</code>이라 창에 유효 관측이 하나도 없으면 평균을 NaN으로 둡니다. 하루에 한 줄이 맞는 실험이라면 날짜 키의 중복을 검사하고, 여러 센서가 들어온 파일은 센서별로 분리해 각자의 시간 순서를 확인합니다.</p>
+<p><code>shift(1).rolling(3, min_periods=1)</code>은 입력값을 관측 위치 하나만큼 옮긴 뒤 세 행 이내에서 평균을 구합니다. 시간의 간격이 불규칙하면 날짜로 계산한 평균과 달라질 수 있습니다. 5일 기준 날짜 창의 평균은 (20+8)/2=14이고, 행 창의 평균은 (10+20+8)/3=38/3입니다.</p>
+<div class="check" data-q="q4"></div><div class="check" data-q="q5"></div>
+<h2>실행으로 확인하기</h2>
+<pre data-example="python"><code>import pandas as pd
+
+times = pd.to_datetime([&quot;2020-04-05&quot;, &quot;2020-04-01&quot;, &quot;2020-04-04&quot;, &quot;2020-04-02&quot;])
+values = pd.Series([16, 10, 8, 20], index=times).sort_index()
+if values.index.hasnans or not values.index.is_unique:
+    raise ValueError(&quot;관측 날짜가 비었거나 중복되었습니다&quot;)
+
+by_day = values.rolling(&quot;3D&quot;, closed=&quot;left&quot;, min_periods=1).mean()
+by_row = values.shift(1).rolling(3, min_periods=1).mean()
+for date, day, row in zip(values.index, by_day, by_row):
+    print(f&quot;{date:%m-%d} {day:.4f} {row:.4f}&quot;)
+t = pd.Timestamp(&quot;2020-04-05&quot;)
+inside = (values.index &gt;= t - pd.Timedelta(days=3)) &amp; (values.index &lt; t)
+print(values.index[inside].strftime(&quot;%m-%d&quot;).tolist())
+assert by_day.loc[t] == values.loc[inside].mean()</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>04-01 nan nan
+04-02 10.0000 10.0000
+04-04 15.0000 15.0000
+04-05 14.0000 12.6667
+['04-02', '04-04']</code></pre>
+<p>여기서는 과거 관측이 모두 그때 사용 가능하다고 가정했습니다. 발표가 늦어지거나 개정되는 자료는 관측일과 별도로 공개 시각을 확인합니다. <a href="../../unit.html?u=DA10">공개 데이터 프로젝트</a>에서는 분석용 CSV에 적힌 연도만큼 과거를 자르는 것과, 그때 발표된 숫자를 비교하는 것이 어떻게 다른지 다시 확인합니다.</p>
+<div class="check" data-q="q6"></div><div class="check" data-q="q7"></div><div class="check" data-q="q8"></div>
+
+<h2>참고 자료</h2>
+<ul><li><a href="https://pandas.pydata.org/docs/reference/api/pandas.Series.rolling.html">pandas · rolling의 시간 창과 closed</a></li><li><a href="https://pandas.pydata.org/docs/user_guide/window.html">pandas · 창 연산 사용자 문서</a></li></ul>
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

@@ -198,6 +198,7 @@
     view.appendChild(link("view-back small", "분야별 목차", "#all"));
     view.appendChild(head(group.name));
     view.appendChild(areaLinks(group.areas, true));
+    if (group.id === "data") view.appendChild(link("view-back small", "NumPy부터 공개 데이터 분석까지", "#path-analysis"));
   }
 
   function drawArea(view, code, group) {
@@ -246,6 +247,15 @@
     var ids = G.expand(p.targets);
     view.appendChild(link("view-back small", "분야별 목차", "#all"));
     view.appendChild(head(p.name + " 경로", unitCount(ids)));
+    if (pid === "analysis") {
+      var route = el("p", "small");
+      [["PY10", "NumPy 입문"], ["PY11", "pandas 입문"], ["PY13", "수치 검산"], ["PY14", "표 검산"],
+        ["DA07", "기술 분석"], ["DA09", "데이터 품질"], ["DA10", "공개 데이터 프로젝트"]].forEach(function (step, i) {
+        if (i) route.append(" → ");
+        route.appendChild(link("", step[1], "unit.html?u=" + step[0]));
+      });
+      view.appendChild(route);
+    }
     drawLayers(view, ids, new Set(p.targets));
   }
 

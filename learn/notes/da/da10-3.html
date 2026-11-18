@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>보정 구간의 오차 폭을 평가하고 재실행 보고서를 남기기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="DA10-3">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">데이터 분석 · DA10 공개 데이터 분석 프로젝트</p>
+<p class="chap-num">DA10·3</p>
+<h1>보정 구간의 오차 폭을 평가하고 재실행 보고서를 남기기</h1>
+<p class="lead">평균 오차가 작아도 실제 값이 예측에서 크게 벗어나는 해가 있습니다. 선택에 쓰지 않은 앞 구간에서 폭을 하나 정하고, 그 범위가 보류 기간에 얼마나 맞았는지 기록합니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2>
+<ul>
+<li>별도 조정 오차의 경험분위수로 폭을 설정한다.</li>
+<li>보류 구간의 폭과 포괄률을 계산하고 보장 범위를 구분한다.</li>
+<li>재실행 명령·실패 사례·자료 버전 및 결론 범위를 보고한다.</li>
+</ul></div>
+<h2>모형을 잠근 뒤에 예측 폭을 따로 만든다</h2>
+<p>선택 시기의 MAE에서 정한 최근 3년 규칙을 유지합니다. 그 뒤인 2007–2011년을 <b class="key">구간 조정</b>에만 사용합니다. 다섯 해의 <var>|y−ŷ|</var>를 정렬하고, 누적비율이 .9 이상이 되는 가장 작은 값을 반폭 r로 씁니다. 이 프로젝트에서는 매우 간단한 <b>경험 오차 범위</b>입니다. 따로 검증한 확률모형이 필요하지 않은 대신, 그 폭의 미래 포괄 확률을 보장하는 절차도 아닙니다.</p>
+<div class="eq"><var>r의 순위 = ⌈.9×5⌉ = 5, 예측 범위 = [ŷ−r, ŷ+r].</var></div>
+<p>정렬한 절대오차는 약 <var>.1067, .1400, .2767, .2967, .6100</var>ppm입니다. 다섯째가 .6100이므로 반폭 .61ppm, 전체 폭은 <var>2×.61=1.22</var>ppm입니다. 소수점으로 나온 오차를 보기 좋게 반올림해 표에 적더라도, 순위를 정할 때는 가능한 한 반올림 전 값으로 계산합니다.</p>
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+<h2>새 여덟 해에서 구간이 놓친 값을 찾는다</h2>
+<p>반폭 .61을 유지한 채 보류 2012–2019년에는 <var>|y−ŷ|≤.61</var>이면 포함으로 기록합니다. 아래 숫자는 반올림했습니다. 각 행에서 오차를 정한 방식과 같은 조건으로 포함된 횟수를 셉니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 405" role="img" aria-label="2012–2019 여덟 해 중 2016년과 2018년을 제외한 여섯 해의 오차는 .61 이하이다.">
+<text class="f-cap" x="380" y="30" text-anchor="middle">고정 반폭 .61 ppm의 보류 결과</text>
+<rect class="f-soft" x="90.5" y="49" width="135" height="38"/>
+<text class="f-t" x="158" y="73" text-anchor="middle">목표 연도</text>
+<rect class="f-soft" x="225.5" y="49" width="224" height="38"/>
+<text class="f-t" x="337.5" y="73" text-anchor="middle">관측−예측 (ppm)</text>
+<rect class="f-soft" x="449.5" y="49" width="220" height="38"/>
+<text class="f-t" x="559.5" y="73" text-anchor="middle">예측 범위 안인가</text>
+<rect class="f-box" x="90.5" y="87" width="135" height="38"/>
+<text class="f-s" x="158" y="111" text-anchor="middle">2012</text>
+<rect class="f-box" x="225.5" y="87" width="224" height="38"/>
+<text class="f-s" x="337.5" y="111" text-anchor="middle">+.2033</text>
+<rect class="f-box" x="449.5" y="87" width="220" height="38"/>
+<text class="f-s" x="559.5" y="111" text-anchor="middle">예</text>
+<rect class="f-box" x="90.5" y="125" width="135" height="38"/>
+<text class="f-s" x="158" y="149" text-anchor="middle">2013</text>
+<rect class="f-box" x="225.5" y="125" width="224" height="38"/>
+<text class="f-s" x="337.5" y="149" text-anchor="middle">+.5400</text>
+<rect class="f-box" x="449.5" y="125" width="220" height="38"/>
+<text class="f-s" x="559.5" y="149" text-anchor="middle">예</text>
+<rect class="f-box" x="90.5" y="163" width="135" height="38"/>
+<text class="f-s" x="158" y="187" text-anchor="middle">2014</text>
+<rect class="f-box" x="225.5" y="163" width="224" height="38"/>
+<text class="f-s" x="337.5" y="187" text-anchor="middle">−.1433</text>
+<rect class="f-box" x="449.5" y="163" width="220" height="38"/>
+<text class="f-s" x="559.5" y="187" text-anchor="middle">예</text>
+<rect class="f-box" x="90.5" y="201" width="135" height="38"/>
+<text class="f-s" x="158" y="225" text-anchor="middle">2015</text>
+<rect class="f-box" x="225.5" y="201" width="224" height="38"/>
+<text class="f-s" x="337.5" y="225" text-anchor="middle">−.1200</text>
+<rect class="f-box" x="449.5" y="201" width="220" height="38"/>
+<text class="f-s" x="559.5" y="225" text-anchor="middle">예</text>
+<rect class="f-box" x="90.5" y="239" width="135" height="38"/>
+<text class="f-s" x="158" y="263" text-anchor="middle">2016</text>
+<rect class="f-box" x="225.5" y="239" width="224" height="38"/>
+<text class="f-s" x="337.5" y="263" text-anchor="middle">+1.0833</text>
+<rect class="f-box" x="449.5" y="239" width="220" height="38"/>
+<text class="f-s" x="559.5" y="263" text-anchor="middle">아니오</text>
+<rect class="f-box" x="90.5" y="277" width="135" height="38"/>
+<text class="f-s" x="158" y="301" text-anchor="middle">2017</text>
+<rect class="f-box" x="225.5" y="277" width="224" height="38"/>
+<text class="f-s" x="337.5" y="301" text-anchor="middle">−.2067</text>
+<rect class="f-box" x="449.5" y="277" width="220" height="38"/>
+<text class="f-s" x="559.5" y="301" text-anchor="middle">예</text>
+<rect class="f-box" x="90.5" y="315" width="135" height="38"/>
+<text class="f-s" x="158" y="339" text-anchor="middle">2018</text>
+<rect class="f-box" x="225.5" y="315" width="224" height="38"/>
+<text class="f-s" x="337.5" y="339" text-anchor="middle">−.6900</text>
+<rect class="f-box" x="449.5" y="315" width="220" height="38"/>
+<text class="f-s" x="559.5" y="339" text-anchor="middle">아니오</text>
+<rect class="f-box" x="90.5" y="353" width="135" height="38"/>
+<text class="f-s" x="158" y="377" text-anchor="middle">2019</text>
+<rect class="f-box" x="225.5" y="353" width="224" height="38"/>
+<text class="f-s" x="337.5" y="377" text-anchor="middle">+.3600</text>
+<rect class="f-box" x="449.5" y="353" width="220" height="38"/>
+<text class="f-s" x="559.5" y="377" text-anchor="middle">예</text>
+</svg><figcaption>포괄률은 여섯 해를 여덟 해로 나눈 75%다.</figcaption></figure>
+<p>2016년 예측 403.3267ppm의 범위는 402.7167~403.9367ppm이고 실제 404.4100ppm은 위쪽을 벗어납니다. 2018년 예측 409.4100ppm의 범위는 408.8000~410.0200ppm이며 실제 408.7200ppm은 아래쪽을 벗어납니다. 양쪽 실패를 표시해야 폭 부족과 예측의 치우침을 구분할 수 있습니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 177" role="img" aria-label="2016년 관측 404.41은 상한 403.9367보다 크고, 2018년 관측 408.72는 하한 408.80보다 작다.">
+<text class="f-cap" x="380" y="30" text-anchor="middle">같은 폭에서 서로 다른 방향으로 실패한다</text>
+<rect class="f-soft" x="49.5" y="49" width="114" height="38"/>
+<text class="f-t" x="106.5" y="73" text-anchor="middle">연도</text>
+<rect class="f-soft" x="163.5" y="49" width="217" height="38"/>
+<text class="f-t" x="272" y="73" text-anchor="middle">고정 예측 범위</text>
+<rect class="f-soft" x="380.5" y="49" width="151" height="38"/>
+<text class="f-t" x="456" y="73" text-anchor="middle">관측</text>
+<rect class="f-soft" x="531.5" y="49" width="179" height="38"/>
+<text class="f-t" x="621" y="73" text-anchor="middle">실패 위치</text>
+<rect class="f-box" x="49.5" y="87" width="114" height="38"/>
+<text class="f-s" x="106.5" y="111" text-anchor="middle">2016</text>
+<rect class="f-box" x="163.5" y="87" width="217" height="38"/>
+<text class="f-s" x="272" y="111" text-anchor="middle">402.7167–403.9367</text>
+<rect class="f-box" x="380.5" y="87" width="151" height="38"/>
+<text class="f-s" x="456" y="111" text-anchor="middle">404.4100</text>
+<rect class="f-box" x="531.5" y="87" width="179" height="38"/>
+<text class="f-s" x="621" y="111" text-anchor="middle">상한 초과</text>
+<rect class="f-box" x="49.5" y="125" width="114" height="38"/>
+<text class="f-s" x="106.5" y="149" text-anchor="middle">2018</text>
+<rect class="f-box" x="163.5" y="125" width="217" height="38"/>
+<text class="f-s" x="272" y="149" text-anchor="middle">408.8000–410.0200</text>
+<rect class="f-box" x="380.5" y="125" width="151" height="38"/>
+<text class="f-s" x="456" y="149" text-anchor="middle">408.7200</text>
+<rect class="f-box" x="531.5" y="125" width="179" height="38"/>
+<text class="f-s" x="621" y="149" text-anchor="middle">하한 미만</text>
+</svg><figcaption>연도별 기온이나 배출 원인은 이 표에서 따로 확인하지 않았다.</figcaption></figure>
+<div class="check" data-q="q3"></div>
+<div class="check" data-q="q4"></div>
+<h2>어떤 불확실성인지 이름을 붙인다</h2>
+<p>.9를 입력했지만 이 연습에는 미래 90% 보장이 없습니다. 조정 표본이 다섯 개뿐이고, 한 관측소에서 인접한 연도의 차분은 같은 관측값을 공유하는 등 오차가 의존할 수 있습니다. 보류 기간과 조정 기간에서 성장과 변동의 구조가 같다는 근거도 별도로 필요합니다. 실습의 75%는 정해 둔 범위가 <b>실제로 보류 여덟 해를 덮은 비율</b>입니다.</p>
+<p>가정에 대한 민감도를 보려고, 같은 조정 오차의 .8 경험분위수로 반폭을 정하는 별도 계산도 적습니다. 순위는 <var>⌈.8×5⌉=4</var>라 반폭은 약 .2967ppm이며 보류에서는 4/8입니다. 좁은 구간을 만들면 맞아야 할 범위도 줄어든다는 교환을 확인합니다. 이것은 예제의 민감도 비교이며, 보류에서 결과가 좋아 보이는 폭을 골라 다시 성능을 주장하는 절차는 아닙니다.</p>
+<p>원자료에 함께 제공되는 <var>uncertainty_ppm</var>은 NOAA와 Scripps의 연평균 추정 차이에서 계산한 측정 자료의 요약입니다. 여기의 r은 과거에 그 규칙을 썼을 때의 예측오차에서 얻었습니다. 같은 단위라도 양이 달라 .12ppm을 예측 범위의 폭이나 모형 성능으로 대체하지 않습니다.</p>
+<div class="check" data-q="q5"></div>
+<div class="check" data-q="q6"></div>
+<h2>자료와 판단을 함께 다시 실행할 수 있게 적는다</h2>
+<p><b>결과 보고서.</b> 대상은 마우나로아의 1990–2019년 연평균 수록 CSV입니다. 파일의 출처와 2026-10-09 원자료 생성본을 적고, 첫 장의 SHA-256을 입력 기록으로 둡니다. CSV를 저장한 작업 폴더에서 이 단원의 코드 세 개를 차례로 실행하면 입력 검사, 선택과 보류 평가, 폭 조정과 실패 표를 다시 얻습니다. Python 표준 라이브러리만 사용합니다.</p>
+<p>같은 8개 예측에서 기준선 MAE 2.4750ppm, 3년 규칙 MAE .4183ppm입니다. 폭 1.22ppm으로 6개 연도를 포함했고 2016·2018년에서 실패했습니다. 이 결과는 단일 관측소의 개정본에서 수행한 한 해 앞 후향 비교입니다. 실제로 과거에 최초 발표된 자료로도 같은지와 다른 관측소에서의 유지 여부는 확인되지 않았습니다. 다른 자료로 다음 비교를 한다면 공개 시점 이력과 사용 가능한 관측 범위를 먼저 기록합니다.</p>
+<h2>이어 풀기와 증명</h2>
+<p>계산이 정확해도 적용 범위는 별도입니다. 틀린 연도와 새 비교에서 확인할 가정을 함께 보고합니다.</p>
+<div class="check" data-q="q7"></div>
+<div class="check" data-q="q8"></div>
+<div class="check" data-q="q9"></div>
+<h2>파이썬으로 같은 계산 검산하기</h2>
+<p><a href="../../labs/mauna-loa/annual_co2.csv" download>연평균 관측 CSV</a>를 저장하고 아래 코드를 그 파일과 같은 작업 폴더에서 실행합니다.</p>
+<pre data-example="python"><code>from csv import DictReader
+from fractions import Fraction as F
+from math import ceil
+from pathlib import Path
+
+with Path(&quot;annual_co2.csv&quot;).open(encoding=&quot;utf8&quot;, newline=&quot;&quot;) as source:
+    y = {int(r[&quot;year&quot;]): F(r[&quot;mean_ppm&quot;]) for r in DictReader(source)}
+
+def forecast(t):
+    last = y[t-1]
+    return last + (last-y[t-4])/3
+
+calibration = sorted(abs(y[t]-forecast(t)) for t in range(2007, 2012))
+print(&quot;calibration absolute errors:&quot;, [f&quot;{float(e):.4f}&quot; for e in calibration])
+for q in (F(9,10), F(4,5)):
+    rank = ceil(q*len(calibration))
+    radius = calibration[rank-1]
+    results = [(t, forecast(t), abs(y[t]-forecast(t)) &lt;= radius)
+               for t in range(2012, 2020)]
+    covered = sum(ok for _,_,ok in results)
+    print(f&quot;q={float(q):.1f}: radius={float(radius):.4f}&quot;,
+          f&quot;width={float(2*radius):.4f} coverage={covered}/{len(results)}&quot;)
+    if q == F(9,10):
+        for t, guess, ok in results:
+            if not ok:
+                print(f&quot;{t}: {float(guess-radius):.4f} to {float(guess+radius):.4f}&quot;,
+                      f&quot;actual={float(y[t]):.4f}&quot;)</code></pre>
+<p class="aside">실행 결과</p>
+<pre data-output><code>calibration absolute errors: [&#x27;0.1067&#x27;, &#x27;0.1400&#x27;, &#x27;0.2767&#x27;, &#x27;0.2967&#x27;, &#x27;0.6100&#x27;]
+q=0.9: radius=0.6100 width=1.2200 coverage=6/8
+2016: 402.7167 to 403.9367 actual=404.4100
+2018: 408.8000 to 410.0200 actual=408.7200
+q=0.8: radius=0.2967 width=0.5933 coverage=4/8</code></pre>
+<p>출력을 비교할 때 r, 전체 폭 2r, 실제로 포함된 개수를 따로 적습니다. 예측 규칙과 반폭을 정한 뒤 보류 데이터가 모델 선택에 다시 쓰이지 않았는지 코드를 확인합니다.</p>
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://otexts.com/fpp3/toolbox.html">Hyndman·Athanasopoulos · Forecasting: Principles and Practice</a></li>
+<li><a href="../rs/rs09-1.html">RS09-1 연구 보고서</a></li>
+<li><a href="da10-2.html">DA10-2 기준선과 오차</a></li>
+</ul>
+<h2>확인 문제</h2>
+<p>조건과 단위를 먼저 적은 뒤 해설을 확인합니다.</p>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

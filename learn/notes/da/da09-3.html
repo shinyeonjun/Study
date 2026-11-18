@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>자료 계약으로 형식과 기대 키를 먼저 검사하기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="DA09-3">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">데이터 분석 · DA09 데이터를 분석 단위로 설계하기</p>
+<p class="chap-num">DA09·3</p>
+<h1>자료 계약으로 형식과 기대 키를 먼저 검사하기</h1>
+<p class="lead">CSV가 읽힌다는 사실만으로 분석에 맞는 자료가 되는 것은 아닙니다. 연도·단위·키를 계약으로 적고, 어떤 입력에서 어느 검사가 먼저 실패하는지 실행합니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2>
+<ul>
+<li>자료 계약을 열 구조·키·범위·완전성의 검사로 바꾼다.</li>
+<li>분석이 멈추는 오류와 따로 조사할 신호를 설명한다.</li>
+<li>고정 수록 파일과 메모리 오류 사례를 같은 함수로 검증한다.</li>
+</ul></div>
+<h2>분석 함수가 기대하는 입력을 먼저 약속한다</h2>
+<p><b class="key">자료 계약</b>은 주어진 분석이 읽을 수 있는 자료의 구조와 의미를 적은 약속입니다. 이 실습은 마우나로아 관측소 하나의 1990–2019년 연평균 수록본을 대상으로 합니다. 열의 종류, 키, 단위 및 기대 연도를 정해야 ‘CSV 파일이 열렸다’는 것과 ‘원하는 자료가 들어 왔다’는 것을 나눌 수 있습니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 291" role="img" aria-label="연평균 실습의 필수 열은 year, mean_ppm, uncertainty_ppm이다. 연도는 유일하며 1990–2019가 모두 있다.">
+<text class="f-cap" x="380" y="30" text-anchor="middle">분석 프로그램이 요구하는 최소 조건</text>
+<rect class="f-soft" x="58" y="49" width="170" height="38"/>
+<text class="f-t" x="143" y="73" text-anchor="middle">검사</text>
+<rect class="f-soft" x="228" y="49" width="474" height="38"/>
+<text class="f-t" x="465" y="73" text-anchor="middle">계약</text>
+<rect class="f-box" x="58" y="87" width="170" height="38"/>
+<text class="f-s" x="143" y="111" text-anchor="middle">열</text>
+<rect class="f-box" x="228" y="87" width="474" height="38"/>
+<text class="f-s" x="465" y="111" text-anchor="middle">year, mean_ppm, uncertainty_ppm</text>
+<rect class="f-box" x="58" y="125" width="170" height="38"/>
+<text class="f-s" x="143" y="149" text-anchor="middle">기본 키</text>
+<rect class="f-box" x="228" y="125" width="474" height="38"/>
+<text class="f-s" x="465" y="149" text-anchor="middle">한 관측소만 있는 수록본에서 year는 유일</text>
+<rect class="f-box" x="58" y="163" width="170" height="38"/>
+<text class="f-s" x="143" y="187" text-anchor="middle">기간</text>
+<rect class="f-box" x="228" y="163" width="474" height="38"/>
+<text class="f-s" x="465" y="187" text-anchor="middle">1990–2019의 30년을 모두 포함</text>
+<rect class="f-box" x="58" y="201" width="170" height="38"/>
+<text class="f-s" x="143" y="225" text-anchor="middle">값</text>
+<rect class="f-box" x="228" y="201" width="474" height="38"/>
+<text class="f-s" x="465" y="225" text-anchor="middle">연평균과 불확실성은 유한한 ppm 수치</text>
+<rect class="f-box" x="58" y="239" width="170" height="38"/>
+<text class="f-s" x="143" y="263" text-anchor="middle">추가 범위</text>
+<rect class="f-box" x="228" y="239" width="474" height="38"/>
+<text class="f-s" x="465" y="263" text-anchor="middle">수록본의 연평균은 300~500 ppm, 불확실성은 0 이상</text>
+</svg><figcaption>300~500은 이 장에서 파일과 단위를 확인하는 실습 범위다.</figcaption></figure>
+<p>같은 키에 같은 값이 두 번 있어도 중복입니다. 행 하나를 버리기 전에 그 기록이 단순한 재복제인지, 집계 방식이 달라진 개정본인지 확인합니다. 값이 열에 들어 있어도 단위가 틀릴 수 있습니다. 예를 들어 <var>354.45</var>ppm은 <var>0.00035445</var>mol/mol과 같은 값입니다. 두 번째 표현을 ppm이라고 표시하면 소수 형식은 맞지만 의미가 틀립니다. 300~500 범위는 그런 문제를 이 수록본에서 찾는 교육용 신호입니다. 모든 관측소와 모든 시기의 물리 법칙은 아닙니다.</p>
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+<div class="check" data-q="q3"></div>
+<h2>같은 검사를 원본과 모의 입력에 적용한다</h2>
+<p>먼저 열 이름과 행마다 들어 있는 필드 수를 확인합니다. 연도, 소수 값을 읽고 유한하다는 조건을 확인합니다. Python에 <var>NaN</var>과 <var>Infinity</var>라는 특수한 소수 값이 있으므로 단순히 소수 변환이 끝났다는 사실을 통과 조건으로 두지 않습니다. 이후 키 중복, 연도의 집합, 약속된 수치 범위를 확인합니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 291" role="img" aria-label="원본은 30행 통과. 1990을 복제하면 중복, 첫 행 제거는 연도 누락, 단위 헤더 변경은 스키마 오류다.">
+<text class="f-cap" x="380" y="30" text-anchor="middle">실패를 구분하는 검산용 입력</text>
+<rect class="f-soft" x="55" y="49" width="183" height="38"/>
+<text class="f-t" x="146.5" y="73" text-anchor="middle">입력</text>
+<rect class="f-soft" x="238" y="49" width="261" height="38"/>
+<text class="f-t" x="368.5" y="73" text-anchor="middle">바꾼 것</text>
+<rect class="f-soft" x="499" y="49" width="206" height="38"/>
+<text class="f-t" x="602" y="73" text-anchor="middle">처리 결과</text>
+<rect class="f-box" x="55" y="87" width="183" height="38"/>
+<text class="f-s" x="146.5" y="111" text-anchor="middle">원본</text>
+<rect class="f-box" x="238" y="87" width="261" height="38"/>
+<text class="f-s" x="368.5" y="111" text-anchor="middle">그대로 읽기</text>
+<rect class="f-box" x="499" y="87" width="206" height="38"/>
+<text class="f-s" x="602" y="111" text-anchor="middle">30행 통과</text>
+<rect class="f-box" x="55" y="125" width="183" height="38"/>
+<text class="f-s" x="146.5" y="149" text-anchor="middle">중복</text>
+<rect class="f-box" x="238" y="125" width="261" height="38"/>
+<text class="f-s" x="368.5" y="149" text-anchor="middle">1990 한 행 복제</text>
+<rect class="f-box" x="499" y="125" width="206" height="38"/>
+<text class="f-s" x="602" y="149" text-anchor="middle">중복 키</text>
+<rect class="f-box" x="55" y="163" width="183" height="38"/>
+<text class="f-s" x="146.5" y="187" text-anchor="middle">기간 누락</text>
+<rect class="f-box" x="238" y="163" width="261" height="38"/>
+<text class="f-s" x="368.5" y="187" text-anchor="middle">1990 한 행 제거</text>
+<rect class="f-box" x="499" y="163" width="206" height="38"/>
+<text class="f-s" x="602" y="187" text-anchor="middle">기간 확인 실패</text>
+<rect class="f-box" x="55" y="201" width="183" height="38"/>
+<text class="f-s" x="146.5" y="225" text-anchor="middle">스키마</text>
+<rect class="f-box" x="238" y="201" width="261" height="38"/>
+<text class="f-s" x="368.5" y="225" text-anchor="middle">mean_ppm → mean_frac</text>
+<rect class="f-box" x="499" y="201" width="206" height="38"/>
+<text class="f-s" x="602" y="225" text-anchor="middle">열 구조 불일치</text>
+<rect class="f-box" x="55" y="239" width="183" height="38"/>
+<text class="f-s" x="146.5" y="263" text-anchor="middle">숫자 범위</text>
+<rect class="f-box" x="238" y="239" width="261" height="38"/>
+<text class="f-s" x="368.5" y="263" text-anchor="middle">354.45 → 0.00035445</text>
+<rect class="f-box" x="499" y="239" width="206" height="38"/>
+<text class="f-s" x="602" y="263" text-anchor="middle">실습 범위 바깥</text>
+</svg><figcaption>오류 사례는 문자열에서 만든 복사본만 바꾼다.</figcaption></figure>
+<p>실습에서는 이 값들을 실패로 처리해 잘못된 표로 계산을 이어 가지 않도록 합니다. 실제 데이터에 적용할 때는 범위를 벗어난 행을 무조건 삭제하기보다 원본 식별자와 실패 조건을 보고, 단위·버전·측정 상황을 확인합니다. 무엇을 누락으로 볼지와 언제 분석을 막을지도 질문에 따라 달라집니다. 값이 규칙을 통과해도 표본 대표성이나 예측 성능이 확보되는 것은 아닙니다.</p>
+<div class="check" data-q="q4"></div>
+<div class="check" data-q="q5"></div>
+<div class="check" data-q="q6"></div>
+<h2>새 버전이 들어올 때 자료의 뜻도 함께 확인한다</h2>
+<p>같은 관측소에 2020년 값을 추가하려면 계약의 기대 기간이 달라집니다. 원본이 개정되면 같은 기간이라도 수치가 바뀔 수 있습니다. 기존 계산을 다시 확인할 때는 같은 수록본을 사용하고, 새 판으로 비교할 때는 해시 또는 버전과 변경된 행을 명시합니다. 구조가 알맞고 기간이 같아도 원자료의 품질 관리는 계속될 수 있습니다.</p>
+<h2>이어 풀기와 증명</h2>
+<p>필드 수, 데이터 형태, 범위, 키와 시간은 서로 다른 검산 항목입니다. 계약을 늘리기 전에 어떤 질문이 그 항목을 필요로 하는지 설명합니다.</p>
+<div class="check" data-q="q7"></div>
+<div class="check" data-q="q8"></div>
+<div class="check" data-q="q9"></div>
+<h2>파이썬으로 같은 계산 검산하기</h2>
+<p><a href="../../labs/mauna-loa/annual_co2.csv" download>연평균 관측 CSV</a>를 저장하고 아래 코드를 그 파일과 같은 작업 폴더에서 실행합니다.</p>
+<pre data-example="python"><code>from csv import DictReader
+from decimal import Decimal as D, InvalidOperation
+from io import StringIO
+from pathlib import Path
+
+def validate(text):
+    reader = DictReader(StringIO(text))
+    if reader.fieldnames != [&quot;year&quot;, &quot;mean_ppm&quot;, &quot;uncertainty_ppm&quot;]:
+        raise ValueError(&quot;schema&quot;)
+    years = set()
+    for row in reader:
+        if None in row or any(value is None for value in row.values()):
+            raise ValueError(&quot;row width&quot;)
+        try:
+            year = int(row[&quot;year&quot;])
+            mean = D(row[&quot;mean_ppm&quot;])
+            uncertainty = D(row[&quot;uncertainty_ppm&quot;])
+        except (ValueError, InvalidOperation) as error:
+            raise ValueError(&quot;number format&quot;) from error
+        if not mean.is_finite() or not uncertainty.is_finite():
+            raise ValueError(&quot;non-finite value&quot;)
+        if not (300 &lt;= mean &lt;= 500 and uncertainty &gt;= 0):
+            raise ValueError(&quot;unit/range&quot;)
+        if year in years:
+            raise ValueError(&quot;duplicate year&quot;)
+        years.add(year)
+    if years != set(range(1990, 2020)):
+        raise ValueError(&quot;year coverage&quot;)
+    return len(years)
+
+path = Path(&quot;annual_co2.csv&quot;)
+original = path.read_text(encoding=&quot;utf8&quot;)
+lines = original.splitlines()
+print(&quot;valid rows:&quot;, validate(original))
+bad_examples = [
+    (&quot;duplicate&quot;, original + &quot;\n&quot; + lines[1]),
+    (&quot;missing&quot;, &quot;\n&quot;.join([lines[0], *lines[2:]])),
+    (&quot;schema&quot;, original.replace(&quot;mean_ppm&quot;, &quot;mean_frac&quot;)),
+    (&quot;unit/range&quot;, original.replace(&quot;354.45&quot;, &quot;0.00035445&quot;, 1)),
+    (&quot;non-finite&quot;, original.replace(&quot;354.45&quot;, &quot;NaN&quot;, 1)),
+]
+for name, bad in bad_examples:
+    try:
+        validate(bad)
+    except ValueError as error:
+        print(name + &quot;:&quot;, error)
+    else:
+        raise AssertionError(f&quot;{name} should fail&quot;)</code></pre>
+<p class="aside">실행 결과</p>
+<pre data-output><code>valid rows: 30
+duplicate: duplicate year
+missing: year coverage
+schema: schema
+unit/range: unit/range
+non-finite: non-finite value</code></pre>
+<p>저장소 최상위에서 실행합니다. 실패한 복사본에는 아무 분석 수치도 출력하지 않습니다. 테스트에 보인 범위는 이 메시지의 파일과 질문에 맞춰 정한 값입니다.</p>
+<h2>참고 자료</h2>
+<ul>
+<li><a href="../../labs/mauna-loa/SOURCE.md">실습 자료의 출처와 필드</a></li>
+<li><a href="../db/db07-2.html">DB07-2 검증과 재실행</a></li>
+<li><a href="https://gml.noaa.gov/webdata/ccgg/trends/co2/co2_annmean_mlo.txt">NOAA GML 연평균 원자료와 값의 단위</a></li>
+</ul>
+<h2>확인 문제</h2>
+<p>조건과 단위를 먼저 적은 뒤 해설을 확인합니다.</p>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

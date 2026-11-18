@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>위치와 라벨을 구별하고 없는 값을 추적하기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="PY14-1">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">Python과 프로그래밍 사고 · PY14 신뢰할 수 있는 표 연산</p>
+<p class="chap-num">PY14·1</p>
+<h1>위치와 라벨을 구별하고 없는 값을 추적하기</h1>
+<p class="lead">관측점 A와 B의 기준값이 표의 다른 순서로 적혀 있습니다. 같은 칸 번호끼리 빼면 오류 없이 틀린 결과가 만들어집니다. 관측점 이름을 기준으로 정렬하고, 기준값을 모르는 행을 그대로 드러냅니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>NumPy의 위치 계산과 pandas의 라벨 연산을 비교한다.</li><li>중복 키와 참조 표에 없는 키를 검사한다.</li><li>유효한 0과 결측을 구별해 분모를 확인한다.</li></ul></div>
+
+<h2>두 표를 서로 다른 순서로 받았을 때</h2>
+<p>A와 B의 센서값은 각각 12와 18입니다. 기준값 장부에는 C가 10, B가 14, A가 11 순으로 기록됐다고 합시다. 질문은 ‘같은 센서에서 관측값이 기준보다 얼마나 높은가’입니다. 먼저 센서의 이름을 맞춰 A의 차이는 12−11=1, B는 18−14=4로 계산합니다. C는 기준은 있지만 관측이 없습니다.</p>
+<div class="table-wrap"><table><thead><tr><th scope="col">센서 ID</th><th scope="col">관측</th><th scope="col">기준</th><th scope="col">관측 − 기준</th></tr></thead><tbody><tr><td>A</td><td>12</td><td>11</td><td>1</td></tr><tr><td>B</td><td>18</td><td>14</td><td>4</td></tr><tr><td>C</td><td>결측</td><td>10</td><td>결측</td></tr></tbody></table></div>
+<p>pandas <code>Series</code>는 원소마다 <b class="key">인덱스 라벨</b>을 갖습니다. 라벨이 유일한 두 Series를 기본 산술로 빼면 공통된 이름끼리 정렬하고, 한쪽에만 있는 이름도 결과에 남겨 값은 결측으로 둡니다. NumPy 배열에서는 이런 식별자가 없으므로 같은 위치끼리 계산합니다. 관측의 개수에 맞춰 기준 장부의 앞 두 값을 바로 빼면 A에 C의 10을 잘못 쓰게 됩니다.</p>
+<div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
+<h2>어떤 이름을 결과에 남길지 먼저 정한다</h2>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 160" role="img" aria-label="기준 장부의 키를 확인하고 A, B, D 관측 순서로 재배열하면 D에는 기준이 비고 C는 결과에서 제외된다.">
+<rect class="f-box" x="42" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="135" y="61" text-anchor="middle">기준의 키 확인</text><text class="f-s" x="135" y="89" text-anchor="middle">유일성·결측 검사</text><text class="f-s" x="135" y="110" text-anchor="middle">장부의 A, B, C</text><line class="f-line" x1="235" y1="84" x2="278" y2="84" marker-end="url(#f-arrow)"/><rect class="f-soft" x="287" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="380" y="61" text-anchor="middle">관측 라벨로 재배열</text><text class="f-s" x="380" y="89" text-anchor="middle">reindex</text><text class="f-s" x="380" y="110" text-anchor="middle">관측 A, B, D 순</text><line class="f-line" x1="480" y1="84" x2="523" y2="84" marker-end="url(#f-arrow)"/><rect class="f-box" x="532" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="625" y="61" text-anchor="middle">미결합 보고</text><text class="f-s" x="625" y="89" text-anchor="middle">D 기준 결측</text><text class="f-s" x="625" y="110" text-anchor="middle">C는 관측에 없음</text>
+</svg><figcaption>기준이 존재하지 않는 관측을 평균에서 제외하기 전에 개수와 이름을 남긴다.</figcaption></figure>
+<p>관측된 행만 유지하려면 <code>reference.reindex(observed.index)</code>로 관측 순서에 맞춥니다. 기준 표에 같은 이름이 두 번 나오면 어떤 줄을 쓸지 정해야 합니다. 여러 날짜의 기준이라면 <code>(센서, 적용 시각)</code>의 복합 키 또는 분석 시점에 맞는 규칙이 필요합니다. 마지막 줄을 무조건 남겨도 된다는 근거는 없습니다.</p>
+<div class="check" data-q="q3"></div><div class="check" data-q="q4"></div>
+<h2>정수 값과 결측이 함께 들어가는 열</h2>
+<p>pandas의 <code>Int64</code>는 결측 <code>pd.NA</code>를 담을 수 있는 정수 자료형입니다. 이 예에서 D의 기준값 대신 0을 쓰면 관측 − 기준이 20으로 바뀌어 평균을 올립니다. <code>.isna()</code>로 결측을 찾고 <code>.count()</code>로 유효한 수를 셉니다. <code>.size</code>는 관측 목록에 붙은 모든 행을 셉니다. 보고할 평균은 유효한 A와 B의 2.5이며, 두 값이 계산 가능했다는 사실도 같이 표시합니다.</p>
+<div class="check" data-q="q5"></div><div class="check" data-q="q6"></div>
+<h2>실행으로 확인하기</h2>
+<pre data-example="python"><code>import pandas as pd
+
+observed = pd.Series([12, 18, 20], index=[&quot;A&quot;, &quot;B&quot;, &quot;D&quot;], dtype=&quot;Int64&quot;)
+reference = pd.Series([10, 14, 11], index=[&quot;C&quot;, &quot;B&quot;, &quot;A&quot;], dtype=&quot;Int64&quot;)
+for series in (observed, reference):
+    if series.index.hasnans or not series.index.is_unique:
+        raise ValueError(&quot;센서 키에 빈칸 또는 중복이 있습니다&quot;)
+
+print((observed.to_numpy() - reference.to_numpy()).tolist())
+delta = observed - reference.reindex(observed.index)
+print(delta.to_dict())
+print(delta.index[delta.isna()].tolist())
+print(delta.count(), delta.size, float(delta.mean()))
+assert delta.loc[&quot;A&quot;] == 1 and delta.loc[&quot;B&quot;] == 4
+assert pd.isna(delta.loc[&quot;D&quot;])</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>[2, 4, 9]
+{'A': 1, 'B': 4, 'D': None}
+['D']
+2 3 2.5</code></pre>
+<div class="box "><p class="box-k">독립 검산</p><p>A와 B가 들어 있는 기준 장부를 작은 Python 딕셔너리로 손에 적고, 관측 행마다 같은 이름으로 찾아 계산해 봅니다. NumPy로 옮길 때는 키가 유일한지 확인하고 정렬한 뒤, 배열에서 빠져 나갈 라벨과 결측 정보를 어떻게 기록할지 먼저 결정합니다.</p></div>
+<div class="check" data-q="q7"></div><div class="check" data-q="q8"></div>
+
+<h2>참고 자료</h2>
+<ul><li><a href="https://pandas.pydata.org/docs/user_guide/basics.html">pandas · 기본 라벨 정렬 및 reindex</a></li><li><a href="https://pandas.pydata.org/docs/user_guide/integer_na.html">pandas · 결측을 담는 정수 자료형</a></li></ul>
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

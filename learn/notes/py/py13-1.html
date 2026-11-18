@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>정수 범위와 실수 반올림을 계산 전에 확인하기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="PY13-1">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">Python과 프로그래밍 사고 · PY13 수치 계산 검증</p>
+<p class="chap-num">PY13·1</p>
+<h1>정수 범위와 실수 반올림을 계산 전에 확인하기</h1>
+<p class="lead">센서에서 온 정수 250과 20을 더했는데 배열에는 14가 남을 수 있습니다. 같은 수식도 어떤 칸에 저장하느냐에 따라 결과가 달라집니다. 저장 범위와 반올림을 손으로 예측한 뒤 검산합니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>비트 수에서 정수 범위를 구하고 넘침을 계산한다.</li><li>변환을 연산 전후 중 어디에 두어야 하는지 결정한다.</li><li>실수를 더하는 순서가 결과를 바꾸는 예를 설명하고 작은 표에서 독립적으로 검산한다.</li></ul></div>
+
+<h2>정수 칸에 놓을 수 있는 256가지</h2>
+<p>한 자리의 비트에는 0과 1이 들어갑니다. 여덟 자리는 2⁸=256가지입니다. 부호를 쓰지 않는 <code>uint8</code>은 이 조합을 0부터 255까지에 배정합니다. 255까지 찬 계수기에 1을 더하면 8자리 바깥의 올림은 저장할 수 없습니다. 이런 범위 초과를 <b class="key">넘침(overflow)</b>이라고 합니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 160" role="img" aria-label="250과 20의 합 270을 uint8에 저장하면 256을 넘는 부분은 들어가지 않아 14가 남는다.">
+<rect class="f-box" x="42" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="135" y="61" text-anchor="middle">입력</text><text class="f-s" x="135" y="89" text-anchor="middle">250과 20</text><text class="f-s" x="135" y="110" text-anchor="middle">둘 다 uint8</text><line class="f-line" x1="235" y1="84" x2="278" y2="84" marker-end="url(#f-arrow)"/><rect class="f-soft" x="287" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="380" y="61" text-anchor="middle">정확한 합</text><text class="f-s" x="380" y="89" text-anchor="middle">270</text><text class="f-s" x="380" y="110" text-anchor="middle">256+14</text><line class="f-line" x1="480" y1="84" x2="523" y2="84" marker-end="url(#f-arrow)"/><rect class="f-box" x="532" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="625" y="61" text-anchor="middle">저장된 값</text><text class="f-s" x="625" y="89" text-anchor="middle">14</text><text class="f-s" x="625" y="110" text-anchor="middle">8비트 안의 나머지</text>
+</svg><figcaption>같은 원소별 덧셈이라도 저장 형식이 실제 수학의 합을 담을 수 있는지 확인한다.</figcaption></figure>
+<div class="check" data-q="q1"></div><div class="check" data-q="q2"></div><div class="check" data-q="q3"></div>
+<h2>어느 단계에서 자료형을 바꾸는가</h2>
+<p><code>a.astype(np.uint16) + b.astype(np.uint16)</code>는 270이 들어가는 칸으로 <em>입력을</em> 옮겨 덧셈을 합니다. <code>(a+b).astype(np.uint16)</code>는 이미 14가 된 값을 옮깁니다. <code>np.sum</code>은 작은 정수를 더할 때 기본으로 더 넓은 정수형을 쓸 수 있지만, <code>a+b</code>와 같은 규칙으로 생각하면 틀립니다. 집계의 <code>dtype</code>도 명시할 수 있습니다. 넓힌 정수도 범위가 있으므로 최악의 합을 미리 따져야 합니다.</p>
+<div class="check" data-q="q4"></div>
+<h2>실수의 저장 간격과 덧셈 순서</h2>
+<p><code>float64</code>는 실수를 유한한 비트로 근사합니다. 저장 간격은 크기에 따라 달라집니다. 1.0에서 바로 다음 큰 수까지는 2⁻⁵²입니다. 10¹⁶은 2⁵³과 2⁵⁴ 사이에 있으며 이 구간에서 이웃한 저장값의 간격은 2입니다. 따라서 10¹⁶+1은 정확히 두 칸의 중간이고, 일반적인 가장 가까운 짝수 쪽 반올림으로 10¹⁶에 저장됩니다. 뒤에서 10¹⁶을 빼면 1을 되찾을 수 없습니다.</p>
+<div class="table-wrap"><table><thead><tr><th scope="col">계산 순서</th><th scope="col">첫 계산의 저장값</th><th scope="col">최종값</th></tr></thead><tbody><tr><td>(10¹⁶ + 1) − 10¹⁶</td><td>10¹⁶</td><td>0</td></tr><tr><td>(10¹⁶ − 10¹⁶) + 1</td><td>0</td><td>1</td></tr></tbody></table></div>
+<p>실수에서 덧셈은 결합법칙이 성립하지만, 반올림을 끼운 부동소수점 계산에서는 괄호 위치가 결과에 영향을 줍니다. <code>math.fsum</code>은 부동소수점 입력의 합을 더 정밀하게 누적합니다. 이 예와 같이 입력을 정확히 표현할 수 있을 때 정확한 수학 결과와 확인하기 좋습니다. 파일을 읽을 때 이미 잃은 정밀도까지 복원하는 기능은 없습니다.</p>
+<div class="check" data-q="q5"></div><div class="check" data-q="q6"></div>
+<h2>실행으로 확인하기</h2>
+<pre data-example="python"><code>import math
+import numpy as np
+
+a = np.array([250], dtype=np.uint8)
+b = np.array([20], dtype=np.uint8)
+print(np.iinfo(a.dtype).max)
+print((a + b).tolist(), (a + b).astype(np.uint16).tolist())
+print((a.astype(np.uint16) + b.astype(np.uint16)).tolist())
+values = np.array([250, 20], dtype=np.uint8)
+print(int(values.sum(dtype=np.uint16)))
+
+x = np.float64(10**16)
+print(np.nextafter(x, np.inf) - x)
+print((x + 1) - x, (x - x) + 1)
+print(math.fsum([float(x), 1, -float(x)]))
+assert int(a[0]) + int(b[0]) == 270</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>255
+[14] [14]
+[270]
+270
+2.0
+0.0 1.0
+1.0</code></pre>
+<div class="box "><p class="box-k">검산할 입력</p><p>높은 값과 낮은 값을 섞은 배열, 정수 한계 근처의 배열, 같은 정수 데이터를 Python <code>int</code>로 계산한 결과를 함께 확인합니다. 실수 근삿값을 비교할 때는 문제의 단위와 허용오차를 정한 뒤 검사합니다.</p></div>
+<div class="check" data-q="q7"></div><div class="check" data-q="q8"></div>
+
+<h2>참고 자료</h2>
+<ul><li><a href="https://numpy.org/doc/stable/user/basics.types.html">NumPy · dtype의 범위와 정수 넘침</a></li><li><a href="https://numpy.org/doc/stable/reference/generated/numpy.sum.html">NumPy · 합의 누적 자료형과 정밀도</a></li><li><a href="https://docs.python.org/3/tutorial/floatingpoint.html">Python · 부동소수점 표현과 반올림</a></li></ul>
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

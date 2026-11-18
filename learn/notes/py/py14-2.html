@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>긴 표와 넓은 표를 오가며 집계의 분모 지키기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="PY14-2">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">Python과 프로그래밍 사고 · PY14 신뢰할 수 있는 표 연산</p>
+<p class="chap-num">PY14·2</p>
+<h1>긴 표와 넓은 표를 오가며 집계의 분모 지키기</h1>
+<p class="lead">온도와 습도가 한 줄에 있는 표를 변수당 한 줄로 펴면 그래프를 그리기 쉽습니다. 행 수가 달라지고 같은 센서·시점에 반복 측정이 생겼을 때, 어느 평균을 보고하는지가 바뀔 수 있습니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>관측·변수·값을 식별하고 melt와 pivot을 연결한다.</li><li>유일한 키와 반복 측정 키를 구분한다.</li><li>행 평균과 센서 평균의 평균이 각각 어떤 질문에 답하는지 계산한다.</li></ul></div>
+
+<h2>값 열 하나에 측정 이름을 따로 적는다</h2>
+<p>원래 표에서는 한 행이 센서와 시각으로 정해지고, 온도와 습도는 두 열입니다. <code>melt</code>는 센서·시각을 계속 식별 열로 두고 측정 이름과 값을 두 열로 펼칩니다. 한 시각에 센서 두 개가 있고 두 종류를 측정하면 네 행이 생깁니다. 값이 결측인 자리도 펼쳐진 표에 남아 관측 누락을 확인할 수 있습니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 160" role="img" aria-label="온도와 습도 열을 펼치면 측정 이름이 키에 더해지고 값 열 하나가 남는다.">
+<rect class="f-box" x="42" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="135" y="61" text-anchor="middle">넓은 표</text><text class="f-s" x="135" y="89" text-anchor="middle">키: 센서·시각</text><text class="f-s" x="135" y="110" text-anchor="middle">온도 열 + 습도 열</text><line class="f-line" x1="235" y1="84" x2="278" y2="84" marker-end="url(#f-arrow)"/><rect class="f-soft" x="287" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="380" y="61" text-anchor="middle">melt</text><text class="f-s" x="380" y="89" text-anchor="middle">측정 이름을</text><text class="f-s" x="380" y="110" text-anchor="middle">행의 키에 더함</text><line class="f-line" x1="480" y1="84" x2="523" y2="84" marker-end="url(#f-arrow)"/><rect class="f-box" x="532" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="625" y="61" text-anchor="middle">긴 표</text><text class="f-s" x="625" y="89" text-anchor="middle">키: 센서·시각·측정</text><text class="f-s" x="625" y="110" text-anchor="middle">값 열 하나</text>
+</svg><figcaption>단위가 다른 측정값은 같은 값 열에 들어가도 측정 이름을 확인하고 집계한다.</figcaption></figure>
+<div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
+<h2>되돌릴 때 한 칸에 들어갈 값은 하나</h2>
+<p><code>pivot</code>에서 <code>index</code>와 <code>columns</code>를 합친 키에 값이 둘 있으면 한 칸에 들어갈 값을 정할 수 없어 오류가 납니다. <code>pivot_table</code>은 여러 값을 지정한 집계 함수로 하나로 줄입니다. 재전송으로 복제된 행인지, 같은 시각에 반복한 별도 측정인지를 먼저 판단합니다. 전자라면 중복 처리 규칙과 근거를 남기고, 후자라면 반복 ID를 보존한 뒤 필요에 따라 평균을 구합니다.</p>
+<div class="check" data-q="q3"></div><div class="check" data-q="q4"></div>
+<h2>관측당 평균과 센서당 평균</h2>
+<div class="table-wrap"><table><thead><tr><th scope="col">센서</th><th scope="col">온도 관측값</th><th scope="col">센서 내부 평균</th></tr></thead><tbody><tr><td>A</td><td>10, 14</td><td>12</td></tr><tr><td>B</td><td>20</td><td>20</td></tr></tbody></table></div>
+<p>센서 A를 두 번, B를 한 번 쟀다면 관측을 모두 합친 평균은 (10+14+20)/3=44/3입니다. 센서에 같은 비중을 주려면 각 센서 평균의 평균 (12+20)/2=16입니다. 첫 번째 계산에서는 A의 합산 비중이 2/3이고, 두 번째 계산에서는 1/2입니다. 두 집계에 답하는 질문이 다르므로 그래프와 보고서에 어느 단위의 평균인지 씁니다.</p>
+<p>집계 전에 값이 없는 센서가 있었는지 확인합니다. 그룹별 <code>size</code>는 행 수이고 <code>count</code>는 결측이 아닌 값 수입니다. 그룹 키 자체가 결측이면 <code>groupby(..., dropna=False)</code>로 그런 행을 별도 묶음에 보존할 수 있습니다. 장부에 있어야 하는 센서가 아예 나타나지 않았는지도 알아야 하므로 기대하는 센서 목록과 대조합니다.</p>
+<div class="check" data-q="q5"></div><div class="check" data-q="q6"></div>
+<h2>실행으로 확인하기</h2>
+<pre data-example="python"><code>import pandas as pd
+
+wide = pd.DataFrame({&quot;station&quot;: [&quot;A&quot;, &quot;B&quot;], &quot;time&quot;: [&quot;09:00&quot;, &quot;09:00&quot;],
+                     &quot;temp_c&quot;: [10, 20], &quot;humidity_pct&quot;: [70, 50]})
+long = wide.melt(id_vars=[&quot;station&quot;, &quot;time&quot;], var_name=&quot;metric&quot;, value_name=&quot;reading&quot;)
+key = [&quot;station&quot;, &quot;time&quot;, &quot;metric&quot;]
+assert not long.duplicated(key).any()
+recovered = long.pivot(index=[&quot;station&quot;, &quot;time&quot;], columns=&quot;metric&quot;, values=&quot;reading&quot;)
+print(long.shape[0], int(recovered.loc[(&quot;A&quot;, &quot;09:00&quot;), &quot;humidity_pct&quot;]))
+
+repeat = pd.DataFrame({&quot;station&quot;: [&quot;A&quot;], &quot;time&quot;: [&quot;09:00&quot;],
+                       &quot;metric&quot;: [&quot;temp_c&quot;], &quot;reading&quot;: [14]})
+repeated = pd.concat([long, repeat], ignore_index=True)
+print(int(repeated.duplicated(key, keep=False).sum()))
+temp = repeated.loc[repeated[&quot;metric&quot;].eq(&quot;temp_c&quot;)]
+means = temp.groupby(&quot;station&quot;)[&quot;reading&quot;].mean()
+print(means.to_dict())
+print(f&quot;{temp['reading'].mean():.4f} {means.mean():.4f}&quot;)
+assert len(temp) == 3 and means.size == 2</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>4 70
+2
+{'A': 12.0, 'B': 20.0}
+14.6667 16.0000</code></pre>
+<p>예제는 마지막 줄을 A의 별도 반복 측정으로 가정합니다. 실제 파일이라면 반복을 구분하는 고유 ID가 필요합니다. 그래야 읽는 순서가 달라져도 A의 두 관측을 구별할 수 있습니다. 다음 <a href="../../unit.html?u=DA09">데이터 입도와 데이터 계약</a>에서는 그 가정을 검사 규칙으로 옮깁니다.</p>
+<div class="check" data-q="q7"></div><div class="check" data-q="q8"></div>
+
+<h2>참고 자료</h2>
+<ul><li><a href="https://pandas.pydata.org/docs/user_guide/reshaping.html">pandas · melt, pivot과 pivot_table</a></li><li><a href="https://pandas.pydata.org/docs/user_guide/groupby.html">pandas · 그룹별 집계</a></li></ul>
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>다음 해의 기준선과 최근 변화량을 시간순으로 비교하기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="DA10-2">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">데이터 분석 · DA10 공개 데이터 분석 프로젝트</p>
+<p class="chap-num">DA10·2</p>
+<h1>다음 해의 기준선과 최근 변화량을 시간순으로 비교하기</h1>
+<p class="lead">기준선과 두 후보는 같은 원점에서 동일한 대상 연도를 예측합니다. 창 길이는 선택 구간에서만 고르고, 그 길이를 잠근 뒤에 보류 구간의 실제 오차를 계산합니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2>
+<ul>
+<li>최근 변화량 평균과 예측식을 한 해에 손으로 적용한다.</li>
+<li>같은 연도를 비교하고 동점 규칙에 맞춰 후보를 고른다.</li>
+<li>보류 MAE·RMSE와 부호 있는 오차를 단위와 함께 해석한다.</li>
+</ul></div>
+<h2>최근 k번의 차분은 k+1개의 연도 값을 사용한다</h2>
+<p>t를 목표 연도라고 할 때 원점은 <var>t−1</var>입니다. 기준선은 <var>y<sub>t−1</sub></var>를 그대로 내놓습니다. 후보는 그때까지의 <b class="key">최근 k개 연간 증가량</b>을 평균해 마지막 값에 더합니다. 예를 들어 k=3이면 세 차분 <var>y<sub>t−1</sub>−y<sub>t−2</sub></var>, <var>y<sub>t−2</sub>−y<sub>t−3</sub></var>, <var>y<sub>t−3</sub>−y<sub>t−4</sub></var>를 평균합니다. 가운데 항이 합에서 지워집니다.</p>
+<div class="eq"><var>ŷ<sub>t</sub>(k)=y<sub>t−1</sub>+[y<sub>t−1</sub>−y<sub>t−1−k</sub>]/k.</var></div>
+<p>2002년 예측에서 <var>y<sub>2001</sub>=371.32</var>ppm, <var>y<sub>1998</sub>=366.84</var>ppm입니다. k=3의 평균 연간 증가량은 <var>(371.32−366.84)/3≈1.4933</var>ppm이며 예측은 약 372.8133ppm입니다. 관측 373.45ppm을 나중에 보고 오차를 구하면 약 +.6367ppm입니다. 오차의 부호는 이 장 전체에서 <var>e=y−ŷ</var>입니다. 양수는 낮게 예측했다는 뜻입니다.</p>
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+<h2>정해 둔 다섯 해에서 후보를 선택한다</h2>
+<p>2002–2006년의 다섯 목표를 한 해씩 내다봅니다. 각 해에는 같은 원점의 배열로 기준과 후보를 비교합니다. MAE는 <var>Σ|e|/n</var>입니다. k=3의 MAE와 k=6의 MAE는 <b>두 경우 모두 .4240ppm으로 정확히 동점</b>이어서 작은 k를 선택합니다. 표에서 출력한 값이 반올림으로만 우연히 같은 경우와 구분하기 위해 코드는 수를 분수로 유지합니다. 선택 기준은 처음에 고정한 규칙을 그대로 적용합니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 215" role="img" aria-label="선택 2002–2006의 MAE는 기준 2.154, 3년 .424, 6년 .424. 3년을 선택한다.">
+<text class="f-cap" x="380" y="30" text-anchor="middle">같은 다섯 해의 선택 구간에서 비교</text>
+<rect class="f-soft" x="67.5" y="49" width="218" height="38"/>
+<text class="f-t" x="176.5" y="73" text-anchor="middle">규칙</text>
+<rect class="f-soft" x="285.5" y="49" width="212" height="38"/>
+<text class="f-t" x="391.5" y="73" text-anchor="middle">선택 MAE (ppm)</text>
+<rect class="f-soft" x="497.5" y="49" width="195" height="38"/>
+<text class="f-t" x="595" y="73" text-anchor="middle">결정</text>
+<rect class="f-box" x="67.5" y="87" width="218" height="38"/>
+<text class="f-s" x="176.5" y="111" text-anchor="middle">작년 값</text>
+<rect class="f-box" x="285.5" y="87" width="212" height="38"/>
+<text class="f-s" x="391.5" y="111" text-anchor="middle">2.1540</text>
+<rect class="f-box" x="497.5" y="87" width="195" height="38"/>
+<text class="f-s" x="595" y="111" text-anchor="middle">기준선</text>
+<rect class="f-box" x="67.5" y="125" width="218" height="38"/>
+<text class="f-s" x="176.5" y="149" text-anchor="middle">최근 3년 증가량</text>
+<rect class="f-box" x="285.5" y="125" width="212" height="38"/>
+<text class="f-s" x="391.5" y="149" text-anchor="middle">0.4240</text>
+<rect class="f-box" x="497.5" y="125" width="195" height="38"/>
+<text class="f-s" x="595" y="149" text-anchor="middle">선택</text>
+<rect class="f-box" x="67.5" y="163" width="218" height="38"/>
+<text class="f-s" x="176.5" y="187" text-anchor="middle">최근 6년 증가량</text>
+<rect class="f-box" x="285.5" y="163" width="212" height="38"/>
+<text class="f-s" x="391.5" y="187" text-anchor="middle">0.4240</text>
+<rect class="f-box" x="497.5" y="163" width="195" height="38"/>
+<text class="f-s" x="595" y="187" text-anchor="middle">동점 규칙에서 제외</text>
+</svg><figcaption>보류값을 보기 전에 작은 창을 택한다는 동점 규칙을 정했다.</figcaption></figure>
+<div class="check" data-q="q3"></div>
+<div class="check" data-q="q4"></div>
+<h2>선택한 규칙의 성능을 여덟 새 원점에서 집계한다</h2>
+<p>2012–2019년은 보류 구간입니다. 선택 과정이 끝난 뒤에만 같은 여덟 해의 점 예측을 다시 대조합니다. 기준의 MAE는 2.4750ppm, 선택한 3년 규칙의 MAE는 0.4183ppm입니다. 큰 오류에 더 민감한 RMSE <var>√(Σe²/n)</var>는 각각 2.5174ppm, 0.5232ppm입니다. 이 기록에서 두 지표의 순서는 같습니다. 오차가 한쪽으로 치우치는지 보려면 부호 있는 평균 오차도 따로 적습니다. 3년 규칙의 평균 오차는 0.1283ppm입니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 264" role="img" aria-label="2012–2019년 3년 후보의 오차는 .2033,.54,−.1433,−.12,1.0833,−.2067,−.69,.36ppm이다.">
+<text class="f-cap" x="380" y="29" text-anchor="middle">보류 기간에서 고정한 3년 규칙의 오차</text>
+<line class="f-ink" x1="136" y1="190" x2="644" y2="190" marker-end="url(#f-arrow)"/>
+<line class="f-ink" x1="136" y1="190" x2="136" y2="49" marker-end="url(#f-arrow)"/>
+<line class="f-ink" x1="136" y1="190" x2="136" y2="196"/>
+<text class="f-s" x="136" y="212" text-anchor="middle">2012</text>
+<line class="f-ink" x1="277.1428571428571" y1="190" x2="277.1428571428571" y2="196"/>
+<text class="f-s" x="277.1428571428571" y="212" text-anchor="middle">2014</text>
+<line class="f-ink" x1="418.2857142857143" y1="190" x2="418.2857142857143" y2="196"/>
+<text class="f-s" x="418.2857142857143" y="212" text-anchor="middle">2016</text>
+<line class="f-ink" x1="559.4285714285714" y1="190" x2="559.4285714285714" y2="196"/>
+<text class="f-s" x="559.4285714285714" y="212" text-anchor="middle">2018</text>
+<line class="f-ink" x1="630" y1="190" x2="630" y2="196"/>
+<text class="f-s" x="630" y="212" text-anchor="middle">2019</text>
+<line class="f-grid" x1="131" y1="190" x2="630" y2="190"/>
+<text class="f-s" x="125" y="194" text-anchor="end">−1</text>
+<line class="f-grid" x1="131" y1="162.8" x2="630" y2="162.8"/>
+<text class="f-s" x="125" y="166.8" text-anchor="end">−.5</text>
+<line class="f-grid" x1="131" y1="135.6" x2="630" y2="135.6"/>
+<text class="f-s" x="125" y="139.6" text-anchor="end">0</text>
+<line class="f-grid" x1="131" y1="108.4" x2="630" y2="108.4"/>
+<text class="f-s" x="125" y="112.4" text-anchor="end">.5</text>
+<line class="f-grid" x1="131" y1="81.2" x2="630" y2="81.2"/>
+<text class="f-s" x="125" y="85.2" text-anchor="end">1</text>
+<line class="f-grid" x1="131" y1="54" x2="630" y2="54"/>
+<text class="f-s" x="125" y="58" text-anchor="end">1.5</text>
+<polyline class="f-line" fill="none" points="136,135.6 630,135.6"/>
+<circle class="f-fill" cx="136" cy="135.6" r="3.5"/>
+<circle class="f-fill" cx="630" cy="135.6" r="3.5"/>
+<polyline class="f-dash" fill="none" points="136,124.539 206.571,106.224 277.143,143.397 347.714,142.128 418.286,76.667 488.857,146.843 559.429,173.136 630,116.016"/>
+<circle class="f-fill" cx="136" cy="124.539" r="3.5"/>
+<circle class="f-fill" cx="206.571" cy="106.224" r="3.5"/>
+<circle class="f-fill" cx="277.143" cy="143.397" r="3.5"/>
+<circle class="f-fill" cx="347.714" cy="142.128" r="3.5"/>
+<circle class="f-fill" cx="418.286" cy="76.667" r="3.5"/>
+<circle class="f-fill" cx="488.857" cy="146.843" r="3.5"/>
+<circle class="f-fill" cx="559.429" cy="173.136" r="3.5"/>
+<circle class="f-fill" cx="630" cy="116.016" r="3.5"/>
+<text class="f-s" x="650" y="236" text-anchor="middle">목표 연도</text>
+<text class="f-s" x="120" y="44" text-anchor="end">관측−예측 (ppm)</text>
+</svg><figcaption>점선은 해당 해의 오차이고 가운데 실선은 오차 0이다. 직선으로 연결한 구간은 연중 측정값이 아니다.</figcaption></figure>
+<p>2016년에는 약 +1.0833ppm, 2018년에는 −0.6900ppm의 오차가 남았습니다. 평균이 작은 규칙에도 오차가 특히 큰 연도가 있습니다. 8개 연도의 시점 오차는 인접해 생겼고, 같은 장소와 관측 과정에서 얻었습니다. 모형 간 평균 오차를 모았다는 사실만으로 다른 관측소나 다음 수십 년의 성능 차이를 추정하지는 않습니다.</p>
+<div class="check" data-q="q5"></div>
+<div class="check" data-q="q6"></div>
+<h2>이어 풀기와 증명</h2>
+<p>모형을 고를 때의 지표와 보류에서 보고할 지표를 따로 적고, 동일한 계산을 다른 한 해에 적용해 봅니다.</p>
+<div class="check" data-q="q7"></div>
+<div class="check" data-q="q8"></div>
+<div class="check" data-q="q9"></div>
+<h2>파이썬으로 같은 계산 검산하기</h2>
+<p><a href="../../labs/mauna-loa/annual_co2.csv" download>연평균 관측 CSV</a>를 저장하고 아래 코드를 그 파일과 같은 작업 폴더에서 실행합니다.</p>
+<pre data-example="python"><code>from csv import DictReader
+from fractions import Fraction as F
+from math import sqrt
+from pathlib import Path
+
+with Path(&quot;annual_co2.csv&quot;).open(encoding=&quot;utf8&quot;, newline=&quot;&quot;) as source:
+    y = {int(r[&quot;year&quot;]): F(r[&quot;mean_ppm&quot;]) for r in DictReader(source)}
+
+def forecast(t, k):
+    origin = t - 1
+    return y[origin] if k == 0 else y[origin] + (y[origin]-y[origin-k])/k
+
+def residuals(start, end, k):
+    return [y[t]-forecast(t, k) for t in range(start, end+1)]
+
+def mae(errors):
+    return sum(map(abs, errors))/len(errors)
+
+validation = {k: mae(residuals(2002, 2006, k)) for k in (0, 3, 6)}
+selected = min((3, 6), key=lambda k: (validation[k], k))
+for k, score in validation.items():
+    print(f&quot;selection k={k}: MAE={float(score):.4f}&quot;)
+print(&quot;selected:&quot;, selected)
+for k in (0, selected):
+    err = residuals(2012, 2019, k)
+    rmse = sqrt(sum(e**2 for e in err)/len(err))
+    print(f&quot;holdout k={k}: MAE={float(mae(err)):.4f}&quot;,
+          f&quot;RMSE={rmse:.4f} mean error={float(sum(err)/len(err)):.4f}&quot;)
+for t in (2002, 2016, 2018):
+    guess = forecast(t, selected)
+    print(f&quot;{t}: forecast={float(guess):.4f} actual={float(y[t]):.4f}&quot;,
+          f&quot;error={float(y[t]-guess):+.4f}&quot;)</code></pre>
+<p class="aside">실행 결과</p>
+<pre data-output><code>selection k=0: MAE=2.1540
+selection k=3: MAE=0.4240
+selection k=6: MAE=0.4240
+selected: 3
+holdout k=0: MAE=2.4750 RMSE=2.5174 mean error=2.4750
+holdout k=3: MAE=0.4183 RMSE=0.5232 mean error=0.1283
+2002: forecast=372.8133 actual=373.4500 error=+0.6367
+2016: forecast=403.3267 actual=404.4100 error=+1.0833
+2018: forecast=409.4100 actual=408.7200 error=-0.6900</code></pre>
+<p>저장소 최상위에서 실행합니다. 2002년 행은 선택 구간에서 손으로 계산한 예입니다. 2016·2018년은 보류 오차를 보여 주는 예이며, 이 수치가 나왔다고 해서 설정을 바꾸어 같은 보류 점수로 다시 비교하지 않습니다.</p>
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://otexts.com/fpp3/toolbox.html#evaluating-point-forecast-accuracy">Hyndman·Athanasopoulos · Forecast Accuracy</a></li>
+<li><a href="da10-1.html">DA10-1 프로젝트의 비교 계획</a></li>
+<li><a href="../sp/sp03-1.html">SP03-1 이동 원점 검증</a></li>
+</ul>
+<h2>확인 문제</h2>
+<p>조건과 단위를 먼저 적은 뒤 해설을 확인합니다.</p>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

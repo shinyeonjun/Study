@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>결측을 제외하고 가중평균과 가중분산 계산하기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="PY13-2">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">Python과 프로그래밍 사고 · PY13 수치 계산 검증</p>
+<p class="chap-num">PY13·2</p>
+<h1>결측을 제외하고 가중평균과 가중분산 계산하기</h1>
+<p class="lead">관측 하나가 빠진 열과 실제로 0을 관측한 열에는 서로 다른 분모가 필요합니다. NumPy 마스크가 어떤 값을 포함하는지 표에서 먼저 표시하고, 합과 나눗셈을 안전하게 구현합니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>값과 가중치의 모양을 맞추고 열마다 유효 분모를 구한다.</li><li>분모가 0인 열의 계산 결과를 명시한다.</li><li>가중분산의 제곱 편차를 손으로 계산하고 배열 결과와 대조한다.</li></ul></div>
+
+<h2>평균에 들어오는 값과 가중치</h2>
+<p>두 관측 10, 20의 가중치를 각각 1, 2로 놓으면 평균은 (1·10+2·20)/(1+2)=50/3입니다. 20을 두 번 센 산술평균과 같습니다. 이 장에서는 유한한 0 이상의 가중치를 직접 주고, 관측값의 결측을 NaN으로 표현합니다. 가중치 0의 행은 결과에 기여하지 않습니다. 무한대인 관측은 입력에서 오류로 처리합니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 160" role="img" aria-label="관측과 가중치 조건을 만족한 칸만 열별 합에 사용하고 분모가 양수일 때 나눈다.">
+<rect class="f-box" x="42" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="135" y="61" text-anchor="middle">유효 여부</text><text class="f-s" x="135" y="89" text-anchor="middle">관측이 있고</text><text class="f-s" x="135" y="110" text-anchor="middle">가중치가 양수</text><line class="f-line" x1="235" y1="84" x2="278" y2="84" marker-end="url(#f-arrow)"/><rect class="f-soft" x="287" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="380" y="61" text-anchor="middle">열별 집계</text><text class="f-s" x="380" y="89" text-anchor="middle">Σ wᵢxᵢ</text><text class="f-s" x="380" y="110" text-anchor="middle">Σ wᵢ</text><line class="f-line" x1="480" y1="84" x2="523" y2="84" marker-end="url(#f-arrow)"/><rect class="f-box" x="532" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="625" y="61" text-anchor="middle">계산 결과</text><text class="f-s" x="625" y="89" text-anchor="middle">가중치 합이 양수면</text><text class="f-s" x="625" y="110" text-anchor="middle">분자를 분모로 나눔</text>
+</svg><figcaption>열마다 관측 가능한 위치가 다르면 같은 가중치 배열을 쓰더라도 분모가 달라진다.</figcaption></figure>
+<div class="check" data-q="q1"></div>
+<h2>마스크는 분자와 분모에 함께 적용한다</h2>
+<div class="table-wrap"><table><thead><tr><th scope="col">행 가중치</th><th scope="col">A</th><th scope="col">B</th><th scope="col">C</th></tr></thead><tbody><tr><td>1</td><td>10</td><td>결측</td><td>결측</td></tr><tr><td>2</td><td>20</td><td>40</td><td>결측</td></tr><tr><td>1</td><td>결측</td><td>0</td><td>결측</td></tr><tr><td>0</td><td>100</td><td>결측</td><td>결측</td></tr></tbody></table></div>
+<p>A열에서 채택한 가중치는 1과 2로 합계가 3입니다. B열은 2와 1이 분모에 들어갑니다. B열의 0은 관측이므로 분자에는 0·1을 더하고 분모에는 1을 더합니다. C열의 분모가 0이라는 것은 양의 가중치를 가진 유효 관측이 없다는 뜻입니다. SQL 집계나 pandas에서 이 표를 만들 때도 먼저 <a href="../../unit.html?u=DA09">관측 단위와 결측이 생기는 과정</a>을 정합니다.</p>
+<p><code>0 * np.nan</code>의 결과는 NaN입니다. 먼저 유효값이 있는 자리를 구하고 <code>np.where</code>로 제외할 값의 자리를 0으로 채워 곱합니다. 이 0은 <em>계산할 항을 제거하는 표식</em>입니다. 같은 자리의 가중치도 0으로 만들어야 결측을 실제 0으로 집계하는 오류를 피합니다.</p>
+<div class="check" data-q="q2"></div><div class="check" data-q="q3"></div><div class="check" data-q="q4"></div>
+<h2>나눌 수 있는 열에서만 나눈다</h2>
+<p>값의 모양은 <code>(4, 3)</code>이고, 행별 가중치는 <code>w[:, None]</code>으로 <code>(4, 1)</code>로 바꿔 모든 열에 적용합니다. 행 축을 줄일 때 <code>axis=0</code>을 사용합니다. <code>np.divide</code>에 길이 3인 출력 배열을 NaN으로 채워 전달하면 <code>where=False</code>인 자리에는 미리 갖고 있던 NaN이 남습니다.</p>
+<div class="check" data-q="q5"></div><div class="check" data-q="q6"></div>
+<h2>같은 가중치로 제곱 편차를 평균한다</h2>
+<p>각 열 평균을 먼저 구합니다. 그다음 채택한 값에서 열 평균을 빼고 제곱해, 같은 가중치로 평균합니다. 이 식은 주어진 가중치를 가진 분포의 분산입니다. <a href="../../unit.html?u=ST02">표본으로 모집단 분산을 추정할 때의 보정</a>에는 표집 방식과 가중치의 뜻에 관한 추가 가정이 필요합니다.</p>
+<p>B열의 평균은 80/3입니다. 가중분산은 [2·(40−80/3)²+1·(0−80/3)²]/3 = 3200/9입니다. A열은 200/9입니다. 두 계산 모두 유효값의 가중치로 다시 나눕니다. 분산의 단위는 원래 단위의 제곱입니다.</p>
+<div class="check" data-q="q7"></div>
+<h2>실행으로 확인하기</h2>
+<pre data-example="python"><code>import numpy as np
+
+x = np.array([[10, np.nan, np.nan], [20, 40, np.nan],
+              [np.nan, 0, np.nan], [100, np.nan, np.nan]], dtype=float)
+w = np.array([1, 2, 1, 0], dtype=float)
+if w.shape != (x.shape[0],) or not np.isfinite(w).all() or (w &lt; 0).any():
+    raise ValueError(&quot;가중치는 행당 하나의 유한한 음이 아닌 수&quot;)
+if np.isinf(x).any():
+    raise ValueError(&quot;무한대인 관측&quot;)
+valid = ~np.isnan(x) &amp; (w[:, None] &gt; 0)
+weight = np.where(valid, w[:, None], 0)
+observed = np.where(valid, x, 0)
+total = weight.sum(axis=0)
+mean = np.full(x.shape[1], np.nan)
+np.divide((observed * weight).sum(axis=0), total, out=mean, where=total &gt; 0)
+deviation = np.where(valid, observed - mean, 0)
+variance = np.full(x.shape[1], np.nan)
+np.divide((weight * deviation**2).sum(axis=0), total,
+          out=variance, where=total &gt; 0)
+
+print(valid.sum(axis=0).tolist(), total.tolist())
+print(&quot; &quot;.join(f&quot;{v:.4f}&quot; for v in mean))
+print(&quot; &quot;.join(f&quot;{v:.4f}&quot; for v in variance))
+assert np.allclose(variance[:2], [200/9, 3200/9])
+assert np.isnan(mean[2]) and np.isnan(variance[2])</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>[2, 2, 0] [3.0, 3.0, 0.0]
+16.6667 26.6667 nan
+22.2222 355.5556 nan</code></pre>
+<div class="box "><p class="box-k">다른 방법으로 손검산</p><p>A열에서 실제 더할 값은 10, 20, 20입니다. B열은 40, 40, 0입니다. 목록을 각자 세 칸으로 펼쳐 평균과 제곱 편차를 계산하면 배열의 가중치 처리와 독립적으로 대조할 수 있습니다. 채택한 관측 수와 가중치의 합은 서로 다른 양이므로 두 값을 모두 기록합니다.</p></div>
+<div class="check" data-q="q8"></div>
+
+<h2>참고 자료</h2>
+<ul><li><a href="https://numpy.org/doc/stable/reference/generated/numpy.average.html">NumPy · 가중평균의 정의</a></li><li><a href="https://numpy.org/doc/stable/reference/generated/numpy.divide.html">NumPy · divide의 out과 where</a></li></ul>
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

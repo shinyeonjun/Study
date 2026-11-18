@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>결측이 생기는 방식과 결측값 범위의 민감도를 비교하기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="DA09-2">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">데이터 분석 · DA09 데이터를 분석 단위로 설계하기</p>
+<p class="chap-num">DA09·2</p>
+<h1>결측이 생기는 방식과 결측값 범위의 민감도를 비교하기</h1>
+<p class="lead">어느 연도의 값이 비어 있을 때 모두 삭제해서 평균을 내면 어떤 기간이 남을까요? 실제 값이 있는 표에서 두 해를 연습용으로 가려, 관측만으로 가능한 평균 범위와 모의 참값을 대조합니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2>
+<ul>
+<li>값이 0인 경우, 행이 없는 경우, 알려진 결측을 구별한다.</li>
+<li>하나의 빠질 수 있는 변수에서 MCAR·MAR·MNAR의 조건을 구별한다.</li>
+<li>명시한 결측 범위에서 목표 평균의 상·하한을 계산한다.</li>
+</ul></div>
+<h2>기록이 없는 것과 개수가 0인 것은 다른 사건이다</h2>
+<p>마우나로아 실측 수록 파일에는 2014–2019년의 연평균이 모두 있습니다. 여기서는 이 여섯 해 중 뒤의 두 값을 <b>연습용으로만 가립니다</b>. 파일을 고치지는 않습니다. 한 해의 값이 비었다고 해서 그 해의 CO₂가 0이라는 뜻은 아닙니다. 연도 전체 행이 없으면, 우선 기대했던 연도의 목록과 실제 행 키를 비교해야 결측 기간을 찾을 수 있습니다. 행이 있고 일부 열만 비어 있는 경우도 있습니다.</p>
+<p>대기는 존재하지만 장치가 꺼져 관측되지 않았는지, 품질 점검으로 기준을 충족하지 못했는지, 원래 관측 계획이 없었는지 기록할 수 있습니다. 실제 자료의 사유 코드가 있으면 빈 문자열·구분자·공식 결측 코드와 함께 확인합니다. 고정 수록 표는 공식 출처의 단위와 연속 기간을 따릅니다. 모의로 가린 값을 원 관측으로 제시하지 않습니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 329" role="img" aria-label="2014–2017년 398.81,401.01,404.41,406.76은 보인다. 2018–2019년은 연습용으로 가렸다.">
+<text class="f-cap" x="380" y="30" text-anchor="middle">여섯 해를 대상으로 두 해만 모의 결측 처리</text>
+<rect class="f-soft" x="99" y="49" width="152" height="38"/>
+<text class="f-t" x="175" y="73" text-anchor="middle">연도</text>
+<rect class="f-soft" x="251" y="49" width="195" height="38"/>
+<text class="f-t" x="348.5" y="73" text-anchor="middle">분석 입력 (ppm)</text>
+<rect class="f-soft" x="446" y="49" width="215" height="38"/>
+<text class="f-t" x="553.5" y="73" text-anchor="middle">분류</text>
+<rect class="f-box" x="99" y="87" width="152" height="38"/>
+<text class="f-s" x="175" y="111" text-anchor="middle">2014</text>
+<rect class="f-box" x="251" y="87" width="195" height="38"/>
+<text class="f-s" x="348.5" y="111" text-anchor="middle">398.81</text>
+<rect class="f-box" x="446" y="87" width="215" height="38"/>
+<text class="f-s" x="553.5" y="111" text-anchor="middle">관측</text>
+<rect class="f-box" x="99" y="125" width="152" height="38"/>
+<text class="f-s" x="175" y="149" text-anchor="middle">2015</text>
+<rect class="f-box" x="251" y="125" width="195" height="38"/>
+<text class="f-s" x="348.5" y="149" text-anchor="middle">401.01</text>
+<rect class="f-box" x="446" y="125" width="215" height="38"/>
+<text class="f-s" x="553.5" y="149" text-anchor="middle">관측</text>
+<rect class="f-box" x="99" y="163" width="152" height="38"/>
+<text class="f-s" x="175" y="187" text-anchor="middle">2016</text>
+<rect class="f-box" x="251" y="163" width="195" height="38"/>
+<text class="f-s" x="348.5" y="187" text-anchor="middle">404.41</text>
+<rect class="f-box" x="446" y="163" width="215" height="38"/>
+<text class="f-s" x="553.5" y="187" text-anchor="middle">관측</text>
+<rect class="f-box" x="99" y="201" width="152" height="38"/>
+<text class="f-s" x="175" y="225" text-anchor="middle">2017</text>
+<rect class="f-box" x="251" y="201" width="195" height="38"/>
+<text class="f-s" x="348.5" y="225" text-anchor="middle">406.76</text>
+<rect class="f-box" x="446" y="201" width="215" height="38"/>
+<text class="f-s" x="553.5" y="225" text-anchor="middle">관측</text>
+<rect class="f-box" x="99" y="239" width="152" height="38"/>
+<text class="f-s" x="175" y="263" text-anchor="middle">2018</text>
+<rect class="f-box" x="251" y="239" width="195" height="38"/>
+<text class="f-s" x="348.5" y="263" text-anchor="middle">—</text>
+<rect class="f-box" x="446" y="239" width="215" height="38"/>
+<text class="f-s" x="553.5" y="263" text-anchor="middle">모의 결측</text>
+<rect class="f-box" x="99" y="277" width="152" height="38"/>
+<text class="f-s" x="175" y="301" text-anchor="middle">2019</text>
+<rect class="f-box" x="251" y="277" width="195" height="38"/>
+<text class="f-s" x="348.5" y="301" text-anchor="middle">—</text>
+<rect class="f-box" x="446" y="277" width="215" height="38"/>
+<text class="f-s" x="553.5" y="301" text-anchor="middle">모의 결측</text>
+</svg><figcaption>독립 표본의 결측 실험이 아니라, 시간의 마지막 두 해를 의도적으로 가린 반례다.</figcaption></figure>
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+<h2>빠질 가능성이 어떤 정보에 의존하는가</h2>
+<p>측정하려던 Y가 관측됐으면 <var>R=1</var>, 비었으면 <var>R=0</var>이라고 씁니다. 연도나 기기와 같이 항상 기록한 값을 X라 하겠습니다. Y 하나가 빠질 수 있는 이 장의 상황에서 세 가지 가정을 비교합니다.</p>
+<ul><li><b class="key">MCAR.</b> R의 확률이 X와 Y에 의존하지 않습니다. 예로 관측값이나 날짜와 관계없이 독립적인 주사위를 던져 일부 행을 가립니다.</li><li><b class="key">MAR.</b> X를 안 뒤에는 R이 조건부로 Y를 더 참조하지 않습니다. 예를 들어 장비 종류 X별 접수 누락률만 다르고 같은 장비 종류의 관측값과는 무관하다고 가정할 수 있습니다.</li><li><b class="key">MNAR.</b> X를 알아도 R이 숨겨진 Y에 의존할 수 있습니다. 같은 기기에서 실제 수치가 너무 큰 때에만 값이 표시되지 않으면 그 예입니다.</li></ul>
+<p>기록된 X별 결측률은 비교할 수 있습니다. 결측인 Y의 분포는 보이지 않으므로 그 값이 달라도 관측 표는 같을 수 있습니다. 관측률이 X별로 같다고 해서 MCAR가 증명되는 것은 아닙니다. 뒤 두 해만 가린 이 실습은 알려진 연도에 따른 규칙입니다. 그런데 이 두 해에는 관측이 하나도 남지 않아, ‘연도를 조건으로 설명한다’는 것만으로 해당 해의 값을 자료에서 얻을 수 없습니다. 시계열을 보간하거나 외삽하려면 추가 가정이 필요합니다.</p>
+<div class="check" data-q="q3"></div>
+<div class="check" data-q="q4"></div>
+<h2>가린 해의 가능 범위를 바꿔 결과를 계산한다</h2>
+<p>전체 목표는 2014–2019년 6개 연도의 동일 비중 평균입니다. 보이는 4개만 평균하면 합 <var>S=1610.99</var>를 4로 나눈 <var>402.7475</var>ppm입니다. 이 값은 2014–2017년의 평균입니다. 원래 6년의 평균을 구하려면 숨은 2년의 합도 알아야 합니다.</p>
+<p>연습을 위해 두 값 각각이 <var>[395,415]</var>ppm 범위에 있다고 <b>시나리오 가정</b>을 둡니다. 가능한 두 결측값에 모두 아래끝을 쓰면 6년 평균의 하한, 모두 위끝을 쓰면 상한입니다. 평균이 두 값 각각에 대해 증가하기 때문입니다.</p>
+<div class="eq"><var>모두 같은 가중치: (S+2·395)/6 ≤ 전체 평균 ≤ (S+2·415)/6.</var></div>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 215" role="img" aria-label="관측만 평균 402.7475, 범위 가정의 하한 400.1650과 상한 406.8317, 원 자료 평균 405.2267이다.">
+<text class="f-cap" x="380" y="30" text-anchor="middle">같은 관측 표가 허용하는 목표 평균</text>
+<rect class="f-soft" x="79.5" y="49" width="330" height="38"/>
+<text class="f-t" x="244.5" y="73" text-anchor="middle">어떤 계산인가</text>
+<rect class="f-soft" x="409.5" y="49" width="271" height="38"/>
+<text class="f-t" x="545" y="73" text-anchor="middle">평균 (ppm)</text>
+<rect class="f-box" x="79.5" y="87" width="330" height="38"/>
+<text class="f-s" x="244.5" y="111" text-anchor="middle">보이는 네 해만 평균</text>
+<rect class="f-box" x="409.5" y="87" width="271" height="38"/>
+<text class="f-s" x="545" y="111" text-anchor="middle">402.7475</text>
+<rect class="f-box" x="79.5" y="125" width="330" height="38"/>
+<text class="f-s" x="244.5" y="149" text-anchor="middle">6년 하한 / 상한 가정</text>
+<rect class="f-box" x="409.5" y="125" width="271" height="38"/>
+<text class="f-s" x="545" y="149" text-anchor="middle">400.1650 / 406.8317</text>
+<rect class="f-box" x="79.5" y="163" width="330" height="38"/>
+<text class="f-s" x="244.5" y="187" text-anchor="middle">가리기 전 실제 6년</text>
+<rect class="f-box" x="409.5" y="163" width="271" height="38"/>
+<text class="f-s" x="545" y="187" text-anchor="middle">405.2267</text>
+</svg><figcaption>경계는 결측값의 범위를 가정한 결정론적 계산이다.</figcaption></figure>
+<p>이 범위는 표본을 반복해 얻는 신뢰구간이 아닙니다. 범위가 넓어지면 결과도 얼마나 움직이는지를 보여 줍니다. 이 실습에서는 원래 결과 <var>(408.72,411.65)</var>를 따로 열어서 비교하므로 실제 6년 평균도 확인할 수 있습니다. 실제로 값이 사라진 자료에서는 이와 같은 검산 기준이 없을 수 있습니다.</p>
+<div class="check" data-q="q5"></div>
+<div class="check" data-q="q6"></div>
+<h2>이어 풀기와 증명</h2>
+<p>관측 비율의 분모를 전체 기대 행으로 잡습니다. 마지막 두 문제는 계산할 수 있는 평균과 자료 수집 가정을 각각 설명합니다.</p>
+<div class="check" data-q="q7"></div>
+<div class="check" data-q="q8"></div>
+<div class="check" data-q="q9"></div>
+<h2>파이썬으로 같은 계산 검산하기</h2>
+<p><a href="../../labs/mauna-loa/annual_co2.csv" download>연평균 관측 CSV</a>를 저장하고 아래 코드를 그 파일과 같은 작업 폴더에서 실행합니다.</p>
+<pre data-example="python"><code>from csv import DictReader
+from decimal import Decimal as D
+from pathlib import Path
+
+path = Path(&quot;annual_co2.csv&quot;)
+with path.open(encoding=&quot;utf8&quot;, newline=&quot;&quot;) as source:
+    actual = {int(row[&quot;year&quot;]): D(row[&quot;mean_ppm&quot;]) for row in DictReader(source)}
+period = list(range(2014, 2020))
+observed = {year: actual[year] if year &lt; 2018 else None for year in period}
+values = [v for v in observed.values() if v is not None]
+n, missing, observed_sum = len(period), len(period)-len(values), sum(values)
+assert missing == 2
+lower = (observed_sum + missing*D(&quot;395&quot;)) / n
+upper = (observed_sum + missing*D(&quot;415&quot;)) / n
+truth = sum(actual[year] for year in period)/n
+assert lower &lt;= truth &lt;= upper
+print(&quot;masked years:&quot;, [year for year, v in observed.items() if v is None])
+print(f&quot;observed mean: {observed_sum/len(values):.4f}&quot;)
+print(f&quot;sensitivity range: {lower:.4f} to {upper:.4f}&quot;)
+print(f&quot;unmasked mean: {truth:.4f}&quot;)</code></pre>
+<p class="aside">실행 결과</p>
+<pre data-output><code>masked years: [2018, 2019]
+observed mean: 402.7475
+sensitivity range: 400.1650 to 406.8317
+unmasked mean: 405.2267</code></pre>
+<p>저장소 최상위 폴더에서 실행합니다. 원본 파일을 읽은 뒤 메모리의 복사한 표에서만 값을 가립니다. 범위 수치도 교육용 가정입니다. 출처가 발표한 오차 열이나 물리적 보장으로 해석하지 않습니다.</p>
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://people.csail.mit.edu/jrennie/trg/papers/rubin-missing-76.pdf">Rubin · Inference and Missing Data 원문</a></li>
+<li><a href="https://gml.noaa.gov/webdata/ccgg/trends/co2/co2_annmean_mlo.txt">NOAA GML · 마우나로아 연평균 원자료</a></li>
+<li><a href="da09-1.html">DA09-1 관측 단위와 정보 시점</a></li>
+</ul>
+<h2>확인 문제</h2>
+<p>조건과 단위를 먼저 적은 뒤 해설을 확인합니다.</p>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>
