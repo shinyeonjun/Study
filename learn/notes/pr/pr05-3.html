@@ -121,7 +121,7 @@
 <div class="box ex"><p class="box-k">풀이 예제</p>
 <p>10분에 평균 2건이면 <b>정확히 2건</b>의 확률은 e<sup>−2</sup> × 2² ÷ 2! = 2e<sup>−2</sup> ≈ 0.2707입니다. <b>적어도 1건</b>은 P(K ≥ 1) = 1 − P(K = 0) = 1 − e<sup>−2</sup> ≈ 0.8647입니다. 2건과 적어도 2건도 서로 다른 사건입니다.</p>
 </div>
-<p>이 분포에서는 <b>E[K] = λ, Var(K) = λ</b>입니다. λ = 2에서 기댓값은 2건이고 분산의 수치는 2, 표준편차는 √2 ≈ 1.41건입니다. 두 숫자가 같은 것은 모형의 특징입니다. 실제 로그의 구간별 평균과 분산이 표본에서 꼭 일치할 필요는 없습니다.</p>
+<p>이 분포에서는 <b>E[K] = λ, Var(K) = λ</b>입니다. λ = 2에서 기댓값은 2건이고 분산의 수치는 2, 표준편차는 √2 ≈ 1.41건입니다. 두 숫자가 같은 것은 모형의 특징입니다(아래 이항 근사에서 보면, 이항의 분산 np(1 − p)는 p가 0에 가까울수록 평균 np = λ에 가까워집니다). 실제 로그의 구간별 평균과 분산이 표본에서 꼭 일치할 필요는 없습니다.</p>
 <div class="check" data-q="q3"></div>
 <div class="check" data-q="q4"></div>
 <div class="check" data-q="q5"></div>
@@ -164,6 +164,7 @@ for k in range(4):
 <tr><td>독립 시도의 공통 성공확률 p</td><td>첫 성공을 포함한 시도 수 1, 2, …</td><td>기하</td></tr>
 <tr><td>관측 구간의 길이와 그 안의 평균 λ</td><td>사건 건수 0, 1, 2, …</td><td><b class='key'>포아송</b></td></tr>
 </table></div>
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>일정한 도착률 r로 독립적으로 일어나는 사건을 길이 t 구간에서 세면 λ = rt인 포아송분포 <code>P(K = k) = e<sup>−λ</sup>λ<sup>k</sup>/k!</code>를 따르고, 평균과 분산이 모두 λ이며, n이 크고 p가 작은 이항(np = λ)의 근사로도 쓰입니다.</p></div>
 <h2>참고 자료</h2>
 <ul><li><a href="https://www.itl.nist.gov/div898/handbook/eda/section3/eda366j.htm">NIST · 포아송분포의 확률과 평균</a></li>
 <li><a href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.poisson.html">SciPy · poisson 확률질량과 모수</a></li>

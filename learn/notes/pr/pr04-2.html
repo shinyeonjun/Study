@@ -20,7 +20,7 @@
 <main class="page">
 <svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
 <header class="chapter">
-<p class="chap-sub">확률 · 확률변수와 평균 · PR04</p>
+<p class="chap-sub">확률 · PR04 확률변수와 평균</p>
 <p class="chap-num">PR04·2</p>
 <h1>기댓값·분산과 실제 보상</h1>
 <p class="lead">고정 선택은 항상 2점입니다. 다른 선택은 자주 0점, 가끔 8점인데 두 선택의 평균은 똑같이 2점입니다. 확률표에서 이 평균을 구하고 한 번에 받는 보상과 얼마나 다른지 계산합니다.</p>
@@ -72,7 +72,7 @@
 <tr><td>0점</td><td>3/4</td><td>−2점</td><td>4 × 3/4 = 3점²</td></tr>
 <tr><td>8점</td><td>1/4</td><td>6점</td><td>36 × 1/4 = 9점²</td></tr>
 </table></div>
-<p>분산은 3 + 9 = 12점², 표준편차는 √12 ≈ 3.46점입니다. S는 항상 평균과 같으므로 편차가 0이고 분산도 0입니다. 계산이 간단할 때는 <code>Var(X) = E[X²] − (E[X])²</code>를 써도 됩니다. 제곱을 풀면 가운데 항의 기댓값은 −2μ·E[X] = −2μ²이고, 마지막 항은 μ²이므로 이 식을 얻습니다. V에 적용하면 <code>E[V²] = 64/4 = 16</code>, <code>16 − 2² = 12</code>로 같은 답입니다.</p>
+<p>분산은 3 + 9 = 12점², 표준편차는 √12 ≈ 3.46점입니다. S는 항상 평균과 같으므로 편차가 0이고 분산도 0입니다. 계산이 간단할 때는 <code>Var(X) = E[X²] − (E[X])²</code>를 써도 됩니다. <code>(X − μ)² = X² − 2μX + μ²</code>로 풀고 아래 절의 선형성을 쓰면 기댓값이 <code>E[X²] − 2μ·E[X] + μ² = E[X²] − 2μ² + μ² = E[X²] − μ²</code>이 되어 이 식을 얻습니다. 여기서 <code>E[X²] = Σ x² · p(x)</code>처럼, X의 함수 g(X)의 기댓값은 <b>X의 확률을 그대로 쓰고 값만 g(x)로 바꿔</b> 더합니다. V에 적용하면 <code>E[V²] = 0² × 3/4 + 8² × 1/4 = 64/4 = 16</code>, <code>16 − 2² = 12</code>로 같은 답입니다.</p>
 <pre data-example="python"><code>from fractions import Fraction
 from math import sqrt
 
@@ -92,6 +92,16 @@ print(f"표준편차: {sqrt(var):.2f}점")</code></pre>
 <div class="check" data-q="q5"></div>
 <div class="check" data-q="q6"></div>
 
+<h2>단위를 바꾸거나 더할 때의 기댓값과 분산 <span class="tag memo">외우기</span></h2>
+<p>보상 규칙을 바꿔, 변동 선택의 점수를 3배하고 참가 점수 1점을 얹는다고 합시다. 새 보상 <code>Y = 3V + 1</code>은 3/4 확률로 <code>3 × 0 + 1 = 1</code>점, 1/4 확률로 <code>3 × 8 + 1 = 25</code>점입니다. 정의대로 계산하면 <code>E[Y] = 1 × 3/4 + 25 × 1/4 = 7</code>점이고, 편차는 −6과 +18이므로 <code>Var(Y) = 36 × 3/4 + 324 × 1/4 = 27 + 81 = 108</code>점²입니다. 이 값은 아래 성질로 바로 얻을 수 있습니다.</p>
+<div class="box"><p class="box-k">기댓값과 분산의 성질 (a, b는 상수)</p><p>① <code>E[aX + b] = aE[X] + b</code><br>② <code>Var(aX + b) = a²Var(X)</code>, 표준편차는 <code>|a| × SD(X)</code><br>③ <code>E[X + Y] = E[X] + E[Y]</code> — 독립이 아니어도 항상 성립<br>④ X와 Y가 독립이면 <code>Var(X + Y) = Var(X) + Var(Y)</code></p></div>
+<p>①은 <code>Σ (ax + b)p(x) = aΣ x p(x) + bΣ p(x) = aE[X] + b</code>에서 나옵니다(확률의 합이 1). ②에서 b가 사라지는 이유는 모든 값을 b만큼 옮기면 평균도 b만큼 옮겨 편차가 그대로이기 때문이고, a가 제곱되는 이유는 편차가 a배가 된 뒤 제곱되기 때문입니다. 예에서 <code>E[Y] = 3 × 2 + 1 = 7</code>, <code>Var(Y) = 3² × 12 = 108</code>, 표준편차는 <code>3 × 3.46 ≈ 10.39</code>점으로 정의대로 계산한 값과 같습니다.</p>
+<p>③과 ④는 두 확률변수를 더할 때 씁니다. 변동 선택을 서로 영향 없이 두 번 하여 보상 V₁, V₂를 합치면 <code>E[V₁ + V₂] = 2 + 2 = 4</code>, <code>Var(V₁ + V₂) = 12 + 12 = 24</code>입니다. 직접 확인하면 합은 0(확률 3/4 × 3/4 = 9/16), 8(0과 8의 두 순서, 2 × 3/4 × 1/4 = 6/16), 16(1/16)이고, 기댓값은 <code>8 × 6/16 + 16 × 1/16 = 4</code>, 분산은 <code>(0−4)² × 9/16 + (8−4)² × 6/16 + (16−4)² × 1/16 = 9 + 6 + 9 = 24</code>입니다.</p>
+<div class="box trap"><p class="box-k">흔한 실수 · 2V와 V₁ + V₂</p><p>한 번의 보상을 두 배로 하는 <code>2V</code>는 0 또는 16점이라 <code>Var(2V) = 2² × 12 = 48</code>입니다. 독립인 두 번의 합 <code>V₁ + V₂</code>는 높고 낮은 결과가 서로 상쇄될 수 있어 분산이 24에 그칩니다. 평균은 둘 다 4입니다. 또 ④는 독립(뒤의 PR07에서는 더 약한 조건인 공분산 0)이 있어야 성립하며, ③은 그런 조건이 필요 없습니다.</p></div>
+<div class="check" data-q="q11"></div>
+<div class="check" data-q="q12"></div>
+<div class="check" data-q="q13"></div>
+
 <h2>평균 보상을 한 번의 결과와 구별한다</h2>
 <p>각 시행에서 이전 시행이 새 결과에 영향을 주지 않고, 변동 선택 V의 확률이 일정하다고 가정합니다. 그 모형을 코드로 여러 번 반복해 봅니다. <code>rng.random() &lt; 0.25</code>가 참이면 8점, 나머지는 0점으로 기록합니다. 같은 기록에서 처음 1번, 10번, 100번, 10,000번의 평균을 차례로 구합니다.</p>
 <pre data-example="python"><code>from random import Random
@@ -106,7 +116,7 @@ for n in (1, 10, 100, 10_000):
 10: 0.800
 100: 2.320
 10000: 1.970</code></pre>
-<p>이 실행에서 처음에는 8점이 나오고 몇 번씩 묶어 평균을 내면 수치가 달라집니다. 시행을 늘렸을 때 평균이 기댓값에 가까워지는 까닭은 추후 다룰 큰수의 법칙과 연결됩니다. 매번 시행을 하나 더 할 때 오차가 줄어드는 보장은 없습니다. 또한 이 결과는 설정한 확률 모형을 확인한 것으로, 현실의 보상 확률이 1/4임을 입증하지 않습니다.</p>
+<p>이 실행에서 처음에는 8점이 나오고 몇 번씩 묶어 평균을 내면 수치가 달라집니다. 시행을 늘렸을 때 평균이 기댓값에 가까워지는 까닭은 PR08에서 다룰 대수의 법칙(큰수의 법칙)과 연결됩니다. 위 성질 ②·④로 미리 보면, 독립인 n번의 평균은 기댓값이 2로 그대로이고 분산은 <code>n × 12 / n² = 12/n</code>으로 줄어듭니다. 매번 시행을 하나 더 할 때 오차가 줄어드는 보장은 없습니다. 또한 이 결과는 설정한 확률 모형을 확인한 것으로, 현실의 보상 확률이 1/4임을 입증하지 않습니다.</p>
 <div class="box trap"><p class="box-k">평균 목표를 적기</p><p>목표가 한 번에 적어도 1점을 얻는 것이라면 고정 선택은 항상 성공하지만 변동 선택은 1/4만 성공합니다. 같은 모형을 반복할 때 평균 점수만 묻는다면 두 선택의 기댓값은 같습니다. 어느 선택이 나은지 말하기 전에 평균, 목표 달성 확률, 변동 중 무엇을 비교할지 정합니다. 강화학습에서도 주어진 상태에서 어떤 행동을 골랐을 때의 보상 분포와 기댓값을 생각합니다. 상태와 정책이 달라지며 결과가 이어지는 경우에는 이 단순 반복 모형과 다른 구조가 됩니다.</p></div>
 <div class="check" data-q="q7"></div>
 <div class="check" data-q="q8"></div>
@@ -118,8 +128,11 @@ for n in (1, 10, 100, 10_000):
 <tr><td><b class='key'>E[X]</b></td><td>값을 발생 확률로 가중 평균한 수</td></tr>
 <tr><td><b class='key'>Var(X)</b></td><td>기댓값에서 벗어난 거리의 제곱을 확률로 가중 평균한 수</td></tr>
 <tr><td><b class='key'>표준편차</b></td><td>분산의 제곱근. 단위는 X와 같음</td></tr>
+<tr><td>E[aX + b], Var(aX + b)</td><td>aE[X] + b, <b class='key'>a²Var(X)</b> (b는 분산에 영향 없음)</td></tr>
+<tr><td>E[X + Y], Var(X + Y)</td><td>기댓값은 항상 더함, 분산은 <b class='key'>독립</b>일 때 더함</td></tr>
 <tr><td><b class='key'>실제 보상과 경험 평균</b></td><td>한 번 기록된 값과 이미 관측한 값들의 평균. 분포와 관측의 수치를 구별</td></tr>
 </table></div>
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>기댓값은 값을 확률로 가중 평균한 수이고 분산은 편차 제곱의 기댓값이며, <code>E[aX + b] = aE[X] + b</code>, <code>Var(aX + b) = a²Var(X)</code>이고 합의 분산은 독립일 때만 그냥 더합니다.</p></div>
 <p class="small">공식 참고 자료 <a href="https://ocw.mit.edu/courses/6-041sc-probabilistic-systems-analysis-and-applied-probability-fall-2013/pages/unit-i/lecture-5/">MIT OpenCourseWare · 기댓값</a> · <a href="https://ocw.mit.edu/courses/6-041sc-probabilistic-systems-analysis-and-applied-probability-fall-2013/pages/unit-i/lecture-6/">MIT OpenCourseWare · 분산</a></p>
 <h2>확인 문제</h2>
 <p>본문에서 풀지 않은 문제가 여기에 나옵니다. 결과를 예측한 뒤 필요하면 코드로 검산합니다.</p>

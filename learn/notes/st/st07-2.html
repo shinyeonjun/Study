@@ -132,6 +132,15 @@ print("요청 2건에서 A, B:", [round(float(v), 1) for v in predictions])</cod
 랭크=4, SSE=8.00
 요청 2건에서 A, B: [6.0, 9.0]</code></pre>
 <p>상호작용을 추가한 모형은 공통 기울기 모형을 특수한 경우로 포함하므로, 같은 자료에서 최소제곱 오차가 늘지는 않습니다. 이것만으로 실제 업무에서 그 항이 필요한지 판단할 수 없습니다. 두 지점에서 요청 수가 비슷한 범위에 걸쳐 관측되었는지 보고, 차이의 불확실성과 새 자료 성능도 확인합니다. ‘다른 설명변수를 고정한다’는 말은 비교에 사용한 모형의 조건을 뜻합니다. 관측되지 않은 직원 수 같은 교란을 통제하거나 지점 변경의 인과 효과를 보장하지는 않습니다.</p>
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table>
+<thead><tr><th scope="col">모형</th><th scope="col">A(g=0)</th><th scope="col">B(g=1)</th><th scope="col">계수 읽기</th></tr></thead>
+<tbody>
+<tr><td>b₀+b₁x+b₂g</td><td>b₀+b₁x</td><td>(b₀+b₂)+b₁x</td><td>b₂는 모든 x에서 같은 지점 차이</td></tr>
+<tr><td>b₀+b₁x+b₂g+b₃xg (<b class="key">상호작용</b>)</td><td>b₀+b₁x</td><td>(b₀+b₂)+(b₁+b₃)x</td><td>b₂는 x=0에서의 차이, b₃는 기울기 차이</td></tr>
+</tbody>
+</table></div>
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>다중회귀 계수는 모형에 넣은 다른 변수를 고정한 비교이고, 상호작용이 있으면 한 변수의 효과가 다른 변수 값에 따라 달라지므로 주효과 계수만 따로 읽지 않습니다.</p></div>
 <h2>참고 자료</h2>
 <ul><li><a href="https://online.stat.psu.edu/stat501/Lesson05">Penn State STAT 501 · 다중회귀와 계수 해석</a></li>
 <li><a href="https://online.stat.psu.edu/stat501/Lesson08">Penn State STAT 501 · 범주형 변수와 상호작용</a></li>

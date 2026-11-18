@@ -32,7 +32,7 @@
 </ul></div>
 
 <h2>성공률에 확신이 얼마인지 분포에 담는다</h2>
-<p>합성 센서의 매 시험은 성공 1 또는 실패 0입니다. 모르는 성공확률을 <code>p∈(0,1)</code>이라 하고 관측 전의 분포인 <b class="key">사전분포</b>를 <code>Beta(2,2)</code>로 정합니다. 베타분포 <code>Beta(a,b), a&gt;0, b&gt;0</code>의 밀도는 <code>pᵃ⁻¹(1−p)ᵇ⁻¹</code>에 비례합니다. Beta(2,2)는 .5를 중심으로 대칭이며, 성공 여부 한 건의 분포가 아니라 성공확률 p가 어느 값인지에 대한 분포입니다.</p>
+<p>합성 센서의 매 시험은 성공 1 또는 실패 0입니다. 모르는 성공확률을 <code>p∈(0,1)</code>이라 하고 관측 전의 분포인 <b class="key">사전분포</b>를 <code>Beta(2,2)</code>로 정합니다. 베타분포 <code>Beta(a,b), a&gt;0, b&gt;0</code>의 밀도는 <code>pᵃ⁻¹(1−p)ᵇ⁻¹</code>에 비례합니다. Beta(2,2)는 0.5를 중심으로 대칭이며, 성공 여부 한 건의 분포가 아니라 성공확률 p가 어느 값인지에 대한 분포입니다.</p>
 <p>p를 고정했을 때 각 시험은 서로 독립이고 확률이 같습니다. 결과가 <code>[1,1,0,1]</code>이면 성공 3회와 실패 1회입니다. p의 함수로 읽은 이 기록의 확률인 <b class="key">우도</b>는 <code>p³(1−p)</code>입니다. 순서를 생략한 성공 횟수만 관측했다면 이항계수 4가 곱해지지만, p에 따라 변하지 않아서 사후의 모양에는 영향을 주지 않습니다.</p>
 <div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
 
@@ -120,7 +120,7 @@ P(p&gt;0.5 | data)=0.7734</code></pre>
 <tr><th scope="row"><b class="key">우도</b></th><td>p에 따라 지금 자료가 나올 가능성을 나타냄</td></tr>
 <tr><th scope="row"><b class="key">사후</b></th><td>사전×우도를 정규화</td></tr>
 <tr><th scope="row"><b class="key">동일꼬리 구간</b></th><td>사후에서 양쪽에 같은 확률을 남김</td></tr>
-</tbody></table></div><div class="box sum"><p class="box-k">다음 장으로</p><p><a href="st09-2.html">다음 장</a>에서는 다음 시험 여러 건의 결과를 예측합니다.</p></div>
+</tbody></table></div><div class="box sum"><p class="box-k">한 줄 정리</p><p>Beta(a,b) 사전에 성공 s, 실패 f를 관측하면 사후는 Beta(a+s,b+f)이고, 그 95% 신용구간은 자료·사전·모형을 조건으로 한 p의 사후확률이지 반복 표집의 포괄률이 아닙니다.</p></div><div class="box sum"><p class="box-k">다음 장으로</p><p><a href="st09-2.html">다음 장</a>에서는 다음 시험 여러 건의 결과를 예측합니다.</p></div>
 
 <h2>참고 자료</h2>
 <ul>

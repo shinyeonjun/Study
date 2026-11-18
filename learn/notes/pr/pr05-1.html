@@ -156,12 +156,14 @@ print(f"평균 {mean:.2f}, 분산 {variance:.2f}")</code></pre>
 <div class="check" data-q="q8"></div>
 <h2>기록이 있다고 모형을 바로 정하지 않는다</h2>
 <p>작은 상자에서 불량품을 뽑고 되돌려 놓지 않으면 남은 구성과 다음 확률이 달라집니다. 기계 한 대의 상태가 나빠져 오류가 연달아 난다면 독립 가정이 틀릴 수 있습니다. 처음 오류가 나오면 검사 자체를 멈추는 경우에는 n이 고정되지 않습니다. 다음 장에서 그때 세는 시도 횟수를 공부합니다.</p>
+<h2>한눈에 정리</h2>
 <div class="table-wrap"><table>
 <tr><th scope="col">질문</th><th scope="col">모형</th><th scope="col">먼저 볼 값</th></tr>
 <tr><td>검사 한 번에서 오류를 발견했나?</td><td><b class='key'>베르누이</b></td><td>0 또는 1, p</td></tr>
 <tr><td>정해진 n번 중 발견이 몇 번인가?</td><td><b class='key'>이항</b></td><td>0부터 n까지, n과 p</td></tr>
 <tr><td>오류를 처음 발견할 때까지 몇 번 검사하나?</td><td>기하분포</td><td>성공으로 끝나는 첫 시도의 위치</td></tr>
 </table></div>
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>베르누이는 한 번의 0·1(평균 p, 분산 p(1 − p)), 이항은 정해진 n번의 독립 시행에서 성공 횟수로 <code>P(X = k) = C(n, k)p<sup>k</sup>(1 − p)<sup>n − k</sup></code>, 평균 np, 분산 np(1 − p)입니다.</p></div>
 <h2>참고 자료</h2>
 <ul><li><a href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.bernoulli.html">SciPy · Bernoulli의 지지집합과 확률질량</a></li>
 <li><a href="https://www.itl.nist.gov/div898/handbook/eda/section3/eda366i.htm">NIST · 이항분포의 확률·평균·표준편차</a></li></ul>

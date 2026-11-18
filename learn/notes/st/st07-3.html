@@ -142,6 +142,17 @@ print(f"x=6 외삽: {fit.intercept + fit.slope * 6:.1f}")</code></pre>
 평균 CI: [3.727, 6.273]
 새 관측 PI: [1.882, 8.118]
 x=6 외삽: 11.4</code></pre>
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table>
+<thead><tr><th scope="col">대상</th><th scope="col">식(단순회귀)</th><th scope="col">x₀=2 예</th></tr></thead>
+<tbody>
+<tr><td><b class="key">평균 반응의 신뢰구간</b></td><td>ŷ₀ ± t*·s√h</td><td>[3.727, 6.273]</td></tr>
+<tr><td><b class="key">예측구간</b></td><td>ŷ₀ ± t*·s√(1+h)</td><td>[1.882, 8.118]</td></tr>
+<tr><td>h</td><td>1/n + (x₀−x̄)²/S<sub>xx</sub></td><td>0.2</td></tr>
+<tr><td><b class="key">외삽</b></td><td>관측 범위 밖의 x</td><td>x=6 → 11.4 (근거 부족)</td></tr>
+</tbody>
+</table></div>
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>잔차 그림으로 선형성·등분산·독립을 점검하고, 평균에는 신뢰구간을, 새 관측 하나에는 더 넓은 예측구간을 쓰되 관측 범위 밖과 인과에는 그대로 옮기지 않습니다.</p></div>
 <h2>참고 자료</h2>
 <ul><li><a href="https://online.stat.psu.edu/stat501/Lesson03">Penn State STAT 501 · 평균 추정과 새 관측의 예측구간</a></li>
 <li><a href="https://online.stat.psu.edu/stat501/Lesson04">Penn State STAT 501 · 회귀 가정과 잔차 그림</a></li>
