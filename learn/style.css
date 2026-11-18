@@ -130,15 +130,21 @@ a.cell-main:hover { text-decoration: underline; text-underline-offset: 3px; }
 .view-head h1 { margin: 0; font-size: clamp(1.5rem, 3vw, 2rem); }
 .view-back { display: inline-block; margin-top: 24px; }
 .view-back + .view-head { margin-top: 4px; }
-.subject-index { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px 32px; margin-top: 20px; }
-.subject-section { border-top: 1px solid var(--text); padding-top: 8px; }
-.subject-section h2 { margin: 0 0 4px; font-size: 1.12rem; }
-.subject-section h2 a { color: var(--text); text-decoration: none; }
-.subject-section h2 a:hover { text-decoration: underline; }
-.subject-links { list-style: none; margin: 0; padding: 0; }
-.subject-links li { margin: 0; }
-.subject-links a { display: inline-block; padding: 3px 0; text-underline-offset: .2em; }
-.subject-links.counted li { display: flex; align-items: baseline; justify-content: space-between; gap: 8px 16px; flex-wrap: wrap; border-bottom: 1px solid var(--line); padding: 7px 0; }
+/* 전체 목차: 묶음은 두 단으로 흘리고, 과목은 종이책 차례처럼 이름 …… 수준 · 단원 · 장 */
+.subject-index { columns: 2 380px; column-gap: 40px; margin-top: 18px; }
+.subject-section { break-inside: avoid; margin: 0 0 28px; border-top: 2px solid var(--text); padding-top: 8px; scroll-margin-top: 12px; }
+.subject-section h2 { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin: 0 0 4px; font-size: 1.08rem; }
+.sec-meta { font-size: 0.76rem; font-weight: 400; color: var(--muted); font-variant-numeric: tabular-nums; }
+.toc-rows { list-style: none; margin: 0; padding: 0; }
+.toc-rows li { margin: 0; border-bottom: 1px solid var(--line); }
+.toc-rows li:last-child { border-bottom: 0; }
+.toc-row { display: flex; align-items: baseline; gap: 8px; padding: 8px 2px; color: var(--text); text-decoration: none; }
+.toc-row:hover .tr-name { color: var(--accent); text-decoration: underline; text-underline-offset: .2em; }
+.tr-name { font-weight: 600; white-space: nowrap; }
+.tr-lead { flex: 1; min-width: 12px; border-bottom: 1px dotted var(--line); transform: translateY(-4px); }
+.tr-meta { display: flex; gap: 6px; font-size: 0.78rem; color: var(--muted); white-space: nowrap; font-variant-numeric: tabular-nums; }
+.tr-meta > span + span::before { content: "·"; margin-right: 6px; }
+.tr-done { color: var(--accent); font-weight: 700; }
 .study-legend { display: flex; justify-content: space-between; align-items: center; gap: 8px 20px; flex-wrap: wrap; }
 .study-legend p { max-width: 52ch; margin: 0; }
 .study-stack { display: grid; gap: 12px; list-style: none; margin: 16px 0 0; padding: 0; }
@@ -423,11 +429,9 @@ footer { margin-top: 56px; color: var(--muted); font-size: 0.85rem; }
   .fig-svg { min-width: 600px; }
   .fig figcaption { position: sticky; left: 0; width: calc(100vw - 40px); text-align: left; }
   .chap-num { font-size: 3.2rem; }
-  .subject-index { gap: 0 16px; }
-  .subject-section { padding-top: 0; }
-  .subject-section h2 { margin: 0; }
-  .subject-section h2 a { display: block; padding: 10px 0; }
-  .subject-section .subject-links { display: none; }
+  .tr-name { white-space: normal; }
+  .tr-depth { display: none; }
+  .tr-meta > .tr-num::before { content: none; }
   .study-floor { padding-inline: 10px; }
   .urow { grid-template-columns: 42px minmax(0, 1fr) auto; gap: 3px 8px; }
   .urow .utag { grid-column: 2; justify-self: start; }

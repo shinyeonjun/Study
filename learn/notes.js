@@ -1158,7 +1158,7 @@ window.BDA_SKIP = ["AR01", "AR02", "AR03", "AR04", "AR05", "AR08", "AR09", "AL01
 // ---- 지도 시작 (tools/build_map.py가 만든다. 직접 고치지 않는다)
 window.BDA_MAP = {
   source: "LEARNING_MAP.md",
-  groups: [{"id": "math", "name": "수학", "areas": ["LA", "CA", "RA", "PR", "DM", "OP", "AL", "AR"]}, {"id": "data", "name": "데이터와 통계", "areas": ["DA", "ST", "DB"]}, {"id": "ai", "name": "AI와 학습", "areas": ["AI", "ML", "DL", "RL"]}, {"id": "computing", "name": "프로그래밍과 컴퓨터", "areas": ["PY", "CS", "SY"]}, {"id": "network", "name": "네트워크", "areas": ["NW"]}, {"id": "research", "name": "연구 방법", "areas": ["RS", "U"]}, {"id": "applications", "name": "응용과 심화", "areas": ["SP"]}, {"id": "exam", "name": "빅데이터분석기사", "areas": ["BD"]}],
+  groups: [{"id": "math", "name": "수학", "areas": ["AR", "AL", "LA", "CA", "PR", "DM", "OP", "RA"]}, {"id": "data", "name": "데이터와 통계", "areas": ["DA", "ST", "BD"]}, {"id": "ai", "name": "AI와 학습", "areas": ["AI", "ML", "DL", "RL"]}, {"id": "computing", "name": "컴퓨터와 프로그래밍", "areas": ["PY", "CS", "SY", "NW", "DB"]}, {"id": "research", "name": "공부와 연구", "areas": ["U", "RS", "SP"]}],
   areas: [
     {"code": "U", "name": "공부·컴퓨터 사용의 출발점", "depth": "입문"},
     {"code": "AR", "name": "산술과 수 감각", "depth": "입문"},

@@ -7,11 +7,8 @@
   // ---- 왼쪽: 검색, 경로, 분야, 공부한 날, 백업 ----
   function drawNav() {
     var paths = document.getElementById("nav-paths"), areas = document.getElementById("nav-areas");
-    var all = link("nv", "분야별 목차", "#all");
-    areas.appendChild(all);
-    M.groups.forEach(function (group) {
-      areas.appendChild(link("nv", group.name, "#group-" + group.id));
-    });
+    // 분야 목록은 오른쪽 목차에 이미 있으므로 왼쪽에는 목차로 가는 링크 하나만 둔다
+    areas.appendChild(link("nv", "전체 목차", "#all"));
     M.paths.forEach(function (p) {
       var ids = G.expand(p.targets), ready = ids.filter(function (id) { return G.chapters(id).length; }).length;
       var a = link("nv", "", "#path-" + p.id);
@@ -159,14 +156,22 @@
     return h;
   }
 
+  // 전체 목차: 묶음마다 과목을 종이책 차례처럼 한 줄씩. 과목 이름 …… 수준 · 단원 · 장 · 푼 장
   function drawAll(view) {
-    view.appendChild(head("분야별 목차"));
+    var total = 0;
+    M.groups.forEach(function (g) { g.areas.forEach(function (c) { total += areaChapters(c).length; }); });
+    view.appendChild(head("전체 목차", M.areas.length + "과목 · " + total + "장"));
     var sections = el("div", "subject-index");
     M.groups.forEach(function (group) {
-      var section = el("section", "subject-section"), title = el("h2");
-      title.appendChild(link("", group.name, "#group-" + group.id));
+      var section = el("section", "subject-section"), units = 0;
+      section.id = "group-" + group.id;
+      group.areas.forEach(function (c) { units += areaUnits(c).length; });
+      var title = el("h2", "", group.name);
+      title.appendChild(el("span", "sec-meta", group.areas.length + "과목 · " + units + "단원"));
       section.appendChild(title);
-      section.appendChild(areaLinks(group.areas));
+      var list = el("ol", "toc-rows");
+      group.areas.forEach(function (code) { list.appendChild(areaRow(code)); });
+      section.appendChild(list);
       sections.appendChild(section);
     });
     view.appendChild(sections);
@@ -177,37 +182,47 @@
       .map(function (u) { return u.id; });
   }
 
+  function areaChapters(code) {
+    var out = [];
+    areaUnits(code).forEach(function (id) { out = out.concat(G.chapters(id)); });
+    return out;
+  }
+
   function unitCount(ids) {
     var ready = ids.filter(function (id) { return G.chapters(id).length; }).length;
     return ready === ids.length ? ready + "개 단원" : "본문 " + ready + " / " + ids.length + "개 단원";
   }
 
-  function areaLinks(codes, showCounts) {
-    var list = el("ul", showCounts ? "subject-links counted" : "subject-links");
-    codes.forEach(function (code) {
-      var item = el("li"), a = link("", G.area(code).name, "#area-" + code);
-      item.appendChild(a);
-      if (showCounts) item.appendChild(el("span", "muted small", unitCount(areaUnits(code))));
-      list.appendChild(item);
-    });
-    return list;
+  // "입문에서 핵심" → "입문–핵심"
+  function depthText(code) { return (G.area(code).depth || "").replace(/에서\s*/, "–"); }
+
+  function areaRow(code) {
+    var chs = areaChapters(code), done = 0;
+    chs.forEach(function (ch) { if (B.noteStatus(ch.id, S).state !== "new") done++; });
+    var li = el("li"), a = link("toc-row", "", "#area-" + code);
+    a.appendChild(el("span", "tr-name", G.area(code).name));
+    a.appendChild(el("span", "tr-lead"));
+    var meta = el("span", "tr-meta");
+    meta.appendChild(el("span", "tr-depth", depthText(code)));
+    meta.appendChild(el("span", "tr-num", areaUnits(code).length + "단원 · " + chs.length + "장"));
+    if (done) meta.appendChild(el("span", "tr-done", done + "장 풂"));
+    a.appendChild(meta);
+    li.appendChild(a);
+    return li;
   }
 
+  // 예전 주소(#group-math)는 전체 목차의 그 묶음으로 내려 준다
   function drawGroup(view, group) {
-    if (group.areas.length === 1) return drawArea(view, group.areas[0], group);
-    view.appendChild(link("view-back small", "분야별 목차", "#all"));
-    view.appendChild(head(group.name));
-    view.appendChild(areaLinks(group.areas, true));
-    if (group.id === "data") view.appendChild(link("view-back small", "NumPy부터 공개 데이터 분석까지", "#path-analysis"));
+    drawAll(view);
+    var sec = document.getElementById("group-" + group.id);
+    if (sec) setTimeout(function () { sec.scrollIntoView({ block: "start" }); }, 0); // 주소가 바뀔 때 맨 위로 올리는 처리 뒤에 실행
   }
 
   function drawArea(view, code, group) {
     if (!group) return drawAll(view);
     var ids = areaUnits(code);
-    view.appendChild(group.areas.length > 1
-      ? link("view-back small", group.name, "#group-" + group.id)
-      : link("view-back small", "분야별 목차", "#all"));
-    view.appendChild(head(G.area(code).name, unitCount(ids)));
+    view.appendChild(link("view-back small", "← 전체 목차 · " + group.name, "#group-" + group.id));
+    view.appendChild(head(G.area(code).name, depthText(code) + " · " + unitCount(ids) + " · " + areaChapters(code).length + "장"));
     drawLayers(view, ids);
   }
 
@@ -245,7 +260,7 @@
     var p = G.path(pid);
     if (!p) return drawAll(view);
     var ids = G.expand(p.targets);
-    view.appendChild(link("view-back small", "분야별 목차", "#all"));
+    view.appendChild(link("view-back small", "← 전체 목차", "#all"));
     view.appendChild(head(p.name + " 경로", unitCount(ids)));
     if (pid === "analysis") {
       var route = el("p", "small");
@@ -277,11 +292,12 @@
     else if (h.indexOf("area-") === 0) {
       var code = h.slice(5), areaGroup = M.groups.find(function (g) { return g.areas.includes(code); });
       drawArea(view, code, areaGroup);
-      key = areaGroup ? "group-" + areaGroup.id : "all";
+      key = "all";
     } else {
       var group = M.groups.find(function (g) { return "group-" + g.id === h; });
       if (group) drawGroup(view, group);
-      else { drawAll(view); key = "all"; }
+      else drawAll(view);
+      key = "all";
     }
     document.querySelectorAll(".nv").forEach(function (a) {
       var active = !q && a.hash === "#" + key;

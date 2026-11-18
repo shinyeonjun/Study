@@ -48,14 +48,12 @@ PATHS = [
     {"id": "research", "name": "연구 과제", "targets": track("RS")},
 ]
 GROUPS = [
-    {"id": "math", "name": "수학", "areas": ["LA", "CA", "RA", "PR", "DM", "OP", "AL", "AR"]},
-    {"id": "data", "name": "데이터와 통계", "areas": ["DA", "ST", "DB"]},
+    # 홈 목차의 묶음. 과목 하나뿐인 묶음은 만들지 않는다. 묶음 안 순서 = 대체로 공부하는 순서
+    {"id": "math", "name": "수학", "areas": ["AR", "AL", "LA", "CA", "PR", "DM", "OP", "RA"]},
+    {"id": "data", "name": "데이터와 통계", "areas": ["DA", "ST", "BD"]},
     {"id": "ai", "name": "AI와 학습", "areas": ["AI", "ML", "DL", "RL"]},
-    {"id": "computing", "name": "프로그래밍과 컴퓨터", "areas": ["PY", "CS", "SY"]},
-    {"id": "network", "name": "네트워크", "areas": ["NW"]},
-    {"id": "research", "name": "연구 방법", "areas": ["RS", "U"]},
-    {"id": "applications", "name": "응용과 심화", "areas": ["SP"]},
-    {"id": "exam", "name": "빅데이터분석기사", "areas": ["BD"]},
+    {"id": "computing", "name": "컴퓨터와 프로그래밍", "areas": ["PY", "CS", "SY", "NW", "DB"]},
+    {"id": "research", "name": "공부와 연구", "areas": ["U", "RS", "SP"]},
 ]
 
 # ---- 검사 ----
