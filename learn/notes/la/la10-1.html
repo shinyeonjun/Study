@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>복소 고유값과 대각화 가능 조건 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e8c'/%3E%3Cpath d='M8 22V10m8 12V14m8 8V6' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="LA10-1">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+
+<header class="chapter">
+<p class="chap-sub">선형대수 · LA10 복소 고유값과 조르당 형식</p>
+<p class="chap-num">LA10·1</p>
+<h1>복소 고유값과 대각화 가능 조건</h1>
+<p class="lead">평면을 90° 돌리는 행렬에는 실수 고유벡터가 없습니다. 복소수에서 방향을 다시 찾고, 근을 세는 것과 독립인 고유벡터를 세는 것이 왜 다른지 증명합니다.</p>
+</header>
+
+<div class="goal">
+<h2>이 장을 읽고 나면</h2>
+<ul>
+<li>실수 행렬을 복소수 열에 작용시켜 복소 스펙트럼을 구한다.</li>
+<li>대수적 중복도와 기하적 중복도의 차이를 증명으로 설명한다.</li>
+<li>대각화 가능 여부가 스칼라체와 고유공간 차원에 달려 있음을 판단한다.</li>
+</ul>
+</div>
+<h2>스칼라체를 먼저 적고 특성다항식을 푼다</h2>
+<p><var>i<sup>2</sup>=−1</var>인 <var>i</var>를 도입하면 복소수는 <var>a+ib</var> (<var>a,b∈ℝ</var>)로 씁니다. 같은 실수 행렬 <var>A</var>라도 입력을 <var>ℝ<sup>n</sup></var>으로 제한할지 <var>ℂ<sup>n</sup></var>까지 허용할지 정해야 합니다. <var>A∈ℝ<sup>n× n</sup></var>을 복소 열에 적용하는 계산은 <var>A(u+iv)=Au+iAv</var>입니다. 실수 행렬의 성분이나 곱셈 규칙은 그대로입니다.</p>
+<p><var>A</var>가 해당 스칼라체의 <var>n× n</var> 행렬일 때 <var>Av=λ v</var>인 <var>v≠0</var>이 있으면 <var>λ</var>를 <strong>고유값</strong>, <var>v</var>를 <strong>고유벡터</strong>라 합니다. 이 식은 <var>(λ I−A)v=0</var>이 0이 아닌 해를 가진다는 말입니다. 행렬식이 0일 때와 정확히 같아 <strong>특성다항식</strong>으로 고유값을 검사할 수 있습니다.</p>
+<div class="eq"><var>p<sub>A</sub>(t)=det (tI−A),  λ가 고유값 ⇔  p<sub>A</sub>(λ)=0</var>.</div>
+<p><var>tI−A</var> 순서를 쓰면 최고차항이 <var>t<sup>n</sup></var>입니다. <var>A−tI</var>로 쓰는 자료는 다항식 전체에 <var>(−1)<sup>n</sup></var>이 곱해져 근은 같습니다. 복소수 위에서는 대수학의 기본정리에 따라 <var>p<sub>A</sub>(t)</var>가 일차 인수로 분해되므로, 중복해서 세면 고유값을 <var>n</var>개 얻습니다. 실수 위에서는 <var>t<sup>2</sup>+1</var>처럼 일차 인수로 분해할 수 없는 다항식이 있습니다.</p>
+<div class="check" data-q="q1"></div>
+
+<h2>회전의 복소 고유벡터와 켤레쌍</h2>
+<p><var>R=[[0, −1], [1, 0]]</var>의 특성다항식은 <var>det [[t, 1], [−1, t]]=t<sup>2</sup>+1</var>입니다. 실수에서는 근이 없고, 복소수에서는 <var>i,−i</var>가 근입니다. <var>Rv=iv</var>의 첫 줄이 <var>−y=ix</var>이므로 <var>x=1</var>을 고르면 <var>y=−i</var>입니다. 둘째 줄의 <var>x=iy</var>도 <var>i(−i)=1</var>로 맞습니다. 반대쪽은 켤레를 취하면 됩니다.</p>
+<div class="eq"><var>R(1,−i)<sup>⊤</sup>=(i,1)<sup>⊤</sup>=i(1,−i)<sup>⊤</sup>,  R(1,i)<sup>⊤</sup>=(−i,1)<sup>⊤</sup>=−i(1,i)<sup>⊤</sup></var>.</div>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 235" role="img" aria-label="표준 좌표평면에서 (1,0)을 위의 (0,1)로, (0,1)을 왼쪽의 (−1,0)으로 보내는 90도 회전">
+<text class="f-cap" x="380" y="29" text-anchor="middle">R은 원점을 기준으로 반시계 90° 회전</text>
+<line class="f-dash" x1="124" y1="126" x2="484" y2="126" marker-end="url(#f-arrow)"/>
+<line class="f-dash" x1="308" y1="197" x2="308" y2="45" marker-end="url(#f-arrow)"/>
+<text class="f-t" x="503" y="132" text-anchor="middle">x</text>
+<text class="f-t" x="308" y="46" text-anchor="middle">y</text>
+<line class="f-line" x1="308" y1="126" x2="371" y2="126" marker-end="url(#f-arrow)"/>
+<line class="f-line" x1="308" y1="126" x2="308" y2="63" marker-end="url(#f-arrow)"/>
+<line class="f-line" x1="308" y1="126" x2="245" y2="126" marker-end="url(#f-arrow)"/>
+<text class="f-t" x="400" y="148" text-anchor="middle">(1,0)</text>
+<text class="f-t" x="365" y="75" text-anchor="middle">(0,1)</text>
+<text class="f-t" x="219" y="148" text-anchor="middle">(−1,0)</text>
+<text class="f-cap" x="588" y="91" text-anchor="middle">R(1,0) = (0,1)</text>
+<text class="f-cap" x="588" y="132" text-anchor="middle">R(0,1) = (−1,0)</text>
+<text class="f-cap" x="380" y="211" text-anchor="middle">R²는 반바퀴, R⁴는 한 바퀴</text>
+</svg>
+<figcaption>회전하면 0이 아닌 실수 벡터는 원래 방향과 평행할 수 없습니다. 복소수 열에서는 i와 −i에 해당하는 고유벡터를 구할 수 있습니다.</figcaption>
+</figure>
+<p>실수 행렬에서는 <var>Av=λ v</var>의 양변을 켤레로 바꾸면 <var>A<span style="text-decoration:overline">v</span>=<span style="text-decoration:overline">λ</span><span style="text-decoration:overline">v</span></var>입니다. 특성다항식의 계수도 실수이므로 <var>λ</var>가 <var>m</var>중근이면 <var><span style="text-decoration:overline">λ</span></var>도 <var>m</var>중근입니다. 복소 고유값의 실수부와 허수부가 실제 운동과 어떤 관계인지도 식에서 읽을 수 있습니다. <var>v=a+ib</var>, <var>λ=α+iβ</var>의 두 부분을 맞추면 <var>Aa=α a−β b</var>, <var>Ab=β a+α b</var>입니다. <var>β≠0</var>일 때 <var>a,b</var>는 독립입니다. 둘이 종속이면 <var>v</var>를 한 실수 벡터의 0이 아닌 복소 배수로 적을 수 있고, 그 실수 벡터가 비실수 고유값을 갖게 되어 실수 행렬이라는 전제와 모순이기 때문입니다. 두 실수 벡터가 생성하는 평면은 따라서 <var>A</var>가 자기 자신 안으로 보내는 <strong>불변 부분공간</strong>입니다.</p>
+<p>회전의 두 복소 고유벡터를 열로 한 <var>P</var>는 <var>det  P=2i≠0</var>이므로 <var>P<sup>−1</sup>RP=diag(i,−i)</var>입니다. 실수에선 고유벡터를 하나도 구할 수 없기 때문에 같은 방식으로 실수 대각행렬을 만들 수 없습니다.</p>
+<div class="check" data-q="q2"></div>
+<div class="check" data-q="q3"></div>
+
+<h2>고유값의 근과 고유공간의 차원을 따로 센다</h2>
+<p>특성다항식에서 인수 <var>(t−λ)</var>의 지수를 <strong>대수적 중복도</strong> <var>m<sub>λ</sub></var>, 고유공간 <var>E<sub>λ</sub>=ker (A−λ I)</var>의 차원을 <strong>기하적 중복도</strong> <var>g<sub>λ</sub></var>라 합니다. 값 <var>λ</var>가 고유값이면 <var>1≤ g<sub>λ</sub>≤ m<sub>λ</sub></var>입니다. 아래에서는 부등식의 오른쪽을 증명합니다.</p>
+<p><var>E<sub>λ</sub></var>의 기저를 <var>g=g<sub>λ</sub></var>개 골라 전체 공간의 기저로 확장합시다. 앞의 <var>g</var>개 벡터는 <var>A</var>가 각각 <var>λ</var>배로 보내므로 이 기저의 행렬은 <var>[[λ I<sub>g</sub>, B], [0, D]]</var>입니다. 전체가 블록 위삼각이므로 특성다항식은 대각 블록의 행렬식을 곱한 <var>(t−λ)<sup>g</sup>det (tI−D)</var>입니다. 기저를 바꿔도 특성다항식이 같다는 닮음의 성질에 의해 <var>(t−λ)<sup>g</sup></var>는 원래 행렬의 특성다항식도 나눕니다. 따라서 <var>g≤ m<sub>λ</sub></var>입니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 165" role="img" aria-label="같은 근의 중복도를 가진 두 행렬의 고유공간 차원 차이">
+<text class="f-cap" x="380" y="33" text-anchor="middle">두 행렬 모두 특성다항식은 (t−2)²</text>
+<text class="f-t" x="180" y="82" text-anchor="end">행렬 2I</text>
+<rect class="f-box" x="206" y="58" width="246" height="38" rx="3"/>
+<text class="f-t" x="329" y="83" text-anchor="middle">근의 중복도 2</text>
+<rect class="f-box" x="458" y="58" width="246" height="38" rx="3"/>
+<text class="f-t" x="581" y="83" text-anchor="middle">고유공간 차원 2</text>
+<text class="f-t" x="180" y="128" text-anchor="end">행렬 J₂(2)</text>
+<rect class="f-box" x="206" y="104" width="246" height="38" rx="3"/>
+<text class="f-t" x="329" y="129" text-anchor="middle">근의 중복도 2</text>
+<rect class="f-box" x="458" y="104" width="246" height="38" rx="3"/>
+<text class="f-t" x="581" y="129" text-anchor="middle">고유공간 차원 1</text>
+</svg>
+<figcaption>J₂(2)는 대각에 2, 오른쪽 위에 1, 왼쪽 아래에 0인 행렬입니다. 필요한 고유벡터의 수는 근을 세는 것만으로 판단할 수 없습니다.</figcaption>
+</figure>
+<p><var>2I</var>에서는 <var>A−2I=0</var>이라 전체 평면이 고유공간입니다. 그러나 <var>J<sub>2</sub>(2)=[[2, 1], [0, 2]]</var>에서는 <var>(A−2I)(x,y)<sup>⊤</sup>=(y,0)<sup>⊤</sup></var>여서 <var>y=0</var>인 직선뿐입니다. 두 행렬 모두 같은 <var>(t−2)<sup>2</sup></var>를 갖지만 첫째는 이미 대각행렬이고 둘째에는 고유벡터 기저가 없습니다. 같은 특성다항식으로 닮음을 결론 낼 수 없는 또 하나의 예입니다.</p>
+<div class="check" data-q="q4"></div>
+<div class="check" data-q="q5"></div>
+
+<h2>대각화의 필요충분조건과 서로 다른 고유값의 독립성</h2>
+<p><var>A=PDP<sup>−1</sup></var>에서 <var>D</var>가 대각행렬이면 <var>AP=PD</var>의 <var>j</var>번째 열은 <var>A p<sub>j</sub>=D<sub>jj</sub>p<sub>j</sub></var>입니다. <var>P</var>가 가역이라 열들이 고유벡터 기저입니다. 반대로 고유벡터 기저가 있으면 이를 열에 넣어 같은 등식을 얻고 대각화할 수 있습니다.</p>
+<p>서로 다른 고유공간들의 합에서는 독립인 방향들의 수를 그냥 더할 수 있습니다. 이유를 보려면 서로 다른 고유값 <var>λ<sub>1</sub>,…,λ<sub>s</sub></var>의 공간에서 각각 <var>u<sub>j</sub></var>를 골라 <var>u<sub>1</sub>+⋯+u<sub>s</sub>=0</var>이라고 합시다. <var>s=1</var>이면 <var>u<sub>1</sub>=0</var>입니다. <var>s&gt;1</var>일 때 <var>(A−λ<sub>s</sub> I)</var>를 적용하면 <var>Σ<sub>j=1</sub><sup>s−1</sup>(λ<sub>j</sub>−λ<sub>s</sub>)u<sub>j</sub>=0</var>입니다. 각 항이 여전히 자기 고유공간에 속하고 <var>s−1</var>개만 있으므로 귀납 가정으로 0입니다. 차이 <var>λ<sub>j</sub>−λ<sub>s</sub>≠0</var>이므로 모든 <var>u<sub>j</sub></var>가 0이고, 처음 식에서 <var>u<sub>s</sub>=0</var>도 얻습니다.</p>
+<p>따라서 모든 고유공간의 기저를 합치면 독립입니다. 대각화와 동치인 조건은 해당 스칼라체의 고유공간 차원 합이 <var>n</var>이라는 것입니다. <var>p<sub>A</sub>(t)</var>가 그 체에서 일차 인수로 분해되면 <var>Σ m<sub>λ</sub>=n</var>이므로 이 조건은 모든 <var>g<sub>λ</sub>=m<sub>λ</sub></var>와 동치입니다. 특히 서로 다른 고유값이 <var>n</var>개면 대각화되며, 고유값이 반복되어도 <var>2I</var>처럼 대각화될 수 있습니다.</p>
+<div class="check" data-q="q6"></div>
+<h2>손계산을 작은 배열로 다시 검산한다</h2>
+<pre data-example="python"><code>import numpy as np
+
+rotation = np.array([[0, -1], [1, 0]])
+eigenvectors = np.array([[1, 1], [-1j, 1j]])
+diagonal = np.diag([1j, -1j])
+print(&quot;R P = P D:&quot;, np.array_equal(rotation @ eigenvectors, eigenvectors @ diagonal))
+print(&quot;R squared:&quot;, (rotation @ rotation).tolist())
+
+identity = np.eye(2, dtype=int)
+jordan = np.array([[2, 1], [0, 2]])
+for matrix in [2 * identity, jordan]:
+    print(&quot;geometric multiplicity:&quot;, 2 - np.linalg.matrix_rank(matrix - 2 * identity))</code></pre>
+<pre data-output><code>R P = P D: True
+R squared: [[-1, 0], [0, -1]]
+geometric multiplicity: 2
+geometric multiplicity: 1</code></pre>
+<p class="small">Python 3.14.6, NumPy 2.5.4로 실행했습니다. 이 코드의 rank 계산은 작은 정수 예제를 검산합니다. 고유공간 차원의 본문 증명은 연립방정식을 직접 사용했습니다.</p>
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://linear.axler.net/">Sheldon Axler, Linear Algebra Done Right, Eigenvalues and Eigenvectors</a></li>
+<li><a href="la09-2.html">LA09-2 닮음과 기저에 무관한 양</a></li>
+<li><a href="la07-2.html">LA07-2 실수 예에서 보는 고유값과 대각화</a></li>
+</ul>
+
+<h2>확인 문제</h2>
+<p>한 문제가 어느 스칼라체를 사용하는지 먼저 표시하세요. 행렬이 대각화된다는 판단에는 기저가 될 만큼의 독립 방향이 있는지도 확인해 보세요.</p>
+<div id="quiz"></div>
+
+<section class="work" id="tools"></section>
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>같은 선형 사상을 다른 행렬로 쓰는 닮음 변환 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e8c'/%3E%3Cpath d='M8 22V10m8 12V14m8 8V6' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="LA09-2">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+
+<header class="chapter">
+<p class="chap-sub">선형대수 · LA09 기저 변환과 차원 정리</p>
+<p class="chap-num">LA09·2</p>
+<h1>같은 선형 사상을 다른 행렬로 쓰는 닮음 변환</h1>
+<p class="lead">미분이라는 한 연산을 두 기저에서 계산합니다. 닮음은 어느 두 행렬이 같은 변환을 다른 좌표로 적은 것인지 알려 줍니다.</p>
+</header>
+
+<div class="goal">
+<h2>이 장을 읽고 나면</h2>
+<ul>
+<li>정의역과 공역의 기저가 행렬의 열과 모양을 정하는 이유를 설명한다.</li>
+<li>닮음식을 좌표의 경로에서 얻고 뒤집힌 곱 순서를 확인한다.</li>
+<li>다항식 미분 행렬을 만들고 닮음에서 보존되는 양을 증명한다.</li>
+</ul>
+</div>
+<h2>입력 기저와 출력 기저를 지정해야 행렬이 정해진다</h2>
+<p>선형 사상 <var>T:V→W</var>에서 정의역 V의 기저가 B=(b₁,…,bₙ), 공역 W의 기저가 C=(c₁,…,cₘ)라고 합시다. 선형이라는 조건은 <var>T(au+bv)=aT(u)+bT(v)</var>입니다. 각 bⱼ를 T에 보낸 뒤 출력 <var>T(bⱼ)</var>의 C-좌표를 열에 넣습니다. 이렇게 만든 행렬을 <var>[T]<sub>C←B</sub></var>라 쓰면 m개의 출력 좌표와 n개의 입력 좌표를 연결하는 m×n 행렬입니다.</p>
+<p>왜 열 규칙만으로 모든 벡터의 결과를 얻을까요? 입력을 <var>v=Σaⱼbⱼ</var>로 쓰면 선형성으로 <var>Tv=ΣaⱼTbⱼ</var>입니다. 출력 좌표도 같은 계수의 선형결합이므로, 행렬 곱에서 j번째 열에 aⱼ를 곱해 더하는 것과 같습니다. 예로 다항식 <var>a+bx+cx²</var>를 <var>(p(0),p′(0))</var>로 보내는 사상에서 단항 기저와 R² 표준 기저를 쓰면 열은 (1,0),(0,1),(0,0)입니다.</p>
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+
+<h2>하나의 공간에서 입력과 출력 기저를 함께 바꾼다</h2>
+<p>이제 W=V인 선형 <b>연산자</b>를 생각합니다. <var>Aᴇ=[T]<sub>E←E</sub></var>, <var>Aᵦ=[T]<sub>B←B</sub></var>이고, <var>P=P<sub>E←B</sub></var>입니다. B-좌표를 받고 결과도 B-좌표로 적고 싶습니다. 먼저 P로 E-좌표로 바꾸고, Aᴇ로 실제 사상을 적용한 뒤 P⁻¹로 다시 B-좌표로 옵니다.</p>
+<div class="eq">Aᵦ = P<sup>−1</sup>AᴇP.</div>
+<p>이 관계를 가진 두 정사각행렬을 <b class="key">닮음</b>(similarity)이라고 합니다. P를 임의의 가역행렬로 주어도, 그 열들을 기존 기저의 좌표로 해석하면 새로운 순서 있는 기저가 됩니다. 단순히 계수표를 바꾸는 과정입니다. 등가식 AᴇP=PAᵦ는 두 행렬 곱에 임의의 B-좌표를 각각 넣어 같은 E-좌표 결과를 얻으면 증명됩니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 277" role="img" aria-label="기저 B 좌표를 B에서 A_B로 변환한 뒤 E로 바꾸는 경로와, E로 바꾼 뒤 A_E를 적용하는 경로가 같은 출력에 도착한다.">
+<text class="f-cap" x="380" y="32" text-anchor="middle">실제 벡터 v에서 Tv로 가는 두 계산 경로</text>
+<rect class="f-soft" x="120" y="67" width="162" height="49" rx="3"/>
+<rect class="f-soft" x="478" y="67" width="162" height="49" rx="3"/>
+<rect class="f-box" x="120" y="175" width="162" height="49" rx="3"/>
+<rect class="f-box" x="478" y="175" width="162" height="49" rx="3"/>
+<text class="f-t" x="201" y="99" text-anchor="middle">[v]ᵦ</text>
+<text class="f-t" x="559" y="99" text-anchor="middle">[Tv]ᵦ</text>
+<text class="f-t" x="201" y="207" text-anchor="middle">[v]ᴇ</text>
+<text class="f-t" x="559" y="207" text-anchor="middle">[Tv]ᴇ</text>
+<line class="f-line" x1="288" y1="91" x2="473" y2="91" marker-end="url(#f-arrow)"/>
+<line class="f-line" x1="288" y1="199" x2="473" y2="199" marker-end="url(#f-arrow)"/>
+<line class="f-line" x1="201" y1="120" x2="201" y2="171" marker-end="url(#f-arrow)"/>
+<line class="f-line" x1="559" y1="120" x2="559" y2="171" marker-end="url(#f-arrow)"/>
+<text class="f-cap" x="380" y="78" text-anchor="middle">Aᵦ</text>
+<text class="f-cap" x="380" y="187" text-anchor="middle">Aᴇ</text>
+<text class="f-cap" x="219" y="151" text-anchor="start">P</text>
+<text class="f-cap" x="577" y="151" text-anchor="start">P</text>
+<text class="f-cap" x="380" y="250" text-anchor="middle">Aᴇ P = P Aᵦ</text>
+</svg>
+<figcaption>두 방향의 실제 변환이 다르다는 뜻이 아닙니다. 위아래 좌표계에서 같은 연산 T를 적었습니다.</figcaption>
+</figure>
+<h3>정의역과 공역을 독립적으로 바꾸는 경우</h3>
+<p>정의역과 공역이 다르거나, 같은 공간에서 입력과 출력에 별개 기저를 사용하는 경우에는 양쪽 변환 행렬이 서로 역이라는 보장이 없습니다. 각 인자를 ‘새 입력 좌표→옛 입력 좌표→옛 출력 좌표→새 출력 좌표’ 순서로 읽습니다. 예컨대 R²의 항등 사상을 표준 입력 기저와 출력 기저 <var>(2e₁,e₂)</var>로 적으면 <var>diag(1/2,1)</var>입니다. I와 이 행렬은 같은 사상을 서로 다르게 적었지만 닮음 관계는 아닙니다. I를 어떤 가역행렬로 닮음 변환해도 I 그대로이기 때문입니다.</p>
+<div class="check" data-q="q3"></div>
+<div class="check" data-q="q4"></div>
+
+<h2>다항식의 미분 행렬을 두 번 만든다</h2>
+<p>예제에서 <var>𝒫₂</var>는 차수 2 이하의 실수 다항식 공간이고, <var>D(p)=p′</var>로 둡니다. D는 결과를 𝒫₂ 안에 내보내는 선형 연산자입니다. 단항 기저 <var>E=(1,x,x²)</var>에서는 <var>D(1)=0, D(x)=1, D(x²)=2x</var>이므로 세 열을 바로 적습니다.</p>
+<p>새 기저 <var>B=(1,1+x,x+x²)</var>에서 첫 열은 0, 둘째 열은 <var>D(1+x)=1</var>의 좌표 (1,0,0)입니다. 셋째 열의 함수 <var>D(x+x²)=1+2x</var>는 <var>−1·1+2(1+x)+0(x+x²)</var>라서 좌표 (−1,2,0)입니다. 셋째 열에 표준 좌표 (1,2,0)를 그대로 넣으면 출력의 기저를 섞은 표가 됩니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 260" role="img" aria-label="미분 연산자의 단항 기저 행렬 [[0,1,0],[0,0,2],[0,0,0]]과 새 기저 행렬 [[0,1,-1],[0,0,2],[0,0,0]].">
+<text class="f-cap" x="380" y="30" text-anchor="middle">열 하나는 기저 다항식 하나의 미분</text>
+<text class="f-cap" x="200" y="69" text-anchor="middle">Aᴇ · 단항 기저</text>
+<rect class="f-box" x="118.5" y="85" width="51" height="51" rx="3"/>
+<text class="f-t" x="144" y="116" text-anchor="middle">0</text>
+<rect class="f-box" x="174.5" y="85" width="51" height="51" rx="3"/>
+<text class="f-t" x="200" y="116" text-anchor="middle">1</text>
+<rect class="f-soft" x="230.5" y="85" width="51" height="51" rx="3"/>
+<text class="f-t" x="256" y="116" text-anchor="middle">0</text>
+<rect class="f-box" x="118.5" y="141" width="51" height="51" rx="3"/>
+<text class="f-t" x="144" y="172" text-anchor="middle">0</text>
+<rect class="f-box" x="174.5" y="141" width="51" height="51" rx="3"/>
+<text class="f-t" x="200" y="172" text-anchor="middle">0</text>
+<rect class="f-soft" x="230.5" y="141" width="51" height="51" rx="3"/>
+<text class="f-t" x="256" y="172" text-anchor="middle">2</text>
+<rect class="f-box" x="118.5" y="197" width="51" height="51" rx="3"/>
+<text class="f-t" x="144" y="228" text-anchor="middle">0</text>
+<rect class="f-box" x="174.5" y="197" width="51" height="51" rx="3"/>
+<text class="f-t" x="200" y="228" text-anchor="middle">0</text>
+<rect class="f-soft" x="230.5" y="197" width="51" height="51" rx="3"/>
+<text class="f-t" x="256" y="228" text-anchor="middle">0</text>
+<text class="f-cap" x="560" y="69" text-anchor="middle">Aᵦ · 새 기저</text>
+<rect class="f-box" x="478.5" y="85" width="51" height="51" rx="3"/>
+<text class="f-t" x="504" y="116" text-anchor="middle">0</text>
+<rect class="f-box" x="534.5" y="85" width="51" height="51" rx="3"/>
+<text class="f-t" x="560" y="116" text-anchor="middle">1</text>
+<rect class="f-soft" x="590.5" y="85" width="51" height="51" rx="3"/>
+<text class="f-t" x="616" y="116" text-anchor="middle">-1</text>
+<rect class="f-box" x="478.5" y="141" width="51" height="51" rx="3"/>
+<text class="f-t" x="504" y="172" text-anchor="middle">0</text>
+<rect class="f-box" x="534.5" y="141" width="51" height="51" rx="3"/>
+<text class="f-t" x="560" y="172" text-anchor="middle">0</text>
+<rect class="f-soft" x="590.5" y="141" width="51" height="51" rx="3"/>
+<text class="f-t" x="616" y="172" text-anchor="middle">2</text>
+<rect class="f-box" x="478.5" y="197" width="51" height="51" rx="3"/>
+<text class="f-t" x="504" y="228" text-anchor="middle">0</text>
+<rect class="f-box" x="534.5" y="197" width="51" height="51" rx="3"/>
+<text class="f-t" x="560" y="228" text-anchor="middle">0</text>
+<rect class="f-soft" x="590.5" y="197" width="51" height="51" rx="3"/>
+<text class="f-t" x="616" y="228" text-anchor="middle">0</text>
+</svg>
+<figcaption>세 번째 열은 각각 x²와 x+x²의 미분입니다. 새 기저에서는 최종 출력을 다시 그 기저의 계수로 적습니다.</figcaption>
+</figure>
+<p>앞 장의 다항식 <var>p=2+x+3x²</var>의 B-좌표는 (4,−2,3)입니다. Aᵦ를 곱하면 (−5,6,0)이 되고, 이것을 B에서 복원하면 <var>−5+6(1+x)=1+6x</var>입니다. 표준 기저에서도 직접 미분하면 같은 결과입니다. 변환 행렬 <var>P=[[1,1,0],[0,1,1],[0,0,1]]</var>로 AᴇP를 구하고 <var>PAᵦ=AᴇP</var>라는 선형계를 풀어도 위의 결과가 나옵니다.</p>
+<div class="check" data-q="q5"></div>
+<div class="check" data-q="q6"></div>
+
+<h2>닮음에서 보존되는 양을 식으로 확인한다</h2>
+<p>임의의 스칼라 λ에서 <var>Aᵦ−λI=P⁻¹(Aᴇ−λI)P</var>입니다. <var>(Aᵦ−λI)u=0</var>이면 <var>(Aᴇ−λI)Pu=0</var>입니다. 반대 방향에서 P⁻¹을 써 되돌릴 수 있으므로, 고유공간의 차원이 같습니다. 특히 u가 0이 아닌 벡터라면 Pu도 0이 아닙니다. P가 가역이기 때문입니다.</p>
+<p>행렬식의 곱셈 성질을 적용하면 <var>det(tI−Aᵦ)=det(P⁻¹)det(tI−Aᴇ)det(P)=det(tI−Aᴇ)</var>입니다. 따라서 특성다항식, 그 뿌리인 고유값과 그 중복도가 보존됩니다. Aᵦ의 치역은 Aᴇ의 치역을 P⁻¹로 옮긴 것이므로 랭크도 같습니다. 한편 두 행렬이 특성다항식만 같다고 닮음이라는 결론은 나오지 않습니다. I₂와 <var>[[1,1],[0,1]]</var>는 특성다항식이 모두 (t−1)²이지만 첫 행렬의 1-고유공간은 2차원, 둘째는 1차원입니다. 이 차이를 LA10에서 더 나눠 봅니다.</p>
+<div class="box ex"><p class="box-k">검산할 자리</p><p>표준 행렬 diag(2,3)에 P=[[1,1],[0,1]]로 좌표를 바꾸면 B-행렬은 [[2,−1],[0,3]]입니다. 이 행렬의 3-고유벡터 (−1,1)에 P를 곱하면 (0,1)이 되어 표준 행렬의 고유벡터가 됩니다. 3이라는 배율은 그대로입니다.</p></div>
+
+<h2>손계산을 작은 배열로 다시 검산한다</h2>
+<pre data-example="python"><code>import numpy as np
+
+A_e = np.array([[0, 1, 0], [0, 0, 2], [0, 0, 0]])
+P = np.array([[1, 1, 0], [0, 1, 1], [0, 0, 1]])
+A_b = np.linalg.solve(P, A_e @ P).astype(int)
+b_coords = np.array([4, -2, 3])
+print(&quot;B matrix:&quot;, A_b.tolist())
+print(&quot;derivative in B:&quot;, (A_b @ b_coords).tolist())
+print(&quot;derivative in E:&quot;, (P @ A_b @ b_coords).tolist())
+assert np.array_equal(P @ A_b, A_e @ P)
+assert np.array_equal(P @ b_coords, [2, 1, 3])
+
+D = np.diag([2, 3])
+S = np.array([[1, 1], [0, 1]])
+M = np.linalg.solve(S, D @ S).astype(int)
+u = np.array([-1, 1])
+assert np.array_equal(M @ u, 3*u)
+print(&quot;same eigenvector in E:&quot;, (S @ u).tolist())</code></pre>
+<pre data-output><code>B matrix: [[0, 1, -1], [0, 0, 2], [0, 0, 0]]
+derivative in B: [-5, 6, 0]
+derivative in E: [1, 6, 0]
+same eigenvector in E: [0, 1]</code></pre>
+<p>이 예의 정수 변환은 피벗이 1인 삼각행렬을 풀어서 얻습니다. 출력의 <code>astype(int)</code>는 이 예에서 계산값이 정확한 정수라는 사실을 사용한 표현입니다. 일반적인 실수 변환 행렬에 이 변환을 적용하면 나머지 값을 잃습니다.</p>
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://linear.axler.net/">Sheldon Axler · Linear Algebra Done Right, 선형 사상의 행렬과 기저 변환</a></li>
+<li><a href="la07-1.html">LA07 · 행렬식과 가역성</a></li>
+<li><a href="la07-2.html">LA07 · 고유값과 대각화</a></li>
+<li><a href="la09-1.html">LA09 · 좌표 변환의 방향</a></li>
+</ul>
+
+<h2>확인 문제</h2>
+<p>아직 풀지 않은 문제입니다. 먼저 식이나 근거를 적어 보고 해설을 확인합니다.</p>
+<div id="quiz"></div>
+
+<section class="work" id="tools"></section>
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

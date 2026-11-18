@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>VLAN의 전달 영역과 라우터의 최장 접두사 일치 연결하기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e8c'/%3E%3Cpath d='M8 22V10m8 12V14m8 8V6' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="NW15-2">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+
+<header class="chapter">
+<p class="chap-sub">네트워크 · NW15 스위칭·분할·IPv6 이웃 탐색</p>
+<p class="chap-num">NW15·2</p>
+<h1>VLAN의 전달 영역과 라우터의 최장 접두사 일치 연결하기</h1>
+<p class="lead">같은 스위치의 여러 포트가 반드시 같은 링크 영역인 것은 아닙니다. 프레임 선택에 쓰는 VLAN·MAC과 다음 망을 고르는 IP 접두사를 구분합니다.</p>
+</header>
+
+<div class="goal">
+<h2>이 장을 읽고 나면</h2>
+<ul>
+<li>VLAN 범위를 먼저 제한하고 그 안에서 MAC을 조회한다.</li>
+<li>같은 목적지의 일치 접두사 중 가장 구체적인 항목을 고른다.</li>
+<li>태그나 링크 경계가 바뀔 때 게이트웨이와 다음 링크를 구분한다.</li>
+</ul>
+</div>
+
+<h2>같은 장치에서도 링크 전달 영역을 나눌 수 있습니다</h2>
+<p><b class="key">VLAN</b>은 브리지 포트나 프레임을 논리적인 링크 영역으로 나눕니다. 어떤 링크에서는 IEEE 802.1Q 태그에 VLAN ID를 붙여 여러 영역의 프레임을 구별합니다. 끝 장치에 연결된 포트에서도 미리 정한 정책으로 태그 없는 입력을 한 영역에 배정할 수 있습니다. 이 합성 모델은 해당 포트로 받은 프레임의 VLAN이 이미 결정됐다고 가정합니다. 링크의 전송 상태, 포트가 속한 영역과 받은 프레임의 영역을 각각 확인합니다.</p>
+<p>예제의 브리지는 VLAN 10에서 p1,p2를, VLAN 20에서 p3,p4를 씁니다. 학습 표도 두 영역에서 독립이어서 MAC <code>m</code>의 위치가 VLAN 10에서는 p2, VLAN 20에서는 p4입니다. p1로 온 VLAN 10 프레임의 목적지 m은 p2입니다. 자료가 없는 MAC을 p1에서 받았을 때도 같은 VLAN의 전달 가능한 다른 포트인 p2에만 내보낼 후보가 됩니다. p3,p4에는 이 프레임이 그대로 넘어가지 않습니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 156" role="img" aria-label="같은 MAC m의 서로 다른 VLAN 조회 결과">
+<text class="f-s" x="176" y="28" text-anchor="middle">조회 키</text>
+<text class="f-s" x="382" y="28" text-anchor="middle">포트</text>
+<text class="f-s" x="596" y="28" text-anchor="middle">허용 영역</text>
+<rect class="f-soft" x="28" y="45" width="704" height="38" rx="3"/>
+<text class="f-t" x="176" y="69" text-anchor="middle">VLAN 10 · m</text>
+<text class="f-t" x="382" y="69" text-anchor="middle">p2</text>
+<text class="f-t" x="596" y="69" text-anchor="middle">p1, p2</text>
+<rect class="f-box" x="28" y="95" width="704" height="38" rx="3"/>
+<text class="f-t" x="176" y="119" text-anchor="middle">VLAN 20 · m</text>
+<text class="f-t" x="382" y="119" text-anchor="middle">p4</text>
+<text class="f-t" x="596" y="119" text-anchor="middle">p3, p4</text>
+</svg>
+<figcaption>이 예의 학습 테이블은 VLAN ID와 MAC을 함께 조회합니다.</figcaption>
+</figure>
+<p>같은 VLAN의 물리 토폴로지에 순환이 있으면 앞 장의 트리가 그 영역이나 묶어 관리하는 인스턴스의 전달 포트를 제한합니다. 같은 물리 장비 위에서 여러 VLAN을 운영하는 일과, 어느 링크를 해당 영역에서 전달 상태로 두는가는 별도의 결정입니다.</p>
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+<div class="check" data-q="q3"></div>
+<h2>다른 링크 영역으로 가려면 IP를 보고 다음 링크를 고릅니다</h2>
+<p>보내려는 IP가 로컬 링크의 범위 밖이면 호스트는 게이트웨이를 다음 홉으로 사용할 수 있습니다. 호스트는 그 게이트웨이에 보낼 링크 프레임을 만들고, 게이트웨이는 IP 목적지를 확인한 뒤 다음 링크의 프레임으로 다시 내보냅니다. 브리지가 같은 프레임을 VLAN 10에서 VLAN 20으로 무조건 복제하는 것과 이 동작은 다릅니다. <a href="nw05-3.html">NW05</a>의 최장 접두사 일치를 여기서는 IPv6 길이로 확장해 계산합니다.</p>
+<p>IPv6 목적지 <code>2001:db8:20:1200::52</code>와 네 전달 항목을 둡니다. <code>2001:db8:20::/48</code>은 앞의 16비트 그룹 세 개를 고정합니다. <code>2001:db8:20:1200::/56</code>은 네 번째 그룹의 높은 8비트 <code>12</code>까지 고정합니다. 이 그룹이 <code>1200</code>~<code>12ff</code>일 때 모두 포함합니다. <code>/64</code>는 네 번째 그룹 전체를 고정합니다. 목적지가 네 행 모두에 들어 있으면 주소의 앞 비트를 가장 많이 고정한 /64를 선택합니다. 같은 길이 안에서 어떤 경로를 설치했는지는 <a href="nw12-3.html">라우팅의 경로 선택</a>에서 먼저 처리할 수 있습니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 181" role="img" aria-label="네 접두사 가운데 예제 목적지에 가장 긴 /64가 일치">
+<text class="f-s" x="185" y="27" text-anchor="middle">접두사</text>
+<text class="f-s" x="467" y="27" text-anchor="middle">예제 목적지 일치</text>
+<text class="f-s" x="630" y="27" text-anchor="middle">다음 홉 라벨</text>
+<rect class="f-box" x="23" y="40" width="714" height="25" rx="3"/>
+<text class="f-s" x="185" y="57" text-anchor="middle">::/0</text>
+<text class="f-t" x="467" y="57" text-anchor="middle">예</text>
+<text class="f-t" x="630" y="57" text-anchor="middle">일반 출구</text>
+<rect class="f-box" x="23" y="71" width="714" height="25" rx="3"/>
+<text class="f-s" x="185" y="88" text-anchor="middle">2001:db8:20::/48</text>
+<text class="f-t" x="467" y="88" text-anchor="middle">예</text>
+<text class="f-t" x="630" y="88" text-anchor="middle">구역 출구</text>
+<rect class="f-box" x="23" y="102" width="714" height="25" rx="3"/>
+<text class="f-s" x="185" y="119" text-anchor="middle">2001:db8:20:1200::/56</text>
+<text class="f-t" x="467" y="119" text-anchor="middle">예</text>
+<text class="f-t" x="630" y="119" text-anchor="middle">묶음 출구</text>
+<rect class="f-soft" x="23" y="133" width="714" height="25" rx="3"/>
+<text class="f-s" x="185" y="150" text-anchor="middle">2001:db8:20:1200::/64</text>
+<text class="f-t" x="467" y="150" text-anchor="middle">예</text>
+<text class="f-t" x="630" y="150" text-anchor="middle">세부 출구</text>
+</svg>
+<figcaption>목적지 2001:db8:20:1200::52는 네 행에 전부 포함되며, 최장 일치 길이는 64입니다.</figcaption>
+</figure>
+<div class="check" data-q="q4"></div>
+<div class="check" data-q="q5"></div>
+<div class="check" data-q="q6"></div>
+<h2>포트 범위와 접두사 일치를 각각 실행합니다</h2>
+<pre data-example="python"><code>from ipaddress import IPv6Address, IPv6Network
+
+locations = {(10, &quot;m&quot;): &quot;p2&quot;, (20, &quot;m&quot;): &quot;p4&quot;}
+members = {10: (&quot;p1&quot;, &quot;p2&quot;), 20: (&quot;p3&quot;, &quot;p4&quot;)}
+for vid in (10, 20):
+    print(&quot;known&quot;, vid, locations[vid, &quot;m&quot;])
+print(&quot;unknown in 10:&quot;, [p for p in members[10] if p != &quot;p1&quot;])
+
+routes = [IPv6Network(prefix) for prefix in (
+    &quot;::/0&quot;, &quot;2001:db8:20::/48&quot;, &quot;2001:db8:20:1200::/56&quot;,
+    &quot;2001:db8:20:1200::/64&quot;)]
+for ending in (&quot;20:1200::52&quot;, &quot;20:12ab::52&quot;, &quot;20:1300::52&quot;, &quot;21::1&quot;):
+    address = IPv6Address(&quot;2001:db8:&quot; + ending)
+    prefix = max((r for r in routes if address in r), key=lambda r: r.prefixlen)
+    print(address, &quot;matches /&quot; + str(prefix.prefixlen))</code></pre>
+<pre data-output><code>known 10 p2
+known 20 p4
+unknown in 10: ['p2']
+2001:db8:20:1200::52 matches /64
+2001:db8:20:12ab::52 matches /56
+2001:db8:20:1300::52 matches /48
+2001:db8:21::1 matches /0</code></pre>
+<p>예제에 쓴 <code>2001:db8::/32</code>는 문서용 주소 범위입니다. 계산 결과는 ‘어느 연결이나 다음 홉을 사용하나’까지 정합니다. 실제 프레임에 넣을 다음 홉의 링크 계층 주소는 이웃 탐색에서 얻습니다.</p>
+
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table>
+<thead><tr><th scope="col">핵심어</th><th scope="col">기억할 기준</th></tr></thead>
+<tbody>
+<tr><td><b class="key">VLAN</b></td><td>링크 안에서 프레임의 전달 및 학습 범위를 나누는 규약</td></tr>
+<tr><td><b class="key">독립 학습 모형</b></td><td>VLAN과 MAC을 함께 비교해 포트를 찾음</td></tr>
+<tr><td><b class="key">게이트웨이</b></td><td>다른 링크로 보낼 IP 패킷의 다음 홉</td></tr>
+<tr><td><b class="key">최장 접두사 일치</b></td><td>목적지와 일치하는 행 중 길이가 가장 큰 행을 사용</td></tr>
+</tbody></table></div>
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>브리지의 검색 키와 라우터의 검색 키를 별도로 적고, 각 장치가 어느 범위에서 결정을 하는지 표시합니다.</p></div>
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://standards.ieee.org/ieee/802.1q/10323/">IEEE 802.1Q · 브리지와 브리지 LAN</a></li>
+<li><a href="https://www.rfc-editor.org/rfc/rfc7608.html">IETF RFC 7608 · IPv6 접두사 길이와 최장 일치</a></li>
+</ul>
+
+<h2>확인 문제</h2>
+<p>아직 풀지 않은 문제입니다. 먼저 식이나 근거를 적어 보고 해설을 확인합니다.</p>
+<div id="quiz"></div>
+
+<section class="work" id="tools"></section>
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

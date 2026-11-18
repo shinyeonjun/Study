@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>잔차의 직교성에서 정규방정식과 QR 풀이를 유도하기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="LA12-1">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">선형대수 · 수치 선형대수</p>
+<p class="chap-num">LA12·1</p>
+<h1>잔차의 직교성에서 정규방정식과 QR 풀이를 유도하기</h1>
+<p class="lead">세 점을 지나는 직선 하나가 없을 때 어느 직선을 고를까요? 가장 가까운 예측 벡터를 찾는 조건을 증명하고, 같은 조건을 이용해 서로 다른 두 선형 풀이를 만들어 봅니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>최소제곱의 잔차 직교 조건이 필요하고 충분한 이유를 보일 수 있다.</li><li>열 독립일 때 해가 하나인 이유를 증명할 수 있다.</li><li>직선 적합 예에서 정규방정식과 얇은 QR을 손으로 풀어 같은 답을 얻을 수 있다.</li></ul></div>
+
+<h2>세 개의 관측과 두 개의 미지수</h2>
+<p>입력 t가 0, 1, 2일 때 관측 b가 1, 1, 4라고 합시다. 절편 c와 기울기 d를 써서 c+dt로 설명하려고 합니다. 첫 두 점을 정확히 맞추면 c=1, d=0이어야 하고, 그러면 세 번째가 4가 아닙니다. 세 식을 한꺼번에 만족하는 해가 없습니다.</p>
+<p>행렬 A의 각 행을 (1,t)로 놓고 x=(c,d)ᵀ라 씁니다. 가능한 세 예측의 묶음 Ax는 A의 두 열이 만드는 평면입니다. 우리가 고르는 것은 관측 벡터 b와 이 평면 사이의 제곱거리 f(x)=‖b−Ax‖₂²가 가장 작은 지점입니다. 각 점의 t 좌표는 정확히 주어졌고, 세 관측의 세로 오차에 같은 비중을 둔 예입니다.</p>
+<div class="check" data-q="q1"></div>
+<h2>왜 잔차는 열공간과 직교해야 하는가</h2>
+<p>어떤 계수 x에서 얻은 <b class="key">잔차</b>를 r=b−Ax로 둡니다. 계수를 x+tz로 바꾸면 예측은 tAz만큼 움직이고 잔차는 r−tAz로 바뀝니다. z는 계수 공간의 임의의 벡터입니다. 제곱거리를 전개하면</p>
+<p class="calc">‖r−tAz‖₂² = ‖r‖₂² − 2t · rᵀAz + t² ‖Az‖₂²</p>
+<p>가 됩니다. x가 최적이라면 실수 t=0에서 모든 방향 z에 대해 이 식이 최소입니다. 그래서 일차항의 계수 −2rᵀAz가 0이어야 합니다. 일차항이 남아 있으면 그 항이 음수가 되는 쪽으로 작은 t를 골라 거리를 줄일 수 있습니다. 모든 z에 대해 성립하므로 Aᵀr=0입니다. 이는 r이 열공간의 모든 벡터에 직교한다는 뜻입니다.</p>
+<p>반대 방향도 확인합니다. Aᵀr=0인 x에서 임의의 계수 변경량을 z로 두면, t=1을 넣었을 때 위의 식은 ‖r‖²+‖Az‖²입니다. 더 작아질 수 없으므로 x는 최소입니다. 만약 A의 열들이 독립이면 z≠0일 때 Az≠0이라 항상 엄격하게 커져 해는 유일합니다. 선형종속이라면 Az=0인 비영 z를 더해도 예측은 바뀌지 않습니다. 계수의 유일성과 예측 벡터의 유일성을 구분해야 합니다. A의 열공간은 유한 차원의 부분공간이라 b를 그 위에 직교 사영한 점이 언제나 존재합니다. 그 점은 A의 열공간에 있으므로 적어도 한 계수로 표현됩니다. 두 계수가 모두 사영점을 만들면 그 차의 예측은 0이라 영공간에 속합니다. 따라서 계수 해 전체는 한 해에 A의 영공간을 더한 집합이고, 예측은 어느 해에서나 하나입니다.</p>
+<div class="check" data-q="q2"></div><div class="check" data-q="q3"></div>
+<h2>첫 풀이 · 열을 직접 곱한다</h2>
+<p>Aᵀ(b−Ax)=0을 옮기면 <b class="key">정규방정식</b> AᵀAx=Aᵀb입니다. t=(0,1,2), b=(1,1,4)를 실제로 곱하면 왼쪽 행렬은 [[3,3],[3,5]], 오른쪽은 (6,9)입니다. 첫 줄 3c+3d=6을 둘째 줄 3c+5d=9에서 빼면 2d=3입니다. 따라서 d=1.5, c=0.5입니다.</p>
+<p>잔차 r=(0.5,−1,0.5)입니다. 첫 열 (1,1,1)과의 내적은 0.5−1+0.5=0이고, 둘째 열 (0,1,2)와의 내적은 0−1+1=0입니다. 최소 제곱거리는 0.25+1+0.25=1.5입니다. 원래 세 방정식은 여전히 동시에 맞지 않지만, 가능한 예측 중 최선이라는 조건은 정확히 맞습니다.</p>
+<div class="check" data-q="q4"></div>
+<h2>두 번째 풀이 · 열공간의 직교 좌표를 쓴다</h2>
+<p>열이 독립인 m×n 행렬에서 <b class="key">얇은 QR 분해</b> A=QR은 열공간의 정규직교 기저를 가진 m×n 행렬 Q와, 대각이 0이 아닌 n×n 위 삼각행렬 R을 사용합니다. QᵀQ=I이고 Aᵀr=RᵀQᵀr입니다. Rᵀ가 가역이라 직교 조건은 Qᵀr=0으로 줄어듭니다. A=QR을 다시 넣으면 Rx=Qᵀb입니다. R의 맨 아래 행에서 미지수 하나를 구한 뒤 거꾸로 올라갑니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 160" role="img" aria-label="얇은 QR에서 관측을 직교좌표로 바꾸고 삼각연립식과 잔차를 확인하는 과정">
+<rect class="f-box" x="42" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="135" y="61" text-anchor="middle">관측 b</text><text class="f-s" x="135" y="89" text-anchor="middle">열공간의 좌표 Qᵀb</text><text class="f-s" x="135" y="110" text-anchor="middle">열공간 밖 잔차는 남음</text><line class="f-line" x1="235" y1="84" x2="278" y2="84" marker-end="url(#f-arrow)"/><rect class="f-soft" x="287" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="380" y="61" text-anchor="middle">계수 계산</text><text class="f-s" x="380" y="89" text-anchor="middle">위 삼각 Rx=Qᵀb</text><text class="f-s" x="380" y="110" text-anchor="middle">맨 아래 식부터 풂</text><line class="f-line" x1="480" y1="84" x2="523" y2="84" marker-end="url(#f-arrow)"/><rect class="f-box" x="532" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="625" y="61" text-anchor="middle">예측과 검산</text><text class="f-s" x="625" y="89" text-anchor="middle">r=b−Ax를 계산</text><text class="f-s" x="625" y="110" text-anchor="middle">Aᵀr=0을 확인</text>
+</svg><figcaption>Q는 예측이 있는 공간의 좌표를 정하고 R은 그 좌표를 원래 절편과 기울기에 연결합니다.</figcaption></figure>
+<p>첫 단위 열 q₁=(1,1,1)/√3입니다. 둘째 열에서 q₁ 방향을 빼면 (−1,0,1)이 남아 q₂=(−1,0,1)/√2를 얻습니다. 첫 기저의 둘째 열 좌표는 √3, 남은 둘째 열의 노름은 √2입니다. 따라서 R=[[√3,√3],[0,√2]]이고 Qᵀb=(6/√3,3/√2)입니다. 마지막 줄 √2d=3/√2에서 d=1.5, 첫 줄 √3(c+d)=6/√3에서 c=0.5입니다.</p>
+<div class="check" data-q="q5"></div><div class="check" data-q="q6"></div>
+<h2>같은 자료로 두 식을 각각 실행한다</h2>
+<pre data-example="python"><code>import numpy as np
+
+design = np.array([[1., 0.], [1., 1.], [1., 2.]])
+observed = np.array([1., 1., 4.])
+normal = np.linalg.solve(design.T @ design, design.T @ observed)
+basis, upper = np.linalg.qr(design, mode=&quot;reduced&quot;)
+qr = np.linalg.solve(upper, basis.T @ observed)
+residual = observed - design @ qr
+assert np.allclose(normal, qr)
+assert np.allclose(design.T @ residual, 0)
+print(&quot;정규방정식:&quot;, normal.round(4).tolist())
+print(&quot;QR:&quot;, qr.round(4).tolist())
+print(&quot;잔차:&quot;, residual.round(4).tolist())
+print(f&quot;잔차 제곱합: {residual @ residual:.1f}&quot;)</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>정규방정식: [0.5, 1.5]
+QR: [0.5, 1.5]
+잔차: [0.5, -1.0, 0.5]
+잔차 제곱합: 1.5</code></pre>
+<p>이 작은 행렬에서는 두 방식의 출력이 같습니다. 하지만 두 열의 방향이 거의 같다면 열을 곱한 AᵀA에서 작은 방향의 정보가 더 약해집니다. 다음 장에서 조건수가 제곱되는 이유와, 입력 자체가 불확실할 때 생기는 오차를 분리해서 확인합니다.</p>
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table><thead><tr><th scope="col">방법</th><th scope="col">한 줄 유도</th><th scope="col">검산</th></tr></thead><tbody><tr><td><b class='key'>최소제곱</b></td><td>임의 z에서 거리의 일차항이 0이면 잔차가 열공간에 수직.</td><td>Aᵀr=0</td></tr><tr><td>정규방정식</td><td>열공간 직교 조건을 AᵀAx=Aᵀb로 쓴다.</td><td>열이 독립이면 AᵀA가 가역</td></tr><tr><td>얇은 QR</td><td>A=QR, QᵀQ=I이므로 Rx=Qᵀb.</td><td>Qᵀr=0 및 계수 일치</td></tr></tbody></table></div>
+
+<h2>참고 자료</h2>
+<ul><li><a href="https://fncbook.com/normaleqns/">Driscoll·Braun · 정규방정식</a></li><li><a href="https://ocw.mit.edu/courses/18-06-linear-algebra-spring-2010/pages/calendar/">MIT 18.06 · 최소제곱과 QR 강의 일정</a></li></ul>
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

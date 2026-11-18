@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>조르당 표준형의 증명과 거듭제곱 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e8c'/%3E%3Cpath d='M8 22V10m8 12V14m8 8V6' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="LA10-3">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+
+<header class="chapter">
+<p class="chap-sub">선형대수 · LA10 복소 고유값과 조르당 형식</p>
+<p class="chap-num">LA10·3</p>
+<h1>조르당 표준형의 증명과 거듭제곱</h1>
+<p class="lead">고유값마다 일반화 고유공간을 분리해 표준형을 증명합니다. 거듭제곱의 다항식 항을 계산하고, 작은 성분 변화가 블록을 어떻게 바꾸는지 확인합니다.</p>
+</header>
+
+<div class="goal">
+<h2>이 장을 읽고 나면</h2>
+<ul>
+<li>특성다항식이 일차 인수로 분해되는 공간에서 일반화 고유공간의 직합을 증명한다.</li>
+<li>조르당 블록의 거듭제곱과 반복의 일시적 증가·장기 거동을 계산한다.</li>
+<li>작은 섭동으로 조르당 구조가 변하는 이유를 설명한다.</li>
+</ul>
+</div>
+<h2>고유값마다 자기 부분공간을 어떻게 분리할까</h2>
+<p>앞 장에서는 <var>N=A−λ I</var>가 멱영인 부분공간에서 사슬 기저를 만들었습니다. 이제 복소 행렬 <var>A</var>에 고유값이 여럿 있어도 이 방법을 각각 적용할 수 있음을 보입니다. 증명은 사용 중인 스칼라체에서 특성다항식이 일차 인수로 분해되기만 하면 성립합니다. 따라서 복소수에는 항상 적용되고, 실수에서는 모든 근이 실수일 때 적용됩니다.</p>
+<p>특성다항식의 분해를 <var>p<sub>A</sub>(t)=f<sub>1</sub>(t)⋯ f<sub>s</sub>(t)</var>, <var>f<sub>i</sub>(t)=(t−λ<sub>i</sub>)<sup>m<sub>i</sub></sup></var>로 쓰고 서로 다른 <var>λ<sub>i</sub></var>를 구분합니다. <var>G<sub>i</sub>=ker  f<sub>i</sub>(A)</var>를 해당 고유값의 <strong>일반화 고유공간</strong>이라 합니다. <var>f<sub>i</sub>(A)x=0</var>이라면 <var>f<sub>i</sub>(A)Ax=Af<sub>i</sub>(A)x=0</var>이므로 <var>G<sub>i</sub></var>는 <var>A</var>에 대해 불변입니다. <var>A−λ<sub>i</sub>I</var>를 이 부분공간으로 제한하면 그 <var>m<sub>i</sub></var>제곱이 0이라 멱영입니다.</p>
+<p>핵심은 전체 공간이 <var>G<sub>1</sub>⊕⋯⊕ G<sub>s</sub></var>라는 점입니다. 준비로 <var>p<sub>i</sub>=p<sub>A</sub>/f<sub>i</sub></var>라고 둡니다. 각 근 <var>λ<sub>i</sub></var>에서 <var>p<sub>i</sub>(λ<sub>i</sub>)≠0</var>이므로 모든 <var>p<sub>i</sub></var>에 공통인 비상수 인수가 없습니다. 다항식의 유클리드 알고리즘에서는 나머지를 되짚어 최대공약수를 원래 다항식들의 선형결합으로 표현할 수 있습니다. 이를 여러 다항식에 이어 적용한 <strong>베주 항등식</strong>으로, 어떤 다항식 <var>q<sub>i</sub></var>가 있어서 <var>Σ<sub>i</sub> q<sub>i</sub>(t)p<sub>i</sub>(t)=1</var>입니다. 한 근만 있는 경우에는 <var>p<sub>1</sub>=1</var>이라 곧바로 성립합니다.</p>
+<p>여기에 <var>A</var>를 대입해 <var>E<sub>i</sub>=q<sub>i</sub>(A)p<sub>i</sub>(A)</var>를 만듭니다. 다항식의 상수항 <var>c</var>는 대입할 때 <var>cI</var>가 됩니다. 그러므로 <var>Σ<sub>i</sub> E<sub>i</sub>=I</var>입니다. <strong>케일리–해밀턴 정리</strong> <var>p<sub>A</sub>(A)=0</var>에 의해 <var>f<sub>i</sub>(A)E<sub>i</sub>=q<sub>i</sub>(A)p<sub>A</sub>(A)=0</var>이고, 따라서 <var>E<sub>i</sub></var>의 출력은 항상 <var>G<sub>i</sub></var>에 속합니다. 또한 <var>j≠ i</var>일 때 <var>p<sub>i</sub></var>에 <var>f<sub>j</sub></var> 인수가 들어 있으므로 <var>E<sub>i</sub></var>는 <var>G<sub>j</sub></var>에 속한 모든 벡터를 0으로 보냅니다.</p>
+<ol class="steps">
+<li><strong>합이 전체 공간을 채운다.</strong> 임의의 <var>v</var>에 대해 <var>v=Σ<sub>i</sub> E<sub>i</sub> v</var>입니다. 각 항은 하나의 <var>G<sub>i</sub></var>에 속합니다.</li>
+<li><strong>합의 표현은 유일하다.</strong> <var>u<sub>i</sub>∈ G<sub>i</sub></var>이고 <var>Σ<sub>i</sub> u<sub>i</sub>=0</var>이라 합시다. <var>E<sub>j</sub></var>를 적용하면 <var>j</var> 이외의 항은 전부 사라집니다. <var>u<sub>j</sub></var>에서는 다른 <var>E<sub>i</sub></var>가 모두 0이므로 <var>Σ<sub>i</sub> E<sub>i</sub>=I</var>에 의해 <var>E<sub>j</sub> u<sub>j</sub>=u<sub>j</sub></var>입니다. 따라서 각 <var>u<sub>j</sub>=0</var>입니다.</li>
+</ol>
+<p>이로써 직합이 증명되었습니다. 각 <var>G<sub>i</sub></var>에서 앞 장의 멱영 사슬 기저를 만들고 모두 모으면 전체 기저를 얻습니다. 이 기저에서 <var>A</var>는 <var>J<sub>r</sub>(λ<sub>i</sub>)</var>들을 대각에 놓고 블록 바깥에 0을 둔 <strong>조르당 표준형</strong>입니다. 각 고유값에 해당하는 블록 크기의 합이 그 고유값의 대수적 중복도입니다. 블록별 특성다항식을 곱하면 바로 확인됩니다. 또 <var>(A−λ<sub>i</sub>I)<sup>k</sup></var>는 다른 고유값의 블록에서 가역이라, 해당 핵 차원만으로 앞 장의 규칙을 적용해 <var>λ<sub>i</sub></var>의 블록 크기를 알아낼 수 있습니다. 표준형은 블록 순서를 빼면 유일합니다.</p>
+<p><strong>케일리–해밀턴 정리의 짧은 증명.</strong> 여인수 행렬을 전치한 수반행렬을 사용하면 <var>(tI−A)adj(tI−A)=p<sub>A</sub>(t)I</var>입니다. 수반행렬을 행렬 계수를 가진 다항식 <var>Σ<sub>j</sub> t<sup>j</sup>B<sub>j</sub></var>로 펼치세요. 양변을 <var>t</var>의 다항식으로 본 뒤 각 <var>t<sup>k</sup></var>의 계수 왼쪽에 <var>A<sup>k</sup></var>를 곱해 더합니다. 왼쪽은 각 <var>j</var>마다 <var>A<sup>j+1</sup>B<sub>j</sub>−A<sup>j</sup> A B<sub>j</sub>=0</var>이고 오른쪽은 정의에 의해 <var>p<sub>A</sub>(A)</var>입니다. 이 증명에서는 <var>B<sub>j</sub></var>와 <var>A</var>의 교환을 가정하지 않습니다.</p>
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+
+<h2>3×3에서 다른 고유값의 두 블록을 분리한다</h2>
+<p><var>M=[[1, 1, 1], [0, 1, 0], [0, 0, 2]]</var>은 위삼각이므로 <var>p<sub>M</sub>(t)=(t−1)<sup>2</sup>(t−2)</var>입니다. <var>M−I</var>는 <var>(a,b,c)</var>를 <var>(b+c,0,c)</var>로 보내고, 한 번 더 적용하면 <var>(c,0,c)</var>입니다. 따라서 <var>G<sub>1</sub>={(a,b,0)}</var>입니다. 이 평면에서 <var>(M−I)e<sub>2</sub>=e<sub>1</sub></var>, <var>(M−I)e<sub>1</sub>=0</var>이므로 순서 <var>(e<sub>1</sub>,e<sub>2</sub>)</var>에 블록 <var>J<sub>2</sub>(1)</var>이 생깁니다.</p>
+<p>고유값 2에 대해서는 <var>(M−2I)(a,b,c)=(−a+b+c,−b,0)</var>입니다. <var>b=0,a=c</var>가 되어 <var>G<sub>2</sub></var>는 <var>(1,0,1)</var>이 생성하는 직선입니다. <var>P</var>를 열 <var>(e<sub>1</sub>,e<sub>2</sub>,(1,0,1)<sup>⊤</sup>)</var>로 만들면 <var>P</var>가 가역이고 <var>P<sup>−1</sup>MP</var>는 <var>J<sub>2</sub>(1)</var>과 <var>[2]</var>를 차례로 놓은 블록 대각행렬입니다. 대각화는 모든 블록의 크기가 1인 경우입니다. 여기서는 고유값 1의 일반화 고유공간 안에 고유벡터가 하나의 방향만 있으므로 크기 2 블록을 더 나눌 수 없습니다.</p>
+<p><strong>블록을 직접 확인하는 순서.</strong> 특성다항식을 분해하고 각 <var>(A−λ I)<sup>j</sup></var>의 핵을 조사합니다. 핵 차원의 증가량으로 사슬의 길이를 정한 뒤 사슬 끝 후보를 위에서부터 골라 <var>N=A−λ I</var>를 적용합니다. 마지막으로 열을 각 사슬의 고유벡터부터 나열해 <var>AP=PJ</var>인지 확인합니다. 같은 특성다항식을 가진 행렬이 두 개 있을 때도, 고유값별 핵 차원이 다르면 이 계산에서 다른 블록 목록이 나옵니다.</p>
+<div class="check" data-q="q3"></div>
+
+<h2>거듭제곱의 지수 항과 다항식 항을 함께 읽는다</h2>
+<p>조르당 블록 <var>J<sub>r</sub>(λ)=λ I+N</var>에서 <var>N<sup>r</sup>=0</var>이고 두 항이 교환합니다. 따라서 이항정리에서 <var>N<sup>j</sup></var>를 포함하는 항 중 <var>j&lt;r</var>인 것만 남습니다. <var>C(k, j)</var>는 <var>k</var>개의 곱셈 중 <var>j</var>개 자리에서 <var>N</var>을 고르는 방법의 수입니다.</p>
+<div class="eq"><var>J<sub>r</sub>(λ)<sup>k</sup>=Σ<sub>j=0</sub><sup>min(k,r−1)</sup>C(k, j)λ<sup>k−j</sup>N<sup>j</sup> (λ≠0, k≥0)</var></div>
+<p><var>λ=0</var>이면 바로 <var>J<sub>r</sub>(0)<sup>k</sup>=N<sup>k</sup></var>이고 <var>k≥ r</var>에서 영행렬입니다. <var>k=0</var>의 행렬 거듭제곱은 항등행렬입니다. 여러 블록을 가진 <var>A=PJP<sup>−1</sup></var>는 인접한 <var>P<sup>−1</sup>P</var>가 소거되므로 <var>A<sup>k</sup>=PJ<sup>k</sup>P<sup>−1</sup></var>입니다.</p>
+<p><strong>크기 2.</strong> <var>J<sub>2</sub>(1/2)</var>를 <var>e<sub>2</sub>=(0,1)</var>에 한 번 곱하면 <var>(1,1/2)</var>입니다. <var>k≥1</var>에서는 <var>N<sup>2</sup>=0</var>이고 <var>Ne<sub>2</sub>=e<sub>1</sub></var>이라 결과는 <var>(k(1/2)<sup>k−1</sup>,(1/2)<sup>k</sup>)</var>입니다. 첫 반복의 유클리드 길이는 <var>√(1+1/4)&gt;1</var>이고 원래 길이는 1이므로 처음에는 커집니다. 그러나 <var>k(1/2)<sup>k−1</sup></var>과 <var>(1/2)<sup>k</sup></var> 모두 0으로 갑니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 211" role="img" aria-label="k가 0에서 4까지일 때 J2 1/2의 반복 좌표">
+<text class="f-cap" x="380" y="33" text-anchor="middle">J₂(1/2)에서 초기 벡터 (0,1)의 반복</text>
+<text class="f-t" x="180" y="82" text-anchor="end">반복 k</text>
+<rect class="f-box" x="206" y="58" width="94.8" height="38" rx="3"/>
+<text class="f-t" x="253.4" y="83" text-anchor="middle">0</text>
+<rect class="f-box" x="306.8" y="58" width="94.8" height="38" rx="3"/>
+<text class="f-t" x="354.2" y="83" text-anchor="middle">1</text>
+<rect class="f-box" x="407.6" y="58" width="94.8" height="38" rx="3"/>
+<text class="f-t" x="455" y="83" text-anchor="middle">2</text>
+<rect class="f-box" x="508.4" y="58" width="94.8" height="38" rx="3"/>
+<text class="f-t" x="555.8" y="83" text-anchor="middle">3</text>
+<rect class="f-box" x="609.2" y="58" width="94.8" height="38" rx="3"/>
+<text class="f-t" x="656.6" y="83" text-anchor="middle">4</text>
+<text class="f-t" x="180" y="128" text-anchor="end">첫째 좌표</text>
+<rect class="f-box" x="206" y="104" width="94.8" height="38" rx="3"/>
+<text class="f-t" x="253.4" y="129" text-anchor="middle">0</text>
+<rect class="f-soft" x="306.8" y="104" width="94.8" height="38" rx="3"/>
+<text class="f-t" x="354.2" y="129" text-anchor="middle">1</text>
+<rect class="f-soft" x="407.6" y="104" width="94.8" height="38" rx="3"/>
+<text class="f-t" x="455" y="129" text-anchor="middle">1</text>
+<rect class="f-box" x="508.4" y="104" width="94.8" height="38" rx="3"/>
+<text class="f-t" x="555.8" y="129" text-anchor="middle">3/4</text>
+<rect class="f-box" x="609.2" y="104" width="94.8" height="38" rx="3"/>
+<text class="f-t" x="656.6" y="129" text-anchor="middle">1/2</text>
+<text class="f-t" x="180" y="174" text-anchor="end">둘째 좌표</text>
+<rect class="f-box" x="206" y="150" width="94.8" height="38" rx="3"/>
+<text class="f-t" x="253.4" y="175" text-anchor="middle">1</text>
+<rect class="f-box" x="306.8" y="150" width="94.8" height="38" rx="3"/>
+<text class="f-t" x="354.2" y="175" text-anchor="middle">1/2</text>
+<rect class="f-box" x="407.6" y="150" width="94.8" height="38" rx="3"/>
+<text class="f-t" x="455" y="175" text-anchor="middle">1/4</text>
+<rect class="f-box" x="508.4" y="150" width="94.8" height="38" rx="3"/>
+<text class="f-t" x="555.8" y="175" text-anchor="middle">1/8</text>
+<rect class="f-box" x="609.2" y="150" width="94.8" height="38" rx="3"/>
+<text class="f-t" x="656.6" y="175" text-anchor="middle">1/16</text>
+</svg>
+<figcaption>초기에 첫째 성분이 0에서 1로 늘지만, 두 좌표는 결국 모두 0으로 갑니다.</figcaption>
+</figure>
+<p><strong>크기 3.</strong> LA10-2의 <var>A=[[0, 1, 0], [0, 1, 1], [1, −1, 2]]</var>는 <var>λ=1</var>인 길이 3 사슬 <var>v<sub>1</sub>=(1,1,0)</var>, <var>v<sub>2</sub>=(0,1,1)</var>, <var>v<sub>3</sub>=(0,0,1)</var>을 갖습니다. <var>A<sup>k</sup> v<sub>3</sub>=v<sub>3</sub>+kv<sub>2</sub>+C(k, 2)v<sub>1</sub></var>이며 <var>k=0,1</var>에서는 마지막 계수를 0으로 둡니다. 예컨대 <var>k=3</var>에서 <var>v<sub>3</sub>+3v<sub>2</sub>+3v<sub>1</sub>=(3,6,4)</var>입니다. <var>|λ|=1</var>이어도 사슬이 길면 성분이 다항식 크기로 성장할 수 있습니다.</p>
+<p>유한차원에서 모든 고유값에 <var>|λ|&lt;1</var>이면 <var>A<sup>k</sup>→0</var>입니다. <var>λ≠0</var>인 각 블록의 성분은 차수가 유한한 다항식과 지수 감쇠를 곱한 항들의 합이기 때문입니다. 예컨대 <var>k<sup>j</sup> r<sup>k</sup></var>의 이웃한 두 양의 항의 비는 <var>(1+1/k)<sup>j</sup>r→ r&lt;1</var>이라 충분히 뒤에서는 1보다 작은 일정한 비율로 감소합니다. 반대로 <var>|λ|≥1</var>인 고유값이 있으면 <var>A<sup>k</sup>v=λ<sup>k</sup>v</var>인 고유벡터에서 영으로 수렴하지 않습니다. 모든 고유값의 크기가 1 이하이고 크기 1인 고유값의 블록이 모두 길이 1이라면 거듭제곱은 유계입니다. 절댓값이 1인 고유값의 블록 길이가 2 이상이면 사슬 좌표에 <var>kλ<sup>k−1</sup></var> 성분이 생길 수 있어 거듭제곱이 유계가 아닙니다.</p>
+<div class="check" data-q="q4"></div>
+<div class="check" data-q="q5"></div>
+
+<h2>정확한 행렬의 표준형과 수치 계산을 구분한다</h2>
+<p><var>A<sub>ε</sub>=[[1, 1], [ε, 1]]</var>에서 <var>ε=0</var>이면 크기 2 조르당 블록입니다. 그러나 <var>ε&gt;0</var>이면 특성다항식은 <var>(t−1)<sup>2</sup>−ε</var>이고 고유값 <var>1±√(ε)</var>이 서로 다릅니다. 행렬의 성분이 아주 조금만 달라져도 크기 2 블록 하나에서 크기 1 블록 둘로 바뀝니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 165" role="img" aria-label="2차 행렬 왼쪽 아래를 0에서 10의 마이너스 8승으로 바꿀 때 1 중근이 0.9999와 1.0001로 나뉜다">
+<text class="f-cap" x="380" y="33" text-anchor="middle">왼쪽 아래 성분을 바꾸면 고유값이 갈라진다</text>
+<text class="f-t" x="180" y="82" text-anchor="end">ε = 0</text>
+<rect class="f-box" x="206" y="58" width="162" height="38" rx="3"/>
+<text class="f-t" x="287" y="83" text-anchor="middle">1</text>
+<rect class="f-box" x="374" y="58" width="162" height="38" rx="3"/>
+<text class="f-t" x="455" y="83" text-anchor="middle">1</text>
+<rect class="f-box" x="542" y="58" width="162" height="38" rx="3"/>
+<text class="f-t" x="623" y="83" text-anchor="middle">고유벡터 방향 1개</text>
+<text class="f-t" x="180" y="128" text-anchor="end">ε = 10⁻⁸</text>
+<rect class="f-box" x="206" y="104" width="162" height="38" rx="3"/>
+<text class="f-t" x="287" y="129" text-anchor="middle">0.9999</text>
+<rect class="f-box" x="374" y="104" width="162" height="38" rx="3"/>
+<text class="f-t" x="455" y="129" text-anchor="middle">1.0001</text>
+<rect class="f-box" x="542" y="104" width="162" height="38" rx="3"/>
+<text class="f-t" x="623" y="129" text-anchor="middle">고유벡터 방향 2개</text>
+</svg>
+<figcaption>ε를 넣은 행렬의 특성다항식은 (t−1)²−ε입니다. 계산 전 입력을 얼마나 정확하게 알고 있는지에 따라 블록 구조를 판별하기 어려울 수 있습니다.</figcaption>
+</figure>
+<p>고유벡터를 <var>(1,√(ε))</var>와 <var>(1,−√(ε))</var>로 고르면 <var>ε</var>이 0에 다가갈수록 두 방향이 가까워집니다. 두 열의 행렬식이 <var>−2√(ε)</var>이라 그 좌표로 바꾸기 위한 역행렬의 성분도 커질 수 있습니다. 측정값으로 얻은 부동소수점 행렬에서 조르당 블록 크기를 곧바로 판정하거나, 고유벡터 기저로 바꾸어 <var>A<sup>k</sup></var>를 계산하면 작은 오차에 민감해질 수 있습니다. 정확히 주어진 작은 정수·유리수 행렬의 구조 증명에는 표준형을 사용하고, 일반 수치 행렬에서 고유값을 분석할 때는 유니터리 기저를 쓰는 <strong>슈어 분해</strong>가 대표적인 방법입니다. 복소 슈어 분해는 <var>A=QTQ<sup>*</sup></var>에서 <var>T</var>가 위삼각, <var>Q<sup>*</sup>Q=I</var>인 분해이며 <var>Q<sup>*</sup></var>는 켤레전치입니다.</p>
+<div class="check" data-q="q6"></div>
+<h2>손계산을 작은 배열로 다시 검산한다</h2>
+<pre data-example="python"><code>from math import comb, sqrt
+import numpy as np
+
+j2 = np.array([[0.5, 1.0], [0.0, 0.5]])
+v = np.array([0.0, 1.0])
+for k in range(5):
+    print(k, v.tolist())
+    v = j2 @ v
+
+a = np.array([[0, 1, 0], [0, 1, 1], [1, -1, 2]])
+v1 = np.array([1, 1, 0])
+v2 = np.array([0, 1, 1])
+v3 = np.array([0, 0, 1])
+k = 3
+predicted = v3 + k * v2 + comb(k, 2) * v1
+print(&quot;size 3:&quot;, (np.linalg.matrix_power(a, k) @ v3).tolist(), predicted.tolist())
+
+epsilon = 1e-8
+perturbed = np.array([[1.0, 1.0], [epsilon, 1.0]])
+observed = np.sort(np.linalg.eigvals(perturbed))
+expected = [1 - sqrt(epsilon), 1 + sqrt(epsilon)]
+assert np.allclose(observed.imag, 0.0, atol=1e-12)
+print(&quot;split roots:&quot;, [round(float(x.real), 4) for x in observed])
+print(&quot;root formula:&quot;, np.allclose(observed, expected))</code></pre>
+<pre data-output><code>0 [0.0, 1.0]
+1 [1.0, 0.5]
+2 [1.0, 0.25]
+3 [0.75, 0.125]
+4 [0.5, 0.0625]
+size 3: [3, 6, 4] [3, 6, 4]
+split roots: [0.9999, 1.0001]
+root formula: True</code></pre>
+<p class="small">Python 3.14.6, NumPy 2.5.4로 실행했습니다. 마지막 예는 본문의 정확한 근을 소수점 넷째 자리까지 확인합니다. 구조 판별은 특성다항식과 핵을 직접 계산했습니다.</p>
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://linear.axler.net/">Sheldon Axler, Linear Algebra Done Right, Generalized Eigenvectors and Jordan Form</a></li>
+<li><a href="https://ee263.stanford.edu/lectures/jcf.pdf">Stephen Boyd, Stanford EE263, Jordan Canonical Form</a></li>
+<li><a href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.linalg.schur.html">SciPy 공식 문서, scipy.linalg.schur</a></li>
+<li><a href="la10-2.html">LA10-2 조르당 사슬과 핵의 차원</a></li>
+</ul>
+
+<h2>확인 문제</h2>
+<p>거듭제곱을 구할 때 <var>N</var>이 몇 번 만에 사라지는지 먼저 확인하세요. 증명 문항에서는 정리의 조건 중 어떤 조건을 각 단계에 쓰는지 표시해 보세요.</p>
+<div id="quiz"></div>
+
+<section class="work" id="tools"></section>
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

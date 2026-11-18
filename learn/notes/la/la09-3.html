@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>핵의 기저를 확장해 계수–영차원 정리 증명하기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e8c'/%3E%3Cpath d='M8 22V10m8 12V14m8 8V6' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="LA09-3">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+
+<header class="chapter">
+<p class="chap-sub">선형대수 · LA09 기저 변환과 차원 정리</p>
+<p class="chap-num">LA09·3</p>
+<h1>핵의 기저를 확장해 계수–영차원 정리 증명하기</h1>
+<p class="lead">입력을 두 번 측정하면 미지수가 몇 개 남을까요? 핵과 상의 기저를 함께 만들어, 자유도가 어디에 남는지 증명하고 해집합을 구합니다.</p>
+</header>
+
+<div class="goal">
+<h2>이 장을 읽고 나면</h2>
+<ul>
+<li>핵과 상이 부분공간인 이유와 두 차원의 의미를 설명한다.</li>
+<li>핵의 기저를 확장해 rank–nullity 정리를 증명한다.</li>
+<li>같은 관측값을 갖는 모든 입력을 한 해와 핵으로 표현한다.</li>
+</ul>
+</div>
+<h2>영이 되는 입력과 실제로 닿는 출력</h2>
+<p><var>T:V→ W</var>를 선형사상이라 하고 <var>V</var>는 <var>n</var>차원, 두 공간의 스칼라체는 같다고 합시다. 영인 출력을 만드는 입력들을 <strong>핵</strong>(kernel), 가능한 모든 출력들을 <strong>상</strong>(image)이라고 부릅니다.</p>
+<div class="eq"><var>ker  T={x∈ V:T(x)=0}⊆ V,  imT={T(x):x∈ V}⊆ W</var>.</div>
+<p>영벡터는 각 집합에 들어갑니다. <var>u,v∈ker  T</var>이면 <var>T(au+bv)=aT(u)+bT(v)=0</var>이므로 선형결합도 핵에 있습니다. <var>y<sub>1</sub>=T(x<sub>1</sub>)</var>, <var>y<sub>2</sub>=T(x<sub>2</sub>)</var>이면 <var>ay<sub>1</sub>+by<sub>2</sub>=T(ax<sub>1</sub>+bx<sub>2</sub>)</var>이므로 선형결합도 상에 있습니다. 어느 공간의 부분공간인지 구분해야 합니다. 서로 차원이 다른 <var>V,W</var> 사이에서도 이 정의가 적용됩니다.</p>
+<p><strong>계수</strong>(rank)는 상의 차원, <strong>영차원</strong>(nullity)은 핵의 차원입니다. 행렬의 계수는 행을 줄여 얻는 피벗 개수이고, 차원 해석에서는 원래 행렬의 열들이 생성하는 공간의 차원입니다. 사상에서의 정의는 기저를 지정하기 전에 성립합니다.</p>
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+
+<h2>핵의 기저를 전체 공간의 기저로 키운다</h2>
+<p><strong>계수–영차원 정리.</strong> <var>V</var>가 유한차원이고 <var>T:V→ W</var>가 선형사상이면 <var>dim  V=rankT+nullityT</var>입니다. <var>W</var> 전체가 유한차원이라는 가정은 필요 없습니다. 입력의 기저를 보내 얻은 유한 개의 벡터만으로도 상을 생성하기 때문입니다.</p>
+<p>핵의 기저를 <var>(u<sub>1</sub>,…,u<sub>k</sub>)</var>라 합시다. 현재 목록이 <var>V</var>를 생성하지 않으면 생성 공간 밖의 벡터 <var>v<sub>1</sub></var>을 추가합니다. 새 벡터에 0이 아닌 계수를 주어 0을 만든 식이 있다면, 정리해서 새 벡터를 기존 목록으로 표현할 수 있어 선택과 모순됩니다. 새 계수가 0이면 기존 목록의 독립성으로 나머지 계수도 0입니다. 따라서 이 단계를 반복해도 독립성을 지키며, 독립인 목록의 길이가 <var>n</var>을 넘지 않으므로 결국 <var>(u<sub>1</sub>,…,u<sub>k</sub>,v<sub>1</sub>,…,v<sub>r</sub>)</var>이라는 전체 기저를 얻고 <var>k+r=n</var>입니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 256" role="img" aria-label="정의역 기저의 u 두 개는 영벡터로, v 두 개는 상의 두 기저 벡터로 내려가는 도식">
+<text class="f-cap" x="380" y="31" text-anchor="middle">정의역 기저를 두 묶음으로 만든다</text>
+<rect class="f-soft" x="30" y="51" width="162" height="50" rx="3"/>
+<text class="f-t" x="111" y="83" text-anchor="middle">u₁</text>
+<rect class="f-soft" x="210" y="51" width="162" height="50" rx="3"/>
+<text class="f-t" x="291" y="83" text-anchor="middle">u₂</text>
+<rect class="f-box" x="390" y="51" width="162" height="50" rx="3"/>
+<text class="f-t" x="471" y="83" text-anchor="middle">v₁</text>
+<rect class="f-box" x="570" y="51" width="162" height="50" rx="3"/>
+<text class="f-t" x="651" y="83" text-anchor="middle">v₂</text>
+<line class="f-line" x1="111" y1="104" x2="184" y2="165" marker-end="url(#f-arrow)"/>
+<line class="f-line" x1="291" y1="104" x2="218" y2="165" marker-end="url(#f-arrow)"/>
+<line class="f-line" x1="471" y1="104" x2="471" y2="165" marker-end="url(#f-arrow)"/>
+<line class="f-line" x1="651" y1="104" x2="651" y2="165" marker-end="url(#f-arrow)"/>
+<rect class="f-soft" x="120" y="169" width="162" height="47" rx="3"/>
+<text class="f-t" x="201" y="198" text-anchor="middle">0</text>
+<rect class="f-box" x="390" y="169" width="162" height="47" rx="3"/>
+<text class="f-t" x="471" y="198" text-anchor="middle">T(v₁)</text>
+<rect class="f-box" x="570" y="169" width="162" height="47" rx="3"/>
+<text class="f-t" x="651" y="198" text-anchor="middle">T(v₂)</text>
+<text class="f-cap" x="201" y="240" text-anchor="middle">핵의 두 방향</text>
+<text class="f-cap" x="560" y="240" text-anchor="middle">상의 독립인 두 방향</text>
+</svg>
+<figcaption>n=4, nullity=2, rank=2인 상황을 나타냈습니다. 실제 증명은 핵 또는 상의 차원이 0일 때도 성립합니다.</figcaption>
+</figure>
+<ol>
+<li><strong>상을 생성한다.</strong> <var>y∈imT</var>를 잡아 <var>y=T(x)</var>라고 쓰세요. 전체 기저로 <var>x=Σ<sub>i</sub> a<sub>i</sub> u<sub>i</sub>+Σ<sub>j</sub> b<sub>j</sub>v<sub>j</sub></var>라고 적으면 <var>y=Σ<sub>j</sub> b<sub>j</sub>T(v<sub>j</sub>)</var>입니다. <var>u</var> 항은 모두 0으로 갑니다.</li>
+<li><strong>상의 목록은 독립이다.</strong> <var>Σ<sub>j</sub> c<sub>j</sub>T(v<sub>j</sub>)=0</var>이라 가정합니다. 그러면 <var>Σ<sub>j</sub> c<sub>j</sub>v<sub>j</sub>∈ker  T</var>라서 어떤 <var>d<sub>i</sub></var>에 대해 <var>Σ<sub>j</sub> c<sub>j</sub>v<sub>j</sub>=Σ<sub>i</sub> d<sub>i</sub> u<sub>i</sub></var>입니다. 두 항을 한쪽으로 모으면 전체 기저 벡터들의 선형관계가 됩니다. 기저가 독립이므로 모든 <var>c<sub>j</sub></var>와 <var>d<sub>i</sub></var>가 0입니다.</li>
+</ol>
+<p>따라서 <var>(T(v<sub>1</sub>),…,T(v<sub>r</sub>))</var>는 상의 기저라서 <var>dim imT=r</var>입니다. 핵의 기저가 비어 있으면 <var>k=0</var>인 경우이며, 상의 기저가 비어 있으면 <var>r=0</var>으로 상은 영공간입니다. 위 두 논증에서 해당 합을 0으로 읽으면 됩니다.</p>
+<div class="check" data-q="q3"></div>
+<div class="check" data-q="q4"></div>
+
+<h2>두 가지 다항식 측정으로 남는 자유도를 찾는다</h2>
+<p><var>F:𝒫<sub>2</sub>→ℝ<sup>2</sup></var>를 <var>F(p)=(p(1),p'(0))</var>로 정의합니다. 값과 도함수는 각각 선형이라 그 쌍도 선형입니다. <var>p=a+bx+cx<sup>2</sup></var>이면 <var>p(1)=a+b+c</var>이고 <var>p'(0)=b</var>이므로 다음과 같습니다.</p>
+<div class="eq"><var>F(p)=(a+b+c,b),  [F]=[[1, 1, 1], [0, 1, 0]]</var>.</div>
+<p>핵은 <var>b=0</var>, <var>a+c=0</var>인 다항식 전부입니다. 즉 <var>ker  F=span(x<sup>2</sup>−1)</var>입니다. <var>u=x<sup>2</sup>−1</var>에 <var>v<sub>1</sub>=1</var>, <var>v<sub>2</sub>=x−1</var>을 추가해 보겠습니다. <var>α u+β v<sub>1</sub>+γ v<sub>2</sub></var>의 표준 계수는 <var>(−α+β−γ,γ,α)</var>입니다. 이 셋이 모두 0이면 <var>α=γ=β=0</var>이라 목록이 독립이고, 차원이 3이므로 기저입니다. 두 출력 <var>F(v<sub>1</sub>)=(1,0)</var>, <var>F(v<sub>2</sub>)=(0,1)</var> 역시 <var>ℝ<sup>2</sup></var>의 기저입니다. 따라서 정의역의 차원 3 중 1이 핵에, 2가 상에 대응합니다.</p>
+<p><var>F(p)=(4,2)</var>의 한 해는 <var>p<sub>0</sub>=4v<sub>1</sub>+2v<sub>2</sub>=2+2x</var>입니다. 선형성 때문에 <var>p<sub>0</sub></var>에 핵 벡터를 더해도 값이 같습니다. 반대로 임의의 해 <var>p</var>는 <var>F(p−p<sub>0</sub>)=(4,2)−(4,2)=0</var>을 만족하므로 <var>p−p<sub>0</sub>∈ker  F</var>입니다. 모든 해는 <var>p=2+2x+c(x<sup>2</sup>−1)</var> (<var>c∈ℝ</var>)입니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 211" role="img" aria-label="2+2x에 c(x²−1)을 더한 세 다항식 모두 F값 (4,2)를 갖는다">
+<text class="f-cap" x="380" y="33" text-anchor="middle">입력이 달라도 두 번의 측정은 같다</text>
+<text class="f-t" x="180" y="82" text-anchor="end">c = −1</text>
+<rect class="f-box" x="206" y="58" width="162" height="38" rx="3"/>
+<text class="f-t" x="287" y="83" text-anchor="middle">3−x²</text>
+<rect class="f-box" x="374" y="58" width="162" height="38" rx="3"/>
+<text class="f-t" x="455" y="83" text-anchor="middle">2x</text>
+<rect class="f-box" x="542" y="58" width="162" height="38" rx="3"/>
+<text class="f-t" x="623" y="83" text-anchor="middle">→ (4, 2)</text>
+<text class="f-t" x="180" y="128" text-anchor="end">대표 입력</text>
+<rect class="f-box" x="206" y="104" width="162" height="38" rx="3"/>
+<text class="f-t" x="287" y="129" text-anchor="middle">2</text>
+<rect class="f-box" x="374" y="104" width="162" height="38" rx="3"/>
+<text class="f-t" x="455" y="129" text-anchor="middle">2x</text>
+<rect class="f-box" x="542" y="104" width="162" height="38" rx="3"/>
+<text class="f-t" x="623" y="129" text-anchor="middle">→ (4, 2)</text>
+<text class="f-t" x="180" y="174" text-anchor="end">c = 3</text>
+<rect class="f-box" x="206" y="150" width="162" height="38" rx="3"/>
+<text class="f-t" x="287" y="175" text-anchor="middle">−1+3x²</text>
+<rect class="f-box" x="374" y="150" width="162" height="38" rx="3"/>
+<text class="f-t" x="455" y="175" text-anchor="middle">2x</text>
+<rect class="f-box" x="542" y="150" width="162" height="38" rx="3"/>
+<text class="f-t" x="623" y="175" text-anchor="middle">→ (4, 2)</text>
+</svg>
+<figcaption>각 행의 첫째와 둘째 칸을 더해 다항식을 만듭니다. 핵 방향 x²−1은 p(1)과 p′(0)을 모두 바꾸지 않습니다.</figcaption>
+</figure>
+<div class="check" data-q="q5"></div>
+<div class="check" data-q="q6"></div>
+
+<h2>해의 존재와 유일성을 따로 판단한다</h2>
+<p>일반적으로 <var>T(x)=y</var>의 해가 있으면 <var>y∈imT</var>이고 그 역도 성립합니다. 한 해 <var>x<sub>0</sub></var>를 잡았을 때 해 전체는 <var>x<sub>0</sub>+ker  T={x<sub>0</sub>+z:z∈ker  T}</var>입니다. 예로 <var>F(p)=(4,2)</var>의 해는 원점을 지나지 않는 다항식 공간의 직선입니다. 해가 존재할 때 유일하려면 <var>ker  T={0}</var>이어야 하고, 이것은 <var>T</var>가 단사일 조건입니다. 모든 목표 <var>y</var>에서 존재하려면 <var>imT=W</var>이어야 하고, 이것은 <var>T</var>가 전사일 조건입니다.</p>
+<p><strong>비교.</strong> <var>G:𝒫<sub>2</sub>→ℝ<sup>2</sup></var>, <var>G(p)=(p(1),2p(1))</var>은 상이 <var>span((1,2))</var>라서 목표 <var>(4,2)</var>를 만들 수 없습니다. <var>p(1)=0</var> 하나만 제약하므로 핵의 차원은 2입니다. <var>dim  V</var>가 같은 두 사상이라도 어떤 관측을 정의했는가에 따라 잃는 자유도가 달라집니다.</p>
+<p><strong>더 읽기.</strong> 차이가 핵에 속하는 입력들을 하나의 동치류 <var>x+ker  T</var>로 묶으면 그 동치류가 상의 출력 <var>T(x)</var>에 일대일 대응합니다. 대표자를 바꾸어도 출력이 같고, 두 출력이 같으면 두 입력의 차이가 핵에 있으며, 상에 있는 모든 출력은 어떤 대표자가 만듭니다. 이 동치류들의 벡터공간을 몫공간 <var>V/ker  T</var>라고 부릅니다.</p>
+
+<h2>손계산을 작은 배열로 다시 검산한다</h2>
+<pre data-example="python"><code>import numpy as np
+
+measure = np.array([[1, 1, 1], [0, 1, 0]])
+basis = np.array([[-1, 1, -1], [0, 0, 1], [1, 0, 0]])
+print(&quot;basis images:&quot;, (measure @ basis).tolist())
+
+representative = np.array([2, 2, 0])
+kernel_direction = basis[:, 0]
+for c in [-1, 0, 3]:
+    coefficients = representative + c * kernel_direction
+    print(c, coefficients.tolist(), (measure @ coefficients).tolist())</code></pre>
+<pre data-output><code>basis images: [[0, 1, 0], [0, 0, 1]]
+-1 [3, 2, -1] [4, 2]
+0 [2, 2, 0] [4, 2]
+3 [-1, 2, 3] [4, 2]</code></pre>
+<p class="small">Python 3.14.6, NumPy 2.5.4로 실행했습니다. 열을 곱해 핵과 상의 후보를 검사했습니다. 상의 기저가 된다는 사실은 두 번째와 세 번째 열이 서로 다른 단위벡터라는 점에서 바로 확인됩니다.</p>
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://linear.axler.net/">Sheldon Axler, Linear Algebra Done Right, Fundamental Theorem of Linear Maps</a></li>
+<li><a href="la09-2.html">LA09-2 선형사상의 행렬과 닮음</a></li>
+</ul>
+
+<h2>확인 문제</h2>
+<p>처음 두 문제는 다른 차원과 관측에 공식을 적용합니다. 마지막 두 문제는 등식을 쓰기 전에 각각 필요한 조건과 입력의 범위를 적은 뒤 증명해 보세요.</p>
+<div id="quiz"></div>
+
+<section class="work" id="tools"></section>
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

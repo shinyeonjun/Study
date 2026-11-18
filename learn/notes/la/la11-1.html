@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>실대칭행렬은 왜 직교하는 고유기저를 갖는가 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="LA11-1">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">선형대수 · 스펙트럼 정리</p>
+<p class="chap-num">LA11·1</p>
+<h1>실대칭행렬은 왜 직교하는 고유기저를 갖는가</h1>
+<p class="lead">고유벡터를 몇 개 구하는 것과, 공간 전체를 고유벡터로 채울 수 있음을 증명하는 일은 다릅니다. 단위벡터 위에서 가장 큰 이차형식을 찾는 데서 시작해, 실대칭행렬이 어떤 차원에서도 직교 대각화되는 이유를 증명합니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>실대칭행렬의 스펙트럼 정리를 정확한 가정과 함께 쓸 수 있다.</li><li>단위구면에서의 최대와 직교 여공간을 사용해 증명을 재구성할 수 있다.</li><li>고유기저에서 이차형식과 Rayleigh 몫을 계산하고 범위를 증명할 수 있다.</li></ul></div>
+
+<h2>행렬이 벡터를 다른 방향으로 보내는 문제</h2>
+<p>평면에서 A = [[2, 1], [1, 2]]가 벡터 (2, 1)을 보내는 곳은 (5, 4)입니다. 방향과 길이가 모두 바뀝니다. 그런데 (1, 1)은 (3, 3)으로, (1, −1)은 (1, −1)로 갑니다. 두 특별한 방향을 축으로 잡으면 A의 일은 각 축에서의 배율 3과 1로 설명됩니다. 두 축은 내적 1−1=0으로 서로 수직입니다. 이 예의 패턴을 임의의 차원에 대해 증명하려면 정규직교 고유벡터가 충분히 많아야 합니다.</p>
+<div class="box "><p class="box-k">정리 · 실대칭 스펙트럼 정리</p><p>A가 실수 성분의 n×n 행렬이고 Aᵀ=A이면, 길이가 1이고 서로 직교하는 실수 고유벡터 n개가 존재합니다. 이 벡터들을 열로 둔 Q는 QᵀQ=I인 직교행렬입니다. 대응 고유값을 대각에 놓은 Λ에 대해 QᵀAQ=Λ, A=QΛQᵀ입니다.</p></div>
+<p>Qᵀ는 표준 좌표를 새 기저의 좌표로 바꿉니다. 일반 기저행렬 P에서는 P⁻¹과 Pᵀ가 다를 수 있지만, Q에서는 둘이 같습니다. <a href="la07-2.html">고유기저에서 배율을 읽는 장</a>이 대각화가 가능할 때의 계산을 보여 줬다면, 여기서는 대칭이 그 가능성을 어떻게 보장하는지 봅니다.</p>
+<div class="check" data-q="q1"></div>
+<h2>첫 고유벡터를 보장하는 방법</h2>
+<h3>단위벡터 위에서 최대값을 고른다</h3>
+<p>q(x)=xᵀAx는 실수 한 개를 내는 이차형식입니다. 아무 크기의 벡터를 허용하면 q(cx)=c²q(x)이므로 방향을 비교하기 어렵습니다. 따라서 ‖x‖₂=1인 x만 봅니다. 실수 유한차원의 단위구면은 닫히고 유계여서 콤팩트합니다. 연속함수 q는 그 위에서 최대를 달성하므로, 최대를 달성하는 단위벡터 u를 하나 고를 수 있습니다. 최대값이 양수일 필요는 없습니다. A=−I라면 모든 방향에서 q(u)=−1입니다.</p>
+<h3>u에서 수직 방향으로 조금 돌려 본다</h3>
+<p>임의의 단위벡터 v가 u와 직교한다고 합시다. x(t)=u cos t+v sin t를 놓으면 cos²t+sin²t=1이어서 언제나 단위벡터입니다. t=0이 q(x(t))의 최대이므로 그곳의 미분값이 0입니다. 이차형식을 실제로 전개하면</p>
+<p class="calc">q(x(t)) = cos²t · uᵀAu + sin²t · vᵀAv + 2 sin t cos t · vᵀAu</p>
+<p>가 됩니다. 가운데 섞이는 두 항 uᵀAv와 vᵀAu가 같아지는 곳에서 <strong>대칭</strong>을 썼습니다. t=0에서 첫 두 항의 도함수는 0이고 마지막 항만 2vᵀAu를 남깁니다. 따라서 모든 v⊥u에 대해 vᵀAu=0입니다. Au를 u 방향 성분과 그에 수직인 성분으로 나누면 수직 성분은 0이어야 합니다. 즉 Au=λu이고 λ=uᵀAu입니다.</p>
+<div class="check" data-q="q2"></div><div class="check" data-q="q3"></div>
+<h2>고유벡터 하나에서 공간 전체로</h2>
+<p>u를 찾았어도 남은 벡터를 골라야 합니다. W={z∈ℝⁿ : uᵀz=0}을 u의 <b class="key">직교 여공간</b>이라고 합니다. z가 W에 있으면 uᵀAz=(Au)ᵀz=λuᵀz=0입니다. 따라서 Az도 W에 남습니다. 이 경우 W를 A의 <b class="key">불변 부분공간</b>이라고 부릅니다.</p>
+<p>W에서 정규직교 기저를 고릅니다. W 위에서 작용하는 A의 행렬은 이 기저에서도 대칭입니다. 두 기저벡터 vᵢ, vⱼ로 만든 성분 vᵢᵀAvⱼ와 vⱼᵀAvᵢ가 같기 때문입니다. W의 차원은 n−1이므로 같은 정리를 귀납적으로 적용해 정규직교 고유벡터 n−1개를 고릅니다. 차원 1에서는 1×1 행렬이 이미 대각행렬입니다. 마지막에 u를 붙이면 ℝⁿ 전체의 정규직교 고유기저를 얻습니다. 최대값을 얻는 방향이 여러 개여도 첫 u를 하나 고른 뒤 같은 논증이 성립합니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 160" role="img" aria-label="단위구면에서 최대 방향을 구해 직교 여공간에서 귀납하는 대칭 스펙트럼 정리 증명">
+<rect class="f-box" x="42" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="135" y="61" text-anchor="middle">단위구면의 최대</text><text class="f-s" x="135" y="89" text-anchor="middle">연속인 q(x)=xᵀAx</text><text class="f-s" x="135" y="110" text-anchor="middle">최대 방향 u를 고름</text><line class="f-line" x1="235" y1="84" x2="278" y2="84" marker-end="url(#f-arrow)"/><rect class="f-soft" x="287" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="380" y="61" text-anchor="middle">수직 방향으로 회전</text><text class="f-s" x="380" y="89" text-anchor="middle">모든 v⊥u에서 vᵀAu=0</text><text class="f-s" x="380" y="110" text-anchor="middle">Au가 u 방향에 남음</text><line class="f-line" x1="480" y1="84" x2="523" y2="84" marker-end="url(#f-arrow)"/><rect class="f-box" x="532" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="625" y="61" text-anchor="middle">남은 공간으로</text><text class="f-s" x="625" y="89" text-anchor="middle">A가 u⊥를 보존</text><text class="f-s" x="625" y="110" text-anchor="middle">차원이 1씩 줄어듦</text>
+</svg><figcaption>최대 달성과 차원 감소는 각각 첫 벡터의 존재와 기저 전체의 존재를 보장합니다.</figcaption></figure>
+<div class="check" data-q="q4"></div>
+<h2>방향을 고르면 얻는 값의 범위</h2>
+<p>비영벡터 x를 정규직교 고유벡터 qᵢ의 합 x=Σcᵢqᵢ로 씁니다. 직교성 때문에 xᵀAx=Σλᵢcᵢ²이고 xᵀx=Σcᵢ²입니다. 따라서 <b class="key">Rayleigh 몫</b> R(x)=xᵀAx/(xᵀx)는 λᵢ의 가중평균입니다. 가중치 cᵢ²/Σcⱼ²는 모두 음이 아니고 합이 1입니다. 그러므로 λ<sub>min</sub> ≤ R(x) ≤ λ<sub>max</sub>입니다. 극단값의 고유벡터에서는 등호가 성립합니다. 같은 최대 고유값이 반복되면 그 고유공간 전체의 모든 비영벡터가 최대를 달성합니다.</p>
+<p>첫 행렬의 고유기저 q₊=(1,1)/√2, q₋=(1,−1)/√2를 써 봅시다. x=(2,1)이 이 기저에서 갖는 좌표는 각각 3/√2와 1/√2입니다. 이차형식은 3×9/2+1×1/2=14이고, 노름의 제곱은 9/2+1/2=5입니다. 몫은 14/5=2.8입니다. 표준 좌표로 확인하면 Ax=(5,4)이고 xᵀAx=2×5+1×4=14입니다.</p>
+<pre data-example="python"><code>import numpy as np
+
+matrix = np.array([[2., 1.], [1., 2.]])
+vector = np.array([2., 1.])
+eigenvalues, axes = np.linalg.eigh(matrix)
+coordinates = axes.T @ vector
+direct = vector @ matrix @ vector
+in_basis = eigenvalues @ coordinates**2
+assert np.allclose(axes.T @ axes, np.eye(2))
+assert np.allclose(matrix, axes @ np.diag(eigenvalues) @ axes.T)
+assert np.isclose(direct, in_basis)
+print(&quot;고유값:&quot;, eigenvalues.tolist())
+print(f&quot;이차형식: {direct:.1f}&quot;)
+print(f&quot;Rayleigh 몫: {direct / (vector @ vector):.1f}&quot;)</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>고유값: [1.0, 3.0]
+이차형식: 14.0
+Rayleigh 몫: 2.8</code></pre>
+<p>프로그램에서 고유벡터 한 열의 부호가 바뀌어도 기저는 유효합니다. 그래서 고유벡터의 부호 자체보다 QᵀQ, QΛQᵀ와 이차형식 값을 검사합니다. <code>eigh</code>에 넘기는 행렬이 실제로 대칭이라고 문제에서 보장되어 있는지도 확인합니다.</p>
+<div class="check" data-q="q5"></div><div class="check" data-q="q6"></div>
+<h2>대칭을 빼면 논증의 어디가 멈추는가</h2>
+<p>평면의 90도 회전 A=[[0,−1],[1,0]]에 대해 xᵀAx=0은 모든 x에서 성립합니다. 가령 u=(1,0)에서도 최대 0이지만 Au=(0,1)이라 같은 직선에 있지 않습니다. 전개에서 uᵀAv+vᵀAu의 합은 0이어도 두 항이 각각 0일 이유가 없습니다. 차원이 2인 이 회전의 실수 고유방향은 없습니다. “단위구면에서 최대가 있다”만으로는 스펙트럼 정리가 나오지 않는다는 반례입니다.</p>
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table><thead><tr><th scope="col">어느 줄을 확인하나</th><th scope="col">필요한 조건과 결론</th></tr></thead><tbody><tr><td>최대가 실제로 있는가</td><td>유한차원의 단위구면 위 연속함수라 최대를 달성한다.</td></tr><tr><td>최대 방향이 고유벡터인가</td><td><b class='key'>대칭</b> 덕분에 회전하는 곡선의 도함수 2vᵀAu가 0이다.</td></tr><tr><td>남은 공간에서도 계속되는가</td><td>직교 여공간이 불변이고, 그 위의 행렬도 대칭이다.</td></tr><tr><td>방향의 배율 범위가 어디인가</td><td>Rayleigh 몫은 고유값의 가중평균이다.</td></tr></tbody></table></div>
+
+<h2>참고 자료</h2>
+<ul><li><a href="https://ocw.mit.edu/courses/18-06-linear-algebra-spring-2010/pages/calendar/">MIT 18.06 · 대칭행렬과 양의 정부호</a></li><li><a href="https://linear.axler.net/index.html">Sheldon Axler · Linear Algebra Done Right, 스펙트럼 정리</a></li></ul>
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

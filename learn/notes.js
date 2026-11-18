@@ -6,7 +6,7 @@
         id    : 공부 기록이 저장되는 번호. 장의 <body data-note="...">와 같아야 하고, 한번 정하면 바꾸지 않는다.
         title : 장 제목
         href  : bigdata/ 폴더 기준 경로
-   2) BDA_MAP — 지식 지도(분야 22개, 단원 199개, 선수관계, 경로). tools/build_map.py가 만든다.
+   2) BDA_MAP — 지식 지도(분야·과목·단원·선수관계·경로). tools/build_map.py가 만든다.
 
    홈 목차, 단원 안내, 장의 위치 표시, 이전·다음, 복습이 모두 이 파일에서 만들어진다. */
 
@@ -306,6 +306,20 @@ window.BDA_CHAPTERS = {
     {"id": "NW12-2", "title": "거리 벡터의 갱신식과 무한대까지 세는 문제", "href": "notes/nw/nw12-2.html"},
     {"id": "NW12-3", "title": "BGP가 도달 경로의 길이보다 조직의 정책을 먼저 보는 경우", "href": "notes/nw/nw12-3.html"}
   ],
+  NW13: [
+    {"id": "NW13-1", "title": "유한 큐의 손실을 세고 대기시간을 면적으로 검산하기", "href": "notes/nw/nw13-1.html"},
+    {"id": "NW13-2", "title": "병목을 채우는 윈도와 혼잡 피드백의 공정성", "href": "notes/nw/nw13-2.html"}
+  ],
+  NW14: [
+    {"id": "NW14-1", "title": "수신 조각의 경계와 독립적인 유한 프레임 파서", "href": "notes/nw/nw14-1.html"},
+    {"id": "NW14-2", "title": "반쪽 종료·정상 EOF·응답 전체 마감을 상태에 기록하기", "href": "notes/nw/nw14-2.html"},
+    {"id": "NW14-3", "title": "손실·재정렬·재전송을 앱의 완료 시각까지 이어 보기", "href": "notes/nw/nw14-3.html"}
+  ],
+  NW15: [
+    {"id": "NW15-1", "title": "스위치 루프를 지우는 루트와 포트 역할 계산", "href": "notes/nw/nw15-1.html"},
+    {"id": "NW15-2", "title": "VLAN의 전달 영역과 라우터의 최장 접두사 일치 연결하기", "href": "notes/nw/nw15-2.html"},
+    {"id": "NW15-3", "title": "IPv6 이웃 탐색의 멀티캐스트와 캐시 상태", "href": "notes/nw/nw15-3.html"}
+  ],
   DB01: [
     {"id": "DB01-1", "title": "표, 스키마, 한 행의 의미", "href": "notes/db/db01-1.html"},
     {"id": "DB01-2", "title": "기본 키, 외래 키와 복합 키", "href": "notes/db/db01-2.html"}
@@ -375,6 +389,24 @@ window.BDA_CHAPTERS = {
     {"id": "LA08-1", "title": "특이값 분해로 입력과 출력의 축을 나누기", "href": "notes/la/la08-1.html"},
     {"id": "LA08-2", "title": "유사역행렬로 가장 가깝고 짧은 해 구하기", "href": "notes/la/la08-2.html"},
     {"id": "LA08-3", "title": "저랭크 근사와 PCA의 두 좌표", "href": "notes/la/la08-3.html"}
+  ],
+  LA09: [
+    {"id": "LA09-1", "title": "기저 좌표를 정의하고 서로 다른 좌표계 오가기", "href": "notes/la/la09-1.html"},
+    {"id": "LA09-2", "title": "같은 선형 사상을 다른 행렬로 쓰는 닮음 변환", "href": "notes/la/la09-2.html"},
+    {"id": "LA09-3", "title": "핵의 기저를 확장해 계수–영차원 정리 증명하기", "href": "notes/la/la09-3.html"}
+  ],
+  LA10: [
+    {"id": "LA10-1", "title": "복소 고유값과 대각화 가능 조건", "href": "notes/la/la10-1.html"},
+    {"id": "LA10-2", "title": "일반화 고유벡터와 조르당 사슬 만들기", "href": "notes/la/la10-2.html"},
+    {"id": "LA10-3", "title": "조르당 표준형의 증명과 거듭제곱", "href": "notes/la/la10-3.html"}
+  ],
+  LA11: [
+    {"id": "LA11-1", "title": "실대칭행렬은 왜 직교하는 고유기저를 갖는가", "href": "notes/la/la11-1.html"},
+    {"id": "LA11-2", "title": "양의 정부호를 이차형식과 Cholesky 분해로 판별하기", "href": "notes/la/la11-2.html"}
+  ],
+  LA12: [
+    {"id": "LA12-1", "title": "잔차의 직교성에서 정규방정식과 QR 풀이를 유도하기", "href": "notes/la/la12-1.html"},
+    {"id": "LA12-2", "title": "거의 겹치는 열에서 조건수와 절단 SVD가 알려 주는 것", "href": "notes/la/la12-2.html"}
   ],
   CA01: [
     {"id": "CA01-1", "title": "항을 크게 보낼 때와 두 점을 좁힐 때", "href": "notes/ca/ca01-1.html"},
@@ -853,7 +885,7 @@ window.BDA_SKIP = ["AR01", "AR02", "AR03", "AR04", "AR05", "AR08", "AR09", "AL01
 // ---- 지도 시작 (tools/build_map.py가 만든다. 직접 고치지 않는다)
 window.BDA_MAP = {
   source: "LEARNING_MAP.md",
-  groups: [{"id": "math", "name": "수학", "areas": ["LA", "CA", "PR", "DM", "OP", "AL", "AR"]}, {"id": "data", "name": "데이터와 통계", "areas": ["DA", "ST", "DB"]}, {"id": "ai", "name": "AI와 학습", "areas": ["AI", "ML", "DL", "RL"]}, {"id": "computing", "name": "프로그래밍과 컴퓨터", "areas": ["PY", "CS", "SY"]}, {"id": "network", "name": "네트워크", "areas": ["NW"]}, {"id": "research", "name": "연구 방법", "areas": ["RS", "U"]}, {"id": "applications", "name": "응용과 심화", "areas": ["SP"]}, {"id": "exam", "name": "빅데이터분석기사", "areas": ["BD"]}],
+  groups: [{"id": "math", "name": "수학", "areas": ["LA", "CA", "RA", "PR", "DM", "OP", "AL", "AR"]}, {"id": "data", "name": "데이터와 통계", "areas": ["DA", "ST", "DB"]}, {"id": "ai", "name": "AI와 학습", "areas": ["AI", "ML", "DL", "RL"]}, {"id": "computing", "name": "프로그래밍과 컴퓨터", "areas": ["PY", "CS", "SY"]}, {"id": "network", "name": "네트워크", "areas": ["NW"]}, {"id": "research", "name": "연구 방법", "areas": ["RS", "U"]}, {"id": "applications", "name": "응용과 심화", "areas": ["SP"]}, {"id": "exam", "name": "빅데이터분석기사", "areas": ["BD"]}],
   areas: [
     {"code": "U", "name": "공부·컴퓨터 사용의 출발점", "depth": "입문"},
     {"code": "AR", "name": "산술과 수 감각", "depth": "입문"},
@@ -867,6 +899,7 @@ window.BDA_MAP = {
     {"code": "DB", "name": "데이터베이스와 데이터 처리", "depth": "기초에서 핵심"},
     {"code": "LA", "name": "선형대수", "depth": "기초"},
     {"code": "CA", "name": "미적분과 변화", "depth": "기초"},
+    {"code": "RA", "name": "실해석과 측도", "depth": "전공 심화"},
     {"code": "PR", "name": "확률", "depth": "기초"},
     {"code": "ST", "name": "통계와 실험 설계", "depth": "기초에서 핵심"},
     {"code": "OP", "name": "수치계산·최적화·정보이론", "depth": "기초에서 핵심"},
@@ -924,12 +957,17 @@ window.BDA_MAP = {
     {"id": "DA06", "area": "DA", "title": "데이터 품질", "concepts": "중복·누락·단위 혼동·잘못된 범주, 관측 시점, 정답 정보의 유출", "pre": ["DA02", "PY07"]},
     {"id": "DA07", "area": "DA", "title": "탐색 보고서", "concepts": "정리·집계·분포 비교·그림 선택, 발견과 추측 구분, 변환 기록", "pre": ["DA05", "DA06", "PY11"]},
     {"id": "DA08", "area": "DA", "title": "표본과 시뮬레이션", "concepts": "모집단·표본, 선택 편향, 상관과 인과의 첫 구분, 반복 추출 실험", "pre": ["DA04", "PY04"]},
+    {"id": "DA09", "area": "DA", "title": "데이터를 분석 단위로 설계하기", "concepts": "데이터 생성 과정·관측 단위·반복 측정, 조인 입도·시간 기준, 결측 패턴과 민감도, 데이터 계약 실습", "pre": ["DA07", "DB07", "ST13"]},
+    {"id": "DA10", "area": "DA", "title": "공개 데이터 분석 프로젝트", "concepts": "연구 질문·사전 설정, 원자료 검사, 지표와 기준선, 보류 자료 평가·불확실성, 재실행 보고서와 결과 지적", "pre": ["DA09", "RS06", "RS07", "ML11"]},
     {"id": "DM01", "area": "DM", "title": "집합과 논리", "concepts": "원소·부분집합·합집합·교집합, 명제·and/or/not, 조건과 논리식", "pre": ["AL01"]},
     {"id": "DM02", "area": "DM", "title": "정확한 주장", "concepts": "모든/어떤, 필요·충분조건, 역·대우, 예와 반례, 직접증명·귀류법", "pre": ["DM01"]},
     {"id": "DM03", "area": "DM", "title": "경우의 수", "concepts": "합·곱의 법칙, 순열·조합·이항계수, 중복과 순서의 영향", "pre": ["DM01", "AR02"]},
     {"id": "DM04", "area": "DM", "title": "귀납과 재귀", "concepts": "수학적 귀납법, 재귀 정의, 점화식, 기저 조건", "pre": ["DM02", "PY05"]},
     {"id": "DM05", "area": "DM", "title": "그래프라는 표현", "concepts": "정점·간선·방향·가중치·경로·연결, 트리·사이클, 인접 표현", "pre": ["DM01"]},
     {"id": "DM06", "area": "DM", "title": "증가 속도와 불변식", "concepts": "다항·로그·지수의 성장, 알고리즘 불변식, O 표기의 수학적 뜻", "pre": ["AL07", "DM02"]},
+    {"id": "DM07", "area": "DM", "title": "관계·동치류·부분순서", "concepts": "관계의 성질, 동치류·분할의 양방향 증명, 부분순서와 위상 정렬, 포함관계의 반례", "pre": ["DM01", "DM02", "DM04"]},
+    {"id": "DM08", "area": "DM", "title": "세는 방법과 점화식", "concepts": "포함배제·비둘기집·이중 계수, 일차 점화식의 해와 상·하계, 조합적 증명", "pre": ["DM03", "DM04", "DM06"]},
+    {"id": "DM09", "area": "DM", "title": "정수론과 이산 구조", "concepts": "나눗셈 정리, 유클리드 알고리즘과 Bézout 항등식, 합동류·역원, 그래프 색칠과 이분 그래프", "pre": ["DM05", "DM07", "DM08"]},
     {"id": "CS01", "area": "CS", "title": "알고리즘의 표현", "concepts": "절차·의사코드·입출력·정확성, 추적표, 작은 입력으로 검증", "pre": ["PY05", "DM02"]},
     {"id": "CS02", "area": "CS", "title": "시간과 공간", "concepts": "시간·공간 복잡도, 입력 크기, 측정과 이론의 차이, 병목", "pre": ["CS01", "DM06"]},
     {"id": "CS03", "area": "CS", "title": "순서가 있는 자료구조", "concepts": "배열·연결리스트·스택·큐, 연산 비용, 구현과 추상 자료형", "pre": ["PY06", "CS01"]},
@@ -938,6 +976,11 @@ window.BDA_MAP = {
     {"id": "CS06", "area": "CS", "title": "정렬과 이진 탐색", "concepts": "정렬 기준, 안정성, 비교 정렬의 생각, 정렬 후 검색", "pre": ["CS02", "CS05"]},
     {"id": "CS07", "area": "CS", "title": "그래프 알고리즘", "concepts": "BFS·DFS·최단경로·위상순서, 방문 기록, 자료구조 선택", "pre": ["CS03", "DM05"]},
     {"id": "CS08", "area": "CS", "title": "문제 해결 전략", "concepts": "탐욕·동적 계획법·메모이제이션, 상태 설계, 계산 가능성·NP 문제 입문", "pre": ["CS06", "CS07"]},
+    {"id": "CS09", "area": "CS", "title": "점화식과 알고리즘 복잡도의 증명", "concepts": "점화식 전개·재귀 트리·귀납 상계, 비교 정렬의 결정 트리 하한, 최악·평균·상각 구분", "pre": ["CS06", "DM08", "DM06"]},
+    {"id": "CS10", "area": "CS", "title": "균형 트리와 상각 자료구조", "concepts": "검색 트리 불변식, 회전과 균형 유지, heap과 union–find, 경로 압축과 상각의 예, 무작위 대조 검사", "pre": ["CS05", "CS09", "SY05"]},
+    {"id": "CS11", "area": "CS", "title": "최단경로와 그래프 알고리즘의 정확성", "concepts": "cut과 교환 논증, Dijkstra·Bellman–Ford 전제와 반례, 위상 순서의 최단경로, 최소 신장 트리 검증", "pre": ["CS07", "DM08", "CS09"]},
+    {"id": "CS12", "area": "CS", "title": "최대 유량과 매칭", "concepts": "잔여 간선과 증가 경로, 최대유량-최소컷 정리, 정수 해, 이분 매칭 환원과 병목 문제", "pre": ["CS11", "DM09"]},
+    {"id": "CS13", "area": "CS", "title": "환원과 계산 복잡도", "concepts": "결정 문제와 검증, 다항시간 환원의 방향, SAT·정점 덮개·독립집합 대응 증명, NP-hard와 실제 풀이 구분", "pre": ["CS08", "CS12", "DM02"]},
     {"id": "SY01", "area": "SY", "title": "정보의 표현", "concepts": "이진수·비트 연산, 정수·문자 인코딩, 이미지·소리의 데이터 표현", "pre": ["U03", "AR08"]},
     {"id": "SY02", "area": "SY", "title": "계산하는 기계", "concepts": "CPU·메모리·저장장치·명령, 캐시, 데이터가 이동하는 비용", "pre": ["SY01"]},
     {"id": "SY03", "area": "SY", "title": "프로그램이 실행될 때", "concepts": "소스·컴파일·인터프리트, 실행 파일·프로세스, 언어와 실행 환경", "pre": ["SY02", "PY05"]},
@@ -946,6 +989,11 @@ window.BDA_MAP = {
     {"id": "SY06", "area": "SY", "title": "터미널과 Linux", "concepts": "명령·경로·권한·환경변수·파이프·리다이렉션; 프로세스 관찰은 SY04 뒤 확장", "pre": ["U05", "PY01"]},
     {"id": "SY07", "area": "SY", "title": "Git와 재현 가능한 작업", "concepts": "변경 이력·diff·commit·branch, README·입력·결과 보관, 비밀정보 제외; 환경 기록은 PY09와 연결", "pre": ["U02", "PY01", "SY06"]},
     {"id": "SY08", "area": "SY", "title": "동시성과 성능", "concepts": "경쟁 상태·잠금·비동기·병렬, CPU/GPU 역할, 프로파일링·메모리 사용량", "pre": ["SY04", "SY05", "CS02"]},
+    {"id": "SY09", "area": "SY", "title": "가상 메모리와 캐시", "concepts": "주소 변환·페이지 테이블·TLB, 가상/물리 구분, 캐시 지역성과 충돌, 페이지 교체를 모의해 지연 계산", "pre": ["SY02", "SY05", "CS02"]},
+    {"id": "SY10", "area": "SY", "title": "스레드와 동시성의 불변식", "concepts": "상태 전이와 스케줄, 원자 연산·mutex·조건변수, 생산자/소비자, 교착과 공정성, 실행 순서 열거", "pre": ["SY04", "SY08", "DM06"]},
+    {"id": "SY11", "area": "SY", "title": "입출력과 성능 분석 실습", "concepts": "블로킹/비동기와 버퍼 경계, 지연과 처리량, 캐시/입출력 계측, 실행 순서와 워밍업 효과 대조", "pre": ["SY06", "SY09", "SY10", "NW09"]},
+    {"id": "SY12", "area": "SY", "title": "분산 장애와 일관성 검증", "concepts": "정상 노드 실패 모형, 선형화 가능성 판정, 과반과 장애 후 로그, 논리 시각과 실제 순서, 메모리 모의 실험", "pre": ["SP11", "SY10", "NW12", "DB08"]},
+    {"id": "SY13", "area": "SY", "title": "프로그래밍 언어와 프로그램 증명", "concepts": "귀납적 구문·타입 유도·보존정리, 작은 단계 의미론과 진행, 루프 불변식·종료 증명, 증명과 실행의 대조", "pre": ["SP13", "DM04", "CS13"]},
     {"id": "NW01", "area": "NW", "title": "연결된 컴퓨터", "concepts": "클라이언트·서버·호스트·공유기·LAN·인터넷, 통신의 목적", "pre": ["U03"]},
     {"id": "NW02", "area": "NW", "title": "웹 요청 한 번", "concepts": "URL·HTTP 요청/응답·상태코드·헤더·본문, 브라우저 관찰, API의 뜻", "pre": ["NW01", "U02"]},
     {"id": "NW03", "area": "NW", "title": "패킷과 성능", "concepts": "패킷 교환·계층·캡슐화, 지연·대역폭·처리량·손실, 단위 계산", "pre": ["NW01", "AR06"]},
@@ -961,6 +1009,8 @@ window.BDA_MAP = {
     {"id": "NW13", "area": "NW", "title": "혼잡 제어와 큐 성능", "concepts": "이산 큐의 보존식과 Little의 법칙, RTT와 대역폭-지연 곱, AIMD의 수렴과 한계, 병목 실험", "pre": ["NW11", "NW12", "PR04"]},
     {"id": "NW14", "area": "NW", "title": "TCP 스트림으로 안전한 메시지 읽기", "concepts": "길이 제한 프레이밍·부분 읽기·버퍼 상태, EOF·반쪽 닫기·시간초과, 로컬 상태 기계 검증", "pre": ["NW08", "NW09", "NW11"]},
     {"id": "NW15", "area": "NW", "title": "스위칭과 인터넷 계층의 경계", "concepts": "스패닝 트리·VLAN, 최장 접두부 조회, IPv6 이웃 발견, 프레임과 라우팅의 통합 추적", "pre": ["NW04", "NW07", "NW12"]},
+    {"id": "NW16", "area": "NW", "title": "현대 전송과 HTTP의 연결 모델", "concepts": "HTTP/2 멀티플렉싱과 줄 앞막힘, QUIC 스트림·연결과 TLS, 전송 지연 비교의 조건, 유한 모의실험", "pre": ["NW08", "NW13", "NW14"]},
+    {"id": "NW17", "area": "NW", "title": "네트워크 성능을 측정하고 해석하기", "concepts": "RTT·손실·좋은 처리량 정의, 트래픽/큐의 실험 통제, 분포와 꼬리 지연, 가상 네트워크 관측 보고서", "pre": ["NW13", "NW15", "NW16", "ST13"]},
     {"id": "DB01", "area": "DB", "title": "관계형 데이터", "concepts": "표·행·열·스키마·키, 식별자, 관계의 의미", "pre": ["DA02"]},
     {"id": "DB02", "area": "DB", "title": "SQL 기초", "concepts": "SELECT·WHERE·ORDER BY·GROUP BY·집계, 행과 그룹 구분; 앱에서 쓸 때 매개변수 바인딩", "pre": ["DB01", "DA04"]},
     {"id": "DB03", "area": "DB", "title": "여러 표 연결", "concepts": "JOIN·일대다·다대다, 행 수 변화, NULL, 서브쿼리·윈도 함수 입문", "pre": ["DB02", "DM01"]},
@@ -969,6 +1019,9 @@ window.BDA_MAP = {
     {"id": "DB06", "area": "DB", "title": "외부 데이터 받기", "concepts": "API·JSON·페이지 구조, 요청·응답·인증 정보 관리, 키를 코드·로그에 남기지 않기, 출처·이용 조건", "pre": ["PY07", "PY08", "NW02", "U06"]},
     {"id": "DB07", "area": "DB", "title": "데이터 파이프라인", "concepts": "수집·변환·적재, 배치·스트리밍, 검증·스키마 변화·계보·재실행", "pre": ["DB04", "DB06", "SY07"]},
     {"id": "DB08", "area": "DB", "title": "분산 데이터 입문", "concepts": "복제·분할·일관성·가용성, 장애·재시도·중복, 메시지 큐·CAP의 전제", "pre": ["DB05", "NW06", "SY08"]},
+    {"id": "DB09", "area": "DB", "title": "저장 페이지와 버퍼 관리자", "concepts": "페이지 배치와 레코드 ID, 슬롯·B+트리 분할, 버퍼 고정과 교체, 단위 테스트 가능한 메모리 구현", "pre": ["DB05", "CS10", "SY09"]},
+    {"id": "DB10", "area": "DB", "title": "질의 실행과 최적화의 비용", "concepts": "iterator 연산자, 해시/정렬-병합/중첩 join, 카디널리티 추정, 작은 질의 계획 열거와 측정", "pre": ["DB03", "DB09", "CS09"]},
+    {"id": "DB11", "area": "DB", "title": "트랜잭션 스케줄과 복구", "concepts": "충돌 직렬 가능성·의존 그래프, 격리와 MVCC, WAL·redo/undo, 중단 뒤 상태의 불변식 검증", "pre": ["DB04", "DB09", "SY10"]},
     {"id": "LA01", "area": "LA", "title": "벡터와 차원", "concepts": "스칼라·벡터·성분·좌표, 행/열, 데이터의 특징 수, 벡터 덧셈·스칼라곱", "pre": ["AL03", "AR10"]},
     {"id": "LA02", "area": "LA", "title": "내적과 거리", "concepts": "가중합·내적·노름·거리·직교·사영의 그림, 코사인 유사도는 삼각함수와 연결", "pre": ["LA01", "AL05"]},
     {"id": "LA03", "area": "LA", "title": "행렬의 뜻", "concepts": "행·열·shape, 선형변환, 표와 변환의 다른 관점, 항등행렬", "pre": ["LA01", "AL02"]},
@@ -981,6 +1034,8 @@ window.BDA_MAP = {
     {"id": "LA10", "area": "LA", "title": "복소 고유값과 조르당 표준형", "concepts": "대수적·기하적 중복도, 일반화 고유벡터 사슬, 복소 고유쌍의 실수 표현, 조르당 블록의 거듭제곱", "pre": ["LA07", "LA09", "AL08"]},
     {"id": "LA11", "area": "LA", "title": "스펙트럼 정리와 이차형식", "concepts": "직교 대각화의 증명, Rayleigh 몫, 양의 정부호와 준정부호, Cholesky 분해와 기하", "pre": ["LA07", "LA09", "DM02"]},
     {"id": "LA12", "area": "LA", "title": "최소제곱의 수치 선형대수", "concepts": "정규방정식과 QR의 유도 및 비교, 특이값·조건수, 절단 SVD, 순방향 오차와 잔차, 교란 실습", "pre": ["LA08", "LA11", "OP02", "PY10"]},
+    {"id": "LA13", "area": "LA", "title": "피벗 소거와 직교 반사", "concepts": "PA=LU의 유도, 작은 피벗과 스케일, Householder QR, 부동소수점 오차·연산량 비교", "pre": ["LA05", "LA12", "OP02"]},
+    {"id": "LA14", "area": "LA", "title": "큰 희소 선형계와 반복법", "concepts": "대칭 양의 정부호의 에너지 노름, Krylov 부분공간, conjugate gradient의 직교 조건, 전조건화와 잔차 검증", "pre": ["LA11", "LA13", "OP02"]},
     {"id": "CA01", "area": "CA", "title": "극한과 연속", "concepts": "수열의 접근, 평균변화율, 극한의 직관, 연속과 불연속", "pre": ["AL04", "AL05", "AL09"]},
     {"id": "CA02", "area": "CA", "title": "미분의 뜻", "concepts": "차분몫·미분계수·도함수·접선, 변화율의 단위, 증가·감소·극값", "pre": ["CA01", "AL06"]},
     {"id": "CA03", "area": "CA", "title": "미분 계산과 연쇄법칙", "concepts": "다항·지수·로그의 미분, 합·곱·몫·합성함수, 작은 계산그래프", "pre": ["CA02", "AL07"]},
@@ -989,6 +1044,14 @@ window.BDA_MAP = {
     {"id": "CA06", "area": "CA", "title": "적분의 확장", "concepts": "부분적분·이상적분·다중적분, 변수변환과 적분 범위, 연속확률과 연결", "pre": ["CA05", "CA04"]},
     {"id": "CA07", "area": "CA", "title": "근사와 곡률", "concepts": "Taylor 근사·이계도함수·Hessian, 국소와 전역, 근사오차", "pre": ["CA04", "LA04"]},
     {"id": "CA08", "area": "CA", "title": "시간에 따라 변하는 시스템", "concepts": "차분·미분방정식 입문, 초기조건·고정점·안정성, Euler 수치해", "pre": ["CA03", "AL09"]},
+    {"id": "CA09", "area": "CA", "title": "벡터장과 선적분", "concepts": "곡선의 매개화·방향, 일과 순환의 선적분, 보존장과 경로 독립, Green 정리의 직접 계산", "pre": ["CA04", "CA05", "CA06", "LA02"]},
+    {"id": "CA10", "area": "CA", "title": "곡면과 벡터 적분의 세 정리", "concepts": "곡면 매개화·법선·유속, curl과 발산, Green·Stokes·발산정리의 가정과 적분 방향, 직접 값 대조", "pre": ["CA06", "CA09", "LA02"]},
+    {"id": "CA11", "area": "CA", "title": "상미분방정식과 위상평면", "concepts": "분리형·일차 선형 ODE, 적분인자, 초기값과 유일성, 2차 선형계·고유값·위상평면, 외력과 Laplace 변환", "pre": ["CA08", "LA10", "CA06"]},
+    {"id": "CA12", "area": "CA", "title": "시간 적분의 오차와 안정성", "concepts": "Euler와 중점·Runge–Kutta, 국소/전역 오차와 차수 실험, 선형 안정성 영역과 뻣뻣한 식의 예", "pre": ["CA07", "CA11", "OP02"]},
+    {"id": "RA01", "area": "RA", "title": "실수의 완비성과 수열", "concepts": "상계·상한, 완비성 공리, 단조수렴·부분수열, Cauchy 조건, ε–N 증명과 유리수 반례", "pre": ["CA01", "AL09", "DM02"]},
+    {"id": "RA02", "area": "RA", "title": "연속성과 콤팩트성", "concepts": "ε–δ 연속, 균등 연속, 열린 덮개·수열 콤팩트성, 최대·최소 정리와 평균값 정리의 가정", "pre": ["RA01", "CA02", "DM07"]},
+    {"id": "RA03", "area": "RA", "title": "적분과 함수열의 극한", "concepts": "Riemann 상합·하합, 함수열 점별·균등수렴, 연속과 적분의 교환, 뾰족한 함수열 반례", "pre": ["RA02", "CA05"]},
+    {"id": "RA04", "area": "RA", "title": "측도와 르베그 적분", "concepts": "σ-대수·측도·가측성, 단순함수 적분, 단조·지배수렴, 영집합과 거의 확실한 성질, 확률측도 연결", "pre": ["RA03", "PR06", "DM07"]},
     {"id": "PR01", "area": "PR", "title": "확률의 언어", "concepts": "표본공간·사건·여사건·합사건, 확률과 관측 빈도", "pre": ["DM01", "AR04"]},
     {"id": "PR02", "area": "PR", "title": "조건이 붙는 확률", "concepts": "조건부확률, 확률나무·분할표, 곱셈법칙, 분모가 바뀌는 이유", "pre": ["PR01", "AR07"]},
     {"id": "PR03", "area": "PR", "title": "독립과 베이즈", "concepts": "독립·배반의 차이, 기저율·Bayes 규칙, 증거에 따른 갱신", "pre": ["PR02"]},
@@ -999,6 +1062,10 @@ window.BDA_MAP = {
     {"id": "PR08", "area": "PR", "title": "반복 시행과 극한", "concepts": "난수·시드·경험분포, 대수의 법칙·중심극한정리, 표본평균의 분포", "pre": ["PR04", "PR06", "PY10"]},
     {"id": "PR09", "area": "PR", "title": "조건부 평균", "concepts": "조건부기댓값·전기댓값·전분산, 확률변수 변환, 작은 표에서의 계산", "pre": ["PR07", "PR03"]},
     {"id": "PR10", "area": "PR", "title": "마르코프 연쇄", "concepts": "상태·전이·전이행렬, 여러 단계 이동, 정상분포의 조건과 의미", "pre": ["PR07", "LA04"]},
+    {"id": "PR11", "area": "PR", "title": "연속 확률의 변수변환", "concepts": "누적분포법과 밀도변환, 다변수 Jacobian, 결합/주변/조건부 밀도, 분산과 공분산 유도", "pre": ["PR06", "PR07", "PR09", "CA06"]},
+    {"id": "PR12", "area": "PR", "title": "확률수렴과 극한정리", "concepts": "거의 확실·확률·분포 수렴, Chebyshev로 약한 대수의 법칙 증명, 중심극한정리의 전제·오류와 시뮬레이션", "pre": ["PR08", "PR11", "RA01"]},
+    {"id": "PR13", "area": "PR", "title": "확률과정과 흡수·기대시간", "concepts": "전이행렬·흡수 확률과 평균 도달 시간, Poisson 과정, 여과와 마팅게일의 정의·조건부 기대값 예", "pre": ["PR10", "PR12", "RA04"]},
+    {"id": "PR14", "area": "PR", "title": "집중부등식과 일반화", "concepts": "Markov·Chebyshev·Chernoff/Hoeffding 비교, 모멘트 생성함수의 상계 유도, 유한 클래스 표본복잡도와 실험", "pre": ["PR12", "SP10"]},
     {"id": "ST01", "area": "ST", "title": "무엇을 추정하는가", "concepts": "모집단·표본·관측 단위, 표집·측정 편향·의존성, 기술과 추론", "pre": ["DA08", "PR04"]},
     {"id": "ST02", "area": "ST", "title": "모수와 추정", "concepts": "모수·통계량·추정량·우도·최대우도, 편향·변동, 모형 가정", "pre": ["ST01", "PR05", "AL07"]},
     {"id": "ST03", "area": "ST", "title": "불확실성을 나타내기", "concepts": "표집분포·표준오차·신뢰구간, bootstrap·포괄률, 원자료 산포와 구분", "pre": ["ST02", "PR08", "PY10"]},
@@ -1009,6 +1076,11 @@ window.BDA_MAP = {
     {"id": "ST08", "area": "ST", "title": "실험의 설계", "concepts": "무작위배정·대조군·짝짓기·블록, 교란·통제변수, 인과효과의 첫 구분", "pre": ["ST01", "ST04"]},
     {"id": "ST09", "area": "ST", "title": "베이즈 통계", "concepts": "사전·우도·사후·사후예측, 신용구간, 빈도주의 구간과의 차이", "pre": ["PR03", "ST02"]},
     {"id": "ST10", "area": "ST", "title": "시간·반복 자료", "concepts": "자기상관·정상성·추세·계절성, 반복 측정, 시간순 평가·재표집", "pre": ["ST07", "PR07"]},
+    {"id": "ST11", "area": "ST", "title": "우도·충분통계량·추정량의 성질", "concepts": "충분성의 인수분해, 점수함수와 Fisher 정보, Bernoulli·정규 우도 유도, 편향·일치·표본 크기, 경계 실패", "pre": ["ST02", "PR11", "RA01"]},
+    {"id": "ST12", "area": "ST", "title": "일반화선형모형과 추론", "concepts": "지수족·연결함수, 로지스틱·포아송 GLM 우도, Fisher scoring과 IRLS, 모형 진단과 계수 해석", "pre": ["ST11", "ML05", "LA12"]},
+    {"id": "ST13", "area": "ST", "title": "순열 검정과 부트스트랩", "concepts": "교환가능성, 정확검정과 몬테카를로 순열 p값, 비모수 부트스트랩과 신뢰구간, 쌍·군집 재표집", "pre": ["ST03", "ST04", "PR12", "PY11"]},
+    {"id": "ST14", "area": "ST", "title": "계층 베이즈와 예측 점검", "concepts": "완전/무풀링과 부분 풀링, 수축과 결합 사후, 사후예측 점검·사전 민감도, MCMC 진단과 한계", "pre": ["ST09", "ST11", "OP08"]},
+    {"id": "ST15", "area": "ST", "title": "인과효과의 추정과 민감도", "concepts": "확증 목표 효과와 식별 분리, 표준화·역확률 가중, 겹침과 절단, 민감도 및 보고, 모의 참값 비교", "pre": ["SP04", "ST11", "ST13"]},
     {"id": "OP01", "area": "OP", "title": "컴퓨터 계산의 오차", "concepts": "부동소수점·반올림·상쇄·overflow/underflow, 수치 안정성·오차 확인", "pre": ["SY01", "AR09"]},
     {"id": "OP02", "area": "OP", "title": "안정적으로 계산하기", "concepts": "조건수·선형계 수치해·수치미분·기울기 검산, 정확도와 비용", "pre": ["OP01", "LA05", "CA03"]},
     {"id": "OP03", "area": "OP", "title": "손실과 경사하강", "concepts": "목적함수·변수·제약, min/argmin, 기울기 방향·학습률·반복·종료", "pre": ["AL05", "CA04", "PY10"]},
@@ -1017,12 +1089,18 @@ window.BDA_MAP = {
     {"id": "OP06", "area": "OP", "title": "정규화", "concepts": "L1/L2·벌점과 제약·규모·희소성, MAP 해석은 베이즈 통계 뒤", "pre": ["OP03", "LA02"]},
     {"id": "OP07", "area": "OP", "title": "정보량", "concepts": "자기정보량·entropy·cross-entropy·KL, 압축·예측 손실; 상호정보량은 PR07 뒤 연결", "pre": ["PR03", "PR04", "AL07"]},
     {"id": "OP08", "area": "OP", "title": "표본으로 계산하기", "concepts": "Monte Carlo·중요도추출; 베이즈 MCMC는 ST09, 변분추론·ELBO는 ST09·OP03 뒤 확장", "pre": ["PR09", "PY10", "OP01", "OP07"]},
+    {"id": "OP09", "area": "OP", "title": "볼록 최적화의 쌍대성과 KKT", "concepts": "Lagrangian, 약·강 쌍대성, Slater 조건, KKT의 필요/충분 조건, 쌍대 변수의 민감도와 반례", "pre": ["OP05", "CA04", "LA11"]},
+    {"id": "OP10", "area": "OP", "title": "최적화의 수렴과 스텝 크기", "concepts": "L-smooth·강볼록의 부등식, 경사하강 감소 보장 유도, 조건수·수렴률, 모멘텀과 스텝 크기 비교", "pre": ["OP03", "OP05", "LA11", "CA07"]},
+    {"id": "OP11", "area": "OP", "title": "추정량의 분산을 줄이는 표본계산", "concepts": "Monte Carlo 표준오차 유도, 중요도 표본의 지지 집합, 유효표본크기·자기정규화의 편향, control variate 검증", "pre": ["OP08", "PR12", "RA04"]},
     {"id": "AI01", "area": "AI", "title": "AI의 전체 지도", "concepts": "규칙과 학습, 예측·추론·계획·생성·행동, AI/ML/DL/RL의 관계", "pre": ["U01", "U03"]},
     {"id": "AI02", "area": "AI", "title": "탐색", "concepts": "상태·목표·상태공간, BFS·균일비용·휴리스틱·A*, 완전성·최적성", "pre": ["CS07"]},
     {"id": "AI03", "area": "AI", "title": "제약·논리·계획", "concepts": "제약충족·백트래킹, 지식표현·명제/술어 논리, 행동과 계획", "pre": ["AI02", "DM02"]},
     {"id": "AI04", "area": "AI", "title": "게임과 의사결정", "concepts": "minimax·alpha–beta·expectimax, 게임 트리, MCTS의 입구", "pre": ["AI02", "PR04"]},
     {"id": "AI05", "area": "AI", "title": "불확실한 추론", "concepts": "Bayes network·조건부독립·확률적 추론, 숨은 상태와 HMM", "pre": ["PR09", "DM05", "LA04"]},
     {"id": "AI06", "area": "AI", "title": "합리적 선택", "concepts": "효용·기대효용·정보 가치·순차 의사결정, 관측과 상태의 차이", "pre": ["AI05", "PR04"]},
+    {"id": "AI07", "area": "AI", "title": "확률 그래프 모형에서 변수 제거", "concepts": "인자 분해·합곱·제거 순서, 그래프 폭과 비용, 소거/열거의 정확성 비교, 근사 샘플링과 진단", "pre": ["AI05", "PR09", "CS11"]},
+    {"id": "AI08", "area": "AI", "title": "시간에 따른 상태 추론", "concepts": "전향·후향과 Viterbi의 다른 목적, Kalman 이득 유도, 입자 가중치·재표집과 퇴화, 숨은 궤적 비교", "pre": ["AI07", "SP07", "PR13"]},
+    {"id": "AI09", "area": "AI", "title": "계획 문제의 표현과 평가", "concepts": "결정적 계획의 완전성, 상태·연산자·휴리스틱, 기대효용과 정보 가치, 제약/탐색을 같은 작은 문제에서 비교", "pre": ["AI03", "AI04", "AI06"]},
     {"id": "ML01", "area": "ML", "title": "학습 문제 정의", "concepts": "특성·목표·표본, 지도/비지도/자기지도, 회귀·분류, 학습과 추론", "pre": ["DA02", "AI01"]},
     {"id": "ML02", "area": "ML", "title": "공정한 첫 비교", "concepts": "평균·다수결 기준 모델, train/validation/test, 그룹·시간 분할, 데이터 누출", "pre": ["ML01", "DA06", "PY11"]},
     {"id": "ML03", "area": "ML", "title": "오차와 평가", "concepts": "손실과 지표, MAE/MSE/RMSE, 혼동행렬·정밀도·재현율·F1·ROC/PR, 불균형·임계값", "pre": ["ML02", "AR10"]},
@@ -1035,6 +1113,10 @@ window.BDA_MAP = {
     {"id": "ML10", "area": "ML", "title": "일반화와 모델 선택", "concepts": "과대/과소적합·bias–variance·정규화·교차검증·튜닝·학습 곡선", "pre": ["ML03", "ML08", "ST03"]},
     {"id": "ML11", "area": "ML", "title": "신뢰성과 실패 분석", "concepts": "확률 보정·불확실성·분포 변화·강건성·공정성·특성 중요도의 한계", "pre": ["ML10", "ST04"]},
     {"id": "ML12", "area": "ML", "title": "모델 계열의 확장", "concepts": "Naive Bayes·생성/판별, SVM·kernel, 혼합모형·EM·밀도추정; 각각 별도 장으로 확장", "pre": ["ML05", "LA06", "PR09"]},
+    {"id": "ML13", "area": "ML", "title": "커널과 최대 마진 분류", "concepts": "마진의 기하와 soft margin, SVM 쌍대 및 KKT, PSD Gram 행렬과 kernel trick, 손계산·검증 실습", "pre": ["ML05", "ML12", "OP09", "LA11"]},
+    {"id": "ML14", "area": "ML", "title": "혼합모형과 EM 유도", "concepts": "잠재 할당·혼합 우도, Jensen과 ELBO, E/M 단계·공분산 정규화, 로그우도 추적과 초기값 민감도", "pre": ["ML12", "PR11", "LA11", "OP08"]},
+    {"id": "ML15", "area": "ML", "title": "예측 불확실성과 강건한 평가", "concepts": "보정·proper scoring rule, 조건과 분포 이동, split conformal의 교환가능성, 그룹별 오류와 실패 기록", "pre": ["ML11", "ST13", "PR12"]},
+    {"id": "ML16", "area": "ML", "title": "기계학습 비교 프로젝트", "concepts": "고정 분할과 중첩 선택, 기준/대안 모델·동일 입력 검증, 지표와 표본 변동, 재실행 가능한 실험 보고서", "pre": ["ML13", "ML14", "ML15", "RS12"]},
     {"id": "DL01", "area": "DL", "title": "작은 신경망", "concepts": "tensor·axis·batch·dtype, 선형층·활성함수·MLP·함수 합성, 입출력 모양", "pre": ["PY10", "LA04", "ML05"]},
     {"id": "DL02", "area": "DL", "title": "신경망의 학습 원리", "concepts": "계산그래프·연쇄법칙·역전파·autograd, 매개변수와 입력의 미분", "pre": ["DL01", "CA04", "OP03"]},
     {"id": "DL03", "area": "DL", "title": "학습 코드", "concepts": "PyTorch·학습루프·데이터 로더·평가모드·저장/복원, Sequential부터 시작; 클래스 기반 모델은 PY12 연결", "pre": ["DL02", "PY09", "ML02"]},
@@ -1045,6 +1127,10 @@ window.BDA_MAP = {
     {"id": "DL08", "area": "DL", "title": "Transformer", "concepts": "위치 정보·잔차·정규화·attention 블록, 토큰·자기회귀·학습목표", "pre": ["DL07", "DL04"]},
     {"id": "DL09", "area": "DL", "title": "생성모형", "concepts": "autoencoder·VAE·GAN·diffusion 개관, 분포·잠재변수·학습목표; VAE 유도는 ST09·OP08 뒤 연결", "pre": ["DL04", "PR06", "OP07"]},
     {"id": "DL10", "area": "DL", "title": "전이와 자기지도", "concepts": "사전학습·미세조정·대조학습·표현 평가, 데이터 규모·추론 효율; Transformer 예제는 DL08, 신뢰성은 ML11 연결", "pre": ["DL04", "ML10"]},
+    {"id": "DL11", "area": "DL", "title": "역전파를 유도하고 구현으로 검증하기", "concepts": "벡터-Jacobian 곱, 선형·활성·정규화 미분, 해석·수치·자동 미분 대조, 초기화·입력 스케일 실험", "pre": ["DL02", "DL03", "LA12", "OP10"]},
+    {"id": "DL12", "area": "DL", "title": "소형 언어모델 종단 실습", "concepts": "토큰화·배치·마스크, 행렬 차원과 next-token loss, 제한된 자료의 훈련/평가, 생성 결과의 오류 분석", "pre": ["DL08", "DL11", "PY11", "RS12"]},
+    {"id": "DL13", "area": "DL", "title": "생성모형의 목적함수와 추론", "concepts": "재구성·KL과 변분 하계, 재매개화, diffusion의 전방 가우시안과 역방향 학습, 설정별 손실/표본 비교", "pre": ["DL09", "DL11", "PR11", "OP11"]},
+    {"id": "DL14", "area": "DL", "title": "표현학습의 평가와 재사용", "concepts": "대조 손실·positive 구성·붕괴, 동결 프로브와 전체 미세조정, 전이 데이터 누출, 증강과 성능 비교", "pre": ["DL10", "DL11", "ML15"]},
     {"id": "RL01", "area": "RL", "title": "행동으로 배우기", "concepts": "에이전트·환경·관측·상태·행동·보상·정책, 경험의 순서", "pre": ["AI01", "PY04"]},
     {"id": "RL02", "area": "RL", "title": "밴딧과 탐험", "concepts": "표본/증분 평균·탐험/활용·ε-greedy, UCB·regret는 로그와 불확실성 뒤", "pre": ["RL01", "PR04", "PY10"]},
     {"id": "RL03", "area": "RL", "title": "장기적인 보상", "concepts": "return·discount·horizon·episode, 즉시 보상과 누적 보상, 종료와 중단", "pre": ["RL01", "PR04", "AL09"]},
@@ -1057,6 +1143,10 @@ window.BDA_MAP = {
     {"id": "RL10", "area": "RL", "title": "정책을 직접 개선", "concepts": "확률적 정책·정책경사·REINFORCE·baseline, 작은 표 정책의 미분", "pre": ["RL06", "PR09", "CA04", "OP03"]},
     {"id": "RL11", "area": "RL", "title": "Actor–Critic", "concepts": "가치와 정책의 역할, advantage·GAE·PPO, 연속행동·TD3/SAC는 선택 심화", "pre": ["RL10", "RL09", "OP07"]},
     {"id": "RL12", "area": "RL", "title": "RL 실험 평가", "concepts": "환경·버전·seed, 학습/평가 분리, 반복·구간추정·상호작용 예산, 보상 설계와 실패", "pre": ["RL07", "ST03", "ML02"]},
+    {"id": "RL13", "area": "RL", "title": "벨만 연산자와 오프폴리시 불안정", "concepts": "할인 최대노름 수축과 고정점, 표 가치반복 오차, 함수근사·부트스트랩·off-policy의 결합 반례", "pre": ["RL05", "RL07", "PR12", "LA11"]},
+    {"id": "RL14", "area": "RL", "title": "정책 경사와 Actor–Critic 유도", "concepts": "로그미분 트릭, 궤적 확률과 반환값, baseline의 무편향, GAE와 PPO 목적의 전제·수치 검증", "pre": ["RL10", "RL11", "RL13"]},
+    {"id": "RL15", "area": "RL", "title": "작은 강화학습 재현 프로젝트", "concepts": "환경·시드·종료와 잘림, DQN 또는 Actor–Critic 구현, 기준 모델·공통 예산, 수익률 구간 및 실패 재현", "pre": ["RL12", "RL14", "RS12", "DL03"]},
+    {"id": "RL16", "area": "RL", "title": "정책을 기록만으로 평가하기", "concepts": "행동 정책의 지지 집합, IS/가중 IS/직접 추정, doubly robust 유도, 분산과 편향 비교 및 오프라인 검증", "pre": ["SP06", "RL13", "ST13"]},
     {"id": "RS01", "area": "RS", "title": "연구 가능한 질문", "concepts": "질문·가설·조작적 정의·가정·측정·반례, 범위를 작은 비교로 줄이기", "pre": ["U01", "DA01"]},
     {"id": "RS02", "area": "RS", "title": "자료와 선행연구", "concepts": "검색어·원문·인용·관련연구·정정, 기술 영어·기호 사전, 출처 기록", "pre": ["U06", "RS01"]},
     {"id": "RS03", "area": "RS", "title": "논문 읽기", "concepts": "문제·기여·방법·그림·근거·한계, 여러 번 읽기, 모르는 선수개념 역추적", "pre": ["RS02", "DA03"]},
@@ -1067,6 +1157,11 @@ window.BDA_MAP = {
     {"id": "RS08", "area": "RS", "title": "자원과 비용", "concepts": "실행시간·CPU/GPU·메모리·프로파일링, 실험 예산·비용 기록", "pre": ["SY08", "RS04"]},
     {"id": "RS09", "area": "RS", "title": "연구 보고서", "concepts": "질문·방법·결과·해석·한계·다음 실험, 재실행 명령·인용·검토 반영", "pre": ["RS05", "RS06", "RS07"]},
     {"id": "RS10", "area": "RS", "title": "연구 윤리와 데이터", "concepts": "데이터 권리·개인정보·동의·허가, 편향·영향, 저자표시·AI 도움 공개", "pre": ["U06", "RS01"]},
+    {"id": "RS11", "area": "RS", "title": "선행연구를 찾고 근거를 기록하기", "concepts": "연구 질문과 검색식, 포함/제외 규칙·중복 제거, 인용 그래프와 출처 확인, 추출 표·검색 재실행", "pre": ["RS02", "RS03", "RS10"]},
+    {"id": "RS12", "area": "RS", "title": "실험 단위와 비교 계획 설계", "concepts": "독립 반복·쌍 비교·군집, 표본 크기와 검정력, 주요 지표와 중단 규칙, ablation을 위한 사전 계획", "pre": ["RS05", "ST08", "ST13"]},
+    {"id": "RS13", "area": "RS", "title": "연구 결과의 불확실성과 증거 합성", "concepts": "효과크기와 신뢰구간, 반복 실험과 집계 단위, 고정효과 가중 결합, 이질성과 선택 보고의 한계", "pre": ["RS06", "RS11", "RS12", "ST11"]},
+    {"id": "RS14", "area": "RS", "title": "재실행 가능한 연구 산출물 만들기", "concepts": "고정한 데이터·코드 버전, 실행 순서와 테스트, 재현 오차 허용 기준, 제한 조건·실패 결과와 재실행 패키지", "pre": ["RS07", "RS09", "RS10", "SY07"]},
+    {"id": "RS15", "area": "RS", "title": "공개 결과를 재현하고 새 가설 검증하기", "concepts": "가설과 예상 결과 사전 정의, 기준 결과 재현, 한 요인 변경·정량 및 반례, 근거에 맞춘 결론과 다음 실험", "pre": ["RS12", "RS13", "RS14"]},
     {"id": "BD01", "area": "BD", "title": "분석 기획", "concepts": "빅데이터 특징·활용, 분석 문제·계획·수집·품질·거버넌스·윤리", "pre": ["DA01", "RS10"]},
     {"id": "BD02", "area": "BD", "title": "데이터 탐색", "concepts": "정제·전처리·변수·기술통계·분포·추론, 공식 문제 표현과 연결", "pre": ["DA07", "ST05"]},
     {"id": "BD03", "area": "BD", "title": "모델링", "concepts": "회귀·분류·군집·특성·학습·모델 선택, 알고리즘 간 비교", "pre": ["ML09", "ML10"]},
@@ -1092,12 +1187,13 @@ window.BDA_MAP = {
     {"id": "start", "name": "공통 출발", "targets": ["U01", "U02", "U03", "U04", "U05", "AR01", "AR02", "AR03", "AR04", "AR05", "AR06", "AR07", "AR10", "PY01", "PY02", "PY03", "PY04", "PY05", "PY06", "PY07", "PY08", "AL01", "AL02", "AL03", "AL04", "AL05", "DA01", "DA02", "DA03", "DA04", "U06", "RS01"]},
     {"id": "analysis", "name": "데이터 분석 실습", "targets": ["PY09", "PY10", "PY11", "DA05", "DA06", "DA07", "DA08"]},
     {"id": "bd", "name": "빅분기", "targets": ["BD01", "BD02", "BD03", "BD04", "BD05"]},
-    {"id": "data", "name": "데이터·통계", "targets": ["DA07", "DB02", "DA08", "ST01", "ST02", "ST03", "ST04", "ST05", "ST06", "ST07", "ST08", "ST09", "ML02", "ML10", "ML11", "RS05", "RS06", "RS07", "RS08", "RS09"]},
-    {"id": "ml", "name": "머신러닝", "targets": ["ML01", "ML02", "ML03", "ML04", "ML05", "ML06", "ML07", "ML08", "ML09", "ML10", "ML11", "ML12"]},
-    {"id": "dl", "name": "AI·딥러닝", "targets": ["AI01", "DL01", "DL02", "DL03", "DL04", "DL05", "DL06", "DL07", "DL08", "DL09", "DL10", "SP01", "SP02", "SP09"]},
-    {"id": "rl", "name": "강화학습", "targets": ["RL01", "RL02", "RL03", "RL04", "RL05", "RL06", "RL07", "RL08", "RL09", "RL10", "RL11", "RL12", "SP06"]},
-    {"id": "nw", "name": "네트워크", "targets": ["NW01", "NW02", "NW03", "NW04", "NW05", "NW06", "NW07", "NW08", "NW09", "NW10", "NW11", "NW12", "NW13", "NW14", "NW15", "DB08", "SP11"]},
-    {"id": "math", "name": "수학 심화", "targets": ["AR01", "AR02", "AR03", "AR04", "AR05", "AR06", "AR07", "AR08", "AR09", "AR10", "AL01", "AL02", "AL03", "AL04", "AL05", "AL06", "AL07", "AL08", "AL09", "DM01", "DM02", "DM03", "DM04", "DM05", "DM06", "LA01", "LA02", "LA03", "LA04", "LA05", "LA06", "LA07", "LA08", "LA09", "LA10", "LA11", "LA12", "CA01", "CA02", "CA03", "CA04", "CA05", "CA06", "CA07", "CA08", "PR01", "PR02", "PR03", "PR04", "PR05", "PR06", "PR07", "PR08", "PR09", "PR10", "OP01", "OP02", "OP03", "OP04", "OP05", "OP06", "OP07", "OP08", "SP10"]}
+    {"id": "data", "name": "데이터·통계", "targets": ["DA01", "DA02", "DA03", "DA04", "DA05", "DA06", "DA07", "DA08", "DA09", "DA10", "ST01", "ST02", "ST03", "ST04", "ST05", "ST06", "ST07", "ST08", "ST09", "ST10", "ST11", "ST12", "ST13", "ST14", "ST15", "DB02", "ML02", "ML10", "ML11", "RS05", "RS06", "RS07", "RS08", "RS09"]},
+    {"id": "ml", "name": "머신러닝", "targets": ["ML01", "ML02", "ML03", "ML04", "ML05", "ML06", "ML07", "ML08", "ML09", "ML10", "ML11", "ML12", "ML13", "ML14", "ML15", "ML16"]},
+    {"id": "dl", "name": "AI·딥러닝", "targets": ["AI01", "AI02", "AI03", "AI04", "AI05", "AI06", "AI07", "AI08", "AI09", "DL01", "DL02", "DL03", "DL04", "DL05", "DL06", "DL07", "DL08", "DL09", "DL10", "DL11", "DL12", "DL13", "DL14", "SP01", "SP02", "SP09"]},
+    {"id": "rl", "name": "강화학습", "targets": ["RL01", "RL02", "RL03", "RL04", "RL05", "RL06", "RL07", "RL08", "RL09", "RL10", "RL11", "RL12", "RL13", "RL14", "RL15", "RL16", "SP06"]},
+    {"id": "nw", "name": "네트워크", "targets": ["NW01", "NW02", "NW03", "NW04", "NW05", "NW06", "NW07", "NW08", "NW09", "NW10", "NW11", "NW12", "NW13", "NW14", "NW15", "NW16", "NW17", "DB08", "SP11"]},
+    {"id": "math", "name": "수학 심화", "targets": ["AR01", "AR02", "AR03", "AR04", "AR05", "AR06", "AR07", "AR08", "AR09", "AR10", "AL01", "AL02", "AL03", "AL04", "AL05", "AL06", "AL07", "AL08", "AL09", "DM01", "DM02", "DM03", "DM04", "DM05", "DM06", "DM07", "DM08", "DM09", "LA01", "LA02", "LA03", "LA04", "LA05", "LA06", "LA07", "LA08", "LA09", "LA10", "LA11", "LA12", "LA13", "LA14", "CA01", "CA02", "CA03", "CA04", "CA05", "CA06", "CA07", "CA08", "CA09", "CA10", "CA11", "CA12", "RA01", "RA02", "RA03", "RA04", "PR01", "PR02", "PR03", "PR04", "PR05", "PR06", "PR07", "PR08", "PR09", "PR10", "PR11", "PR12", "PR13", "PR14", "OP01", "OP02", "OP03", "OP04", "OP05", "OP06", "OP07", "OP08", "OP09", "OP10", "OP11", "SP10"]},
+    {"id": "research", "name": "연구 과제", "targets": ["RS01", "RS02", "RS03", "RS04", "RS05", "RS06", "RS07", "RS08", "RS09", "RS10", "RS11", "RS12", "RS13", "RS14", "RS15"]}
   ]
 };
 // ---- 지도 끝

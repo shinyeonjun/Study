@@ -33,19 +33,22 @@ for line in part.splitlines():
 
 # 관심별 경로: 5절 표의 목표 지점. 앞내용은 화면에서 선수관계를 따라 펼친다.
 def rng(prefix, a, b): return ["%s%02d" % (prefix, i) for i in range(a, b + 1)]
+def track(*area_codes): return [u["id"] for u in units if u["area"] in area_codes]
+
 PATHS = [
     {"id": "start", "name": "공통 출발", "targets": rng("U", 1, 5) + rng("AR", 1, 7) + ["AR10"] + rng("PY", 1, 8) + rng("AL", 1, 5) + rng("DA", 1, 4) + ["U06", "RS01"]},
     {"id": "analysis", "name": "데이터 분석 실습", "targets": rng("PY", 9, 11) + rng("DA", 5, 8)},
     {"id": "bd", "name": "빅분기", "targets": rng("BD", 1, 5)},
-    {"id": "data", "name": "데이터·통계", "targets": ["DA07", "DB02", "DA08"] + rng("ST", 1, 9) + ["ML02", "ML10", "ML11"] + rng("RS", 5, 9)},
-    {"id": "ml", "name": "머신러닝", "targets": rng("ML", 1, 12)},
-    {"id": "dl", "name": "AI·딥러닝", "targets": ["AI01"] + rng("DL", 1, 10) + ["SP01", "SP02", "SP09"]},
-    {"id": "rl", "name": "강화학습", "targets": rng("RL", 1, 12) + ["SP06"]},
-    {"id": "nw", "name": "네트워크", "targets": [u["id"] for u in units if u["area"] == "NW"] + ["DB08", "SP11"]},
-    {"id": "math", "name": "수학 심화", "targets": [u["id"] for u in units if u["area"] in {"AR", "AL", "DM", "LA", "CA", "PR", "OP"}] + ["SP10"]},
+    {"id": "data", "name": "데이터·통계", "targets": track("DA", "ST") + ["DB02", "ML02", "ML10", "ML11"] + rng("RS", 5, 9)},
+    {"id": "ml", "name": "머신러닝", "targets": track("ML")},
+    {"id": "dl", "name": "AI·딥러닝", "targets": track("AI", "DL") + ["SP01", "SP02", "SP09"]},
+    {"id": "rl", "name": "강화학습", "targets": track("RL") + ["SP06"]},
+    {"id": "nw", "name": "네트워크", "targets": track("NW") + ["DB08", "SP11"]},
+    {"id": "math", "name": "수학 심화", "targets": track("AR", "AL", "DM", "LA", "CA", "RA", "PR", "OP") + ["SP10"]},
+    {"id": "research", "name": "연구 과제", "targets": track("RS")},
 ]
 GROUPS = [
-    {"id": "math", "name": "수학", "areas": ["LA", "CA", "PR", "DM", "OP", "AL", "AR"]},
+    {"id": "math", "name": "수학", "areas": ["LA", "CA", "RA", "PR", "DM", "OP", "AL", "AR"]},
     {"id": "data", "name": "데이터와 통계", "areas": ["DA", "ST", "DB"]},
     {"id": "ai", "name": "AI와 학습", "areas": ["AI", "ML", "DL", "RL"]},
     {"id": "computing", "name": "프로그래밍과 컴퓨터", "areas": ["PY", "CS", "SY"]},

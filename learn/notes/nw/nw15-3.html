@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>IPv6 이웃 탐색의 멀티캐스트와 캐시 상태 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e8c'/%3E%3Cpath d='M8 22V10m8 12V14m8 8V6' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="NW15-3">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+
+<header class="chapter">
+<p class="chap-sub">네트워크 · NW15 스위칭·분할·IPv6 이웃 탐색</p>
+<p class="chap-num">NW15·3</p>
+<h1>IPv6 이웃 탐색의 멀티캐스트와 캐시 상태</h1>
+<p class="lead">라우팅에서 다음 홉을 골랐어도 그 링크의 프레임을 만들 주소가 필요합니다. IPv6의 이웃에게 묻는 주소와 캐시의 진행을 계산합니다.</p>
+</header>
+
+<div class="goal">
+<h2>이 장을 읽고 나면</h2>
+<ul>
+<li>IPv6의 최종 목적지와 현재 링크에서 찾는 이웃을 구분한다.</li>
+<li>solicited-node IPv6 그룹과 해당 Ethernet 멀티캐스트 주소를 계산한다.</li>
+<li>이웃의 주소가 캐시에 있는 상태와 최근 도달이 확인된 상태를 구분한다.</li>
+</ul>
+</div>
+
+<h2>IP에서 정한 다음 홉을 링크 계층 주소로 대응합니다</h2>
+<p>한 링크에서 직접 전달할 IPv6 주소는 목적지 자체일 수도, 다른 링크로 넘길 라우터일 수도 있습니다. 이웃 탐색(<b class="key">Neighbor Discovery</b>, ND)은 IPv6가 ICMPv6 메시지로 라우터와 이웃에 대한 정보를 얻는 기능입니다. <b>주소 해석</b>을 할 때는 앞 장에서 고른 다음 홉과 출구 링크가 먼저 필요합니다. 멀리 있는 주소를 보낼 때 그 먼 상대의 MAC을 같은 링크에 묻는 절차는 아닙니다. 링크 로컬 주소로 next hop을 쓰면 어느 출구 인터페이스의 주소인지 구분합니다.</p>
+<p>예를 들어 가상 Ethernet 링크의 다음 홉은 <code>fe80::2a3b:4c5d</code>입니다. 출발 주소가 정해진 일반 주소 해석에서 <b>Neighbor Solicitation</b>(NS)에는 이 주소 전체가 질의 대상 필드로 들어갑니다. 초기 질의의 IPv6 목적지는 대상의 solicited-node 멀티캐스트 그룹입니다. <code>ff02::1:ff00:0/104</code>에 대상의 하위 24비트 <code>3b:4c:5d</code>를 붙여 <code>ff02::1:ff3b:4c5d</code>를 얻습니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 154" role="img" aria-label="IPv6 주소의 끝 24비트가 멀티캐스트 그룹과 Ethernet 주소의 끝으로 이어짐">
+<rect class="f-box" x="19" y="37" width="214" height="67" rx="3"/>
+<text class="f-t" x="126" y="64" text-anchor="middle">IPv6 이웃</text>
+<text class="f-s" x="126" y="89" text-anchor="middle">fe80::2a3b:4c5d</text>
+<rect class="f-box" x="270" y="37" width="214" height="67" rx="3"/>
+<text class="f-t" x="377" y="64" text-anchor="middle">요청 멀티캐스트</text>
+<text class="f-s" x="377" y="89" text-anchor="middle">ff02::1:ff3b:4c5d</text>
+<rect class="f-box" x="521" y="37" width="214" height="67" rx="3"/>
+<text class="f-t" x="628" y="64" text-anchor="middle">Ethernet 목적지</text>
+<text class="f-s" x="628" y="89" text-anchor="middle">33:33:ff:3b:4c:5d</text>
+<line class="f-ink" x1="233" y1="72" x2="266" y2="72" marker-end="url(#f-arrow)"/>
+<line class="f-ink" x1="484" y1="72" x2="517" y2="72" marker-end="url(#f-arrow)"/>
+<text class="f-s" x="380" y="134" text-anchor="middle">끝 세 바이트 3B · 4C · 5D</text>
+</svg>
+<figcaption>solicited-node 그룹에는 IPv6 이웃 주소의 끝 24비트가 들어갑니다. 이를 Ethernet으로 옮길 때 그룹의 끝 32비트를 사용합니다.</figcaption>
+</figure>
+<p>IPv6 멀티캐스트를 Ethernet에 옮길 때는 <code>33:33</code> 뒤에 IPv6 멀티캐스트 주소의 하위 32비트를 붙입니다. 이번 그룹의 하위 32비트가 <code>ff:3b:4c:5d</code>라서 요청 프레임의 MAC은 <code>33:33:ff:3b:4c:5d</code>입니다. 이 값은 요청을 듣는 그룹의 주소입니다. 응답의 내용에서 실제 이웃의 링크 계층 주소를 확인합니다. 서로 다른 IPv6 주소가 하위 24비트를 공유할 수 있으므로 그룹에 속했다고 모두 같은 이웃인 것은 아닙니다.</p>
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+<div class="check" data-q="q3"></div>
+<h2>지금 주소를 아는 것과 최근 도달을 확인한 것을 나눕니다</h2>
+<p>대상 주소의 MAC을 아직 찾지 못해 해석 중인 캐시는 <b class="key">INCOMPLETE</b>입니다. 대상에서 온 유효한 응답 <b>Neighbor Advertisement</b>(NA)로 주소 정보와 요청에 대한 도달성이 확인되면 REACHABLE로 바뀔 수 있습니다. 시간이 흘러 최근성 기준을 넘으면 주소를 저장한 채 STALE이 됩니다. STALE 항목을 보낼 때는 그 주소를 사용하면서 DELAY 상태에서 상위 계층 등의 확인을 잠시 기다릴 수 있습니다. 더 최근의 확인이 없으면 PROBE 상태에서 알고 있는 이웃에게 직접 도달을 다시 검사합니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 169" role="img" aria-label="20초 이후 STALE, 22초에 사용하면 DELAY, 27초 PROBE">
+<text class="f-s" x="130" y="28" text-anchor="middle">경과 시각</text>
+<text class="f-s" x="352" y="28" text-anchor="middle">캐시 상태</text>
+<text class="f-s" x="581" y="28" text-anchor="middle">계기</text>
+<rect class="f-box" x="27" y="38" width="706" height="24" rx="3"/>
+<text class="f-t" x="130" y="55" text-anchor="middle">0초</text>
+<text class="f-t" x="352" y="55" text-anchor="middle">REACHABLE</text>
+<text class="f-s" x="581" y="55" text-anchor="middle">응답으로 확인</text>
+<rect class="f-box" x="27" y="68" width="706" height="24" rx="3"/>
+<text class="f-t" x="130" y="85" text-anchor="middle">21초</text>
+<text class="f-t" x="352" y="85" text-anchor="middle">STALE</text>
+<text class="f-s" x="581" y="85" text-anchor="middle">최근 확인 시각 오래됨</text>
+<rect class="f-box" x="27" y="98" width="706" height="24" rx="3"/>
+<text class="f-t" x="130" y="115" text-anchor="middle">22초</text>
+<text class="f-t" x="352" y="115" text-anchor="middle">DELAY</text>
+<text class="f-s" x="581" y="115" text-anchor="middle">캐시 사용, 확인 대기</text>
+<rect class="f-soft" x="27" y="128" width="706" height="24" rx="3"/>
+<text class="f-t" x="130" y="145" text-anchor="middle">27초</text>
+<text class="f-t" x="352" y="145" text-anchor="middle">PROBE</text>
+<text class="f-s" x="581" y="145" text-anchor="middle">직접 가 닿는지 재검사</text>
+</svg>
+<figcaption>이 예의 확인 유지 기준은 20초, 확인 대기 간격은 5초입니다. 실제 구현은 최근 확인 시각과 타이머를 따로 관리할 수 있습니다.</figcaption>
+</figure>
+<p>이 예에서는 t=0에 도달을 확인하고 유지 기준 20초 뒤부터 STALE로 봅니다. t=22에 사용하면 DELAY를 시작하고 5초가 지나도록 별도 확인이 없을 때 t=27에 PROBE로 넘어갑니다. 실제 ND에서 사용되는 시간, 응답 조건과 갱신은 여러 사건에 따릅니다. IPv6의 로컬 링크 판단은 주소 모양만으로 일반화하지 않고, 라우터 광고에서 얻은 on-link 정보나 별도 경로를 확인합니다.</p>
+<div class="check" data-q="q4"></div>
+<div class="check" data-q="q5"></div>
+<div class="check" data-q="q6"></div>
+<h2>주소 비트와 캐시 시각을 각각 계산합니다</h2>
+<pre data-example="python"><code>from ipaddress import IPv6Address
+
+target = IPv6Address(&quot;fe80::2a3b:4c5d&quot;)
+low24 = int(target) &amp; ((1 &lt;&lt; 24) - 1)
+base = int(IPv6Address(&quot;ff02::1:ff00:0&quot;))
+group = IPv6Address(base | low24)
+low32 = int(group) &amp; ((1 &lt;&lt; 32) - 1)
+mac = bytes.fromhex(&quot;3333&quot;) + low32.to_bytes(4, &quot;big&quot;)
+print(&quot;low 24:&quot;, f&quot;{low24:06x}&quot;)
+print(&quot;solicited node:&quot;, group)
+print(&quot;Ethernet multicast:&quot;, mac.hex(&quot;:&quot;))
+
+confirmed = 0
+fresh_seconds = 20
+used = 22
+wait = 5
+print(&quot;at 21:&quot;, &quot;STALE&quot; if 21-confirmed &gt;= fresh_seconds else &quot;REACHABLE&quot;)
+print(&quot;DELAY starts:&quot;, used, &quot;PROBE starts:&quot;, used + wait)</code></pre>
+<pre data-output><code>low 24: 3b4c5d
+solicited node: ff02::1:ff3b:4c5d
+Ethernet multicast: 33:33:ff:3b:4c:5d
+at 21: STALE
+DELAY starts: 22 PROBE starts: 27</code></pre>
+<p>이 코드는 문자열에서 비트를 계산합니다. VLAN별 링크 영역은 <a href="nw15-2.html">앞 장의 브리지 범위</a>에서 정한 뒤, 그 출구에서만 이웃을 찾습니다.</p>
+
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table>
+<thead><tr><th scope="col">핵심어</th><th scope="col">기억할 기준</th></tr></thead>
+<tbody>
+<tr><td><b class="key">주소 해석</b></td><td>출구 링크에서 다음 홉의 링크 계층 주소 확인</td></tr>
+<tr><td><b class="key">solicited-node 그룹</b></td><td>대상 IPv6의 하위 24비트를 포함하는 멀티캐스트 주소</td></tr>
+<tr><td><b class="key">Ethernet 멀티캐스트</b></td><td>33:33 뒤에 IPv6 그룹의 하위 32비트를 사용</td></tr>
+<tr><td><b class="key">이웃 상태</b></td><td>주소 보유와 최근 도달 확인을 별도로 관리</td></tr>
+</tbody></table></div>
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>다음 홉의 IP와 출구 링크를 먼저 고르고, 그 링크에서 MAC과 도달 상태를 각각 확인합니다.</p></div>
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://www.rfc-editor.org/rfc/rfc4861.html">IETF RFC 4861 · IPv6 이웃 탐색</a></li>
+<li><a href="https://www.rfc-editor.org/rfc/rfc4291.html">IETF RFC 4291 · IPv6 주소와 solicited-node 그룹</a></li>
+<li><a href="https://www.rfc-editor.org/rfc/rfc2464.html">IETF RFC 2464 · Ethernet과 IPv6 멀티캐스트 매핑</a></li>
+<li><a href="https://www.rfc-editor.org/rfc/rfc5942.html">IETF RFC 5942 · 주소 할당과 IPv6 on-link 판단</a></li>
+</ul>
+
+<h2>확인 문제</h2>
+<p>아직 풀지 않은 문제입니다. 먼저 식이나 근거를 적어 보고 해설을 확인합니다.</p>
+<div id="quiz"></div>
+
+<section class="work" id="tools"></section>
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

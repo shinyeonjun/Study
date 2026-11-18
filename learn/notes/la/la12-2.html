@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>거의 겹치는 열에서 조건수와 절단 SVD가 알려 주는 것 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="LA12-2">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">선형대수 · 수치 선형대수</p>
+<p class="chap-num">LA12·2</p>
+<h1>거의 겹치는 열에서 조건수와 절단 SVD가 알려 주는 것</h1>
+<p class="lead">잔차가 0이어도 계수는 크게 틀릴 수 있습니다. 거의 같은 두 열을 가진 자료에서 입력이 작게 변하면 추정값이 얼마나 달라지는지 보고, 알고리즘의 반올림 문제와 자료 자체의 민감도를 따로 계산합니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>특잇값으로 2-노름 조건수와 정규방정식의 조건수를 유도할 수 있다.</li><li>작은 입력 교란이 계수와 잔차에 주는 영향을 별도로 측정할 수 있다.</li><li>절단 SVD가 보존하는 방향과 버리는 정보의 비용을 설명할 수 있다.</li></ul></div>
+
+<h2>두 열을 거의 넘겨 쓴 자료</h2>
+<p>다음 행렬이 계수 x=(x₁,x₂)에서 길이 3인 관측을 만든다고 합시다. 세 번째 측정은 모형에서 항상 0입니다. 두 번째 측정은 매우 작은 숫자 ε만큼 약하게 x₂를 읽습니다.</p>
+<div class="table-wrap"><table><thead><tr><th scope="col">행</th><th scope="col">첫째 열</th><th scope="col">둘째 열</th><th scope="col">측정하는 양</th></tr></thead><tbody><tr><td>1</td><td>1</td><td>1</td><td>x₁+x₂</td></tr><tr><td>2</td><td>0</td><td>ε</td><td>εx₂</td></tr><tr><td>3</td><td>0</td><td>0</td><td>0</td></tr></tbody></table></div>
+<p>ε&gt;0이면 두 열은 독립입니다. b=(2,ε,0)일 때 두 번째 식에서 x₂=1, 첫 식에서 x₁=1입니다. b를 (2,2ε,0)으로 바꾸면 x=(0,2)입니다. 관측의 차이는 (0,ε,0)으로 작아도 계수의 두 성분은 각각 1만큼 움직였습니다. 양쪽은 각자 주어진 b와 정확히 맞아서 잔차가 0입니다.</p>
+<p>‖새 계수−원래 계수‖₂/‖원래 계수‖₂=√2/√2=1입니다. 입력의 상대 변화는 ε/√(4+ε²)입니다. 해의 변화는 계산기가 틀려서가 아니라 정확한 수식에서도 생깁니다. 이처럼 입력에 들어간 변화에 결과가 얼마나 민감한지는 문제의 <b class="key">조건</b>입니다. 실제 알고리즘이 그 문제를 어떤 숫자 오차로 푸는지는 별도로 살핍니다.</p>
+<div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
+<h2>변환에서 가장 약한 방향을 특잇값으로 찾기</h2>
+<p>열 독립인 A의 얇은 SVD를 A=UΣVᵀ로 씁니다. 오른쪽 특이벡터 vᵢ에 A를 적용하면 왼쪽 특이벡터 uᵢ에 양의 특잇값 σᵢ가 곱해집니다. 관측에서 vᵢ 방향의 계수를 복구할 때는 uᵢ 방향 관측을 σᵢ로 나눕니다. 같은 크기의 관측 변화가 들어오면 σᵢ가 가장 작은 방향에서 계수 변화가 가장 큽니다.</p>
+<p>최대·최소 특잇값이 σ₁, σₙ일 때 <b class="key">2-노름 조건수</b> κ₂(A)=σ₁/σₙ은 최대 늘어남과 최소 늘어남의 비입니다. 정확히 b=Ax였던 경우, 관측을 Δb만큼 바꾸어 최소제곱으로 다시 풀면 Δx=A⁺Δb입니다. ‖Δx‖≤‖Δb‖/σₙ이고 ‖b‖≤σ₁‖x‖이어서, x와 b가 0이 아닐 때 상대 오차를 나누면 다음 상계를 얻습니다.</p>
+<p class="calc">‖Δx‖₂/‖x‖₂ ≤ κ₂(A) · ‖Δb‖₂/‖b‖₂</p>
+<p>이 상계는 여기서 A가 고정이고 원래 b가 열공간 안에 있다는 조건으로 얻었습니다. A도 측정 오차가 있거나 원래 b가 열공간 밖에 있는 일반 최소제곱에서는 잔차와 A의 오차를 따로 분석해야 합니다.</p>
+<div class="check" data-q="q3"></div>
+<h2>정규방정식에서 조건수가 제곱되는 이유</h2>
+<p>AᵀA=VΣᵀUᵀUΣVᵀ=VΣ²Vᵀ입니다. 얇은 U의 열이 직교하고 단위 길이라 UᵀU=I입니다. 따라서 AᵀA의 고유값은 σᵢ²입니다. 이 행렬은 양의 정부호라 특잇값과 양의 고유값이 같고, 조건수는</p>
+<p class="calc">κ₂(AᵀA) = σ₁²/σₙ² = κ₂(A)²</p>
+<p>입니다. A에 직접 QR이나 SVD를 적용하면 AᵀA의 형성에서 생기는 정보 손실을 피할 수 있습니다. A 자체의 민감도는 그 방법으로도 남습니다. 이 차이는 ε=10⁻⁸인 예에서 눈에 띕니다. 손으로는 AᵀA=[[1,1],[1,1+10⁻¹⁶]]이고 가역입니다. IEEE 754 배정밀도의 1 바로 위 수까지 간격은 약 2.22×10⁻¹⁶입니다. 10⁻¹⁶은 그 간격의 절반보다 작으므로 1+10⁻¹⁶을 가장 가까운 수로 반올림하면 1입니다. 계산된 정규방정식 행렬은 두 열이 똑같아, 정확한 수식과 달리 특이가 됩니다.</p>
+<div class="check" data-q="q4"></div><div class="check" data-q="q5"></div>
+<h2>어느 방향까지 자료를 믿을지 정한다</h2>
+<p><b class="key">절단 SVD</b>는 정해 둔 임계값 아래의 σᵢ 방향을 복구에서 뺍니다. 모든 성분을 나누어 복구하는 대신, 충분히 큰 σᵢ에 대한 (uᵢᵀb/σᵢ)vᵢ만 더합니다. 근사 종속 예에서 큰 방향은 거의 (1,1)/√2이며 작은 방향은 거의 (−1,1)/√2입니다. 큰 방향만 남기면 x₁+x₂≈2라는 정보는 살고, 두 계수의 차이는 구분하기 어렵다는 점을 반영해 두 값이 거의 1이 됩니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 160" role="img" aria-label="작은 특잇값 방향을 제외하면 분산과 약한 신호가 함께 줄어드는 절단 SVD">
+<rect class="f-box" x="42" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="135" y="61" text-anchor="middle">약한 관측</text><text class="f-s" x="135" y="89" text-anchor="middle">작은 σᵢ 방향의 잡음</text><text class="f-s" x="135" y="110" text-anchor="middle">복구 때 1/σᵢ만큼 커짐</text><line class="f-line" x1="235" y1="84" x2="278" y2="84" marker-end="url(#f-arrow)"/><rect class="f-soft" x="287" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="380" y="61" text-anchor="middle">기준을 선택</text><text class="f-s" x="380" y="89" text-anchor="middle">σᵢ가 작은 방향을 제외</text><text class="f-s" x="380" y="110" text-anchor="middle">검증·자료 해상도로 판단</text><line class="f-line" x1="480" y1="84" x2="523" y2="84" marker-end="url(#f-arrow)"/><rect class="f-box" x="532" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="625" y="61" text-anchor="middle">비용을 확인</text><text class="f-s" x="625" y="89" text-anchor="middle">계수의 흔들림 감소</text><text class="f-s" x="625" y="110" text-anchor="middle">작은 방향의 신호도 손실</text>
+</svg><figcaption>임계값을 올리면 모든 문제에서 더 정확해진다는 보장은 없습니다.</figcaption></figure>
+<p>자료를 정확한 모형으로부터 얻었고 작은 방향도 실제 신호라면, 버린 방향만큼 계수가 치우칩니다. 그래서 허용 가능한 측정 오차, 단위의 크기, 예측으로 필요한 정밀도, 외부 검증에서의 성능을 보고 임계값을 정합니다. 이 예에서는 비교를 위해 상대 기준 10⁻⁶을 사용합니다.</p>
+<div class="check" data-q="q6"></div>
+<h2>같은 관측으로 세 가지 결과를 분리한다</h2>
+<pre data-example="python"><code>import numpy as np
+
+epsilon = 1e-8
+design = np.array([[1., 1.], [0., epsilon], [0., 0.]])
+rhs = np.array([2., epsilon, 0.])
+perturbed = np.array([2., 2 * epsilon, 0.])
+_, singular, _ = np.linalg.svd(design, full_matrices=False)
+full, _, rank, _ = np.linalg.lstsq(design, perturbed, rcond=None)
+reduced, _, keep, _ = np.linalg.lstsq(design, perturbed, rcond=1e-6)
+gram = design.T @ design
+
+assert np.array_equal(gram, np.ones((2, 2)))
+assert np.allclose(design @ full, perturbed, atol=1e-14, rtol=1e-12)
+assert np.allclose(np.linalg.lstsq(design, rhs, rcond=None)[0], [1., 1.])
+assert rank == 2 and keep == 1
+assert np.allclose(reduced, [1., 1.])
+
+print(f&quot;원래 행렬 조건수: {singular[0] / singular[-1]:.2e}&quot;)
+print(f&quot;정확한 정규방정식 조건수: {(singular[0] / singular[-1]) ** 2:.2e}&quot;)
+print(&quot;부동소수점에서 열 곱:&quot;, gram.tolist())
+print(f&quot;두 방향 유지: {(0. if abs(full[0]) &lt; 1e-8 else full[0]):.1f}, {full[1]:.1f}&quot;)
+print(f&quot;한 방향 유지: {reduced[0]:.1f}, {reduced[1]:.1f}&quot;)</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>원래 행렬 조건수: 2.00e+08
+정확한 정규방정식 조건수: 4.00e+16
+부동소수점에서 열 곱: [[1.0, 1.0], [1.0, 1.0]]
+두 방향 유지: 0.0, 2.0
+한 방향 유지: 1.0, 1.0</code></pre>
+<p>두 번째 줄은 반올림된 <code>gram</code>의 조건수를 재서 낸 값이 아닙니다. 원래 A에 대한 특잇값의 비를 제곱해 얻은 이론적 조건수의 근삿값입니다. 원래 A의 열 독립성, 표현에서 반올림된 열 곱의 특이성, 작은 방향을 의도적으로 제외한 모형 선택은 각각 따로 기록합니다.</p>
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table><thead><tr><th scope="col">결과를 구분하는 질문</th><th scope="col">확인할 값</th></tr></thead><tbody><tr><td>정확한 입력을 조금 바꾸면?</td><td>특잇값·조건수와 입력 대비 계수 변화.</td></tr><tr><td>계산하면서 정보가 없어졌는가?</td><td>AᵀA에서 조건수가 제곱되는 현상과 1+ε²의 반올림.</td></tr><tr><td>약한 방향을 일부러 버려도 되는가?</td><td>절단 기준, 남은 유효 계수 방향, 별도 자료에서의 예측 오차.</td></tr></tbody></table></div>
+
+<h2>참고 자료</h2>
+<ul><li><a href="https://fncbook.com/normaleqns/">Driscoll·Braun · 정규방정식과 조건수</a></li><li><a href="https://github.com/mitmath/18335">MIT 18.335 · 수치 선형대수 강의와 과제</a></li><li><a href="../op/op02-1.html">기존 교재 · 조건수와 작은 잔차</a></li></ul>
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

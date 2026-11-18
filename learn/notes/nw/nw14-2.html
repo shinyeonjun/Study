@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>반쪽 종료·정상 EOF·응답 전체 마감을 상태에 기록하기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e8c'/%3E%3Cpath d='M8 22V10m8 12V14m8 8V6' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="NW14-2">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+
+<header class="chapter">
+<p class="chap-sub">네트워크 · NW14 TCP 스트림 설계와 상태</p>
+<p class="chap-num">NW14·2</p>
+<h1>반쪽 종료·정상 EOF·응답 전체 마감을 상태에 기록하기</h1>
+<p class="lead">쓰기 방향의 종료와 읽기 방향의 종료는 함께 일어날 필요가 없습니다. 타임아웃도 바이트열의 끝과 구별해야 합니다.</p>
+</header>
+
+<div class="goal">
+<h2>이 장을 읽고 나면</h2>
+<ul>
+<li>읽기 방향과 쓰기 방향에서 끝을 나타내는 사건을 구분한다.</li>
+<li>프레임 중간의 EOF와 프레임 사이의 EOF를 구별한다.</li>
+<li>읽기 한 번의 대기 한도와 전체 응답 마감이 다른 결과를 계산한다.</li>
+</ul>
+</div>
+
+<h2>쓰기 방향을 끝내고도 반대 방향에서 응답을 읽을 수 있습니다</h2>
+<p>TCP는 두 방향의 순서 있는 바이트열을 제공합니다. 예를 들어 요청 쪽이 몇 프레임을 쓰고 더 보낼 것이 없음을 정상적으로 알리는 일을 <b class="key">반쪽 종료</b>(half-close)라고 합니다. 이 방향에서 데이터가 끝나도 반대 쪽은 응답을 보낼 수 있습니다. Python 소켓에서 <code>shutdown(SHUT_WR)</code>은 쓰기 방향을 닫는 동작입니다. 일반적으로 이미 보낸 요청이 끝나면 그 방향의 FIN이 오고, 상대는 FIN보다 작은 순서 번호에 해당하는 바이트를 모두 읽은 뒤에 EOF를 읽습니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 166" role="img" aria-label="한쪽 쓰기 종료 후 반대 방향은 응답을 보냄">
+<rect class="f-box" x="32" y="39" width="190" height="71" rx="3"/>
+<text class="f-t" x="127" y="64" text-anchor="middle">요청 쪽</text>
+<text class="f-s" x="127" y="89" text-anchor="middle">내 쓰기는 종료</text>
+<rect class="f-box" x="538" y="39" width="190" height="71" rx="3"/>
+<text class="f-t" x="633" y="64" text-anchor="middle">응답 쪽</text>
+<text class="f-s" x="633" y="89" text-anchor="middle">내 쓰기는 가능</text>
+<line class="f-line" x1="222" y1="55" x2="534" y2="55" marker-end="url(#f-arrow)"/>
+<text class="f-s" x="380" y="43" text-anchor="middle">요청의 마지막 바이트와 종료</text>
+<line class="f-ink" x1="538" y1="94" x2="226" y2="94" marker-end="url(#f-arrow)"/>
+<text class="f-s" x="380" y="120" text-anchor="middle">응답 바이트</text>
+</svg>
+<figcaption>한 방향에서 끝을 알릴 수 있고 반대 방향은 계속 읽을 수 있습니다.</figcaption>
+</figure>
+<p>두 방향을 따로 보면 상태를 <code>(쓰기 가능, 읽기 EOF 수신)</code>처럼 적을 수 있습니다. 요청 쪽이 쓰기를 끝낸 직후에는 (아니오, 아니오)입니다. 응답 쪽에서 오는 마지막 바이트와 EOF를 읽고 나면 (아니오, 예)입니다. EOF 전에 응답 쪽이 프레임 전체를 보냈는지는 앱 규약으로 확인합니다. <code>recv(n)</code>에서 n이 양수이고 정상 끝에서 반환된 빈 바이트 <code>b''</code>는 읽을 스트림의 끝을 뜻합니다. 예외로 보고된 타임아웃이나 연결 오류는 그 신호와 구분합니다.</p>
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+<div class="check" data-q="q3"></div>
+<h2>프레임의 진행 상태에서 EOF를 판정합니다</h2>
+<p>길이 헤더가 본체 3을 설명하고 이미 A,B 두 바이트를 받았는데 읽기 EOF가 오면 기록은 잘렸습니다. ABC를 모두 반환하고 다음 헤더가 비어 있는 상태에서 EOF가 오면 정상 끝입니다. 여기서 EOF가 정상이라는 것은 프레이밍 관점입니다. 앱 규약이 응답 프레임을 반드시 한 개 요구했다면 빈 상태의 EOF라도 ‘응답 누락’을 앱에서 별도로 판정합니다. <a href="nw14-1.html">프레임 파서의 불변식</a>과 앱에서 필요한 응답의 종류를 각각 확인합니다.</p>
+<h2>조금씩 도착해도 총 시간은 늘어날 수 있습니다</h2>
+<p>길이 3인 프레임의 조각이 요청 시작 t=0 뒤 12,31,51 ms에 도착한다고 합시다. 읽을 때마다 25ms만 기다린다면 각각의 대기는 12,19,20ms로 모두 통과합니다. 그래도 마지막 바이트는 시작 51ms 뒤에 도착합니다. 앱의 <b class="key">전체 마감</b>이 45ms라면 프레임을 다 받지 못한 채 시간이 끝납니다. 같은 문제에서 ‘지금부터 몇 초 기다릴지’와 ‘처음부터 정한 시각까지 얼마 남았는지’는 서로 다릅니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 172" role="img" aria-label="프레임 조각 시각 12,31,51ms와 전체 마감 45ms">
+<line class="f-ink" x1="99" y1="94" x2="700" y2="94" marker-end="url(#f-arrow)"/>
+<circle class="f-fill" cx="99" cy="94" r="4"/>
+<text class="f-s" x="99" y="119" text-anchor="middle">0</text>
+<text class="f-s" x="99" y="74" text-anchor="middle">시작</text>
+<circle class="f-fill" cx="231" cy="94" r="4"/>
+<text class="f-s" x="231" y="119" text-anchor="middle">12</text>
+<text class="f-s" x="231" y="50" text-anchor="middle">길이 첫 바이트</text>
+<circle class="f-fill" cx="440" cy="94" r="4"/>
+<text class="f-s" x="440" y="119" text-anchor="middle">31</text>
+<text class="f-s" x="440" y="74" text-anchor="middle">길이 끝 + A</text>
+<circle class="f-fill" cx="594" cy="94" r="4"/>
+<text class="f-s" x="594" y="119" text-anchor="middle">45</text>
+<text class="f-s" x="594" y="50" text-anchor="middle">전체 마감</text>
+<line class="f-dash" x1="594" y1="55" x2="594" y2="95"/>
+<circle class="f-fill" cx="660" cy="94" r="4"/>
+<text class="f-s" x="660" y="119" text-anchor="middle">51</text>
+<text class="f-s" x="660" y="74" text-anchor="middle">B,C</text>
+<text class="f-s" x="385" y="150" text-anchor="middle">간격 12ms, 19ms, 20ms · 총 51ms</text>
+</svg>
+<figcaption>개별 대기 한도 25ms 안에 조각이 계속 와도 전체 마감 45ms까지 프레임이 다 오지 않았습니다.</figcaption>
+</figure>
+<p>진행을 유지하면서 다음 읽기의 최대 시간을 정하려면 현재까지 흐른 시간을 마감 시각에서 뺍니다. 31ms에 일부를 받은 다음에는 마감까지 14ms입니다. 새로 25ms를 전부 주면 원래 마감을 넘길 수 있습니다. 이 장에서는 마감과 같은 시각의 도착은 허용한다고 정합니다. 타임아웃에서 기존 수신 자료를 버릴지, 상태를 보존한 채 더 늦게 재시도할지는 앱 규약과 실패 처리에서 정합니다.</p>
+<div class="check" data-q="q4"></div>
+<div class="check" data-q="q5"></div>
+<div class="check" data-q="q6"></div>
+<h2>가상 시각으로 두 규약을 비교합니다</h2>
+<pre data-example="python"><code>events = [(12, bytes([0])), (31, bytes([3]) + b&quot;A&quot;), (51, b&quot;BC&quot;)]
+
+def outcome(deadline):
+    clock = 0
+    accumulated = b&quot;&quot;
+    for at, fragment in events:
+        stop = clock + 25
+        if deadline is not None:
+            stop = min(stop, deadline)
+        if at &gt; stop:
+            return &quot;timeout&quot;, stop, len(accumulated)
+        accumulated += fragment
+        clock = at
+    size = int.from_bytes(accumulated[:2], &quot;big&quot;)
+    assert len(accumulated[2:]) == size
+    return &quot;complete&quot;, clock, accumulated[2:]
+
+print(&quot;per read only:&quot;, outcome(None))
+print(&quot;with deadline:&quot;, outcome(45))
+for body in (b&quot;ABC&quot;, b&quot;AB&quot;):
+    print(body, &quot;clean EOF&quot; if len(body) == 3 else &quot;truncated at EOF&quot;)</code></pre>
+<pre data-output><code>per read only: ('complete', 51, b'ABC')
+with deadline: ('timeout', 45, 3)
+b'ABC' clean EOF
+b'AB' truncated at EOF</code></pre>
+<p>마감에서 출력한 3은 이미 읽은 전체 바이트 수이며 헤더 2와 본체 1을 포함합니다. 정상 EOF와 잘린 프레임은 길이를 알고 있는 본체의 별도 예입니다. 실제 소켓 관찰은 <a href="nw09-2.html">NW09의 종료·타임아웃</a>에서 기본 반환을 다룹니다.</p>
+
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table>
+<thead><tr><th scope="col">핵심어</th><th scope="col">기억할 기준</th></tr></thead>
+<tbody>
+<tr><td><b class="key">반쪽 종료</b></td><td>한 방향의 쓰기 종료 뒤 반대 방향으로 읽고 쓸 수 있음</td></tr>
+<tr><td><b class="key">EOF</b></td><td>읽기 방향의 끝이며 프레임의 완료 여부는 앱이 판단</td></tr>
+<tr><td><b class="key">읽기별 한도</b></td><td>각 읽기 시작을 기준으로 기다리는 최대 시간</td></tr>
+<tr><td><b class="key">전체 마감</b></td><td>처리가 끝나야 하는 시각을 처음부터 고정</td></tr>
+</tbody></table></div>
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>방향별 종료, 프레임의 완성, 절대 마감 시각을 각각 상태로 기록합니다.</p></div>
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://docs.python.org/3/library/socket.html">Python 공식 문서 · 소켓 읽기·타임아웃·shutdown</a></li>
+<li><a href="https://docs.python.org/3/howto/sockets.html">Python Socket HOWTO · 스트림과 메시지 경계</a></li>
+<li><a href="https://www.rfc-editor.org/rfc/rfc9293.html">IETF RFC 9293 · TCP 순서 공간과 수신 처리</a></li>
+</ul>
+
+<h2>확인 문제</h2>
+<p>아직 풀지 않은 문제입니다. 먼저 식이나 근거를 적어 보고 해설을 확인합니다.</p>
+<div id="quiz"></div>
+
+<section class="work" id="tools"></section>
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

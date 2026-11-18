@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>손실·재정렬·재전송을 앱의 완료 시각까지 이어 보기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e8c'/%3E%3Cpath d='M8 22V10m8 12V14m8 8V6' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="NW14-3">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+
+<header class="chapter">
+<p class="chap-sub">네트워크 · NW14 TCP 스트림 설계와 상태</p>
+<p class="chap-num">NW14·3</p>
+<h1>손실·재정렬·재전송을 앱의 완료 시각까지 이어 보기</h1>
+<p class="lead">손실이 복구돼도 앱이 기다릴 수 있는 시간을 넘겼을 수 있습니다. 가상의 전송 상태와 앱 파서가 각각 어느 시점에 진행하는지 잇습니다.</p>
+</header>
+
+<div class="goal">
+<h2>이 장을 읽고 나면</h2>
+<ul>
+<li>바이트 구간의 순서와 프레임 경계를 구분한다.</li>
+<li>새 ACK와 같은 ACK가 타이머에 미치는 영향을 추적한다.</li>
+<li>같은 전송 완료를 앱의 서로 다른 마감으로 판정한다.</li>
+</ul>
+</div>
+
+<h2>같은 프레임을 다른 구간에서 나눠 보냅니다</h2>
+<p>2바이트 길이와 본체의 규약으로 ‘CAT’(길이 3), ‘OK’(길이 2)를 순서대로 만듭니다. 총 길이는 9이며 전송 구간은 A=[0,3), B=[3,6), C=[6,9)입니다. A에는 첫 길이와 문자 C가 들어 있고, B에는 문자 A,T와 다음 길이의 첫 바이트가 들어 있습니다. C에는 다음 길이의 나머지와 OK가 들어 있습니다. 수신 TCP는 연속으로 받은 접두부만 앱에 내보내고, 앱은 길이와 바이트열로 프레임을 완성합니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 153" role="img" aria-label="9바이트 전체의 A,B,C 구간과 손실된 가운데 B">
+<rect class="f-box" x="79" y="45" width="201" height="55" rx="0"/>
+<text class="f-t" x="179" y="67" text-anchor="middle">A [0,3)</text>
+<text class="f-s" x="179" y="88" text-anchor="middle">00 03 43</text>
+<rect class="f-over" x="280" y="45" width="201" height="55" rx="0"/>
+<text class="f-t" x="380" y="67" text-anchor="middle">B [3,6)</text>
+<text class="f-s" x="380" y="88" text-anchor="middle">41 54 00</text>
+<rect class="f-box" x="481" y="45" width="201" height="55" rx="0"/>
+<text class="f-t" x="581" y="67" text-anchor="middle">C [6,9)</text>
+<text class="f-s" x="581" y="88" text-anchor="middle">02 4F 4B</text>
+<text class="f-s" x="380" y="128" text-anchor="middle">B는 CAT의 끝과 다음 길이의 첫 바이트를 포함</text>
+</svg>
+<figcaption>각 상자의 길이는 3바이트입니다. A,B,C는 프레임 단위가 아니라 전송 조각입니다.</figcaption>
+</figure>
+<p>처음 A,B,C를 모두 보낼 수 있는 창이 있다고 가정합니다. A는 10 ms에, C는 15 ms에 오지만 B는 사라집니다. 수신자는 C를 순서 밖 버퍼에 보관합니다. A로 연속 접두부가 3이 되지만 첫 본체는 한 바이트뿐이므로 앱의 완료 프레임은 0개입니다. C만 도착한 뒤에도 접두부는 3이라 앱에 더 전달하지 않습니다.</p>
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+<div class="check" data-q="q3"></div>
+<h2>확인이 실제로 전진하는지 확인하고 타이머를 갱신합니다</h2>
+<p>초기 송신 시각은 0, 예제의 RTO는 30 ms입니다. 첫 만료 예정은 30입니다. 이 모형에서는 새 바이트를 확인했고 남은 미확인이 있으면 타이머를 다시 시작합니다. t=10의 ACK 3으로 기록이 전진했으므로 새 만료 예정은 10+30=40입니다. t=15의 ACK 3은 같은 번호라 이 예의 타이머를 바꾸지 않습니다. t=40에 가장 앞 미확인 구간 B를 재시도하고 RTO를 두 배로 해 다음 만료를 40+60=100으로 둡니다. t=45에 받은 B는 버퍼의 C와 이어져 ACK를 9로 바꿉니다. 모든 자료가 확인되어 만료 예정도 사라집니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 199" role="img" aria-label="시각 10·15·40·45에서 ACK 3,3, 재전송, ACK 9">
+<line class="f-ink" x1="88" y1="83" x2="675" y2="83" marker-end="url(#f-arrow)"/>
+<circle class="f-fill" cx="88" cy="83" r="4"/>
+<text class="f-s" x="88" y="108" text-anchor="middle">0</text>
+<text class="f-s" x="88" y="68" text-anchor="middle">첫 송신</text>
+<circle class="f-fill" cx="208" cy="83" r="4"/>
+<text class="f-s" x="208" y="108" text-anchor="middle">10</text>
+<text class="f-s" x="208" y="46" text-anchor="middle">A 수락</text>
+<circle class="f-fill" cx="268" cy="83" r="4"/>
+<text class="f-s" x="268" y="108" text-anchor="middle">15</text>
+<text class="f-s" x="268" y="68" text-anchor="middle">C 보관</text>
+<circle class="f-fill" cx="568" cy="83" r="4"/>
+<text class="f-s" x="568" y="108" text-anchor="middle">40</text>
+<text class="f-s" x="568" y="46" text-anchor="middle">B 재전송</text>
+<circle class="f-fill" cx="628" cy="83" r="4"/>
+<text class="f-s" x="628" y="108" text-anchor="middle">45</text>
+<text class="f-s" x="628" y="68" text-anchor="middle">B 수락</text>
+<text class="f-t" x="380" y="151" text-anchor="middle">누적 ACK: 0 → 3 → 3 → 9</text>
+<text class="f-s" x="380" y="175" text-anchor="middle">두 프레임이 완성되는 시각: 45 ms</text>
+</svg>
+<figcaption>0에서 10까지의 첫 새 ACK가 타이머를 바꿉니다. 15의 중복 확인은 만료 시각을 늦추지 않습니다.</figcaption>
+</figure>
+<p>이 모형은 ACK가 수신 시각에 즉시 도달하고, 같은 ACK 한 번으로 빠른 재전송하지 않으며, 두 번째 만료 이전에 복구된다고 둡니다. 실제 TCP의 RTO와 만료 뒤 배가는 <a href="nw11-3.html">NW11의 타이머 편</a>에서 계산했습니다. 여기서는 송신·수신 상태와 연결된 앱의 완료 기준을 보는 것이 목적입니다.</p>
+<div class="check" data-q="q4"></div>
+<div class="check" data-q="q5"></div>
+<div class="check" data-q="q6"></div>
+<h2>전송의 성공과 사용자의 마감을 각각 판정합니다</h2>
+<p>수신 TCP가 t=45에 새 연속 부분 여섯 바이트를 제공하면 앱은 CAT과 OK 두 프레임을 처리할 수 있습니다. 요청이 첫 프레임을 44ms까지 요구했다면 채널의 최종 복구에도 불구하고 앱은 마감을 지키지 못합니다. 마감 46ms면 도착을 기다릴 수 있습니다. 실패로 재시도하는 앱은 원래 상태 변경 요청이 상대에게 이미 도착했을 가능성도 고려해야 합니다. 이 장은 응답 조각만 모의하고 앱이 요청을 처리했는지는 별도 정보로 남깁니다.</p>
+<pre data-example="python"><code>wire = bytes.fromhex(&quot;00 03 43 41 54 00 02 4f 4b&quot;)
+pieces = {&quot;A&quot;: (0, wire[:3]), &quot;B&quot;: (3, wire[3:6]), &quot;C&quot;: (6, wire[6:])}
+pending = {}
+stream = bytearray()
+rto = 30
+expiry = rto
+
+def frames(data):
+    results = []
+    start = 0
+    while start + 2 &lt;= len(data):
+        length = int.from_bytes(data[start:start+2], &quot;big&quot;)
+        end = start + 2 + length
+        if end &gt; len(data):
+            break
+        results.append(bytes(data[start+2:end]))
+        start = end
+    return results
+
+for at, name in [(10, &quot;A&quot;), (15, &quot;C&quot;), (40, &quot;retry&quot;), (45, &quot;B&quot;)]:
+    if name == &quot;retry&quot;:
+        assert at == expiry
+        rto *= 2
+        expiry = at + rto
+        print(at, &quot;retransmit&quot;, &quot;B&quot;, &quot;timer&quot;, expiry)
+        continue
+    begin, piece = pieces[name]
+    previous = len(stream)
+    pending.update({begin+i: v for i, v in enumerate(piece)})
+    while len(stream) in pending:
+        stream.append(pending.pop(len(stream)))
+    ack = len(stream)
+    if ack &gt; previous:
+        expiry = None if ack == len(wire) else at + rto
+    print(at, name, &quot;ACK&quot;, ack, &quot;timer&quot;, expiry, &quot;frames&quot;, frames(stream))
+
+for deadline in (44, 46):
+    print(&quot;application deadline&quot;, deadline, &quot;completed:&quot;, 45 &lt;= deadline)</code></pre>
+<pre data-output><code>10 A ACK 3 timer 40 frames []
+15 C ACK 3 timer 40 frames []
+40 retransmit B timer 100
+45 B ACK 9 timer None frames [b'CAT', b'OK']
+application deadline 44 completed: False
+application deadline 46 completed: True</code></pre>
+<p>코드의 프레임 함수는 정해 둔 9바이트 접두부가 어디까지 완성됐는지를 확인합니다. 프레임을 중복 전달하지 않는 실제 증분 동작과 저장 상한은 <a href="nw14-1.html">앞 장</a>의 파서를 사용합니다. 이 결정적 실행에서는 시각을 직접 적어 모든 사건을 표의 순서와 대조할 수 있습니다.</p>
+
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table>
+<thead><tr><th scope="col">핵심어</th><th scope="col">기억할 기준</th></tr></thead>
+<tbody>
+<tr><td><b class="key">수신 버퍼</b></td><td>앞 번호가 비면 순서 밖 조각을 대기시킴</td></tr>
+<tr><td><b class="key">송신 타이머</b></td><td>새 확인 여부와 미확인 자료 유무에 따라 상태가 바뀜</td></tr>
+<tr><td><b class="key">프레임 완료</b></td><td>연속 스트림에서 길이만큼 본체가 모인 시점</td></tr>
+<tr><td><b class="key">앱의 마감</b></td><td>프레임 완료가 업무상 허용한 시각 안인지 판정</td></tr>
+</tbody></table></div>
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>누적 확인의 전진과 앱의 프레임 완성, 앱의 마감은 같은 사건으로 기록하지 않습니다.</p></div>
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://www.rfc-editor.org/rfc/rfc9293.html">IETF RFC 9293 · TCP 순서 공간과 수신 처리</a></li>
+<li><a href="https://www.rfc-editor.org/rfc/rfc6298.html">IETF RFC 6298 · TCP 재전송 타이머</a></li>
+<li><a href="https://docs.python.org/3/howto/sockets.html">Python Socket HOWTO · 스트림과 메시지 경계</a></li>
+</ul>
+
+<h2>확인 문제</h2>
+<p>아직 풀지 않은 문제입니다. 먼저 식이나 근거를 적어 보고 해설을 확인합니다.</p>
+<div id="quiz"></div>
+
+<section class="work" id="tools"></section>
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>수신 조각의 경계와 독립적인 유한 프레임 파서 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e8c'/%3E%3Cpath d='M8 22V10m8 12V14m8 8V6' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="NW14-1">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+
+<header class="chapter">
+<p class="chap-sub">네트워크 · NW14 TCP 스트림 설계와 상태</p>
+<p class="chap-num">NW14·1</p>
+<h1>수신 조각의 경계와 독립적인 유한 프레임 파서</h1>
+<p class="lead">한 번 읽었을 때 길이의 절반만 오거나, 한 기록의 끝과 다음 기록의 시작을 같이 받을 수 있습니다. 파서가 기억해야 할 상태를 명세합니다.</p>
+</header>
+
+<div class="goal">
+<h2>이 장을 읽고 나면</h2>
+<ul>
+<li>수신 조각이 달라도 동일한 프레임이 나오는 규칙을 적는다.</li>
+<li>길이 헤더를 검사한 뒤 상한을 넘는 본체를 기다리지 않는다.</li>
+<li>상태 불변식과 EOF 조건으로 파서를 검산한다.</li>
+</ul>
+</div>
+
+<h2>스트림 규약의 바이트 순서와 길이 상한을 정합니다</h2>
+<p><a href="nw09-1.html">NW09의 길이 접두어</a>는 TCP 한 방향의 바이트열에서 앱 메시지의 끝을 찾는 방법입니다. 이제 송신과 똑같은 단위로 읽히기를 기대하지 않는 증분 파서를 정의합니다. 합성 규약은 길이 헤더 2바이트를 큰 자리 먼저 읽고, 이어서 헤더가 지정한 수의 본체를 읽습니다. 길이는 본체의 바이트 수입니다. 이 규약의 허용 범위는 1~5 B입니다. 정수 0과 6 이상은 잘못된 길이입니다. 본체의 바이트는 임의여서 내부의 0도 일반 데이터입니다.</p>
+<p>모형의 두 본체는 ASCII ‘OK’와 ‘xyz’입니다. 전체 바이트열은 <code>00 02 4F 4B 00 03 78 79 7A</code>로 9바이트입니다. 이를 한 덩어리로 받든 네 조각 [00], [02 4F], [4B 00 03 78], [79 7A]로 받든 기록열은 똑같습니다. TCP는 읽기의 호출 크기나 수신 이벤트마다 프레임을 완성해 준다는 규약이 없습니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 158" role="img" aria-label="9바이트의 두 프레임과 네 조각 경계">
+<rect class="f-soft" x="69" y="46" width="69" height="33" rx="0"/>
+<text class="f-t" x="103.5" y="68" text-anchor="middle">00</text>
+<text class="f-s" x="103.5" y="102" text-anchor="middle">길이</text>
+<rect class="f-soft" x="138" y="46" width="69" height="33" rx="0"/>
+<text class="f-t" x="172.5" y="68" text-anchor="middle">02</text>
+<text class="f-s" x="172.5" y="102" text-anchor="middle">길이</text>
+<rect class="f-box" x="207" y="46" width="69" height="33" rx="0"/>
+<text class="f-t" x="241.5" y="68" text-anchor="middle">4F</text>
+<text class="f-s" x="241.5" y="102" text-anchor="middle">O</text>
+<rect class="f-box" x="276" y="46" width="69" height="33" rx="0"/>
+<text class="f-t" x="310.5" y="68" text-anchor="middle">4B</text>
+<text class="f-s" x="310.5" y="102" text-anchor="middle">K</text>
+<rect class="f-soft" x="345" y="46" width="69" height="33" rx="0"/>
+<text class="f-t" x="379.5" y="68" text-anchor="middle">00</text>
+<text class="f-s" x="379.5" y="102" text-anchor="middle">길이</text>
+<rect class="f-soft" x="414" y="46" width="69" height="33" rx="0"/>
+<text class="f-t" x="448.5" y="68" text-anchor="middle">03</text>
+<text class="f-s" x="448.5" y="102" text-anchor="middle">길이</text>
+<rect class="f-box" x="483" y="46" width="69" height="33" rx="0"/>
+<text class="f-t" x="517.5" y="68" text-anchor="middle">78</text>
+<text class="f-s" x="517.5" y="102" text-anchor="middle">x</text>
+<rect class="f-box" x="552" y="46" width="69" height="33" rx="0"/>
+<text class="f-t" x="586.5" y="68" text-anchor="middle">79</text>
+<text class="f-s" x="586.5" y="102" text-anchor="middle">y</text>
+<rect class="f-box" x="621" y="46" width="69" height="33" rx="0"/>
+<text class="f-t" x="655.5" y="68" text-anchor="middle">7A</text>
+<text class="f-s" x="655.5" y="102" text-anchor="middle">z</text>
+<line class="f-ink" x1="69" y1="34" x2="69" y2="45"/>
+<line class="f-ink" x1="138" y1="34" x2="138" y2="45"/>
+<line class="f-ink" x1="276" y1="34" x2="276" y2="45"/>
+<line class="f-ink" x1="552" y1="34" x2="552" y2="45"/>
+<line class="f-ink" x1="690" y1="34" x2="690" y2="45"/>
+<text class="f-s" x="103.5" y="28" text-anchor="middle">조각 1</text>
+<text class="f-s" x="207" y="28" text-anchor="middle">조각 2</text>
+<text class="f-s" x="414" y="28" text-anchor="middle">조각 3</text>
+<text class="f-s" x="621" y="28" text-anchor="middle">조각 4</text>
+<text class="f-s" x="380" y="132" text-anchor="middle">같은 바이트열: 길이 2 + OK · 길이 3 + xyz</text>
+</svg>
+<figcaption>각 사각형의 폭은 한 바이트입니다. 위 구분선이 수신 조각, 첫째와 다섯째 바이트가 각각 프레임의 시작입니다.</figcaption>
+</figure>
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+<div class="check" data-q="q3"></div>
+<h2>헤더·본체 중 기다리는 상태를 보존합니다</h2>
+<p>파서에 다음 두 상태를 둡니다. 헤더 상태에서는 아직 본체 길이를 모르므로 길이 바이트 두 개가 모일 때만 판정합니다. 범위에 맞으면 길이를 저장해 본체 상태로 넘어갑니다. 범위를 벗어나면 헤더를 읽은 즉시 오류로 보고합니다. 본체 상태에서는 지금까지 모은 크기를 확인하고, 지정된 수에 정확히 도달하면 기록을 하나 전달한 뒤 다음 헤더 상태로 돌아갑니다. 한 조각에 뒤 프레임의 시작이 섞일 수 있어 남은 바이트에도 같은 동작을 반복합니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 150" role="img" aria-label="두 길이 바이트를 검사한 뒤 필요량만 모아 전달">
+<rect class="f-box" x="20" y="39" width="213" height="62" rx="3"/>
+<text class="f-t" x="126" y="64" text-anchor="middle">길이 2바이트 모으기</text>
+<text class="f-s" x="126" y="85" text-anchor="middle">0·6 이상 거절</text>
+<rect class="f-box" x="271" y="39" width="213" height="62" rx="3"/>
+<text class="f-t" x="377" y="64" text-anchor="middle">본체 길이만큼 모으기</text>
+<text class="f-s" x="377" y="85" text-anchor="middle">이미 읽은 수를 유지</text>
+<rect class="f-box" x="522" y="39" width="213" height="62" rx="3"/>
+<text class="f-t" x="628" y="64" text-anchor="middle">기록 1개 내보내기</text>
+<text class="f-s" x="628" y="85" text-anchor="middle">다음 길이로 초기화</text>
+<line class="f-ink" x1="233" y1="71" x2="266" y2="71" marker-end="url(#f-arrow)"/>
+<line class="f-ink" x1="484" y1="71" x2="517" y2="71" marker-end="url(#f-arrow)"/>
+<text class="f-s" x="380" y="131" text-anchor="middle">필요 바이트가 덜 오면 현재 단계에서 기다림</text>
+</svg>
+<figcaption>완료하지 않은 프레임을 유지할 공간에는 이 규약의 상한이 적용됩니다.</figcaption>
+</figure>
+<p>조각이 끝나도 이전 조각의 미완성 상태를 버리지 않습니다. 증분 처리의 불변식은 ‘지금까지 다 읽은 프레임은 입력 접두부에서 정확히 한 번씩 이어지고, 남은 상태는 다음 미완성 프레임 하나만 나타낸다’입니다. 한 바이트마다 헤더 또는 본체 중 한쪽에만 추가하고, 완료할 때마다 상태를 지우므로 다음 조각에서도 불변식이 유지됩니다. 예제에서 파서가 따로 담아 두는 미완성 자료는 2바이트 헤더 또는 길이 상한 이하의 본체입니다. 호출자가 제공한 입력 조각의 메모리와 이미 반환한 기록은 별도입니다.</p>
+<p>수신 스트림이 끝나면 새 헤더를 읽기 직전처럼 비어 있는 상태에서만 정상 종료입니다. 헤더 한 바이트나 본체 일부가 남아 있으면 맞지 않는 길이의 기록이 아니라 <b class="key">잘린 프레임</b>입니다. 오류 전에 이미 전달한 프레임들의 효과가 되돌아가는 규약은 이 예에 두지 않습니다.</p>
+<div class="check" data-q="q4"></div>
+<div class="check" data-q="q5"></div>
+<div class="check" data-q="q6"></div>
+<h2>모든 바이트를 한 번씩 파서에 공급합니다</h2>
+<pre data-example="python"><code>def decode(chunks):
+    header = bytearray()
+    payload = bytearray()
+    size = None
+    for chunk in chunks:
+        for value in chunk:
+            if size is None:
+                header.append(value)
+                if len(header) == 2:
+                    size = int.from_bytes(header, &quot;big&quot;)
+                    if not 1 &lt;= size &lt;= 5:
+                        raise ValueError(&quot;invalid frame length&quot;)
+                    header.clear()
+            else:
+                payload.append(value)
+                if len(payload) == size:
+                    record = bytes(payload)
+                    payload.clear()
+                    size = None
+                    yield record
+    if header or size is not None:
+        raise ValueError(&quot;truncated frame&quot;)
+
+wire = bytes.fromhex(&quot;00 02 4f 4b 00 03 78 79 7a&quot;)
+chunks = [wire[:1], wire[1:3], wire[3:7], wire[7:]]
+for data in ([wire], chunks, [wire[i:i+1] for i in range(len(wire))]):
+    print(list(decode(data)))
+
+for bad in (bytes.fromhex(&quot;00 06&quot;), wire[:-1]):
+    try:
+        list(decode([bad]))
+    except ValueError as error:
+        print(error)</code></pre>
+<pre data-output><code>[b'OK', b'xyz']
+[b'OK', b'xyz']
+[b'OK', b'xyz']
+invalid frame length
+truncated frame</code></pre>
+<p>위 예제의 유효 범위는 이 교재 규약에서 정한 값입니다. 다른 규약에서는 바이트 순서·0 길이 처리·최대 길이를 각자의 명세로 맞춰야 합니다. 다음 장에서는 스트림이 아직 살아 있는 동안의 타임아웃과 방향별 종료를 다룹니다.</p>
+
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table>
+<thead><tr><th scope="col">핵심어</th><th scope="col">기억할 기준</th></tr></thead>
+<tbody>
+<tr><td><b class="key">프레임 명세</b></td><td>길이 위치와 크기, 바이트 순서, 본체 상한</td></tr>
+<tr><td><b class="key">증분 파서</b></td><td>길이 또는 본체의 진행 정도를 조각 사이에 보존</td></tr>
+<tr><td><b class="key">길이 상한</b></td><td>헤더가 완성되자마자 검증</td></tr>
+<tr><td><b class="key">잘린 프레임</b></td><td>스트림 종료 시 미완성 헤더나 본체가 있음</td></tr>
+</tbody></table></div>
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>수신 조각의 경계에서 상태를 초기화하지 않고, 프레임이 끝날 때만 다음 헤더로 이동합니다.</p></div>
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://docs.python.org/3/howto/sockets.html">Python Socket HOWTO · 스트림과 메시지 경계</a></li>
+<li><a href="https://www.rfc-editor.org/rfc/rfc9293.html">IETF RFC 9293 · TCP 순서 공간과 수신 처리</a></li>
+</ul>
+
+<h2>확인 문제</h2>
+<p>아직 풀지 않은 문제입니다. 먼저 식이나 근거를 적어 보고 해설을 확인합니다.</p>
+<div id="quiz"></div>
+
+<section class="work" id="tools"></section>
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>
