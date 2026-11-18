@@ -28,7 +28,7 @@
 <div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>평균, 중심화, 스케일을 거치는 경로에서 LayerNorm 기울기를 구한다.</li><li>해석식과 자동미분에서 같은 입력 경사가 나오는지 검사한다.</li><li>입력과 초기 가중치 하나씩을 바꾸어 활성함수의 포화를 확인한다.</li></ul></div>
 
 <h2>정규화에서 각 좌표의 계산이 서로 연결된다</h2>
-<p>한 행의 좌표 x에서 m=mean(x), z=x−m, s=√(mean(z²)+ε), x̂=z/s라 둡니다. ε&gt;0은 분모가 0으로 떨어지지 않게 합니다. 출력은 y=γ⊙x̂+β입니다. 여기서 γ와 β는 좌표별 학습 매개변수입니다. 평균과 분산은 현재 행의 좌표를 함께 사용합니다.</p>
+<p>한 행의 좌표 x에서 m=mean(x), z=x−m, s=√(mean(z²)+ε), x̂=z/s라 둡니다. ε&gt;0은 분모가 0으로 떨어지지 않게 합니다. PyTorch <code>nn.LayerNorm</code>의 기본값은 ε=1e−5이고, 아래 예는 손계산이 쉽도록 ε=1/3을 씁니다. 출력은 y=γ⊙x̂+β입니다. 여기서 γ와 β는 좌표별 학습 매개변수입니다. 평균과 분산은 현재 행의 좌표를 함께 사용합니다.</p>
 <figure class="fig"><svg class="fig-svg" viewBox="0 0 760 160" role="img" aria-label="한 좌표의 변화가 행 전체 평균과 스케일에 영향을 주므로, 세 경로의 변화가 입력 기울기에 함께 들어간다.">
 <rect class="f-box" x="42" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="135" y="61" text-anchor="middle">입력 변화</text><text class="f-s" x="135" y="89" text-anchor="middle">각 좌표의 Δx</text><text class="f-s" x="135" y="110" text-anchor="middle">m도 함께 변화</text><line class="f-line" x1="235" y1="84" x2="278" y2="84" marker-end="url(#f-arrow)"/><rect class="f-soft" x="287" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="380" y="61" text-anchor="middle">중심화와 스케일</text><text class="f-s" x="380" y="89" text-anchor="middle">z=x−m</text><text class="f-s" x="380" y="110" text-anchor="middle">s가 전체에 적용</text><line class="f-line" x1="480" y1="84" x2="523" y2="84" marker-end="url(#f-arrow)"/><rect class="f-box" x="532" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="625" y="61" text-anchor="middle">경사 반환</text><text class="f-s" x="625" y="89" text-anchor="middle">현재 좌표 외에</text><text class="f-s" x="625" y="110" text-anchor="middle">평균·스케일 경로 포함</text>
 </svg><figcaption>한 행의 평균을 뺀 뒤에 좌표별 독립인 함수로 보면 연결된 경로를 놓친다.</figcaption></figure>
@@ -39,8 +39,8 @@
 <p>g에서 각 좌표의 γ 경사는 g⊙x̂, β 경사는 g입니다. 여러 행에서 매개변수를 공유하면 각 행의 기여를 더합니다. x=(1,2,3), ε=1/3이면 m=2, 분산 2/3, s=1, x̂=(−1,0,1)입니다. g=(1,2,4), γ=(1,1,1)에서는 mean(h)=7/3, mean(h⊙x̂)=1이라 경사는 (−1/3,−1/3,2/3)입니다. 행 전체에 같은 값을 더하면 z가 그대로라, 이 방향의 손실 미분이 0인 것도 합계로 확인할 수 있습니다.</p>
 <div class="check" data-q="q3"></div><div class="check" data-q="q4"></div><div class="check" data-q="q5"></div>
 <h2>활성함수에서는 입력과 초깃값을 하나씩 바꿔 본다</h2>
-<p>tanh 한 뉴런의 출력 tanh(wx)를 w로 미분하면 x·(1−tanh²(wx))입니다. w=1에서 x를 .25,1,4로 올리면 경사는 .2350, .4200, .0054입니다. 처음에는 x가 커져도, 큰 |wx|에서는 tanh가 ±1 가까이 가며 안쪽 미분이 거의 0이 됩니다. x=2를 고정하고 w만 .1,1,3으로 바꾼 결과도 아래에 있습니다. 반올림한 0.0000은 해석적으로 정확히 0이라는 뜻과 다릅니다.</p>
-<p>ReLU는 다른 활성입니다. x=0에서 왼쪽과 오른쪽 기울기가 달라, 수치 검사에서 매끄러운 점을 쓸지 특정 구현의 규칙을 확인할지 먼저 정합니다. 더 깊은 모델에서 초기 가중치 규모를 고를 때는 활성함수, 입력 및 출력 차원과 분산의 전달도 같이 봅니다.</p>
+<p>tanh 한 뉴런의 출력 tanh(wx)를 w로 미분하면 x·(1−tanh²(wx))입니다. w=1에서 x를 .25,1,4로 올리면 경사는 .2350, .4200, .0054입니다. x가 작을 때는 앞에 곱한 x 때문에 경사가 커지지만, |wx|가 커지면 tanh가 ±1 가까이 가며 안쪽 미분 1−tanh²가 거의 0이 되어 경사도 줄어듭니다. x=2를 고정하고 w만 .1,1,3으로 바꾼 결과도 아래에 있습니다. 반올림한 0.0000은 해석적으로 정확히 0이라는 뜻과 다릅니다.</p>
+<p>ReLU는 다른 활성입니다. x=0에서 왼쪽과 오른쪽 기울기가 달라 미분이 정의되지 않습니다. PyTorch 2.14.0의 <code>torch.relu</code>는 이 점에서 기울기 0을 돌려주도록 정해 두었고(직접 확인), 중심차분은 (ε−0)/(2ε)=0.5를 냅니다. 그래서 수치 검사에서는 매끄러운 점을 쓸지 구현의 규칙을 확인할지 먼저 정합니다. 더 깊은 모델에서 초기 가중치 규모를 고를 때는 활성함수, 입력 및 출력 차원과 분산의 전달도 같이 봅니다.</p>
 <div class="check" data-q="q6"></div><div class="check" data-q="q7"></div>
 <pre data-example="python"><code>import math
 import torch

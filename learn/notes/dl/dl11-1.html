@@ -36,7 +36,7 @@
 <div class="check" data-q="q1"></div><div class="check" data-q="q2"></div><div class="check" data-q="q3"></div>
 <h2>배치 선형층에서 세 가지 기울기를 분리한다</h2>
 <p>X의 모양을 [B,D], W를 [D,M], b를 [M]이라 둡니다. H=XW+1bᵀ의 모양은 [B,M]입니다. G를 H에 대한 경사라 둡니다. H의 작은 변화는 ΔX·W+X·ΔW+1·Δbᵀ입니다. 이를 ΔL=∑ᵢⱼGᵢⱼΔHᵢⱼ에 넣습니다. 예를 들어 ΔW<sub>km</sub>의 계수는 배치 전체 ∑ᵢX<sub>ik</sub>G<sub>im</sub>입니다.</p>
-<div class="table-wrap"><table><thead><tr><th scope="col">구하려는 경사</th><th scope="col">식</th><th scope="col">모양</th></tr></thead><tbody><tr><td>∇ₓL</td><td>GWᵀ</td><td>[B,D]</td></tr><tr><td>∇wL</td><td>XᵀG</td><td>[D,M]</td></tr><tr><td>∇bL</td><td>배치 행마다 G를 더함</td><td>[M]</td></tr></tbody></table></div>
+<div class="table-wrap"><table><thead><tr><th scope="col">구하려는 경사</th><th scope="col">식</th><th scope="col">모양</th></tr></thead><tbody><tr><td>∇<sub>X</sub>L</td><td>GWᵀ</td><td>[B,D]</td></tr><tr><td>∇<sub>W</sub>L</td><td>XᵀG</td><td>[D,M]</td></tr><tr><td>∇<sub>b</sub>L</td><td>배치 행마다 G를 더함</td><td>[M]</td></tr></tbody></table></div>
 <p>같은 b가 모든 행에 쓰였으므로 그 경사는 배치에서 더합니다. 평균 손실을 사용했다면 G를 만들 때 이미 그 평균 배율이 들어갑니다. PyTorch <code>nn.Linear</code>가 저장하는 가중치의 모양은 [M,D]라 위 표의 W와 전치 관계입니다.</p>
 <div class="check" data-q="q4"></div><div class="check" data-q="q5"></div><div class="check" data-q="q6"></div>
 <h2>수치미분은 같은 손실을 살짝 옮겨 대조한다</h2>
@@ -72,7 +72,7 @@ print(&quot;affine&quot;,out.tolist(),da.tolist(),dw.tolist(),db.tolist())</code
 <p class="small">실행 결과</p>
 <pre data-output><code>y [7.0, 6.0] J [[4.0, 1.0], [3.0, 2.0]] grad [14.0, 1.0]
 affine [[1.0, 1.0], [3.0, 3.0]] [[2.0, 1.0], [-2.0, 4.0]] [[-2.0, 11.0], [-2.0, 16.0]] [0.0, 5.0]</code></pre>
-<p>이 예제는 Python 3.14.6과 PyTorch 2.14.1 CPU 연산에서 검증했습니다. 부동소수점으로 읽는 검산은 출력의 모든 숫자를 같은 문자열로 비교하는 대신 식에 대한 절대 허용 오차를 함께 확인합니다.</p>
+<p>이 예제는 Python 3.14.6과 PyTorch 2.14.0 CPU 연산에서 검증했습니다. 부동소수점으로 읽는 검산은 출력의 모든 숫자를 같은 문자열로 비교하는 대신 식에 대한 절대 허용 오차를 함께 확인합니다.</p>
 <div class="check" data-q="q7"></div><div class="check" data-q="q8"></div>
 
 <h2>참고 자료</h2>
