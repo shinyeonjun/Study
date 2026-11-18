@@ -44,6 +44,7 @@
 <p>다음은 문제 해결 도구 A와 B를 비교한 <strong>가상 자료</strong>입니다. A는 어려운 문제에, B는 쉬운 문제에 더 자주 쓰였습니다. 도구 선택과 성공률 양쪽에 문제 난도가 관련되므로, 집계 비율만 보면 서로 다른 작업 구성의 효과를 섞게 됩니다.</p>
 <div class="table-wrap"><table><thead><tr><th scope="col">문제 난도</th><th scope="col">A 성공/시도</th><th scope="col">B 성공/시도</th></tr></thead><tbody><tr><td>쉬움</td><td>18/20 = 90%</td><td>80/100 = 80%</td></tr><tr><td>어려움</td><td>30/100 = 30%</td><td>4/20 = 20%</td></tr><tr><td>전체</td><td>48/120 = 40%</td><td>84/120 = 70%</td></tr></tbody></table></div>
 <p>각 난도에서는 A의 성공률이 10퍼센트포인트 높습니다. 전체에서는 B가 30퍼센트포인트 높습니다. 난도를 나눠 봐야 함을 보여 주는 예입니다. 난도를 맞췄어도 작업자의 경험처럼 다른 요인이 남을 수 있으므로, 이 관찰표만으로 도구 자체의 효과를 확정하지 않습니다.</p>
+<div class="box"><p class="box-k">정의 · 상관과 인과</p><p>두 변수가 함께 움직이는 경향을 <b class="key">상관</b>(association, correlation)이라고 합니다. 한 변수를 바꾸면 다른 변수가 따라 바뀌는 관계는 <b class="key">인과</b>(causation)입니다. 관찰 자료에서 보이는 것은 상관이고, 상관만으로 인과를 결론 내릴 수 없습니다.</p><p>여기서 문제 난도처럼 원인 후보(도구 선택)와 결과(성공) 양쪽에 영향을 주는 제3의 변수를 <b class="key">교란 변수</b>(confounder)라고 합니다. 위 표처럼 집단별로는 한 방향인 관계가 합치면 반대로 뒤집히는 현상을 <b class="key">심슨의 역설</b>(Simpson's paradox)이라고 부릅니다. 뒤집힘은 두 도구에 섞인 쉬운 문제·어려운 문제의 비중이 달라서 생깁니다.</p></div>
 <pre data-example="python"><code>for name, easy, hard in (
     (&quot;A&quot;, (18, 20), (30, 100)),
     (&quot;B&quot;, (80, 100), (4, 20)),
@@ -56,6 +57,7 @@
 B: 84/120 = 70%</code></pre>
 <div class="check" data-q="q4"></div>
 <div class="check" data-q="q5"></div>
+<div class="check" data-q="q10"></div>
 <h2>무작위 추출과 무작위 배정</h2>
 <figure class="fig"><svg class="fig-svg" viewBox="0 0 760 160" role="img" aria-label="무작위 추출은 조사 참가자를 정하고, 무작위 배정은 선정된 참가자의 실험 조건을 정한다.">
 <rect class="f-box" x="42" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="135" y="61" text-anchor="middle">무작위 추출</text><text class="f-s" x="135" y="89" text-anchor="middle">모집단 → 조사 참가자</text><text class="f-s" x="135" y="110" text-anchor="middle">누구에게 결과를 일반화할까</text><line class="f-line" x1="235" y1="84" x2="278" y2="84" marker-end="url(#f-arrow)"/><rect class="f-soft" x="287" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="380" y="61" text-anchor="middle">무작위 배정</text><text class="f-s" x="380" y="89" text-anchor="middle">참가자 → A 또는 B</text><text class="f-s" x="380" y="110" text-anchor="middle">조건을 공정하게 비교</text><line class="f-line" x1="480" y1="84" x2="523" y2="84" marker-end="url(#f-arrow)"/><rect class="f-box" x="532" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="625" y="61" text-anchor="middle">결과 읽기</text><text class="f-s" x="625" y="89" text-anchor="middle">효과와 적용 대상을 분리</text><text class="f-s" x="625" y="110" text-anchor="middle">누락·이탈·측정 방법 확인</text>

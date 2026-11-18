@@ -101,7 +101,7 @@
 </svg>
 <figcaption>제외된 행도 사유별로 세어 합계가 원본 수와 맞는지 확인한다.</figcaption>
 </figure>
-<p>아래 코드는 이 표에서 확정한 규칙을 적용합니다. <code>dict.fromkeys</code>는 같은 튜플에 한 번만 키를 넣어 <b>완전히 동일한</b> 행을 모읍니다. 이 예에서는 동일 행이 사본이라는 사실이 이미 확인되었습니다. <code>Counter</code>는 같은 주문번호가 사본을 제거한 뒤에도 남는지 셉니다. 처음 배우는 코드는 결과를 먼저 본 뒤 조건을 한 줄씩 읽어 보세요.</p>
+<p>아래 코드는 이 표에서 확정한 규칙을 적용합니다. <code>dict.fromkeys</code>는 같은 튜플에 한 번만 키를 넣어 <b>완전히 동일한</b> 행을 모읍니다. 이 예에서는 동일 행이 사본이라는 사실이 이미 확인되었습니다. <code>Counter</code>는 같은 주문번호가 사본을 제거한 뒤에도 남는지 셉니다.</p>
 <pre data-example="python"><code>from collections import Counter
 from statistics import mean
 
