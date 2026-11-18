@@ -34,6 +34,8 @@
 <p><strong>확률적 경사하강(SGD)</strong>은 한 건이나 작은 미니배치의 평균 기울기를 사용해 갱신합니다. 무작위 표본을 뽑으면 어느 쪽으로 얼마나 움직일지가 달라질 수 있습니다. 그렇다고 그 값이 쓸모없는 것은 아닙니다. 같은 w에서 모든 행이 똑같은 확률로 뽑히면 표본 기울기의 기대값은 전체 기울기입니다.</p>
 <h2>독립으로 두 건씩 뽑았을 때</h2>
 <p>이 장에서는 복원추출로 각 기록을 같은 확률로 뽑습니다. 평균 −4와의 차이는 3, 1, −1, −3입니다. 이 차이의 제곱 평균은 5이므로 한 건 기울기의 분산은 5입니다. 독립인 두 건을 평균 내면 그 분산은 (5+5)/4=2.5가 됩니다. 같은 방법으로 b건의 독립 표본 평균 분산은 5/b입니다.</p>
+<p class="calc">한 건 기울기의 분산이 σ²이면: Var(미니배치 평균) = σ²/b, &nbsp;표준편차 = σ/√b</p>
+<p>표준편차는 √b에만 반비례합니다. 이 예에서 한 건의 표준편차 √5≈2.24가 b=2에서 √2.5≈1.58, b=4(복원추출)에서 √1.25≈1.12가 됩니다. 흔들림을 절반으로 줄이려면 배치를 네 배로 키워야 하고, 계산량도 네 배가 됩니다.</p>
 <figure class="fig"><svg class="fig-svg" viewBox="0 0 760 239" role="img" aria-label="두 건의 가능한 순서쌍 16개는 평균 기울기 −7부터 −1까지 각각 1,2,3,4,3,2,1개">
 <line class="f-line" x1="113" y1="173" x2="665" y2="173"/><line class="f-line" x1="113" y1="173" x2="113" y2="34"/><line class="f-dash" x1="113" y1="144" x2="648" y2="144"/><text class="f-s" x="94" y="148" text-anchor="end">1</text><line class="f-dash" x1="113" y1="115" x2="648" y2="115"/><text class="f-s" x="94" y="119" text-anchor="end">2</text><line class="f-dash" x1="113" y1="86" x2="648" y2="86"/><text class="f-s" x="94" y="90" text-anchor="end">3</text><line class="f-dash" x1="113" y1="57" x2="648" y2="57"/><text class="f-s" x="94" y="61" text-anchor="end">4</text><rect class="f-box" x="148" y="144" width="34" height="29" rx="3"/><text class="f-s" x="165" y="194" text-anchor="middle">-7</text><rect class="f-box" x="219" y="115" width="34" height="58" rx="3"/><text class="f-s" x="236" y="194" text-anchor="middle">-6</text><rect class="f-box" x="290" y="86" width="34" height="87" rx="3"/><text class="f-s" x="307" y="194" text-anchor="middle">-5</text><rect class="f-soft" x="361" y="57" width="34" height="116" rx="3"/><text class="f-s" x="378" y="194" text-anchor="middle">-4</text><rect class="f-box" x="432" y="86" width="34" height="87" rx="3"/><text class="f-s" x="449" y="194" text-anchor="middle">-3</text><rect class="f-box" x="503" y="115" width="34" height="58" rx="3"/><text class="f-s" x="520" y="194" text-anchor="middle">-2</text><rect class="f-box" x="574" y="144" width="34" height="29" rx="3"/><text class="f-s" x="591" y="194" text-anchor="middle">-1</text><text class="f-s" x="113" y="24" text-anchor="middle">순서쌍 수</text><text class="f-s" x="376" y="220" text-anchor="middle">두 표본의 평균 기울기</text>
 </svg><figcaption>각 막대가 나타내는 순서쌍은 모두 같은 확률입니다. 예를 들어 기울기 −4는 두 값의 합이 −8인 네 가지에서 나옵니다.</figcaption></figure>
@@ -51,9 +53,13 @@ print(&quot;두 건 배치:&quot;, len(minibatches), mean(minibatches), pvarianc
 한 건 분산: 5
 두 건 배치: 16 -4 2.5</code></pre>
 <h2>몇 건을 읽고 몇 번 갱신했는지 함께 기록한다</h2>
-<p>네 건을 한 번씩 읽을 때 배치 크기가 4면 한 번, 배치 크기가 2면 두 번 갱신합니다. 첫 갱신 뒤 w가 바뀌므로 두 미니배치의 기울기를 간단히 합해서 전체 배치 갱신과 같다고 할 수 없습니다. 전체 순서를 섞고 복원 없이 배치를 만드는 절차에는 위의 독립 복원추출 분산 공식이 그대로 적용되지는 않습니다.</p>
+<p>훈련 자료 전체를 한 번씩 다 사용하는 것을 <b class="key">에포크</b>(epoch)라고 합니다. 자료가 N건이고 배치 크기가 B이면 한 에포크의 갱신 횟수는 N/B(나누어떨어지지 않으면 올림)입니다. 네 건을 한 번씩 읽을 때 배치 크기가 4면 한 번, 배치 크기가 2면 두 번 갱신합니다. 첫 갱신 뒤 w가 바뀌므로 두 미니배치의 기울기를 간단히 합해서 전체 배치 갱신과 같다고 할 수 없습니다. 전체 순서를 섞고 복원 없이 배치를 만드는 절차에는 위의 독립 복원추출 분산 공식이 그대로 적용되지는 않습니다.</p>
 <p>큰 배치는 기울기가 흔들리는 정도를 줄일 수 있지만 곧바로 학습 효율이 더 좋다는 뜻은 아닙니다. 한 번 갱신할 때 필요한 자료, 메모리, 갱신 횟수와 학습률을 같은 비교 조건에서 기록합니다.</p>
 <div class="check" data-q="q5"></div><div class="check" data-q="q6"></div>
+<h2>최소점 근처에서도 표본 기울기는 0이 아니다</h2>
+<p>이 예의 전체 손실은 w가 네 값의 평균 4일 때 최소이고, 그곳의 전체 기울기는 0입니다. 그러나 w=4에서 한 건 기울기는 3, 1, −1, −3으로 0이 아닙니다. 학습률 0.1의 SGD(배치 1)는 최소점에 도착해도 뽑힌 기록에 따라 3.7, 3.9, 4.1, 4.3 중 하나로 다시 밀려납니다. 고정 학습률의 SGD는 최소점 주변에서 크기가 대략 η·(기울기 표준편차)에 비례하는 흔들림을 남깁니다.</p>
+<p>그래서 실제 학습에서는 학습률을 점점 줄이는 <b class="key">학습률 스케줄</b>(예: 일정 에포크마다 1/10로, 또는 코사인 감소)을 쓰거나 배치를 키워 잡음을 줄입니다. 초반에는 큰 학습률로 멀리 이동하고, 후반에는 작은 학습률로 흔들림을 줄이는 방식입니다. 반대로 이 잡음이 좁은 골짜기에 갇히지 않게 돕는다는 관찰도 있지만, 언제나 성립하는 정리는 아닙니다.</p>
+<p class="calc">SGD 갱신: w<sub>k+1</sub> = w<sub>k</sub> − η<sub>k</sub> · (1/B) Σ<sub>i∈배치<sub>k</sub></sub> g<sub>i</sub>(w<sub>k</sub>) &nbsp;(g<sub>i</sub>: 기록 i 한 건의 손실 기울기, η<sub>k</sub>: k번째 갱신의 학습률)</p>
 <div class="box sum"><p class="box-k">한 줄 정리</p><p>미니배치 기울기는 전체 방향의 근사입니다. 표본 선택, 배치 크기와 갱신 횟수를 구분합니다.</p></div>
 
 <h2>참고 자료</h2>

@@ -29,13 +29,17 @@
 
 <h2>컴퓨터가 간격을 두고 수를 고른다</h2>
 <p>이진 소수는 1/2, 1/4, 1/8처럼 2의 거듭제곱의 역수를 더해서 쓸 수 있습니다. 0.125는 1/8이므로 이진에서 0.001입니다. 반면 0.1은 1/10이며 분모에 5가 들어 있습니다. 2의 거듭제곱을 분모로 하는 어떤 유한한 분수와도 정확히 같지 않습니다.</p>
+<div class="box"><p class="box-k">유한 이진 소수가 되는 조건</p><p>기약분수 p/q가 유한한 이진 소수로 쓰이는 것은 분모 q가 2의 거듭제곱(1, 2, 4, 8, …)일 때뿐입니다. 예: 3/8=0.011₂는 유한, 1/10·1/5·1/3은 무한히 반복합니다(0.1=0.000110011…₂). 십진에서 1/3이 끝나지 않는 것과 같은 이유입니다.</p></div>
 <p>설명용으로 1/8의 배수만 저장하는 작은 모형을 생각합니다. 0.1을 넣으면 가까운 0.125를 선택합니다. 실제 Python <code>float</code>는 훨씬 촘촘하고 넓은 범위를 씁니다. 그래서 0.1에 아주 가까운 이진 값을 쓰지만, 차이가 완전히 없어지지는 않습니다.</p>
 <figure class="fig"><svg class="fig-svg" viewBox="0 0 760 188" role="img" aria-label="1/8 간격의 이진 격자에서 0.1은 0과 0.125 사이이고 0.125에 더 가까움">
 <line class="f-line" x1="125" y1="113" x2="722.5" y2="113" marker-end="url(#f-arrow)"/><line class="f-ink" x1="161" y1="98" x2="161" y2="128"/><text class="f-s" x="161" y="158" text-anchor="middle">0</text><line class="f-ink" x1="338.5" y1="98" x2="338.5" y2="128"/><text class="f-s" x="338.5" y="158" text-anchor="middle">0.125</text><line class="f-ink" x1="516" y1="98" x2="516" y2="128"/><text class="f-s" x="516" y="158" text-anchor="middle">0.25</text><line class="f-ink" x1="693.5" y1="98" x2="693.5" y2="128"/><text class="f-s" x="693.5" y="158" text-anchor="middle">0.375</text><line class="f-dash" x1="303" y1="53" x2="303" y2="109" marker-end="url(#f-arrow)"/><text class="f-s" x="277" y="40" text-anchor="middle">입력 0.1</text><text class="f-s" x="398.5" y="78" text-anchor="middle">가까운 저장값 0.125</text>
 </svg><figcaption>격자 눈금은 예시입니다. 실제 부동소수점은 수의 크기에 따라 인접한 값 간격이 달라집니다.</figcaption></figure>
 <div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
 <h2>표시되는 숫자와 저장된 값</h2>
-<p>일반적인 Python 환경의 float는 IEEE 754 배정밀도 이진 부동소수점을 사용합니다. 표현 가능한 수들 사이에서 반올림이 일어나고, 연산 결과도 다시 표현 범위에 맞춰 반올림됩니다. 출력의 자릿수를 줄이면 0.3처럼 보이게 만들 수 있지만, 이미 저장한 값 자체는 바뀌지 않습니다. 1 바로 다음 표현 가능 수와 1의 차이는 이 환경에서 약 2.22×10⁻¹⁶입니다. 더 큰 수 주변의 간격은 달라질 수 있습니다.</p>
+<p>일반적인 Python 환경의 float는 IEEE 754 배정밀도 이진 부동소수점을 사용합니다. 표현 가능한 수들 사이에서 반올림이 일어나고, 연산 결과도 다시 표현 범위에 맞춰 반올림됩니다. 출력의 자릿수를 줄이면 0.3처럼 보이게 만들 수 있지만, 이미 저장한 값 자체는 바뀌지 않습니다.</p>
+<div class="box"><p class="box-k">배정밀도(binary64)의 구조 <span class="tag memo">외우기</span></p><p>64비트를 부호 1비트, 지수 11비트, 가수(소수 부분) 52비트로 나눕니다. 정규 수는 (−1)<sup>부호</sup> × 1.f₂ × 2<sup>지수−1023</sup> 꼴이고, 맨 앞의 1은 저장하지 않으므로 유효 이진 자릿수는 53개(십진으로 약 15~17자리)입니다.</p>
+<p><b class="key">기계 엡실론</b>(machine epsilon) ε는 1과 그 바로 다음 표현 가능한 수의 차이로, binary64에서 ε=2⁻⁵²≈2.22×10⁻¹⁶입니다. 가장 가까운 값으로 반올림하면 정규 범위의 실수 x를 저장할 때 상대오차가 ε/2=2⁻⁵³≈1.11×10⁻¹⁶(단위 반올림, unit roundoff) 이하입니다. 문헌에 따라 ε/2를 엡실론이라 부르기도 하므로 정의를 확인합니다.</p></div>
+<p>간격은 상대적으로 일정하고 절대적으로는 수의 크기에 비례합니다. 2 근처의 간격은 4.44×10⁻¹⁶, 10¹⁶ 근처의 간격은 2이므로 Python에서 <code>1e16 + 1 == 1e16</code>은 True입니다. 실제로 저장된 0.1은 0.1000000000000000055511151231257827…로, 0.1보다 아주 조금 큽니다(<code>Decimal(0.1)</code>로 확인).</p>
 <div class="check" data-q="q3"></div>
 <pre data-example="python"><code>from decimal import Decimal
 from math import inf, isclose, nextafter
