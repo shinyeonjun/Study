@@ -39,6 +39,7 @@
 <div class="check" data-q="q4"></div><div class="check" data-q="q5"></div>
 <h2>첫 도착까지 기다린 시간이 t보다 길다는 뜻</h2>
 <p><var>T₁&gt;t</var>는 t까지 도착이 0건입니다. 포아송 확률에서 k=0을 대입하면 <var>P(T₁&gt;t)=e<sup>−λt</sup></var>입니다. 그래서 첫 대기 시간은 율 λ의 지수분포입니다. 꼬리 확률을 0부터 무한대까지 적분하면 평균 1/λ입니다. λ=2건/분이면 평균 대기가 .5분이며, 1.5분을 초과할 확률은 e<sup>−3</sup>입니다. 율이 0이면 도착이 없으므로 유한 평균 식은 λ&gt;0이라는 조건에서 사용합니다.</p>
+<p>첫 도착 뒤에도 같은 논리가 반복됩니다. 도착과 도착 사이의 간격 T₁, T₂, …는 서로 독립이고 모두 율 λ의 지수분포를 따릅니다. 반대로 독립인 Exp(λ) 간격을 이어 붙여 도착 시각을 만들면 균질 포아송 과정이 됩니다. 그래서 k번째 도착 시각은 간격 k개의 합이고 평균은 k/λ입니다(증명은 Ross의 확률모형 교재 5장 참고).</p>
 <div class="check" data-q="q6"></div><div class="check" data-q="q7"></div>
 <pre data-example="python"><code>from math import exp, factorial
 

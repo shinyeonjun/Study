@@ -31,18 +31,19 @@
 <p>정수 a와 양의 정수 b에 대해 a=bq+r, 0≤r&lt;b를 만족시키는 정수 q,r을 찾습니다. q를 a/b 이하의 가장 큰 정수로 두면 bq≤a&lt;b(q+1)이므로 r=a−bq가 범위 안입니다. 두 쌍이 있다고 가정하면 b(q−q′)=r′−r인데 오른쪽은 절댓값이 b 미만입니다. b의 배수 중 이 범위에는 0만 들어가므로 두 쌍은 같습니다. 예를 들어 −17=5(−4)+3입니다.</p>
 <div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
 <h2>공통으로 나누는 수의 집합은 바뀌지 않는다</h2>
-<p>d가 a,b를 나누면 a−bq=r도 나눕니다. 반대로 d가 b,r을 나누면 bq+r=a도 나눕니다. 공약수 전체가 같으므로 gcd(a,b)=gcd(b,r)입니다. 양의 나머지가 엄격하게 내려가면 결국 0이 됩니다. 마지막 양의 수를 gcd로 읽습니다. b=0으로 시작하면 a≠0인 경우 gcd(a,0)=|a|입니다.</p>
+<p>d가 a,b를 나누면 a−bq=r도 나눕니다. 반대로 d가 b,r을 나누면 bq+r=a도 나눕니다. 공약수 전체가 같으므로 gcd(a,b)=gcd(b,r)입니다. 나머지는 b&gt;r₁&gt;r₂&gt;⋯≥0으로 엄격하게 줄어드는 음이 아닌 정수열이고, 그런 수열은 무한히 이어질 수 없으므로(정렬 원리) 유한 번 안에 0이 됩니다. 그때 gcd(rₖ,0)=rₖ이므로 마지막 양의 나머지가 gcd입니다. b=0으로 시작하면 a≠0인 경우 gcd(a,0)=|a|입니다.</p>
 <figure class="fig"><svg class="fig-svg" viewBox="0 0 760 160" role="img" aria-label="나머지 54, 36, 18, 0 순으로 작아지고 마지막 양의 나머지 18이 최대공약수이다.">
 <rect class="f-box" x="42" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="135" y="61" text-anchor="middle">252, 198</text><text class="f-s" x="135" y="89" text-anchor="middle">나머지 54</text><text class="f-s" x="135" y="110" text-anchor="middle">252−198</text><line class="f-line" x1="235" y1="84" x2="278" y2="84" marker-end="url(#f-arrow)"/><rect class="f-soft" x="287" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="380" y="61" text-anchor="middle">198, 54</text><text class="f-s" x="380" y="89" text-anchor="middle">나머지 36</text><text class="f-s" x="380" y="110" text-anchor="middle">198−3·54</text><line class="f-line" x1="480" y1="84" x2="523" y2="84" marker-end="url(#f-arrow)"/><rect class="f-box" x="532" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="625" y="61" text-anchor="middle">54, 36 → 36, 18</text><text class="f-s" x="625" y="89" text-anchor="middle">나머지 18, 0</text><text class="f-s" x="625" y="110" text-anchor="middle">최대공약수 18</text>
 </svg><figcaption>나머지로 교체해도 공약수 전체가 보존된다.</figcaption></figure>
-<p>마지막 식을 거꾸로 대입해 18=54−36=4·252−5·198을 얻습니다. 일반 계산에서도 각 새 나머지를 이전 둘의 정수 선형결합으로 유지하므로 각 나머지는 초기 두 수의 정수 선형결합입니다. 이것이 이 알고리즘이 주는 Bézout 항등식입니다.</p>
+<p>마지막 식을 거꾸로 대입해 18=54−36=4·252−5·198을 얻습니다. 일반 계산에서도 각 새 나머지를 이전 둘의 정수 선형결합으로 유지하므로 각 나머지는 초기 두 수의 정수 선형결합입니다. 마지막 양의 나머지에 적용하면 <b class="key">Bézout 항등식</b>을 얻습니다. 둘 다 0은 아닌 정수 a,b에 대해 <var>gcd(a,b)=ax+by</var>를 만족하는 정수 x,y가 있습니다. x,y는 하나로 정해지지 않습니다. 예를 들어 (4+11k)·252−(5+14k)·198도 모든 정수 k에서 18입니다.</p>
 <div class="check" data-q="q3"></div><div class="check" data-q="q4"></div>
 <h2>같은 나머지끼리 계산할 수 있다</h2>
 <p>m≥2에서 a≡b (mod m)는 m이 a−b를 나눈다는 뜻입니다. 차이가 0인 경우, 부호를 바꾼 경우, 두 차이를 더한 경우 모두 m의 배수여서 동치관계입니다. 대표값이 각각 m의 배수만큼 바뀌면 덧셈과 곱셈의 변화도 m의 배수라 같은 합동류에서 계산할 수 있습니다.</p>
 <p>a의 <b class="key">역원</b> x는 ax≡1 (mod m)을 만족합니다. 역원이 있으면 ax−my=1인 정수 y가 있으므로 공약수는 1을 나누어야 합니다. 반대로 gcd(a,m)=1이면 Bézout의 ax+my=1에서 x가 역원입니다. 예를 들어 1=2·43−5·17이라 17의 mod 43 역원은 −5≡38입니다.</p>
 <div class="check" data-q="q5"></div><div class="check" data-q="q6"></div>
 <h2>합동식에서 약분할 때는 모듈러스도 본다</h2>
-<p>6x≡8 (mod 14)는 14|(6x−8)이라는 뜻입니다. 각 정수 항을 2로 나누면 7|(3x−4)와 동치입니다. 3의 mod 7 역원은 5라서 x≡20≡6 (mod 7), 따라서 mod 14의 대표로는 6,13입니다. 우변이 9이면 6x−9는 홀수라 14의 배수가 될 수 없습니다. 반대로 모듈러스와 약분하는 값이 서로소라면 역원을 곱하는 방식으로 모듈러스를 유지하며 지울 수 있습니다.</p>
+<p>6x≡8 (mod 14)는 14|(6x−8)이라는 뜻입니다. 각 정수 항을 2로 나누면 7|(3x−4)와 동치입니다. 3의 mod 7 역원은 5라서 양변에 5를 곱하면 x≡5·4=20≡6 (mod 7), 따라서 mod 14의 대표로는 6,13입니다. 우변이 9이면 6x−9는 홀수라 14의 배수가 될 수 없습니다. 반대로 모듈러스와 약분하는 값이 서로소라면 역원을 곱하는 방식으로 모듈러스를 유지하며 지울 수 있습니다.</p>
+<p>일반적으로 d=gcd(a,m)일 때 ax≡b (mod m)은 d가 b를 나눌 때만 해가 있고, 그때 해는 mod m에서 정확히 d개입니다. 위 예에서 d=gcd(6,14)=2가 8을 나누므로 해가 2개(6,13)이고, 9는 나누지 않으므로 해가 없습니다.</p>
 <div class="check" data-q="q7"></div>
 <pre data-example="python"><code>from math import gcd
 

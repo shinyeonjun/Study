@@ -30,17 +30,17 @@
 <h2>관계는 어떤 순서쌍을 포함하는지 정하는 조건이다</h2>
 <p>집합 A 위의 관계 R은 A×A의 부분집합입니다. aRb는 (a,b)가 그 안에 있다는 뜻입니다. 다음 네 조건은 서로 다른 검사입니다.</p>
 <div class="table-wrap"><table><thead><tr><th scope="col">성질</th><th scope="col">검사</th></tr></thead><tbody><tr><td>반사</td><td>모든 a에서 aRa</td></tr><tr><td>대칭</td><td>aRb이면 bRa</td></tr><tr><td>반대칭</td><td>aRb와 bRa가 모두 성립하면 a=b</td></tr><tr><td>추이</td><td>aRb와 bRc이면 aRc</td></tr></tbody></table></div>
-<p>등호 관계는 a=b일 때만 관계에 들어갑니다. 이 관계는 대칭과 반대칭을 동시에 만족합니다. 반대칭은 ‘대칭이 일반적으로 틀린다’는 말보다 조건이 정확합니다. 서로 다른 두 원소 사이에 양방향으로 관계가 성립하는 것을 금합니다.</p>
+<p>등호 관계는 a=b일 때만 관계에 들어갑니다. 이 관계는 대칭과 반대칭을 동시에 만족합니다. 그러므로 반대칭은 ‘대칭이 아니다’와 같은 말이 아닙니다. 반대칭이 금하는 것은 서로 다른 두 원소 사이에 양방향으로 관계가 성립하는 경우뿐입니다. 거꾸로 A={1,2,3} 위의 {(1,2),(2,1),(1,3)}은 (1,3)에 (3,1)이 없어 대칭이 아니고, 1≠2인데 양방향이라 반대칭도 아닙니다.</p>
 <div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
 <h2>동치관계에서 분할을 얻고 분할에서 되돌린다</h2>
 <p>반사·대칭·추이를 갖는 관계를 <b class="key">동치관계</b>라 합니다. 각 a의 동치류 [a]={x:aRx}를 만들면 반사성으로 a가 들어갑니다. 두 동치류 [a], [b]에 공통 원소 z가 있다고 합시다. aRz와 bRz에서 대칭·추이로 aRb를 얻습니다. b류의 임의의 x에서 bRx와 aRb를 이어 aRx이므로 [b]⊆[a]입니다. 같은 방식으로 [a]⊆[b]입니다. 따라서 동치류는 서로 같거나 만나지 않고, 전체를 덮는 분할입니다.</p>
 <p>반대로 분할은 비어 있지 않은 블록들이 서로소이며 합집합이 A라는 뜻입니다. ‘같은 블록에 든다’를 관계로 쓰면 모든 원소는 자기 블록에 있고, 순서를 바꿔도 그대로이며, a,b와 b,c의 공통 블록은 b가 한 블록에만 있기에 같아서 추이가 성립합니다. 예를 들어 0~7을 3으로 나눈 나머지에 따라 묶으면 {0,3,6}, {1,4,7}, {2,5}입니다.</p>
 <div class="check" data-q="q3"></div><div class="check" data-q="q4"></div>
 <h2>부분순서는 모든 쌍을 비교할 필요가 없다</h2>
-<p>반사·반대칭·추이가 있는 관계는 <b class="key">부분순서</b>입니다. 서로 다른 a와 b에 대해 집합 포함관계에서 {a}와 {b} 어느 쪽도 다른 쪽을 포함하지 않습니다. 다음 그림은 같은 점 자기 자신으로 이어지는 관계와, 두 단계로 이미 알 수 있는 관계를 생략합니다.</p>
+<p>반사·반대칭·추이가 있는 관계는 <b class="key">부분순서</b>입니다. 서로 다른 a와 b에 대해 집합 포함관계에서 {a}와 {b} 어느 쪽도 다른 쪽을 포함하지 않습니다. 다음 그림처럼 작은 원소를 아래에 두고, 자기 자신과의 관계(반사)와 추이로 이미 알 수 있는 관계(∅⊆{a,b})를 생략해 바로 위의 관계만 선으로 그린 그림을 <b>하세 도표</b>라고 합니다.</p>
 <figure class="fig"><svg class="fig-svg" viewBox="0 0 760 222" role="img" aria-label="공집합이 두 한 원소 집합 아래에 있고 그 두 집합이 {a,b} 아래에 있다. 한 원소 두 집합 사이에는 변이 없다.">
 <line class="f-ink" x1="335" y1="58" x2="257" y2="96"/><line class="f-ink" x1="425" y1="58" x2="503" y2="96"/><line class="f-ink" x1="257" y1="132" x2="335" y2="170"/><line class="f-ink" x1="503" y1="132" x2="425" y2="170"/><rect class="f-soft" x="319" y="22" width="122" height="36" rx="3"/><text class="f-t" x="380" y="46" text-anchor="middle">{a,b}</text><rect class="f-box" x="189" y="96" width="136" height="36" rx="3"/><text class="f-t" x="257" y="120" text-anchor="middle">{a}</text><rect class="f-box" x="435" y="96" width="136" height="36" rx="3"/><text class="f-t" x="503" y="120" text-anchor="middle">{b}</text><rect class="f-soft" x="319" y="170" width="122" height="36" rx="3"/><text class="f-t" x="380" y="194" text-anchor="middle">∅</text>
-</svg><figcaption>왼쪽과 오른쪽의 한 원소 집합은 어떤 순서로 적어도 위아래 포함 조건을 깨지 않는다.</figcaption></figure>
+</svg><figcaption>같은 높이의 {a}와 {b} 사이에는 선도, 위아래로 이어지는 길도 없으므로 비교 불가능하다.</figcaption></figure>
 <p>공집합을 뺀 세 집합에서는 {a}와 {b}가 각각 <b>극소</b>입니다. 각각 자기보다 엄격하게 작은 집합이 없습니다. <b>최소</b>는 집합의 모든 원소 이하인 원소입니다. {a}와 {b}가 비교 불가능하므로 이 세 집합에는 최소가 없습니다.</p>
 <div class="check" data-q="q5"></div><div class="check" data-q="q6"></div>
 <h2>정해지지 않은 쌍을 나열 가능한 순서로 펴기</h2>
