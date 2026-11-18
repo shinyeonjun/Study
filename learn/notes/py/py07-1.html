@@ -25,7 +25,7 @@
 <p class="chap-sub">Python과 프로그래밍 사고 · PY07 파일과 자료 교환</p>
 <p class="chap-num">PY07·1</p>
 <h1>텍스트 파일·경로·인코딩</h1>
-<p class="lead">지금까지 만든 프로그램은 끝나는 순간 모든 값을 잊었습니다. 변수는 메모리에 있고, 메모리는 프로그램이 끝나면 비워지기 때문입니다(U03의 "저장"). 이 장에서는 Python으로 파일에 글을 쓰고 다시 읽는 법, 파일을 찾아가는 경로, 그리고 한국어 Windows에서 거의 반드시 한 번은 만나는 "인코딩 오류"를 실제로 일으켜 보고 고칩니다.</p>
+<p class="lead">지금까지 만든 프로그램은 끝나는 순간 모든 값을 잊었습니다. 변수는 메모리에 있고, 메모리는 프로그램이 끝나면 비워지기 때문입니다. 이 장에서는 Python으로 파일에 글을 쓰고 다시 읽는 법, 파일을 찾아가는 경로, 그리고 한국어 Windows에서 거의 반드시 한 번은 만나는 "인코딩 오류"를 실제로 일으켜 보고 고칩니다.</p>
 </header>
 
 <div class="goal">
@@ -41,7 +41,7 @@
 
 <h2>파일을 읽고 쓰는 흐름</h2>
 
-<p>U02에서 파일은 "이름이 붙은 데이터 덩어리"이고, 디스크에 저장되어 전원을 꺼도 남는다고 배웠습니다. 디스크에 실제로 적히는 것은 글자가 아니라 <b>바이트(byte)</b>, 곧 0부터 255까지의 숫자들입니다(U04). 반면 Python 프로그램 안에서 우리는 <code>"이름"</code> 같은 <b>글자(문자열)</b>를 다룹니다. 그러니 파일에 쓸 때는 글자를 바이트로 바꾸고, 읽을 때는 바이트를 글자로 되돌리는 단계가 반드시 끼어 있습니다.</p>
+<p>파일은 "이름이 붙은 데이터 덩어리"이고, 디스크에 저장되어 전원을 꺼도 남습니다. 디스크에 실제로 적히는 것은 글자가 아니라 <b>바이트(byte)</b>, 곧 0부터 255까지의 숫자들입니다. 반면 Python 프로그램 안에서 우리는 <code>"이름"</code> 같은 <b>글자(문자열)</b>를 다룹니다. 그러니 파일에 쓸 때는 글자를 바이트로 바꾸고, 읽을 때는 바이트를 글자로 되돌리는 단계가 반드시 끼어 있습니다.</p>
 
 <figure class="fig">
 <svg class="fig-svg" viewBox="0 0 760 245" role="img" aria-label="세 칸이 나란히 있다. 왼쪽 프로그램(메모리)은 문자열 이름을 글자로 다룬다. 가운데 파일 객체 f는 open(이름, 모드, encoding)으로 만들며 인코딩과 디코딩을 맡는다. 오른쪽 디스크의 파일은 EC 9D B4 EB A6 84 같은 바이트로 저장된다. 위쪽 화살표는 쓰기: 글자가 인코딩되어 바이트로 간다. 아래쪽 화살표는 읽기: 바이트가 디코딩되어 글자로 온다.">
@@ -72,7 +72,7 @@
 
 <h2>첫 파일 쓰고 읽기 <span class="tag grasp">이해하기</span></h2>
 
-<p>이 장의 코드는 모두 새 폴더(예: <code>study\py07a</code>)를 하나 만들어 그 안에 파일로 저장하고, 명령 프롬프트에서 <b>그 폴더로 이동한 뒤</b> <code>python 파일이름.py</code>로 실행했습니다(폴더 이동은 U05 참고). 실행 결과는 Windows 11, Python 3.14에서 실제로 나온 것입니다.</p>
+<p>이 장의 코드는 모두 새 폴더(예: <code>study\py07a</code>)를 하나 만들어 그 안에 파일로 저장하고, 명령 프롬프트에서 <b>그 폴더로 이동한 뒤</b> <code>python 파일이름.py</code>로 실행했습니다(폴더 이동은 <code>cd 폴더이름</code>). 실행 결과는 Windows 11, Python 3.14에서 실제로 나온 것입니다.</p>
 
 <p class="small">파일 <code>01_write_read.py</code></p>
 <pre><code>with open("memo.txt", "w", encoding="utf-8") as f:
@@ -238,7 +238,7 @@ ValueError: I/O operation on closed file.</code></pre>
 
 <h2>경로: 파일을 찾아가는 주소</h2>
 
-<p>U02에서 경로를 두 가지로 나눴습니다. <code>C:\Users\...\study\py07a\memo.txt</code>처럼 드라이브부터 끝까지 적은 <b>절대 경로</b>, 그리고 <code>data\scores.csv</code>처럼 "어딘가를 기준으로" 적은 <b>상대 경로</b>입니다. Python에서 중요한 질문은 하나입니다. <b>상대 경로의 그 "어딘가"는 어디인가?</b></p>
+<p>경로는 두 가지로 나뉩니다. <code>C:\Users\...\study\py07a\memo.txt</code>처럼 드라이브부터 끝까지 적은 <b>절대 경로</b>, 그리고 <code>data\scores.csv</code>처럼 "어딘가를 기준으로" 적은 <b>상대 경로</b>입니다. Python에서 중요한 질문은 하나입니다. <b>상대 경로의 그 "어딘가"는 어디인가?</b></p>
 
 <div class="box">
 <p class="box-k">정의</p>
@@ -258,7 +258,7 @@ C:\Users\...\study\py07a\data\scores.csv</code></pre>
 <pre><code>C:\Users\...\study\py07a\data
 C:\Users\...\study\py07a\data\data\scores.csv</code></pre>
 
-<p>스크립트는 똑같은데, 둘째 실행에서는 <code>data\data\scores.csv</code>라는 있지도 않은 곳을 가리킵니다. 현재 작업 폴더가 data였으니 거기에 또 data를 붙인 것입니다. 이 상태에서 파일을 열면 FileNotFoundError가 납니다. (<code>..</code>는 "한 단계 위 폴더"입니다. U02 참고.)</p>
+<p>스크립트는 똑같은데, 둘째 실행에서는 <code>data\data\scores.csv</code>라는 있지도 않은 곳을 가리킵니다. 현재 작업 폴더가 data였으니 거기에 또 data를 붙인 것입니다. 이 상태에서 파일을 열면 FileNotFoundError가 납니다. (<code>..</code>는 "한 단계 위 폴더"입니다.)</p>
 
 <figure class="fig">
 <svg class="fig-svg" viewBox="0 0 760 250" role="img" aria-label="폴더 나무: study 아래 py07a, 그 아래 08_cwd.py, memo.txt, data 폴더, data 아래 scores.csv. (가) py07a에서 실행하면 data/scores.csv는 py07a\data\scores.csv로 풀려 실제 파일을 가리킨다. (나) data에서 실행하면 data\data\scores.csv로 풀려 없는 곳을 가리킨다.">
@@ -318,7 +318,7 @@ True</code></pre>
 <tr><td><code>Path("data") / "scores.csv"</code></td><td><code>data\scores.csv</code></td><td><code>/</code>로 경로 조각을 잇는다. Windows에서는 알아서 <code>\</code>로 적는다</td></tr>
 <tr><td><code>p.name</code></td><td><code>scores.csv</code></td><td>맨 끝 이름</td></tr>
 <tr><td><code>p.stem</code></td><td><code>scores</code></td><td>확장자를 뺀 이름</td></tr>
-<tr><td><code>p.suffix</code></td><td><code>.csv</code></td><td>확장자 (U02)</td></tr>
+<tr><td><code>p.suffix</code></td><td><code>.csv</code></td><td>확장자</td></tr>
 <tr><td><code>p.parent</code></td><td><code>data</code></td><td>담고 있는 폴더</td></tr>
 <tr><td><code>p.exists()</code></td><td><code>False</code></td><td>그 파일이 실제로 있는가 (이 시점에는 아직 scores.csv를 만들지 않았다)</td></tr>
 </table>

@@ -161,11 +161,11 @@ print(type(body[0][2]))</code></pre>
 
 <ul>
 <li><code>newline=""</code>: csv 모듈을 쓸 때 open에 붙이라고 Python 공식 문서가 권하는 설정입니다. 줄바꿈 처리를 csv 모듈에 맡긴다는 뜻이고, 특히 <b>쓸 때</b> 빠뜨리면 문제가 생깁니다(쓰기 절에서 실제로 봅니다).</li>
-<li><code>rows</code>는 <b>리스트의 리스트</b>입니다. 5행이고, 첫 행이 머리글입니다. PY04의 슬라이싱으로 <code>rows[1:]</code>을 잘라 머리글을 뺀 본문을 얻었습니다.</li>
+<li><code>rows</code>는 <b>리스트의 리스트</b>입니다. 5행이고, 첫 행이 머리글입니다. 슬라이싱으로 <code>rows[1:]</code>을 잘라 머리글을 뺀 본문을 얻었습니다.</li>
 <li>마지막 줄이 가장 중요합니다. <code>'80'</code>은 숫자 80이 아니라 <b>문자열</b>입니다. CSV는 글자 파일이라 "이 칸은 숫자"라는 정보가 없습니다. 읽은 값은 <b>모두 문자열</b>입니다.</li>
 </ul>
 
-<p>그래서 숫자로 바꾸지 않고 더하면 PY02에서 본 오류가 납니다.</p>
+<p>그래서 숫자로 바꾸지 않고 더하면 정수와 문자열을 더하는 TypeError가 납니다.</p>
 
 <p class="small">파일 <code>03_sum_str.py</code></p>
 <pre><code>import csv

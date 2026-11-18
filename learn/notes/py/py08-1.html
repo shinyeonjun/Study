@@ -326,7 +326,7 @@ i = 2 더한 값 = 70 total = 160
 </table>
 </div>
 
-<p>i가 0부터가 아니라 1부터 시작해서 첫 점수 80을 빠뜨렸습니다. 결과는 160 ÷ 3 = 53.33…입니다. PY04에서 본 <code>range(1, n)</code>은 1부터 n−1까지라는 점이 원인입니다. <code>range(len(scores))</code>로 고치면 0, 1, 2를 돕니다. 이렇게 처음이나 끝을 하나 빠뜨리거나 하나 더 도는 실수를 <b>하나 차이 오류(off-by-one error)</b>라고 부르며, 매우 흔합니다.</p>
+<p>i가 0부터가 아니라 1부터 시작해서 첫 점수 80을 빠뜨렸습니다. 결과는 160 ÷ 3 = 53.33…입니다. <code>range(1, n)</code>은 1부터 n−1까지라는 점이 원인입니다. <code>range(len(scores))</code>로 고치면 0, 1, 2를 돕니다. 이렇게 처음이나 끝을 하나 빠뜨리거나 하나 더 도는 실수를 <b>하나 차이 오류(off-by-one error)</b>라고 부르며, 매우 흔합니다.</p>
 
 <div class="check" data-q="q9"></div>
 
@@ -400,7 +400,7 @@ ZeroDivisionError: division by zero</code></pre>
 
 <div class="box trap">
 <p class="box-k">흔한 실수</p>
-<p><b>실수(소수) 계산 결과를 <code>==</code>로 검사하는 것.</b> 컴퓨터는 0.1 같은 수를 2진수로 정확히 담지 못해 아주 작은 오차가 생깁니다(PY01·2 참고).</p>
+<p><b>실수(소수) 계산 결과를 <code>==</code>로 검사하는 것.</b> 컴퓨터는 0.1 같은 수를 2진수로 정확히 담지 못해 아주 작은 오차가 생깁니다.</p>
 <p class="small">파일 <code>17_float_eq.py</code></p>
 <pre><code>import math
 print(0.1 + 0.2)

@@ -31,7 +31,7 @@
 <li>가중치 하나를 바꾸는 제곱 손실의 기울기를 직접 검산한다.</li>
 </ul></div>
 <h2>안쪽 함수부터 값을 구하고 바깥쪽까지 잇는다</h2>
-<p><code>y=ln(1+x²)</code>에는 함수가 두 겹으로 들어 있습니다. 먼저 입력 x를 안쪽 함수 <code>g(x)=1+x²</code>에 넣어 u를 얻습니다. 그 뒤 바깥 함수 <code>f(u)=ln u</code>를 계산합니다. 이렇게 한 함수의 출력을 다음 함수의 입력으로 넣는 것을 <a href="../../unit.html?u=AL04">합성</a>이라고 합니다. 이 합성은 <code>f(g(x))</code>로 적습니다.</p>
+<p><code>y=ln(1+x²)</code>에는 함수가 두 겹으로 들어 있습니다. 먼저 입력 x를 안쪽 함수 <code>g(x)=1+x²</code>에 넣어 u를 얻습니다. 그 뒤 바깥 함수 <code>f(u)=ln u</code>를 계산합니다. 이렇게 한 함수의 출력을 다음 함수의 입력으로 넣는 것을 <b>합성</b>이라고 합니다. 이 합성은 <code>f(g(x))</code>로 적습니다.</p>
 <figure class="fig">
 <svg class="fig-svg" viewBox="0 0 760 194" role="img" aria-label="입력 x=2에서 안쪽 함수 u=1+x²는 5, 바깥 함수 ln(u)는 ln 5. 각각의 기울기는 4와 1/5이며 연결한 변화율은 4/5.">
 <rect class="f-box" x="37" y="47" width="178" height="83"/><text class="f-cap" x="126" y="73" text-anchor="middle">입력</text><text class="f-t" x="126" y="104" text-anchor="middle">x = 2</text>
