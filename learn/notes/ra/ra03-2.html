@@ -116,6 +116,7 @@
 <figcaption>고정된 x>0은 결국 모든 봉우리 밖으로 나갑니다. 하지만 n마다 봉우리의 넓이는 그대로입니다.</figcaption>
 </figure>
 <p><var>x=0</var>에서 <var>fₙ(0)=0</var>입니다. 어떤 <var>x&gt;0</var>을 고정해도 <var>n&gt;2/x</var>이면 <var>2/n&lt;x</var>라 <var>fₙ(x)=0</var>입니다. 그러므로 점별 극한은 영함수입니다. 하지만 봉우리 높이가 n이라 최대 오차는 n이며, 모든 n에서 <var>∫<sub>0</sub><sup>1</sup>fₙ=(1/2)(2/n)n=1</var>입니다. <var>lim ∫fₙ=1</var>이고 <var>∫lim fₙ=0</var>입니다. 적분의 값은 고정된 한 점에서의 비교가 아니라 전체의 면적을 읽기 때문에 점별수렴만으로는 충분하지 않습니다.</p>
+<div class="box trap"><p class="box-k">흔한 오해 · 균등수렴해도 미분과 극한은 바꿀 수 없다</p><p><var>fₙ(x)=sin(n²x)/n</var>은 <var>|fₙ(x)|≤1/n</var>이라 ℝ에서 영함수로 균등수렴합니다. 그러나 <var>fₙ′(x)=n cos(n²x)</var>이고 <var>fₙ′(0)=n→∞</var>이어서, 도함수의 극한은 극한함수의 도함수 0과 같지 않습니다. 닫힌 구간 [a,b]에서 미분과 극한을 바꾸는 표준 정리는 조건을 <strong>도함수열</strong>에 둡니다. 각 fₙ이 미분 가능하고, 어느 한 점 x₀에서 <var>fₙ(x₀)</var>가 수렴하며, <var>fₙ′</var>이 균등수렴하면 fₙ도 어떤 f로 균등수렴하고 <var>f′=lim fₙ′</var>입니다.</p></div>
 <p>다음 단원에서는 한 점이나 가산 개수의 점을 길이 0으로 다루고, 균등수렴 대신 어떤 지배 조건에서 적분의 극한을 바꿀 수 있는지 다룹니다.</p>
 <div class="check" data-q="q6"></div>
 <h2>손계산을 Python으로 검산한다</h2>
@@ -141,7 +142,7 @@ for n in [5, 20]:
 <p class="small">Python 3.14.6으로 실행했습니다. 고정한 <var>x=1/8</var>에서 함수값이 중간에 올라가도, 충분히 큰 n에서는 0이 됩니다. 반면 각 n의 꼭짓점으로 입력을 함께 옮기면 높이가 커집니다.</p>
 <h2>참고 자료</h2>
 <ul>
-<li><a href="https://www.jirka.org/ra/html/sec_liminter.html">Jiří Lebl, Basic Analysis, Interchange of Limits</a></li>
+<li><a href="https://www.jirka.org/ra/html/sec_liminter.html">Jiří Lebl, Basic Analysis I §6.2 Interchange of Limits</a></li>
 <li><a href="ra03-1.html">RA03-1 Darboux 상합과 하합</a></li>
 <li><a href="ra02-1.html">RA02-1 ε–δ 연속</a></li>
 </ul>

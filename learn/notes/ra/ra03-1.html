@@ -83,7 +83,7 @@
 <h2>기존 눈금을 모두 보존한 채 더 잘게 나눈다</h2>
 
 <p>분할 <var>P</var>에 눈금을 추가한 <var>R⊇P</var>를 <b>정제</b>(refinement)라 합니다. 칸이 둘로 나뉘면 두 하한은 각각 옛 하한 이상이고 두 상한은 각각 옛 상한 이하입니다. 두 폭의 합이 옛 폭이라 하합은 감소하지 않고 상합은 증가하지 않습니다. 즉 <var>L(P,f)≤L(R,f)≤U(R,f)≤U(P,f)</var>입니다.</p>
-<p>임의의 두 분할 <var>P,Q</var>는 한쪽에 다른 쪽의 모든 눈금이 없을 수 있습니다. 합집합 <var>R=P∪Q</var>로 정제하면 <var>L(P,f)≤L(R,f)≤U(R,f)≤U(Q,f)</var>입니다. 따라서 어느 하합도 어느 상합보다 클 수 없습니다. 모든 하합의 상한 <var>I₋=sup<sub>P</sub>L(P,f)</var>, 모든 상합의 하한 <var>I₊=inf<sub>P</sub>U(P,f)</var>는 함수가 유계라 유한한 실수로 존재하며 <var>I₋≤I₊</var>입니다. 두 값이 같으면 그 공통값을 <var>∫<sub>a</sub><sup>b</sup>f(x)dx</var>라 합니다. 이는 리만 적분을 Darboux 합으로 정의한 방식입니다.</p>
+<p>임의의 두 분할 <var>P,Q</var>는 한쪽에 다른 쪽의 모든 눈금이 없을 수 있습니다. 합집합 <var>R=P∪Q</var>로 정제하면 <var>L(P,f)≤L(R,f)≤U(R,f)≤U(Q,f)</var>입니다. 따라서 어느 하합도 어느 상합보다 클 수 없습니다. 모든 하합의 상한 <var>I₋=sup<sub>P</sub>L(P,f)</var>, 모든 상합의 하한 <var>I₊=inf<sub>P</sub>U(P,f)</var>는 함수가 유계라 유한한 실수로 존재하며 <var>I₋≤I₊</var>입니다. 두 값이 같으면 그 공통값을 <var>∫<sub>a</sub><sup>b</sup>f(x)dx</var>라 합니다. 이는 리만 적분을 Darboux 합으로 정의한 방식입니다. 칸마다 표본점 하나를 골라 만든 리만합에서 가장 넓은 칸의 폭을 0으로 보내는 정의도 있는데, 두 정의는 같은 함수를 적분 가능하다고 하고 같은 값을 줍니다. 이 동치는 표준 해석학 교재에서 정리로 증명합니다.</p>
 <p><b>적분 가능성 기준.</b> 모든 <var>ε&gt;0</var>에서 <var>U(P,f)-L(P,f)&lt;ε</var>인 분할 하나를 고를 수 있으면, <var>0≤I₊-I₋≤U(P,f)-L(P,f)&lt;ε</var>이므로 두 값이 같습니다. 반대로 두 값이 I로 같다면 <var>L(P₁,f)&gt;I-ε/2</var>, <var>U(P₂,f)&lt;I+ε/2</var>인 분할을 각각 고릅니다. 공통 정제 <var>P₁∪P₂</var>에서 하합은 더 커지고 상합은 더 작아져 그 차이가 ε 미만입니다.</p>
 <div class="check" data-q="q3"></div>
 <div class="check" data-q="q4"></div>
@@ -126,7 +126,7 @@
 <rect class="f-soft" x="542" y="196" width="162" height="38" rx="3"/>
 <text class="f-t" x="623" y="221" text-anchor="middle">1/20</text>
 </svg>
-<figcaption>4와 8 등분은 서로가 정제 관계입니다. 20 등분은 8 등분의 정제일 필요가 없어도, 이 함수의 오차 식은 모든 등분 수에 적용됩니다.</figcaption>
+<figcaption>8등분은 4등분의 정제입니다. 20등분은 눈금 1/8이 없어 8등분의 정제가 아니지만, 이 함수의 차이 식 1/n은 모든 등분 수에 적용됩니다.</figcaption>
 </figure>
 <div class="check" data-q="q5"></div>
 
