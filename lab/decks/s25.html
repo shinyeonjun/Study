@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>벨만식 · 오늘의 보상과 다음 상태의 가치 · 슬라이드 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%238a4b14'/%3E%3Cpath d='M10 8l12 8-12 8z' fill='%23fff'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../style.css">
+</head>
+<body class="deck-body" data-note="S25">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../index.html">슬라이드 교재</a>
+<span class="crumb">덱 25</span>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<main class="deck">
+
+<section class="slide cover-slide">
+<p class="deck-no">덱 25</p>
+<h1>벨만식 · 오늘의 보상과 다음 상태의 가치</h1>
+<p class="road"><b>정책의 가치</b> → <b>기댓값을 한 단계씩</b> → <b>벨만 기대식</b> → <b>벨만 최적식</b></p>
+<p class="say">통로 C의 가치를 먼저 구하면, 출발에서의 선택도 숫자로 비교할 수 있다.</p>
+</section>
+
+<section class="slide">
+<h2>한 걸음 뒤의 반환은 통째로 할인한다</h2>
+<figure class="fig"><svg class="fig-svg fig-wide" viewBox="0 0 760 212" role="img" aria-label="현재 반환은 지금 받은 보상에 한 걸음 뒤부터의 반환을 할인해 더한 값이다."><rect class="f-box" x="30" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="135.66666666666669" y="66" text-anchor="middle">첫 이동</text><text class="f-cap" x="135.66666666666669" y="105" text-anchor="middle">보상 Rₜ₊₁</text><text class="f-s" x="135.66666666666669" y="139" text-anchor="middle">이번 전이에서 받는다</text><rect class="f-box" x="263.33333333333337" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="369.00000000000006" y="66" text-anchor="middle">둘째 이동부터</text><text class="f-cap" x="369.00000000000006" y="105" text-anchor="middle">반환 Gₜ₊₁</text><text class="f-s" x="369.00000000000006" y="139" text-anchor="middle">다음 시점에서 센 합</text><rect class="f-soft" x="496.6666666666667" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="602.3333333333334" y="66" text-anchor="middle">지금으로 환산</text><text class="f-cap" x="602.3333333333334" y="105" text-anchor="middle">Rₜ₊₁ + γGₜ₊₁</text><text class="f-s" x="602.3333333333334" y="139" text-anchor="middle">현재 반환 Gₜ</text></svg><svg class="fig-svg fig-narrow" viewBox="0 0 390 187" role="img" aria-label="현재 반환은 지금 받은 보상에 한 걸음 뒤부터의 반환을 할인해 더한 값이다."><rect class="f-box" x="20" y="6" width="350" height="51" rx="5"/><text class="f-s" x="34" y="25" text-anchor="start">첫 이동</text><text class="f-cap" x="34" y="47" text-anchor="start">보상 Rₜ₊₁</text><text class="f-s" x="354" y="46" text-anchor="end">이번 전이에서 받는다</text><rect class="f-box" x="20" y="68" width="350" height="51" rx="5"/><text class="f-s" x="34" y="87" text-anchor="start">둘째 이동부터</text><text class="f-cap" x="34" y="109" text-anchor="start">반환 Gₜ₊₁</text><text class="f-s" x="354" y="108" text-anchor="end">다음 시점에서 센 합</text><rect class="f-soft" x="20" y="130" width="350" height="51" rx="5"/><text class="f-s" x="34" y="149" text-anchor="start">지금으로 환산</text><text class="f-cap" x="34" y="171" text-anchor="start">Rₜ₊₁ + γGₜ₊₁</text><text class="f-s" x="354" y="170" text-anchor="end">현재 반환 Gₜ</text></svg></figure>
+<p class="say">다음 시점부터의 보상을 이미 Gₜ₊₁에 모아 두었다. 지금 시점으로 한 칸 당겨 γ를 곱한다.</p>
+</section>
+
+<section class="slide">
+<h2>상태의 가치는 정책을 따라 얻는 평균</h2>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 390 186" role="img" aria-label="통로 C에서 정책 파이가 배송과 중단을 각각 0.5 확률로 선택한다. 양쪽 모두 종료하므로 상태 가치가 3이다."><rect class="f-soft" x="116" y="9" width="158" height="54" rx="5"/><text class="f-cap" x="195" y="40" text-anchor="middle">통로 C의 정책 π</text><line class="f-line" x1="169" y1="66" x2="101" y2="107" marker-end="url(#f-arrow)"/><line class="f-line" x1="221" y1="66" x2="289" y2="107" marker-end="url(#f-arrow)"/><text class="f-s" x="95" y="87" text-anchor="middle">선택 0.5</text><text class="f-s" x="295" y="87" text-anchor="middle">선택 0.5</text><rect class="f-box" x="16" y="113" width="155" height="63" rx="5"/><text class="f-t" x="93.5" y="139" text-anchor="middle">배송</text><text class="f-s" x="93.5" y="159" text-anchor="middle">즉시 +6, 종료</text><rect class="f-box" x="219" y="113" width="155" height="63" rx="5"/><text class="f-t" x="296.5" y="139" text-anchor="middle">중단</text><text class="f-s" x="296.5" y="159" text-anchor="middle">즉시 0, 종료</text></svg></figure>
+<p class="big">Vπ(C) = 0.5 × 6 + 0.5 × 0 = 3</p>
+<p class="say">Vπ(C)는 C에서 출발해 이 정책을 따를 때의 기대 반환이다. 종료 뒤에는 더 받을 보상이 없다.</p>
+</section>
+
+<section class="slide">
+<h2>행동 가치는 첫 행동부터 고정한다</h2>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 390 120" role="img" aria-label="우회의 지금 보상 마이너스 1에 다음 상태 통로 C의 가치 V(C)를 0.8배 해 더한다."><rect class="f-box" x="13" y="38" width="145" height="70" rx="5"/><rect class="f-soft" x="231" y="38" width="145" height="70" rx="5"/><text class="f-s" x="85.5" y="62" text-anchor="middle">지금 받은 보상</text><text class="f-cap" x="85.5" y="88" text-anchor="middle">−1</text><text class="f-s" x="303.5" y="62" text-anchor="middle">나중 반환의 평균</text><text class="f-cap" x="303.5" y="88" text-anchor="middle">0.8 × Vπ(C)</text><text class="f-t" x="195" y="82" text-anchor="middle">+</text></svg></figure>
+<p class="big">Qπ(S, 우회) = −1 + 0.8 × 3 = 1.4</p>
+<p class="say">Qπ(S, 우회)는 출발에서 우회를 먼저 한 뒤 C에서는 정책 π를 따를 때의 기대 반환이다.</p>
+</section>
+
+<section class="slide check-slide">
+<h2>잠깐, 직접</h2>
+<div class="check" data-q="q1"></div>
+</section>
+
+<section class="slide">
+<h2>여러 전이가 있으면 결과마다 따로 계산한다</h2>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 390 186" role="img" aria-label="직행 두 결과 모두 끝 상태이므로 미래 가치는 0이다. 완료 보상 4와 미완료 보상 0의 가중합은 3이다."><rect class="f-soft" x="116" y="9" width="158" height="54" rx="5"/><text class="f-cap" x="195" y="40" text-anchor="middle">Qπ(S, 직행)</text><line class="f-line" x1="169" y1="66" x2="101" y2="107" marker-end="url(#f-arrow)"/><line class="f-line" x1="221" y1="66" x2="289" y2="107" marker-end="url(#f-arrow)"/><text class="f-s" x="95" y="87" text-anchor="middle">확률 0.75</text><text class="f-s" x="295" y="87" text-anchor="middle">확률 0.25</text><rect class="f-box" x="16" y="113" width="155" height="63" rx="5"/><text class="f-t" x="93.5" y="139" text-anchor="middle">완료 D</text><text class="f-s" x="93.5" y="159" text-anchor="middle">4 + 0.8 × 0</text><rect class="f-box" x="219" y="113" width="155" height="63" rx="5"/><text class="f-t" x="296.5" y="139" text-anchor="middle">미완료 F</text><text class="f-s" x="296.5" y="159" text-anchor="middle">0 + 0.8 × 0</text></svg></figure>
+<p class="say">종료에 들어가는 순간의 보상은 그대로 더한다. 종료 상태 D와 F의 미래 가치는 0이다.</p>
+</section>
+
+<section class="slide">
+<h2>두 갈래 평균을 한 줄로 쓰면 벨만식</h2>
+<figure class="fig"><svg class="fig-svg fig-wide" viewBox="0 0 760 140" role="img" aria-label="직행 결과 두 개는 확률이 0.75와 0.25이며 각 결과의 지금 보상과 할인 가치에 확률을 곱한다."><text class="f-s" x="245" y="28" text-anchor="middle">확률로 가중</text><text class="f-s" x="367" y="28" text-anchor="middle">더할 값</text><text class="f-s" x="175" y="74.8" text-anchor="end">완료 D</text><rect class="f-box" x="184" y="48" width="118" height="35" rx="5"/><text class="f-t" x="243" y="73.6" text-anchor="middle">0.75</text><rect class="f-box" x="306" y="48" width="118" height="35" rx="5"/><text class="f-t" x="365" y="73.6" text-anchor="middle">4 + 0.8 × 0</text><text class="f-s" x="175" y="114.8" text-anchor="end">미완료 F</text><rect class="f-box" x="184" y="88" width="118" height="35" rx="5"/><text class="f-t" x="243" y="113.6" text-anchor="middle">0.25</text><rect class="f-box" x="306" y="88" width="118" height="35" rx="5"/><text class="f-t" x="365" y="113.6" text-anchor="middle">0 + 0.8 × 0</text></svg><svg class="fig-svg fig-narrow" viewBox="0 0 390 140" role="img" aria-label="직행 결과 두 개는 확률이 0.75와 0.25이며 각 결과의 지금 보상과 할인 가치에 확률을 곱한다."><text class="f-s" x="165.5" y="28" text-anchor="middle">확률로 가중</text><text class="f-s" x="280.5" y="28" text-anchor="middle">더할 값</text><text class="f-s" x="99" y="74.8" text-anchor="end">완료 D</text><rect class="f-box" x="108" y="48" width="111" height="35" rx="5"/><text class="f-t" x="163.5" y="73.6" text-anchor="middle">0.75</text><rect class="f-box" x="223" y="48" width="111" height="35" rx="5"/><text class="f-t" x="278.5" y="73.6" text-anchor="middle">4 + 0.8 × 0</text><text class="f-s" x="99" y="114.8" text-anchor="end">미완료 F</text><rect class="f-box" x="108" y="88" width="111" height="35" rx="5"/><text class="f-t" x="163.5" y="113.6" text-anchor="middle">0.25</text><rect class="f-box" x="223" y="88" width="111" height="35" rx="5"/><text class="f-t" x="278.5" y="113.6" text-anchor="middle">0 + 0.8 × 0</text></svg></figure>
+<p class="big">Qπ(s,a) = Σ p(s′,r | s,a) × [r + γVπ(s′)]</p>
+<p class="say">Σ는 가능한 다음 상태 s′와 보상 r을 모두 더한다는 뜻이고, p는 각 전이의 확률이다.</p>
+</section>
+
+<section class="slide check-slide">
+<h2>잠깐, 직접</h2>
+<div class="check" data-q="q2"></div>
+</section>
+
+<section class="slide">
+<h2>정책으로 행동을 고르면 한 번 더 평균</h2>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 390 186" role="img" aria-label="출발 상태의 정책이 직행과 우회를 각각 0.5로 골라 주므로 상태 가치는 3과 1.4의 평균 2.2이다."><rect class="f-soft" x="116" y="9" width="158" height="54" rx="5"/><text class="f-cap" x="195" y="40" text-anchor="middle">출발 S의 정책 π</text><line class="f-line" x1="169" y1="66" x2="101" y2="107" marker-end="url(#f-arrow)"/><line class="f-line" x1="221" y1="66" x2="289" y2="107" marker-end="url(#f-arrow)"/><text class="f-s" x="95" y="87" text-anchor="middle">선택 0.5</text><text class="f-s" x="295" y="87" text-anchor="middle">선택 0.5</text><rect class="f-box" x="16" y="113" width="155" height="63" rx="5"/><text class="f-t" x="93.5" y="139" text-anchor="middle">직행</text><text class="f-s" x="93.5" y="159" text-anchor="middle">Qπ(S, 직행) = 3</text><rect class="f-box" x="219" y="113" width="155" height="63" rx="5"/><text class="f-t" x="296.5" y="139" text-anchor="middle">우회</text><text class="f-s" x="296.5" y="159" text-anchor="middle">Qπ(S, 우회) = 1.4</text></svg></figure>
+<p class="big">Vπ(S) = 0.5 × 3 + 0.5 × 1.4 = 2.2</p>
+<p class="say">먼저 행동별로 결과를 평균 낸다. 그 뒤 π가 각 행동을 고르는 확률로 그 행동 값들을 평균 낸다.</p>
+</section>
+
+<section class="slide check-slide">
+<h2>잠깐, 직접</h2>
+<div class="check" data-q="q3"></div>
+</section>
+
+<section class="slide">
+<h2>두 평균을 합친 식이 벨만 기대식</h2>
+<figure class="fig"><svg class="fig-svg fig-wide" viewBox="0 0 760 212" role="img" aria-label="첫 번째 평균은 행동을 고정해 환경이 돌려주는 전이 결과에 대해 구한다. 두 번째 평균은 정책이 행동을 고르는 확률로 구해 상태 가치가 된다."><rect class="f-box" x="30" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="135.66666666666669" y="66" text-anchor="middle">환경의 확률 p</text><text class="f-cap" x="135.66666666666669" y="105" text-anchor="middle">전이 결과 평균</text><text class="f-s" x="135.66666666666669" y="139" text-anchor="middle">행동마다 계산</text><line class="f-line" x1="243.33333333333334" y1="105" x2="260.33333333333337" y2="105" marker-end="url(#f-arrow)"/><rect class="f-box" x="263.33333333333337" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="369.00000000000006" y="66" text-anchor="middle">정책의 확률 π</text><text class="f-cap" x="369.00000000000006" y="105" text-anchor="middle">행동 값 평균</text><text class="f-s" x="369.00000000000006" y="139" text-anchor="middle">지금 상태에 적용</text><line class="f-line" x1="476.66666666666674" y1="105" x2="493.66666666666674" y2="105" marker-end="url(#f-arrow)"/><rect class="f-soft" x="496.6666666666667" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="602.3333333333334" y="66" text-anchor="middle">상태 가치</text><text class="f-cap" x="602.3333333333334" y="105" text-anchor="middle">Vπ(s)</text><text class="f-s" x="602.3333333333334" y="139" text-anchor="middle">같은 정책의 기대 반환</text></svg><svg class="fig-svg fig-narrow" viewBox="0 0 390 187" role="img" aria-label="첫 번째 평균은 행동을 고정해 환경이 돌려주는 전이 결과에 대해 구한다. 두 번째 평균은 정책이 행동을 고르는 확률로 구해 상태 가치가 된다."><rect class="f-box" x="20" y="6" width="350" height="51" rx="5"/><text class="f-s" x="34" y="25" text-anchor="start">환경의 확률 p</text><text class="f-cap" x="34" y="47" text-anchor="start">전이 결과 평균</text><text class="f-s" x="354" y="46" text-anchor="end">행동마다 계산</text><line class="f-line" x1="195" y1="58" x2="195" y2="67" marker-end="url(#f-arrow)"/><rect class="f-box" x="20" y="68" width="350" height="51" rx="5"/><text class="f-s" x="34" y="87" text-anchor="start">정책의 확률 π</text><text class="f-cap" x="34" y="109" text-anchor="start">행동 값 평균</text><text class="f-s" x="354" y="108" text-anchor="end">지금 상태에 적용</text><line class="f-line" x1="195" y1="120" x2="195" y2="129" marker-end="url(#f-arrow)"/><rect class="f-soft" x="20" y="130" width="350" height="51" rx="5"/><text class="f-s" x="34" y="149" text-anchor="start">상태 가치</text><text class="f-cap" x="34" y="171" text-anchor="start">Vπ(s)</text><text class="f-s" x="354" y="170" text-anchor="end">같은 정책의 기대 반환</text></svg></figure>
+<p class="big">Vπ(s) = Σ<sub>a</sub> π(a | s) × Σ<sub>s′,r</sub> p(s′, r | s,a) × [r + γVπ(s′)]</p>
+<p class="say">안쪽 Σ는 한 행동의 전이 결과를 더한다. 바깥쪽 Σ는 정책이 고를 수 있는 첫 행동을 더한다.</p>
+</section>
+
+<section class="slide">
+<h2>앞으로 최선이라면 통로의 가치는 6</h2>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 390 186" role="img" aria-label="통로에서 배송의 기대 반환은 6이고 중단의 기대 반환은 0이다. 최대인 6이 통로의 최적 가치다."><rect class="f-soft" x="116" y="9" width="158" height="54" rx="5"/><text class="f-cap" x="195" y="40" text-anchor="middle">통로 C에서 비교</text><line class="f-line" x1="169" y1="66" x2="101" y2="107" marker-end="url(#f-arrow)"/><line class="f-line" x1="221" y1="66" x2="289" y2="107" marker-end="url(#f-arrow)"/><text class="f-s" x="95" y="87" text-anchor="middle">행동</text><text class="f-s" x="295" y="87" text-anchor="middle">행동</text><rect class="f-soft" x="16" y="113" width="155" height="63" rx="5"/><text class="f-t" x="93.5" y="139" text-anchor="middle">배송</text><text class="f-s" x="93.5" y="159" text-anchor="middle">6점 · 선택</text><rect class="f-box" x="219" y="113" width="155" height="63" rx="5"/><text class="f-t" x="296.5" y="139" text-anchor="middle">중단</text><text class="f-s" x="296.5" y="159" text-anchor="middle">0점</text></svg></figure>
+<p class="big">V*(C) = max(6, 0) = 6</p>
+<p class="say">V*(C)는 여기부터 가능한 가장 높은 기대 반환이다. 이 예의 C에서는 배송을 고른다.</p>
+</section>
+
+<section class="slide">
+<h2>행동마다 평균을 낸 뒤 가장 큰 것을 고른다</h2>
+<figure class="fig"><svg class="fig-svg fig-wide" viewBox="0 0 760 140" role="img" aria-label="직행은 확률로 보상들을 평균 내면 3이다. 우회는 보상 마이너스 1에 최적 통로 가치 6을 할인해 더하면 3.8이라 우회를 선택한다."><text class="f-s" x="245" y="28" text-anchor="middle">직행</text><text class="f-s" x="367" y="28" text-anchor="middle">우회</text><text class="f-s" x="175" y="74.8" text-anchor="end">기대 반환</text><rect class="f-box" x="184" y="48" width="118" height="35" rx="5"/><text class="f-t" x="243" y="73.6" text-anchor="middle">3</text><rect class="f-box" x="306" y="48" width="118" height="35" rx="5"/><text class="f-t" x="365" y="73.6" text-anchor="middle">3.8</text><text class="f-s" x="175" y="114.8" text-anchor="end">최적 행동</text><rect class="f-box" x="184" y="88" width="118" height="35" rx="5"/><text class="f-t" x="243" y="113.6" text-anchor="middle"></text><rect class="f-soft" x="306" y="88" width="118" height="35" rx="5"/><text class="f-t" x="365" y="113.6" text-anchor="middle">우회</text></svg><svg class="fig-svg fig-narrow" viewBox="0 0 390 140" role="img" aria-label="직행은 확률로 보상들을 평균 내면 3이다. 우회는 보상 마이너스 1에 최적 통로 가치 6을 할인해 더하면 3.8이라 우회를 선택한다."><text class="f-s" x="165.5" y="28" text-anchor="middle">직행</text><text class="f-s" x="280.5" y="28" text-anchor="middle">우회</text><text class="f-s" x="99" y="74.8" text-anchor="end">기대 반환</text><rect class="f-box" x="108" y="48" width="111" height="35" rx="5"/><text class="f-t" x="163.5" y="73.6" text-anchor="middle">3</text><rect class="f-box" x="223" y="48" width="111" height="35" rx="5"/><text class="f-t" x="278.5" y="73.6" text-anchor="middle">3.8</text><text class="f-s" x="99" y="114.8" text-anchor="end">최적 행동</text><rect class="f-box" x="108" y="88" width="111" height="35" rx="5"/><text class="f-t" x="163.5" y="113.6" text-anchor="middle"></text><rect class="f-soft" x="223" y="88" width="111" height="35" rx="5"/><text class="f-t" x="278.5" y="113.6" text-anchor="middle">우회</text></svg></figure>
+<p class="big">V*(s) = max<sub>a</sub> Σ<sub>s′,r</sub> p(s′, r | s,a) × [r + γV*(s′)]</p>
+<p class="say">행동은 로봇이 고르고, 전이 결과는 환경이 정한다. 각 행동을 비교할 때는 다음 상태의 최적 가치 V*를 쓴다.</p>
+</section>
+
+<section class="slide check-slide">
+<h2>잠깐, 직접</h2>
+<div class="check" data-q="q4"></div>
+</section>
+
+<section class="slide">
+<h2>전이표에서 정책의 가치와 최적 가치를 구한다</h2>
+<pre data-example="python"><code>gamma = 0.8
+# 한 항목은 (확률, 즉시 보상, 다음 상태)다.
+transitions = {
+    &quot;직행&quot;: [(0.75, 4, &quot;D&quot;), (0.25, 0, &quot;F&quot;)],
+    &quot;우회&quot;: [(1.0, -1, &quot;C&quot;)],
+    &quot;배송&quot;: [(1.0, 6, &quot;D&quot;)],
+    &quot;중단&quot;: [(1.0, 0, &quot;F&quot;)],
+}
+
+def q(action, values):
+    return sum(p * (r + gamma * values[next_state])
+               for p, r, next_state in transitions[action])
+
+terminal = {&quot;D&quot;: 0, &quot;F&quot;: 0}
+deliver = q(&quot;배송&quot;, terminal)
+stop = q(&quot;중단&quot;, terminal)
+fixed = {**terminal, &quot;C&quot;: (deliver + stop) / 2}
+optimal = {**terminal, &quot;C&quot;: max(deliver, stop)}
+print(f&quot;정책 π의 출발 가치 {(q('직행', fixed) + q('우회', fixed))/2:.1f}&quot;)
+print(f&quot;출발의 최적 가치 {max(q('직행', optimal), q('우회', optimal)):.1f}&quot;)</code></pre>
+<pre data-output><code>정책 π의 출발 가치 2.2
+출발의 최적 가치 3.8</code></pre>
+<p class="say">행동 이름이 모두 달라 이름만으로 전이표를 찾는다. D와 F부터 C, S 순서로 값을 채운다.</p>
+</section>
+
+<section class="slide">
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table><tbody><tr><th scope="row">Vπ(s)</th><td>상태 s부터 정책 π를 따를 때의 기대 반환</td></tr><tr><th scope="row">Qπ(s,a)</th><td>상태 s에서 첫 행동 a를 고정하고 이후는 π를 따를 때의 기대 반환</td></tr><tr><th scope="row">벨만 기대식</th><td>전이 결과는 환경의 확률로, 첫 행동은 정책의 확률로 평균</td></tr><tr><th scope="row">벨만 최적식</th><td>다음에 최선으로 행동한다고 두고 행동별 기대 반환 중 최댓값을 고름</td></tr><tr><th scope="row">종료 상태</th><td>진입 보상은 전이에 기록. 종료 상태부터의 미래 가치는 0</td></tr></tbody></table></div>
+<p class="small muted">개념 사전 · <a href="../../learn/unit.html?u=RL03">반환과 할인</a> · <a href="../../learn/unit.html?u=RL04">MDP와 벨만식</a> · <a href="../../learn/unit.html?u=RL05">정책 평가·개선과 가치반복</a> · <a href="../../learn/unit.html?u=PR04">조건별 기댓값</a></p>
+<p class="small muted">참고 교재 · <a href="https://mitpress.mit.edu/9780262039246/reinforcement-learning/">Sutton·Barto, 제3~4장</a></p>
+</section>
+
+</main>
+<script src="../notes.js"></script>
+<script src="../js/core.js"></script>
+<script src="../js/deck.js"></script>
+</body>
+</html>

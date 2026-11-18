@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>강화학습 첫걸음 · 확률에서 MDP까지 · 슬라이드 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%238a4b14'/%3E%3Cpath d='M10 8l12 8-12 8z' fill='%23fff'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../style.css">
+</head>
+<body class="deck-body" data-note="S24">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../index.html">슬라이드 교재</a>
+<span class="crumb">덱 24</span>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<main class="deck">
+
+<section class="slide cover-slide">
+<p class="deck-no">덱 24</p>
+<h1>강화학습 첫걸음 · 확률에서 MDP까지</h1>
+<p class="road"><b>로봇의 선택</b> → <b>결과의 확률</b> → <b>보상의 기댓값</b> → <b>MDP</b></p>
+<p class="say">배달 로봇이 직행할까, 한 번 더 돌아갈까? 선택 뒤에 생기는 일부터 그려 보자.</p>
+</section>
+
+<section class="slide">
+<h2>로봇이 고르고, 길이 결과를 돌려준다</h2>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 390 151" role="img" aria-label="배달 로봇이 환경에 행동을 보내고, 환경은 새 상태와 보상을 돌려준다."><rect class="f-soft" x="15" y="64" width="125" height="66" rx="5"/><rect class="f-box" x="250" y="64" width="125" height="66" rx="5"/><text class="f-t" x="77.5" y="92" text-anchor="middle">에이전트</text><text class="f-s" x="77.5" y="113" text-anchor="middle">배달 로봇</text><text class="f-t" x="312.5" y="92" text-anchor="middle">환경</text><text class="f-s" x="312.5" y="113" text-anchor="middle">길과 도착 결과</text><line class="f-line" x1="144" y1="82" x2="244" y2="82" marker-end="url(#f-arrow)"/><text class="f-s" x="194" y="67" text-anchor="middle">행동</text><line class="f-line" x1="244" y1="113" x2="146" y2="113" marker-end="url(#f-arrow)"/><text class="f-s" x="194" y="136" text-anchor="middle">새 상태 · 보상</text></svg></figure>
+<p class="say">로봇이 행동을 고른다. 한 번 움직이면 새 상태와 보상 점수를 받는다.</p>
+<p class="kw"><span>에이전트 = 선택하는 로봇</span><span>환경 = 로봇이 움직이는 세계</span></p>
+</section>
+
+<section class="slide">
+<h2>같은 직행도 결과가 두 갈래</h2>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 390 186" role="img" aria-label="출발 S에서 직행했을 때 배송 완료 확률은 0.75이고 보상은 4, 배송 미완료 확률은 0.25이고 보상은 0이다."><rect class="f-soft" x="116" y="9" width="158" height="54" rx="5"/><text class="f-cap" x="195" y="40" text-anchor="middle">출발 S에서 직행</text><line class="f-line" x1="169" y1="66" x2="101" y2="107" marker-end="url(#f-arrow)"/><line class="f-line" x1="221" y1="66" x2="289" y2="107" marker-end="url(#f-arrow)"/><text class="f-s" x="95" y="87" text-anchor="middle">확률 0.75</text><text class="f-s" x="295" y="87" text-anchor="middle">확률 0.25</text><rect class="f-box" x="16" y="113" width="155" height="63" rx="5"/><text class="f-t" x="93.5" y="139" text-anchor="middle">배송 완료 D</text><text class="f-s" x="93.5" y="159" text-anchor="middle">보상 +4</text><rect class="f-box" x="219" y="113" width="155" height="63" rx="5"/><text class="f-t" x="296.5" y="139" text-anchor="middle">배송 미완료 F</text><text class="f-s" x="296.5" y="159" text-anchor="middle">보상 0</text></svg></figure>
+<p class="say">0.75는 ‘출발에서 직행을 골랐을 때’ 배송될 확률이다.</p>
+<p class="kw"><span>조건부확률 · 무엇을 이미 골랐나</span></p>
+</section>
+
+<section class="slide">
+<h2>기댓값은 확률로 무게를 준 평균</h2>
+<figure class="fig"><svg class="fig-svg fig-wide" viewBox="0 0 760 180" role="img" aria-label="직행의 보상 4와 0에 각각 0.75와 0.25를 곱해 더하면 기대 보상 3."><text class="f-s" x="245" y="28" text-anchor="middle">완료 D</text><text class="f-s" x="367" y="28" text-anchor="middle">미완료 F</text><text class="f-s" x="489" y="28" text-anchor="middle">합</text><text class="f-s" x="175" y="74.8" text-anchor="end">확률</text><rect class="f-box" x="184" y="48" width="118" height="35" rx="5"/><text class="f-t" x="243" y="73.6" text-anchor="middle">0.75</text><rect class="f-box" x="306" y="48" width="118" height="35" rx="5"/><text class="f-t" x="365" y="73.6" text-anchor="middle">0.25</text><rect class="f-box" x="428" y="48" width="118" height="35" rx="5"/><text class="f-t" x="487" y="73.6" text-anchor="middle">1</text><text class="f-s" x="175" y="114.8" text-anchor="end">보상</text><rect class="f-box" x="184" y="88" width="118" height="35" rx="5"/><text class="f-t" x="243" y="113.6" text-anchor="middle">4</text><rect class="f-box" x="306" y="88" width="118" height="35" rx="5"/><text class="f-t" x="365" y="113.6" text-anchor="middle">0</text><rect class="f-box" x="428" y="88" width="118" height="35" rx="5"/><text class="f-t" x="487" y="113.6" text-anchor="middle"></text><text class="f-s" x="175" y="154.8" text-anchor="end">확률 × 보상</text><rect class="f-box" x="184" y="128" width="118" height="35" rx="5"/><text class="f-t" x="243" y="153.6" text-anchor="middle">3</text><rect class="f-box" x="306" y="128" width="118" height="35" rx="5"/><text class="f-t" x="365" y="153.6" text-anchor="middle">0</text><rect class="f-soft" x="428" y="128" width="118" height="35" rx="5"/><text class="f-t" x="487" y="153.6" text-anchor="middle">3</text></svg><svg class="fig-svg fig-narrow" viewBox="0 0 390 180" role="img" aria-label="직행의 보상 4와 0에 각각 0.75와 0.25를 곱해 더하면 기대 보상 3."><text class="f-s" x="152.33333333333334" y="28" text-anchor="middle">완료 D</text><text class="f-s" x="241" y="28" text-anchor="middle">미완료 F</text><text class="f-s" x="329.6666666666667" y="28" text-anchor="middle">합</text><text class="f-s" x="99" y="74.8" text-anchor="end">확률</text><rect class="f-box" x="108" y="48" width="84.66666666666667" height="35" rx="5"/><text class="f-t" x="150.33333333333334" y="73.6" text-anchor="middle">0.75</text><rect class="f-box" x="196.66666666666669" y="48" width="84.66666666666667" height="35" rx="5"/><text class="f-t" x="239.00000000000003" y="73.6" text-anchor="middle">0.25</text><rect class="f-box" x="285.33333333333337" y="48" width="84.66666666666667" height="35" rx="5"/><text class="f-t" x="327.6666666666667" y="73.6" text-anchor="middle">1</text><text class="f-s" x="99" y="114.8" text-anchor="end">보상</text><rect class="f-box" x="108" y="88" width="84.66666666666667" height="35" rx="5"/><text class="f-t" x="150.33333333333334" y="113.6" text-anchor="middle">4</text><rect class="f-box" x="196.66666666666669" y="88" width="84.66666666666667" height="35" rx="5"/><text class="f-t" x="239.00000000000003" y="113.6" text-anchor="middle">0</text><rect class="f-box" x="285.33333333333337" y="88" width="84.66666666666667" height="35" rx="5"/><text class="f-t" x="327.6666666666667" y="113.6" text-anchor="middle"></text><text class="f-s" x="99" y="154.8" text-anchor="end">확률 × 보상</text><rect class="f-box" x="108" y="128" width="84.66666666666667" height="35" rx="5"/><text class="f-t" x="150.33333333333334" y="153.6" text-anchor="middle">3</text><rect class="f-box" x="196.66666666666669" y="128" width="84.66666666666667" height="35" rx="5"/><text class="f-t" x="239.00000000000003" y="153.6" text-anchor="middle">0</text><rect class="f-soft" x="285.33333333333337" y="128" width="84.66666666666667" height="35" rx="5"/><text class="f-t" x="327.6666666666667" y="153.6" text-anchor="middle">3</text></svg></figure>
+<p class="big">0.75 × 4 + 0.25 × 0 = 3</p>
+<p class="say">한 번 직행하면 보상은 4 또는 0이다. 같은 조건에서 반복할 때 평균이 가까워지는 값이 3이다.</p>
+</section>
+
+<section class="slide check-slide">
+<h2>잠깐, 직접</h2>
+<div class="check" data-q="q1"></div>
+</section>
+
+<section class="slide">
+<h2>우회하면 다음 선택이 생긴다</h2>
+<figure class="fig"><svg class="fig-svg fig-wide" viewBox="0 0 760 212" role="img" aria-label="출발에서 우회하면 보상 마이너스 1을 받고 통로에 도착한다. 통로에서 배송을 고르면 보상 6을 받고 종료한다."><rect class="f-box" x="30" y="37" width="328" height="134" rx="5"/><text class="f-s" x="194" y="66" text-anchor="middle">출발 S에서 우회</text><text class="f-cap" x="194" y="105" text-anchor="middle">보상 −1</text><text class="f-s" x="194" y="139" text-anchor="middle">확실히 통로 C에 도착</text><line class="f-line" x1="360" y1="105" x2="377" y2="105" marker-end="url(#f-arrow)"/><rect class="f-box" x="380" y="37" width="328" height="134" rx="5"/><text class="f-s" x="544" y="66" text-anchor="middle">통로 C에서 배송</text><text class="f-cap" x="544" y="105" text-anchor="middle">보상 +6</text><text class="f-s" x="544" y="139" text-anchor="middle">배송 완료 D에서 종료</text></svg><svg class="fig-svg fig-narrow" viewBox="0 0 390 125" role="img" aria-label="출발에서 우회하면 보상 마이너스 1을 받고 통로에 도착한다. 통로에서 배송을 고르면 보상 6을 받고 종료한다."><rect class="f-box" x="20" y="6" width="350" height="51" rx="5"/><text class="f-s" x="34" y="25" text-anchor="start">출발 S에서 우회</text><text class="f-cap" x="34" y="47" text-anchor="start">보상 −1</text><text class="f-s" x="354" y="46" text-anchor="end">확실히 통로 C에 도착</text><line class="f-line" x1="195" y1="58" x2="195" y2="67" marker-end="url(#f-arrow)"/><rect class="f-box" x="20" y="68" width="350" height="51" rx="5"/><text class="f-s" x="34" y="87" text-anchor="start">통로 C에서 배송</text><text class="f-cap" x="34" y="109" text-anchor="start">보상 +6</text><text class="f-s" x="354" y="108" text-anchor="end">배송 완료 D에서 종료</text></svg></figure>
+<p class="say">그림은 ‘우회한 뒤 배송’을 고른 한 경로다. 통로 C에서는 중단도 고를 수 있다.</p>
+</section>
+
+<section class="slide">
+<h2>나중 보상에 곱할 비율이 할인율</h2>
+<figure class="fig"><svg class="fig-svg fig-wide" viewBox="0 0 760 140" role="img" aria-label="첫 이동의 보상은 그대로, 둘째는 감마, 셋째는 감마 제곱을 곱한다. 감마 0.8에서는 1, 0.8, 0.64이다."><text class="f-s" x="245" y="28" text-anchor="middle">첫 이동</text><text class="f-s" x="367" y="28" text-anchor="middle">둘째 이동</text><text class="f-s" x="489" y="28" text-anchor="middle">셋째 이동</text><text class="f-s" x="175" y="74.8" text-anchor="end">시간 가중치</text><rect class="f-box" x="184" y="48" width="118" height="35" rx="5"/><text class="f-t" x="243" y="73.6" text-anchor="middle">1</text><rect class="f-box" x="306" y="48" width="118" height="35" rx="5"/><text class="f-t" x="365" y="73.6" text-anchor="middle">γ</text><rect class="f-box" x="428" y="48" width="118" height="35" rx="5"/><text class="f-t" x="487" y="73.6" text-anchor="middle">γ²</text><text class="f-s" x="175" y="114.8" text-anchor="end">γ = 0.8</text><rect class="f-box" x="184" y="88" width="118" height="35" rx="5"/><text class="f-t" x="243" y="113.6" text-anchor="middle">1</text><rect class="f-soft" x="306" y="88" width="118" height="35" rx="5"/><text class="f-t" x="365" y="113.6" text-anchor="middle">0.8</text><rect class="f-box" x="428" y="88" width="118" height="35" rx="5"/><text class="f-t" x="487" y="113.6" text-anchor="middle">0.64</text></svg><svg class="fig-svg fig-narrow" viewBox="0 0 390 140" role="img" aria-label="첫 이동의 보상은 그대로, 둘째는 감마, 셋째는 감마 제곱을 곱한다. 감마 0.8에서는 1, 0.8, 0.64이다."><text class="f-s" x="152.33333333333334" y="28" text-anchor="middle">첫 이동</text><text class="f-s" x="241" y="28" text-anchor="middle">둘째 이동</text><text class="f-s" x="329.6666666666667" y="28" text-anchor="middle">셋째 이동</text><text class="f-s" x="99" y="74.8" text-anchor="end">시간 가중치</text><rect class="f-box" x="108" y="48" width="84.66666666666667" height="35" rx="5"/><text class="f-t" x="150.33333333333334" y="73.6" text-anchor="middle">1</text><rect class="f-box" x="196.66666666666669" y="48" width="84.66666666666667" height="35" rx="5"/><text class="f-t" x="239.00000000000003" y="73.6" text-anchor="middle">γ</text><rect class="f-box" x="285.33333333333337" y="48" width="84.66666666666667" height="35" rx="5"/><text class="f-t" x="327.6666666666667" y="73.6" text-anchor="middle">γ²</text><text class="f-s" x="99" y="114.8" text-anchor="end">γ = 0.8</text><rect class="f-box" x="108" y="88" width="84.66666666666667" height="35" rx="5"/><text class="f-t" x="150.33333333333334" y="113.6" text-anchor="middle">1</text><rect class="f-soft" x="196.66666666666669" y="88" width="84.66666666666667" height="35" rx="5"/><text class="f-t" x="239.00000000000003" y="113.6" text-anchor="middle">0.8</text><rect class="f-box" x="285.33333333333337" y="88" width="84.66666666666667" height="35" rx="5"/><text class="f-t" x="327.6666666666667" y="113.6" text-anchor="middle">0.64</text></svg></figure>
+<p class="say">할인율 γ(감마)를 작게 두면, 같은 보상이라도 나중에 받는 쪽의 비중이 줄어든다.</p>
+</section>
+
+<section class="slide">
+<h2>한 번의 길에서 받은 점수를 모두 더한다</h2>
+<figure class="fig"><svg class="fig-svg fig-wide" viewBox="0 0 760 212" role="img" aria-label="우회하고 배송하는 경로는 즉시 보상 마이너스 1과 다음 보상 6을 받는다. 할인율 0.8에서 반환은 3.8이다."><rect class="f-box" x="30" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="135.66666666666669" y="66" text-anchor="middle">지금 받는 보상</text><text class="f-cap" x="135.66666666666669" y="105" text-anchor="middle">−1 × 1</text><text class="f-s" x="135.66666666666669" y="139" text-anchor="middle">우회로 진입</text><rect class="f-box" x="263.33333333333337" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="369.00000000000006" y="66" text-anchor="middle">나중에 받는 보상</text><text class="f-cap" x="369.00000000000006" y="105" text-anchor="middle">6 × 0.8</text><text class="f-s" x="369.00000000000006" y="139" text-anchor="middle">통로에서 배송</text><rect class="f-soft" x="496.6666666666667" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="602.3333333333334" y="66" text-anchor="middle">할인해서 더한 값</text><text class="f-cap" x="602.3333333333334" y="105" text-anchor="middle">3.8</text><text class="f-s" x="602.3333333333334" y="139" text-anchor="middle">이 경로의 반환</text></svg><svg class="fig-svg fig-narrow" viewBox="0 0 390 187" role="img" aria-label="우회하고 배송하는 경로는 즉시 보상 마이너스 1과 다음 보상 6을 받는다. 할인율 0.8에서 반환은 3.8이다."><rect class="f-box" x="20" y="6" width="350" height="51" rx="5"/><text class="f-s" x="34" y="25" text-anchor="start">지금 받는 보상</text><text class="f-cap" x="34" y="47" text-anchor="start">−1 × 1</text><text class="f-s" x="354" y="46" text-anchor="end">우회로 진입</text><rect class="f-box" x="20" y="68" width="350" height="51" rx="5"/><text class="f-s" x="34" y="87" text-anchor="start">나중에 받는 보상</text><text class="f-cap" x="34" y="109" text-anchor="start">6 × 0.8</text><text class="f-s" x="354" y="108" text-anchor="end">통로에서 배송</text><rect class="f-soft" x="20" y="130" width="350" height="51" rx="5"/><text class="f-s" x="34" y="149" text-anchor="start">할인해서 더한 값</text><text class="f-cap" x="34" y="171" text-anchor="start">3.8</text><text class="f-s" x="354" y="170" text-anchor="end">이 경로의 반환</text></svg></figure>
+<p class="big">G = −1 + 0.8 × 6 = 3.8</p>
+<p class="say">반환 G는 한 경로에서 받은 보상의 할인 합이다. 이 반환에 확률을 붙여 평균 내면 기대 반환이다.</p>
+</section>
+
+<section class="slide check-slide">
+<h2>잠깐, 직접</h2>
+<div class="check" data-q="q2"></div>
+</section>
+
+<section class="slide">
+<h2>전이표에 가능한 결과를 모두 적는다</h2>
+<figure class="fig"><svg class="fig-svg fig-wide" viewBox="0 0 760 210" role="img" aria-label="출발 S에서 직행하면 0.75로 완료 D와 보상 4, 0.25로 미완료 F와 보상 0. 우회는 확률 1로 통로 C와 보상 마이너스 1. 통로의 배송과 중단은 각각 완료 D와 보상 6, 미완료 F와 보상 0."><text class="f-s" x="245" y="28" text-anchor="middle">다음 상태</text><text class="f-s" x="367" y="28" text-anchor="middle">확률</text><text class="f-s" x="489" y="28" text-anchor="middle">보상</text><text class="f-s" x="175" y="68.1" text-anchor="end">S · 직행</text><rect class="f-box" x="184" y="48" width="118" height="25" rx="5"/><text class="f-t" x="243" y="67.2" text-anchor="middle">D</text><rect class="f-box" x="306" y="48" width="118" height="25" rx="5"/><text class="f-t" x="365" y="67.2" text-anchor="middle">0.75</text><rect class="f-box" x="428" y="48" width="118" height="25" rx="5"/><text class="f-t" x="487" y="67.2" text-anchor="middle">+4</text><text class="f-s" x="175" y="98.1" text-anchor="end">S · 직행</text><rect class="f-box" x="184" y="78" width="118" height="25" rx="5"/><text class="f-t" x="243" y="97.2" text-anchor="middle">F</text><rect class="f-box" x="306" y="78" width="118" height="25" rx="5"/><text class="f-t" x="365" y="97.2" text-anchor="middle">0.25</text><rect class="f-box" x="428" y="78" width="118" height="25" rx="5"/><text class="f-t" x="487" y="97.2" text-anchor="middle">0</text><text class="f-s" x="175" y="128.1" text-anchor="end">S · 우회</text><rect class="f-soft" x="184" y="108" width="118" height="25" rx="5"/><text class="f-t" x="243" y="127.2" text-anchor="middle">C</text><rect class="f-box" x="306" y="108" width="118" height="25" rx="5"/><text class="f-t" x="365" y="127.2" text-anchor="middle">1</text><rect class="f-box" x="428" y="108" width="118" height="25" rx="5"/><text class="f-t" x="487" y="127.2" text-anchor="middle">−1</text><text class="f-s" x="175" y="158.1" text-anchor="end">C · 배송</text><rect class="f-box" x="184" y="138" width="118" height="25" rx="5"/><text class="f-t" x="243" y="157.2" text-anchor="middle">D</text><rect class="f-box" x="306" y="138" width="118" height="25" rx="5"/><text class="f-t" x="365" y="157.2" text-anchor="middle">1</text><rect class="f-box" x="428" y="138" width="118" height="25" rx="5"/><text class="f-t" x="487" y="157.2" text-anchor="middle">+6</text><text class="f-s" x="175" y="188.1" text-anchor="end">C · 중단</text><rect class="f-box" x="184" y="168" width="118" height="25" rx="5"/><text class="f-t" x="243" y="187.2" text-anchor="middle">F</text><rect class="f-box" x="306" y="168" width="118" height="25" rx="5"/><text class="f-t" x="365" y="187.2" text-anchor="middle">1</text><rect class="f-box" x="428" y="168" width="118" height="25" rx="5"/><text class="f-t" x="487" y="187.2" text-anchor="middle">0</text></svg><svg class="fig-svg fig-narrow" viewBox="0 0 390 210" role="img" aria-label="출발 S에서 직행하면 0.75로 완료 D와 보상 4, 0.25로 미완료 F와 보상 0. 우회는 확률 1로 통로 C와 보상 마이너스 1. 통로의 배송과 중단은 각각 완료 D와 보상 6, 미완료 F와 보상 0."><text class="f-s" x="152.33333333333334" y="28" text-anchor="middle">다음 상태</text><text class="f-s" x="241" y="28" text-anchor="middle">확률</text><text class="f-s" x="329.6666666666667" y="28" text-anchor="middle">보상</text><text class="f-s" x="99" y="68.1" text-anchor="end">S · 직행</text><rect class="f-box" x="108" y="48" width="84.66666666666667" height="25" rx="5"/><text class="f-t" x="150.33333333333334" y="67.2" text-anchor="middle">D</text><rect class="f-box" x="196.66666666666669" y="48" width="84.66666666666667" height="25" rx="5"/><text class="f-t" x="239.00000000000003" y="67.2" text-anchor="middle">0.75</text><rect class="f-box" x="285.33333333333337" y="48" width="84.66666666666667" height="25" rx="5"/><text class="f-t" x="327.6666666666667" y="67.2" text-anchor="middle">+4</text><text class="f-s" x="99" y="98.1" text-anchor="end">S · 직행</text><rect class="f-box" x="108" y="78" width="84.66666666666667" height="25" rx="5"/><text class="f-t" x="150.33333333333334" y="97.2" text-anchor="middle">F</text><rect class="f-box" x="196.66666666666669" y="78" width="84.66666666666667" height="25" rx="5"/><text class="f-t" x="239.00000000000003" y="97.2" text-anchor="middle">0.25</text><rect class="f-box" x="285.33333333333337" y="78" width="84.66666666666667" height="25" rx="5"/><text class="f-t" x="327.6666666666667" y="97.2" text-anchor="middle">0</text><text class="f-s" x="99" y="128.1" text-anchor="end">S · 우회</text><rect class="f-soft" x="108" y="108" width="84.66666666666667" height="25" rx="5"/><text class="f-t" x="150.33333333333334" y="127.2" text-anchor="middle">C</text><rect class="f-box" x="196.66666666666669" y="108" width="84.66666666666667" height="25" rx="5"/><text class="f-t" x="239.00000000000003" y="127.2" text-anchor="middle">1</text><rect class="f-box" x="285.33333333333337" y="108" width="84.66666666666667" height="25" rx="5"/><text class="f-t" x="327.6666666666667" y="127.2" text-anchor="middle">−1</text><text class="f-s" x="99" y="158.1" text-anchor="end">C · 배송</text><rect class="f-box" x="108" y="138" width="84.66666666666667" height="25" rx="5"/><text class="f-t" x="150.33333333333334" y="157.2" text-anchor="middle">D</text><rect class="f-box" x="196.66666666666669" y="138" width="84.66666666666667" height="25" rx="5"/><text class="f-t" x="239.00000000000003" y="157.2" text-anchor="middle">1</text><rect class="f-box" x="285.33333333333337" y="138" width="84.66666666666667" height="25" rx="5"/><text class="f-t" x="327.6666666666667" y="157.2" text-anchor="middle">+6</text><text class="f-s" x="99" y="188.1" text-anchor="end">C · 중단</text><rect class="f-box" x="108" y="168" width="84.66666666666667" height="25" rx="5"/><text class="f-t" x="150.33333333333334" y="187.2" text-anchor="middle">F</text><rect class="f-box" x="196.66666666666669" y="168" width="84.66666666666667" height="25" rx="5"/><text class="f-t" x="239.00000000000003" y="187.2" text-anchor="middle">1</text><rect class="f-box" x="285.33333333333337" y="168" width="84.66666666666667" height="25" rx="5"/><text class="f-t" x="327.6666666666667" y="187.2" text-anchor="middle">0</text></svg></figure>
+<p class="say">전이란 한 번 움직인 결과다. 같은 상태·행동에서 나올 모든 (다음 상태, 보상)의 확률을 합하면 1이다.</p>
+<p class="kw"><span>S 출발 · C 통로</span><span>D 배송 완료 · F 배송 미완료</span><span>D와 F는 종료</span></p>
+</section>
+
+<section class="slide">
+<h2>현재 상태에 다음을 예측할 정보가 있어야 한다</h2>
+<figure class="fig"><svg class="fig-svg fig-wide" viewBox="0 0 760 212" role="img" aria-label="배터리에 따라 직행 성공률이 달라지는 경우 현재 위치만 적으면 두 상황이 섞인다. 현재 배터리도 상태에 넣을 수 있다."><rect class="f-over" x="30" y="37" width="328" height="134" rx="5"/><text class="f-s" x="194" y="66" text-anchor="middle">배터리가 중요한 다른 환경</text><text class="f-cap" x="194" y="105" text-anchor="middle">위치만 기억</text><text class="f-s" x="194" y="139" text-anchor="middle">같은 위치라도 성공률이 달라짐</text><rect class="f-soft" x="380" y="37" width="328" height="134" rx="5"/><text class="f-s" x="544" y="66" text-anchor="middle">상태를 다시 정하기</text><text class="f-cap" x="544" y="105" text-anchor="middle">위치 + 배터리</text><text class="f-s" x="544" y="139" text-anchor="middle">행동 뒤의 확률을 구분</text></svg><svg class="fig-svg fig-narrow" viewBox="0 0 390 125" role="img" aria-label="배터리에 따라 직행 성공률이 달라지는 경우 현재 위치만 적으면 두 상황이 섞인다. 현재 배터리도 상태에 넣을 수 있다."><rect class="f-over" x="20" y="6" width="350" height="51" rx="5"/><text class="f-s" x="34" y="25" text-anchor="start">배터리가 중요한 다른 환경</text><text class="f-cap" x="34" y="47" text-anchor="start">위치만 기억</text><text class="f-s" x="354" y="46" text-anchor="end">같은 위치라도 성공률이 달라짐</text><rect class="f-soft" x="20" y="68" width="350" height="51" rx="5"/><text class="f-s" x="34" y="87" text-anchor="start">상태를 다시 정하기</text><text class="f-cap" x="34" y="109" text-anchor="start">위치 + 배터리</text><text class="f-s" x="354" y="108" text-anchor="end">행동 뒤의 확률을 구분</text></svg></figure>
+<p class="say">마르코프 조건에서는 현재 상태와 행동을 알면 과거 경로를 더 알아도 다음 상태·보상의 확률이 그대로다.</p>
+<p class="kw"><span>MDP · 마르코프 결정 과정</span></p>
+</section>
+
+<section class="slide check-slide">
+<h2>잠깐, 직접</h2>
+<div class="check" data-q="q3"></div>
+</section>
+
+<section class="slide">
+<h2>정책은 선택의 확률, 전이는 결과의 확률</h2>
+<figure class="fig"><svg class="fig-svg fig-wide" viewBox="0 0 760 212" role="img" aria-label="로봇의 정책은 출발에서 직행 또는 우회를 각각 0.5로 고른다. 직행을 이미 골랐다면 환경은 0.75로 완료, 0.25로 배송 미완료를 돌려준다."><rect class="f-box" x="30" y="37" width="328" height="134" rx="5"/><text class="f-s" x="194" y="66" text-anchor="middle">로봇이 고름</text><text class="f-cap" x="194" y="105" text-anchor="middle">직행 0.5 / 우회 0.5</text><text class="f-s" x="194" y="139" text-anchor="middle">정책 π의 예</text><line class="f-line" x1="360" y1="105" x2="377" y2="105" marker-end="url(#f-arrow)"/><rect class="f-box" x="380" y="37" width="328" height="134" rx="5"/><text class="f-s" x="544" y="66" text-anchor="middle">길에서 결정됨</text><text class="f-cap" x="544" y="105" text-anchor="middle">완료 0.75 / 미완료 0.25</text><text class="f-s" x="544" y="139" text-anchor="middle">직행을 골랐을 때</text></svg><svg class="fig-svg fig-narrow" viewBox="0 0 390 125" role="img" aria-label="로봇의 정책은 출발에서 직행 또는 우회를 각각 0.5로 고른다. 직행을 이미 골랐다면 환경은 0.75로 완료, 0.25로 배송 미완료를 돌려준다."><rect class="f-box" x="20" y="6" width="350" height="51" rx="5"/><text class="f-s" x="34" y="25" text-anchor="start">로봇이 고름</text><text class="f-cap" x="34" y="47" text-anchor="start">직행 0.5 / 우회 0.5</text><text class="f-s" x="354" y="46" text-anchor="end">정책 π의 예</text><line class="f-line" x1="195" y1="58" x2="195" y2="67" marker-end="url(#f-arrow)"/><rect class="f-box" x="20" y="68" width="350" height="51" rx="5"/><text class="f-s" x="34" y="87" text-anchor="start">길에서 결정됨</text><text class="f-cap" x="34" y="109" text-anchor="start">완료 0.75 / 미완료 0.25</text><text class="f-s" x="354" y="108" text-anchor="end">직행을 골랐을 때</text></svg></figure>
+<p class="say">정책을 바꾸면 어떤 길을 더 자주 시도할지 달라진다. 이 예에서 길의 전이 확률은 그대로다.</p>
+</section>
+
+<section class="slide check-slide">
+<h2>잠깐, 직접</h2>
+<div class="check" data-q="q4"></div>
+</section>
+
+<section class="slide">
+<h2>직행의 평균과 우회의 반환을 계산한다</h2>
+<pre data-example="python"><code>import numpy as np
+
+probability = [0.75, 0.25]
+direct = np.dot(probability, [4, 0])
+gamma = 0.8
+detour_then_deliver = -1 + gamma * 6
+
+assert np.isclose(sum(probability), 1.0)
+print(f&quot;직행 기대 반환 {direct:.1f}&quot;)
+print(f&quot;우회 후 배송 반환 {detour_then_deliver:.1f}&quot;)</code></pre>
+<pre data-output><code>직행 기대 반환 3.0
+우회 후 배송 반환 3.8</code></pre>
+<p class="say">직행은 결과 두 개를 평균 낸다. 우회 후 배송은 확률 1인 경로라 그 반환이 곧 기대 반환이다.</p>
+</section>
+
+<section class="slide">
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table><tbody><tr><th scope="row">전이</th><td>현재 상태와 행동 뒤에 나오는 새 상태와 보상</td></tr><tr><th scope="row">기댓값</th><td>가능한 값 × 각 값의 확률을 더한 평균</td></tr><tr><th scope="row">반환 G</th><td>한 번의 진행에서 받은 보상을 시간에 따라 할인해 더한 값</td></tr><tr><th scope="row">MDP</th><td>현재 상태·행동으로 다음 상태와 보상의 확률을 정하는 결정 문제</td></tr><tr><th scope="row">정책 π</th><td>각 상태에서 로봇이 행동을 고르는 규칙</td></tr></tbody></table></div>
+<p class="small muted">개념 사전 · <a href="../../learn/unit.html?u=RL01">에이전트와 환경</a> · <a href="../../learn/unit.html?u=PR02">조건부확률</a> · <a href="../../learn/unit.html?u=PR04">확률변수와 기댓값</a> · <a href="../../learn/unit.html?u=RL03">반환과 할인</a> · <a href="../../learn/unit.html?u=RL04">마르코프 결정 과정</a></p>
+<p class="small muted">참고 교재 · <a href="https://mitpress.mit.edu/9780262039246/reinforcement-learning/">Sutton·Barto, 제3장 유한 MDP</a></p>
+</section>
+
+</main>
+<script src="../notes.js"></script>
+<script src="../js/core.js"></script>
+<script src="../js/deck.js"></script>
+</body>
+</html>

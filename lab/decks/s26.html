@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Q러닝 · 한 번의 경험으로 표 고치기 · 슬라이드 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%238a4b14'/%3E%3Cpath d='M10 8l12 8-12 8z' fill='%23fff'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../style.css">
+</head>
+<body class="deck-body" data-note="S26">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../index.html">슬라이드 교재</a>
+<span class="crumb">덱 26</span>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<main class="deck">
+
+<section class="slide cover-slide">
+<p class="deck-no">덱 26</p>
+<h1>Q러닝 · 한 번의 경험으로 표 고치기</h1>
+<p class="road"><b>벨만 최적식</b> → <b>한 번의 전이</b> → <b>목표값과 학습률</b> → <b>탐험과 실습</b></p>
+<p class="say">로봇이 직행 성공률을 모른 채 출발한다. 경험 한 줄씩으로 어느 길이 나은지 배워 보자.</p>
+</section>
+
+<section class="slide">
+<h2>벨만 최적식은 다음 상태의 최고 값을 쓴다</h2>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 390 186" role="img" aria-label="출발에서 우회하면 통로 C가 된다. 통로에서는 배송의 최적 행동 가치 6과 중단의 최적 행동 가치 0 중에서 큰 값이 쓰인다."><rect class="f-soft" x="116" y="9" width="158" height="54" rx="5"/><text class="f-cap" x="195" y="40" text-anchor="middle">우회하면 통로 C</text><line class="f-line" x1="169" y1="66" x2="101" y2="107" marker-end="url(#f-arrow)"/><line class="f-line" x1="221" y1="66" x2="289" y2="107" marker-end="url(#f-arrow)"/><text class="f-s" x="95" y="87" text-anchor="middle">다음 행동</text><text class="f-s" x="295" y="87" text-anchor="middle">다음 행동</text><rect class="f-soft" x="16" y="113" width="155" height="63" rx="5"/><text class="f-t" x="93.5" y="139" text-anchor="middle">C에서 배송</text><text class="f-s" x="93.5" y="159" text-anchor="middle">Q*(C, 배송) = 6</text><rect class="f-box" x="219" y="113" width="155" height="63" rx="5"/><text class="f-t" x="296.5" y="139" text-anchor="middle">C에서 중단</text><text class="f-s" x="296.5" y="159" text-anchor="middle">Q*(C, 중단) = 0</text></svg></figure>
+<p class="big">Q*(s,a) = E[r + γ max<sub>b</sub> Q*(s′,b) | s,a]</p>
+<p class="say">E는 전이 확률로 평균 낸다는 뜻이다. 처음 행동 a를 고정하고, 다음 상태에서는 가능한 행동 b의 최고 Q를 쓴다.</p>
+</section>
+
+<section class="slide">
+<h2>한 번 실행하면 결과 하나를 관측한다</h2>
+<figure class="fig"><svg class="fig-svg fig-wide" viewBox="0 0 760 212" role="img" aria-label="직행한 이번 시도에서 받은 기록은 출발 S, 직행, 보상 4, 배송 완료 D이고, 에피소드는 끝났다."><rect class="f-box" x="30" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="135.66666666666669" y="66" text-anchor="middle">현재 상태 s와 행동 a</text><text class="f-cap" x="135.66666666666669" y="105" text-anchor="middle">S에서 직행</text><text class="f-s" x="135.66666666666669" y="139" text-anchor="middle">로봇의 선택</text><line class="f-line" x1="243.33333333333334" y1="105" x2="260.33333333333337" y2="105" marker-end="url(#f-arrow)"/><rect class="f-box" x="263.33333333333337" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="369.00000000000006" y="66" text-anchor="middle">실제 보상 r</text><text class="f-cap" x="369.00000000000006" y="105" text-anchor="middle">4</text><text class="f-s" x="369.00000000000006" y="139" text-anchor="middle">이번 시도에서 받은 점수</text><line class="f-line" x1="476.66666666666674" y1="105" x2="493.66666666666674" y2="105" marker-end="url(#f-arrow)"/><rect class="f-soft" x="496.6666666666667" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="602.3333333333334" y="66" text-anchor="middle">새 상태 s′</text><text class="f-cap" x="602.3333333333334" y="105" text-anchor="middle">배송 완료 D</text><text class="f-s" x="602.3333333333334" y="139" text-anchor="middle">이번 에피소드 종료</text></svg><svg class="fig-svg fig-narrow" viewBox="0 0 390 187" role="img" aria-label="직행한 이번 시도에서 받은 기록은 출발 S, 직행, 보상 4, 배송 완료 D이고, 에피소드는 끝났다."><rect class="f-box" x="20" y="6" width="350" height="51" rx="5"/><text class="f-s" x="34" y="25" text-anchor="start">현재 상태 s와 행동 a</text><text class="f-cap" x="34" y="47" text-anchor="start">S에서 직행</text><text class="f-s" x="354" y="46" text-anchor="end">로봇의 선택</text><line class="f-line" x1="195" y1="58" x2="195" y2="67" marker-end="url(#f-arrow)"/><rect class="f-box" x="20" y="68" width="350" height="51" rx="5"/><text class="f-s" x="34" y="87" text-anchor="start">실제 보상 r</text><text class="f-cap" x="34" y="109" text-anchor="start">4</text><text class="f-s" x="354" y="108" text-anchor="end">이번 시도에서 받은 점수</text><line class="f-line" x1="195" y1="120" x2="195" y2="129" marker-end="url(#f-arrow)"/><rect class="f-soft" x="20" y="130" width="350" height="51" rx="5"/><text class="f-s" x="34" y="149" text-anchor="start">새 상태 s′</text><text class="f-cap" x="34" y="171" text-anchor="start">배송 완료 D</text><text class="f-s" x="354" y="170" text-anchor="end">이번 에피소드 종료</text></svg></figure>
+<p class="say">한 번의 경험으로 상태·행동·보상·다음 상태를 기록한다. 종료 여부도 함께 기록한다.</p>
+<p class="kw"><span>에피소드 = 출발부터 종료까지 한 번</span></p>
+</section>
+
+<section class="slide">
+<h2>종료에 도착하면 목표는 이번 보상</h2>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 390 186" role="img" aria-label="출발에서 한 번 직행하면 완료 보상 4 또는 미완료 보상 0이 관측된다. 두 경우 모두 종료라 다음 항은 0이다."><rect class="f-soft" x="116" y="9" width="158" height="54" rx="5"/><text class="f-cap" x="195" y="40" text-anchor="middle">직행 한 번의 목표</text><line class="f-line" x1="169" y1="66" x2="101" y2="107" marker-end="url(#f-arrow)"/><line class="f-line" x1="221" y1="66" x2="289" y2="107" marker-end="url(#f-arrow)"/><text class="f-s" x="95" y="87" text-anchor="middle">가능한 결과</text><text class="f-s" x="295" y="87" text-anchor="middle">가능한 결과</text><rect class="f-box" x="16" y="113" width="155" height="63" rx="5"/><text class="f-t" x="93.5" y="139" text-anchor="middle">완료를 관측</text><text class="f-s" x="93.5" y="159" text-anchor="middle">4 + 0 = 4</text><rect class="f-box" x="219" y="113" width="155" height="63" rx="5"/><text class="f-t" x="296.5" y="139" text-anchor="middle">미완료 관측</text><text class="f-s" x="296.5" y="159" text-anchor="middle">0 + 0 = 0</text></svg></figure>
+<p class="say">직행의 기대 반환은 0.75×4 + 0.25×0 = 3이다. 한 번의 목표에는 그때 실제로 받은 보상이 들어간다.</p>
+</section>
+
+<section class="slide check-slide">
+<h2>잠깐, 직접</h2>
+<div class="check" data-q="q1"></div>
+</section>
+
+<section class="slide">
+<h2>목표 쪽으로 정한 비율만큼 움직인다</h2>
+<figure class="fig"><svg class="fig-svg fig-wide" viewBox="0 0 760 119" role="img" aria-label="통로에서 배송을 골라 보상 6으로 끝났다. 기존 값 0에서 목표 6 쪽으로 절반 이동해 3이 된다."><text class="f-s" x="245" y="28" text-anchor="middle">갱신 전 Q</text><text class="f-s" x="367" y="28" text-anchor="middle">목표</text><text class="f-s" x="489" y="28" text-anchor="middle">갱신 후 Q</text><text class="f-s" x="175" y="74.8" text-anchor="end">C · 배송</text><rect class="f-box" x="184" y="48" width="118" height="35" rx="5"/><text class="f-t" x="243" y="73.6" text-anchor="middle">0</text><rect class="f-box" x="306" y="48" width="118" height="35" rx="5"/><text class="f-t" x="365" y="73.6" text-anchor="middle">6</text><rect class="f-soft" x="428" y="48" width="118" height="35" rx="5"/><text class="f-t" x="487" y="73.6" text-anchor="middle">3</text></svg><svg class="fig-svg fig-narrow" viewBox="0 0 390 119" role="img" aria-label="통로에서 배송을 골라 보상 6으로 끝났다. 기존 값 0에서 목표 6 쪽으로 절반 이동해 3이 된다."><text class="f-s" x="152.33333333333334" y="28" text-anchor="middle">갱신 전 Q</text><text class="f-s" x="241" y="28" text-anchor="middle">목표</text><text class="f-s" x="329.6666666666667" y="28" text-anchor="middle">갱신 후 Q</text><text class="f-s" x="99" y="74.8" text-anchor="end">C · 배송</text><rect class="f-box" x="108" y="48" width="84.66666666666667" height="35" rx="5"/><text class="f-t" x="150.33333333333334" y="73.6" text-anchor="middle">0</text><rect class="f-box" x="196.66666666666669" y="48" width="84.66666666666667" height="35" rx="5"/><text class="f-t" x="239.00000000000003" y="73.6" text-anchor="middle">6</text><rect class="f-soft" x="285.33333333333337" y="48" width="84.66666666666667" height="35" rx="5"/><text class="f-t" x="327.6666666666667" y="73.6" text-anchor="middle">3</text></svg></figure>
+<p class="big">새 Q = 기존 Q + α × (목표 − 기존 Q)</p>
+<p class="say">모든 Q가 0에서 시작한다. 첫 우회 뒤 C에서 배송하면 α(알파)=0.5로 목표 6까지 절반을 움직인다.</p>
+</section>
+
+<section class="slide">
+<h2>통로에서 배운 값이 출발로 전달된다</h2>
+<figure class="fig"><svg class="fig-svg fig-wide" viewBox="0 0 760 212" role="img" aria-label="출발 S에서 우회해 보상 마이너스 1과 다음 상태 C를 얻는다. 통로의 Q 추정 중 가장 큰 3을 할인하면 표본 목표는 1.4이다."><rect class="f-box" x="30" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="135.66666666666669" y="66" text-anchor="middle">출발에서 우회</text><text class="f-cap" x="135.66666666666669" y="105" text-anchor="middle">보상 −1</text><text class="f-s" x="135.66666666666669" y="139" text-anchor="middle">다음 상태 C</text><line class="f-line" x1="243.33333333333334" y1="105" x2="260.33333333333337" y2="105" marker-end="url(#f-arrow)"/><rect class="f-box" x="263.33333333333337" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="369.00000000000006" y="66" text-anchor="middle">현재 C의 Q표</text><text class="f-cap" x="369.00000000000006" y="105" text-anchor="middle">배송 3 / 중단 0</text><text class="f-s" x="369.00000000000006" y="139" text-anchor="middle">최댓값 3을 가져옴</text><line class="f-line" x1="476.66666666666674" y1="105" x2="493.66666666666674" y2="105" marker-end="url(#f-arrow)"/><rect class="f-soft" x="496.6666666666667" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="602.3333333333334" y="66" text-anchor="middle">이번 우회의 목표</text><text class="f-cap" x="602.3333333333334" y="105" text-anchor="middle">1.4</text><text class="f-s" x="602.3333333333334" y="139" text-anchor="middle">−1 + 0.8 × 3</text></svg><svg class="fig-svg fig-narrow" viewBox="0 0 390 187" role="img" aria-label="출발 S에서 우회해 보상 마이너스 1과 다음 상태 C를 얻는다. 통로의 Q 추정 중 가장 큰 3을 할인하면 표본 목표는 1.4이다."><rect class="f-box" x="20" y="6" width="350" height="51" rx="5"/><text class="f-s" x="34" y="25" text-anchor="start">출발에서 우회</text><text class="f-cap" x="34" y="47" text-anchor="start">보상 −1</text><text class="f-s" x="354" y="46" text-anchor="end">다음 상태 C</text><line class="f-line" x1="195" y1="58" x2="195" y2="67" marker-end="url(#f-arrow)"/><rect class="f-box" x="20" y="68" width="350" height="51" rx="5"/><text class="f-s" x="34" y="87" text-anchor="start">현재 C의 Q표</text><text class="f-cap" x="34" y="109" text-anchor="start">배송 3 / 중단 0</text><text class="f-s" x="354" y="108" text-anchor="end">최댓값 3을 가져옴</text><line class="f-line" x1="195" y1="120" x2="195" y2="129" marker-end="url(#f-arrow)"/><rect class="f-soft" x="20" y="130" width="350" height="51" rx="5"/><text class="f-s" x="34" y="149" text-anchor="start">이번 우회의 목표</text><text class="f-cap" x="34" y="171" text-anchor="start">1.4</text><text class="f-s" x="354" y="170" text-anchor="end">−1 + 0.8 × 3</text></svg></figure>
+<p class="say">첫 우회는 C의 Q가 0이라 우회 Q를 −0.5로 바꿨다. 다음 에피소드의 우회는 C에서 배운 값을 써서 −0.5에서 1.4 쪽으로 절반 움직여 0.45가 된다.</p>
+<p class="kw"><span>부트스트랩 = 현재 추정치를 목표 계산에 사용</span></p>
+</section>
+
+<section class="slide check-slide">
+<h2>잠깐, 직접</h2>
+<div class="check" data-q="q2"></div>
+</section>
+
+<section class="slide">
+<h2>새 표본마다 Q표를 한 칸씩 고친다</h2>
+<figure class="fig"><svg class="fig-svg fig-wide" viewBox="0 0 760 140" role="img" aria-label="직행 완료 경험이면 관측 보상과 목표가 4이며 미완료 경험이면 둘 다 0이다. 같은 직행을 반복하면 환경이 완료와 미완료의 비율을 정한다."><text class="f-s" x="245" y="28" text-anchor="middle">완료 경험</text><text class="f-s" x="367" y="28" text-anchor="middle">미완료 경험</text><text class="f-s" x="175" y="74.8" text-anchor="end">관측 보상</text><rect class="f-box" x="184" y="48" width="118" height="35" rx="5"/><text class="f-t" x="243" y="73.6" text-anchor="middle">4</text><rect class="f-box" x="306" y="48" width="118" height="35" rx="5"/><text class="f-t" x="365" y="73.6" text-anchor="middle">0</text><text class="f-s" x="175" y="114.8" text-anchor="end">표본 목표</text><rect class="f-box" x="184" y="88" width="118" height="35" rx="5"/><text class="f-t" x="243" y="113.6" text-anchor="middle">4</text><rect class="f-box" x="306" y="88" width="118" height="35" rx="5"/><text class="f-t" x="365" y="113.6" text-anchor="middle">0</text></svg><svg class="fig-svg fig-narrow" viewBox="0 0 390 140" role="img" aria-label="직행 완료 경험이면 관측 보상과 목표가 4이며 미완료 경험이면 둘 다 0이다. 같은 직행을 반복하면 환경이 완료와 미완료의 비율을 정한다."><text class="f-s" x="165.5" y="28" text-anchor="middle">완료 경험</text><text class="f-s" x="280.5" y="28" text-anchor="middle">미완료 경험</text><text class="f-s" x="99" y="74.8" text-anchor="end">관측 보상</text><rect class="f-box" x="108" y="48" width="111" height="35" rx="5"/><text class="f-t" x="163.5" y="73.6" text-anchor="middle">4</text><rect class="f-box" x="223" y="48" width="111" height="35" rx="5"/><text class="f-t" x="278.5" y="73.6" text-anchor="middle">0</text><text class="f-s" x="99" y="114.8" text-anchor="end">표본 목표</text><rect class="f-box" x="108" y="88" width="111" height="35" rx="5"/><text class="f-t" x="163.5" y="113.6" text-anchor="middle">4</text><rect class="f-box" x="223" y="88" width="111" height="35" rx="5"/><text class="f-t" x="278.5" y="113.6" text-anchor="middle">0</text></svg></figure>
+<p class="say">같은 상태·행동을 반복하면 직행의 표본 목표 평균은 3에 가까워진다. 현재 Q를 고정해 생각하면, 표본 목표를 확률로 평균 낸 것이 벨만 목표다.</p>
+</section>
+
+<section class="slide">
+<h2>가끔 다른 행동도 해 본다</h2>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 390 150" role="img" aria-label="엡실론 0.2에서 80퍼센트는 가장 큰 Q의 행동을 고른다. 나머지 20퍼센트는 행동 둘에 10퍼센트씩 배분하므로 전체 선택 확률은 최고 행동 90퍼센트, 다른 행동 10퍼센트."><rect class="f-soft" x="15" y="34" width="288" height="43" rx="5"/><rect class="f-box" x="303" y="34" width="36" height="43" rx="5"/><rect class="f-box" x="339" y="34" width="36" height="43" rx="5"/><text class="f-t" x="159" y="60" text-anchor="middle">가장 큰 Q를 따라 선택 · 80%</text><text class="f-s" x="321" y="60" text-anchor="middle">10%</text><text class="f-s" x="357" y="60" text-anchor="middle">10%</text><text class="f-s" x="15" y="102" text-anchor="start">고정 선택</text><text class="f-s" x="375" y="102" text-anchor="end">무작위 20% · 최고 10% + 다른 10%</text><line class="f-line" x1="304" y1="84" x2="374" y2="84"/><text class="f-t" x="195" y="136" text-anchor="middle">최고 Q 행동 90% · 다른 행동 10%</text></svg></figure>
+<p class="say">ε(엡실론)=0.2인 ε-greedy의 예. 행동이 둘이고 최고 Q가 하나일 때 무작위 선택은 그 최고 행동도 포함한다.</p>
+</section>
+
+<section class="slide check-slide">
+<h2>잠깐, 직접</h2>
+<div class="check" data-q="q3"></div>
+</section>
+
+<section class="slide">
+<h2>탐험 중의 행동과 학습 목표는 따로 정한다</h2>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 390 186" role="img" aria-label="통로에서 실제 다음 행동은 엡실론 탐욕 정책으로 고르고, 이전 우회를 갱신할 때는 통로의 최고 추정 행동 가치를 사용한다."><rect class="f-soft" x="116" y="9" width="158" height="54" rx="5"/><text class="f-cap" x="195" y="40" text-anchor="middle">다음 상태 C</text><line class="f-line" x1="169" y1="66" x2="101" y2="107" marker-end="url(#f-arrow)"/><line class="f-line" x1="221" y1="66" x2="289" y2="107" marker-end="url(#f-arrow)"/><text class="f-s" x="95" y="87" text-anchor="middle">경험을 모을 때</text><text class="f-s" x="295" y="87" text-anchor="middle">표를 고칠 때</text><rect class="f-box" x="16" y="113" width="155" height="63" rx="5"/><text class="f-t" x="93.5" y="139" text-anchor="middle">실제로 할 행동</text><text class="f-s" x="93.5" y="159" text-anchor="middle">ε-greedy로 고름</text><rect class="f-soft" x="219" y="113" width="155" height="63" rx="5"/><text class="f-t" x="296.5" y="139" text-anchor="middle">우회 갱신의 목표</text><text class="f-s" x="296.5" y="159" text-anchor="middle">C의 최고 Q 사용</text></svg></figure>
+<p class="say">탐험 때문에 실제로 중단을 골라도, 우회의 목표에는 배송 쪽 Q가 더 크면 그 값이 들어간다.</p>
+<p class="kw"><span>오프폴리시 · 경험을 모으는 규칙과 목표의 규칙이 다름</span></p>
+</section>
+
+<section class="slide check-slide">
+<h2>잠깐, 직접</h2>
+<div class="check" data-q="q4"></div>
+</section>
+
+<section class="slide">
+<h2>환경을 5,000번 돌며 Q표를 배운다</h2>
+<pre data-example="python"><code>from random import Random
+
+rng = Random(24)
+Q = [[0.0, 0.0], [0.0, 0.0]]
+visits = [[0, 0], [0, 0]]
+
+def step(s, a):
+    # S=0은 직행·우회, C=1은 배송·중단 순서다.
+    if s == 0 and a == 0:
+        return (4 if rng.random() &lt; 0.75 else 0), None
+    if s == 0:
+        return -1, 1
+    return (6 if a == 0 else 0), None
+
+for _ in range(5000):
+    s = 0
+    while s is not None:
+        best = int(Q[s][1] &gt; Q[s][0])
+        a = rng.randrange(2) if rng.random() &lt; 0.2 else best
+        reward, next_state = step(s, a)
+        future = max(Q[next_state]) if next_state is not None else 0
+        target = reward + 0.8 * future
+        visits[s][a] += 1
+        alpha = 1 / visits[s][a]
+        Q[s][a] += alpha * (target - Q[s][a])
+        s = next_state
+
+print(&quot;S · 직행 / 우회:&quot;, *(f&quot;{value:.2f}&quot; for value in Q[0]))
+print(&quot;C · 배송 / 중단:&quot;, *(f&quot;{value:.2f}&quot; for value in Q[1]))
+assert Q[0][1] &gt; Q[0][0] and Q[1][0] &gt; Q[1][1]</code></pre>
+<pre data-output><code>S · 직행 / 우회: 2.96 3.80
+C · 배송 / 중단: 6.00 0.00</code></pre>
+<p class="say">step()이 길의 확률로 결과를 뽑고, 학습은 돌려받은 보상과 다음 상태를 쓴다. α는 상태·행동별 방문 횟수의 역수다.</p>
+</section>
+
+<section class="slide">
+<h2>배운 표를 벨만식의 정답과 대조한다</h2>
+<figure class="fig"><svg class="fig-svg fig-wide" viewBox="0 0 760 140" role="img" aria-label="벨만 최적식으로 계산한 직행과 우회의 가치는 3과 3.8이다. 난수 시드 24로 5천 번 경험한 표에선 반올림해 2.96과 3.80이다."><text class="f-s" x="245" y="28" text-anchor="middle">직행</text><text class="f-s" x="367" y="28" text-anchor="middle">우회</text><text class="f-s" x="175" y="74.8" text-anchor="end">모형으로 계산</text><rect class="f-box" x="184" y="48" width="118" height="35" rx="5"/><text class="f-t" x="243" y="73.6" text-anchor="middle">3.00</text><rect class="f-box" x="306" y="48" width="118" height="35" rx="5"/><text class="f-t" x="365" y="73.6" text-anchor="middle">3.80</text><text class="f-s" x="175" y="114.8" text-anchor="end">경험으로 추정</text><rect class="f-box" x="184" y="88" width="118" height="35" rx="5"/><text class="f-t" x="243" y="113.6" text-anchor="middle">2.96</text><rect class="f-soft" x="306" y="88" width="118" height="35" rx="5"/><text class="f-t" x="365" y="113.6" text-anchor="middle">3.80</text></svg><svg class="fig-svg fig-narrow" viewBox="0 0 390 140" role="img" aria-label="벨만 최적식으로 계산한 직행과 우회의 가치는 3과 3.8이다. 난수 시드 24로 5천 번 경험한 표에선 반올림해 2.96과 3.80이다."><text class="f-s" x="165.5" y="28" text-anchor="middle">직행</text><text class="f-s" x="280.5" y="28" text-anchor="middle">우회</text><text class="f-s" x="99" y="74.8" text-anchor="end">모형으로 계산</text><rect class="f-box" x="108" y="48" width="111" height="35" rx="5"/><text class="f-t" x="163.5" y="73.6" text-anchor="middle">3.00</text><rect class="f-box" x="223" y="48" width="111" height="35" rx="5"/><text class="f-t" x="278.5" y="73.6" text-anchor="middle">3.80</text><text class="f-s" x="99" y="114.8" text-anchor="end">경험으로 추정</text><rect class="f-box" x="108" y="88" width="111" height="35" rx="5"/><text class="f-t" x="163.5" y="113.6" text-anchor="middle">2.96</text><rect class="f-soft" x="223" y="88" width="111" height="35" rx="5"/><text class="f-t" x="278.5" y="113.6" text-anchor="middle">3.80</text></svg></figure>
+<p class="say">이번 실행은 출발에서 우회를 선택하고 통로에서 배송을 선택한다. 경험으로 구한 값은 시드와 방문 횟수에 따라 달라진다.</p>
+</section>
+
+<section class="slide">
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table><tbody><tr><th scope="row">Q표</th><td>Q러닝에서는 첫 행동 이후 최선으로 행동할 때의 기대 반환을 추정</td></tr><tr><th scope="row">표본 목표</th><td>실제로 받은 보상 + 할인한 다음 상태의 최고 Q</td></tr><tr><th scope="row">학습률 α</th><td>기존 Q와 목표 사이에서 이동할 비율</td></tr><tr><th scope="row">ε-greedy</th><td>확률 ε로 균등 무작위 선택, 확률 1−ε로 최고 Q 행동 선택</td></tr><tr><th scope="row">종료</th><td>종료에 들어가면 목표는 그 전이의 보상</td></tr></tbody></table></div>
+<p class="small muted">개념 사전 · <a href="../../learn/unit.html?u=RL02">탐험과 ε-greedy</a> · <a href="../../learn/unit.html?u=RL07">시간차 학습과 Q러닝</a> · <a href="../../learn/unit.html?u=RL05">가치반복</a> · <a href="../../learn/unit.html?u=RL15">작은 강화학습 재현 프로젝트</a></p>
+<p class="small muted">참고 자료 · <a href="https://www.gatsby.ucl.ac.uk/~dayan/papers/wd92.html">Watkins·Dayan, Q-learning 원 논문</a></p>
+</section>
+
+</main>
+<script src="../notes.js"></script>
+<script src="../js/core.js"></script>
+<script src="../js/deck.js"></script>
+</body>
+</html>

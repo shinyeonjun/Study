@@ -1,5 +1,5 @@
 /* 슬라이드 교재의 목록. 빅분기 노트 notes.js와 같은 모양(core.js·home.js·deck.js가 그대로 읽는다).
-   과목 = 공부 순서의 단계(공부 교재 learn/의 PLAN 1~5단계: 모델 내부 해석까지 최단 경로).
+   과목 = AI 기초부터 강화학습으로 이어지는 공부 순서의 단계.
    plan = 그 단계 안의 묶음. 노트 = 덱 하나(decks/sNN.html, 슬라이드 15장 안팎).
    id는 "S01"처럼 덱 번호. 공부 기록이 이 번호로 저장되므로 한번 정하면 바꾸지 않는다.
    덱 작성 기준: DECK_GUIDE.md */
@@ -55,6 +55,15 @@ window.BDA_SUBJECTS = [
     notes: [
       { id: "S22", title: "실험을 믿을 수 있게", href: "decks/s22.html", area: 0 },
       { id: "S23", title: "모델 안을 들여다보다", href: "decks/s23.html", area: 1 }
+    ]
+  },
+  {
+    code: "6", name: "6단계 · 강화학습", short: "6단계 · 강화학습", title: "강화학습",
+    plan: ["확률에서 MDP까지", "벨만식으로 가치 계산", "경험에서 Q러닝"],
+    notes: [
+      { id: "S24", title: "강화학습 첫걸음 · 확률에서 MDP까지", href: "decks/s24.html", area: 0 },
+      { id: "S25", title: "벨만식 · 오늘의 보상과 다음 상태의 가치", href: "decks/s25.html", area: 1 },
+      { id: "S26", title: "Q러닝 · 한 번의 경험으로 표 고치기", href: "decks/s26.html", area: 2 }
     ]
   }
 ];
