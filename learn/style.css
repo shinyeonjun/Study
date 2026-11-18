@@ -102,6 +102,28 @@ main { max-width: 700px; margin: 0 auto; padding: 28px 16px 96px; }
 .nv.on { background: var(--surface); color: var(--accent); font-weight: 700; text-decoration: underline; text-underline-offset: .2em; }
 .nv .cnt { font-size: 0.74rem; color: var(--muted); font-weight: 400; white-space: nowrap; font-variant-numeric: tabular-nums; }
 #nav-areas { margin-top: 12px; }
+/* 지금 할 공부: 현재 단계, 진도 막대, 다음 장 셋, 가벼운 날 한 장 */
+.now { margin: 14px 0 4px; padding: 2px 0 10px; border-bottom: 1px solid var(--line); }
+.now .nv-h { margin-top: 6px; }
+.now-phase { display: flex; justify-content: space-between; gap: 8px; padding: 2px 8px; font-weight: 700; color: var(--text); text-decoration: none; }
+.now-phase:hover span:first-child { text-decoration: underline; text-underline-offset: .2em; }
+.now-phase .cnt { font-size: 0.74rem; color: var(--muted); font-weight: 400; font-variant-numeric: tabular-nums; }
+.now-bar { height: 4px; margin: 6px 8px 8px; background: var(--line); border-radius: 2px; overflow: hidden; }
+.now-bar i { display: block; height: 100%; background: var(--accent); }
+.now-ch { display: block; padding: 6px 8px; border-radius: 6px; text-decoration: none; color: var(--text); line-height: 1.4; }
+.now-ch:hover { background: var(--surface); }
+.now-ch.first { background: var(--surface); border-left: 3px solid var(--accent); }
+.now-t { display: block; font-weight: 600; }
+.now-ch.first .now-t { color: var(--accent); }
+.now-u { display: block; font-size: 0.75rem; color: var(--muted); }
+.now-side-h { margin: 10px 8px 0; font-size: 0.72rem; font-weight: 800; letter-spacing: 0.06em; color: var(--muted); }
+/* #plan 공부 순서 */
+.plan-phase { margin-top: 30px; border-top: 2px solid var(--text); padding-top: 8px; scroll-margin-top: 12px; }
+.plan-phase h2 { display: flex; align-items: baseline; gap: 10px; margin: 0; font-size: 1.15rem; }
+.plan-phase h2 .sec-meta { margin-left: auto; }
+.plan-phase.now-on { border-top-color: var(--accent); }
+.now-tag { font-size: 0.72rem; font-weight: 800; color: var(--bg, #fff); background: var(--accent); border-radius: 4px; padding: 1px 6px; }
+.plan-note { margin: 4px 0 0; }
 .nav-paths { margin-top: 16px; }
 .nav-paths summary { padding: 4px 8px; color: var(--muted); cursor: pointer; }
 .side-extra .strip { margin: 0 8px 4px; }
@@ -112,7 +134,7 @@ main { max-width: 700px; margin: 0 auto; padding: 28px 16px 96px; }
 .lib-main { min-width: 0; max-width: none; margin: 0; padding: 24px 36px 96px; }
 
 /* 오늘 상태 한 줄 */
-.status { display: grid; grid-template-columns: 1.9fr 1fr 1fr 1fr; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; }
+.status { display: grid; grid-template-columns: 1fr 1fr 1fr; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; }
 .cell { padding: 12px 16px; min-width: 0; }
 .cell + .cell { border-left: 1px solid var(--line); }
 .cell .label { margin: 0 0 2px; }
@@ -405,17 +427,14 @@ footer { margin-top: 56px; color: var(--muted); font-size: 0.85rem; }
 @media (max-width: 900px) {
   .lib { display: block; }
   .side-nav { position: static; height: auto; border-right: 0; border-bottom: 1px solid var(--line); padding: 16px; }
-  #nav-areas { display: inline-block; max-width: 50%; }
-  #nav-areas .nv:not(:first-child), .side-nav .side-extra { display: none; }
+  #nav-areas { display: flex; gap: 4px; flex-wrap: wrap; }
+  .side-nav .side-extra { display: none; }
   .nav-paths { display: inline-block; margin-left: 8px; }
   .nav-paths[open] { display: block; margin: 8px 0 0; }
   .side-extra.mob { display: block; margin-top: 36px; border-top: 1px solid var(--line); padding-top: 8px; }
   .lib-main { padding: 18px 16px 72px; }
   .status { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-  .cell.wide { grid-column: 1 / -1; }
-  .cell:nth-child(2) { border-left: 0; }
-  .cell:nth-child(n+2) { border-top: 1px solid var(--line); }
-  .cell:nth-child(n+2) .cell-sub { display: none; }
+  .cell .cell-sub { display: none; }
   .unit-page .concepts { columns: 1; }
 }
 @media (max-width: 700px) {

@@ -36,6 +36,43 @@
   var order = G.expand(G.path("start").targets.concat(M.units.map(function (u) { return u.id; })));
   G.readingOrder = function () { return order; };
 
+  // 공부 순서(BDA_MAP.plan): 단계마다 선수관계를 지켜 펼친다. 앞 단계에서 이미 나온 단원은 다시 넣지 않고,
+  // 뒤 단계 단원이 선수로 필요하면 이 단계에 '앞내용'(pulled)으로 먼저 나온다.
+  var plan = null;
+  G.plan = function () {
+    if (plan) return plan;
+    var seen = {};
+    plan = (M.plan || []).map(function (p, i) {
+      var own = new Set(p.units), out = [];
+      function visit(id) {
+        if (seen[id] || SKIP[id] || !byId[id]) return;
+        seen[id] = true;
+        byId[id].pre.slice().sort(function (a, b) { return byId[a].order - byId[b].order; }).forEach(visit);
+        out.push({ id: id, pulled: !own.has(id) });
+      }
+      p.units.forEach(visit);
+      return { id: p.id, no: i + 1, name: p.name, main: p.main, note: p.note, items: out };
+    });
+    return plan;
+  };
+  // 장 하나를 마쳤는가: 문제를 모두 풀었고 틀린 채 남은 것이 없다(복습할 때가 된 것도 마친 것으로 본다)
+  G.chapterDone = function (ch, s) {
+    var st = B.noteStatus(ch.id, s).state;
+    return st === "ok" || st === "due";
+  };
+  // 단계 하나의 진도와, 아직 안 마친 장을 순서대로
+  G.phaseProgress = function (phase, s) {
+    var total = 0, done = 0, todo = [];
+    phase.items.forEach(function (it) {
+      G.chapters(it.id).forEach(function (ch) {
+        total++;
+        if (G.chapterDone(ch, s)) done++;
+        else todo.push({ ch: ch, unit: it.id });
+      });
+    });
+    return { total: total, done: done, todo: todo };
+  };
+
   // 다른 과목이 사이에 있어도 같은 화면에 표시된 선수는 아래 층에 둔다.
   G.layers = function (targets) {
     var included = new Set(targets), depth = {}, layers = [];

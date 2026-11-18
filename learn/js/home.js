@@ -8,6 +8,7 @@
   function drawNav() {
     var paths = document.getElementById("nav-paths"), areas = document.getElementById("nav-areas");
     // 분야 목록은 오른쪽 목차에 이미 있으므로 왼쪽에는 목차로 가는 링크 하나만 둔다
+    areas.appendChild(link("nv", "공부 순서", "#plan"));
     areas.appendChild(link("nv", "전체 목차", "#all"));
     M.paths.forEach(function (p) {
       var ids = G.expand(p.targets), ready = ids.filter(function (id) { return G.chapters(id).length; }).length;
@@ -78,26 +79,8 @@
   function drawStatus() {
     var box = document.getElementById("status");
     box.textContent = "";
-    var t = B.today();
-
-    // 이어서 읽기: 읽기 순서에서 아직 다 못 푼 첫 장
-    var cell = el("div", "cell wide"), pick = null, unitOf = null;
-    G.readingOrder().some(function (uid) {
-      return G.chapters(uid).some(function (ch) {
-        var st = B.noteStatus(ch.id, S).state;
-        if (st === "new" || st === "ing") { pick = ch; unitOf = uid; return true; }
-        return false;
-      });
-    });
-    cell.appendChild(el("p", "label", "이어서 읽기"));
-    if (pick) {
-      var u = G.unit(unitOf), idx = G.chapters(unitOf).indexOf(pick) + 1;
-      cell.appendChild(link("cell-main", pick.title, B.BASE + pick.href));
-      cell.appendChild(el("p", "cell-sub", u.id + " " + u.title + " · " + idx + "장"));
-    } else {
-      cell.appendChild(el("p", "cell-main", "쓴 장을 모두 풀었습니다"));
-    }
-    box.appendChild(cell);
+    var t = B.today(), cell;
+    // 다음에 읽을 장은 왼쪽 '지금 할 공부'에 있다. 여기는 오늘 복습·오답·시험만
 
     // 오늘 복습과 오답
     var due = 0, wrong = 0, nextDay = null;
@@ -144,6 +127,76 @@
     d.appendChild(inp);
     cell.appendChild(d);
     box.appendChild(cell);
+  }
+
+  // ---- 왼쪽 위: 지금 할 공부 (공부 순서에서 아직 안 마친 장) ----
+  function chapterLink(item) {
+    var u = G.unit(item.unit), a = link("now-ch", "", B.BASE + item.ch.href);
+    a.appendChild(el("span", "now-t", item.ch.title));
+    a.appendChild(el("span", "now-u", u.id + " " + u.title + " · " + (G.chapters(item.unit).indexOf(item.ch) + 1) + "장"));
+    return a;
+  }
+
+  function currentPhase() {
+    if (!G.plan) return null; // 예전 map.js가 캐시에 남아 있으면 이 칸만 비운다
+    var phases = G.plan(), cur = null;
+    phases.some(function (p) {
+      if (!p.main) return false;
+      var pr = G.phaseProgress(p, S);
+      if (pr.todo.length) { cur = { phase: p, pr: pr }; return true; }
+      return false;
+    });
+    return cur;
+  }
+
+  function drawNow() {
+    var box = document.getElementById("now");
+    if (!box) return;
+    box.textContent = "";
+    box.appendChild(el("p", "nv-h", "지금 할 공부"));
+    if (!G.plan) return;
+    var cur = currentPhase();
+    if (!cur) { box.appendChild(el("p", "small muted", "공부 순서의 장을 모두 마쳤습니다.")); return; }
+    var head = link("now-phase", "", "#plan-" + cur.phase.id);
+    head.appendChild(el("span", "", cur.phase.no + "단계 · " + cur.phase.name));
+    head.appendChild(el("span", "cnt", cur.pr.done + " / " + cur.pr.total + "장"));
+    box.appendChild(head);
+    var bar = el("div", "now-bar"), fill = el("i");
+    fill.style.width = (cur.pr.total ? Math.round(cur.pr.done / cur.pr.total * 100) : 0) + "%";
+    bar.appendChild(fill);
+    box.appendChild(bar);
+    cur.pr.todo.slice(0, 3).forEach(function (item, i) {
+      var a = chapterLink(item);
+      if (i === 0) a.classList.add("first");
+      box.appendChild(a);
+    });
+    var side = G.plan().filter(function (p) { return !p.main; })[0];
+    if (side) {
+      var sp = G.phaseProgress(side, S);
+      if (sp.todo.length) {
+        box.appendChild(el("p", "now-side-h", "가벼운 날"));
+        box.appendChild(chapterLink(sp.todo[0]));
+      }
+    }
+  }
+
+  // #plan: 공부 순서 전체. 단계마다 진도, 한 줄 안내, 단원 줄(앞 단계에서 끌려온 선수는 '앞내용')
+  function drawPlan(view) {
+    var cur = currentPhase();
+    view.appendChild(head("공부 순서", "단계 " + G.plan().length + "개"));
+    G.plan().forEach(function (p) {
+      var pr = G.phaseProgress(p, S), sec = el("section", "plan-phase" + (cur && cur.phase.id === p.id ? " now-on" : ""));
+      sec.id = "plan-" + p.id;
+      var h = el("h2", "", p.no + "단계 · " + p.name);
+      if (cur && cur.phase.id === p.id) h.appendChild(el("span", "now-tag", "지금"));
+      h.appendChild(el("span", "sec-meta", pr.done + " / " + pr.total + "장"));
+      sec.appendChild(h);
+      if (p.note) sec.appendChild(el("p", "plan-note small muted", p.note));
+      var blk = el("div", "area-block");
+      p.items.forEach(function (it) { blk.appendChild(G.row(it.id, S, { tag: it.pulled ? "앞내용" : "" })); });
+      sec.appendChild(blk);
+      view.appendChild(sec);
+    });
   }
 
   // ---- 목차 ----
@@ -288,6 +341,12 @@
     var key = h;
     view.textContent = "";
     if (q) drawSearch(view, q);
+    else if (h === "plan" || h.indexOf("plan-") === 0) {
+      drawPlan(view);
+      key = "plan";
+      var sec = h !== "plan" && document.getElementById(h);
+      if (sec) setTimeout(function () { sec.scrollIntoView({ block: "start" }); }, 0);
+    }
     else if (h.indexOf("path-") === 0) drawPath(view, h.slice(5));
     else if (h.indexOf("area-") === 0) {
       var code = h.slice(5), areaGroup = M.groups.find(function (g) { return g.areas.includes(code); });
@@ -316,6 +375,7 @@
     var ids = B.allNotes().map(function (n) { return n.id; }).filter(function (id) { return recorded.has(id); });
     B.loadQuiz(ids, function () {
       drawStatus();
+      drawNow();
       drawDays();
       drawBackup();
       render();
