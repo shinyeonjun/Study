@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>거의 확실한 수렴, 확률수렴, 분포수렴의 관계 증명하기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="PR12-1">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">확률 · PR12 확률수렴과 극한정리</p>
+<p class="chap-num">PR12·1</p>
+<h1>거의 확실한 수렴, 확률수렴, 분포수렴의 관계 증명하기</h1>
+<p class="lead">한 사람의 전체 추적 기록이 안정되는 말과, 어느 한 날짜의 오차가 드물어진다는 말은 다릅니다. 난수 하나를 잘게 나눠 그 차이가 실제로 일어나는 수열을 만듭니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>세 종류의 수렴이 비교하는 양을 각각 정의한다.</li><li>거의 확실한 수렴에서 확률과 분포수렴을 도출한다.</li><li>역방향이 실패하는 두 예를 검산한다.</li></ul></div>
+
+<h2>확률공간 위에서 경로를 볼지 분포를 볼지 정한다</h2>
+<p>같은 확률공간에서 정의된 Xₙ과 X를 생각합니다. <b class="key">거의 확실한 수렴</b>은 확률 1로 하나의 표본점 ω에서 수치 Xₙ(ω)가 X(ω)로 수렴한다는 뜻입니다. <b class="key">확률수렴</b>은 모든 ε&gt;0에 대해 <var>P(|Xₙ−X|&gt;ε)→0</var>이라는 뜻입니다. 여기서는 각 n의 오차 확률을 확인합니다. <b class="key">분포수렴</b>은 X의 누적분포 F가 연속인 모든 x에서 <var>Fₙ(x)→F(x)</var>인 것입니다. 마지막 정의는 수열과 극한 변수를 같은 확률공간에 둘 필요가 없습니다.</p>
+<div class="table-wrap"><table><thead><tr><th scope="col">수렴</th><th scope="col">점검하는 양</th></tr></thead><tbody><tr><td>거의 확실히</td><td>표본점마다 뒤로 갈수록 가까움</td></tr><tr><td>확률로</td><td>각 항의 큰 오차 확률이 작아짐</td></tr><tr><td>분포로</td><td>극한 누적분포의 연속점에서 분포가 맞아감</td></tr></tbody></table></div>
+<div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
+<h2>강한 조건에서 약한 조건을 유도한다</h2>
+<p>거의 확실히 Xₙ→X이면 큰 오차 사건의 지시함수 1{|Xₙ−X|&gt;ε}가 거의 확실히 0으로 갑니다. 모두 1 이하이므로 <a href="../../unit.html?u=RA04">지배수렴</a>으로 기댓값도 0에 접근합니다. 이 기댓값이 바로 큰 오차 확률입니다.</p>
+<p>확률수렴에서는 |Xₙ−X|≤ε일 때 X≤x−ε이면 Xₙ≤x이고, Xₙ≤x이면 X≤x+ε입니다. 큰 오차 사건을 허용해 아래 경계를 얻습니다.</p>
+<p class="calc">F(x−ε) − P(|Xₙ−X|&gt;ε) ≤ Fₙ(x) ≤ F(x+ε)+P(|Xₙ−X|&gt;ε)</p>
+<p>n을 크게 하면 오차확률이 사라집니다. x가 F의 연속점이면 ε을 0으로 보낼 때 양쪽이 F(x)로 접근해, 분포수렴이 성립합니다.</p>
+<div class="check" data-q="q3"></div><div class="check" data-q="q4"></div>
+<h2>오차가 나는 칸은 좁아지지만 모든 점이 계속 맞닥뜨린다</h2>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 160" role="img" aria-label="각 단계의 칸이 좁아 해당 칸에 들어갈 확률은 줄어들지만, 모든 점은 모든 단계에서 자신이 속한 칸을 한 번 만난다.">
+<rect class="f-box" x="42" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="135" y="61" text-anchor="middle">1층</text><text class="f-s" x="135" y="89" text-anchor="middle">[0,1)을 2등분</text><text class="f-s" x="135" y="110" text-anchor="middle">두 칸을 차례로 훑음</text><line class="f-line" x1="235" y1="84" x2="278" y2="84" marker-end="url(#f-arrow)"/><rect class="f-soft" x="287" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="380" y="61" text-anchor="middle">m층</text><text class="f-s" x="380" y="89" text-anchor="middle">[0,1)을 2ᵐ등분</text><text class="f-s" x="380" y="110" text-anchor="middle">한 항은 그 칸의 지시함수</text><line class="f-line" x1="480" y1="84" x2="523" y2="84" marker-end="url(#f-arrow)"/><rect class="f-box" x="532" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="625" y="61" text-anchor="middle">각 점의 경로</text><text class="f-s" x="625" y="89" text-anchor="middle">매 층에서 1 한 번</text><text class="f-s" x="625" y="110" text-anchor="middle">0도 매 층에서 나옴</text>
+</svg><figcaption>각 항에서는 오차가 드물어지는데 한 점을 오래 따라보면 오차가 무한히 반복된다.</figcaption></figure>
+<p>U를 [0,1)에서 균등하게 뽑습니다. 층 m마다 2ᵐ개의 반열린 칸을 차례로 쓰고, U가 해당 칸에 들면 1, 아니면 0인 수열로 한 줄에 잇습니다. m층 각 항의 1 확률은 2⁻ᵐ이므로 확률수렴의 극한은 0입니다. 그러나 고정한 U는 매 층에서 한 번 1, 나머지 항은 0을 만나므로 수치열은 수렴하지 않습니다. 반열린 칸이므로 경계에서도 어느 한 칸에 정확히 속합니다.</p>
+<p>다른 예로 X가 ±1을 각각 절반으로 갖고, 모든 n에서 Xₙ=−X라고 둡니다. Xₙ의 분포는 X와 같지만 두 변수의 실제 거리는 언제나 2라 확률로 X에 수렴하지 않습니다. 극한이 상수라면 분포수렴에서 확률수렴이 따라오는 특수한 경우가 있습니다. 그 상수 c의 양옆 c−ε와 c+ε는 극한 누적분포의 연속점이라, 그 사이 밖의 확률을 0으로 보낼 수 있습니다.</p>
+<div class="check" data-q="q5"></div><div class="check" data-q="q6"></div><div class="check" data-q="q7"></div>
+<pre data-example="python"><code>from fractions import Fraction as F
+
+u = F(3,8)
+for level in range(1,6):
+    size = 2**level
+    values = [int(F(k,size)&lt;=u&lt;F(k+1,size)) for k in range(size)]
+    print(level,F(1,size),values.index(1),sum(values))
+print([abs(-x-x) for x in (-1,1)])</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>1 1/2 0 1
+2 1/4 1 1
+3 1/8 3 1
+4 1/16 6 1
+5 1/32 12 1
+[2, 2]</code></pre>
+<div class="check" data-q="q8"></div>
+
+<h2>참고 자료</h2>
+<ul><li><a href="https://www.probabilitycourse.com/chapter7/7_2_0_convergence_of_random_variables.php">Pishro-Nik · Convergence of Random Variables</a></li></ul>
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

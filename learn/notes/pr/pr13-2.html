@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>포아송 과정에서 건수와 첫 도착 시간을 연결하기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="PR13-2">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">확률 · PR13 확률과정과 흡수·기대시간</p>
+<p class="chap-num">PR13·2</p>
+<h1>포아송 과정에서 건수와 첫 도착 시간을 연결하기</h1>
+<p class="lead">한 분 안에 부품이 도착한 횟수와, 한 분이 지난 뒤 새로 도착한 횟수를 따로 봅니다. 시간 구간을 자르면 독립적인 대상을 찾아 곱할 수 있습니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>균질 포아송 과정에서 도착률과 구간 길이를 곱한다.</li><li>독립 증분과 누적 횟수의 의존성을 구분한다.</li><li>무도착 사건에서 첫 도착 대기 시간을 도출한다.</li></ul></div>
+
+<h2>누적 기록에서 두 시간 사이에 들어온 것만 센다</h2>
+<p>시간 t까지의 도착 건수를 N(t)라고 둡니다. 균질 포아송 과정은 N(0)=0이며, 겹치지 않는 시간 구간의 도착 횟수가 독립이고, 길이 Δ인 구간에서 새로 도착한 횟수는 평균 λΔ의 Poisson 분포를 따릅니다. λ=2건/분이면 0~1분 구간의 평균은 2건, 1~3분 구간은 4건입니다. λ는 건수 자체가 아니라 시간에 따른 비율입니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 160" role="img" aria-label="1분까지의 도착과 그 뒤 2분의 도착은 서로 독립인 증분이다. 3분까지 누적을 세면 둘을 더한다.">
+<rect class="f-box" x="42" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="135" y="61" text-anchor="middle">0~1분</text><text class="f-s" x="135" y="89" text-anchor="middle">평균 2건</text><text class="f-s" x="135" y="110" text-anchor="middle">N(1)</text><line class="f-line" x1="235" y1="84" x2="278" y2="84" marker-end="url(#f-arrow)"/><rect class="f-soft" x="287" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="380" y="61" text-anchor="middle">1~3분</text><text class="f-s" x="380" y="89" text-anchor="middle">평균 4건</text><text class="f-s" x="380" y="110" text-anchor="middle">N(3)−N(1)</text><line class="f-line" x1="480" y1="84" x2="523" y2="84" marker-end="url(#f-arrow)"/><rect class="f-box" x="532" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="625" y="61" text-anchor="middle">0~3분 누적</text><text class="f-s" x="625" y="89" text-anchor="middle">평균 6건</text><text class="f-s" x="625" y="110" text-anchor="middle">두 증분의 합</text>
+</svg><figcaption>N(1)과 N(3)은 앞 1분의 도착을 공유한다.</figcaption></figure>
+<p>포아송 평균 m에서 k건 확률은 e<sup>−m</sup>mᵏ/k!입니다. 첫 구간 1건과 둘째 구간 2건을 함께 원하면 독립 증분이라 (2e<sup>−2</sup>)(8e<sup>−4</sup>)=16e<sup>−6</sup>입니다. 전체 3건과 같은 사건은 아닙니다. 전체가 3이라도 첫 1분에 0,1,2,3건 모두 가능하기 때문입니다.</p>
+<div class="check" data-q="q1"></div><div class="check" data-q="q2"></div><div class="check" data-q="q3"></div>
+<h2>누적값에는 이미 본 구간이 함께 들어간다</h2>
+<p>N(3)=N(1)+[N(3)−N(1)]입니다. 뒤 증분은 앞 증분과 독립이므로 공분산이 0입니다. 따라서 Cov(N(1),N(3))=Var(N(1))=2입니다. 포아송의 분산이 평균과 같다는 사실을 썼습니다. 같은 과정을 두 다른 시각에서 읽은 누적 횟수를 독립으로 곱하지 않습니다.</p>
+<div class="check" data-q="q4"></div><div class="check" data-q="q5"></div>
+<h2>첫 도착까지 기다린 시간이 t보다 길다는 뜻</h2>
+<p><var>T₁&gt;t</var>는 t까지 도착이 0건입니다. 포아송 확률에서 k=0을 대입하면 <var>P(T₁&gt;t)=e<sup>−λt</sup></var>입니다. 그래서 첫 대기 시간은 율 λ의 지수분포입니다. 꼬리 확률을 0부터 무한대까지 적분하면 평균 1/λ입니다. λ=2건/분이면 평균 대기가 .5분이며, 1.5분을 초과할 확률은 e<sup>−3</sup>입니다. 율이 0이면 도착이 없으므로 유한 평균 식은 λ&gt;0이라는 조건에서 사용합니다.</p>
+<div class="check" data-q="q6"></div><div class="check" data-q="q7"></div>
+<pre data-example="python"><code>from math import exp, factorial
+
+def poisson(k,m):
+    return exp(-m)*m**k/factorial(k)
+
+lam=2
+first,second=lam*1,lam*2
+joint = poisson(1,first)*poisson(2,second)
+tail = poisson(0,lam*1.5)
+print(first,second,first+second)
+print(f&quot;{joint:.8f} {tail:.8f}&quot;)
+print(1/lam,first)
+assert abs(joint-16*exp(-6))&lt;1e-14</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>2 4 6
+0.03966003 0.04978707
+0.5 2</code></pre>
+<div class="check" data-q="q8"></div>
+
+<h2>참고 자료</h2>
+<ul><li><a href="https://ocw.mit.edu/courses/18-445-introduction-to-stochastic-processes-spring-2015/resources/mit18_445s15_lecture20/">MIT 18.445 · Poisson Process</a></li></ul>
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

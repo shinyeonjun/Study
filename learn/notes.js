@@ -205,6 +205,17 @@ window.BDA_CHAPTERS = {
     {"id": "DM06-1", "title": "입력이 커질 때 증가 속도와 큰 O 표기 읽기", "href": "notes/dm/dm06-1.html"},
     {"id": "DM06-2", "title": "반복문 불변식으로 가장 큰 값의 위치 증명하기", "href": "notes/dm/dm06-2.html"}
   ],
+  DM07: [
+    {"id": "DM07-1", "title": "관계가 만드는 분할과 부분순서의 차이를 증명하기", "href": "notes/dm/dm07-1.html"}
+  ],
+  DM08: [
+    {"id": "DM08-1", "title": "포함배제와 이중 계수로 중복을 바로잡기", "href": "notes/dm/dm08-1.html"},
+    {"id": "DM08-2", "title": "일차 점화식의 닫힌꼴과 상·하계를 계산하기", "href": "notes/dm/dm08-2.html"}
+  ],
+  DM09: [
+    {"id": "DM09-1", "title": "최대공약수의 불변식으로 합동식과 역원을 풀기", "href": "notes/dm/dm09-1.html"},
+    {"id": "DM09-2", "title": "두 색으로 칠할 수 있는 그래프와 홀수 순환의 증명", "href": "notes/dm/dm09-2.html"}
+  ],
   CS01: [
     {"id": "CS01-1", "title": "입력·출력 계약과 처음 찾는 절차", "href": "notes/cs/cs01-1.html"},
     {"id": "CS01-2", "title": "추적표로 반복문과 개수 세기 검증하기", "href": "notes/cs/cs01-2.html"}
@@ -588,6 +599,23 @@ window.BDA_CHAPTERS = {
   PR10: [
     {"id": "PR10-1", "title": "현재 상태와 여러 단계의 전이", "href": "notes/pr/pr10-1.html"},
     {"id": "PR10-2", "title": "정상분포가 있을 때 어디로 수렴하는가", "href": "notes/pr/pr10-2.html"}
+  ],
+  PR11: [
+    {"id": "PR11-1", "title": "제곱처럼 되돌리는 길이 둘일 때 새 확률밀도 구하기", "href": "notes/pr/pr11-1.html"},
+    {"id": "PR11-2", "title": "야코비안으로 넓이를 바꾸고 조건부 밀도를 구하기", "href": "notes/pr/pr11-2.html"}
+  ],
+  PR12: [
+    {"id": "PR12-1", "title": "거의 확실한 수렴, 확률수렴, 분포수렴의 관계 증명하기", "href": "notes/pr/pr12-1.html"},
+    {"id": "PR12-2", "title": "대수의 법칙과 중심극한정리에서 서로 다른 질문 읽기", "href": "notes/pr/pr12-2.html"}
+  ],
+  PR13: [
+    {"id": "PR13-1", "title": "흡수될 확률과 걸리는 평균 시간을 첫 단계로 구하기", "href": "notes/pr/pr13-1.html"},
+    {"id": "PR13-2", "title": "포아송 과정에서 건수와 첫 도착 시간을 연결하기", "href": "notes/pr/pr13-2.html"},
+    {"id": "PR13-3", "title": "지금 가진 정보로 마팅게일을 판정하기", "href": "notes/pr/pr13-3.html"}
+  ],
+  PR14: [
+    {"id": "PR14-1", "title": "같은 꼬리확률에 Markov부터 Hoeffding까지 적용하기", "href": "notes/pr/pr14-1.html"},
+    {"id": "PR14-2", "title": "Hoeffding을 유도하고 유한한 여러 후보의 일반화 오차를 제한하기", "href": "notes/pr/pr14-2.html"}
   ],
   ST01: [
     {"id": "ST01-1", "title": "기술과 추론 · 어떤 평균을 추정하는가", "href": "notes/st/st01-1.html"},

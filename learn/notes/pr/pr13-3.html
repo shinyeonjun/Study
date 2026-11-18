@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>지금 가진 정보로 마팅게일을 판정하기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="PR13-3">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">확률 · PR13 확률과정과 흡수·기대시간</p>
+<p class="chap-num">PR13·3</p>
+<h1>지금 가진 정보로 마팅게일을 판정하기</h1>
+<p class="lead">공평한 동전을 한 번 더 던지기 전에 다음 점수의 평균을 예상합니다. 지금까지 무엇을 봤는지 명확히 쓰면, 점수뿐 아니라 제곱에서 시간만큼 뺀 양도 같은 규칙을 만족합니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>정보의 증가를 여과로 쓰고 적응 조건을 확인한다.</li><li>대칭 걸음과 제곱 보정값의 마팅게일 성질을 증명한다.</li><li>포아송 과정에서 시간당 평균 도착을 빼는 이유를 설명한다.</li></ul></div>
+
+<h2>최근까지의 기록을 확률공간의 정보로 표현한다</h2>
+<p>시점 n까지 알 수 있는 사건들의 σ-대수를 <var>ℱₙ</var>으로 씁니다. 과거에 알던 것도 계속 알고 있다면 ℱ₀⊆ℱ₁⊆⋯이며, 이 증가하는 정보열을 <b class="key">여과</b>라고 합니다. Mₙ이 현재 정보로 정해지는 ℱₙ-가측 변수이고, E|Mₙ|가 유한하며, <var>E[Mₙ₊₁|ℱₙ]=Mₙ</var>이면 이 여과에 대한 <b class="key">마팅게일</b>입니다. 다음 값 자체는 무작위로 달라질 수 있습니다.</p>
+<div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
+<h2>한 번 더 던지기 전에는 증분 평균이 0</h2>
+<p>독립인 Xᵢ가 −1과 1을 절반씩 갖고 Sₙ=∑<sub>i≤n</sub>Xᵢ라 둡니다. 첫 n개 증분을 ℱₙ에 넣으면 Sₙ은 이미 정해졌고 다음 X는 독립이므로 조건부 평균 0입니다. 따라서 Sₙ은 마팅게일입니다. 적분 가능성은 |Sₙ|≤n에서 확인할 수 있습니다.</p>
+<p>제곱에서는 (Sₙ+Xₙ₊₁)²=Sₙ²+2SₙXₙ₊₁+1입니다. 중간 항은 조건부 기대에서 0이고 1이 남으므로 Sₙ² 자체의 다음 조건부 평균은 Sₙ²+1입니다. 따라서 <var>Mₙ=Sₙ²−n</var>으로 시간당 늘어나는 1을 빼면 마팅게일입니다. 각 n에서 |Mₙ|≤n²+n으로 적분 가능성도 보장됩니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 241" role="img" aria-label="현재 두 걸음의 합이 2일 때 한 번 더 걷고 제곱에서 3을 뺀 값은 −2 또는 6이며 평균은 현재의 2이다.">
+<rect class="f-soft" x="110" y="79" width="190" height="82" rx="3"/><text class="f-cap" x="205" y="109" text-anchor="middle">현재 n=2, S₂=2</text><text class="f-t" x="205" y="136" text-anchor="middle">M₂=4−2=2</text><rect class="f-box" x="454" y="21" width="188" height="80" rx="3"/><text class="f-cap" x="548" y="50" text-anchor="middle">다음 증분 −1</text><text class="f-t" x="548" y="78" text-anchor="middle">S₃=1, M₃=−2</text><rect class="f-box" x="454" y="140" width="188" height="80" rx="3"/><text class="f-cap" x="548" y="169" text-anchor="middle">다음 증분 +1</text><text class="f-t" x="548" y="197" text-anchor="middle">S₃=3, M₃=6</text><line class="f-line" x1="301" y1="113" x2="446" y2="62" marker-end="url(#f-arrow)"/><line class="f-line" x1="301" y1="127" x2="445" y2="180" marker-end="url(#f-arrow)"/><text class="f-s" x="368" y="75" text-anchor="middle">확률 1/2</text><text class="f-s" x="368" y="171" text-anchor="middle">확률 1/2</text>
+</svg><figcaption>조건부 평균이 현재와 같아도 각각의 다음 경로 값은 달라질 수 있다.</figcaption></figure>
+<div class="check" data-q="q3"></div><div class="check" data-q="q4"></div><div class="check" data-q="q5"></div>
+<h2>도착하는 평균 속도를 빼는 경우</h2>
+<p>포아송 과정의 자연 여과에는 시간 s까지의 모든 도착 정보가 있습니다. s&lt;t에서 독립 증분으로 E[N(t)−N(s)|ℱₛ]=λ(t−s)입니다. 따라서 E[N(t)−λt|ℱₛ]=N(s)−λs입니다. 자연 여과에서 관측 가능한 N(t)와 유한한 기대값도 있으므로 중심화한 도착량도 마팅게일입니다.</p>
+<p>만약 미래의 증분까지 이미 드러나 있는 정보를 조건으로 쓰면 조건부 평균이 달라질 수 있습니다. 여과를 적는 것은 이 정보를 고정하기 위한 조건입니다. 무제한 시간 동안 기다리다가 임의로 정지한 값의 평균이 항상 초기값이라는 결론에는 정지 규칙과 적분 가능성 등의 별도 정리가 필요합니다.</p>
+<div class="check" data-q="q6"></div><div class="check" data-q="q7"></div>
+<pre data-example="python"><code>from fractions import Fraction as F
+from itertools import product
+
+n,s = 2,2
+next_m = [(s+x)**2-(n+1) for x in (-1,1)]
+print(*next_m,F(sum(next_m),2),s*s-n)
+
+for n in range(1,5):
+    paths = list(product((-1,1),repeat=n))
+    sums = [sum(path) for path in paths]
+    mean = F(sum(sums),len(sums))
+    square_mean = F(sum(s*s for s in sums),len(sums))
+    print(n,mean,square_mean,square_mean-n)</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>-2 6 2 2
+1 0 1 0
+2 0 2 0
+3 0 3 0
+4 0 4 0</code></pre>
+<div class="check" data-q="q8"></div>
+
+<h2>참고 자료</h2>
+<ul><li><a href="https://ocw.mit.edu/courses/18-445-introduction-to-stochastic-processes-spring-2015/resources/mit18_445s15_lecture15/">MIT 18.445 · 조건부 기댓값과 마팅게일</a></li></ul>
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

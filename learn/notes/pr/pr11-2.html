@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>야코비안으로 넓이를 바꾸고 조건부 밀도를 구하기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="PR11-2">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">확률 · PR11 연속 확률의 변수변환</p>
+<p class="chap-num">PR11·2</p>
+<h1>야코비안으로 넓이를 바꾸고 조건부 밀도를 구하기</h1>
+<p class="lead">정사각형 안의 점에서 두 좌표를 더하고 뺍니다. 새 점들은 마름모 안에 들어가고, 같은 확률 질량이 다른 넓이에 걸쳐 나타납니다. 그 넓이의 비율로 밀도를 구합니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>역변환의 야코비안 절댓값과 지지집합을 계산한다.</li><li>결합밀도를 적분한 뒤 조건부 밀도를 얻는다.</li><li>공분산이 0이어도 독립이 아닐 수 있음을 보인다.</li></ul></div>
+
+<h2>역변환에서 원래 사각형으로 돌아간다</h2>
+<p>X,Y는 서로 독립인 Uniform(0,1)입니다. 그러므로 정사각형 0&lt;x,y&lt;1에서 결합밀도는 1입니다. U=X+Y, V=X−Y로 바꾸면 역함수는 x=(u+v)/2, y=(u−v)/2입니다. 한 쌍에서 원래 점을 하나로 되찾을 수 있습니다.</p>
+<p>역함수의 <b class="key">야코비안</b>은 x,y를 u,v로 미분한 행렬입니다. 두 행이 (1/2,1/2)와 (1/2,−1/2)이므로 행렬식은 −1/2입니다. 밀도 변환에는 방향이 아니라 작은 넓이의 크기가 필요해서 절댓값 1/2를 씁니다. 이 예에서 일대일, 미분 가능하며 역변환의 행렬식이 0이 아닙니다.</p>
+<div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
+<h2>새 좌표의 한 단면을 직접 읽는다</h2>
+<p>0&lt;u+v&lt;2, 0&lt;u−v&lt;2의 두 조건을 합치면 0&lt;u&lt;2, |v|&lt;ℓ(u)이고 ℓ(u)=min(u,2−u)입니다. 범위 내부 결합밀도는 1/2입니다. 마름모의 가로·세로 대각선이 각각 길이 2라 넓이는 2이고, 밀도 1/2를 곱하면 전체 확률이 1입니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 232" role="img" aria-label="u,v 좌표의 마름모 지지집합은 (0,0), (1,1), (2,0), (1,−1)로 이어져 있다. u=1.25에서 위아래 단면은 v=±.75이다.">
+<polygon class="f-soft" points="180,123 380,40 580,123 380,206"/><line class="f-ink" x1="148" y1="123" x2="615" y2="123" marker-end="url(#f-arrow)"/><line class="f-ink" x1="180" y1="219" x2="180" y2="28" marker-end="url(#f-arrow)"/><line class="f-line" x1="430" y1="61" x2="430" y2="185"/><text class="f-s" x="166" y="143" text-anchor="middle">0</text><text class="f-s" x="380" y="145" text-anchor="middle">1</text><text class="f-s" x="580" y="145" text-anchor="middle">2</text><text class="f-s" x="166" y="44" text-anchor="middle">1</text><text class="f-s" x="167" y="210" text-anchor="middle">−1</text><text class="f-cap" x="629" y="126" text-anchor="middle">u</text><text class="f-cap" x="164" y="26" text-anchor="middle">v</text><text class="f-s" x="540" y="212" text-anchor="middle">u=1.25에서 자른 단면</text>
+</svg><figcaption>u가 1에서 멀어질수록 세로 단면이 짧아진다. 내부에서의 결합밀도는 항상 1/2이다.</figcaption></figure>
+<p>u를 고정하고 v의 길이 2ℓ(u) 위로 f<sub>U,V</sub>를 적분하면 주변밀도 f<sub>U</sub>(u)=ℓ(u)입니다. 0&lt;u&lt;2에서 이 값이 양수이므로 f<sub>V|U=u</sub>=(1/2)/ℓ(u)=1/[2ℓ(u)]입니다. 지지집합을 따라 조건부로는 균등분포입니다. u=0 또는 2에서는 이 나눗셈으로 조건부 분포를 정의하지 않습니다.</p>
+<div class="check" data-q="q3"></div><div class="check" data-q="q4"></div><div class="check" data-q="q5"></div>
+<h2>공분산의 0과 독립을 분리한다</h2>
+<p>Cov(X+Y,X−Y)=Var(X)−Var(Y)=0입니다. Var(U)=Var(V)=1/6입니다. 그럼에도 가능한 V의 폭이 U에 따라 바뀝니다. 예를 들어 0&lt;u&lt;1/2에서는 |V|&gt;1/2가 불가능하고, 1/2&lt;u&lt;3/2의 내부에서는 양의 조건부확률이 있습니다. 길이가 양수인 u 구간들에서 조건부 분포가 달라지므로, 독립이라면 조건부 분포가 동일해야 한다는 성질이 깨집니다.</p>
+<p>벡터 Z에 일반 행렬 A를 적용하면, 평균을 뺀 벡터가 A(Z−E[Z])입니다. 이 벡터의 외적을 평균해 Cov(AZ)=A Cov(Z) Aᵀ를 얻습니다. 계산에 필요한 2차 모멘트는 유한해야 합니다. 공분산이 0인 항은 선형적인 동반 변동을 볼 뿐이며, 그림의 모양을 고정하지 않습니다.</p>
+<div class="check" data-q="q6"></div><div class="check" data-q="q7"></div>
+<pre data-example="python"><code>from fractions import Fraction as F
+
+def slice_at(u):
+    ell = min(u, 2-u)
+    if ell&lt;=0:
+        return None
+    mass_inside_half = min(1, F(1,2)/ell)
+    return ell, 1/(2*ell), mass_inside_half
+
+for u in (F(1,4),F(1),F(5,4)):
+    print(u,*slice_at(u))
+xy_var = F(1,12)
+print(2*xy_var,2*xy_var,xy_var-xy_var)</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>1/4 1/4 2 1
+1 1 1/2 1/2
+5/4 3/4 2/3 2/3
+1/6 1/6 0</code></pre>
+<div class="check" data-q="q8"></div>
+
+<h2>참고 자료</h2>
+<ul><li><a href="https://www.probabilitycourse.com/chapter6/6_1_5_random_vectors.php">Pishro-Nik · Random Vectors와 Jacobian</a></li><li><a href="https://www.probabilitycourse.com/chapter5/5_2_3_conditioning_independence.php">Pishro-Nik · 조건부 밀도와 독립</a></li></ul>
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

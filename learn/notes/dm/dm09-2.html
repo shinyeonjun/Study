@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>두 색으로 칠할 수 있는 그래프와 홀수 순환의 증명 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="DM09-2">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">논리·이산수학·증명 · DM09 정수론과 이산 구조</p>
+<p class="chap-num">DM09·2</p>
+<h1>두 색으로 칠할 수 있는 그래프와 홀수 순환의 증명</h1>
+<p class="lead">인접한 정점에는 서로 다른 색을 써야 합니다. 여섯 점의 고리에는 두 색이 잘 맞지만, 선 하나를 추가하면 불가능할 수 있습니다. 가능한 경우에는 색을, 불가능한 경우에는 홀수 고리를 찾아냅니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>이분 그래프와 올바른 2색칠을 대응시킨다.</li><li>홀수 순환이 존재하지 않을 때 BFS로 색을 붙이는 증명을 이해한다.</li><li>충돌에서 실제 홀수 순환을 복원한다.</li></ul></div>
+
+<h2>색 두 개가 연결의 두 편을 정한다</h2>
+<p>유한 무방향 단순 그래프에서 각 정점에 색 0 또는 1을 붙여 모든 간선 양끝의 색을 다르게 하는 일을 <b class="key">2색칠</b>이라고 합니다. 색별 두 부분 안에는 간선이 없습니다. 반대로 간선이 항상 서로 다른 두 부분 사이에 있는 <b class="key">이분 그래프</b>라면 두 부분에 서로 다른 색을 주면 됩니다.</p>
+<p>색이 다르도록 고리를 따라가면 간선을 지나갈 때마다 색이 뒤집힙니다. 홀수 개 간선을 지나 제자리로 나오면 색이 반대가 되어 모순입니다. 그래서 두 색으로 칠한 그래프에는 홀수 길이의 단순 순환이 없습니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 250" role="img" aria-label="육각형 고리는 번갈아 색칠된다. 점선으로 0과 2를 잇으면 세 변 0-1-2-0이 홀수 순환을 이룬다.">
+<line class="f-ink" x1="380" y1="36" x2="465" y2="85"/><line class="f-ink" x1="465" y1="85" x2="465" y2="170"/><line class="f-ink" x1="465" y1="170" x2="380" y2="219"/><line class="f-ink" x1="380" y1="219" x2="295" y2="170"/><line class="f-ink" x1="295" y1="170" x2="295" y2="85"/><line class="f-ink" x1="295" y1="85" x2="380" y2="36"/><line class="f-dash" x1="380" y1="36" x2="465" y2="170"/><circle class="f-soft" cx="380" cy="36" r="17"/><text class="f-t" x="380" y="41" text-anchor="middle">0</text><circle class="f-box" cx="465" cy="85" r="17"/><text class="f-t" x="465" y="90" text-anchor="middle">1</text><circle class="f-soft" cx="465" cy="170" r="17"/><text class="f-t" x="465" y="175" text-anchor="middle">2</text><circle class="f-box" cx="380" cy="219" r="17"/><text class="f-t" x="380" y="224" text-anchor="middle">3</text><circle class="f-soft" cx="295" cy="170" r="17"/><text class="f-t" x="295" y="175" text-anchor="middle">4</text><circle class="f-box" cx="295" cy="85" r="17"/><text class="f-t" x="295" y="90" text-anchor="middle">5</text>
+</svg><figcaption>실선 여섯 개만 있으면 교대로 칠할 수 있다. 점선은 같은 색 0과 2를 잇는다.</figcaption></figure>
+<div class="check" data-q="q1"></div><div class="check" data-q="q2"></div><div class="check" data-q="q3"></div>
+<h2>홀수 순환이 없으면 깊이의 홀짝을 쓴다</h2>
+<p>각 연결 성분에서 시작점을 정해 너비 우선 탐색을 합니다. 처음 발견한 가장 가까운 트리 경로의 길이가 깊이입니다. 각 정점에는 깊이를 2로 나눈 나머지를 줍니다. 어떤 간선 (u,v)의 양끝이 같은 홀짝이라고 가정합시다. 두 트리 경로가 만나는 마지막 공통 조상을 w라고 하면, w에서 u와 v까지의 경로는 w를 제외하고 만나지 않습니다. 그 두 경로와 간선을 합친 길이는 d(u)+d(v)−2d(w)+1입니다. 같던 깊이의 홀짝 두 개에 1을 더하므로 홀수입니다.</p>
+<p>해당 간선이 트리 간선이라면 두 끝의 깊이는 바로 한 단계 차이 나므로 이런 충돌이 날 수 없습니다. 따라서 두 트리 경로와 충돌 간선으로 실제 홀수 순환이 생깁니다. 홀수 순환이 없다는 가정과 모순이므로 모든 간선 양끝의 색이 다릅니다. 정점 하나뿐인 연결 성분은 어느 색을 주어도 조건을 만족합니다.</p>
+<div class="check" data-q="q4"></div><div class="check" data-q="q5"></div>
+<h2>성공하면 색표, 실패하면 순환을 보여 준다</h2>
+<p>아래는 정점이 0~5인 고리에서 0부터 너비 우선 탐색으로 깊이의 홀짝을 붙이고 실제 간선들의 양끝 색을 확인합니다. 그다음 0–2를 추가합니다. 실제 탐색 순서에 따라 충돌을 찾는 간선이 다를 수 있습니다. 찾아낸 순환은 첫·마지막 정점이 같고, 중간의 정점이 중복되지 않으며, 모든 연속 쌍이 실제 간선인지 검증하면 됩니다.</p>
+<div class="check" data-q="q6"></div><div class="check" data-q="q7"></div>
+<pre data-example="python"><code>from collections import deque
+
+def color_or_cycle(n, edges):
+    adj = [[] for _ in range(n)]
+    for u,v in edges:
+        adj[u].append(v)
+        adj[v].append(u)
+    depth = {}
+    parent = {}
+    for start in range(n):
+        if start in depth:
+            continue
+        depth[start], parent[start] = 0, None
+        queue = deque([start])
+        while queue:
+            u = queue.popleft()
+            for v in adj[u]:
+                if v not in depth:
+                    depth[v], parent[v] = depth[u]+1, u
+                    queue.append(v)
+                elif depth[u]%2 == depth[v]%2:
+                    anc = []
+                    node = u
+                    while node is not None:
+                        anc.append(node)
+                        node = parent[node]
+                    trail = []
+                    node = v
+                    while node not in anc:
+                        trail.append(node)
+                        node = parent[node]
+                    return None, anc[:anc.index(node)+1]+trail[::-1]+[u]
+    return [depth[v]%2 for v in range(n)], None
+
+edges = [(i,(i+1)%6) for i in range(6)]
+colors,_ = color_or_cycle(6,edges)
+chord = edges+[(0,2)]
+_,cycle = color_or_cycle(6,chord)
+print(colors)
+print(cycle)
+assert all(colors[u]!=colors[v] for u,v in edges)
+assert (len(cycle)-1)%2 == 1
+assert all((u,v) in chord or (v,u) in chord for u,v in zip(cycle,cycle[1:]))</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>[0, 1, 0, 1, 0, 1]
+[1, 0, 2, 1]</code></pre>
+<div class="check" data-q="q8"></div>
+
+<h2>참고 자료</h2>
+<ul><li><a href="https://ocw.mit.edu/courses/6-042j-mathematics-for-computer-science-spring-2015/mit6_042js15_textbook.pdf">MIT 6.042J · 이분 그래프와 그래프 색칠</a></li></ul>
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

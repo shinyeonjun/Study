@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>같은 꼬리확률에 Markov부터 Hoeffding까지 적용하기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="PR14-1">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">확률 · PR14 집중부등식과 일반화</p>
+<p class="chap-num">PR14·1</p>
+<h1>같은 꼬리확률에 Markov부터 Hoeffding까지 적용하기</h1>
+<p class="lead">공평한 동전 20개 중 앞면이 14개 이상일 확률을 정확히 셉니다. 그다음 알려진 정보가 평균뿐일 때와 분포까지 아는 경우, 각각 얼마까지 확률을 막을 수 있는지 계산합니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>지시함수 비교에서 Markov 및 Chebyshev 부등식을 유도한다.</li><li>지수 변환과 독립성에서 Chernoff 계산을 얻는다.</li><li>확률 상계와 실제 꼬리확률을 같은 축에서 비교한다.</li></ul></div>
+
+<h2>사건에서 값이 최소 얼마인지 사용한다</h2>
+<p>X≥0, 유한한 E[X], a&gt;0이면 사건 X≥a에서 X/a≥1입니다. 전체에서 지시함수 1{X≥a}≤X/a이므로 <b class="key">Markov 부등식</b> P(X≥a)≤E[X]/a를 얻습니다. 분산을 알고 있다면 비음수 (X−E[X])²에 같은 논리를 적용해 <b class="key">Chebyshev 부등식</b> P(|X−E[X]|≥a)≤Var(X)/a²를 얻습니다.</p>
+<p>공평한 동전을 독립적으로 n=20번 던진 앞면 횟수 K는 평균 10, 분산 5입니다. K≥14는 양측 |K−10|≥4의 일부이므로 첫 상계는 10/14, 두 번째는 5/16입니다. 여기서 얻은 두 값은 실제 확률보다 클 수 있습니다.</p>
+<div class="check" data-q="q1"></div><div class="check" data-q="q2"></div><div class="check" data-q="q3"></div>
+<h2>지수로 바꾸면 큰 값에 더 민감해진다</h2>
+<p>t&gt;0에서 e<sup>tX</sup>는 양수이고 단조 증가합니다. 지수에 Markov를 쓰면 <var>P(X≥a)≤e<sup>−ta</sup>E[e<sup>tX</sup>]</var>입니다. 적률생성함수 또는 <b class="key">MGF</b> E[e<sup>tX</sup>]가 그 t에서 유한해야 합니다. 독립 확률변수의 합에서는 그 기대값이 곱으로 나뉩니다. K가 공평한 Bernoulli 합이면 <var>E[e<sup>tK</sup>]=[(1+eᵗ)/2]²⁰</var>입니다.</p>
+<p>우변의 로그를 미분하면 −14+20eᵗ/(1+eᵗ)입니다. 이를 0으로 놓아 eᵗ=7/3을 얻습니다. 이 t는 양수이고 로그의 두 번째 미분이 양수라 최소입니다. 대입하면 상계는 약 .192886입니다. 분포를 더 구체적으로 알아 MGF를 직접 계산한 예입니다.</p>
+<div class="check" data-q="q4"></div><div class="check" data-q="q5"></div>
+<h2>위아래 범위만 알아도 줄어드는 상계를 구한다</h2>
+<p>독립 항이 [0,1]에 든다는 사실만 쓰는 Hoeffding의 단측 상계에서는 <var>P(K−E[K]≥4)≤exp(−2·4²/20)=exp(−1.6)</var>입니다. 해당 상계의 증명과 여러 모델에 동시에 적용하는 법을 다음 장에서 다룹니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 249" role="img" aria-label="실제 이항 꼬리는 약 .0577이다. Markov .7143, Chebyshev .3125, Chernoff .1929, Hoeffding .2019 상계를 같은 0에서 1 축에 둔다.">
+<line class="f-ink" x1="213" y1="210" x2="641" y2="210"/><line class="f-ink" x1="213" y1="210" x2="213" y2="215"/><text class="f-s" x="213" y="233" text-anchor="middle">0</text><line class="f-ink" x1="320" y1="210" x2="320" y2="215"/><text class="f-s" x="320" y="233" text-anchor="middle">0.25</text><line class="f-ink" x1="427" y1="210" x2="427" y2="215"/><text class="f-s" x="427" y="233" text-anchor="middle">0.5</text><line class="f-ink" x1="534" y1="210" x2="534" y2="215"/><text class="f-s" x="534" y="233" text-anchor="middle">0.75</text><line class="f-ink" x1="641" y1="210" x2="641" y2="215"/><text class="f-s" x="641" y="233" text-anchor="middle">1</text><text class="f-t" x="190" y="48" text-anchor="end">정확 이항합</text><rect class="f-fill" x="213" y="36" width="24.68" height="16"/><text class="f-s" x="247.6781162" y="49" text-anchor="start">0.0577</text><text class="f-t" x="190" y="84" text-anchor="end">Markov</text><rect class="f-soft" x="213" y="72" width="305.71" height="16"/><text class="f-s" x="528.7142857142858" y="85" text-anchor="start">0.7143</text><text class="f-t" x="190" y="120" text-anchor="end">Chebyshev</text><rect class="f-soft" x="213" y="108" width="133.75" height="16"/><text class="f-s" x="356.75" y="121" text-anchor="start">0.3125</text><text class="f-t" x="190" y="156" text-anchor="end">Chernoff</text><rect class="f-soft" x="213" y="144" width="82.56" height="16"/><text class="f-s" x="305.555208" y="157" text-anchor="start">0.1929</text><text class="f-t" x="190" y="192" text-anchor="end">Hoeffding</text><rect class="f-soft" x="213" y="180" width="86.41" height="16"/><text class="f-s" x="309.411916" y="193" text-anchor="start">0.2019</text>
+</svg><figcaption>이 동전 문제에서는 정확한 MGF를 활용한 값이 범위만 사용한 Hoeffding 값보다 작다.</figcaption></figure>
+<p>정확한 이항합은 15115/262144≈.057659입니다. 표본의 분포를 모르면서 위의 이항합을 사용할 수는 없습니다. 상계를 비교할 때 각각 어떤 가정을 사용했는지 함께 기록합니다.</p>
+<div class="check" data-q="q6"></div><div class="check" data-q="q7"></div>
+<pre data-example="python"><code>from fractions import Fraction as F
+from math import comb, exp, log
+
+exact = F(sum(comb(20,k) for k in range(14,21)),2**20)
+t = log(7/3)
+chernoff = exp(-14*t)*((1+exp(t))/2)**20
+bounds = (5/7,5/16,chernoff,exp(-1.6))
+print(exact,f&quot;{float(exact):.8f}&quot;)
+print(&quot; &quot;.join(f&quot;{b:.6f}&quot; for b in bounds))
+assert all(exact &lt;= x for x in bounds)</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>15115/262144 0.05765915
+0.714286 0.312500 0.192886 0.201897</code></pre>
+<div class="check" data-q="q8"></div>
+
+<h2>참고 자료</h2>
+<ul><li><a href="https://ocw.mit.edu/courses/6-042j-mathematics-for-computer-science-spring-2015/mit6_042js15_textbook.pdf">MIT 6.042J · Markov와 Chebyshev</a></li><li><a href="https://statistics.stanford.edu/technical-reports/measure-asymptotic-efficiency-tests-hypothesis-based-sum-observations">Chernoff · 지수적 꼬리 상계</a></li><li><a href="https://doi.org/10.1080/01621459.1963.10500830">Hoeffding · Probability Inequalities for Sums of Bounded Random Variables</a></li></ul>
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

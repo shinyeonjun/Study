@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>제곱처럼 되돌리는 길이 둘일 때 새 확률밀도 구하기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="PR11-1">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">확률 · PR11 연속 확률의 변수변환</p>
+<p class="chap-num">PR11·1</p>
+<h1>제곱처럼 되돌리는 길이 둘일 때 새 확률밀도 구하기</h1>
+<p class="lead">온도 차이 −1과 1을 제곱하면 같은 수가 됩니다. 변환 뒤 한 값이 원래 여러 곳에서 올 수 있으므로, 어느 길이로부터 확률이 들어오는지 먼저 셉니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>누적분포를 원래 표본공간에서 직접 계산한다.</li><li>일대일이 아닌 변환을 여러 분기로 나눈다.</li><li>밀도의 발산과 한 점에 놓인 확률을 구별한다.</li></ul></div>
+
+<h2>변환된 사건을 원래 변수로 읽는다</h2>
+<p>X가 −1에서 2까지 길이 3의 균등분포라고 둡니다. W=X²의 누적확률은 <var>F<sub>W</sub>(w)=P(X²≤w)</var>입니다. w≥0이면 <var>−√w≤X≤√w</var>가 원래 사건입니다. 이 구간을 X가 들어 있는 [−1,2]와 교차해 길이를 3으로 나눕니다.</p>
+<div class="table-wrap"><table><thead><tr><th scope="col">w의 범위</th><th scope="col">X에 남는 구간</th><th scope="col">누적확률</th></tr></thead><tbody><tr><td>w&lt;0</td><td>공집합</td><td>0</td></tr><tr><td>0≤w≤1</td><td>[−√w,√w]</td><td>2√w/3</td></tr><tr><td>1&lt;w&lt;4</td><td>[−1,√w]</td><td>(1+√w)/3</td></tr><tr><td>w≥4</td><td>[−1,2]</td><td>1</td></tr></tbody></table></div>
+<div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
+<h2>내부의 분기를 미분해 밀도를 구한다</h2>
+<p>0&lt;w&lt;1에서는 두 쪽이 함께 움직여 <var>f<sub>W</sub>(w)=1/(3√w)</var>입니다. 1&lt;w&lt;4에서는 왼쪽 끝이 이미 −1로 고정되어 <var>1/(6√w)</var>입니다. 다른 열린 구간에서는 0입니다. 누적분포는 0,1,4에서 연속이므로 그 지점만을 정확히 관측할 확률은 0입니다. 0 근처에서 밀도가 커져도 폭이 0으로 줄 때 확률이 0으로 갑니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 160" role="img" aria-label="제곱값이 w 이하인 원래 구간의 양 끝을 움직이다가 원래 지지집합의 경계에 닿으면 해당 끝이 더 이동하지 않는다.">
+<rect class="f-box" x="42" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="135" y="61" text-anchor="middle">작은 w</text><text class="f-s" x="135" y="89" text-anchor="middle">왼쪽 −√w</text><text class="f-s" x="135" y="110" text-anchor="middle">오른쪽 √w</text><line class="f-line" x1="235" y1="84" x2="278" y2="84" marker-end="url(#f-arrow)"/><rect class="f-soft" x="287" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="380" y="61" text-anchor="middle">w가 1을 넘음</text><text class="f-s" x="380" y="89" text-anchor="middle">왼쪽은 −1로 멈춤</text><text class="f-s" x="380" y="110" text-anchor="middle">오른쪽만 이동</text><line class="f-line" x1="480" y1="84" x2="523" y2="84" marker-end="url(#f-arrow)"/><rect class="f-box" x="532" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="625" y="61" text-anchor="middle">w가 4 이상</text><text class="f-s" x="625" y="89" text-anchor="middle">원래 구간 전체</text><text class="f-s" x="625" y="110" text-anchor="middle">누적확률 1</text>
+</svg><figcaption>w=1보다 작을 때와 클 때의 밀도 차이는 움직이는 경계 수에서 온다.</figcaption></figure>
+<p>단조 구간마다 역함수를 써도 같습니다. 제곱의 역분기 x=±√w에서 |dx/dw|=1/(2√w)입니다. 원래 밀도 1/3을 곱하면 두 분기가 모두 유효할 때 두 항이 생기고, x&lt;−1인 분기가 사라지면 하나가 남습니다. 역분기 공식은 해당 구간 내부에서 미분과 역미분이 가능한 곳에 사용합니다.</p>
+<div class="check" data-q="q3"></div><div class="check" data-q="q4"></div><div class="check" data-q="q5"></div>
+<h2>평균은 밀도를 먼저 만들지 않아도 구할 수 있다</h2>
+<p>W의 기댓값은 X²의 기댓값입니다. 균등밀도로 x²를 −1부터 2까지 적분하면 <var>(2³−(−1)³)/9=1</var>입니다. W²의 기댓값은 x⁴를 적분해 <var>(2⁵−(−1)⁵)/15=11/5</var>입니다. 따라서 Var(W)=11/5−1=6/5입니다. 변환 뒤 밀도를 적분해도, 처음 X를 통해 계산해도 같은 결과를 얻습니다.</p>
+<div class="check" data-q="q6"></div><div class="check" data-q="q7"></div>
+<pre data-example="python"><code>from fractions import Fraction as F
+from math import sqrt
+
+def cdf(w):
+    if w &lt; 0:
+        return 0
+    r = sqrt(w)
+    return max(0,min(2,r)-max(-1,-r))/3
+
+for w in (.25,1,2.25,4):
+    print(f&quot;{cdf(w):.6f}&quot;)
+mu = F(2**3-(-1)**3,9)
+second = F(2**5-(-1)**5,15)
+print(mu,second,second-mu**2)</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>0.333333
+0.666667
+0.833333
+1.000000
+1 11/5 6/5</code></pre>
+<div class="check" data-q="q8"></div>
+
+<h2>참고 자료</h2>
+<ul><li><a href="https://www.probabilitycourse.com/chapter4/4_1_3_functions_continuous_var.php">Pishro-Nik · Functions of Continuous Random Variables</a></li></ul>
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

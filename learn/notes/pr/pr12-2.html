@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>대수의 법칙과 중심극한정리에서 서로 다른 질문 읽기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="PR12-2">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">확률 · PR12 확률수렴과 극한정리</p>
+<p class="chap-num">PR12·2</p>
+<h1>대수의 법칙과 중심극한정리에서 서로 다른 질문 읽기</h1>
+<p class="lead">표본평균이 참 평균에 가까워지는 이야기와, 그 오차에 눈금을 붙여 어떤 모양인지 보는 이야기는 구분합니다. 이항확률을 정확하게 센 뒤 정규 근사와 난수 빈도를 비교합니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>표본평균의 분산과 Chebyshev에서 약한 대수의 법칙을 유도한다.</li><li>표준화한 표본평균의 중심극한정리를 정확히 진술한다.</li><li>정확 확률, 정규 근사 오차, 모의실험 오차를 구분한다.</li></ul></div>
+
+<h2>표본을 늘리면 큰 평균 오차 확률의 상계가 작아진다</h2>
+<p>독립 동일분포 Xᵢ의 평균을 μ, 분산을 유한한 σ²라 합시다. 표본평균 X̄의 기댓값은 μ, 분산은 σ²/n입니다. 평균에서 ε 이상 떨어진 사건의 지시값은 (X̄−μ)²/ε² 이하이므로 기대값을 취하면 다음이 됩니다.</p>
+<p class="calc">P(|X̄−μ|≥ε) ≤ σ²/(n ε²)</p>
+<p>고정한 ε&gt;0에서 우변은 0으로 가므로 표본평균은 μ로 확률수렴합니다. 이는 <b class="key">약한 대수의 법칙</b>의 한 증명입니다. 같은 난수를 n번 복사해 Xᵢ=Z로 두면 X̄=Z라 분산은 그대로입니다. 관측이 비슷해 보이는 것과 독립은 별도로 확인합니다.</p>
+<div class="check" data-q="q1"></div><div class="check" data-q="q2"></div><div class="check" data-q="q3"></div>
+<h2>평균 오차의 단위를 표준오차로 바꾼다</h2>
+<p>0&lt;σ²&lt;∞의 독립 동일분포에서 <b class="key">중심극한정리</b>는 √n(X̄−μ)/σ가 표준정규분포로 분포수렴한다고 말합니다. 평균을 그대로 바라볼 때는 μ에 모이지만, 이 오차를 표준오차 σ/√n로 나누면 표준화된 표본평균의 분포 모양을 확인할 수 있습니다. 원래 관측과 정수 성공 횟수의 확률질량이 유한한 n에서 정규밀도와 같아진다는 말은 아닙니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 160" role="img" aria-label="원래 평균은 모집단 평균으로 접근하고, 평균에서의 오차를 표준오차로 나눈 통계량은 표준정규에 접근한다.">
+<rect class="f-box" x="42" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="135" y="61" text-anchor="middle">약한 대수의 법칙</text><text class="f-s" x="135" y="89" text-anchor="middle">X̄</text><text class="f-s" x="135" y="110" text-anchor="middle">고정 단위로 μ에 접근</text><line class="f-line" x1="235" y1="84" x2="278" y2="84" marker-end="url(#f-arrow)"/><rect class="f-soft" x="287" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="380" y="61" text-anchor="middle">표준화</text><text class="f-s" x="380" y="89" text-anchor="middle">(X̄−μ)/(σ/√n)</text><text class="f-s" x="380" y="110" text-anchor="middle">오차의 눈금을 확대</text><line class="f-line" x1="480" y1="84" x2="523" y2="84" marker-end="url(#f-arrow)"/><rect class="f-box" x="532" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="625" y="61" text-anchor="middle">중심극한정리</text><text class="f-s" x="625" y="89" text-anchor="middle">표준화된 통계량</text><text class="f-s" x="625" y="110" text-anchor="middle">분포가 표준정규에 접근</text>
+</svg><figcaption>유한한 표본에서는 분포의 차이와 정규 근사의 오차가 남을 수 있다.</figcaption></figure>
+<div class="check" data-q="q4"></div><div class="check" data-q="q5"></div>
+<h2>성공 횟수를 세는 세 방법</h2>
+<p>성공확률 1/5인 독립 시행 25회에서 성공 횟수 K가 3 이하여야 한다고 합시다. 정확 값은 k=0,1,2,3의 이항확률을 더합니다. K의 평균은 5이고 분산은 25·(1/5)(4/5)=4입니다. 연속 정규분포로 정수 사건을 근사할 때 정수 3의 오른쪽 경계를 3.5로 놓는 <b>연속성 보정</b>을 쓰면 z=(3.5−5)/2=−.75입니다.</p>
+<div class="table-wrap"><table><thead><tr><th scope="col">방법</th><th scope="col">P(K≤3) 또는 근사 빈도</th></tr></thead><tbody><tr><td>정확한 이항합</td><td>0.23399326</td></tr><tr><td>연속성 보정 정규 근사</td><td>0.22662735</td></tr><tr><td>난수 반복 6,000번, 시드 31</td><td>0.232500</td></tr></tbody></table></div>
+<p>이항합과 정규 근사의 차이는 분포를 근사한 오차입니다. 난수로 얻은 빈도에는 무작위 변동이 있습니다. 난수 반복을 더 늘려도 정규 근사 자체의 정확도가 좋아지는 것은 아닙니다. 같은 문제에서 시행 수 n을 바꾸면 정규 근사의 대상이 바뀝니다.</p>
+<div class="check" data-q="q6"></div><div class="check" data-q="q7"></div>
+<pre data-example="python"><code>from math import comb
+from fractions import Fraction as F
+from random import Random
+from statistics import NormalDist
+
+n = 25
+exact = sum(F(comb(n,k)*4**(n-k),5**n) for k in range(4))
+approximation = NormalDist().cdf((3.5-5)/2)
+rng = Random(31)
+runs = 6000
+success = sum(sum(rng.randrange(5)==0 for _ in range(n))&lt;=3 for _ in range(runs))
+print(f&quot;{float(exact):.8f} {approximation:.8f}&quot;)
+print(success, f&quot;{success/runs:.6f}&quot;)</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>0.23399326 0.22662735
+1395 0.232500</code></pre>
+<div class="check" data-q="q8"></div>
+
+<h2>참고 자료</h2>
+<ul><li><a href="https://www.probabilitycourse.com/chapter7/7_1_1_law_of_large_numbers.php">Pishro-Nik · Law of Large Numbers</a></li><li><a href="https://www.probabilitycourse.com/chapter7/7_1_2_central_limit_theorem.php">Pishro-Nik · Central Limit Theorem</a></li></ul>
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

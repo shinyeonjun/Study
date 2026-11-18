@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>관계가 만드는 분할과 부분순서의 차이를 증명하기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="DM07-1">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">논리·이산수학·증명 · DM07 관계·동치류·부분순서</p>
+<p class="chap-num">DM07·1</p>
+<h1>관계가 만드는 분할과 부분순서의 차이를 증명하기</h1>
+<p class="lead">같은 나머지로 묶으면 한 원소는 블록 하나에만 들어갑니다. 선수 단원이나 집합 포함을 비교할 때는 서로 어느 쪽도 앞이 아닌 쌍이 생깁니다. 두 구조가 각각 어떤 조건에서 만들어지는지 증명합니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>관계를 순서쌍 집합으로 쓰고 네 성질을 검사한다.</li><li>동치관계와 분할이 양쪽 방향으로 대응함을 보인다.</li><li>부분순서에서 비교 불가능, 극소와 최소를 구분하고 위상 순서를 센다.</li></ul></div>
+
+<h2>관계는 어떤 순서쌍을 포함하는지 정하는 조건이다</h2>
+<p>집합 A 위의 관계 R은 A×A의 부분집합입니다. aRb는 (a,b)가 그 안에 있다는 뜻입니다. 다음 네 조건은 서로 다른 검사입니다.</p>
+<div class="table-wrap"><table><thead><tr><th scope="col">성질</th><th scope="col">검사</th></tr></thead><tbody><tr><td>반사</td><td>모든 a에서 aRa</td></tr><tr><td>대칭</td><td>aRb이면 bRa</td></tr><tr><td>반대칭</td><td>aRb와 bRa가 모두 성립하면 a=b</td></tr><tr><td>추이</td><td>aRb와 bRc이면 aRc</td></tr></tbody></table></div>
+<p>등호 관계는 a=b일 때만 관계에 들어갑니다. 이 관계는 대칭과 반대칭을 동시에 만족합니다. 반대칭은 ‘대칭이 일반적으로 틀린다’는 말보다 조건이 정확합니다. 서로 다른 두 원소 사이에 양방향으로 관계가 성립하는 것을 금합니다.</p>
+<div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
+<h2>동치관계에서 분할을 얻고 분할에서 되돌린다</h2>
+<p>반사·대칭·추이를 갖는 관계를 <b class="key">동치관계</b>라 합니다. 각 a의 동치류 [a]={x:aRx}를 만들면 반사성으로 a가 들어갑니다. 두 동치류 [a], [b]에 공통 원소 z가 있다고 합시다. aRz와 bRz에서 대칭·추이로 aRb를 얻습니다. b류의 임의의 x에서 bRx와 aRb를 이어 aRx이므로 [b]⊆[a]입니다. 같은 방식으로 [a]⊆[b]입니다. 따라서 동치류는 서로 같거나 만나지 않고, 전체를 덮는 분할입니다.</p>
+<p>반대로 분할은 비어 있지 않은 블록들이 서로소이며 합집합이 A라는 뜻입니다. ‘같은 블록에 든다’를 관계로 쓰면 모든 원소는 자기 블록에 있고, 순서를 바꿔도 그대로이며, a,b와 b,c의 공통 블록은 b가 한 블록에만 있기에 같아서 추이가 성립합니다. 예를 들어 0~7을 3으로 나눈 나머지에 따라 묶으면 {0,3,6}, {1,4,7}, {2,5}입니다.</p>
+<div class="check" data-q="q3"></div><div class="check" data-q="q4"></div>
+<h2>부분순서는 모든 쌍을 비교할 필요가 없다</h2>
+<p>반사·반대칭·추이가 있는 관계는 <b class="key">부분순서</b>입니다. 서로 다른 a와 b에 대해 집합 포함관계에서 {a}와 {b} 어느 쪽도 다른 쪽을 포함하지 않습니다. 다음 그림은 같은 점 자기 자신으로 이어지는 관계와, 두 단계로 이미 알 수 있는 관계를 생략합니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 222" role="img" aria-label="공집합이 두 한 원소 집합 아래에 있고 그 두 집합이 {a,b} 아래에 있다. 한 원소 두 집합 사이에는 변이 없다.">
+<line class="f-ink" x1="335" y1="58" x2="257" y2="96"/><line class="f-ink" x1="425" y1="58" x2="503" y2="96"/><line class="f-ink" x1="257" y1="132" x2="335" y2="170"/><line class="f-ink" x1="503" y1="132" x2="425" y2="170"/><rect class="f-soft" x="319" y="22" width="122" height="36" rx="3"/><text class="f-t" x="380" y="46" text-anchor="middle">{a,b}</text><rect class="f-box" x="189" y="96" width="136" height="36" rx="3"/><text class="f-t" x="257" y="120" text-anchor="middle">{a}</text><rect class="f-box" x="435" y="96" width="136" height="36" rx="3"/><text class="f-t" x="503" y="120" text-anchor="middle">{b}</text><rect class="f-soft" x="319" y="170" width="122" height="36" rx="3"/><text class="f-t" x="380" y="194" text-anchor="middle">∅</text>
+</svg><figcaption>왼쪽과 오른쪽의 한 원소 집합은 어떤 순서로 적어도 위아래 포함 조건을 깨지 않는다.</figcaption></figure>
+<p>공집합을 뺀 세 집합에서는 {a}와 {b}가 각각 <b>극소</b>입니다. 각각 자기보다 엄격하게 작은 집합이 없습니다. <b>최소</b>는 집합의 모든 원소 이하인 원소입니다. {a}와 {b}가 비교 불가능하므로 이 세 집합에는 최소가 없습니다.</p>
+<div class="check" data-q="q5"></div><div class="check" data-q="q6"></div>
+<h2>정해지지 않은 쌍을 나열 가능한 순서로 펴기</h2>
+<p>유한한 부분순서에서 서로 다른 원소의 ‘작다’를 간선으로 쓰면 방향 순환이 없습니다. 순환이면 추이로 서로 다른 두 원소가 양방향이 되어 반대칭에 걸립니다. DAG에서 진입차수가 0인 정점이 없다면, 앞 정점만 계속 따라가다 유한 개 안에서 반복되어 순환을 만듭니다. 따라서 진입차수 0 하나를 나열하고 지우기를 반복해 모든 제약을 만족하는 순서를 얻습니다. 이 예에서는 ∅가 먼저, {a,b}가 마지막이고 중간 두 단계의 순서는 두 가지입니다.</p>
+<div class="check" data-q="q7"></div>
+<pre data-example="python"><code>from itertools import permutations
+
+numbers = range(8)
+classes = [[x for x in numbers if x%3==r] for r in range(3)]
+print(classes)
+edges = [(0,1),(0,2),(1,3),(2,3)]
+orders = []
+for order in permutations(range(4)):
+    pos = {node:i for i,node in enumerate(order)}
+    if all(pos[a]&lt;pos[b] for a,b in edges):
+        orders.append(order)
+print(orders)
+assert set().union(*map(set,classes)) == set(numbers)</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>[[0, 3, 6], [1, 4, 7], [2, 5]]
+[(0, 1, 2, 3), (0, 2, 1, 3)]</code></pre>
+<div class="check" data-q="q8"></div>
+
+<h2>참고 자료</h2>
+<ul><li><a href="https://ocw.mit.edu/courses/6-042j-mathematics-for-computer-science-spring-2015/mit6_042js15_textbook.pdf">MIT 6.042J · Mathematics for Computer Science, 관계와 부분순서</a></li></ul>
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

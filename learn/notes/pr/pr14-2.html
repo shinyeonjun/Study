@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hoeffding을 유도하고 유한한 여러 후보의 일반화 오차를 제한하기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="PR14-2">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">확률 · PR14 집중부등식과 일반화</p>
+<p class="chap-num">PR14·2</p>
+<h1>Hoeffding을 유도하고 유한한 여러 후보의 일반화 오차를 제한하기</h1>
+<p class="lead">12개 모델을 같은 시험 자료에 평가하면 어느 하나는 우연히 좋은 점수를 받을 수 있습니다. 한 모델에서 얻은 확률 상계를 후보 전체로 옮기고, 선택한 모델의 위험에 무엇이 보장되는지 계산합니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>범위가 있는 변수의 log-MGF 상계에서 Hoeffding을 도출한다.</li><li>유한한 고정 후보의 동시 오차 확률과 필요한 표본 수를 계산한다.</li><li>같은 자료에서 고른 최선 모델의 초과 위험을 상계한다.</li></ul></div>
+
+<h2>지수로 다시 가중해도 범위와 분산의 상계는 유지된다</h2>
+<p>X∈[a,b]라 두고 중심화 로그 MGF를 <var>φ(t)=log E exp[t(X−E[X])]</var>로 잡습니다. φ(0)=φ′(0)=0입니다. 두 번 미분하면 φ″(t)는 원래 분포에 exp(tX)에 비례하는 가중치를 준 분포에서의 분산입니다. X가 유계라 이 미분에서 적분과 순서를 바꿀 수 있습니다.</p>
+<p>가중한 뒤에도 X는 [a,b] 안에 있습니다. 분산은 상수 c 주위 제곱거리 E[(X−c)²]를 가장 작게 한 값입니다. c=(a+b)/2를 선택하면 각 거리는 (b−a)/2 이하라 φ″(t)≤(b−a)²/4입니다. t≥0에서 0부터 두 번 적분해 <var>φ(t)≤t²(b−a)²/8</var>을 얻습니다.</p>
+<div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
+<h2>독립 변수들의 로그 MGF를 더한다</h2>
+<p>독립인 Xᵢ가 각기 [aᵢ,bᵢ]에 놓이면 중심화 합 S의 지수 Markov 상계는 exp(−ts+t²B/8)입니다. 여기서 B=∑(bᵢ−aᵢ)²입니다. B&gt;0, s&gt;0에서 최솟값을 주는 t=4s/B를 넣어 exp(−2s²/B)를 얻습니다. B=0이면 모든 값이 상수라 양수 꼬리의 확률은 0입니다. 아래 꼬리는 −Xᵢ에 동일하게 적용합니다. [0,1] 범위 n개의 평균에서 양측 ε 편차는 ≤2 exp(−2nε²)입니다.</p>
+<div class="check" data-q="q3"></div><div class="check" data-q="q4"></div>
+<h2>후보를 같은 자료에 평가한다</h2>
+<p>평가 전에 고정된 M개 가설에서 각 손실은 [0,1]에 있습니다. 동일한 IID 관측 n개로 각 모델의 평균 손실 R̂(h)를 계산합니다. 참 위험 R(h)는 그 모델의 모집단 평균 손실입니다. 한 모델의 큰 편차 확률을 위처럼 묶고, 어떤 후보라도 큰 편차가 나오는 사건은 그 사건들의 합집합이므로 확률을 모두 더할 수 있습니다.</p>
+<p class="calc">P(maxₕ|R̂(h)−R(h)|≥ε) ≤ 2M exp(−2nε²)</p>
+<p>서로 다른 모델이 같은 자료를 봐서 오차가 의존하더라도 합집합 상계는 성립합니다. M=12, ε=.1, 허용 실패확률 δ=.05이면 n≥⌈log(2M/δ)/(2ε²)⌉=309면 이 상계로 충분합니다. 실제 필요한 수는 손실 분포와 후보에 따라 더 작을 수 있습니다.</p>
+<div class="check" data-q="q5"></div><div class="check" data-q="q6"></div>
+<h2>실제로 선택한 후보의 참 위험도 비교한다</h2>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 160" role="img" aria-label="모든 후보의 실제 위험과 경험 위험이 동시에 엡실론 이내라면 경험 위험 최소 규칙이 참 위험 최소보다 최대 두 엡실론만큼 높은 위험을 갖는다.">
+<rect class="f-box" x="42" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="135" y="61" text-anchor="middle">모든 후보에서</text><text class="f-s" x="135" y="89" text-anchor="middle">|경험−참 위험| ≤ε</text><text class="f-s" x="135" y="110" text-anchor="middle">동시에 성립</text><line class="f-line" x1="235" y1="84" x2="278" y2="84" marker-end="url(#f-arrow)"/><rect class="f-soft" x="287" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="380" y="61" text-anchor="middle">경험 위험 최소</text><text class="f-s" x="380" y="89" text-anchor="middle">ĥ를 선택</text><text class="f-s" x="380" y="110" text-anchor="middle">R̂(ĥ)≤R̂(h*)</text><line class="f-line" x1="480" y1="84" x2="523" y2="84" marker-end="url(#f-arrow)"/><rect class="f-box" x="532" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="625" y="61" text-anchor="middle">참 위험 차이</text><text class="f-s" x="625" y="89" text-anchor="middle">두 번 ε을 더해</text><text class="f-s" x="625" y="110" text-anchor="middle">R(ĥ)≤R(h*)+2ε</text>
+</svg><figcaption>이 증명은 비교할 후보를 평가 표본을 보기 전에 정한 경우에 적용한다.</figcaption></figure>
+<p>참 위험 최소 모델을 h*, 경험 위험 최소 모델을 ĥ라 둡니다. 전 후보의 편차가 ε 이내인 사건에서 R(ĥ)≤R̂(ĥ)+ε≤R̂(h*)+ε≤R(h*)+2ε입니다. 같은 표본으로 후보군 자체를 늘리거나 피처를 바꿨다면, 이 고정 후보 개수의 상계를 그대로 적용할 수 없습니다. 후보를 정하는 자료와 평가 자료를 나누는 방법을 고려합니다.</p>
+<div class="check" data-q="q7"></div>
+<h2>같은 관측으로 비교하는 네 모델을 모의실험한다</h2>
+<p>입력 X와 표지 Y는 각각 공평한 독립 이진값입니다. 예측 규칙 0, 1, X, 1−X 네 가지는 모두 참 오분류 위험 1/2입니다. n=60에서 편차 .2 이상을 봅니다. 상수 0과 1의 오류는 서로 보수이고, X와 1−X의 오류도 서로 보수입니다. 대표 두 오류는 Y와 X XOR Y이며 이 모형에서는 독립입니다. 그래서 한 규칙의 양쪽 꼬리 p=2P(Binomial(60,1/2)≤18)에서, 네 후보 최대 편차의 정확확률은 1−(1−p)²입니다.</p>
+<div class="table-wrap"><table><thead><tr><th scope="col">구분</th><th scope="col">확률 또는 빈도</th></tr></thead><tbody><tr><td>합집합 상계</td><td>0.06583798</td></tr><tr><td>이 모형의 정확 확률</td><td>0.00533374</td></tr><tr><td>시드 33, 10,000회 모의실험</td><td>47/10,000 = 0.004700</td></tr></tbody></table></div>
+<pre data-example="python"><code>from fractions import Fraction as F
+from math import ceil, comb, exp, log
+from random import Random
+
+n = ceil(log(2*12/.05)/.02)
+single = F(2*sum(comb(60,k) for k in range(19)),2**60)
+joint = 1-(1-single)**2
+rng = Random(33)
+runs = 10000
+observed = 0
+for _ in range(runs):
+    losses = [0]*4
+    for _ in range(60):
+        x,y = rng.getrandbits(1),rng.getrandbits(1)
+        for i,prediction in enumerate((0,1,x,1-x)):
+            losses[i] += prediction != y
+    observed += max(abs(count-30) for count in losses) &gt;= 12
+print(n,f&quot;{float(joint):.8f} {8*exp(-4.8):.8f}&quot;)
+print(observed,f&quot;{observed/runs:.6f}&quot;)</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>309 0.00533374 0.06583798
+47 0.004700</code></pre>
+<div class="check" data-q="q8"></div>
+
+<h2>참고 자료</h2>
+<ul><li><a href="https://www.cs.rpi.edu/academics/courses/spring06/random/hoefding.pdf">Hoeffding · Bounded Random Variables, Lemma 1과 Theorem 2</a></li><li><a href="https://cs229.stanford.edu/notes2022fall/main_notes.pdf">Stanford CS229 · Learning Theory와 유한 가설 클래스</a></li></ul>
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

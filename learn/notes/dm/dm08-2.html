@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>일차 점화식의 닫힌꼴과 상·하계를 계산하기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="DM08-2">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">논리·이산수학·증명 · DM08 세는 방법과 점화식</p>
+<p class="chap-num">DM08·2</p>
+<h1>일차 점화식의 닫힌꼴과 상·하계를 계산하기</h1>
+<p class="lead">지난 값의 세 배를 복사하고 매번 새 수를 더하는 수열을 계산합니다. 반복식과 닫힌꼴이 언제 같은지 증명하고, 추가항의 성장률이 같을 때 왜 n이 붙는지 확인합니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>일차 비동차 점화식의 일반식을 반복 대입으로 만들고 귀납 검증한다.</li><li>서로 다른 성장률과 같은 성장률을 구분한다.</li><li>같은 식에서 닫힌꼴과 상·하계가 각각 무엇을 알려주는지 설명한다.</li></ul></div>
+
+<h2>초깃값과 각 시점에 추가한 항을 따로 추적한다</h2>
+<p><var>aₙ=c aₙ₋₁+dₙ</var>에서 n=1이면 c a₀+d₁입니다. n=2이면 c²a₀+c d₁+d₂입니다. 시점 j에서 추가한 dⱼ는 이후 n−j번 c를 곱한 상태로 남습니다.</p>
+<p class="calc">aₙ = cⁿa₀ + ∑<sub>j=1</sub><sup>n</sup> cⁿ⁻ʲ dⱼ</p>
+<p>지수가 0인 곱은 항이 하나도 없어 1로 둡니다. 이 식은 n=0에서 합이 비어 a₀입니다. n−1에서 식이 성립한다고 가정하고 c를 곱한 뒤 dₙ을 새 항으로 붙이면 n 식이 됩니다. 처음 값을 지정하고 각 뒤 값을 앞 값으로 하나씩 정하므로 이 해는 유일합니다.</p>
+<div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
+<h2>서로 다른 밑에서 기하합을 정리한다</h2>
+<p>a₀=2, c=3, dₙ=2ⁿ이라 둡니다. 일반식 뒤 항은 3ⁿ∑<sub>j=1</sub><sup>n</sup>(2/3)ʲ입니다. 유한 기하합에서 ∑<sub>j=1</sub><sup>n</sup>rʲ=r(1−rⁿ)/(1−r)이므로 2·3ⁿ−2·2ⁿ으로 줄어듭니다. 앞에 2·3ⁿ가 있어 정답은 <var>4·3ⁿ−2·2ⁿ</var>입니다.</p>
+<div class="table-wrap"><table><thead><tr><th scope="col">n</th><th scope="col">0</th><th scope="col">1</th><th scope="col">2</th><th scope="col">3</th></tr></thead><tbody><tr><td>반복 계산</td><td>2</td><td>8</td><td>28</td><td>92</td></tr><tr><td>닫힌꼴 계산</td><td>2</td><td>8</td><td>28</td><td>92</td></tr></tbody></table></div>
+<p>닫힌꼴로부터 n≥0에서 2·3ⁿ≤aₙ≤4·3ⁿ을 얻습니다. 0≤2·2ⁿ≤2·3ⁿ이기 때문입니다. 이는 값의 양쪽을 제한하며, aₙ의 지배적인 성장률이 3ⁿ임을 설명합니다. 상계 4·3ⁿ을 aₙ의 정확한 정의로 대체하지는 않습니다.</p>
+<div class="check" data-q="q3"></div><div class="check" data-q="q4"></div><div class="check" data-q="q5"></div>
+<h2>밑이 같으면 매번 같은 크기의 값을 보탠다</h2>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 160" role="img" aria-label="두 밑이 같으면 전개에서 추가한 모든 항이 각각 2의 n제곱이 되므로 n배가 나온다.">
+<rect class="f-box" x="42" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="135" y="61" text-anchor="middle">c=3, dₙ=2ⁿ</text><text class="f-s" x="135" y="89" text-anchor="middle">각 항 비율 2/3</text><text class="f-s" x="135" y="110" text-anchor="middle">기하합</text><line class="f-line" x1="235" y1="84" x2="278" y2="84" marker-end="url(#f-arrow)"/><rect class="f-soft" x="287" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="380" y="61" text-anchor="middle">c=2, dₙ=2ⁿ</text><text class="f-s" x="380" y="89" text-anchor="middle">각 항 비율 1</text><text class="f-s" x="380" y="110" text-anchor="middle">n개의 같은 항</text><line class="f-line" x1="480" y1="84" x2="523" y2="84" marker-end="url(#f-arrow)"/><rect class="f-box" x="532" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="625" y="61" text-anchor="middle">같은 밑의 해</text><text class="f-s" x="625" y="89" text-anchor="middle">(a₀+n)2ⁿ</text><text class="f-s" x="625" y="110" text-anchor="middle">기하합 분모는 0</text>
+</svg><figcaption>r=1인 기하합은 나눗셈 대신 항의 개수를 센다.</figcaption></figure>
+<p>c=2이고 dⱼ=2ʲ이면 cⁿ⁻ʲdⱼ=2ⁿ가 모든 j에서 같습니다. n개의 항을 더하므로 <var>aₙ=(a₀+n)2ⁿ</var>입니다. a₀=2이면 처음 네 항은 2,6,16,40입니다. 이 차이는 반복으로 만든 알고리즘의 비용을 점화식으로 적을 때도 중요합니다.</p>
+<div class="check" data-q="q6"></div><div class="check" data-q="q7"></div>
+<pre data-example="python"><code>def build(c):
+    a=[2]
+    for n in range(1,7):
+        a.append(c*a[-1]+2**n)
+    return a
+
+a,b=build(3),build(2)
+assert a == [4*3**n-2*2**n for n in range(7)]
+assert b == [(2+n)*2**n for n in range(7)]
+print(a[:4])
+print(b[:4])
+print(2*3**4,a[4],4*3**4)</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>[2, 8, 28, 92]
+[2, 6, 16, 40]
+162 292 324</code></pre>
+<div class="check" data-q="q8"></div>
+
+<h2>참고 자료</h2>
+<ul><li><a href="https://ocw.mit.edu/courses/6-042j-mathematics-for-computer-science-spring-2015/mit6_042js15_textbook.pdf">MIT 6.042J · 조합, 포함배제와 점화식</a></li></ul>
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>
