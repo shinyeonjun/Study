@@ -27,7 +27,7 @@ window.BDA_SUBJECTS = [
       { id: "S11", title: "확률의 언어", href: "decks/s11.html", area: 0 },
       { id: "S12", title: "독립과 베이즈", href: "decks/s12.html", area: 0 },
       { id: "S13", title: "확률변수·기댓값·분포", href: "decks/s13.html", area: 1 },
-      { id: "S14", title: "많이 반복하면", href: "decks/s14.html", area: 1 },
+      { id: "S14", title: "많이 반복하면: 추정과 불확실성", href: "decks/s14.html", area: 1 },
       { id: "S15", title: "확률로 분류하다", href: "decks/s15.html", area: 2 },
       { id: "S16", title: "잘 맞는다는 것", href: "decks/s16.html", area: 3 }
     ]
@@ -46,7 +46,7 @@ window.BDA_SUBJECTS = [
     plan: ["표현과 attention", "Transformer 블록"],
     notes: [
       { id: "S20", title: "무엇을 볼지 고르다", href: "decks/s20.html", area: 0 },
-      { id: "S21", title: "Transformer", href: "decks/s21.html", area: 1 }
+      { id: "S21", title: "Transformer = 블록을 쌓아 다음 토큰 맞히기", href: "decks/s21.html", area: 1 }
     ]
   },
   {
