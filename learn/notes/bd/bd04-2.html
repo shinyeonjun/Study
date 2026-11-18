@@ -29,8 +29,10 @@
 
 <h2>같은 시험 주문에 두 규칙을 적용한다</h2>
 <p>확정 라벨이 있는 주문 200건을 같은 하루 조건의 연습 표로 둡니다. 실제 지연 20건에 대해 현재 규칙과 후보 규칙의 판정을 비교합니다. 미탐은 4점, 오탐은 1점이고, 업무팀은 주문을 최대 20건까지 추가 검토할 수 있습니다. 예측이 양성인 건을 모두 검토한다고 둡니다.</p>
+<div class="side"><b>TP·FN·FP·TN</b> 실제 지연을 지연으로 맞힘(TP, 참양성), 실제 지연을 놓침(FN, 거짓음성=미탐), 정상을 지연으로 알림(FP, 거짓양성=오탐), 정상을 정상으로 맞힘(TN, 참음성).</div>
 <div class="table-wrap"><table><thead><tr><th scope="col">규칙</th><th scope="col">TP</th><th scope="col">FN</th><th scope="col">FP</th><th scope="col">TN</th></tr></thead><tbody><tr><td>현재</td><td>10</td><td>10</td><td>5</td><td>175</td></tr><tr><td>후보</td><td>16</td><td>4</td><td>10</td><td>170</td></tr></tbody></table></div>
 <p>현재 규칙의 예상 비용은 4×10+5=45점이고 검토 요청은 10+5=15건입니다. 후보는 4×4+10=26점으로 비용이 19점 줄지만, 요청이 16+10=26건이어서 처리 한도보다 6건 많습니다. 오탐 비용에 담당 인원의 추가 업무를 포함하더라도, 한도를 넘기는 경우는 별도의 제약으로 처리합니다.</p>
+<p>익숙한 지표로 바꾸면 현재 규칙은 재현율 10/20=0.50, 정밀도 10/15≈0.67이고, 후보는 재현율 16/20=0.80, 정밀도 16/26≈0.62입니다. 재현율은 오르고 정밀도는 조금 내려갔습니다. 어느 지표를 앞세울지는 미탐과 오탐의 비용 비율이 정하며, 이 사례에서는 비용(4:1)과 검토 한도를 직접 계산했습니다.</p>
 <div class="check" data-q="q1"></div><div class="check" data-q="q2"></div><div class="check" data-q="q3"></div>
 <pre data-example="python"><code>rules = {&quot;현재&quot;: (10, 10, 5), &quot;후보&quot;: (16, 4, 10)}
 for name, (tp, fn, fp) in rules.items():

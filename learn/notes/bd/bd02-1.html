@@ -31,12 +31,13 @@
 <p>아래는 시험 연습에 쓸 합성 로그입니다. 한 행의 <b>ID</b>는 방문 건입니다. 대기값과 단위가 다른 열에 기록되어 있습니다. 공식 집계의 입력 단위로 <code>sec</code>와 <code>min</code>만 허용한다고 정합니다. 값을 읽어 공통 단위인 분으로 바꿀 계획을 적습니다. 빈 문자열은 실제 0분이 확인된 값과 구별합니다. 숫자로 읽히는 유한한 0 이상의 값만 계산에 씁니다.</p>
 <div class="table-wrap"><table><thead><tr><th scope="col">ID</th><th scope="col">지점</th><th scope="col">시간 원문</th><th scope="col">단위</th></tr></thead><tbody><tr><td>D101</td><td>동쪽</td><td>120</td><td>sec</td></tr><tr><td>D102</td><td>동쪽</td><td>4</td><td>min</td></tr><tr><td>D102</td><td>동쪽</td><td>4</td><td>min</td></tr><tr><td>D103</td><td>동쪽</td><td>(빈값)</td><td>min</td></tr><tr><td>D104</td><td>서쪽</td><td>600</td><td>sec</td></tr><tr><td>D105</td><td>서쪽</td><td>5</td><td>min</td></tr><tr><td>D106</td><td>서쪽</td><td>4</td><td>hour</td></tr></tbody></table></div>
 <p>D102는 원천에서 같은 방문의 정확한 재전송이라고 확인했습니다. 일반적인 경우에는 동일 ID에 다른 값이 올 수 있어 충돌을 확인합니다. D106은 이 실습의 허용 단위가 아니므로 나중에 검토할 목록에 둡니다. 이 자료 계약이 허용하는 단위가 더 많아지면 검증 규칙도 바뀔 수 있습니다.</p>
+<p>열마다 변수의 종류도 확인합니다. ID는 행을 구별하는 식별자라 평균을 내지 않습니다. 지점은 범주형 변수로 집계의 묶음 기준이 됩니다. 대기시간은 수치형(연속형) 변수지만 원문이 문자열이고 단위가 다른 열에 있으므로, 숫자로 바꾸고 단위를 맞춘 뒤에야 계산할 수 있습니다.</p>
 <figure class="fig"><svg class="fig-svg" viewBox="0 0 760 160" role="img" aria-label="문자열과 단위가 있는 원시 7행에서 재전송 하나를 통합해 고유 방문 6개를 얻는다. 값이 빠진 기록과 미지원 단위를 구별해 유효 기록 4개를 센다.">
 <rect class="f-box" x="42" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="135" y="61" text-anchor="middle">원시 7행</text><text class="f-s" x="135" y="89" text-anchor="middle">단위가 섞여 있음</text><text class="f-s" x="135" y="110" text-anchor="middle">방문 ID를 먼저 확인</text><line class="f-line" x1="235" y1="84" x2="278" y2="84" marker-end="url(#f-arrow)"/><rect class="f-soft" x="287" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="380" y="61" text-anchor="middle">고유 방문 6개</text><text class="f-s" x="380" y="89" text-anchor="middle">정확한 재전송 1행</text><text class="f-s" x="380" y="110" text-anchor="middle">단위와 결측 검사</text><line class="f-line" x1="480" y1="84" x2="523" y2="84" marker-end="url(#f-arrow)"/><rect class="f-box" x="532" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="625" y="61" text-anchor="middle">유효값 4개</text><text class="f-s" x="625" y="89" text-anchor="middle">동쪽 2건 · 서쪽 2건</text><text class="f-s" x="625" y="110" text-anchor="middle">분 단위에서 요약</text>
 </svg><figcaption>각 단계에서 무엇을 셌는지 숫자 옆에 함께 기록한다.</figcaption></figure>
 <div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
 <h2>단위를 맞춘 뒤 계산한다</h2>
-<p>동쪽: 120초는 2분, 4분은 그대로입니다. 서쪽: 600초를 10분으로 바꾸고 5분은 그대로입니다. 둘을 더해 동쪽 평균 3분과 서쪽 평균 7.5분이 나옵니다. 모두 합친 유효 관측의 평균은 <code>(2+4+10+5)/4=5.25분</code>입니다.</p>
+<p>동쪽: 120초는 2분, 4분은 그대로입니다. 서쪽: 600초를 10분으로 바꾸고 5분은 그대로입니다. 지점마다 두 값을 더해 2로 나누면 동쪽 평균 (2+4)/2=3분, 서쪽 평균 (10+5)/2=7.5분입니다. 모두 합친 유효 관측의 평균은 <code>(2+4+10+5)/4=5.25분</code>입니다.</p>
 <figure class="fig"><svg class="fig-svg" viewBox="0 0 760 196" role="img" aria-label="동쪽 유효 기록은 120초가 2분, 4분이 4분. 서쪽 유효 기록은 600초가 10분, 5분이 5분.">
 <rect class="f-soft" x="71" y="47" width="268" height="118" rx="3"/><text class="f-t f-b" x="205" y="78" text-anchor="middle">동쪽</text><text class="f-s" x="205" y="112" text-anchor="middle">120초 → 2분</text><text class="f-s" x="205" y="142" text-anchor="middle">4분 → 4분</text><rect class="f-box" x="404" y="47" width="268" height="118" rx="3"/><text class="f-t f-b" x="538" y="78" text-anchor="middle">서쪽</text><text class="f-s" x="538" y="112" text-anchor="middle">600초 → 10분</text><text class="f-s" x="538" y="142" text-anchor="middle">5분 → 5분</text>
 </svg><figcaption>시간을 먼저 공통 단위로 바꿔야 어느 지점의 합이나 평균이 더 큰지 읽을 수 있다.</figcaption></figure>
@@ -84,6 +85,7 @@ all usable 5.25</code></pre>
 <div class="check" data-q="q5"></div><div class="check" data-q="q6"></div>
 <h2>기준에 따라 숫자의 뜻을 확인한다</h2>
 <p>이 예에서는 두 지점의 유효 관측 수가 각각 2개라 두 평균의 단순 평균도 5.25분입니다. 건수가 다른 상황에서 전체 방문의 평균을 구하려면 각 지점의 평균에 관측 건수를 곱해 합친 뒤 전체 건수로 나눕니다. 여기서 제외한 두 방문의 대기시간은 확정하지 않았으므로, 모든 고유 방문의 평균을 보고하려면 값을 어떻게 처리했는지 별도로 밝힙니다.</p>
+<p>평균 하나는 분포의 위치만 알려 줍니다. 서쪽 평균 7.5분은 5분과 10분처럼 5분이나 벌어진 두 값에서 나왔고, 동쪽 3분은 2분과 4분에서 나왔습니다. 관측이 이렇게 적으면 평균과 함께 건수와 최솟값·최댓값(또는 값 전체)을 적어야 읽는 사람이 흩어짐을 판단할 수 있습니다.</p>
 <p>시험 단어의 뜻과 이어 읽습니다. <a href="../../../bigdata/notes/2-exploration/01-누락·중복·형식-문제-점검.html">전처리</a> · <a href="../../../bigdata/notes/2-exploration/04-기술통계와-분포-그림.html">기술통계와 분포</a></p>
 <h2>한눈에 정리</h2>
 <ul><li>정확한 재전송 한 행을 통합하고 미확인·미지원 건을 기록한다.</li><li>모든 계산에 쓸 시간의 단위를 맞춘다.</li><li>평균은 분자와 분모가 무엇인지 밝혀 보고한다.</li></ul>

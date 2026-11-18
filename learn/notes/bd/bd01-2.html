@@ -36,6 +36,7 @@
 <p>모든 식별자가 도착해도 사용할 값이 빠져 있을 수 있습니다. 같은 ID의 값이 다르면 정정 버전이나 오류인지 확인해야 합니다. 이 실습에서는 중복이 정확히 같은 재전송이고 정정은 없다고 가정합니다. 수집 방식과 보존은 <a href="../../../bigdata/notes/1-planning/06-데이터-수집과-시간기준.html">빅분기 노트의 수집 기준</a>과 <a href="../../../bigdata/notes/1-planning/08-데이터-품질과-거버넌스.html">품질·거버넌스</a>에서 이어집니다.</p>
 <div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
 <h2>받은 자료, 유효 자료, 결과의 분모를 각각 구한다</h2>
+<div class="box"><p class="box-k">품질 차원 두 가지</p><p><b class="key">완전성</b>(completeness): 있어야 할 기록과 값이 빠짐없이 있는가. 이 예에서는 기대한 세 운행 중 지연 값이 있는 운행의 비율(2/3)로 잽니다.<br><b class="key">정합성</b>(consistency): 같은 대상을 가리키는 기록끼리, 또는 정해 둔 규칙과 모순이 없는가. r02의 두 줄이 같은 값이면 정합하고, 값이 다르면 정합성 위반으로 보고 원인을 확인합니다.</p></div>
 <p>수신한 원시 줄은 r01(740), r02(0), r02(0), r03(값 없음)의 네 줄입니다. 기대 목록의 세 ID를 모두 받았습니다. r02를 하나로 통합하고 r03의 지연 값이 없음을 표시하면 큰 지연인지 판정할 수 있는 운행은 두 건입니다. 740초는 600초 이상이라 두 건 중 한 건입니다.</p>
 <figure class="fig"><svg class="fig-svg" viewBox="0 0 760 160" role="img" aria-label="원본의 의미를 기록하고 검증과 변환을 한 뒤, 수신 수와 유효 수를 나누어 보고한다.">
 <rect class="f-box" x="42" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="135" y="61" text-anchor="middle">원본과 계약</text><text class="f-s" x="135" y="89" text-anchor="middle">시점·키·단위를 명시</text><text class="f-s" x="135" y="110" text-anchor="middle">기대 식별자 목록</text><line class="f-line" x1="235" y1="84" x2="278" y2="84" marker-end="url(#f-arrow)"/><rect class="f-soft" x="287" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="380" y="61" text-anchor="middle">검증과 변환</text><text class="f-s" x="380" y="89" text-anchor="middle">중복·누락·도메인 검사</text><text class="f-s" x="380" y="110" text-anchor="middle">정수 초 단위 검증</text><line class="f-line" x1="480" y1="84" x2="523" y2="84" marker-end="url(#f-arrow)"/><rect class="f-box" x="532" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="625" y="61" text-anchor="middle">업무용 산출물</text><text class="f-s" x="625" y="89" text-anchor="middle">받은 수와 유효 수 보고</text><text class="f-s" x="625" y="110" text-anchor="middle">조건이 되면 모델 평가</text>
@@ -65,6 +66,11 @@ confirmed high delay 1 / 2</code></pre>
 <h2>다음 평가에 쓸지 기준에 따라 결정한다</h2>
 <p>예를 들어 목표 라벨이 90% 이상 붙은 날만 평가하기로 정했다면, 이 실습의 2/3은 기준을 만족하지 못합니다. 누락이 일어난 이유와 범위를 살피고 원천 시스템이 지연을 확정하는 데 얼마나 걸리는지 확인합니다. 오류를 고친 뒤 재검증하려면 처음 받은 기록, 적용한 검사와 결과를 함께 찾아갈 수 있어야 합니다.</p>
 <div class="check" data-q="q6"></div>
+<h2>누가 기준을 정하고 어떤 범위로 쓰는가</h2>
+<p><b class="key">데이터 거버넌스</b>는 데이터의 기준·책임·권한·변경 절차를 정하고 지키게 하는 관리 체계입니다. 빅분기 교재는 구성 요소를 원칙·조직·프로세스로 정리합니다. 이 실습에 대응시키면 다음과 같습니다.</p>
+<div class="table-wrap"><table><thead><tr><th scope="col">구성 요소</th><th scope="col">이 실습에서의 예</th></tr></thead><tbody><tr><td>원칙</td><td>큰 지연은 600초 이상, 같은 ID의 같은 값은 한 번만 센다, 값 없음은 0으로 채우지 않는다</td></tr><tr><td>조직</td><td>지연 정의와 90% 기준을 바꿀 권한이 있는 담당자, 원천 시스템 담당자</td></tr><tr><td>프로세스</td><td>기준을 바꿀 때의 승인·기록, 누락 원인 조사, 재검증 절차</td></tr></tbody></table></div>
+<p>윤리와 개인정보도 기획 단계에서 정합니다. 운행 기록에 운전자를 알아볼 수 있는 정보가 함께 있다면, 지연 예측에 필요 없는 열은 추출하지 않고(최소 수집), 필요한 경우 가명처리합니다. 수집한 목적(점검 배치) 밖의 용도, 예를 들어 운전자 개인 평가에 같은 자료를 쓰려면 그 용도가 허용되는지 따로 확인해야 합니다. 법령상 세부 요건은 <a href="../../../bigdata/notes/1-planning/08-데이터-품질과-거버넌스.html">빅분기 노트의 품질·거버넌스</a>와 공식 안내를 확인합니다.</p>
+<div class="check" data-q="q9"></div>
 <h2>한눈에 정리</h2>
 <ul><li>한 행의 뜻과 키, 단위, 갱신 시점, 라벨의 기준을 함께 정한다.</li><li>도착 여부·사용 가능 여부·사건 비율은 분자와 분모가 다를 수 있다.</li><li>라벨 부족과 누락의 원인을 확인하고 품질 검증이 필요한 때를 기록한다.</li></ul>
 

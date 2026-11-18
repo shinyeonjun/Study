@@ -30,13 +30,14 @@
 <h2>전체 재현율이 같으면 모두 같아졌을까</h2>
 <p>출고 주문을 직접 접수와 연동 접수로 나눕니다. 별도 시험 기간의 실제 지연 주문은 직접 접수 40건과 연동 접수 10건입니다. 같은 시험 표본에서 현재 모형과 후보를 비교하고 각 모형이 찾아낸 지연 주문을 셉니다.</p>
 <div class="table-wrap"><table><thead><tr><th scope="col">접수 경로</th><th scope="col">실제 지연</th><th scope="col">현재 모형이 찾음</th><th scope="col">후보가 찾음</th></tr></thead><tbody><tr><td>직접 접수</td><td>40</td><td>32</td><td>36</td></tr><tr><td>연동 접수</td><td>10</td><td>8</td><td>4</td></tr><tr><td>전체</td><td>50</td><td>40</td><td>40</td></tr></tbody></table></div>
-<p>직접 접수의 재현율은 현재 0.8, 후보 0.9입니다. 연동 접수에서는 현재 0.8, 후보 0.4입니다. 전체 재현율은 둘 다 40/50=0.8이지만 후보의 연동 접수 미탐은 2건에서 6건으로 늘었습니다.</p>
+<p><b class="key">재현율</b>(recall)은 실제 양성 중에서 모형이 찾아낸 비율, 곧 TP/(TP+FN)입니다. 직접 접수의 재현율은 현재 32/40=0.8, 후보 36/40=0.9입니다. 연동 접수에서는 현재 0.8, 후보 0.4입니다. 전체 재현율은 둘 다 40/50=0.8이지만 후보의 연동 접수 미탐은 2건에서 6건으로 늘었습니다.</p>
 <div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
 <figure class="fig"><svg class="fig-svg" viewBox="0 0 760 228" role="img" aria-label="재현율 비교, 직접 접수 현재 .8 후보 .9, 연동 접수 현재 .8 후보 .4">
 <line class="f-line" x1="153" y1="165" x2="651" y2="165"/><line class="f-line" x1="153" y1="165" x2="153" y2="51"/><line class="f-dash" x1="153" y1="165" x2="630" y2="165"/><text class="f-s" x="136" y="169" text-anchor="middle">0</text><line class="f-dash" x1="153" y1="115" x2="630" y2="115"/><text class="f-s" x="136" y="119" text-anchor="middle">0.5</text><line class="f-dash" x1="153" y1="65" x2="630" y2="65"/><text class="f-s" x="136" y="69" text-anchor="middle">1</text><text class="f-t" x="156" y="39" text-anchor="middle">재현율</text><rect x="261" y="85" width="45" height="80" class="f-soft"/><rect x="316" y="75" width="45" height="90" class="f-box"/><rect x="456" y="85" width="45" height="80" class="f-soft"/><rect x="511" y="125" width="45" height="40" class="f-box"/><text class="f-t" x="315" y="188" text-anchor="middle">직접 접수</text><text class="f-t" x="510" y="188" text-anchor="middle">연동 접수</text><text class="f-s" x="413" y="213" text-anchor="middle">왼쪽 현재 · 오른쪽 후보</text>
 </svg><figcaption>두 경로에서 각각 실제 지연을 분모로 씁니다. 집단별 실제 지연 수는 40건과 10건입니다.</figcaption></figure>
 <h2>합쳐서 셀 때와 각 집단을 똑같이 볼 때</h2>
 <p>전체의 0.8은 예측 결과를 모두 합쳐 50건을 분모로 계산했습니다. 같은 값을 후보의 경로별 재현율에 40/50과 10/50을 곱해 더해도 얻습니다. 각 경로에 같은 비중을 주는 집단 평균은 (0.9+0.4)/2=0.65입니다. 집계 방식은 무엇을 같은 비중으로 볼지 결정합니다.</p>
+<p>합쳐서 센 값은 지연 주문 한 건 한 건에 같은 비중을 주는 방식으로, 마이크로 평균(micro average)과 같은 생각입니다. 집단마다 따로 구해 단순 평균한 값은 집단 하나하나에 같은 비중을 주는 방식으로, 매크로 평균(macro average)과 같은 생각입니다. 다만 scikit-learn의 <code>average="micro"</code>·<code>"macro"</code>는 접수 경로 같은 <b>집단</b>이 아니라 정답 <b>클래스</b>(라벨)를 단위로 평균합니다. 집단별 지표는 행을 집단으로 나눠 따로 계산해야 합니다(아래 코드처럼).</p>
 <div class="check" data-q="q3"></div><div class="check" data-q="q4"></div>
 <pre data-example="python"><code>from fractions import Fraction as F
 from statistics import mean
