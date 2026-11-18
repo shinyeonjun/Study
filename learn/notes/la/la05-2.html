@@ -28,21 +28,24 @@
 <div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>정사각 행렬의 역과 항등행렬의 관계를 검산한다.</li><li>첨가행렬 [A|I]에서 역행렬을 구한다.</li><li>역행렬을 써야 할 문제와 선형계를 직접 풀 문제를 구별한다.</li></ul></div>
 
 <h2>출력으로부터 항상 원래 입력을 찾을 조건</h2>
-<p>정사각 행렬 A에 대해 AA⁻¹ = A⁻¹A = I를 만족하는 A⁻¹이 있으면 <b class="key">역행렬</b>이라고 부릅니다. 변환 A에 이어 A⁻¹을 적용하면 원래 벡터가 돌아옵니다. 곱할 때 똑같은 행렬끼리라도 원소마다 역수를 취하는 계산과는 다릅니다.</p>
+<p>정사각 행렬 A에 대해 AA⁻¹ = A⁻¹A = I를 만족하는 A⁻¹이 있으면 <b class="key">역행렬</b>이라고 부릅니다. 변환 A에 이어 A⁻¹을 적용하면 원래 벡터가 돌아옵니다. A⁻¹은 원소마다 역수를 취한 행렬이 아닙니다. 아래에서 구할 [[2,1],[1,3]]의 역행렬은 [[3,−1],[−1,2]]/5이고, 원소별 역수 [[1/2,1],[1,1/3]]과 전혀 다릅니다. 역행렬이 있는 행렬을 <b>가역</b>(invertible) 행렬이라고 합니다.</p>
 <figure class="fig"><svg class="fig-svg" viewBox="0 0 760 160" role="img" aria-label="A로 (2,3)이 (7,11)이 되고 A 역변환으로 다시 (2,3)으로 돌아간다.">
 <rect class="f-box" x="42" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="135" y="61" text-anchor="middle">원래 입력</text><text class="f-s" x="135" y="89" text-anchor="middle">x = (2, 3)</text><text class="f-s" x="135" y="110" text-anchor="middle">두 성분</text><line class="f-line" x1="235" y1="84" x2="278" y2="84" marker-end="url(#f-arrow)"/><rect class="f-soft" x="287" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="380" y="61" text-anchor="middle">A를 적용</text><text class="f-s" x="380" y="89" text-anchor="middle">Ax = (7, 11)</text><text class="f-s" x="380" y="110" text-anchor="middle">2x+y, x+3y</text><line class="f-line" x1="480" y1="84" x2="523" y2="84" marker-end="url(#f-arrow)"/><rect class="f-box" x="532" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="625" y="61" text-anchor="middle">A⁻¹로 되돌림</text><text class="f-s" x="625" y="89" text-anchor="middle">A⁻¹(Ax) = (2, 3)</text><text class="f-s" x="625" y="110" text-anchor="middle">항등 I의 효과</text>
-</svg><figcaption>정사각 행렬이 입력 두 개를 한 출력에 보내면 되돌릴 규칙이 없다.</figcaption></figure>
+</svg><figcaption>A가 보낸 (7,11)을 A⁻¹가 (2,3)으로 되돌린다. 서로 다른 두 입력을 같은 출력에 보내는 행렬은 이렇게 되돌릴 수 없다.</figcaption></figure>
 <p>예를 들어 y를 버리는 [[1,0],[0,0]]은 (2,3)과 (2,8)을 모두 (2,0)으로 보냅니다. 출력만 보고 어느 입력이었는지 결정할 수 없습니다. 앞 장에서처럼 2×2인데 피벗이 1개뿐이면 전체 공간에서 역을 만들 수 없습니다. 정사각 n×n이 가역이라는 것은 n개 피벗이 모두 있다는 뜻과 같습니다.</p>
+<div class="box"><p class="box-k">정리: n×n 행렬 A에서 서로 같은 말</p><p class="calc">A가 가역이다<br>⇔ 소거하면 피벗이 n개, 곧 rank(A) = n<br>⇔ 모든 b에 대해 Ax = b의 해가 정확히 하나<br>⇔ Ax = 0의 해는 x = 0뿐</p><p>하나가 깨지면 모두 깨집니다. [[1,0],[0,0]]은 rank 1이고, Ax=0이 x=(0,5) 같은 0 아닌 해를 가집니다.</p></div>
 <div class="check" data-q="q1"></div>
 <div class="check" data-q="q2"></div>
 <h2>오른쪽에 항등행렬을 붙여 두 열을 같이 풀기</h2>
 <p>A=[[2,1],[1,3]]이 만든 출력 (1,0)과 (0,1)을 각각 되돌리는 입력을 찾아야 합니다. 각각 해가 역행렬의 첫 번째 열과 두 번째 열입니다. b 벡터 두 개를 오른쪽에 함께 붙여 [A|I]에 같은 행 연산을 써 봅니다.</p>
 <div class="table-wrap"><table><thead><tr><th scope="col">연산</th><th scope="col">첫 행</th><th scope="col">둘째 행</th></tr></thead><tbody><tr><td>처음</td><td>2  1  |  1  0</td><td>1  3  |  0  1</td></tr><tr><td>두 행 교환</td><td>1  3  |  0  1</td><td>2  1  |  1  0</td></tr><tr><td>R₂ ← (R₂−2R₁)/(−5)</td><td>1  3  |  0  1</td><td>0  1  |  −1/5  2/5</td></tr><tr><td>R₁에서 3R₂ 빼기</td><td>1  0  |  3/5  −1/5</td><td>0  1  |  −1/5  2/5</td></tr></tbody></table></div>
-<p>왼쪽이 I가 됐고 오른쪽 A⁻¹ = [[3,−1],[−1,2]]/5를 얻었습니다. 첫 열 (3/5,−1/5)에 A를 적용하면 (1,0)입니다. 둘째 열도 직접 검산합니다. A가 정사각이더라도 소거 중 왼쪽을 I로 만들 수 없으면 이 방식으로 역행렬을 얻을 수 없습니다.</p>
+<p>왼쪽이 I가 됐고 오른쪽 A⁻¹ = [[3,−1],[−1,2]]/5를 얻었습니다. 첫 열 (3/5,−1/5)에 A를 적용하면 (1,0)입니다. 둘째 열도 직접 검산합니다. A가 정사각이더라도 소거 중 왼쪽을 I로 만들 수 없으면(피벗이 모자라면) 역행렬이 존재하지 않습니다.</p>
+<p>2×2에서는 결과를 공식으로 외워 둘 수 있습니다. A = [[a,b],[c,d]]이고 ad − bc ≠ 0이면 A⁻¹ = [[d,−b],[−c,a]] / (ad − bc)입니다. 예에서 ad − bc = 2×3 − 1×1 = 5이므로 [[3,−1],[−1,2]]/5로 위 소거 결과와 같습니다. ad − bc = 0이면 역행렬이 없습니다([[2,1],[4,2]]는 4 − 4 = 0). 이 수 ad − bc는 LA07에서 행렬식으로 다시 다룹니다. 곱의 역행렬은 전치처럼 순서가 뒤집혀 (AB)⁻¹ = B⁻¹A⁻¹입니다. (AB)(B⁻¹A⁻¹) = A(BB⁻¹)A⁻¹ = AA⁻¹ = I로 확인됩니다.</p>
 <div class="check" data-q="q3"></div>
 <div class="check" data-q="q4"></div>
 <h2>벡터 하나에 필요한 것은 해 하나</h2>
-<p>A가 가역인 정사각 행렬이면 Ax=b의 해를 x=A⁻¹b라고 쓸 수 있습니다. 계산의 목적이 그 x 하나라면 소거와 분해를 이용해 우변으로부터 바로 구합니다. 역행렬의 열 전체를 계산해 보관할 필요가 없습니다. 순수한 연산 횟수와 반올림 오차를 줄이는 데에도 불필요한 역행렬 계산을 피하는 것이 도움이 됩니다.</p>
+<p>A가 가역인 정사각 행렬이면 Ax=b의 해를 x=A⁻¹b라고 쓸 수 있습니다. 계산의 목적이 그 x 하나라면 소거로 우변에서 바로 구합니다. 역행렬의 열 전체를 계산해 보관할 필요가 없습니다.</p>
+<div class="box"><p class="box-k">왜 역행렬을 계산하지 않고 푸나</p><p>① <b>계산량</b>: <code>np.linalg.solve</code>는 소거 과정을 행렬 곱 꼴로 저장하는 LU 분해(A = LU, L은 아래삼각·U는 위삼각 행렬, 행 교환 포함)를 한 번 하고 전진·후진대입으로 x를 얻습니다. 큰 n에서 대략 (2/3)n³번의 곱셈·덧셈입니다. <code>inv(A) @ b</code>는 같은 분해 뒤에 우변 n개(I의 열)를 모두 풀어야 해서 대략 2n³번으로 약 세 배입니다. 우변 b가 여러 개여도 LU 분해 하나를 재사용하면 됩니다.<br>② <b>정확도</b>: 부동소수점에서는 역행렬을 거치는 계산이 반올림 오차를 한 단계 더 쌓습니다. 특히 거의 비례하는 행렬에서는 solve 쪽 잔차 Ax−b가 대체로 더 작습니다.<br>③ <b>역행렬이 정말 필요한 때</b>: 역행렬의 원소 자체가 해석 대상일 때(예: 회귀 계수의 분산을 구하는 (XᵀX)⁻¹의 대각 원소)에는 계산합니다.</p></div>
 <figure class="fig"><svg class="fig-svg" viewBox="0 0 760 160" role="img" aria-label="A가 가역인 정사각 행렬이고 x만 필요하면 solve로 풀고 Ax−b를 확인한다.">
 <rect class="f-box" x="42" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="135" y="61" text-anchor="middle">문제</text><text class="f-s" x="135" y="89" text-anchor="middle">Ax=b의 x가 필요</text><text class="f-s" x="135" y="110" text-anchor="middle">A는 가역·정사각</text><line class="f-line" x1="235" y1="84" x2="278" y2="84" marker-end="url(#f-arrow)"/><rect class="f-soft" x="287" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="380" y="61" text-anchor="middle">직접 풀기</text><text class="f-s" x="380" y="89" text-anchor="middle">소거 또는 분해</text><text class="f-s" x="380" y="110" text-anchor="middle">solve(A,b)</text><line class="f-line" x1="480" y1="84" x2="523" y2="84" marker-end="url(#f-arrow)"/><rect class="f-box" x="532" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="625" y="61" text-anchor="middle">확인</text><text class="f-s" x="625" y="89" text-anchor="middle">Ax−b 잔차</text><text class="f-s" x="625" y="110" text-anchor="middle">단위와 규모도 고려</text>
 </svg><figcaption>역행렬 자체가 필요할 때와 x가 필요할 때를 구분한다.</figcaption></figure>
@@ -58,14 +61,26 @@ print(np.allclose(A @ inv, np.eye(2)))</code></pre>
 [[0.6, -0.2], [-0.2, 0.4]]
 True</code></pre>
 <p><code>np.allclose</code>는 값이 주어진 허용 범위 안에서 가까운지 확인하는 데 씁니다. 허용 범위는 문제의 값 크기와 단위에 맞춰 정해야 합니다. 거의 비례하는 식은 입력에 작은 오차가 있어도 해가 크게 움직일 수 있으므로, 잔차가 작다는 것만으로 원래 입력의 오차가 반드시 작다고 말할 수 없습니다.</p>
+<div class="box ex"><p class="box-k">풀이 예제: 거의 비례하는 두 식</p><p>A = [[1, 1], [1, 1.0001]]은 두 행이 거의 같습니다.</p><p class="calc">b = (2, 2.0001): 둘째 − 첫째 → 0.0001y = 0.0001 → y = 1, x = 1<br>b = (2, 2.0002): 둘째 − 첫째 → 0.0001y = 0.0002 → y = 2, x = 0</p><p>우변이 0.0001 바뀌었을 뿐인데 해는 (1,1)에서 (0,2)로 크게 움직였습니다. 이런 민감도는 조건수(condition number, 이 A는 약 4×10⁴)로 재며 OP02에서 다룹니다.</p></div>
 <div class="check" data-q="q5"></div>
 <div class="check" data-q="q6"></div>
 <h2>어느 상황에 어느 도구를 쓰나</h2>
 <p>정확한 해가 없는 관측식에는 가장 잘 맞추는 값을 구하는 최소제곱 문제를 생각합니다. 열이 부족하거나 여러 해가 가능할 때 무엇을 기준으로 고를지도 정해야 합니다. 단순히 정사각 행렬에서 푸는 <code>solve</code>나 <code>inv</code>의 문제와 구별하며, 공간과 기저를 배운 뒤 자세히 살펴봅니다.</p>
 
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table><thead><tr><th scope="col">주제</th><th scope="col">핵심</th></tr></thead><tbody>
+<tr><td><b class="key">역행렬</b></td><td>정사각 A에서 AA⁻¹ = A⁻¹A = I, 원소별 역수가 아님</td></tr>
+<tr><td>존재 조건</td><td>피벗 n개 ⇔ rank n ⇔ Ax=b 해가 항상 하나 ⇔ Ax=0은 0뿐</td></tr>
+<tr><td>[A|I] 소거</td><td>왼쪽이 I가 되면 오른쪽이 A⁻¹ (우변 n개를 동시에 풂)</td></tr>
+<tr><td>2×2 공식</td><td>[[a,b],[c,d]]⁻¹ = [[d,−b],[−c,a]]/(ad−bc), ad−bc≠0</td></tr>
+<tr><td>Ax=b 풀기</td><td><code>solve(A,b)</code>(LU) 사용, <code>inv(A)@b</code>는 계산량·오차 면에서 불리</td></tr>
+</tbody></table></div>
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>역행렬은 피벗이 n개인 정사각 행렬에만 있고, Ax=b의 해 하나가 목적이면 역행렬을 만들지 말고 solve로 직접 풉니다.</p></div>
+
 <h2>참고 자료</h2>
 <ul><li><a href="https://ocw.mit.edu/courses/18-06sc-linear-algebra-fall-2011/pages/ax-b-and-the-four-subspaces/">MIT OCW · Linear Algebra, Ax = b and the Four Subspaces</a></li><li><a href="https://numpy.org/doc/stable/reference/generated/numpy.linalg.solve.html">NumPy · linalg.solve</a></li><li><a href="https://numpy.org/doc/stable/reference/generated/numpy.linalg.inv.html">NumPy · linalg.inv</a></li></ul>
 <h2>확인 문제</h2>
+<p>본문 중간에서 푼 문제 말고 남은 문제입니다. 보기를 누르면 바로 정답과 해설이 나옵니다.</p>
 <div id="quiz"></div>
 <section class="work" id="tools"></section>
 <nav class="pager" aria-label="이전 장과 다음 장"></nav>

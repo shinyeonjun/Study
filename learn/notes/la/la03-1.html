@@ -30,7 +30,7 @@
 <h2>행과 열의 순서를 지킨 숫자 표</h2>
 <p>매장 두 곳의 세 가지 특징이 다음과 같습니다. 행이 매장, 열이 특징입니다.</p>
 <div class="table-wrap"><table><thead><tr><th scope="col">매장</th><th scope="col">주문 수</th><th scope="col">평균 분</th><th scope="col">반품 수</th></tr></thead><tbody><tr><td>A</td><td>120</td><td>32</td><td>4</td></tr><tr><td>B</td><td>136</td><td>28</td><td>8</td></tr></tbody></table></div>
-<p>숫자 부분은 2행 3열 <b class="key">행렬</b>입니다. a<sub>ij</sub>는 i번째 행, j번째 열의 원소입니다. 수학에서 첫 행과 첫 열을 1로 세면 a<sub>23</sub>=8입니다. NumPy에서는 0부터 세므로 <code>A[1, 2]</code>가 같은 자리를 찾습니다. 행과 열의 수가 같으면 <b>정사각 행렬</b>입니다. 행과 열이 다르더라도 행렬이 될 수 있습니다.</p>
+<p>숫자 부분은 2행 3열 <b class="key">행렬</b>입니다. m행 n열 행렬을 m×n 행렬이라 하고, (m, n)을 그 행렬의 모양(shape)이라고 합니다. 이 표는 2×3입니다. a<sub>ij</sub>는 i번째 행, j번째 열의 원소입니다. 수학에서 첫 행과 첫 열을 1로 세면 a<sub>23</sub>=8입니다. NumPy에서는 0부터 세므로 <code>A[1, 2]</code>가 같은 자리를 찾습니다. 행과 열의 수가 같으면 <b>정사각 행렬</b>입니다. 행과 열이 다르더라도 행렬이 될 수 있습니다.</p>
 <div class="check" data-q="q1"></div>
 <div class="check" data-q="q2"></div>
 <h2>입력 벡터를 다른 벡터로 바꾸기</h2>
@@ -39,12 +39,13 @@
 <figure class="fig"><svg class="fig-svg" viewBox="0 0 760 280" role="img" aria-label="T(x,y)=(2x+y,y)가 (1,0)을 (2,0), (0,1)을 (1,1)로 옮긴다.">
 <line class="f-ink" x1="98" y1="225" x2="633.8" y2="225" marker-end="url(#f-arrow)"/><line class="f-ink" x1="145" y1="250.85" x2="145" y2="26.660000000000025" marker-end="url(#f-arrow)"/><line class="f-ink" x1="192" y1="227.82" x2="192" y2="222.18"/><text class="f-s" x="192" y="243" text-anchor="middle">1</text><line class="f-ink" x1="239" y1="227.82" x2="239" y2="222.18"/><text class="f-s" x="239" y="243" text-anchor="middle">2</text><line class="f-ink" x1="286" y1="227.82" x2="286" y2="222.18"/><text class="f-s" x="286" y="243" text-anchor="middle">3</text><line class="f-ink" x1="333" y1="227.82" x2="333" y2="222.18"/><text class="f-s" x="333" y="243" text-anchor="middle">4</text><line class="f-ink" x1="380" y1="227.82" x2="380" y2="222.18"/><text class="f-s" x="380" y="243" text-anchor="middle">5</text><line class="f-ink" x1="427" y1="227.82" x2="427" y2="222.18"/><text class="f-s" x="427" y="243" text-anchor="middle">6</text><line class="f-ink" x1="474" y1="227.82" x2="474" y2="222.18"/><text class="f-s" x="474" y="243" text-anchor="middle">7</text><line class="f-ink" x1="521" y1="227.82" x2="521" y2="222.18"/><text class="f-s" x="521" y="243" text-anchor="middle">8</text><line class="f-ink" x1="568" y1="227.82" x2="568" y2="222.18"/><text class="f-s" x="568" y="243" text-anchor="middle">9</text><line class="f-ink" x1="615" y1="227.82" x2="615" y2="222.18"/><text class="f-s" x="615" y="243" text-anchor="middle">10</text><line class="f-ink" x1="142.18" y1="178" x2="147.82" y2="178"/><text class="f-s" x="131" y="182" text-anchor="middle">1</text><line class="f-ink" x1="142.18" y1="131" x2="147.82" y2="131"/><text class="f-s" x="131" y="135" text-anchor="middle">2</text><line class="f-ink" x1="142.18" y1="84" x2="147.82" y2="84"/><text class="f-s" x="131" y="88" text-anchor="middle">3</text><line class="f-ink" x1="142.18" y1="37" x2="147.82" y2="37"/><text class="f-s" x="131" y="41" text-anchor="middle">4</text><text class="f-s" x="134" y="241" text-anchor="middle">0</text><text class="f-s" x="640.85" y="220" text-anchor="middle">x</text><text class="f-s" x="158" y="23.370000000000005" text-anchor="middle">y</text><line class="f-line" x1="145" y1="225" x2="239" y2="225" marker-end="url(#f-arrow)"/><line class="f-line" x1="145" y1="225" x2="192" y2="178" marker-end="url(#f-arrow)"/><text class="f-t" x="283" y="211" text-anchor="middle">T(e₁) = (2, 0)</text><text class="f-t" x="246" y="168" text-anchor="middle">T(e₂) = (1, 1)</text>
 </svg><figcaption>두 입력축의 단위벡터를 옮긴 두 화살표가 A의 첫 열과 둘째 열이다.</figcaption></figure>
-<p>첫 번째 단위벡터 e₁=(1,0)의 출력은 A의 첫 번째 <em>열</em> (2,0)입니다. 두 번째 e₂=(0,1)의 출력은 둘째 열 (1,1)입니다. 입력 (x,y)는 x·e₁ + y·e₂이므로 출력은 두 열을 x와 y만큼 곱해 더한 것입니다. (2,3)이면 2×(2,0)+3×(1,1)=(7,3)입니다.</p>
+<p>첫 번째 단위벡터 e₁=(1,0)의 출력은 A의 첫 번째 <em>열</em> (2,0)입니다. 두 번째 e₂=(0,1)의 출력은 둘째 열 (1,1)입니다. 입력 (x,y)는 x·e₁ + y·e₂이므로, 아래에서 정의할 선형성에 의해 출력은 T(x,y) = x·T(e₁) + y·T(e₂), 즉 두 열을 x와 y만큼 곱해 더한 것입니다. (2,3)이면 2×(2,0)+3×(1,1)=(7,3)입니다.</p>
+<p>이것이 행렬–벡터 곱 <b>Ax</b>의 정의입니다. 같은 값을 두 방향으로 읽을 수 있습니다. <b>열로 읽기</b>: Ax = x₁·(A의 1열) + … + x<sub>n</sub>·(A의 n열). <b>행으로 읽기</b>: Ax의 i번째 성분 = (A의 i행)·x, 즉 i행과 x의 내적. 예에서 첫 행 (2,1)·(2,3) = 7, 둘째 행 (0,1)·(2,3) = 3으로 같은 (7,3)이 나옵니다. A의 열 수와 x의 성분 수가 같아야 곱이 정의됩니다.</p>
 <div class="check" data-q="q3"></div>
 <div class="check" data-q="q4"></div>
 <h2>언제 선형변환이라고 할까</h2>
 <div class="box "><p class="box-k">두 보존 조건</p><p><b class="key">선형변환</b> T는 입력 벡터 합의 출력을 각각 출력한 합으로 바꾸어도 같고, 입력을 스칼라 c배 한 결과도 출력의 c배와 같습니다.</p><p class="calc">T(u+v) = T(u)+T(v),   T(cu) = cT(u)</p></div>
-<p>실수 공간 ℝⁿ에서 ℝᵐ으로 가는 선형변환은 좌표계를 정하면 m×n 행렬로 나타낼 수 있습니다. T(x,y)=(2x+y,y)는 해당하지만, S(x,y)=(2x+y+3,y)는 영벡터를 (3,0)으로 보내므로 해당하지 않습니다. S는 선형변환 뒤에 고정된 위치 이동을 더한 예입니다. 좌표의 그래프가 직선이라는 말과 선형대수에서 원점을 보존한다는 말은 구분합니다.</p>
+<p>실수 공간 ℝⁿ에서 ℝᵐ으로 가는 선형변환은 좌표계를 정하면 m×n 행렬로 나타낼 수 있습니다. T(x,y)=(2x+y,y)는 해당하지만, S(x,y)=(2x+y+3,y)는 영벡터를 (3,0)으로 보내므로 해당하지 않습니다. S는 선형변환 뒤에 고정된 위치 이동을 더한 예입니다. 고등학교의 일차함수 f(x)=2x+3은 그래프가 직선이지만 f(0)=3≠0이고 f(1+1)=7≠f(1)+f(1)=10이라서 선형대수의 선형변환이 아닙니다. 이런 '선형변환 + 평행이동'은 아핀(affine) 변환이라고 따로 부릅니다. T(0) = T(0·u) = 0·T(u) = 0이므로, 영벡터를 영벡터로 보내지 않으면 곧바로 선형이 아닙니다(반대로 T(0)=0이라고 해서 선형이 보장되지는 않습니다).</p>
 <figure class="fig"><svg class="fig-svg" viewBox="0 0 760 160" role="img" aria-label="m행 n열 행렬이 n개 성분의 입력을 m개 성분의 출력으로 보낸다.">
 <rect class="f-box" x="42" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="135" y="61" text-anchor="middle">입력 성분 n개</text><text class="f-s" x="135" y="89" text-anchor="middle">x의 길이 n</text><text class="f-s" x="135" y="110" text-anchor="middle">좌표마다 한 성분</text><line class="f-line" x1="235" y1="84" x2="278" y2="84" marker-end="url(#f-arrow)"/><rect class="f-soft" x="287" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="380" y="61" text-anchor="middle">행렬 A</text><text class="f-s" x="380" y="89" text-anchor="middle">m행 n열</text><text class="f-s" x="380" y="110" text-anchor="middle">열 하나가 입력 방향 하나</text><line class="f-line" x1="480" y1="84" x2="523" y2="84" marker-end="url(#f-arrow)"/><rect class="f-box" x="532" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="625" y="61" text-anchor="middle">출력 성분 m개</text><text class="f-s" x="625" y="89" text-anchor="middle">Ax의 길이 m</text><text class="f-s" x="625" y="110" text-anchor="middle">행마다 한 성분</text>
 </svg><figcaption>입력 차원을 보고 열을, 출력 차원을 보고 행을 정한다.</figcaption></figure>
@@ -67,9 +68,18 @@ print((I @ x).tolist())</code></pre>
 <h2>행렬의 역할을 먼저 읽는다</h2>
 <p>데이터 표의 열은 기록할 특징이고 관측이 추가되면 행이 늘어납니다. 변환 행렬의 각 행은 출력 성분 하나의 계산식을 담고, 각 열은 입력 단위 방향에서 나오는 출력입니다. 숫자 표의 생김새만 보고 역할을 확정하지 말고 그 행렬이 무엇을 표현하도록 정했는지 읽습니다.</p>
 
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table><thead><tr><th scope="col">관점</th><th scope="col">행</th><th scope="col">열</th><th scope="col">예</th></tr></thead><tbody>
+<tr><td>데이터 표로서의 <b class="key">행렬</b></td><td>관측 하나</td><td>특징 하나</td><td>매장 2곳 × 특징 3개 = 2×3</td></tr>
+<tr><td><b class="key">선형변환</b>의 행렬 (m×n)</td><td>출력 성분 하나의 계산식</td><td>입력 단위벡터 eⱼ의 출력 T(eⱼ)</td><td>T(x,y)=(2x+y, y) → [[2,1],[0,1]]</td></tr>
+<tr><td><b class="key">항등행렬</b> I</td><td colspan="2">대각선 1, 나머지 0인 정사각 행렬</td><td>Ix = x</td></tr>
+</tbody></table></div>
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>같은 숫자 표라도 데이터를 담을 수도, 선형변환을 나타낼 수도 있으며, 변환 행렬의 j번째 열은 eⱼ가 가는 곳입니다.</p></div>
+
 <h2>참고 자료</h2>
 <ul><li><a href="https://ocw.mit.edu/courses/18-06sc-linear-algebra-fall-2011/pages/ax-b-and-the-four-subspaces/">MIT OCW · Linear Algebra, Ax = b and the Four Subspaces</a></li><li><a href="https://ocw.mit.edu/courses/18-06sc-linear-algebra-fall-2011/pages/positive-definite-matrices-and-applications/linear-transformations-and-their-matrices/">MIT OCW · Linear Transformations and their Matrices</a></li><li><a href="https://numpy.org/doc/stable/reference/generated/numpy.matmul.html">NumPy · 행렬 곱 matmul</a></li></ul>
 <h2>확인 문제</h2>
+<p>본문 중간에서 푼 문제 말고 남은 문제입니다. 보기를 누르면 바로 정답과 해설이 나옵니다.</p>
 <div id="quiz"></div>
 <section class="work" id="tools"></section>
 <nav class="pager" aria-label="이전 장과 다음 장"></nav>

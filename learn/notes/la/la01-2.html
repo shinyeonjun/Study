@@ -35,7 +35,7 @@
 <p>u를 먼저 그린 뒤 그 끝을 v의 시작점으로 옮깁니다. 그림에서는 세 화살표가 있고 계산에는 가로·세로 성분이 따로 있습니다. 같은 차원의 벡터를 더할 때 u+v와 v+u는 같습니다. 각 성분의 덧셈이 순서에 영향을 받지 않기 때문입니다.</p>
 <div class="check" data-q="q1"></div>
 <h2>스칼라를 각 성분에 곱한다</h2>
-<p><code>c·u</code>는 u의 각 성분을 c배 한 벡터입니다. u=(2,1)이라면 2u=(4,2), (1/2)u=(1,0.5), −u=(−2,−1)입니다. 양수 곱은 0이 아닌 화살표의 방향을 유지하고 음수 곱은 방향을 뒤집습니다. 0을 곱하면 영벡터가 됩니다.</p>
+<p><code>c·u</code>는 u의 각 성분을 c배 한 벡터입니다. u=(2,1)이라면 2u=(4,2), (1/2)u=(1,0.5), −u=(−2,−1)입니다. 양수 곱은 0이 아닌 화살표의 방향을 유지하고 음수 곱은 방향을 뒤집습니다. 어느 경우든 화살표 길이는 |c|배가 됩니다. 0을 곱하면 모든 성분이 0인 <b class="key">영벡터</b> 0이 됩니다.</p>
 <figure class="fig"><svg class="fig-svg" viewBox="0 0 760 160" role="img" aria-label="u에 같은 스칼라를 각 성분마다 곱한다. 음수 −1이면 반대 방향.">
 <rect class="f-box" x="42" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="135" y="61" text-anchor="middle">2배</text><text class="f-s" x="135" y="89" text-anchor="middle">2u=(4,2)</text><text class="f-s" x="135" y="110" text-anchor="middle">같은 방향, 길이 2배</text><line class="f-line" x1="278" y1="84" x2="235" y2="84" marker-end="url(#f-arrow)"/><rect class="f-soft" x="287" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="380" y="61" text-anchor="middle">원래 벡터</text><text class="f-s" x="380" y="89" text-anchor="middle">u=(2,1)</text><text class="f-s" x="380" y="110" text-anchor="middle">두 성분</text><line class="f-line" x1="480" y1="84" x2="523" y2="84" marker-end="url(#f-arrow)"/><rect class="f-box" x="532" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="625" y="61" text-anchor="middle">−1배</text><text class="f-s" x="625" y="89" text-anchor="middle">−u=(−2,−1)</text><text class="f-s" x="625" y="110" text-anchor="middle">반대 방향, 같은 길이</text>
 </svg><figcaption>왼쪽과 오른쪽은 가운데의 원래 벡터에 각각 2와 −1을 곱한 결과다.</figcaption></figure>
@@ -59,15 +59,25 @@ print((2 * np.array([2, 1])).tolist())</code></pre>
 <div class="check" data-q="q4"></div>
 <div class="check" data-q="q5"></div>
 <h2>모양만 같아서 생기는 실수</h2>
-<p>(건, 분)과 (명, 시)를 더하면 자리가 두 개라 코드에서는 계산할 수 있습니다. 같은 의미와 단위의 성분끼리 비교하는 식인지 먼저 살펴야 합니다. 모양이 다르면 NumPy가 브로드캐스팅하는 경우도 있습니다. 행이나 열의 모양이 달라졌다면 연산 결과의 shape와 의도를 같이 검사합니다.</p>
+<p>(건, 분)과 (명, 시)를 더하면 자리가 두 개라 코드에서는 계산할 수 있습니다. 같은 의미와 단위의 성분끼리 비교하는 식인지 먼저 살펴야 합니다. 수학의 벡터 덧셈은 차원이 같을 때만 정의되지만, NumPy는 모양이 다른 배열도 <b>브로드캐스팅</b>(broadcasting: 크기 1인 축이나 없는 축을 늘려 모양을 맞추는 규칙)으로 계산해 버리는 경우가 있습니다. 예를 들어 shape (3,)인 <code>[1, 2, 3]</code>과 shape (2,1)인 <code>[[10], [20]]</code>을 더하면 오류 없이 shape (2,3)인 <code>[[11, 12, 13], [21, 22, 23]]</code>이 나옵니다. 행이나 열의 모양이 달라졌다면 연산 결과의 shape와 의도를 같이 검사합니다.</p>
 <div class="box "><p class="box-k">검산 기준</p><p>같은 종류의 성분끼리 비교했나요? 부호를 반대로 쓰지 않았나요? 편차나 평균을 만들 때 분모가 분석에서 세려는 단위와 맞나요?</p></div>
 <div class="check" data-q="q6"></div>
 <h2>다음 계산</h2>
 <p>더하기는 벡터를 하나 만듭니다. 다음 단원에서는 벡터 두 개의 대응 성분을 곱해 모두 더한 다음 숫자 하나를 만드는 내적을 배웁니다. 특징마다 다른 무게를 줄 때 쓰는 계산입니다.</p>
 
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table><thead><tr><th scope="col">연산</th><th scope="col">규칙</th><th scope="col">그림</th><th scope="col">예</th></tr></thead><tbody>
+<tr><td><b class="key">벡터 덧셈</b></td><td>같은 자리끼리 더함(같은 차원만)</td><td>화살표를 이어 붙임</td><td>(2,1)+(3,2)=(5,3)</td></tr>
+<tr><td><b class="key">스칼라곱</b></td><td>모든 성분에 c를 곱함</td><td>길이 |c|배, c&lt;0이면 방향 반대</td><td>−1·(2,1)=(−2,−1)</td></tr>
+<tr><td>뺄셈·변위</td><td>끝−시작</td><td>시작점에서 끝점으로 가는 화살표</td><td>Q−P=(3,2)</td></tr>
+<tr><td>평균 벡터</td><td>(합)/개수, 성분별</td><td>두 점의 가운데</td><td>(128, 30)</td></tr>
+</tbody></table></div>
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>벡터 덧셈과 스칼라곱은 성분마다 같은 규칙을 적용하는 계산이고, 계산이 되는 것과 의미가 맞는 것은 따로 확인합니다.</p></div>
+
 <h2>참고 자료</h2>
 <ul><li><a href="https://ocw.mit.edu/courses/18-06sc-linear-algebra-fall-2011/pages/ax-b-and-the-four-subspaces/">MIT OCW · Linear Algebra, Ax = b and the Four Subspaces</a></li></ul>
 <h2>확인 문제</h2>
+<p>본문 중간에서 푼 문제 말고 남은 문제입니다. 보기를 누르면 바로 정답과 해설이 나옵니다.</p>
 <div id="quiz"></div>
 <section class="work" id="tools"></section>
 <nav class="pager" aria-label="이전 장과 다음 장"></nav>

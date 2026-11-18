@@ -64,7 +64,9 @@
 <div class="check" data-q="q2"></div>
 <div class="check" data-q="q3"></div>
 <h2>순서를 두고 괄호를 바꿀 수 있다</h2>
-<p>A의 열 수가 B의 행 수와 같고, B의 열 수가 C의 행 수와 같으면 (AB)C=A(BC)입니다. 양쪽 모두 C를 먼저, B를 다음, A를 마지막에 적용하는 합성입니다. 이것이 <b class="key">결합법칙</b>입니다. 전치를 취할 때는 <code>(AB)ᵀ = BᵀAᵀ</code>로 순서가 바뀝니다. AB에서 i행 j열을 얻는 내적이 전치 후에는 j행 i열로 가기 때문입니다.</p>
+<p>A의 열 수가 B의 행 수와 같고, B의 열 수가 C의 행 수와 같으면 (AB)C=A(BC)입니다. 양쪽 모두 C를 먼저, B를 다음, A를 마지막에 적용하는 합성입니다. 이것이 <b class="key">결합법칙</b>입니다. 전치를 취할 때는 <code>(AB)ᵀ = BᵀAᵀ</code>로 순서가 바뀝니다.</p>
+<div class="box ex"><p class="box-k">왜 순서가 뒤집히나: 성분으로 확인</p><p>A가 m×n, B가 n×p라고 합시다. 양변의 j행 i열 성분을 비교합니다.</p><p class="calc">((AB)ᵀ)ⱼᵢ = (AB)ᵢⱼ = Σₖ AᵢₖBₖⱼ<br>(BᵀAᵀ)ⱼᵢ = Σₖ (Bᵀ)ⱼₖ(Aᵀ)ₖᵢ = Σₖ BₖⱼAᵢₖ</p><p>실수 곱 BₖⱼAᵢₖ = AᵢₖBₖⱼ이므로 모든 성분이 같습니다. 모양으로도 확인됩니다. (AB)ᵀ는 p×m이고 BᵀAᵀ는 (p×n)(n×m) = p×m입니다. 순서를 그대로 둔 AᵀBᵀ는 (n×m)(p×n)이라 p = m이 아니면 곱 자체가 정의되지 않습니다. 예를 들어 A가 2×3, B가 3×2이면 (AB)ᵀ는 2×2인데 AᵀBᵀ는 3×3입니다.</p></div>
+<div class="box trap"><p class="box-k">흔한 실수</p><p>(AB)ᵀ를 AᵀBᵀ로 쓰는 실수입니다. 양말을 신고 신발을 신었다면 벗을 때는 신발부터 벗는 것처럼, 곱의 전치와 곱의 역행렬((AB)⁻¹ = B⁻¹A⁻¹, 다음 단원)은 모두 순서를 뒤집습니다.</p></div>
 <pre data-example="python"><code>import numpy as np
 
 A = np.array([[2, 0], [0, 1]])
@@ -98,9 +100,20 @@ print(Y.shape)</code></pre>
 <h2>다음 장에서 풀 질문</h2>
 <p>입력 x를 알면 Ax를 계산할 수 있습니다. 출력 b를 알 때 원래 입력을 되찾는 문제는 Ax=b입니다. 모든 b에 하나의 입력이 있는지, 전혀 없는 경우와 여러 개인 경우는 어떻게 찾는지 살펴봅니다.</p>
 
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table><thead><tr><th scope="col">규칙</th><th scope="col">식</th><th scope="col">메모</th></tr></thead><tbody>
+<tr><td>합성 순서</td><td>A 먼저, B 다음 = B(Ax) = (BA)x</td><td>x에 가까운 행렬이 먼저 작용</td></tr>
+<tr><td><b class="key">교환법칙</b></td><td>일반적으로 AB ≠ BA</td><td>한쪽만 정의될 수도 있음</td></tr>
+<tr><td><b class="key">결합법칙</b></td><td>(AB)C = A(BC)</td><td>순서는 그대로, 괄호만 이동</td></tr>
+<tr><td>곱의 전치</td><td>(AB)ᵀ = BᵀAᵀ</td><td>순서가 뒤집힘</td></tr>
+<tr><td>행으로 쌓은 관측</td><td>Y = XAᵀ</td><td>(n×d)(d×m) = n×m</td></tr>
+</tbody></table></div>
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>행렬 곱은 변환의 합성이라 순서가 중요하고, 괄호는 옮길 수 있지만 순서는 바꿀 수 없으며, 전치하면 순서가 뒤집힙니다.</p></div>
+
 <h2>참고 자료</h2>
 <ul><li><a href="https://ocw.mit.edu/courses/18-06sc-linear-algebra-fall-2011/pages/ax-b-and-the-four-subspaces/">MIT OCW · Linear Algebra, Ax = b and the Four Subspaces</a></li><li><a href="https://numpy.org/doc/stable/reference/generated/numpy.matmul.html">NumPy · 행렬 곱 matmul</a></li></ul>
 <h2>확인 문제</h2>
+<p>본문 중간에서 푼 문제 말고 남은 문제입니다. 보기를 누르면 바로 정답과 해설이 나옵니다.</p>
 <div id="quiz"></div>
 <section class="work" id="tools"></section>
 <nav class="pager" aria-label="이전 장과 다음 장"></nav>

@@ -61,14 +61,25 @@ True</code></pre>
 <figure class="fig"><svg class="fig-svg" viewBox="0 0 760 160" role="img" aria-label="A의 1번 행 2번 열 값을 전치 후 2번 행 1번 열에 둔다. 인덱스는 0부터.">
 <rect class="f-box" x="42" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="135" y="61" text-anchor="middle">원래 A</text><text class="f-s" x="135" y="89" text-anchor="middle">(2, 3)</text><text class="f-s" x="135" y="110" text-anchor="middle">원소 A[1,2]</text><line class="f-line" x1="235" y1="84" x2="278" y2="84" marker-end="url(#f-arrow)"/><rect class="f-soft" x="287" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="380" y="61" text-anchor="middle">행·열 교환</text><text class="f-s" x="380" y="89" text-anchor="middle">인덱스를 바꾼다</text><text class="f-s" x="380" y="110" text-anchor="middle">값은 그대로</text><line class="f-line" x1="480" y1="84" x2="523" y2="84" marker-end="url(#f-arrow)"/><rect class="f-box" x="532" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="625" y="61" text-anchor="middle">A.T</text><text class="f-s" x="625" y="89" text-anchor="middle">(3, 2)</text><text class="f-s" x="625" y="110" text-anchor="middle">같은 원소 A.T[2,1]</text>
 </svg><figcaption>전치는 숫자를 바꾸지 않으며 자리를 옮긴다.</figcaption></figure>
+<p>정의에서 바로 나오는 성질은 (Aᵀ)ᵀ = A, (A+B)ᵀ = Aᵀ + Bᵀ, (cA)ᵀ = cAᵀ입니다. 열벡터 x(n×1)의 전치 xᵀ는 1×n 행벡터이므로, 두 열벡터의 내적은 행렬 곱으로 <code>x·y = xᵀy</code>(1×n 곱하기 n×1 = 1×1)라고 씁니다. 반대 순서 xyᵀ는 n×n 행렬이 되므로 순서를 바꾸면 전혀 다른 양입니다. 곱의 전치 (AB)ᵀ는 다음 장에서 순서가 뒤집히는 이유와 함께 다룹니다.</p>
 <div class="check" data-q="q5"></div>
 <div class="check" data-q="q6"></div>
 <h2>단위와 모양으로 검산하기</h2>
 <p>결과의 첫 열은 원, 둘째 열은 g입니다. 2×3과 2×2를 그대로 곱할 수 없습니다. 연결할 축의 길이와 의미를 먼저 확인하세요. 품목 순서가 어긋나면 모양이 맞더라도 올바른 결과를 얻지 못합니다.</p>
 
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table><thead><tr><th scope="col">계산</th><th scope="col">모양 규칙</th><th scope="col">값 규칙</th></tr></thead><tbody>
+<tr><td><b class="key">행렬 곱</b> AB</td><td>(m×n)(n×p) → m×p, 안쪽 n이 같아야 함</td><td>(AB)ᵢⱼ = Σₖ AᵢₖBₖⱼ (A의 i행 · B의 j열)</td></tr>
+<tr><td>행렬–벡터 곱 Aw</td><td>(m×n)(n) → m</td><td>행 내적, 또는 열의 선형결합</td></tr>
+<tr><td><b class="key">전치</b> Aᵀ</td><td>m×n → n×m</td><td>(Aᵀ)ⱼᵢ = Aᵢⱼ</td></tr>
+<tr><td>NumPy <code>@</code> / <code>*</code></td><td>행렬 곱 / 원소별(브로드캐스팅)</td><td>기호를 섞지 않는다</td></tr>
+</tbody></table></div>
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>행렬 곱은 안쪽 차원이 맞을 때 행과 열을 내적하는 계산이며, 계산 전에 모양과 연결 축의 의미부터 확인합니다.</p></div>
+
 <h2>참고 자료</h2>
 <ul><li><a href="https://ocw.mit.edu/courses/18-06sc-linear-algebra-fall-2011/pages/ax-b-and-the-four-subspaces/">MIT OCW · Linear Algebra, Ax = b and the Four Subspaces</a></li><li><a href="https://numpy.org/doc/stable/reference/generated/numpy.matmul.html">NumPy · 행렬 곱 matmul</a></li></ul>
 <h2>확인 문제</h2>
+<p>본문 중간에서 푼 문제 말고 남은 문제입니다. 보기를 누르면 바로 정답과 해설이 나옵니다.</p>
 <div id="quiz"></div>
 <section class="work" id="tools"></section>
 <nav class="pager" aria-label="이전 장과 다음 장"></nav>

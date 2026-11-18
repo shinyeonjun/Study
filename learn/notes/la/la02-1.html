@@ -37,13 +37,13 @@
 <div class="check" data-q="q1"></div>
 <div class="check" data-q="q2"></div>
 <h2>자기 자신과의 내적에서 길이 구하기</h2>
-<p>v = (3,4)의 내적 v·v는 3²+4² = 25입니다. 제곱근이 5이므로 원점부터 v까지 유클리드 길이는 5입니다. 이를 <b class="key">유클리드 노름</b> ∥v∥₂라 씁니다. x가 (x₁,…,x<sub>n</sub>)이면 ∥x∥₂ = √(x·x)입니다. 영벡터의 길이는 0입니다.</p>
+<p>v = (3,4)의 내적 v·v는 3²+4² = 25입니다. 제곱근이 5이므로 원점부터 v까지 유클리드 길이는 5입니다. 이를 <b class="key">유클리드 노름</b> ∥v∥₂라 씁니다. x가 (x₁,…,x<sub>n</sub>)이면 ∥x∥₂ = √(x·x) = √(x₁² + … + x<sub>n</sub>²)입니다. 영벡터의 길이는 0입니다. 아래 첨자 2는 성분을 <b>제곱</b>해 더한 뒤 제곱근을 취한다는 표시이고, 이 때문에 <b>L2 노름</b>이라고도 부릅니다.</p>
 <div class="check" data-q="q3"></div>
 <h2>두 점 사이 거리는 차이 벡터의 길이</h2>
 <p>P=(1,1), Q=(4,5)일 때 Q−P=(3,4)입니다. ∥Q−P∥₂ = 5입니다. P와 Q의 순서를 뒤집으면 차이 벡터의 방향이 바뀌지만 길이는 그대로입니다.</p>
-<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 301" role="img" aria-label="P=(1,1), Q=(4,5). 가로와 세로 차는 3과 4이고 두 점 사이 직선 거리 5.">
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 301" role="img" aria-label="P=(1,1), Q=(4,5). 가로와 세로 차는 3과 4이고 두 점 사이 직선 거리 5. 점선을 따라 가로 3, 세로 4를 가면 L1 거리 7.">
 <line class="f-ink" x1="117" y1="257" x2="607.2" y2="257" marker-end="url(#f-arrow)"/><line class="f-ink" x1="160" y1="280.65" x2="160" y2="32.54000000000002" marker-end="url(#f-arrow)"/><line class="f-ink" x1="203" y1="259.58" x2="203" y2="254.42"/><text class="f-s" x="203" y="275" text-anchor="middle">1</text><line class="f-ink" x1="246" y1="259.58" x2="246" y2="254.42"/><text class="f-s" x="246" y="275" text-anchor="middle">2</text><line class="f-ink" x1="289" y1="259.58" x2="289" y2="254.42"/><text class="f-s" x="289" y="275" text-anchor="middle">3</text><line class="f-ink" x1="332" y1="259.58" x2="332" y2="254.42"/><text class="f-s" x="332" y="275" text-anchor="middle">4</text><line class="f-ink" x1="375" y1="259.58" x2="375" y2="254.42"/><text class="f-s" x="375" y="275" text-anchor="middle">5</text><line class="f-ink" x1="418" y1="259.58" x2="418" y2="254.42"/><text class="f-s" x="418" y="275" text-anchor="middle">6</text><line class="f-ink" x1="461" y1="259.58" x2="461" y2="254.42"/><text class="f-s" x="461" y="275" text-anchor="middle">7</text><line class="f-ink" x1="504" y1="259.58" x2="504" y2="254.42"/><text class="f-s" x="504" y="275" text-anchor="middle">8</text><line class="f-ink" x1="547" y1="259.58" x2="547" y2="254.42"/><text class="f-s" x="547" y="275" text-anchor="middle">9</text><line class="f-ink" x1="590" y1="259.58" x2="590" y2="254.42"/><text class="f-s" x="590" y="275" text-anchor="middle">10</text><line class="f-ink" x1="157.42" y1="214" x2="162.58" y2="214"/><text class="f-s" x="146" y="218" text-anchor="middle">1</text><line class="f-ink" x1="157.42" y1="171" x2="162.58" y2="171"/><text class="f-s" x="146" y="175" text-anchor="middle">2</text><line class="f-ink" x1="157.42" y1="128" x2="162.58" y2="128"/><text class="f-s" x="146" y="132" text-anchor="middle">3</text><line class="f-ink" x1="157.42" y1="85" x2="162.58" y2="85"/><text class="f-s" x="146" y="89" text-anchor="middle">4</text><line class="f-ink" x1="157.42" y1="42" x2="162.58" y2="42"/><text class="f-s" x="146" y="46" text-anchor="middle">5</text><text class="f-s" x="149" y="273" text-anchor="middle">0</text><text class="f-s" x="613.6500000000001" y="252" text-anchor="middle">x</text><text class="f-s" x="173" y="29.53" text-anchor="middle">y</text><line class="f-dash" x1="203" y1="214" x2="332" y2="214"/><line class="f-dash" x1="332" y1="214" x2="332" y2="42"/><line class="f-line" x1="203" y1="214" x2="332" y2="42"/><circle class="f-fill" cx="203" cy="214" r="3.2"/><circle class="f-fill" cx="332" cy="42" r="3.2"/><text class="f-t" x="194" y="205" text-anchor="middle">P</text><text class="f-t" x="342" y="34" text-anchor="middle">Q</text><text class="f-t" x="267.5" y="230" text-anchor="middle">3</text><text class="f-t" x="351" y="140.60000000000002" text-anchor="middle">4</text><text class="f-t" x="236.8" y="127.69999999999999" text-anchor="middle">거리 5</text>
-</svg><figcaption>직각삼각형에서 가로 3, 세로 4이므로 거리는 5다.</figcaption></figure>
+</svg><figcaption>파란 빗변이 L2 거리 √(3²+4²)=5, 점선(가로 3 + 세로 4)이 L1 거리 7이다.</figcaption></figure>
 <pre data-example="python"><code>import numpy as np
 
 q = np.array([2, 3, 1])
@@ -60,15 +60,32 @@ print(float(np.linalg.norm(Q - P)))</code></pre>
 <p><code>@</code>는 NumPy에서 행렬 곱 문법이고 1차원 배열 두 개에는 해당 벡터의 내적을 계산합니다. <code>q * w</code>는 중간의 성분별 곱 <code>[2400,2400,3000]</code>을 돌려줍니다. 한 숫자가 필요한가, 성분별 곱을 따로 갖고 있어야 하는가에 따라 선택합니다.</p>
 <div class="check" data-q="q4"></div>
 <div class="check" data-q="q5"></div>
+<h2>노름의 조건과 L1 노름</h2>
+<p>길이를 재는 방법은 하나가 아닙니다. 벡터에 0 이상의 수 하나를 붙이는 함수 ∥·∥가 다음 세 조건을 만족하면 <b class="key">노름</b>(norm)이라고 부릅니다.</p>
+<div class="box"><p class="box-k">정의: 노름의 세 조건</p><p class="calc">① ∥x∥ ≥ 0이고, ∥x∥ = 0은 x가 영벡터일 때뿐<br>② ∥cx∥ = |c|·∥x∥ (스칼라배는 길이를 |c|배)<br>③ ∥x+y∥ ≤ ∥x∥ + ∥y∥ (삼각부등식: 돌아가는 길이 곧은 길보다 짧지 않다)</p></div>
+<p>성분의 절댓값을 그대로 더하는 <b class="key">L1 노름</b> ∥x∥₁ = |x₁| + … + |x<sub>n</sub>|도 세 조건을 만족합니다. 바둑판 같은 길을 가로·세로로만 걷는 거리와 같아서 맨해튼 거리라고도 합니다. 성분의 절댓값 중 가장 큰 값을 쓰는 ∥x∥<sub>∞</sub> = max |xᵢ|(L∞ 노름)도 있습니다.</p>
+<div class="box ex"><p class="box-k">풀이 예제: 같은 벡터, 다른 길이</p><p class="calc">v = Q − P = (3, 4)<br>∥v∥₂ = √(3² + 4²) = √25 = 5<br>∥v∥₁ = |3| + |4| = 7<br>∥v∥<sub>∞</sub> = max(3, 4) = 4</p><p>그림의 점선을 따라가면 3 + 4 = 7, 빗변은 5입니다. 일반적으로 ∥x∥<sub>∞</sub> ≤ ∥x∥₂ ≤ ∥x∥₁입니다. NumPy에서는 <code>np.linalg.norm(v, 1)</code>이 7.0, <code>np.linalg.norm(v)</code>가 5.0입니다.</p></div>
+<p>L2는 큰 성분 차이를 제곱으로 더 크게 반영하고, L1은 모든 성분 차이를 절댓값 그대로 더합니다. 그래서 이상값 하나의 영향은 L2 쪽이 더 큽니다. 두 노름은 뒤에서 거리 기반 모델(k-NN)과 정규화(L1·L2 벌점, OP06)에서 다시 나옵니다.</p>
+<div class="check" data-q="q9"></div>
 <h2>특징 척도가 다르면 거리가 달라진다</h2>
-<p>예를 들어 x축이 키(cm)이고 y축이 체중(kg)이라면, 두 열을 그대로 합쳐 구한 수를 실제 길이 ‘몇 cm’로 해석할 수 없습니다. 키를 m로 적는 것만으로도 수치상 거리가 달라집니다. 기능상 어떤 차이를 중요하게 볼지 결정한 뒤 단위 변환, 가중치, 혹은 DA05에서 배운 표준화를 적용합니다. 표준화를 해도 그 관측들에 어떤 거리가 적합한지는 문제에 따라 다릅니다.</p>
+<p>예를 들어 x축이 키(cm)이고 y축이 체중(kg)이라면, 두 열을 그대로 합쳐 구한 수를 실제 길이 ‘몇 cm’로 해석할 수 없습니다. 키를 m로 적는 것만으로도 수치상 거리가 달라집니다. 기능상 어떤 차이를 중요하게 볼지 결정한 뒤 단위 변환, 가중치, 혹은 표준화(열마다 평균을 빼고 표준편차로 나누기, DA05)를 적용합니다. 표준화를 해도 그 관측들에 어떤 거리가 적합한지는 문제에 따라 다릅니다.</p>
 <div class="check" data-q="q6"></div>
 <h2>풀이 점검</h2>
 <p>내적, 크기, 거리의 차이를 식으로 적어 봅시다. 내적은 두 벡터를 넣고, 크기는 하나의 벡터를 자기 자신과 비교하고, 거리는 두 점의 차이 벡터를 만든 뒤 길이를 구합니다. 다음 장에서는 내적이 0이거나, 일부만 특정 방향으로 겹칠 때를 그림으로 해석합니다.</p>
 
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table><thead><tr><th scope="col">양</th><th scope="col">식</th><th scope="col">결과</th><th scope="col">예</th></tr></thead><tbody>
+<tr><td><b class="key">내적</b></td><td>x·w = Σ xᵢwᵢ</td><td>스칼라</td><td>(2,3,1)·(1200,800,3000)=7800</td></tr>
+<tr><td><b class="key">L2 노름</b></td><td>√(x·x)</td><td>0 이상 스칼라</td><td>∥(3,4)∥₂=5</td></tr>
+<tr><td><b class="key">L1 노름</b></td><td>Σ |xᵢ|</td><td>0 이상 스칼라</td><td>∥(3,4)∥₁=7</td></tr>
+<tr><td>거리</td><td>∥Q−P∥</td><td>차이 벡터의 노름</td><td>P=(1,1), Q=(4,5): L2 5, L1 7</td></tr>
+</tbody></table></div>
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>내적은 짝지어 곱해 더한 스칼라이고, 노름은 노름의 세 조건을 만족하는 길이이며, 거리는 차이 벡터의 노름입니다.</p></div>
+
 <h2>참고 자료</h2>
-<ul><li><a href="https://ocw.mit.edu/courses/18-06sc-linear-algebra-fall-2011/pages/ax-b-and-the-four-subspaces/">MIT OCW · Linear Algebra, Ax = b and the Four Subspaces</a></li><li><a href="https://ocw.mit.edu/courses/18-06sc-linear-algebra-fall-2011/pages/least-squares-determinants-and-eigenvalues/">MIT OCW · Orthogonality and Projections</a></li><li><a href="https://numpy.org/doc/stable/reference/generated/numpy.dot.html">NumPy · 내적과 행렬 곱</a></li></ul>
+<ul><li><a href="https://ocw.mit.edu/courses/18-06sc-linear-algebra-fall-2011/pages/ax-b-and-the-four-subspaces/">MIT OCW · Linear Algebra, Ax = b and the Four Subspaces</a></li><li><a href="https://ocw.mit.edu/courses/18-06sc-linear-algebra-fall-2011/pages/least-squares-determinants-and-eigenvalues/">MIT OCW · Unit II: Least Squares, Determinants and Eigenvalues (직교·사영 포함)</a></li><li><a href="https://numpy.org/doc/stable/reference/generated/numpy.dot.html">NumPy · 내적과 행렬 곱</a></li></ul>
 <h2>확인 문제</h2>
+<p>본문 중간에서 푼 문제 말고 남은 문제입니다. 보기를 누르면 바로 정답과 해설이 나옵니다.</p>
 <div id="quiz"></div>
 <section class="work" id="tools"></section>
 <nav class="pager" aria-label="이전 장과 다음 장"></nav>
