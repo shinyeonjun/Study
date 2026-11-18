@@ -9,7 +9,7 @@ window.BDA_SUBJECTS = [
     plan: ["벡터와 행렬", "변화와 미분", "손실과 경사하강", "선형회귀 완성"],
     notes: [
       { id: "S01", title: "AI는 숫자를 곱해서 더한다", href: "decks/s01.html", area: 0 },
-      { id: "S02", title: "행렬로 한꺼번에", href: "decks/s02.html", area: 0 },
+      { id: "S02", title: "행렬 = 숫자를 바꾸는 기계", href: "decks/s02.html", area: 0 },
       { id: "S03", title: "곱을 합으로", href: "decks/s03.html", area: 1 },
       { id: "S04", title: "변화를 재다", href: "decks/s04.html", area: 1 },
       { id: "S05", title: "여러 변수와 기울기 벡터", href: "decks/s05.html", area: 1 },
