@@ -29,7 +29,7 @@
 
 <h2>알림과 조건이 참인 상태를 구분한다</h2>
 <p>한 칸 버퍼의 상태는 비었거나 하나가 들어 있습니다. 소비자는 비어 있으면 기다리고, 생산자는 한 칸이 차 있으면 기다립니다. 두 작업 모두 버퍼 상태와 기다리는 조건을 같은 잠금으로 보호합니다. <b class="key">조건변수</b>의 wait는 새 작업이 조건을 바꿀 수 있도록 잠금을 풀고 기다린 뒤, 돌아올 때 다시 잠금을 획득합니다.</p>
-<p>소비자 A가 알림을 받고 대기에서 풀려도 그 시점에 이미 버퍼를 가지고 있는 것은 아닙니다. A가 잠금을 다시 잡기 전 소비자 B가 먼저 가져갈 수 있습니다. 알림은 조건을 다시 검사하라는 뜻입니다. 따라서 <code>while not buffer …: wait()</code>처럼 루프로 검사합니다. 버퍼와 조건 확인이 따로 보호되면 검사와 상태 갱신 사이에 빈틈이 생깁니다.</p>
+<p>소비자 A가 알림을 받고 대기에서 풀려도 그 시점에 이미 버퍼를 가지고 있는 것은 아닙니다. A가 잠금을 다시 잡기 전 소비자 B가 먼저 가져갈 수 있습니다. 알림은 조건을 다시 검사하라는 뜻입니다. 따라서 <code>while not buffer …: wait()</code>처럼 루프로 검사합니다. 알림을 보낸 쪽이 잠금을 계속 쥐고 깨어난 쪽은 나중에 다시 경쟁하는 이 방식을 <b>Mesa 의미론</b>이라 하며, POSIX·Java·Python의 조건변수가 모두 이 방식입니다. (알림과 동시에 잠금을 넘겨 조건이 보장되는 Hoare 의미론도 있지만 실제 라이브러리에서는 드뭅니다.) POSIX는 알림 없이 깨어나는 <b>가짜 깨어남</b>도 허용하므로 <code>if</code> 한 번의 검사로는 안전하지 않습니다. 버퍼와 조건 확인이 따로 보호되면 검사와 상태 갱신 사이에 빈틈이 생깁니다.</p>
 <figure class="fig"><svg class="fig-svg" viewBox="0 0 760 160" role="img" aria-label="생산자와 소비자가 같은 잠금 아래 조건을 검사하고, 상태를 바꾼 뒤 조건변수로 알린다.">
 <rect class="f-box" x="42" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="135" y="61" text-anchor="middle">생산자</text><text class="f-s" x="135" y="89" text-anchor="middle">가득 차면 기다림</text><text class="f-s" x="135" y="110" text-anchor="middle">빈칸이면 하나 추가</text><line class="f-line" x1="235" y1="84" x2="278" y2="84" marker-end="url(#f-arrow)"/><rect class="f-soft" x="287" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="380" y="61" text-anchor="middle">같은 잠금</text><text class="f-s" x="380" y="89" text-anchor="middle">길이는 0 또는 1</text><text class="f-s" x="380" y="110" text-anchor="middle">바뀌면 알림</text><line class="f-line" x1="480" y1="84" x2="523" y2="84" marker-end="url(#f-arrow)"/><rect class="f-box" x="532" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="625" y="61" text-anchor="middle">소비자</text><text class="f-s" x="625" y="89" text-anchor="middle">비어 있으면 기다림</text><text class="f-s" x="625" y="110" text-anchor="middle">한 개면 꺼냄</text>
 </svg><figcaption>알림 뒤 잠금을 다시 잡았을 때 조건을 확인한다.</figcaption></figure>
@@ -89,6 +89,16 @@ assert invariant() and out==[10,20,30]</code></pre>
 <p class="small">실행 결과</p>
 <pre data-output><code>[10, 20, 30] 3 0</code></pre>
 <div class="check" data-q="q8"></div>
+
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table><thead><tr><th scope="col">핵심어</th><th scope="col">기억할 기준</th></tr></thead><tbody>
+<tr><td><b class="key">조건변수 wait</b></td><td>잠금을 풀고 잠든 뒤, 돌아올 때 잠금을 다시 잡습니다. 알림은 "다시 검사하라"는 뜻일 뿐입니다.</td></tr>
+<tr><td><b class="key">while 검사</b></td><td>Mesa 의미론과 가짜 깨어남 때문에 조건은 반복문으로 다시 확인합니다.</td></tr>
+<tr><td><b class="key">생산자/소비자 불변식</b></td><td>임계 구역 경계마다 produced−consumed=len(buffer)∈{0,1}입니다.</td></tr>
+<tr><td><b class="key">교착의 네 조건</b></td><td>상호 배제, 점유하며 대기, 비선점, 순환 대기. 전역 잠금 순서는 순환 대기를 없앱니다.</td></tr>
+<tr><td><b class="key">기아</b></td><td>교착이 없어도 특정 스레드가 계속 밀릴 수 있습니다. 공정성은 따로 보장해야 합니다.</td></tr>
+</tbody></table></div>
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>조건은 잠금 안에서 반복해 검사하고, 잠금은 모두가 같은 전역 순서로 잡습니다.</p></div>
 
 <h2>참고 자료</h2>
 <ul><li><a href="https://pages.cs.wisc.edu/~remzi/OSTEP/">Arpaci-Dusseau와 Arpaci-Dusseau · OSTEP, 스레드와 락</a></li><li><a href="https://docs.python.org/3/library/threading.html">Python · Lock과 Condition</a></li></ul>

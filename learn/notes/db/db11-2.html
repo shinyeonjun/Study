@@ -37,7 +37,7 @@
 <figure class="fig"><svg class="fig-svg" viewBox="0 0 760 160" role="img" aria-label="로그대로 변경을 다시 반영해 Y를 23으로 만들고, 커밋하지 않은 거래의 X 변경을 되돌려 7과 23을 복원한다.">
 <rect class="f-box" x="42" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="135" y="61" text-anchor="middle">중단 때 디스크</text><text class="f-s" x="135" y="89" text-anchor="middle">X=99, Y=20</text><text class="f-s" x="135" y="110" text-anchor="middle">로그는 LSN 4까지</text><line class="f-line" x1="235" y1="84" x2="278" y2="84" marker-end="url(#f-arrow)"/><rect class="f-soft" x="287" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="380" y="61" text-anchor="middle">redo로 이력 확인</text><text class="f-s" x="380" y="89" text-anchor="middle">X=99, Y=23</text><text class="f-s" x="380" y="110" text-anchor="middle">Y를 다시 씀</text><line class="f-line" x1="480" y1="84" x2="523" y2="84" marker-end="url(#f-arrow)"/><rect class="f-box" x="532" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="625" y="61" text-anchor="middle">미완료 거래 undo</text><text class="f-s" x="625" y="89" text-anchor="middle">X=7, Y=23</text><text class="f-s" x="625" y="110" text-anchor="middle">합계 30 복원</text>
 </svg><figcaption>커밋한 T₁의 변경은 남기고, 완료하지 않은 T₂의 효과만 제거한다.</figcaption></figure>
-<p>이제 커밋이 없는 T₂의 최종 로그에서 변경 전 값 7을 가져와 X를 되돌립니다. 복구 뒤 X+Y는 30입니다. 실제 ARIES에서는 페이지 LSN 검사 외에 마지막 작업을 기록하는 로그와, 되돌리는 과정 자체가 다시 중단됐을 때 반복 실행을 처리하는 보상 로그 등도 씁니다. 이 실습은 한 번의 복구가 끝까지 실행되고 거래 둘의 변경 순서가 위와 같다고 둔 메모리 모형입니다.</p>
+<p>이제 커밋이 없는 T₂의 최종 로그에서 변경 전 값 7을 가져와 X를 되돌립니다. 복구 뒤 X+Y는 30입니다. 실제 ARIES는 세 단계로 복구합니다. <b>분석</b> 단계는 마지막 체크포인트부터 로그를 읽어 중단 때 활동 중이던 거래 표와 수정 페이지 표(dirty page table)를 만들고 redo를 시작할 위치를 정합니다. <b>redo</b> 단계는 미완료 거래의 변경까지 포함해 로그를 순서대로 다시 적용해 중단 직전 상태를 그대로 재현합니다(이력 반복, repeating history). 이때 이 장처럼 pageLSN이 로그 LSN 이상이면 건너뜁니다. <b>undo</b> 단계는 미완료 거래의 변경을 LSN이 큰 것부터 되돌리면서 되돌린 일마다 <b>보상 로그 레코드</b>(CLR)를 남깁니다. CLR은 다시 되돌리지 않는 기록이라, 복구 도중 또 중단돼도 같은 변경을 두 번 되돌리지 않고 이어서 진행할 수 있습니다. 이 실습은 한 번의 복구가 끝까지 실행되고 거래 둘의 변경 순서가 위와 같다고 둔 메모리 모형입니다.</p>
 <div class="check" data-q="q3"></div><div class="check" data-q="q4"></div><div class="check" data-q="q5"></div>
 <h2>아직 어느 데이터가 영속됐는지에 따라 시작을 바꾸어 본다</h2>
 <p>세 가지 시작 상태에서 같은 영속 로그를 읽습니다. 데이터 페이지가 아직 하나도 쓰이지 않은 상태, X의 미완료 변경만 쓰인 상태, T₁의 두 변경만 쓰인 상태입니다. redo에서 모두 같은 이력 상태를 얻고, undo 뒤에는 커밋된 값만 남는지 검사합니다. 실제 DB를 중단하지 않고 값과 페이지 LSN으로 만든 표에 대해서만 계산합니다.</p>
@@ -66,6 +66,15 @@ for x,y in (((0,10),(0,20)),((4,99),(0,20)),((1,7),(2,23))):
 7 23 30
 7 23 30</code></pre>
 <div class="check" data-q="q8"></div>
+
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table><thead><tr><th scope="col">핵심어</th><th scope="col">기억할 기준</th></tr></thead><tbody>
+<tr><td><b class="key">steal / no-force</b></td><td>steal이면 미커밋 변경이 디스크에 있을 수 있어 undo가, no-force면 커밋 변경이 디스크에 없을 수 있어 redo가 필요합니다.</td></tr>
+<tr><td><b class="key">WAL 규칙</b></td><td>데이터 페이지보다 그 로그를 먼저, 커밋 응답보다 커밋 기록까지의 로그를 먼저 영속합니다.</td></tr>
+<tr><td><b class="key">pageLSN</b></td><td>pageLSN ≥ 로그 LSN이면 이미 반영된 변경이므로 redo를 건너뜁니다.</td></tr>
+<tr><td><b class="key">ARIES</b></td><td>분석 → redo(이력 반복) → undo(CLR 기록). 예제 복구 결과는 X=7, Y=23입니다.</td></tr>
+</tbody></table></div>
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>어느 페이지가 디스크에 먼저 나갔든, 영속 로그만 있으면 redo로 이력을 재현하고 undo로 미완료 거래를 지워 같은 상태에 도달합니다.</p></div>
 
 <h2>참고 자료</h2>
 <ul><li><a href="https://people.csail.mit.edu/tdanford/6830papers/mohan-aries.pdf">Mohan 외 · ARIES 복구 원 논문</a></li><li><a href="https://www.postgresql.org/docs/18/wal-intro.html">PostgreSQL · WAL 소개</a></li></ul>
