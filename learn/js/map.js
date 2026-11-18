@@ -51,7 +51,7 @@
         out.push({ id: id, pulled: !own.has(id) });
       }
       p.units.forEach(visit);
-      return { id: p.id, no: i + 1, name: p.name, main: p.main, note: p.note, items: out };
+      return { id: p.id, no: i + 1, name: p.name, main: p.main, note: p.note, project: p.project || "", items: out };
     });
     return plan;
   };

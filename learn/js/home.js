@@ -150,8 +150,9 @@
 
   function drawPlan(view) {
     var cur = currentPhase(), phases = G.plan(), mainTotal = 0;
-    var prs = phases.map(function (p) { var pr = G.phaseProgress(p, S); if (p.main && p.id !== "adv") mainTotal += pr.total; return pr; });
-    view.appendChild(head("공부 순서", "1~7단계 " + mainTotal + "장 · 약 " + weeks(mainTotal) + "주"));
+    // 실습이 붙은 단계들 = 목표(모델 내부)까지의 최단 경로
+    var prs = phases.map(function (p) { var pr = G.phaseProgress(p, S); if (p.project) mainTotal += pr.total; return pr; });
+    view.appendChild(head("공부 순서", "모델 내부까지 " + mainTotal + "장 · 약 " + weeks(mainTotal) + "주"));
 
     // 한눈에: 단계 · 기간 · 진도
     var over = el("ol", "plan-over");
@@ -159,6 +160,7 @@
       var li = el("li", cur && cur.phase.id === p.id ? "on" : ""), a = link("", "", "#plan-" + p.id);
       a.appendChild(el("span", "po-n", p.no + "단계"));
       a.appendChild(el("span", "po-t", p.name));
+      if (p.project) a.title = "끝에 직접 해 보기: " + p.project;
       a.appendChild(el("span", "po-m", prs[i].done + " / " + prs[i].total + "장 · 약 " + weeks(prs[i].total) + "주"));
       li.appendChild(a);
       over.appendChild(li);
@@ -180,6 +182,12 @@
     var blk = el("div", "area-block");
     p.items.forEach(function (it) { blk.appendChild(G.row(it.id, S, { tag: it.pulled ? "앞내용" : "" })); });
     view.appendChild(blk);
+    if (p.project) {
+      var pj = el("div", "phase-project");
+      pj.appendChild(el("span", "pj-k", "직접 해 보기"));
+      pj.appendChild(el("span", "", p.project));
+      view.appendChild(pj);
+    }
     var nav = el("p", "phase-pager small");
     if (i > 0) nav.appendChild(link("", "← " + phases[i - 1].no + "단계 " + phases[i - 1].name, "#plan-" + phases[i - 1].id));
     if (i < phases.length - 1) nav.appendChild(link("", phases[i + 1].no + "단계 " + phases[i + 1].name + " →", "#plan-" + phases[i + 1].id));

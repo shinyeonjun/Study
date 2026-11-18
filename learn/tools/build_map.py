@@ -76,28 +76,20 @@ GROUPS = [dict(ax, cats=[{"id": c["id"], "name": c["name"], "units": c["units"],
 # 다른 단계에 있는 선수 단원은 그 단계보다 먼저 '앞내용'으로 끌려 나온다. main=False 단계는 차례를 기다리지 않는다.
 # 건너뛰는 단원은 notes.js의 window.BDA_SKIP 한 곳에서만 관리한다
 SKIP = json.loads(re.search(r"window\.BDA_SKIP = (\[.*?\]);", io.open(NOTES, encoding="utf-8").read()).group(1))
-# 2026-11-19 사용자 결정: 본 줄기는 이론·지식 단원만. 방법·도구 단원은 이론 단원의 선수일 때만
-# 그 앞에 '앞내용'으로 끌려 나오고, 나머지는 '필요할 때'(시험 실기·연구 실험을 시작할 때) 묶음에 둔다.
-PLAN = [
-    {"id": "warm", "name": "수학 몸풀기", "main": True, "note": "", "units": rng("AL", 7, 9)},
-    {"id": "data", "name": "자료와 확률 기초", "main": True, "note": "",
-     "units": ["DA02", "DA03", "DA04", "DA05", "DA08"] + rng("DM", 1, 3) + rng("PR", 1, 5)},
-    {"id": "base", "name": "선형대수·미적분 기초", "main": True, "note": "", "units": rng("LA", 1, 5) + rng("CA", 1, 5)},
-    {"id": "stat", "name": "확률·통계", "main": True, "note": "", "units": rng("PR", 6, 10) + rng("ST", 1, 10)},
-    {"id": "math", "name": "선형대수·미적분 마무리", "main": True, "note": "", "units": rng("LA", 6, 8) + rng("CA", 6, 8)},
-    {"id": "ml", "name": "머신러닝", "main": True, "note": "", "units": rng("OP", 1, 4) + rng("ML", 1, 12)},
-    {"id": "dl", "name": "딥러닝과 모델 내부", "main": True, "note": "", "units": rng("DL", 1, 10) + rng("OP", 5, 8) + ["SP09"]},
-    {"id": "adv", "name": "대학 심화", "main": True, "note": "",
-     "units": rng("LA", 9, 14) + rng("CA", 9, 12) + track("RA") + rng("DM", 4, 9) + rng("PR", 11, 14) + rng("ST", 11, 15)
-              + rng("OP", 9, 11) + rng("ML", 13, 16) + rng("DL", 11, 14) + track("AI", "RL")},
-]
-_planned = set(i for p in PLAN for i in p["units"])
-_theory = set(i for c in CATS if c["axis"] == "theory" for i in c["units"])
-PLAN.append({"id": "side", "name": "컴퓨터 과학 이론", "main": False, "note": "",
-             "units": [u["id"] for u in units if u["id"] in _theory and u["id"] not in _planned and u["id"] not in SKIP]})
-PLAN.append({"id": "need", "name": "필요할 때", "main": False, "note": "",
-             "units": [u["id"] for u in units if u["id"] not in _theory and u["id"] not in _planned and u["id"] not in SKIP]})
-
+# 2026-11-19 사용자 결정: "몸으로 박으면서" 빠르게 응용까지. 본 줄기 1~5단계는 모델 내부 해석(SP09)까지의
+# 최단 경로(목표의 선수만)이고, 단계마다 끝에 직접 해 보는 실습 하나(project)를 둔다. 6~8단계에서 수학·통계를
+# 깊게 다시 보고 넓힌다. 방법·도구 단원은 선수일 때만 끌려 나오고 나머지는 '필요할 때'.
+def _need(targets):
+    out = set()
+    for t in targets:
+        out.add(t); out |= closure(t)
+    return out
+_done = set()
+def _phase(pid, name, targets, project="", main=True, units=None):
+    got = (set(units) if units is not None else _need(targets)) - _done - set(SKIP)
+    _done.update(got)
+    order = [u["id"] for u in units_all if u["id"] in got]
+    return {"id": pid, "name": name, "main": main, "note": "", "project": project, "units": order}
 # ---- 검사 ----
 ids = [u["id"] for u in units]
 byid = {u["id"]: u for u in units}
@@ -127,6 +119,21 @@ def closure(i, seen=None):
         if p not in seen:
             seen.add(p); closure(p, seen)
     return seen
+units_all = units
+_theory = set(i for c in CATS if c["axis"] == "theory" for i in c["units"])
+PLAN = [
+    _phase("lin", "선형회귀까지", ["ML04"], "numpy로 선형회귀를 직접 짜고, 경사하강으로 다시 풀어 두 답 비교하기"),
+    _phase("cls", "확률로 분류하고 평가하기", ["ML05", "ML03", "ML10"], "로지스틱 회귀를 라이브러리 없이 짜고 교차검증으로 평가하기"),
+    _phase("nn", "신경망", ["DL04"], "작은 MLP를 처음부터 학습시키고 학습률·초기화를 바꿔 보기"),
+    _phase("tf", "Transformer", ["DL08"], "작은 Transformer로 다음 글자 예측하기"),
+    _phase("inside", "모델 내부 들여다보기", ["SP09"], "학습한 작은 모델의 내부 표현에 선형 탐침을 붙이고, 활성화를 바꿔 출력 변화 보기"),
+    _phase("deep", "수학·통계 마저", [], "", units=rng("AL", 7, 9) + rng("LA", 1, 8) + rng("CA", 1, 8) + rng("PR", 1, 10)
+           + rng("DM", 1, 3) + rng("ST", 1, 10) + ["DA02", "DA03", "DA04", "DA05", "DA08"]),
+    _phase("wide", "머신러닝·딥러닝 넓히기", [], "", units=rng("OP", 1, 8) + rng("ML", 1, 12) + rng("DL", 1, 10)),
+    _phase("adv", "대학 심화", [], "", units=[i for i in _theory if i[:2] in ("LA", "CA", "RA", "DM", "PR", "ST", "OP", "ML", "DL", "AI", "RL")]),
+]
+PLAN.append(_phase("side", "컴퓨터 과학 이론", [], "", main=False, units=_theory))
+PLAN.append(_phase("need", "필요할 때", [], "", main=False, units=[u["id"] for u in units]))
 for i in rng("RL", 1, 8):
     bad = sorted(x for x in closure(i) if x.startswith("CA") or x.startswith("DL"))
     if bad: errors.append("%s 앞내용에 %s" % (i, bad))
