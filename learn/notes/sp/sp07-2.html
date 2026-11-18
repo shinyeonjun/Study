@@ -58,6 +58,7 @@
 <div class="check" data-q="q3"></div>
 <h2>센서가 말한 값과 예측의 차이만큼 보정합니다</h2>
 <p>새 센서값 y=6이 왔습니다. 예측된 센서값은 이 모형에서 m⁻=3입니다. 실제와 예측의 차이 3을 <b class="key">혁신</b>(innovation) 또는 관측 잔차라고 부릅니다. <b class="key">칼만 이득</b> K=P⁻/(P⁻+R)=2/(2+4)=1/3만큼 그 차이를 반영합니다. 새 평균은 3+(1/3)(6−3)=4, 새 분산은 (1−K)P⁻=(2/3)·2=4/3입니다. 여기서는 센서의 관측 행렬 C=1이라 이 단순한 식을 쓸 수 있습니다.</p>
+<p>같은 결과는 정밀도(분산의 역수)로 가중한 평균으로도 얻습니다. 새 평균 = (R·m⁻+P⁻·y)/(P⁻+R) = (4×3+2×6)/6 = 4, 새 분산 = 1/(1/P⁻+1/R) = 1/(1/2+1/4) = 4/3입니다. 분산이 작은 쪽, 곧 더 믿을 만한 쪽에 더 큰 가중치가 가고, 합친 뒤의 분산은 두 분산보다 작습니다.</p>
 <figure class="fig">
 <svg class="fig-svg" viewBox="0 0 760 157" role="img" aria-label="위치 눈금 위에 3 예측, 4 갱신, 6 관측을 표시">
 <line class="f-ink" x1="84" y1="89" x2="672" y2="89"/>
@@ -87,6 +88,7 @@
 <figcaption>눈금의 한 칸은 위치 1입니다. 예측 3에서 센서값 6까지 차이 3의 1/3만 반영해 평균이 4가 됩니다.</figcaption>
 </figure>
 <p>양수인 예측 분산 P⁻를 고정하고 센서 잡음 분산 R을 늘리면 K가 작아져 센서에 덜 반응합니다. 다음 상태의 예측이 불확실해 P⁻가 더 커지면 양수인 R이 고정됐을 때 K가 커집니다. 실제 확률 구조가 다르거나 센서가 지속적으로 한쪽으로 치우치면 위 갱신을 그대로 써도 실제 오차가 작다는 보장은 없습니다. 이 선형 가우스 전제에서는 평균과 분산으로 사후분포를 정확히 나타낼 수 있습니다. 일반 벡터 모형에서는 공분산 P와 관측 행렬 C가 보정 방향도 정합니다.</p>
+<div class="box"><p class="box-k">벡터 칼만 필터 (xₜ₊₁=Axₜ+Buₜ+wₜ, yₜ=Cxₜ+vₜ)</p><p>예측: m⁻=Am+Bu, P⁻=APAᵀ+Q<br>이득: K=P⁻Cᵀ(CP⁻Cᵀ+R)⁻¹<br>갱신: m=m⁻+K(y−Cm⁻), P=(I−KC)P⁻<br>A=B=C=1이면 이 장의 스칼라 식과 같습니다. Q와 R은 이제 과정 잡음과 관측 잡음의 공분산 행렬입니다.</p></div>
 <div class="check" data-q="q4"></div>
 <div class="check" data-q="q5"></div>
 <div class="check" data-q="q6"></div>
@@ -123,7 +125,7 @@ gain with noisier sensor: 1/5</code></pre>
 <h2>참고 자료</h2>
 <ul>
 <li><a href="https://press.princeton.edu/books/hardcover/9780691193984/feedback-systems">Åström·Murray · Feedback Systems</a></li>
-<li><a href="https://cs-www.cs.yale.edu/homes/yry/readings/general/Kalman1960.pdf">Kalman · 선형 필터와 예측</a></li>
+<li><a href="https://doi.org/10.1115/1.3662552">Kalman · A New Approach to Linear Filtering and Prediction Problems (1960)</a></li>
 </ul>
 
 <h2>확인 문제</h2>

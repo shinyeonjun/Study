@@ -75,6 +75,7 @@
 <div class="check" data-q="q3"></div>
 <h2>최적 행동은 남은 시간과 상태에 따라 달라집니다</h2>
 <p>마지막 시점에 위치 1이면 입력 −1을 주는 비용 1이 최선입니다. 위치 2라면 같은 −1을 줘도 끝 위치가 1이라 비용 3입니다. <b class="key">동적 계획법</b>에서는 각 상태에서 남은 한 단계의 최소 비용을 먼저 계산합니다. 처음 행동의 비용에 그 다음 상태에서의 최소 비용을 더해 다시 비교하면 두 단계 전체의 최선이 됩니다.</p>
+<div class="box"><p class="box-k">유한 시간 동적 계획의 식</p><p>끝 시점 N에서 V<sub>N</sub>(x)=끝 비용으로 시작해, k=N−1, …, 0 순서로 V<sub>k</sub>(x)=min<sub>u</sub> [ℓ(x,u)+V<sub>k+1</sub>(f(x,u))]를 계산합니다. ℓ는 단계 비용, f는 전이 식, V<sub>k</sub>(x)는 시점 k에 상태 x에서 남은 최소 비용입니다. 이 예에서는 N=2, V<sub>2</sub>(x)=2x², ℓ(x,u)=u², f(x,u)=x+u이고 V<sub>1</sub>(1)=1, V<sub>1</sub>(2)=3, V<sub>0</sub>(2)=2입니다.</p></div>
 <figure class="fig">
 <svg class="fig-svg" viewBox="0 0 760 163" role="img" aria-label="첫 단계에서 −1을 주고 상태 1의 최선 값 1을 더함">
 <rect class="f-box" x="30" y="30" width="203" height="63" rx="3"/>
@@ -124,7 +125,7 @@ backward: [2, 3, 10]</code></pre>
 <tbody>
 <tr><td><b class="key">최적제어</b></td><td>전이와 제약 안에서 정한 비용을 작게 하는 입력 선택</td></tr>
 <tr><td><b class="key">동적 계획</b></td><td>남은 최선 비용을 계산해 현재 대안에 더함</td></tr>
-<tr><td><b class="key">LQR</b></td><td>선형 전이와 이차 비용을 갖는 특정 연속 제어 문제의 해법</td></tr>
+<tr><td><b class="key">LQR</b></td><td>선형 전이·이차 비용·제약 없는 연속값 입력 문제. 최적 입력이 선형 피드백 u=−Kx</td></tr>
 <tr><td><b class="key">MPC</b></td><td>현재 상태에서 유한 계획을 다시 풀고 첫 입력을 적용</td></tr>
 </tbody></table></div>
 <div class="box sum"><p class="box-k">한 줄 정리</p><p>모형, 허용 입력, 비용, 비교 기간을 먼저 적고 가능한 다음 상태별 비용을 함께 계산합니다.</p></div>

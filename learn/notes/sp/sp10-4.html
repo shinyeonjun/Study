@@ -20,7 +20,7 @@
 <main class="page">
 <svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
 <header class="chapter">
-<p class="chap-sub">연구 수학·학습이론</p>
+<p class="chap-sub">전문 연구 경로 · SP10 연구 수학·학습이론</p>
 <p class="chap-num">SP10·4</p>
 <h1>도착과 처리의 확률과정에서 평균 대기 구하기</h1>
 <p class="lead">분당 3건이 들어오고 한 작업자가 분당 평균 5건을 처리할 수 있습니다. 처리 능력이 도착보다 커도 대기는 생깁니다. 도착과 처리 시간의 가정을 명시하고 기다리는 시간을 계산합니다.</p>
@@ -28,7 +28,7 @@
 <div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>M/M/1의 도착, 서비스 시간, 서버 수 가정을 설명할 수 있다.</li><li>정상상태 분포를 구해 시스템 평균 인원과 체류 시간을 계산할 수 있다.</li><li>Little의 법칙에서 세 수치가 같은 범위를 기준으로 해야 하는 이유를 설명할 수 있다.</li></ul></div>
 
 <h2>평균 속도 두 개와 분포 가정</h2>
-<p>인쇄 요청이 일정한 비율 λ=분당 3건으로 도착한다고 합시다. M/M/1에서는 도착 횟수를 포아송 과정으로 두므로 길이 t분인 구간에서 도착한 수는 평균 λt의 포아송 분포입니다. 겹치지 않는 구간의 도착 수는 독립입니다. 도착 사이 시간은 비율 λ의 지수분포입니다. 요청별 처리 시간은 동일한 지수분포를 따릅니다. 서로 및 도착 과정과 독립이며 평균은 1/μ=0.2분입니다. 1은 요청을 한 번에 하나씩 처리하는 서버 수입니다.</p>
+<p>M/M/1은 켄들 표기입니다. 첫 칸은 도착 과정, 둘째 칸은 처리 시간 분포, 셋째 칸은 서버 수이고, M은 무기억(Markov) 성질, 곧 포아송 도착과 지수분포 처리 시간을 뜻합니다. 인쇄 요청이 일정한 비율 λ=분당 3건으로 도착한다고 합시다. M/M/1에서는 도착 횟수를 포아송 과정으로 두므로 길이 t분인 구간에서 도착한 수는 평균 λt의 포아송 분포입니다. 겹치지 않는 구간의 도착 수는 독립입니다. 도착 사이 시간은 비율 λ의 지수분포입니다. 요청별 처리 시간은 동일한 지수분포를 따릅니다. 서로 및 도착 과정과 독립이며 평균은 1/μ=0.2분입니다. 1은 요청을 한 번에 하나씩 처리하는 서버 수입니다.</p>
 <p>묶음 도착과 예약 인쇄처럼 특정 시각에 요청이 모인다면 이 도착 가정을 먼저 확인합니다. 처리 시간이 항상 일정하다면 두 번째 M이 가리키는 서비스 가정도 달라집니다. 이번 장은 대기 공간이 충분하고 요청이 빠져나가지 않는 한 서버 모형을 사용합니다.</p>
 <div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
 <h2>장기적으로 몇 건이 쌓이는가</h2>
@@ -40,7 +40,7 @@
 <p>평균 시스템 인원은 L=Σ nπₙ=ρ/(1−ρ)입니다. 등비급수에 n이 붙은 합은 Σ nρⁿ=ρ/(1−ρ)²이므로 위 식을 얻습니다. 예제에서 L=1.5건입니다. λ≥μ라면 이 모형에 정규화 가능한 정상 분포가 없어 아래 정상상태 표를 적용할 수 없습니다.</p>
 <div class="check" data-q="q3"></div><div class="check" data-q="q4"></div>
 <h2>기다리는 시간과 인쇄하는 시간을 나누기</h2>
-<p><b class="key">Little의 법칙</b> L=λW에서 W는 도착부터 완료까지 걸린 평균 시간입니다. 따라서 W=L/λ=1.5/(분당 3건)=0.5분입니다. 평균 처리 시간 0.2분을 빼면 처리 전 대기 W<sub>q</sub>=0.3분입니다. 대기 중인 것만 세면 평균 L<sub>q</sub>=λW<sub>q</sub>=0.9건입니다. 두 법칙에서 센 인원과 시간의 범위가 일치해야 합니다.</p>
+<p><b class="key">Little의 법칙</b> L=λW에서 W는 도착부터 완료까지 걸린 평균 시간입니다. 따라서 W=L/λ=1.5/(분당 3건)=0.5분입니다. 평균 처리 시간 0.2분을 빼면 처리 전 대기 W<sub>q</sub>=0.3분입니다. 대기 중인 것만 세면 평균 L<sub>q</sub>=λW<sub>q</sub>=0.9건입니다. 두 법칙에서 센 인원과 시간의 범위가 일치해야 합니다. Little의 법칙은 도착 간격이나 처리 시간의 분포를 가정하지 않습니다. 장기 평균들이 존재하는 안정된 시스템이면 M/M/1이 아니어도 성립합니다.</p>
 <div class="table-wrap"><table><thead><tr><th scope="col">범위</th><th scope="col">평균 요청 수</th><th scope="col">요청 하나의 평균 시간</th></tr></thead><tbody><tr><td>대기와 처리 전체</td><td>1.5건</td><td>0.5분</td></tr><tr><td>인쇄를 받기 전 대기만</td><td>0.9건</td><td>0.3분</td></tr></tbody></table></div>
 <pre data-example="python"><code>from fractions import Fraction as F
 
@@ -65,6 +65,17 @@ print(f&quot;대기열: {float(arrival * wait):.1f}건, {float(wait):.1f}분&quo
 <div class="check" data-q="q5"></div><div class="check" data-q="q6"></div>
 <h2>도착을 하나 더 늘리면</h2>
 <p>처리율을 분당 5건으로 고정하고 도착률을 4건으로 높이면 W=1/(5−4)=1분입니다. 3건에서 4건으로 늘었을 뿐인데 평균 체류는 두 배가 됩니다. 실측 데이터를 분석할 때는 평균 도착률과 처리율만 맞추기보다 시간대별 혼잡, 분포의 적합성과 요청의 처리 순서를 함께 기록합니다.</p>
+
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table>
+<thead><tr><th scope="col">핵심어</th><th scope="col">기억할 기준</th></tr></thead>
+<tbody>
+<tr><td><b class="key">M/M/1</b></td><td>포아송 도착 λ, 지수 처리 μ, 서버 1개</td></tr>
+<tr><td><b class="key">이용률 ρ</b></td><td>λ/μ. ρ&lt;1이어야 정상상태가 있음</td></tr>
+<tr><td><b class="key">정상상태</b></td><td>πₙ=(1−ρ)ρⁿ, L=ρ/(1−ρ), W=1/(μ−λ)</td></tr>
+<tr><td><b class="key">Little의 법칙</b></td><td>L=λW, L<sub>q</sub>=λW<sub>q</sub>. 같은 범위의 인원과 시간을 짝지음</td></tr>
+</tbody></table></div>
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>ρ=λ/μ로 정상 분포를 구하고 Little의 법칙으로 인원을 시간으로 바꾸며, ρ가 1에 가까워질수록 대기는 급격히 늘어납니다.</p></div>
 
 <h2>참고 자료</h2>
 <ul><li><a href="https://galton.uchicago.edu/~yibi/teaching/stat317/2021/Lectures/Lecture19.pdf">University of Chicago · Queueing Models</a></li><li><a href="https://web.mit.edu/course/16/16.682/www/lec17.pdf">MIT · Queueing Theory</a></li></ul>

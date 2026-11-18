@@ -20,7 +20,7 @@
 <main class="page">
 <svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
 <header class="chapter">
-<p class="chap-sub">연구 수학·학습이론</p>
+<p class="chap-sub">전문 연구 경로 · SP10 연구 수학·학습이론</p>
 <p class="chap-num">SP10·1</p>
 <h1>수렴의 조건을 쓰고 점의 확률을 길이로 읽기</h1>
 <p class="lead">계산값이 가까워진다고 했을 때 어디에서, 얼마나 가까워지는지 명시합니다. 그다음 구간의 길이를 재는 규칙을 연속 확률의 사건과 기댓값에 연결합니다.</p>
@@ -54,12 +54,28 @@ print(f&quot;[0, 1]의 반례 오차: {point**n:.4f}&quot;)</code></pre>
 <h2>구간의 길이와 지시함수의 적분</h2>
 <p>측도는 집합의 크기를 0 이상의 수 또는 +∞로 재는 규칙입니다. 빈 집합의 크기는 0이고, 서로 겹치지 않는 가산 개의 측정 가능한 집합을 합치면 각각의 크기를 더합니다. 실수의 르베그 측도는 구간 [a,b]의 크기를 b−a로 둡니다. [a,a]는 점 하나여서 크기 0입니다. 확률 측도는 전체 표본공간의 크기가 1이라는 조건을 더하며, 연속 균등분포 U(0,1)는 이 구간의 길이를 사건의 확률로 씁니다.</p>
 <figure class="fig"><svg class="fig-svg" viewBox="0 0 760 160" role="img" aria-label="0과 1 사이의 균등분포에서 길이 0.5인 사건의 지시함수 적분">
-<rect class="f-box" x="42" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="135" y="61" text-anchor="middle">사건 A</text><text class="f-s" x="135" y="89" text-anchor="middle">0.25 ≤ X ≤ 0.75</text><text class="f-s" x="135" y="110" text-anchor="middle">X는 [0, 1] 균등</text><line class="f-line" x1="235" y1="84" x2="278" y2="84" marker-end="url(#f-arrow)"/><rect class="f-soft" x="287" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="380" y="61" text-anchor="middle">지시함수 1ₐ</text><text class="f-s" x="380" y="89" text-anchor="middle">A에서 1</text><text class="f-s" x="380" y="110" text-anchor="middle">나머지에서 0</text><line class="f-line" x1="480" y1="84" x2="523" y2="84" marker-end="url(#f-arrow)"/><rect class="f-box" x="532" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="625" y="61" text-anchor="middle">기댓값</text><text class="f-s" x="625" y="89" text-anchor="middle">A인 곳만 적분</text><text class="f-s" x="625" y="110" text-anchor="middle">E[1ₐ] = P(A) = 0.5</text>
+<rect class="f-box" x="42" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="135" y="61" text-anchor="middle">사건 A</text><text class="f-s" x="135" y="89" text-anchor="middle">0.25 ≤ X ≤ 0.75</text><text class="f-s" x="135" y="110" text-anchor="middle">X는 [0, 1] 균등</text><line class="f-line" x1="235" y1="84" x2="278" y2="84" marker-end="url(#f-arrow)"/><rect class="f-soft" x="287" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="380" y="61" text-anchor="middle">지시함수 1<tspan dy="5" font-size="0.75em">A</tspan></text><text class="f-s" x="380" y="89" text-anchor="middle">A에서 1</text><text class="f-s" x="380" y="110" text-anchor="middle">나머지에서 0</text><line class="f-line" x1="480" y1="84" x2="523" y2="84" marker-end="url(#f-arrow)"/><rect class="f-box" x="532" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="625" y="61" text-anchor="middle">기댓값</text><text class="f-s" x="625" y="89" text-anchor="middle">A인 곳만 적분</text><text class="f-s" x="625" y="110" text-anchor="middle">E[1<tspan dy="5" font-size="0.75em">A</tspan><tspan dy="-5">] = P(A) = 0.5</tspan></text>
 </svg><figcaption>확률로 가중한 지시함수의 평균은 1인 경우의 확률입니다.</figcaption></figure>
-<p>확률변수 X는 표본 결과에 실수를 대응시킵니다. X가 측정 가능하다는 것은 모든 실수 t에 대해 {X≤t}가 확률을 부여할 수 있는 사건이라는 뜻입니다. 보통 1<sub>A</sub>로 쓰는 지시함수도 이 조건을 만족합니다. X가 [0,1] 균등이면 X가 정확히 0.5인 사건은 확률이 0입니다. 같은 숫자라도 이산 모형에서 따로 질량을 주면 확률이 0보다 클 수 있습니다.</p>
+<p>확률변수 X는 표본 결과에 실수를 대응시킵니다. X가 측정 가능하다는 것은 모든 실수 t에 대해 {X≤t}가 확률을 부여할 수 있는 사건이라는 뜻입니다. A가 사건(확률을 부여할 수 있는 집합)이면, A에서 1이고 나머지에서 0인 지시함수 1<sub>A</sub>도 이 조건을 만족합니다. X가 [0,1] 균등이면 X가 정확히 0.5인 사건은 확률이 0입니다. 같은 숫자라도 이산 모형에서 따로 질량을 주면 확률이 0보다 클 수 있습니다.</p>
 <div class="check" data-q="q5"></div><div class="check" data-q="q6"></div>
 <h2>연구에서 다음에 확인할 것</h2>
 <p>적분과 극한의 순서를 바꾸는 계산을 만나면 저자가 어떤 수렴과 상계를 확보했는지 확인합니다. 점별 수렴을 보았다고 해서 교환이 언제나 가능한 것은 아닙니다. 예를 들어 유한 측도 공간에서 적분 가능한 함수열이 균등 수렴하면, 적분값은 극한 함수의 적분에 수렴합니다. 지배수렴정리는 점별 수렴에 절댓값을 지배하는 적분 가능한 공통 함수 등의 조건을 더해 교환을 정당화합니다.</p>
+<p>조건이 빠지면 교환이 실패합니다. fₙ=n·1<sub>(0,1/n)</sub>은 [0,1]의 모든 점에서 0으로 점별 수렴하지만, ∫fₙ=n×(1/n)=1이라 적분값은 0으로 가지 않습니다. 이 함수열의 높이는 n까지 커지므로 모든 n을 한꺼번에 덮는 적분 가능한 지배 함수가 없습니다.</p>
+<div class="box"><p class="box-k">확률변수의 두 가지 수렴</p><p>Xₙ이 X로 <b class="key">확률수렴</b>한다는 것은 모든 ε&gt;0에 대해 P(|Xₙ−X|≥ε)→0이라는 뜻입니다. <b class="key">거의 확실한 수렴</b>은 P(Xₙ→X)=1, 곧 수렴하지 않는 결과들의 확률이 0이라는 뜻입니다. 거의 확실한 수렴이면 확률수렴이지만 역은 일반적으로 성립하지 않습니다. 독립 동일분포 표본평균이 기댓값으로 가는 대수의 법칙이 대표 예입니다(약한 법칙은 확률수렴, 강한 법칙은 거의 확실한 수렴). 다음 장의 Hoeffding 부등식은 이 확률이 n에 따라 얼마나 빨리 줄어드는지 수치로 줍니다.</p></div>
+
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table>
+<thead><tr><th scope="col">핵심어</th><th scope="col">기억할 기준</th></tr></thead>
+<tbody>
+<tr><td><b class="key">ε–N 정의</b></td><td>모든 ε&gt;0에 대해 N이 있어 n≥N이면 |aₙ−L|&lt;ε. N은 ε에 의존</td></tr>
+<tr><td><b class="key">점별 수렴</b></td><td>x마다 따로 N을 고름</td></tr>
+<tr><td><b class="key">균등 수렴</b></td><td>ε 하나에 정의역 전체에 통하는 N 하나. xⁿ은 [0,0.9]에서만 균등</td></tr>
+<tr><td><b class="key">측도</b></td><td>집합의 크기. 빈 집합 0, 서로소 가산 합집합에서 더해짐</td></tr>
+<tr><td><b class="key">르베그 측도</b></td><td>구간 [a,b]의 크기 b−a. 점 하나는 0</td></tr>
+<tr><td><b class="key">지시함수</b></td><td>E[1<sub>A</sub>]=P(A)</td></tr>
+<tr><td><b class="key">확률수렴</b></td><td>P(|Xₙ−X|≥ε)→0</td></tr>
+</tbody></table></div>
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>수렴은 오차를 먼저 정하고 N을 고르는 순서로 쓰고, 연속 확률은 길이를 재는 측도로 읽습니다.</p></div>
 
 <h2>참고 자료</h2>
 <ul><li><a href="https://ocw.mit.edu/courses/18-100b-real-analysis-spring-2025/mit18_100b_s25_lec_full.pdf">MIT 18.100B · 실해석 강의 노트</a></li><li><a href="https://arxiv.org/abs/2604.01685">Probability with Measure · 측도 확률 강의 노트</a></li></ul>

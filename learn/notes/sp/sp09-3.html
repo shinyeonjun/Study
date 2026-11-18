@@ -22,7 +22,7 @@
 <svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
 
 <header class="chapter">
-<p class="chap-sub">전문 경로 · SP09 모델 내부·해석 가능성</p>
+<p class="chap-sub">전문 연구 경로 · SP09 모델 내부·해석 가능성</p>
 <p class="chap-num">SP09·3</p>
 <h1>섞인 뉴런에서 희소 특징을 읽고 회로 가설 검증하기</h1>
 <p class="lead">같은 뉴런 값에 여러 특징이 섞일 수 있습니다. 둘을 다른 좌표에서 읽고, 출력으로 이어지는 경로 중 무엇을 없앴는지 계산합니다.</p>
@@ -38,7 +38,7 @@
 </div>
 <h2>한 좌표의 숫자만 보고 어느 특징인지 바로 알 수 없다</h2>
 <p>두 특징 a,b가 음이 아니고 모의 활성 벡터 h=(a+b,a−b)로 관찰된다고 합시다. a=2,b=0일 때와 a=0,b=2일 때 첫 활성이 모두 2입니다. 전체 벡터는 [2,2]와 [2,−2]로 다릅니다. 첫 좌표에 두 특징이 섞였지만, 전체를 사용하면 a=(h₀+h₁)/2, b=(h₀−h₁)/2로 복원합니다.</p>
-<p>이 예의 두 특성은 여러 뉴런 좌표를 함께 써서 표현됩니다. 특징 a의 방향은 [1,1], b의 방향은 [1,−1]입니다. a=2,b=3이면 h=[5,−1]입니다. 실제 네트워크에서는 특징 수가 활성 차원보다 더 많은 모형도 연구되지만, 이 두 좌표 예는 두 방향이 단순히 섞이는 원리를 보여줍니다.</p>
+<p>이 예의 두 특성은 여러 뉴런 좌표를 함께 써서 표현됩니다. 특징 a의 방향은 [1,1], b의 방향은 [1,−1]입니다. a=2,b=3이면 h=[5,−1]입니다. 첫 뉴런처럼 서로 다른 여러 특징에 반응하는 뉴런을 <b class="key">다의적</b>(polysemantic) 뉴런이라고 합니다. 이 예는 특징 2개를 2차원에 담았으므로 역변환 하나로 정확히 되찾을 수 있습니다. 실제 네트워크에서는 특징 수가 활성 차원보다 많을 수 있다는 가설이 연구되며, 이를 <b class="key">중첩</b>(superposition)이라고 부릅니다. 이때는 선형 변환 하나로 모든 특징을 정확히 되찾을 수 없습니다. 각 입력에서 실제로 켜지는 특징이 소수(희소)라면 간섭이 적어 읽어 낼 수 있다는 것이 희소 표현을 찾는 이유입니다.</p>
 <figure class="fig">
 <svg class="fig-svg" viewBox="0 0 760 257" role="img" aria-label="a 2만 있을 때와 b 2만 있을 때 h0는 둘 다 2이며 h1이 2와 -2로 다르다.">
 <text class="f-cap" x="380" y="33" text-anchor="middle">첫 뉴런에서 같은 수가 나타나는 두 이유</text>
@@ -77,7 +77,7 @@
 <div class="check" data-q="q2"></div>
 
 <h2>많은 후보 중 적은 특징을 남기도록 학습할 수 있다</h2>
-<p><b class="key">희소 오토인코더</b>(SAE)는 관찰한 활성 h를 특징 z로 바꾸고, 그 적은 활성 특징을 조합해 h를 복원합니다. 작은 모형으로 z=ReLU(Wₑh+bₑ), ĥ=Wᵈz+bᵈ를 씁니다. 예를 들어 복원 평균제곱오차 + λΣ|zᵢ|를 최소화하면, 오차와 특징 활성 크기 사이의 절충을 학습할 수 있습니다. 실제 얼마나 적은 특징이 활성화됐는지도 별도로 셉니다.</p>
+<p><b class="key">희소 오토인코더</b>(SAE)는 관찰한 활성 h를 특징 z로 바꾸고, 그 적은 활성 특징을 조합해 h를 복원합니다. 작은 모형으로 z=ReLU(W<sub>enc</sub>h+b<sub>enc</sub>), ĥ=W<sub>dec</sub>z+b<sub>dec</sub>를 씁니다. 보통 z의 차원을 h의 차원보다 크게 잡아, 많은 후보 특징 가운데 입력마다 몇 개만 켜지게 합니다. 예를 들어 복원 평균제곱오차 + λΣ|zᵢ|를 최소화하면, 오차와 특징 활성 크기 사이의 절충을 학습할 수 있습니다. 실제 얼마나 적은 특징이 활성화됐는지도 별도로 셉니다.</p>
 <p>아래 계산은 앞의 모형을 아는 인코더와 디코더를 지정합니다. [5,−1]을 z=(2,3)으로 읽고 두 방향을 섞으면 정확히 [5,−1]이 됩니다. b를 끄면 재구성은 [2,2]로 바뀌어 원래 [5,−1]과의 평균제곱오차는 (9+9)/2=9입니다. 학습한 특징의 출력 효과를 바꾸는 개입과 원래 표현을 잘 복원하는지도 다른 질문입니다.</p>
 <figure class="fig">
 <svg class="fig-svg" viewBox="0 0 760 257" role="img" aria-label="h=(5,-1)에서 a=2와 b=3을 읽어 출력 8을 얻는다. b를 0으로 교체하면 복원은 (2,2), 출력은 2다.">
@@ -134,9 +134,21 @@ h, z, score: (5, -1) (2.0, 3.0) 8.0
 without b: (2.0, 2.0) score: 2.0 mse: 9.0</code></pre>
 <p>실제 SAE에서 특징에 붙인 이름은 활성 사례를 설명하려는 가설입니다. 복원 오차, 다른 의미를 섞어 읽는 사례, 서로 대신할 수 있는 경로, 다른 층과 입력에서의 실패를 함께 봅니다. 한 입력에서의 효과를 모델 전체나 사람의 개념 전체까지 일반화할 수 있는지는 별도 실험이 필요합니다.</p>
 
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table>
+<thead><tr><th scope="col">핵심어</th><th scope="col">기억할 기준</th></tr></thead>
+<tbody>
+<tr><td><b class="key">다의적 뉴런</b></td><td>한 뉴런이 여러 특징에 반응. 뉴런 하나의 값만으로 특징을 정할 수 없음</td></tr>
+<tr><td><b class="key">중첩</b></td><td>특징 수가 차원보다 많게 겹쳐 표현된다는 가설</td></tr>
+<tr><td><b class="key">희소 오토인코더</b></td><td>활성 h를 넓고 희소한 z로 바꾸고 다시 복원. 손실 = 복원 오차 + λΣ|zᵢ|</td></tr>
+<tr><td><b class="key">회로 분석</b></td><td>특징이 어떤 경로로 출력에 전달되는지 가설을 세우고 개입으로 검증</td></tr>
+</tbody></table></div>
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>뉴런 좌표가 아니라 특징 방향으로 활성을 읽고, 그 특징이 출력에 쓰인다는 주장은 복원 성능이 아니라 개입으로 확인합니다.</p></div>
+
 <h2>참고 자료</h2>
 <ul>
 <li><a href="https://distill.pub/2020/circuits/zoom-in/">Olah 외 · 특징과 회로의 구성</a></li>
+<li><a href="https://transformer-circuits.pub/2022/toy_model/index.html">Elhage 외 · Toy Models of Superposition</a></li>
 <li><a href="https://transformer-circuits.pub/2023/monosemantic-features/index.html">Bricken 외 · 희소 오토인코더로 읽는 특징</a></li>
 <li><a href="../dl/dl09-1.html">DL09 · 인코더와 복원</a></li>
 <li><a href="sp09-2.html">SP09 · 출력에 대한 내부 개입</a></li>

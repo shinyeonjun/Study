@@ -20,7 +20,7 @@
 <main class="page">
 <svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
 <header class="chapter">
-<p class="chap-sub">신호·통신 이론</p>
+<p class="chap-sub">전문 연구 경로 · SP08 신호·통신 이론</p>
 <p class="chap-num">SP08·1</p>
 <h1>시간 표를 이산 푸리에 변환으로 읽기</h1>
 <p class="lead">네 번 측정한 값에서 어느 속도로 반복하는 성분이 있는지 찾습니다. 복소수 회전으로 점수를 계산하고 같은 변환을 FFT로 검산합니다.</p>
@@ -29,11 +29,12 @@
 
 <h2>시간의 네 값에서 반복 패턴을 찾는다</h2>
 <p>1초에 한 번 반복하는 코사인을 1초에 네 번 측정했습니다. 시간은 0, 0.25, 0.5, 0.75초이고 표본값은 [1,0,−1,0]입니다. 각도가 한 바퀴 도는 동안의 가로 좌표를 네 곳에서 읽은 값입니다.</p>
-<p>길이 N의 <b class="key">이산 푸리에 변환</b>(DFT)은 각 후보 k에서 x[n]에 복소수 회전 cos(2πkn/N)−i sin(2πkn/N)을 곱해 n=0부터 N−1까지 더합니다. +i와 −i로 회전 방향을 정할 수 있는데, 여기서는 NumPy의 전방 변환 약속에 따라 −i를 사용합니다. 이 값의 크기는 주어진 반복 방향 성분의 크기에 연결됩니다.</p>
+<p>길이 N의 <b class="key">이산 푸리에 변환</b>(DFT)은 각 후보 k에서 x[n]에 복소수 회전 cos(2πkn/N)−i sin(2πkn/N)을 곱해 n=0부터 N−1까지 더합니다. +i와 −i로 회전 방향을 정할 수 있는데, 여기서는 NumPy의 전방 변환 약속에 따라 −i를 사용합니다. |X[k]|가 크면 그 회전 성분이 신호에 많이 들어 있다는 뜻입니다.</p>
+<div class="box"><p class="box-k">DFT와 역변환</p><p>X[k] = Σ<sub>n=0</sub><sup>N−1</sup> x[n]·e<sup>−2πikn/N</sup>, k=0, …, N−1<br>x[n] = (1/N)·Σ<sub>k=0</sub><sup>N−1</sup> X[k]·e<sup>+2πikn/N</sup><br>오일러 공식 e<sup>iθ</sup>=cos θ+i sin θ에 따라 e<sup>−2πikn/N</sup>은 위의 회전 cos(2πkn/N)−i sin(2πkn/N)과 같습니다. 1/N을 어느 쪽에 둘지는 라이브러리마다 다를 수 있고, NumPy 기본값은 역변환 쪽에 둡니다.</p></div>
 <div class="check" data-q="q1"></div>
 <h2>무엇과 곱할지 네 점으로 계산한다</h2>
 <div class="table-wrap"><table><thead><tr><th scope="col">후보 k</th><th scope="col">수열에 곱할 네 회전 계수</th><th scope="col">X[k]</th></tr></thead><tbody><tr><td>0</td><td>[1, 1, 1, 1]</td><td>0</td></tr><tr><td>1</td><td>[1, −i, −1, i]</td><td>2</td></tr><tr><td>2</td><td>[1, −1, 1, −1]</td><td>0</td></tr><tr><td>3</td><td>[1, i, −1, −i]</td><td>2</td></tr></tbody></table></div>
-<p>k=0은 단순합 1+0−1+0=0입니다. k=1에서는 첫째 항 1과 셋째 항 (−1)×(−1)이 더해져 2입니다. 이 실수 신호의 k=1과 k=3은 양·음 방향의 한 쌍입니다. k=3은 표본에서 k=−1과 같은 회전을 나타냅니다. 이 값을 곧바로 시간 신호의 진폭으로 읽기보다는 N과 변환 방식, 한 쌍을 합칠지부터 확인합니다.</p>
+<p>k=0은 단순합 1+0−1+0=0입니다. k=1에서는 첫째 항 1과 셋째 항 (−1)×(−1)이 더해져 2입니다. 이 실수 신호의 k=1과 k=3은 양·음 방향의 한 쌍입니다. k=3은 표본에서 k=−1과 같은 회전을 나타냅니다. 진폭으로 환산할 때는 이 짝을 함께 봅니다. 실수 코사인 A·cos(2πkn/N)(0&lt;k&lt;N/2)는 이 약속에서 |X[k]|=|X[N−k]|=AN/2를 만듭니다. 여기서는 A=1, N=4라 2입니다. 따라서 진폭은 2|X[k]|/N으로 읽습니다. 짝이 없는 k=0 칸과(N이 짝수일 때) k=N/2 칸은 |X[k]|/N입니다. 정규화 약속이 다르면 이 환산도 달라집니다.</p>
 <div class="check" data-q="q2"></div><div class="check" data-q="q3"></div>
 <figure class="fig"><svg class="fig-svg" viewBox="0 0 760 220" role="img" aria-label="k가 0,1,2,3일 때 계수 크기 0,2,0,2. 샘플링 4Hz의 주파수 표기는 0,1,−2,−1Hz">
 <line class="f-line" x1="123" y1="147" x2="655" y2="147"/><line class="f-line" x1="130" y1="147" x2="130" y2="37"/><line class="f-dash" x1="130" y1="147" x2="650" y2="147"/><text class="f-s" x="109" y="150" text-anchor="end">0</text><line class="f-dash" x1="130" y1="110" x2="650" y2="110"/><text class="f-s" x="109" y="113" text-anchor="end">1</text><line class="f-dash" x1="130" y1="73" x2="650" y2="73"/><text class="f-s" x="109" y="76" text-anchor="end">2</text><text class="f-s" x="204" y="172" text-anchor="middle">0</text><text class="f-s" x="204" y="198" text-anchor="middle">0 Hz</text><rect class="f-soft" x="304" y="73" width="44" height="74" rx="3"/><text class="f-s" x="326" y="172" text-anchor="middle">1</text><text class="f-s" x="326" y="198" text-anchor="middle">1 Hz</text><text class="f-s" x="448" y="172" text-anchor="middle">2</text><text class="f-s" x="448" y="198" text-anchor="middle">−2 Hz</text><rect class="f-soft" x="548" y="73" width="44" height="74" rx="3"/><text class="f-s" x="570" y="172" text-anchor="middle">3</text><text class="f-s" x="570" y="198" text-anchor="middle">−1 Hz</text><text class="f-s" x="130" y="28" text-anchor="middle">|X[k]|</text>
@@ -62,6 +63,16 @@ print(&quot;복원:&quot;, [round(v.real) for v in restored])</code></pre>
 <div class="check" data-q="q4"></div><div class="check" data-q="q5"></div>
 <p>표본 간격 d가 0.25초라 표본 빈도는 4Hz입니다. N=4이면 주파수 칸 사이의 간격은 4/4=1Hz입니다. FFT 결과에 실제 단위를 붙이려면 배열 길이뿐 아니라 표본 간격도 알아야 합니다.</p>
 <div class="check" data-q="q6"></div>
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table>
+<thead><tr><th scope="col">핵심어</th><th scope="col">기억할 기준</th></tr></thead>
+<tbody>
+<tr><td><b class="key">이산 푸리에 변환</b></td><td>X[k]=Σ x[n]e<sup>−2πikn/N</sup>. 각 회전 성분과의 내적</td></tr>
+<tr><td><b class="key">역변환</b></td><td>반대 부호 회전으로 더한 뒤 N으로 나눔(NumPy 기본)</td></tr>
+<tr><td><b class="key">FFT</b></td><td>같은 DFT를 O(N log N)에 계산하는 알고리즘</td></tr>
+<tr><td><b class="key">주파수 간격</b></td><td>표본 빈도 ÷ N. 표본 간격을 알아야 Hz를 붙임</td></tr>
+<tr><td><b class="key">진폭 환산</b></td><td>실수 코사인은 0&lt;k&lt;N/2에서 진폭 = 2|X[k]|/N</td></tr>
+</tbody></table></div>
 <div class="box sum"><p class="box-k">한 줄 정리</p><p>시간 표를 각 회전 패턴과 비교해 DFT 계수를 구하고, 표본 간격으로 주파수의 단위를 붙입니다.</p></div>
 
 <h2>참고 자료</h2>

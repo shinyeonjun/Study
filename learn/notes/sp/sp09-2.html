@@ -22,7 +22,7 @@
 <svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
 
 <header class="chapter">
-<p class="chap-sub">전문 경로 · SP09 모델 내부·해석 가능성</p>
+<p class="chap-sub">전문 연구 경로 · SP09 모델 내부·해석 가능성</p>
 <p class="chap-num">SP09·2</p>
 <h1>내부 활성을 바꾸고 삭제와 복원을 대조하기</h1>
 <p class="lead">같은 모형에서 두 입력의 값을 기록하고, 한 내부 성분만 바꿔 점수가 어떻게 움직이는지 봅니다. 정상 입력에서의 제거와 손상 입력에서의 복원을 구분합니다.</p>
@@ -79,6 +79,7 @@
 <h2>다른 실행에서 얻은 활성 하나를 복사해 다시 계산한다</h2>
 <p><b class="key">Activation patching</b>은 한 실행에서 기록한 활성의 일부를 다른 실행의 같은 위치에 넣은 뒤 이후 계산을 보는 방법입니다. 비교 상태 (−1,1)에서 u만 정상값 3으로 바꾸면 s=7이 됩니다. 반대로 v만 정상값으로 바꾸면 그 값이 이미 1이라 s=−1입니다.</p>
 <p>이 장에서는 복원율을 (개입 점수−비교 점수)/(정상 점수−비교 점수)로 정합니다. 점수 차가 8이라 u의 경우 (7+1)/8=1, v는 0입니다. 정상·비교 점수가 같아 분모가 0이면 계산하지 않습니다. 개입 점수가 정상보다 높거나 비교보다 낮을 때 값은 0~1 밖에도 나올 수 있습니다. 이 수치는 성공 확률이 아니라 점수 차를 비율로 표현한 것입니다.</p>
+<p>방향도 밝혀야 합니다. 정상 실행의 값을 비교 실행에 넣어 점수가 얼마나 돌아오는지 보는 것과, 비교 실행의 값을 정상 실행에 넣어 점수가 얼마나 무너지는지 보는 것은 서로 다른 질문입니다. 앞의 것은 그 성분만으로 충분한지, 뒤의 것은 그 성분이 필요한지에 가깝습니다. Zhang·Nanda는 비교 입력을 만드는 방법과 점수 지표(확률인지 로짓 차이인지)를 바꾸면 결론이 달라질 수 있음을 보였습니다.</p>
 <figure class="fig">
 <svg class="fig-svg" viewBox="0 0 760 257" role="img" aria-label="비교 점수 -1에서 u만 정상값으로 교체하면 7, v만 교체하면 -1이라 복원율은 각각 1과 0이다.">
 <text class="f-cap" x="380" y="33" text-anchor="middle">비교 상태에서 한 성분을 정상값으로 교체</text>
@@ -139,6 +140,17 @@ for i in range(2):
 axis: 0 ablation: 1 patched: 7 recovery: 1.0
 axis: 1 ablation: 6 patched: -1 recovery: 0.0</code></pre>
 <p>이 예의 v 교체는 정상과 비교에서 값이 같아 아무 변화도 만들지 않았습니다. 따라서 v가 전혀 쓰이지 않는다고 결론내릴 수 없습니다. 실제로 정상 실행에서 v를 0으로 바꾸면 점수가 1 줄어듭니다. 다른 조건과 측정값에서 결과가 다시 나오는지 보기 전에는 이 입력 쌍과 개입에서 관찰한 효과로 주장 범위를 정합니다.</p>
+
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table>
+<thead><tr><th scope="col">핵심어</th><th scope="col">기억할 기준</th></tr></thead>
+<tbody>
+<tr><td><b class="key">Ablation</b></td><td>한 성분을 0·평균 같은 기준값으로 바꾸고 원래 점수와 비교</td></tr>
+<tr><td><b class="key">Activation patching</b></td><td>다른 실행에서 기록한 활성을 같은 위치에 복사한 뒤 이후 계산을 봄</td></tr>
+<tr><td><b class="key">복원율</b></td><td>(개입 − 비교)/(정상 − 비교). 분모 0이면 정의되지 않음, 0~1 밖도 가능</td></tr>
+<tr><td><b class="key">개입 기록</b></td><td>모델, 입력 쌍, 층·위치, 교체 방향, 대체값, 지표를 함께 적음</td></tr>
+</tbody></table></div>
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>제거는 정상 실행에서 무엇이 필요한지, 복사는 비교 실행에서 무엇이 점수를 되돌리는지 묻고, 둘 다 주장 범위는 실험한 조건까지입니다.</p></div>
 
 <h2>참고 자료</h2>
 <ul>

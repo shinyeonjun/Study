@@ -20,7 +20,7 @@
 <main class="page">
 <svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
 <header class="chapter">
-<p class="chap-sub">연구 수학·학습이론</p>
+<p class="chap-sub">전문 연구 경로 · SP10 연구 수학·학습이론</p>
 <p class="chap-num">SP10·3</p>
 <h1>가우시안 평균의 불확실성과 다음 두 관측의 관계</h1>
 <p class="lead">측정값 2와 4로 장치의 평균을 추정합니다. 추정한 평균이 불확실하므로 다음 측정의 분포를 구할 때 그 불확실성까지 전달합니다.</p>
@@ -30,6 +30,7 @@
 <h2>두 숫자 사이에서 평균 하나를 추정하기</h2>
 <p>장치가 안정된 상태에서 찍는 평균 θ는 아직 모릅니다. θ의 사전분포를 N(0,1)로 놓습니다. 여기서 N(m,v)의 첫 자리는 평균, 둘째 자리는 분산입니다. θ를 알고 있다고 가정하면 각 측정 Y<sub>i</sub>는 N(θ,1)을 따르며 서로 독립입니다. 관측마다 생기는 오차의 분산 1은 알려졌다고 둡니다.</p>
 <p>관측을 2, 4라고 합시다. <a href="../st/st09-1.html">베이즈 추론</a>에서처럼 사후 밀도는 사전 밀도와 관측의 우도를 곱해 정규화합니다. θ에 관한 지수 부분에 들어가는 제곱을 모으면 θ²+(2−θ)²+(4−θ)² = 3θ²−12θ+20 = 3(θ−2)²+8입니다. 마지막 8은 θ에 따라 바뀌지 않습니다. 따라서 사후분포는 N(2,1/3)입니다.</p>
+<div class="box"><p class="box-k">분산을 아는 정규 평균의 켤레 갱신</p><p>사전 θ~N(μ₀, 1/τ₀), 관측 Yᵢ|θ~N(θ, 1/τ)가 독립으로 n개이면 사후는 N(μₙ, 1/τₙ)이고 τₙ=τ₀+nτ, μₙ=(τ₀μ₀+τΣyᵢ)/τₙ입니다. τ는 분산의 역수인 정밀도입니다. 다음 관측의 사후예측분포는 N(μₙ, 1/τₙ+1/τ)입니다. 이 장의 예는 μ₀=0, τ₀=τ=1, n=2라 τₙ=3, μₙ=6/3=2입니다. 사전과 사후가 같은 정규 꼴이라 이런 사전을 켤레 사전이라 부릅니다.</p></div>
 <div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
 <h2>평균이 아니라 다음 값을 예측하기</h2>
 <p>새 측정을 Y<sub>3</sub>=θ+η<sub>3</sub>로 씁니다. η<sub>3</sub>는 새로 생기는 평균 0, 분산 1의 정규 잡음이며 θ와 앞선 잡음들에서 독립입니다. 관측 두 개에 조건을 걸어 계산하면 Y<sub>3</sub>의 평균은 2+0, 분산은 1/3+1입니다. 두 독립 정규변수의 합이므로 <b class="key">사후예측분포</b>는 N(2,4/3)입니다. θ를 2에 고정해 버리면 분산 1만 써서 예측이 실제 모형보다 지나치게 좁아집니다.</p>
@@ -38,7 +39,7 @@
 </svg><figcaption>오른쪽은 장치에서 실제로 찍을 다음 값의 분포라 가운데보다 폭이 넓습니다.</figcaption></figure>
 <div class="check" data-q="q3"></div><div class="check" data-q="q4"></div>
 <h2>관측이 한 줄 이어지면 확률과정이 된다</h2>
-<p>시점 1, 2, 3, … 에서의 측정값을 모두 한꺼번에 모형화하면 (Y<sub>1</sub>, Y<sub>2</sub>, …)라는 확률과정입니다. <b class="key">확률과정</b>은 지표로 구분된 확률변수의 모음입니다. 미지의 평균 θ 하나를 시점들이 공유합니다. θ에 조건을 주면 관측 잡음은 독립입니다. θ를 평균 내어 없앤 사후예측에서는 두 미래 관측의 공분산이 남습니다.</p>
+<p>시점 1, 2, 3, … 에서의 측정값을 모두 한꺼번에 모형화하면 (Y<sub>1</sub>, Y<sub>2</sub>, …)라는 확률과정입니다. <b class="key">확률과정</b>은 지표로 구분된 확률변수의 모음입니다. 미지의 평균 θ 하나를 시점들이 공유합니다. θ에 조건을 주면 관측 잡음은 독립입니다. θ를 평균 내어 없앤 사후예측에서는 두 미래 관측의 공분산이 남습니다. 유한 개 시점을 어떻게 골라도 값들이 결합 정규분포를 이루는 확률과정을 <b class="key">가우스 과정</b>이라 하는데, 이 모형의 (Y<sub>1</sub>, Y<sub>2</sub>, …)도 그 예입니다. 관측 전에는 서로 다른 두 시점의 공분산이 Var(θ)=1, 한 시점의 분산이 1+1=2입니다.</p>
 <p>Y<sub>3</sub>=θ+η<sub>3</sub>, Y<sub>4</sub>=θ+η<sub>4</sub>의 공분산을 전개하면 새 잡음 사이, 그리고 θ와 각 잡음 사이의 항은 0입니다. 남는 항은 Var(θ | 자료)=1/3입니다. 각 예측 분산은 4/3이어서 상관계수는 (1/3)/(4/3)=1/4입니다. 한 미래 관측이 높게 나왔다면 장치의 평균도 더 높을 가능성을 새로 고려하게 됩니다.</p>
 <pre data-example="python"><code>from fractions import Fraction
 
@@ -64,6 +65,18 @@ print(f&quot;예측 공분산, 상관: {predictive_covariance}, &quot;
 <div class="check" data-q="q5"></div><div class="check" data-q="q6"></div>
 <h2>어느 가정이 결과를 만들었는가</h2>
 <p>여기서는 시간이 지나도 θ가 일정합니다. 시간이 지나며 장치 자체가 달라진다면 θ를 시점별 상태로 두어야 합니다. 그런 모형에서는 상태가 다음 시점에 어떻게 움직이는지와 측정 잡음을 따로 구분합니다. <a href="sp07-2.html">상태공간 모형</a>에서 그 구분을 수치로 연습할 수 있습니다.</p>
+
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table>
+<thead><tr><th scope="col">핵심어</th><th scope="col">기억할 기준</th></tr></thead>
+<tbody>
+<tr><td><b class="key">사후분포</b></td><td>θ | 자료 ~ N(2, 1/3). 평균 θ 자체의 불확실성</td></tr>
+<tr><td><b class="key">정밀도</b></td><td>분산의 역수. 정규 켤레 갱신에서 사전과 관측의 정밀도가 더해짐</td></tr>
+<tr><td><b class="key">사후예측분포</b></td><td>Y<sub>new</sub> | 자료 ~ N(2, 4/3). θ의 분산 + 새 잡음 분산</td></tr>
+<tr><td><b class="key">확률과정</b></td><td>지표(시점)로 구분된 확률변수의 모음</td></tr>
+<tr><td><b class="key">예측 공분산</b></td><td>공통 θ 때문에 두 미래 관측의 공분산 = Var(θ|자료) = 1/3</td></tr>
+</tbody></table></div>
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>매개변수의 불확실성과 새 관측의 잡음을 구분해 더하면, 공통 매개변수를 공유하는 미래 관측끼리의 상관도 따라 나옵니다.</p></div>
 
 <h2>참고 자료</h2>
 <ul><li><a href="https://cbmm.mit.edu/sites/default/files/learning-hub/Murphy07_gaussian.pdf">Kevin P. Murphy · Conjugate Bayesian Analysis of the Gaussian Distribution</a></li><li><a href="../st/st09-1.html">기존 베이즈 추론 단원</a></li></ul>
