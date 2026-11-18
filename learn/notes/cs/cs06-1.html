@@ -139,7 +139,24 @@ print(&quot;records:&quot;, [name for name, _ in result])
 assert result == sorted(rows, key=by_priority)</code></pre>
 <pre data-output><code>keys: [1, 1, 2, 2]
 records: ['B', 'D', 'A', 'C']</code></pre>
-<p>Python의 <code>sorted</code>와 <code>list.sort</code>는 둘 다 안정 정렬을 보장합니다. 정렬한 복사본이 필요하면 <code>sorted</code>, 원래 목록을 바꿔도 되면 <code>list.sort</code>를 선택합니다. 이 예의 함수는 병합 원리를 보여 주기 위한 구현입니다. 실제 두 내장 기능이 여기와 똑같은 방식으로 동작한다고 가정할 필요는 없습니다.</p>
+<p>Python의 <code>sorted</code>와 <code>list.sort</code>는 둘 다 안정 정렬을 보장합니다. 정렬한 복사본이 필요하면 <code>sorted</code>, 원래 목록을 바꿔도 되면 <code>list.sort</code>를 선택합니다. 이 예의 함수는 병합 원리를 보여 주기 위한 구현입니다. 실제 두 내장 기능이 여기와 똑같은 방식으로 동작한다고 가정할 필요는 없습니다. 내장 정렬은 안정성을 보장하고, 최악에도 O(n log n)입니다.</p>
+
+<h2>대표 비교 정렬의 성질과 n log n 하한</h2>
+<p>병합 정렬처럼 두 키를 비교한 결과만으로 순서를 정하는 방법을 <b class="key">비교 정렬</b>이라고 합니다. 자주 비교되는 방법의 성질을 정리하면 다음과 같습니다. 원소는 n개이고 비용은 비교 횟수 기준입니다. <span class="tag memo">외우기</span></p>
+<div class="table-wrap"><table>
+<thead><tr><th scope="col">정렬</th><th scope="col">최선</th><th scope="col">최악</th><th scope="col">안정</th><th scope="col">추가 공간</th></tr></thead>
+<tbody>
+<tr><td>삽입 정렬</td><td>Θ(n) · 이미 정렬된 입력</td><td>Θ(n²) · 역순 입력</td><td>예</td><td>O(1)</td></tr>
+<tr><td>선택 정렬</td><td>Θ(n²)</td><td>Θ(n²)</td><td>보통의 교환 구현은 아니오</td><td>O(1)</td></tr>
+<tr><td>병합 정렬</td><td>Θ(n log n)</td><td>Θ(n log n)</td><td>예 · 동점에서 왼쪽 먼저</td><td>Θ(n)</td></tr>
+<tr><td>퀵 정렬</td><td>Θ(n log n)</td><td>Θ(n²) · 기준값이 매번 한쪽 끝</td><td>보통의 제자리 구현은 아니오</td><td>재귀 스택, 평균 O(log n)</td></tr>
+<tr><td>힙 정렬</td><td>O(n log n)</td><td>Θ(n log n)</td><td>아니오</td><td>O(1)</td></tr>
+</tbody>
+</table></div>
+<p>퀵 정렬은 평균 Θ(n log n)으로 실전에서 빠르지만 최악이 Θ(n²)입니다. 선택 정렬이 불안정한 이유는 먼 자리끼리 교환할 때 같은 키의 기록을 건너뛰어 순서를 뒤집을 수 있기 때문입니다. 예로 [2a, 2b, 1]에서 최솟값 1을 맨 앞 2a와 바꾸면 [1, 2b, 2a]가 됩니다.</p>
+<p>비교 정렬은 아무리 잘 만들어도 최악에 Ω(n log n)번보다 적게 비교할 수 없습니다. 서로 다른 키 n개의 입력 순서는 n!가지이고, 정렬하려면 이 n!가지를 모두 구별해야 합니다. 비교 한 번의 결과는 두 갈래(앞이 작다 / 크다)이므로 k번 비교로 구별할 수 있는 경우는 많아야 2<sup>k</sup>가지입니다. 따라서 2<sup>k</sup> ≥ n!, 즉 k ≥ log₂(n!)이어야 하고 log₂(n!)은 Θ(n log n)입니다. n=3이면 3!=6인데 2²=4&lt;6이므로 최악에 적어도 3번이 필요합니다. 그래서 병합 정렬과 힙 정렬은 비교 횟수의 증가 속도로 보면 최적입니다. 키가 작은 정수 범위라서 비교 대신 개수를 세는 계수 정렬 같은 방법은 이 하한에 묶이지 않습니다.</p>
+<div class="check" data-q="q9"></div>
+<div class="check" data-q="q10"></div>
 
 <h2>참고 자료</h2>
 <ul>

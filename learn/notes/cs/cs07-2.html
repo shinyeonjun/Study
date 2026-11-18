@@ -65,7 +65,7 @@
 <text class="f-s" x="210" y="166" text-anchor="middle">1</text>
 <text class="f-s" x="300" y="133" text-anchor="middle">2</text>
 <text class="f-s" x="407" y="63" text-anchor="middle">1</text>
-<text class="f-s" x="406" y="124" text-anchor="middle">5</text>
+<text class="f-s" x="392" y="119" text-anchor="middle">5</text>
 <text class="f-s" x="480" y="200" text-anchor="middle">8</text>
 <text class="f-s" x="575" y="111" text-anchor="middle">2</text>
 </svg>
@@ -194,7 +194,7 @@ print(&quot;F reachable:&quot;, best[&quot;F&quot;] &lt; inf)</code></pre>
 path to E: A -&gt; C -&gt; B -&gt; D -&gt; E
 F reachable: False</code></pre>
 <p>부호 조건은 필수입니다. 예로 A→B의 비용 2, A→C의 비용 4, C→B의 비용 −3이면 B를 비용 2로 먼저 확정할 수 없습니다. C를 거쳐 1에 가는 길이 뒤에 있습니다. 음수 간선이 있는 문제에서는 그 조건을 지원하는 다른 알고리즘을 사용합니다. 실습의 경로 복원은 E가 도달 가능하다는 것을 알고 실행합니다. 임의 목적지라면 먼저 거리나 부모 표에서 도달 여부를 확인합니다.</p>
-<p>V개 정점을 거리 표에 두고, E개 간선의 완화 시도마다 힙에 후보를 최대 한 번 넣습니다. 이 구현은 옛 후보도 넣어 두어서 힙에 O(E+1)개까지 들어갈 수 있습니다. 간선이 하나 이상일 때 전체 시간은 O(V+E log(E+1)), 입력 외 공간은 O(V+E)입니다.</p>
+<p>정점 수를 V, 간선 수를 E라 합시다(여기서 E는 정점 E와 다른 개수 기호). 거리 표에 V칸을 두고, 간선 하나를 볼 때 완화가 성공하면 힙에 후보를 하나 넣습니다. 옛 후보를 지우지 않으므로 힙에는 시작 후보까지 많아야 E+1개가 들어가고, 넣기·꺼내기는 각각 O(log E)입니다. 그래서 전체 시간은 O(V + E log E), 입력 외 공간은 O(V+E)입니다. 단순 그래프에서는 E ≤ V²라 log E ≤ 2 log V이므로, 이진 힙을 쓰는 다익스트라를 흔히 O((V+E) log V)라고 적습니다.</p>
 
 <h2>참고 자료</h2>
 <ul>
