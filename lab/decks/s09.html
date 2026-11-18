@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>자료를 표와 배열로 · 슬라이드 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%238a4b14'/%3E%3Cpath d='M10 8l12 8-12 8z' fill='%23fff'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../style.css">
+</head>
+<body class="deck-body" data-note="S09">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../index.html">슬라이드 교재</a>
+<span class="crumb">덱 9</span>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<main class="deck">
+
+<section class="slide cover-slide">
+<p class="deck-no">덱 9</p>
+<h1>자료를 표와 배열로</h1>
+<p class="road"><b>행의 의미</b> → <b>자료형</b> → <b>결측</b> → <b>NumPy 배열</b></p>
+<p class="say">집값 모델에서 집 한 채가 어디서 한 행이 되는지 확인한다.</p>
+</section>
+
+<section class="slide">
+<h2>집 한 채의 기록을 열로 펼친다</h2>
+<figure class="fig"><svg class="fig-svg fig-wide" viewBox="0 0 760 180" role="img" aria-label="집 식별자 A,B,C와 세 수치 특성으로 만든 표."><text class="f-s" x="245" y="28" text-anchor="middle">면적</text><text class="f-s" x="367" y="28" text-anchor="middle">방</text><text class="f-s" x="489" y="28" text-anchor="middle">역까지(분)</text><text class="f-s" x="175" y="74.8" text-anchor="end">A</text><rect class="f-box" x="184" y="48" width="118" height="35" rx="5"/><text class="f-t" x="243" y="73.6" text-anchor="middle">84</text><rect class="f-box" x="306" y="48" width="118" height="35" rx="5"/><text class="f-t" x="365" y="73.6" text-anchor="middle">3</text><rect class="f-box" x="428" y="48" width="118" height="35" rx="5"/><text class="f-t" x="487" y="73.6" text-anchor="middle">0</text><text class="f-s" x="175" y="114.8" text-anchor="end">B</text><rect class="f-box" x="184" y="88" width="118" height="35" rx="5"/><text class="f-t" x="243" y="113.6" text-anchor="middle">59</text><rect class="f-box" x="306" y="88" width="118" height="35" rx="5"/><text class="f-t" x="365" y="113.6" text-anchor="middle">2</text><rect class="f-box" x="428" y="88" width="118" height="35" rx="5"/><text class="f-t" x="487" y="113.6" text-anchor="middle">10</text><text class="f-s" x="175" y="154.8" text-anchor="end">C</text><rect class="f-box" x="184" y="128" width="118" height="35" rx="5"/><text class="f-t" x="243" y="153.6" text-anchor="middle">120</text><rect class="f-box" x="306" y="128" width="118" height="35" rx="5"/><text class="f-t" x="365" y="153.6" text-anchor="middle">4</text><rect class="f-box" x="428" y="128" width="118" height="35" rx="5"/><text class="f-t" x="487" y="153.6" text-anchor="middle">2</text></svg><svg class="fig-svg fig-narrow" viewBox="0 0 390 180" role="img" aria-label="집 식별자 A,B,C와 세 수치 특성으로 만든 표."><text class="f-s" x="152.33333333333334" y="28" text-anchor="middle">면적</text><text class="f-s" x="241" y="28" text-anchor="middle">방</text><text class="f-s" x="329.6666666666667" y="28" text-anchor="middle">역까지(분)</text><text class="f-s" x="99" y="74.8" text-anchor="end">A</text><rect class="f-box" x="108" y="48" width="84.66666666666667" height="35" rx="5"/><text class="f-t" x="150.33333333333334" y="73.6" text-anchor="middle">84</text><rect class="f-box" x="196.66666666666669" y="48" width="84.66666666666667" height="35" rx="5"/><text class="f-t" x="239.00000000000003" y="73.6" text-anchor="middle">3</text><rect class="f-box" x="285.33333333333337" y="48" width="84.66666666666667" height="35" rx="5"/><text class="f-t" x="327.6666666666667" y="73.6" text-anchor="middle">0</text><text class="f-s" x="99" y="114.8" text-anchor="end">B</text><rect class="f-box" x="108" y="88" width="84.66666666666667" height="35" rx="5"/><text class="f-t" x="150.33333333333334" y="113.6" text-anchor="middle">59</text><rect class="f-box" x="196.66666666666669" y="88" width="84.66666666666667" height="35" rx="5"/><text class="f-t" x="239.00000000000003" y="113.6" text-anchor="middle">2</text><rect class="f-box" x="285.33333333333337" y="88" width="84.66666666666667" height="35" rx="5"/><text class="f-t" x="327.6666666666667" y="113.6" text-anchor="middle">10</text><text class="f-s" x="99" y="154.8" text-anchor="end">C</text><rect class="f-box" x="108" y="128" width="84.66666666666667" height="35" rx="5"/><text class="f-t" x="150.33333333333334" y="153.6" text-anchor="middle">120</text><rect class="f-box" x="196.66666666666669" y="128" width="84.66666666666667" height="35" rx="5"/><text class="f-t" x="239.00000000000003" y="153.6" text-anchor="middle">4</text><rect class="f-box" x="285.33333333333337" y="128" width="84.66666666666667" height="35" rx="5"/><text class="f-t" x="327.6666666666667" y="153.6" text-anchor="middle">2</text></svg></figure>
+<p class="say">한 행 = 집 한 채. 같은 집의 다른 시점 관측은 다른 키가 필요할 수 있다.</p>
+</section>
+
+<section class="slide">
+<h2>파일의 모양마다 읽는 단위가 다르다</h2>
+<figure class="fig"><svg class="fig-svg fig-wide" viewBox="0 0 760 212" role="img" aria-label="딕셔너리는 키, CSV는 필드 구분, JSON은 객체와 목록으로 집 정보를 표현한다."><rect class="f-box" x="30" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="135.66666666666669" y="66" text-anchor="middle">Python dict</text><text class="f-cap" x="135.66666666666669" y="105" text-anchor="middle">키 → 값</text><text class="f-s" x="135.66666666666669" y="139" text-anchor="middle">면적 키로 84 찾기</text><rect class="f-box" x="263.33333333333337" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="369.00000000000006" y="66" text-anchor="middle">CSV</text><text class="f-cap" x="369.00000000000006" y="105" text-anchor="middle">쉼표로 나눈 열</text><text class="f-s" x="369.00000000000006" y="139" text-anchor="middle">한 줄에 한 집</text><rect class="f-soft" x="496.6666666666667" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="602.3333333333334" y="66" text-anchor="middle">JSON</text><text class="f-cap" x="602.3333333333334" y="105" text-anchor="middle">객체와 목록</text><text class="f-s" x="602.3333333333334" y="139" text-anchor="middle">중첩 자료도 표현</text></svg><svg class="fig-svg fig-narrow" viewBox="0 0 390 187" role="img" aria-label="딕셔너리는 키, CSV는 필드 구분, JSON은 객체와 목록으로 집 정보를 표현한다."><rect class="f-box" x="20" y="6" width="350" height="51" rx="5"/><text class="f-s" x="34" y="25" text-anchor="start">Python dict</text><text class="f-cap" x="34" y="47" text-anchor="start">키 → 값</text><text class="f-s" x="354" y="46" text-anchor="end">면적 키로 84 찾기</text><rect class="f-box" x="20" y="68" width="350" height="51" rx="5"/><text class="f-s" x="34" y="87" text-anchor="start">CSV</text><text class="f-cap" x="34" y="109" text-anchor="start">쉼표로 나눈 열</text><text class="f-s" x="354" y="108" text-anchor="end">한 줄에 한 집</text><rect class="f-soft" x="20" y="130" width="350" height="51" rx="5"/><text class="f-s" x="34" y="149" text-anchor="start">JSON</text><text class="f-cap" x="34" y="171" text-anchor="start">객체와 목록</text><text class="f-s" x="354" y="170" text-anchor="end">중첩 자료도 표현</text></svg></figure>
+<p class="say">텍스트를 읽을 때 열 이름과 단위부터 확인.</p>
+</section>
+
+<section class="slide">
+<h2>숫자, 범주, 시각을 나눈다</h2>
+<figure class="fig"><svg class="fig-svg fig-wide" viewBox="0 0 760 212" role="img" aria-label="면적은 연속 수치, 동네는 범주, 거래일은 시간 변수이다."><rect class="f-box" x="30" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="135.66666666666669" y="66" text-anchor="middle">면적</text><text class="f-cap" x="135.66666666666669" y="105" text-anchor="middle">84</text><text class="f-s" x="135.66666666666669" y="139" text-anchor="middle">수치 · 제곱미터</text><rect class="f-box" x="263.33333333333337" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="369.00000000000006" y="66" text-anchor="middle">동네</text><text class="f-cap" x="369.00000000000006" y="105" text-anchor="middle">동쪽</text><text class="f-s" x="369.00000000000006" y="139" text-anchor="middle">범주 · 크기 순서 없음</text><rect class="f-soft" x="496.6666666666667" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="602.3333333333334" y="66" text-anchor="middle">거래일</text><text class="f-cap" x="602.3333333333334" y="105" text-anchor="middle">2026-01-10</text><text class="f-s" x="602.3333333333334" y="139" text-anchor="middle">시간 · 분할에 사용</text></svg><svg class="fig-svg fig-narrow" viewBox="0 0 390 187" role="img" aria-label="면적은 연속 수치, 동네는 범주, 거래일은 시간 변수이다."><rect class="f-box" x="20" y="6" width="350" height="51" rx="5"/><text class="f-s" x="34" y="25" text-anchor="start">면적</text><text class="f-cap" x="34" y="47" text-anchor="start">84</text><text class="f-s" x="354" y="46" text-anchor="end">수치 · 제곱미터</text><rect class="f-box" x="20" y="68" width="350" height="51" rx="5"/><text class="f-s" x="34" y="87" text-anchor="start">동네</text><text class="f-cap" x="34" y="109" text-anchor="start">동쪽</text><text class="f-s" x="354" y="108" text-anchor="end">범주 · 크기 순서 없음</text><rect class="f-soft" x="20" y="130" width="350" height="51" rx="5"/><text class="f-s" x="34" y="149" text-anchor="start">거래일</text><text class="f-cap" x="34" y="171" text-anchor="start">2026-01-10</text><text class="f-s" x="354" y="170" text-anchor="end">시간 · 분할에 사용</text></svg></figure>
+<p class="say">범주를 1,2,3으로 바꿔도 크기 관계가 생기는 건 아니다.</p>
+</section>
+
+<section class="slide check-slide">
+<h2>잠깐, 직접</h2>
+<div class="check" data-q="q1"></div>
+</section>
+
+<section class="slide">
+<h2>결측은 실제 0과 다르다</h2>
+<figure class="fig"><svg class="fig-svg fig-wide" viewBox="0 0 760 140" role="img" aria-label="역까지 0분인 집과 역까지 시간이 결측인 집."><text class="f-s" x="245" y="28" text-anchor="middle">역까지</text><text class="f-s" x="367" y="28" text-anchor="middle">뜻</text><text class="f-s" x="175" y="74.8" text-anchor="end">집 A</text><rect class="f-box" x="184" y="48" width="118" height="35" rx="5"/><text class="f-t" x="243" y="73.6" text-anchor="middle">0</text><rect class="f-box" x="306" y="48" width="118" height="35" rx="5"/><text class="f-t" x="365" y="73.6" text-anchor="middle">바로 앞</text><text class="f-s" x="175" y="114.8" text-anchor="end">집 D</text><rect class="f-soft" x="184" y="88" width="118" height="35" rx="5"/><text class="f-t" x="243" y="113.6" text-anchor="middle">NA</text><rect class="f-box" x="306" y="88" width="118" height="35" rx="5"/><text class="f-t" x="365" y="113.6" text-anchor="middle">측정 안 함</text></svg><svg class="fig-svg fig-narrow" viewBox="0 0 390 140" role="img" aria-label="역까지 0분인 집과 역까지 시간이 결측인 집."><text class="f-s" x="165.5" y="28" text-anchor="middle">역까지</text><text class="f-s" x="280.5" y="28" text-anchor="middle">뜻</text><text class="f-s" x="99" y="74.8" text-anchor="end">집 A</text><rect class="f-box" x="108" y="48" width="111" height="35" rx="5"/><text class="f-t" x="163.5" y="73.6" text-anchor="middle">0</text><rect class="f-box" x="223" y="48" width="111" height="35" rx="5"/><text class="f-t" x="278.5" y="73.6" text-anchor="middle">바로 앞</text><text class="f-s" x="99" y="114.8" text-anchor="end">집 D</text><rect class="f-soft" x="108" y="88" width="111" height="35" rx="5"/><text class="f-t" x="163.5" y="113.6" text-anchor="middle">NA</text><rect class="f-box" x="223" y="88" width="111" height="35" rx="5"/><text class="f-t" x="278.5" y="113.6" text-anchor="middle">측정 안 함</text></svg></figure>
+<p class="say">빈 값을 0으로 바꾸면 역이 바로 앞인 집이 가짜로 늘어난다.</p>
+</section>
+
+<section class="slide">
+<h2>위치 대신 집 ID로 결합한다</h2>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 390 206" role="img" aria-label="두 표의 집 정보와 교통 정보를 공통 집 ID로 결합한다."><rect class="f-box" x="12" y="38" width="145" height="64" rx="5"/><text class="f-t" x="84" y="61" text-anchor="middle">집 정보</text><text class="f-s" x="84" y="81" text-anchor="middle">집 ID · 면적</text><rect class="f-box" x="12" y="132" width="145" height="64" rx="5"/><text class="f-t" x="84" y="155" text-anchor="middle">교통 정보</text><text class="f-s" x="84" y="175" text-anchor="middle">집 ID · 역까지 시간</text><line class="f-line" x1="164" y1="70" x2="212" y2="112" marker-end="url(#f-arrow)"/><line class="f-line" x1="164" y1="164" x2="212" y2="122" marker-end="url(#f-arrow)"/><rect class="f-soft" x="221" y="82" width="155" height="70" rx="5"/><text class="f-t" x="298" y="110" text-anchor="middle">집 ID로 결합</text><text class="f-s" x="298" y="132" text-anchor="middle">같은 집의 두 기록</text></svg></figure>
+<p class="say">붙이기 전 키의 중복과 의도한 한 행의 의미를 점검.</p>
+</section>
+
+<section class="slide check-slide">
+<h2>잠깐, 직접</h2>
+<div class="check" data-q="q2"></div>
+</section>
+
+<section class="slide">
+<h2>시험을 열기 전에 전처리 값 고정</h2>
+<figure class="fig"><svg class="fig-svg fig-wide" viewBox="0 0 760 212" role="img" aria-label="훈련 면적 중앙값 84를 한 번 구해 시험 면적 결측에 적용한다."><rect class="f-box" x="30" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="135.66666666666669" y="66" text-anchor="middle">훈련 면적</text><text class="f-cap" x="135.66666666666669" y="105" text-anchor="middle">59 · 84 · 120</text><text class="f-s" x="135.66666666666669" y="139" text-anchor="middle">중앙값 84</text><line class="f-line" x1="243.33333333333334" y1="105" x2="260.33333333333337" y2="105" marker-end="url(#f-arrow)"/><rect class="f-box" x="263.33333333333337" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="369.00000000000006" y="66" text-anchor="middle">시험 면적</text><text class="f-cap" x="369.00000000000006" y="105" text-anchor="middle">빈칸</text><text class="f-s" x="369.00000000000006" y="139" text-anchor="middle">이 값으로 채움</text><line class="f-line" x1="476.66666666666674" y1="105" x2="493.66666666666674" y2="105" marker-end="url(#f-arrow)"/><rect class="f-soft" x="496.6666666666667" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="602.3333333333334" y="66" text-anchor="middle">걷어둘 정보</text><text class="f-cap" x="602.3333333333334" y="105" text-anchor="middle">실제 집값</text><text class="f-s" x="602.3333333333334" y="139" text-anchor="middle">예측 열에서 제외</text></svg><svg class="fig-svg fig-narrow" viewBox="0 0 390 187" role="img" aria-label="훈련 면적 중앙값 84를 한 번 구해 시험 면적 결측에 적용한다."><rect class="f-box" x="20" y="6" width="350" height="51" rx="5"/><text class="f-s" x="34" y="25" text-anchor="start">훈련 면적</text><text class="f-cap" x="34" y="47" text-anchor="start">59 · 84 · 120</text><text class="f-s" x="354" y="46" text-anchor="end">중앙값 84</text><line class="f-line" x1="195" y1="58" x2="195" y2="67" marker-end="url(#f-arrow)"/><rect class="f-box" x="20" y="68" width="350" height="51" rx="5"/><text class="f-s" x="34" y="87" text-anchor="start">시험 면적</text><text class="f-cap" x="34" y="109" text-anchor="start">빈칸</text><text class="f-s" x="354" y="108" text-anchor="end">이 값으로 채움</text><line class="f-line" x1="195" y1="120" x2="195" y2="129" marker-end="url(#f-arrow)"/><rect class="f-soft" x="20" y="130" width="350" height="51" rx="5"/><text class="f-s" x="34" y="149" text-anchor="start">걷어둘 정보</text><text class="f-cap" x="34" y="171" text-anchor="start">실제 집값</text><text class="f-s" x="354" y="170" text-anchor="end">예측 열에서 제외</text></svg></figure>
+<p class="say">평균이나 중앙값도 학습으로 정한 값. 전체 자료에서 먼저 구하면 시험 정보가 섞인다.</p>
+</section>
+
+<section class="slide">
+<h2>검증한 수치 열을 배열로</h2>
+<figure class="fig"><svg class="fig-svg fig-wide" viewBox="0 0 760 212" role="img" aria-label="pandas로 정리한 세 수치 열을 3행 3열 NumPy 배열로 바꿔 모델에 넣는다."><rect class="f-box" x="30" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="135.66666666666669" y="66" text-anchor="middle">pandas</text><text class="f-cap" x="135.66666666666669" y="105" text-anchor="middle">집 ID 유지</text><text class="f-s" x="135.66666666666669" y="139" text-anchor="middle">열 이름과 결측 검사</text><line class="f-line" x1="243.33333333333334" y1="105" x2="260.33333333333337" y2="105" marker-end="url(#f-arrow)"/><rect class="f-box" x="263.33333333333337" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="369.00000000000006" y="66" text-anchor="middle">NumPy</text><text class="f-cap" x="369.00000000000006" y="105" text-anchor="middle">X.shape = (3, 3)</text><text class="f-s" x="369.00000000000006" y="139" text-anchor="middle">면적 · 방 · 분</text><line class="f-line" x1="476.66666666666674" y1="105" x2="493.66666666666674" y2="105" marker-end="url(#f-arrow)"/><rect class="f-soft" x="496.6666666666667" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="602.3333333333334" y="66" text-anchor="middle">모델</text><text class="f-cap" x="602.3333333333334" y="105" text-anchor="middle">X @ w</text><text class="f-s" x="602.3333333333334" y="139" text-anchor="middle">집마다 숫자 하나</text></svg><svg class="fig-svg fig-narrow" viewBox="0 0 390 187" role="img" aria-label="pandas로 정리한 세 수치 열을 3행 3열 NumPy 배열로 바꿔 모델에 넣는다."><rect class="f-box" x="20" y="6" width="350" height="51" rx="5"/><text class="f-s" x="34" y="25" text-anchor="start">pandas</text><text class="f-cap" x="34" y="47" text-anchor="start">집 ID 유지</text><text class="f-s" x="354" y="46" text-anchor="end">열 이름과 결측 검사</text><line class="f-line" x1="195" y1="58" x2="195" y2="67" marker-end="url(#f-arrow)"/><rect class="f-box" x="20" y="68" width="350" height="51" rx="5"/><text class="f-s" x="34" y="87" text-anchor="start">NumPy</text><text class="f-cap" x="34" y="109" text-anchor="start">X.shape = (3, 3)</text><text class="f-s" x="354" y="108" text-anchor="end">면적 · 방 · 분</text><line class="f-line" x1="195" y1="120" x2="195" y2="129" marker-end="url(#f-arrow)"/><rect class="f-soft" x="20" y="130" width="350" height="51" rx="5"/><text class="f-s" x="34" y="149" text-anchor="start">모델</text><text class="f-cap" x="34" y="171" text-anchor="start">X @ w</text><text class="f-s" x="354" y="170" text-anchor="end">집마다 숫자 하나</text></svg></figure>
+<p class="say">열 순서를 훈련과 예측에서 같게 유지.</p>
+</section>
+
+<section class="slide check-slide">
+<h2>잠깐, 직접</h2>
+<div class="check" data-q="q3"></div>
+</section>
+
+<section class="slide">
+<h2>짧은 CSV를 읽어 특성만 뽑는다</h2>
+<pre data-example="python"><code>from io import StringIO
+import pandas as pd
+
+csv = &quot;id,area,rooms,minutes\nA,84,3,0\nB,59,2,10\nC,120,4,2&quot;
+rows = pd.read_csv(StringIO(csv)).set_index(&quot;id&quot;)
+X = rows[[&quot;area&quot;, &quot;rooms&quot;, &quot;minutes&quot;]].to_numpy()
+print(rows.index.is_unique, X.shape)
+print((X @ [.05, .3, -.1] + 1).round(2).tolist())</code></pre>
+<pre data-output><code>True (3, 3)
+[6.1, 3.55, 8.0]</code></pre>
+<p class="say">A는 역까지 실제로 0분이라 측정값 0이 그대로 들어간다.</p>
+</section>
+
+<section class="slide">
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table><tbody><tr><th scope="row">dict와 표</th><td>이름으로 필드를 찾고 같은 항목을 열로 모음</td></tr><tr><th scope="row">결측</th><td>관측 없음. 실제 0과 구별</td></tr><tr><th scope="row">키</th><td>한 행을 식별하고 표를 연결</td></tr><tr><th scope="row">NumPy</th><td>행 = 사례, 열 = 특성</td></tr></tbody></table></div>
+<p class="small muted">개념 사전 · <a href="../../learn/unit.html?u=PY06">자료를 담는 방법</a> · <a href="../../learn/unit.html?u=PY07">파일과 자료 교환</a> · <a href="../../learn/unit.html?u=PY10">수치 배열</a> · <a href="../../learn/unit.html?u=PY11">표와 시각화 코드</a> · <a href="../../learn/unit.html?u=DA01">질문을 데이터로</a> · <a href="../../learn/unit.html?u=DA02">자료의 종류</a> · <a href="../../learn/unit.html?u=DA06">데이터 품질</a></p>
+</section>
+
+</main>
+<script src="../notes.js"></script>
+<script src="../js/core.js"></script>
+<script src="../js/deck.js"></script>
+</body>
+</html>

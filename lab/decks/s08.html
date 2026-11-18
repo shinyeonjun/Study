@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>선형회귀 완성 · 슬라이드 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%238a4b14'/%3E%3Cpath d='M10 8l12 8-12 8z' fill='%23fff'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../style.css">
+</head>
+<body class="deck-body" data-note="S08">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../index.html">슬라이드 교재</a>
+<span class="crumb">덱 8</span>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<main class="deck">
+
+<section class="slide cover-slide">
+<p class="deck-no">덱 8</p>
+<h1>선형회귀 완성</h1>
+<p class="road"><b>잔차</b> → <b>최소제곱</b> → <b>절편</b> → <b>예측</b></p>
+<p class="say">정답이 직선 위에 딱 놓이지 않아도 가중치와 절편을 정한다.</p>
+</section>
+
+<section class="slide">
+<h2>세 집에 맞는 직선을 하나 긋는다</h2>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 214" role="img" aria-label="자료 세 점은 (0,1), (1,2), (2,5)이며 한 직선에 놓이지 않는다."><line class="f-ink" x1="138" y1="16" x2="138" y2="170"/><line class="f-ink" x1="138" y1="170" x2="659" y2="170" marker-end="url(#f-arrow)"/><line class="f-ink" x1="138" y1="170" x2="138" y2="175"/><text class="f-s" x="138" y="190" text-anchor="middle">0</text><line class="f-ink" x1="354.9565217391305" y1="170" x2="354.9565217391305" y2="175"/><text class="f-s" x="354.9565217391305" y="190" text-anchor="middle">1</text><line class="f-ink" x1="571.913043478261" y1="170" x2="571.913043478261" y2="175"/><text class="f-s" x="571.913043478261" y="190" text-anchor="middle">2</text><line class="f-ink" x1="133" y1="170" x2="138" y2="170"/><text class="f-s" x="127" y="175" text-anchor="end">0</text><line class="f-ink" x1="133" y1="121.33333333333334" x2="138" y2="121.33333333333334"/><text class="f-s" x="127" y="126.33333333333334" text-anchor="end">2</text><line class="f-ink" x1="133" y1="72.66666666666667" x2="138" y2="72.66666666666667"/><text class="f-s" x="127" y="77.66666666666667" text-anchor="end">4</text><line class="f-ink" x1="133" y1="24" x2="138" y2="24"/><text class="f-s" x="127" y="29" text-anchor="end">6</text><circle class="f-fill" cx="138" cy="145.66666666666666" r="6"/><circle class="f-fill" cx="354.9565217391305" cy="121.33333333333334" r="6"/><circle class="f-fill" cx="571.913043478261" cy="48.33333333333333" r="6"/><text class="f-s" x="678" y="171" text-anchor="start">면적 점수</text><text class="f-s" x="117" y="15" text-anchor="end">가격</text></svg></figure>
+<p class="say">면적 점수 하나로 집값을 예측. 관측 세 점을 모두 통과하는 직선이 없다.</p>
+</section>
+
+<section class="slide">
+<h2>각 점과 직선의 세로 차이 = 잔차</h2>
+<figure class="fig"><svg class="fig-svg fig-wide" viewBox="0 0 760 180" role="img" aria-label="ŷ=2/3+2x의 세 잔차는 1/3,−2/3,1/3이다."><text class="f-s" x="245" y="28" text-anchor="middle">x=0</text><text class="f-s" x="367" y="28" text-anchor="middle">x=1</text><text class="f-s" x="489" y="28" text-anchor="middle">x=2</text><text class="f-s" x="175" y="74.8" text-anchor="end">실제</text><rect class="f-box" x="184" y="48" width="118" height="35" rx="5"/><text class="f-t" x="243" y="73.6" text-anchor="middle">1</text><rect class="f-box" x="306" y="48" width="118" height="35" rx="5"/><text class="f-t" x="365" y="73.6" text-anchor="middle">2</text><rect class="f-box" x="428" y="48" width="118" height="35" rx="5"/><text class="f-t" x="487" y="73.6" text-anchor="middle">5</text><text class="f-s" x="175" y="114.8" text-anchor="end">예측</text><rect class="f-box" x="184" y="88" width="118" height="35" rx="5"/><text class="f-t" x="243" y="113.6" text-anchor="middle">2/3</text><rect class="f-box" x="306" y="88" width="118" height="35" rx="5"/><text class="f-t" x="365" y="113.6" text-anchor="middle">8/3</text><rect class="f-box" x="428" y="88" width="118" height="35" rx="5"/><text class="f-t" x="487" y="113.6" text-anchor="middle">14/3</text><text class="f-s" x="175" y="154.8" text-anchor="end">잔차</text><rect class="f-soft" x="184" y="128" width="118" height="35" rx="5"/><text class="f-t" x="243" y="153.6" text-anchor="middle">1/3</text><rect class="f-soft" x="306" y="128" width="118" height="35" rx="5"/><text class="f-t" x="365" y="153.6" text-anchor="middle">−2/3</text><rect class="f-soft" x="428" y="128" width="118" height="35" rx="5"/><text class="f-t" x="487" y="153.6" text-anchor="middle">1/3</text></svg><svg class="fig-svg fig-narrow" viewBox="0 0 390 180" role="img" aria-label="ŷ=2/3+2x의 세 잔차는 1/3,−2/3,1/3이다."><text class="f-s" x="152.33333333333334" y="28" text-anchor="middle">x=0</text><text class="f-s" x="241" y="28" text-anchor="middle">x=1</text><text class="f-s" x="329.6666666666667" y="28" text-anchor="middle">x=2</text><text class="f-s" x="99" y="74.8" text-anchor="end">실제</text><rect class="f-box" x="108" y="48" width="84.66666666666667" height="35" rx="5"/><text class="f-t" x="150.33333333333334" y="73.6" text-anchor="middle">1</text><rect class="f-box" x="196.66666666666669" y="48" width="84.66666666666667" height="35" rx="5"/><text class="f-t" x="239.00000000000003" y="73.6" text-anchor="middle">2</text><rect class="f-box" x="285.33333333333337" y="48" width="84.66666666666667" height="35" rx="5"/><text class="f-t" x="327.6666666666667" y="73.6" text-anchor="middle">5</text><text class="f-s" x="99" y="114.8" text-anchor="end">예측</text><rect class="f-box" x="108" y="88" width="84.66666666666667" height="35" rx="5"/><text class="f-t" x="150.33333333333334" y="113.6" text-anchor="middle">2/3</text><rect class="f-box" x="196.66666666666669" y="88" width="84.66666666666667" height="35" rx="5"/><text class="f-t" x="239.00000000000003" y="113.6" text-anchor="middle">8/3</text><rect class="f-box" x="285.33333333333337" y="88" width="84.66666666666667" height="35" rx="5"/><text class="f-t" x="327.6666666666667" y="113.6" text-anchor="middle">14/3</text><text class="f-s" x="99" y="154.8" text-anchor="end">잔차</text><rect class="f-soft" x="108" y="128" width="84.66666666666667" height="35" rx="5"/><text class="f-t" x="150.33333333333334" y="153.6" text-anchor="middle">1/3</text><rect class="f-soft" x="196.66666666666669" y="128" width="84.66666666666667" height="35" rx="5"/><text class="f-t" x="239.00000000000003" y="153.6" text-anchor="middle">−2/3</text><rect class="f-soft" x="285.33333333333337" y="128" width="84.66666666666667" height="35" rx="5"/><text class="f-t" x="327.6666666666667" y="153.6" text-anchor="middle">1/3</text></svg></figure>
+<p class="big">RSS = 2/3</p>
+<p class="say">잔차는 실제−예측. 제곱합은 1/9+4/9+1/9.</p>
+</section>
+
+<section class="slide">
+<h2>기울기는 같이 움직인 양 ÷ x의 퍼짐</h2>
+<figure class="fig"><svg class="fig-svg fig-wide" viewBox="0 0 760 212" role="img" aria-label="편차의 곱의 합 4를 x 편차 제곱합 2로 나누어 기울기 2를 얻는다."><rect class="f-box" x="30" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="135.66666666666669" y="66" text-anchor="middle">중심 x̄</text><text class="f-cap" x="135.66666666666669" y="105" text-anchor="middle">1</text><text class="f-s" x="135.66666666666669" y="139" text-anchor="middle">x의 편차 −1,0,1</text><line class="f-line" x1="243.33333333333334" y1="105" x2="260.33333333333337" y2="105" marker-end="url(#f-arrow)"/><rect class="f-box" x="263.33333333333337" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="369.00000000000006" y="66" text-anchor="middle">분자 Σ dx·dy</text><text class="f-cap" x="369.00000000000006" y="105" text-anchor="middle">4</text><text class="f-s" x="369.00000000000006" y="139" text-anchor="middle">x와 y가 함께 움직임</text><line class="f-line" x1="476.66666666666674" y1="105" x2="493.66666666666674" y2="105" marker-end="url(#f-arrow)"/><rect class="f-soft" x="496.6666666666667" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="602.3333333333334" y="66" text-anchor="middle">분모 Σ dx²</text><text class="f-cap" x="602.3333333333334" y="105" text-anchor="middle">2</text><text class="f-s" x="602.3333333333334" y="139" text-anchor="middle">기울기 b=4/2=2</text></svg><svg class="fig-svg fig-narrow" viewBox="0 0 390 187" role="img" aria-label="편차의 곱의 합 4를 x 편차 제곱합 2로 나누어 기울기 2를 얻는다."><rect class="f-box" x="20" y="6" width="350" height="51" rx="5"/><text class="f-s" x="34" y="25" text-anchor="start">중심 x̄</text><text class="f-cap" x="34" y="47" text-anchor="start">1</text><text class="f-s" x="354" y="46" text-anchor="end">x의 편차 −1,0,1</text><line class="f-line" x1="195" y1="58" x2="195" y2="67" marker-end="url(#f-arrow)"/><rect class="f-box" x="20" y="68" width="350" height="51" rx="5"/><text class="f-s" x="34" y="87" text-anchor="start">분자 Σ dx·dy</text><text class="f-cap" x="34" y="109" text-anchor="start">4</text><text class="f-s" x="354" y="108" text-anchor="end">x와 y가 함께 움직임</text><line class="f-line" x1="195" y1="120" x2="195" y2="129" marker-end="url(#f-arrow)"/><rect class="f-soft" x="20" y="130" width="350" height="51" rx="5"/><text class="f-s" x="34" y="149" text-anchor="start">분모 Σ dx²</text><text class="f-cap" x="34" y="171" text-anchor="start">2</text><text class="f-s" x="354" y="170" text-anchor="end">기울기 b=4/2=2</text></svg></figure>
+<p class="say">절편 a=ȳ−bx̄=8/3−2=2/3. x가 모두 같다면 여기서 나눌 수 없다.</p>
+</section>
+
+<section class="slide check-slide">
+<h2>잠깐, 직접</h2>
+<div class="check" data-q="q1"></div>
+</section>
+
+<section class="slide">
+<h2>직선은 자료의 평균점을 지난다</h2>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 214" role="img" aria-label="최소제곱 직선이 평균점 (1,8/3)을 지나고 관측 점과는 차이가 난다."><line class="f-ink" x1="138" y1="16" x2="138" y2="170"/><line class="f-ink" x1="138" y1="170" x2="659" y2="170" marker-end="url(#f-arrow)"/><line class="f-ink" x1="138" y1="170" x2="138" y2="175"/><text class="f-s" x="138" y="190" text-anchor="middle">0</text><line class="f-ink" x1="354.9565217391305" y1="170" x2="354.9565217391305" y2="175"/><text class="f-s" x="354.9565217391305" y="190" text-anchor="middle">1</text><line class="f-ink" x1="571.913043478261" y1="170" x2="571.913043478261" y2="175"/><text class="f-s" x="571.913043478261" y="190" text-anchor="middle">2</text><line class="f-ink" x1="133" y1="170" x2="138" y2="170"/><text class="f-s" x="127" y="175" text-anchor="end">0</text><line class="f-ink" x1="133" y1="121.33333333333334" x2="138" y2="121.33333333333334"/><text class="f-s" x="127" y="126.33333333333334" text-anchor="end">2</text><line class="f-ink" x1="133" y1="72.66666666666667" x2="138" y2="72.66666666666667"/><text class="f-s" x="127" y="77.66666666666667" text-anchor="end">4</text><line class="f-ink" x1="133" y1="24" x2="138" y2="24"/><text class="f-s" x="127" y="29" text-anchor="end">6</text><line class="f-line" x1="138" y1="153.77777777777777" x2="637" y2="41.844444444444434"/><circle class="f-fill" cx="138" cy="145.66666666666666" r="6"/><circle class="f-fill" cx="354.9565217391305" cy="121.33333333333334" r="6"/><circle class="f-fill" cx="571.913043478261" cy="48.33333333333333" r="6"/><circle class="f-fill" cx="354.9565217391305" cy="105.11111111111111" r="6"/><text class="f-s" x="354.9565217391305" y="93" text-anchor="middle">평균</text><text class="f-s" x="678" y="171" text-anchor="start">면적 점수</text></svg></figure>
+<p class="say">절편을 자유롭게 두었으니 잔차 합이 0이다.</p>
+</section>
+
+<section class="slide">
+<h2>두 방향에서 더 줄일 수 있는지 봄</h2>
+<figure class="fig"><svg class="fig-svg fig-wide" viewBox="0 0 760 140" role="img" aria-label="1로 채운 절편 열과 x 열 둘 다 잔차 벡터에 직교한다."><text class="f-s" x="245" y="28" text-anchor="middle">절편 열</text><text class="f-s" x="367" y="28" text-anchor="middle">특성 열</text><text class="f-s" x="175" y="74.8" text-anchor="end">X</text><rect class="f-box" x="184" y="48" width="118" height="35" rx="5"/><text class="f-t" x="243" y="73.6" text-anchor="middle">1, 1, 1</text><rect class="f-box" x="306" y="48" width="118" height="35" rx="5"/><text class="f-t" x="365" y="73.6" text-anchor="middle">0, 1, 2</text><text class="f-s" x="175" y="114.8" text-anchor="end">잔차와 내적</text><rect class="f-soft" x="184" y="88" width="118" height="35" rx="5"/><text class="f-t" x="243" y="113.6" text-anchor="middle">0</text><rect class="f-soft" x="306" y="88" width="118" height="35" rx="5"/><text class="f-t" x="365" y="113.6" text-anchor="middle">0</text></svg><svg class="fig-svg fig-narrow" viewBox="0 0 390 140" role="img" aria-label="1로 채운 절편 열과 x 열 둘 다 잔차 벡터에 직교한다."><text class="f-s" x="165.5" y="28" text-anchor="middle">절편 열</text><text class="f-s" x="280.5" y="28" text-anchor="middle">특성 열</text><text class="f-s" x="99" y="74.8" text-anchor="end">X</text><rect class="f-box" x="108" y="48" width="111" height="35" rx="5"/><text class="f-t" x="163.5" y="73.6" text-anchor="middle">1, 1, 1</text><rect class="f-box" x="223" y="48" width="111" height="35" rx="5"/><text class="f-t" x="278.5" y="73.6" text-anchor="middle">0, 1, 2</text><text class="f-s" x="99" y="114.8" text-anchor="end">잔차와 내적</text><rect class="f-soft" x="108" y="88" width="111" height="35" rx="5"/><text class="f-t" x="163.5" y="113.6" text-anchor="middle">0</text><rect class="f-soft" x="223" y="88" width="111" height="35" rx="5"/><text class="f-t" x="278.5" y="113.6" text-anchor="middle">0</text></svg></figure>
+<p class="big">Xᵀ(y−Xβ) = 0</p>
+<p class="say">제곱손실을 각 계수로 미분한 값이 0. 잔차와 두 열의 내적이 사라진다.</p>
+</section>
+
+<section class="slide check-slide">
+<h2>잠깐, 직접</h2>
+<div class="check" data-q="q2"></div>
+</section>
+
+<section class="slide">
+<h2>답이 하나인지 먼저 본다</h2>
+<figure class="fig"><svg class="fig-svg fig-wide" viewBox="0 0 760 212" role="img" aria-label="현재 두 열은 독립이나 모든 x가 2이면 절편과 특성 두 열이 비례한다."><rect class="f-box" x="30" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="135.66666666666669" y="66" text-anchor="middle">절편 열</text><text class="f-cap" x="135.66666666666669" y="105" text-anchor="middle">(1,1,1)</text><text class="f-s" x="135.66666666666669" y="139" text-anchor="middle">항상 고정</text><rect class="f-box" x="263.33333333333337" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="369.00000000000006" y="66" text-anchor="middle">특성 열</text><text class="f-cap" x="369.00000000000006" y="105" text-anchor="middle">(0,1,2)</text><text class="f-s" x="369.00000000000006" y="139" text-anchor="middle">같은 배수 아님</text><rect class="f-over" x="496.6666666666667" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="602.3333333333334" y="66" text-anchor="middle">x가 전부 2라면</text><text class="f-cap" x="602.3333333333334" y="105" text-anchor="middle">(2,2,2)</text><text class="f-s" x="602.3333333333334" y="139" text-anchor="middle">계수 두 개가 얽힘</text></svg><svg class="fig-svg fig-narrow" viewBox="0 0 390 187" role="img" aria-label="현재 두 열은 독립이나 모든 x가 2이면 절편과 특성 두 열이 비례한다."><rect class="f-box" x="20" y="6" width="350" height="51" rx="5"/><text class="f-s" x="34" y="25" text-anchor="start">절편 열</text><text class="f-cap" x="34" y="47" text-anchor="start">(1,1,1)</text><text class="f-s" x="354" y="46" text-anchor="end">항상 고정</text><rect class="f-box" x="20" y="68" width="350" height="51" rx="5"/><text class="f-s" x="34" y="87" text-anchor="start">특성 열</text><text class="f-cap" x="34" y="109" text-anchor="start">(0,1,2)</text><text class="f-s" x="354" y="108" text-anchor="end">같은 배수 아님</text><rect class="f-over" x="20" y="130" width="350" height="51" rx="5"/><text class="f-s" x="34" y="149" text-anchor="start">x가 전부 2라면</text><text class="f-cap" x="34" y="171" text-anchor="start">(2,2,2)</text><text class="f-s" x="354" y="170" text-anchor="end">계수 두 개가 얽힘</text></svg></figure>
+<p class="say">열들이 독립이면 계수가 유일. 열이 독립이 아니면 같은 잔차제곱합을 만드는 계수가 여럿이어서 고르는 기준이 필요하다.</p>
+</section>
+
+<section class="slide">
+<h2>새 집에는 배운 식만 적용한다</h2>
+<figure class="fig"><svg class="fig-svg fig-wide" viewBox="0 0 760 212" role="img" aria-label="새 x=3의 예측 20/3에 새 정답이 생기면 그때 성능을 계산한다."><rect class="f-box" x="30" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="135.66666666666669" y="66" text-anchor="middle">학습을 닫고</text><text class="f-cap" x="135.66666666666669" y="105" text-anchor="middle">a=2/3, b=2</text><text class="f-s" x="135.66666666666669" y="139" text-anchor="middle">가중치 고정</text><line class="f-line" x1="243.33333333333334" y1="105" x2="260.33333333333337" y2="105" marker-end="url(#f-arrow)"/><rect class="f-box" x="263.33333333333337" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="369.00000000000006" y="66" text-anchor="middle">새 집</text><text class="f-cap" x="369.00000000000006" y="105" text-anchor="middle">x=3</text><text class="f-s" x="369.00000000000006" y="139" text-anchor="middle">예측 20/3</text><line class="f-line" x1="476.66666666666674" y1="105" x2="493.66666666666674" y2="105" marker-end="url(#f-arrow)"/><rect class="f-soft" x="496.6666666666667" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="602.3333333333334" y="66" text-anchor="middle">나중 확인</text><text class="f-cap" x="602.3333333333334" y="105" text-anchor="middle">실제 가격과 비교</text><text class="f-s" x="602.3333333333334" y="139" text-anchor="middle">훈련 오차와 따로</text></svg><svg class="fig-svg fig-narrow" viewBox="0 0 390 187" role="img" aria-label="새 x=3의 예측 20/3에 새 정답이 생기면 그때 성능을 계산한다."><rect class="f-box" x="20" y="6" width="350" height="51" rx="5"/><text class="f-s" x="34" y="25" text-anchor="start">학습을 닫고</text><text class="f-cap" x="34" y="47" text-anchor="start">a=2/3, b=2</text><text class="f-s" x="354" y="46" text-anchor="end">가중치 고정</text><line class="f-line" x1="195" y1="58" x2="195" y2="67" marker-end="url(#f-arrow)"/><rect class="f-box" x="20" y="68" width="350" height="51" rx="5"/><text class="f-s" x="34" y="87" text-anchor="start">새 집</text><text class="f-cap" x="34" y="109" text-anchor="start">x=3</text><text class="f-s" x="354" y="108" text-anchor="end">예측 20/3</text><line class="f-line" x1="195" y1="120" x2="195" y2="129" marker-end="url(#f-arrow)"/><rect class="f-soft" x="20" y="130" width="350" height="51" rx="5"/><text class="f-s" x="34" y="149" text-anchor="start">나중 확인</text><text class="f-cap" x="34" y="171" text-anchor="start">실제 가격과 비교</text><text class="f-s" x="354" y="170" text-anchor="end">훈련 오차와 따로</text></svg></figure>
+<p class="say">학습에 쓰인 세 점으로 새 집 성능을 대신할 수 없다.</p>
+</section>
+
+<section class="slide check-slide">
+<h2>잠깐, 직접</h2>
+<div class="check" data-q="q3"></div>
+</section>
+
+<section class="slide">
+<h2>절편 포함한 최소제곱</h2>
+<pre data-example="python"><code>import numpy as np
+x, y = np.array([0, 1, 2]), np.array([1, 2, 5])
+X = np.column_stack((np.ones(3), x))
+coef = np.linalg.lstsq(X, y, rcond=None)[0]
+print(coef.round(4).tolist())
+print(f&quot;{np.square(y-X@coef).sum():.6f}&quot;)</code></pre>
+<pre data-output><code>[0.6667, 2.0]
+0.666667</code></pre>
+<p class="say">최소제곱으로 a, b를 찾고 제곱합을 다시 계산한다.</p>
+</section>
+
+<section class="slide">
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table><tbody><tr><th scope="row">선형 예측</th><td>ŷ = a + bx</td></tr><tr><th scope="row">최소제곱</th><td>잔차 제곱 합 최소화</td></tr><tr><th scope="row">정규방정식</th><td>Xᵀ(y−Xβ) = 0</td></tr><tr><th scope="row">검증</th><td>새 자료에 계산한 오차로 판단</td></tr></tbody></table></div>
+<p class="small muted">개념 사전 · <a href="../../learn/unit.html?u=ML04">선형 회귀의 원리</a> · <a href="../../learn/unit.html?u=LA05">연립식 풀기</a> · <a href="../../learn/unit.html?u=LA06">공간과 기저</a></p>
+</section>
+
+</main>
+<script src="../notes.js"></script>
+<script src="../js/core.js"></script>
+<script src="../js/deck.js"></script>
+</body>
+</html>

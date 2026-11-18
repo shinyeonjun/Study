@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>학습 문제를 세우는 법 · 슬라이드 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%238a4b14'/%3E%3Cpath d='M10 8l12 8-12 8z' fill='%23fff'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../style.css">
+</head>
+<body class="deck-body" data-note="S07">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../index.html">슬라이드 교재</a>
+<span class="crumb">덱 7</span>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<main class="deck">
+
+<section class="slide cover-slide">
+<p class="deck-no">덱 7</p>
+<h1>학습 문제를 세우는 법</h1>
+<p class="road"><b>목표</b> → <b>특성</b> → <b>학습 방식</b> → <b>검증</b></p>
+<p class="say">‘스팸을 잡아 줘’를 데이터와 검증 가능한 질문으로 바꾼다.</p>
+</section>
+
+<section class="slide">
+<h2>스팸 검사는 무엇을 예측하나?</h2>
+<figure class="fig"><svg class="fig-svg fig-wide" viewBox="0 0 760 212" role="img" aria-label="메일 도착 시 알 수 있는 정보로 스팸 확률을 예측하고 나중 신고나 사람의 판단을 정답으로 삼는다."><rect class="f-box" x="30" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="135.66666666666669" y="66" text-anchor="middle">예측 시점</text><text class="f-cap" x="135.66666666666669" y="105" text-anchor="middle">메일 도착</text><text class="f-s" x="135.66666666666669" y="139" text-anchor="middle">그때 헤더·본문 있음</text><line class="f-line" x1="243.33333333333334" y1="105" x2="260.33333333333337" y2="105" marker-end="url(#f-arrow)"/><rect class="f-box" x="263.33333333333337" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="369.00000000000006" y="66" text-anchor="middle">출력</text><text class="f-cap" x="369.00000000000006" y="105" text-anchor="middle">스팸 확률</text><text class="f-s" x="369.00000000000006" y="139" text-anchor="middle">나중에 차단에 사용</text><line class="f-line" x1="476.66666666666674" y1="105" x2="493.66666666666674" y2="105" marker-end="url(#f-arrow)"/><rect class="f-soft" x="496.6666666666667" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="602.3333333333334" y="66" text-anchor="middle">나중 정답</text><text class="f-cap" x="602.3333333333334" y="105" text-anchor="middle">신고·사람 확인</text><text class="f-s" x="602.3333333333334" y="139" text-anchor="middle">같은 시점 정보 아님</text></svg><svg class="fig-svg fig-narrow" viewBox="0 0 390 187" role="img" aria-label="메일 도착 시 알 수 있는 정보로 스팸 확률을 예측하고 나중 신고나 사람의 판단을 정답으로 삼는다."><rect class="f-box" x="20" y="6" width="350" height="51" rx="5"/><text class="f-s" x="34" y="25" text-anchor="start">예측 시점</text><text class="f-cap" x="34" y="47" text-anchor="start">메일 도착</text><text class="f-s" x="354" y="46" text-anchor="end">그때 헤더·본문 있음</text><line class="f-line" x1="195" y1="58" x2="195" y2="67" marker-end="url(#f-arrow)"/><rect class="f-box" x="20" y="68" width="350" height="51" rx="5"/><text class="f-s" x="34" y="87" text-anchor="start">출력</text><text class="f-cap" x="34" y="109" text-anchor="start">스팸 확률</text><text class="f-s" x="354" y="108" text-anchor="end">나중에 차단에 사용</text><line class="f-line" x1="195" y1="120" x2="195" y2="129" marker-end="url(#f-arrow)"/><rect class="f-soft" x="20" y="130" width="350" height="51" rx="5"/><text class="f-s" x="34" y="149" text-anchor="start">나중 정답</text><text class="f-cap" x="34" y="171" text-anchor="start">신고·사람 확인</text><text class="f-s" x="354" y="170" text-anchor="end">같은 시점 정보 아님</text></svg></figure>
+<p class="say">먼저 대상, 예측 시점, 정답 기준을 적는다.</p>
+</section>
+
+<section class="slide">
+<h2>AI 안의 여러 방식</h2>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 390 220" role="img" aria-label="AI에는 사람이 규칙을 정하는 방식과 자료로 학습하는 방식 등이 있다. 딥러닝은 머신러닝 안에 속한다."><rect class="f-box" x="22" y="12" width="346" height="196" rx="5"/><text class="f-t" x="45" y="41" text-anchor="start">인공지능 (AI)</text><rect class="f-box" x="42" y="63" width="112" height="112" rx="5"/><text class="f-t" x="98" y="105" text-anchor="middle">규칙 기반</text><text class="f-s" x="98" y="130" text-anchor="middle">사람이 규칙 작성</text><rect class="f-soft" x="165" y="63" width="182" height="112" rx="5"/><text class="f-t" x="256" y="91" text-anchor="middle">머신러닝 · 자료로 학습</text><rect class="f-box" x="182" y="109" width="148" height="50" rx="5"/><text class="f-t" x="256" y="139" text-anchor="middle">딥러닝 · 여러 층</text></svg></figure>
+<p class="say">AI는 더 넓은 분야. 머신러닝에서 여러 층을 쓰는 방식이 딥러닝.</p>
+</section>
+
+<section class="slide">
+<h2>바꾸고 싶은 출력부터 정한다</h2>
+<figure class="fig"><svg class="fig-svg fig-wide" viewBox="0 0 760 140" role="img" aria-label="회귀의 목표는 연속 집값, 분류에서는 스팸 범주 또는 확률을 낸다."><text class="f-s" x="245" y="28" text-anchor="middle">회귀</text><text class="f-s" x="367" y="28" text-anchor="middle">분류</text><text class="f-s" x="175" y="74.8" text-anchor="end">목표</text><rect class="f-box" x="184" y="48" width="118" height="35" rx="5"/><text class="f-t" x="243" y="73.6" text-anchor="middle">연속 수치</text><rect class="f-box" x="306" y="48" width="118" height="35" rx="5"/><text class="f-t" x="365" y="73.6" text-anchor="middle">범주 또는 확률</text><text class="f-s" x="175" y="114.8" text-anchor="end">예</text><rect class="f-box" x="184" y="88" width="118" height="35" rx="5"/><text class="f-t" x="243" y="113.6" text-anchor="middle">집값 6.1억</text><rect class="f-box" x="306" y="88" width="118" height="35" rx="5"/><text class="f-t" x="365" y="113.6" text-anchor="middle">스팸일 확률</text></svg><svg class="fig-svg fig-narrow" viewBox="0 0 390 140" role="img" aria-label="회귀의 목표는 연속 집값, 분류에서는 스팸 범주 또는 확률을 낸다."><text class="f-s" x="165.5" y="28" text-anchor="middle">회귀</text><text class="f-s" x="280.5" y="28" text-anchor="middle">분류</text><text class="f-s" x="99" y="74.8" text-anchor="end">목표</text><rect class="f-box" x="108" y="48" width="111" height="35" rx="5"/><text class="f-t" x="163.5" y="73.6" text-anchor="middle">연속 수치</text><rect class="f-box" x="223" y="48" width="111" height="35" rx="5"/><text class="f-t" x="278.5" y="73.6" text-anchor="middle">범주 또는 확률</text><text class="f-s" x="99" y="114.8" text-anchor="end">예</text><rect class="f-box" x="108" y="88" width="111" height="35" rx="5"/><text class="f-t" x="163.5" y="113.6" text-anchor="middle">집값 6.1억</text><rect class="f-box" x="223" y="88" width="111" height="35" rx="5"/><text class="f-t" x="278.5" y="113.6" text-anchor="middle">스팸일 확률</text></svg></figure>
+<p class="say">자료에서 미리 얻는 숫자는 특성. 학습으로 맞추는 쪽은 목표.</p>
+</section>
+
+<section class="slide check-slide">
+<h2>잠깐, 직접</h2>
+<div class="check" data-q="q1"></div>
+</section>
+
+<section class="slide">
+<h2>정답을 어떻게 얻는지에 따라 다르다</h2>
+<figure class="fig"><svg class="fig-svg fig-wide" viewBox="0 0 760 212" role="img" aria-label="지도학습은 외부 라벨, 비지도는 구조, 자기지도는 자료에서 학습 목표를 만든다."><rect class="f-box" x="30" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="135.66666666666669" y="66" text-anchor="middle">지도</text><text class="f-cap" x="135.66666666666669" y="105" text-anchor="middle">라벨로 비교</text><text class="f-s" x="135.66666666666669" y="139" text-anchor="middle">스팸/정상</text><rect class="f-box" x="263.33333333333337" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="369.00000000000006" y="66" text-anchor="middle">비지도</text><text class="f-cap" x="369.00000000000006" y="105" text-anchor="middle">구조 찾기</text><text class="f-s" x="369.00000000000006" y="139" text-anchor="middle">비슷한 메일끼리</text><rect class="f-soft" x="496.6666666666667" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="602.3333333333334" y="66" text-anchor="middle">자기지도</text><text class="f-cap" x="602.3333333333334" y="105" text-anchor="middle">자료로 정답 생성</text><text class="f-s" x="602.3333333333334" y="139" text-anchor="middle">다음 토큰 맞히기</text></svg><svg class="fig-svg fig-narrow" viewBox="0 0 390 187" role="img" aria-label="지도학습은 외부 라벨, 비지도는 구조, 자기지도는 자료에서 학습 목표를 만든다."><rect class="f-box" x="20" y="6" width="350" height="51" rx="5"/><text class="f-s" x="34" y="25" text-anchor="start">지도</text><text class="f-cap" x="34" y="47" text-anchor="start">라벨로 비교</text><text class="f-s" x="354" y="46" text-anchor="end">스팸/정상</text><rect class="f-box" x="20" y="68" width="350" height="51" rx="5"/><text class="f-s" x="34" y="87" text-anchor="start">비지도</text><text class="f-cap" x="34" y="109" text-anchor="start">구조 찾기</text><text class="f-s" x="354" y="108" text-anchor="end">비슷한 메일끼리</text><rect class="f-soft" x="20" y="130" width="350" height="51" rx="5"/><text class="f-s" x="34" y="149" text-anchor="start">자기지도</text><text class="f-cap" x="34" y="171" text-anchor="start">자료로 정답 생성</text><text class="f-s" x="354" y="170" text-anchor="end">다음 토큰 맞히기</text></svg></figure>
+<p class="say">다음 토큰은 사람이 따로 표시하지 않아도 문장에서 가져올 수 있다.</p>
+</section>
+
+<section class="slide">
+<h2>단순한 기준선부터</h2>
+<figure class="fig"><svg class="fig-svg fig-wide" viewBox="0 0 760 140" role="img" aria-label="정상 90과 스팸 10에서 정상만 예측해도 90개를 맞히지만 스팸은 한 번도 검출하지 못한다."><text class="f-s" x="245" y="28" text-anchor="middle">정상</text><text class="f-s" x="367" y="28" text-anchor="middle">스팸</text><text class="f-s" x="175" y="74.8" text-anchor="end">실제 개수</text><rect class="f-box" x="184" y="48" width="118" height="35" rx="5"/><text class="f-t" x="243" y="73.6" text-anchor="middle">90</text><rect class="f-box" x="306" y="48" width="118" height="35" rx="5"/><text class="f-t" x="365" y="73.6" text-anchor="middle">10</text><text class="f-s" x="175" y="114.8" text-anchor="end">맞힌 수</text><rect class="f-soft" x="184" y="88" width="118" height="35" rx="5"/><text class="f-t" x="243" y="113.6" text-anchor="middle">90</text><rect class="f-box" x="306" y="88" width="118" height="35" rx="5"/><text class="f-t" x="365" y="113.6" text-anchor="middle">0</text></svg><svg class="fig-svg fig-narrow" viewBox="0 0 390 140" role="img" aria-label="정상 90과 스팸 10에서 정상만 예측해도 90개를 맞히지만 스팸은 한 번도 검출하지 못한다."><text class="f-s" x="165.5" y="28" text-anchor="middle">정상</text><text class="f-s" x="280.5" y="28" text-anchor="middle">스팸</text><text class="f-s" x="99" y="74.8" text-anchor="end">실제 개수</text><rect class="f-box" x="108" y="48" width="111" height="35" rx="5"/><text class="f-t" x="163.5" y="73.6" text-anchor="middle">90</text><rect class="f-box" x="223" y="48" width="111" height="35" rx="5"/><text class="f-t" x="278.5" y="73.6" text-anchor="middle">10</text><text class="f-s" x="99" y="114.8" text-anchor="end">맞힌 수</text><rect class="f-soft" x="108" y="88" width="111" height="35" rx="5"/><text class="f-t" x="163.5" y="113.6" text-anchor="middle">90</text><rect class="f-box" x="223" y="88" width="111" height="35" rx="5"/><text class="f-t" x="278.5" y="113.6" text-anchor="middle">0</text></svg></figure>
+<p class="big">기준선 · baseline</p>
+<p class="say">정상만 고르는 기준선 정확도 90%. 스팸 재현율은 0.</p>
+</section>
+
+<section class="slide check-slide">
+<h2>잠깐, 직접</h2>
+<div class="check" data-q="q2"></div>
+</section>
+
+<section class="slide">
+<h2>과거로 배우고 미래에서 평가</h2>
+<figure class="fig"><svg class="fig-svg fig-wide" viewBox="0 0 760 212" role="img" aria-label="시간순으로 1~3월을 훈련, 4월을 검증, 5월을 시험에 둔다."><rect class="f-box" x="30" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="135.66666666666669" y="66" text-anchor="middle">훈련</text><text class="f-cap" x="135.66666666666669" y="105" text-anchor="middle">1~3월</text><text class="f-s" x="135.66666666666669" y="139" text-anchor="middle">가중치를 맞춘다</text><line class="f-line" x1="243.33333333333334" y1="105" x2="260.33333333333337" y2="105" marker-end="url(#f-arrow)"/><rect class="f-box" x="263.33333333333337" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="369.00000000000006" y="66" text-anchor="middle">검증</text><text class="f-cap" x="369.00000000000006" y="105" text-anchor="middle">4월</text><text class="f-s" x="369.00000000000006" y="139" text-anchor="middle">후보를 고른다</text><line class="f-line" x1="476.66666666666674" y1="105" x2="493.66666666666674" y2="105" marker-end="url(#f-arrow)"/><rect class="f-soft" x="496.6666666666667" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="602.3333333333334" y="66" text-anchor="middle">시험</text><text class="f-cap" x="602.3333333333334" y="105" text-anchor="middle">5월</text><text class="f-s" x="602.3333333333334" y="139" text-anchor="middle">마지막 점수</text></svg><svg class="fig-svg fig-narrow" viewBox="0 0 390 187" role="img" aria-label="시간순으로 1~3월을 훈련, 4월을 검증, 5월을 시험에 둔다."><rect class="f-box" x="20" y="6" width="350" height="51" rx="5"/><text class="f-s" x="34" y="25" text-anchor="start">훈련</text><text class="f-cap" x="34" y="47" text-anchor="start">1~3월</text><text class="f-s" x="354" y="46" text-anchor="end">가중치를 맞춘다</text><line class="f-line" x1="195" y1="58" x2="195" y2="67" marker-end="url(#f-arrow)"/><rect class="f-box" x="20" y="68" width="350" height="51" rx="5"/><text class="f-s" x="34" y="87" text-anchor="start">검증</text><text class="f-cap" x="34" y="109" text-anchor="start">4월</text><text class="f-s" x="354" y="108" text-anchor="end">후보를 고른다</text><line class="f-line" x1="195" y1="120" x2="195" y2="129" marker-end="url(#f-arrow)"/><rect class="f-soft" x="20" y="130" width="350" height="51" rx="5"/><text class="f-s" x="34" y="149" text-anchor="start">시험</text><text class="f-cap" x="34" y="171" text-anchor="start">5월</text><text class="f-s" x="354" y="170" text-anchor="end">마지막 점수</text></svg></figure>
+<p class="say">처음 보는 발신자에 대한 성능을 재려면 같은 발신자를 훈련과 평가에 함께 넣지 않는다.</p>
+</section>
+
+<section class="slide">
+<h2>정답을 미리 볼 수 있으면 시험이 쉬워진다</h2>
+<figure class="fig"><svg class="fig-svg fig-wide" viewBox="0 0 760 212" role="img" aria-label="예측 시점에 아직 없는 다음 날 신고를 입력에 쓰면 데이터 누출이다."><rect class="f-box" x="30" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="135.66666666666669" y="66" text-anchor="middle">도착 즉시</text><text class="f-cap" x="135.66666666666669" y="105" text-anchor="middle">제목·보낸 주소</text><text class="f-s" x="135.66666666666669" y="139" text-anchor="middle">예측에 사용 가능</text><rect class="f-box" x="263.33333333333337" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="369.00000000000006" y="66" text-anchor="middle">다음 날</text><text class="f-cap" x="369.00000000000006" y="105" text-anchor="middle">사용자 스팸 신고</text><text class="f-s" x="369.00000000000006" y="139" text-anchor="middle">정답 작성에 사용</text><rect class="f-over" x="496.6666666666667" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="602.3333333333334" y="66" text-anchor="middle">신고를 특성에 넣음</text><text class="f-cap" x="602.3333333333334" y="105" text-anchor="middle">누출</text><text class="f-s" x="602.3333333333334" y="139" text-anchor="middle">실전에서는 없음</text></svg><svg class="fig-svg fig-narrow" viewBox="0 0 390 187" role="img" aria-label="예측 시점에 아직 없는 다음 날 신고를 입력에 쓰면 데이터 누출이다."><rect class="f-box" x="20" y="6" width="350" height="51" rx="5"/><text class="f-s" x="34" y="25" text-anchor="start">도착 즉시</text><text class="f-cap" x="34" y="47" text-anchor="start">제목·보낸 주소</text><text class="f-s" x="354" y="46" text-anchor="end">예측에 사용 가능</text><rect class="f-box" x="20" y="68" width="350" height="51" rx="5"/><text class="f-s" x="34" y="87" text-anchor="start">다음 날</text><text class="f-cap" x="34" y="109" text-anchor="start">사용자 스팸 신고</text><text class="f-s" x="354" y="108" text-anchor="end">정답 작성에 사용</text><rect class="f-over" x="20" y="130" width="350" height="51" rx="5"/><text class="f-s" x="34" y="149" text-anchor="start">신고를 특성에 넣음</text><text class="f-cap" x="34" y="171" text-anchor="start">누출</text><text class="f-s" x="354" y="170" text-anchor="end">실전에서는 없음</text></svg></figure>
+<p class="say">결과를 보고 만든 표도 언제 알 수 있는지 확인.</p>
+</section>
+
+<section class="slide check-slide">
+<h2>잠깐, 직접</h2>
+<div class="check" data-q="q3"></div>
+</section>
+
+<section class="slide">
+<h2>정상만 예측하는 기준선</h2>
+<pre data-example="python"><code>import numpy as np
+spam = np.array([0]*90 + [1]*10)
+predict = np.zeros_like(spam)
+print(float((spam == predict).mean()))
+print(int(((spam == 1) &amp; (predict == 1)).sum()))</code></pre>
+<pre data-output><code>0.9
+0</code></pre>
+<p class="say">정확도와 찾아낸 스팸 수를 같이 본다.</p>
+</section>
+
+<section class="slide">
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table><tbody><tr><th scope="row">특성과 목표</th><td>예측 시 입력 / 나중에 확인하는 정답</td></tr><tr><th scope="row">지도학습</th><td>라벨 있는 예</td></tr><tr><th scope="row">자기지도</th><td>자료에서 학습 목표를 만든다</td></tr><tr><th scope="row">분할</th><td>훈련에서 맞추고 검증으로 고른 뒤 시험에서 평가</td></tr></tbody></table></div>
+<p class="small muted">개념 사전 · <a href="../../learn/unit.html?u=AI01">AI란</a> · <a href="../../learn/unit.html?u=ML01">학습 문제 정의</a> · <a href="../../learn/unit.html?u=ML02">공정한 첫 비교</a></p>
+</section>
+
+</main>
+<script src="../notes.js"></script>
+<script src="../js/core.js"></script>
+<script src="../js/deck.js"></script>
+</body>
+</html>

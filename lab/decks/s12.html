@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>독립과 베이즈 · 슬라이드 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%238a4b14'/%3E%3Cpath d='M10 8l12 8-12 8z' fill='%23fff'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../style.css">
+</head>
+<body class="deck-body" data-note="S12">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../index.html">슬라이드 교재</a>
+<span class="crumb">덱 12</span>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<main class="deck">
+
+<section class="slide cover-slide">
+<p class="deck-no">덱 12</p>
+<h1>독립과 베이즈</h1>
+<p class="road"><b>기저율</b> → <b>조건의 방향</b> → <b>베이즈</b> → <b>독립</b></p>
+<p class="say">감지율 90%인 모델도 경고의 절반만 맞을 수 있다.</p>
+</section>
+
+<section class="slide">
+<h2>감지율 90%를 어디에 적용할까?</h2>
+<figure class="fig"><svg class="fig-svg fig-wide" viewBox="0 0 760 212" role="img" aria-label="1,000개 중 실제 스팸 100개 중 90개와 정상 900개 중 90개가 경고된다."><rect class="f-box" x="30" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="135.66666666666669" y="66" text-anchor="middle">실제 스팸</text><text class="f-cap" x="135.66666666666669" y="105" text-anchor="middle">100개</text><text class="f-s" x="135.66666666666669" y="139" text-anchor="middle">전체의 10%</text><rect class="f-box" x="263.33333333333337" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="369.00000000000006" y="66" text-anchor="middle">감지율 90%</text><text class="f-cap" x="369.00000000000006" y="105" text-anchor="middle">90개 경고</text><text class="f-s" x="369.00000000000006" y="139" text-anchor="middle">스팸 중 경고</text><rect class="f-over" x="496.6666666666667" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="602.3333333333334" y="66" text-anchor="middle">정상도 경고</text><text class="f-cap" x="602.3333333333334" y="105" text-anchor="middle">900개 중 90개</text><text class="f-s" x="602.3333333333334" y="139" text-anchor="middle">오탐률 10%</text></svg><svg class="fig-svg fig-narrow" viewBox="0 0 390 187" role="img" aria-label="1,000개 중 실제 스팸 100개 중 90개와 정상 900개 중 90개가 경고된다."><rect class="f-box" x="20" y="6" width="350" height="51" rx="5"/><text class="f-s" x="34" y="25" text-anchor="start">실제 스팸</text><text class="f-cap" x="34" y="47" text-anchor="start">100개</text><text class="f-s" x="354" y="46" text-anchor="end">전체의 10%</text><rect class="f-box" x="20" y="68" width="350" height="51" rx="5"/><text class="f-s" x="34" y="87" text-anchor="start">감지율 90%</text><text class="f-cap" x="34" y="109" text-anchor="start">90개 경고</text><text class="f-s" x="354" y="108" text-anchor="end">스팸 중 경고</text><rect class="f-over" x="20" y="130" width="350" height="51" rx="5"/><text class="f-s" x="34" y="149" text-anchor="start">정상도 경고</text><text class="f-cap" x="34" y="171" text-anchor="start">900개 중 90개</text><text class="f-s" x="354" y="170" text-anchor="end">오탐률 10%</text></svg></figure>
+<p class="say">스팸일 때 경고가 울릴 확률과, 경고일 때 스팸일 확률은 다르다.</p>
+</section>
+
+<section class="slide">
+<h2>전체 경고는 90이 아니라 180</h2>
+<figure class="fig"><svg class="fig-svg fig-wide" viewBox="0 0 760 140" role="img" aria-label="정탐 90, 놓친 스팸 10, 오탐 90, 정상 미경고 810."><text class="f-s" x="245" y="28" text-anchor="middle">경고</text><text class="f-s" x="367" y="28" text-anchor="middle">경고 없음</text><text class="f-s" x="175" y="74.8" text-anchor="end">실제 스팸</text><rect class="f-soft" x="184" y="48" width="118" height="35" rx="5"/><text class="f-t" x="243" y="73.6" text-anchor="middle">90</text><rect class="f-box" x="306" y="48" width="118" height="35" rx="5"/><text class="f-t" x="365" y="73.6" text-anchor="middle">10</text><text class="f-s" x="175" y="114.8" text-anchor="end">실제 정상</text><rect class="f-soft" x="184" y="88" width="118" height="35" rx="5"/><text class="f-t" x="243" y="113.6" text-anchor="middle">90</text><rect class="f-box" x="306" y="88" width="118" height="35" rx="5"/><text class="f-t" x="365" y="113.6" text-anchor="middle">810</text></svg><svg class="fig-svg fig-narrow" viewBox="0 0 390 140" role="img" aria-label="정탐 90, 놓친 스팸 10, 오탐 90, 정상 미경고 810."><text class="f-s" x="165.5" y="28" text-anchor="middle">경고</text><text class="f-s" x="280.5" y="28" text-anchor="middle">경고 없음</text><text class="f-s" x="99" y="74.8" text-anchor="end">실제 스팸</text><rect class="f-soft" x="108" y="48" width="111" height="35" rx="5"/><text class="f-t" x="163.5" y="73.6" text-anchor="middle">90</text><rect class="f-box" x="223" y="48" width="111" height="35" rx="5"/><text class="f-t" x="278.5" y="73.6" text-anchor="middle">10</text><text class="f-s" x="99" y="114.8" text-anchor="end">실제 정상</text><rect class="f-soft" x="108" y="88" width="111" height="35" rx="5"/><text class="f-t" x="163.5" y="113.6" text-anchor="middle">90</text><rect class="f-box" x="223" y="88" width="111" height="35" rx="5"/><text class="f-t" x="278.5" y="113.6" text-anchor="middle">810</text></svg></figure>
+<p class="big">P(스팸 | 경고) = 90/180 = 0.5</p>
+<p class="say">경고를 받았다면 이 열의 180개 가운데 실제 스팸 90개.</p>
+</section>
+
+<section class="slide">
+<h2>베이즈는 조건을 반대쪽에서 계산</h2>
+<figure class="fig"><svg class="fig-svg fig-wide" viewBox="0 0 760 212" role="img" aria-label="전체 경고 확률 0.18에서 스팸과 경고의 0.09가 차지하는 비율은 0.5."><rect class="f-box" x="30" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="135.66666666666669" y="66" text-anchor="middle">분자</text><text class="f-cap" x="135.66666666666669" y="105" text-anchor="middle">0.1 × 0.9</text><text class="f-s" x="135.66666666666669" y="139" text-anchor="middle">스팸이면서 경고</text><line class="f-line" x1="243.33333333333334" y1="105" x2="260.33333333333337" y2="105" marker-end="url(#f-arrow)"/><rect class="f-box" x="263.33333333333337" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="369.00000000000006" y="66" text-anchor="middle">나머지 경고</text><text class="f-cap" x="369.00000000000006" y="105" text-anchor="middle">0.9 × 0.1</text><text class="f-s" x="369.00000000000006" y="139" text-anchor="middle">정상이면서 경고</text><line class="f-line" x1="476.66666666666674" y1="105" x2="493.66666666666674" y2="105" marker-end="url(#f-arrow)"/><rect class="f-soft" x="496.6666666666667" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="602.3333333333334" y="66" text-anchor="middle">결과</text><text class="f-cap" x="602.3333333333334" y="105" text-anchor="middle">0.09 ÷ (0.09+0.09)</text><text class="f-s" x="602.3333333333334" y="139" text-anchor="middle">경고 중 스팸 비율</text></svg><svg class="fig-svg fig-narrow" viewBox="0 0 390 187" role="img" aria-label="전체 경고 확률 0.18에서 스팸과 경고의 0.09가 차지하는 비율은 0.5."><rect class="f-box" x="20" y="6" width="350" height="51" rx="5"/><text class="f-s" x="34" y="25" text-anchor="start">분자</text><text class="f-cap" x="34" y="47" text-anchor="start">0.1 × 0.9</text><text class="f-s" x="354" y="46" text-anchor="end">스팸이면서 경고</text><line class="f-line" x1="195" y1="58" x2="195" y2="67" marker-end="url(#f-arrow)"/><rect class="f-box" x="20" y="68" width="350" height="51" rx="5"/><text class="f-s" x="34" y="87" text-anchor="start">나머지 경고</text><text class="f-cap" x="34" y="109" text-anchor="start">0.9 × 0.1</text><text class="f-s" x="354" y="108" text-anchor="end">정상이면서 경고</text><line class="f-line" x1="195" y1="120" x2="195" y2="129" marker-end="url(#f-arrow)"/><rect class="f-soft" x="20" y="130" width="350" height="51" rx="5"/><text class="f-s" x="34" y="149" text-anchor="start">결과</text><text class="f-cap" x="34" y="171" text-anchor="start">0.09 ÷ (0.09+0.09)</text><text class="f-s" x="354" y="170" text-anchor="end">경고 중 스팸 비율</text></svg></figure>
+<p class="say">A는 실제 스팸, B는 경고. 분모는 스팸·정상에서 경고가 나올 확률을 더한 값.</p>
+</section>
+
+<section class="slide check-slide">
+<h2>잠깐, 직접</h2>
+<div class="check" data-q="q1"></div>
+</section>
+
+<section class="slide">
+<h2>스팸이 드물어지면 결과가 바뀐다</h2>
+<figure class="fig"><svg class="fig-svg fig-wide" viewBox="0 0 760 180" role="img" aria-label="감지율·오탐률을 고정하고 스팸 기저율을 10%에서 1%로 낮추면 정밀도는 50%에서 약 8.3%."><text class="f-s" x="245" y="28" text-anchor="middle">스팸 10%</text><text class="f-s" x="367" y="28" text-anchor="middle">스팸 1%</text><text class="f-s" x="175" y="74.8" text-anchor="end">감지율</text><rect class="f-box" x="184" y="48" width="118" height="35" rx="5"/><text class="f-t" x="243" y="73.6" text-anchor="middle">90%</text><rect class="f-box" x="306" y="48" width="118" height="35" rx="5"/><text class="f-t" x="365" y="73.6" text-anchor="middle">90%</text><text class="f-s" x="175" y="114.8" text-anchor="end">오탐률</text><rect class="f-box" x="184" y="88" width="118" height="35" rx="5"/><text class="f-t" x="243" y="113.6" text-anchor="middle">10%</text><rect class="f-box" x="306" y="88" width="118" height="35" rx="5"/><text class="f-t" x="365" y="113.6" text-anchor="middle">10%</text><text class="f-s" x="175" y="154.8" text-anchor="end">경고 중 스팸</text><rect class="f-soft" x="184" y="128" width="118" height="35" rx="5"/><text class="f-t" x="243" y="153.6" text-anchor="middle">50%</text><rect class="f-soft" x="306" y="128" width="118" height="35" rx="5"/><text class="f-t" x="365" y="153.6" text-anchor="middle">약 8.3%</text></svg><svg class="fig-svg fig-narrow" viewBox="0 0 390 180" role="img" aria-label="감지율·오탐률을 고정하고 스팸 기저율을 10%에서 1%로 낮추면 정밀도는 50%에서 약 8.3%."><text class="f-s" x="165.5" y="28" text-anchor="middle">스팸 10%</text><text class="f-s" x="280.5" y="28" text-anchor="middle">스팸 1%</text><text class="f-s" x="99" y="74.8" text-anchor="end">감지율</text><rect class="f-box" x="108" y="48" width="111" height="35" rx="5"/><text class="f-t" x="163.5" y="73.6" text-anchor="middle">90%</text><rect class="f-box" x="223" y="48" width="111" height="35" rx="5"/><text class="f-t" x="278.5" y="73.6" text-anchor="middle">90%</text><text class="f-s" x="99" y="114.8" text-anchor="end">오탐률</text><rect class="f-box" x="108" y="88" width="111" height="35" rx="5"/><text class="f-t" x="163.5" y="113.6" text-anchor="middle">10%</text><rect class="f-box" x="223" y="88" width="111" height="35" rx="5"/><text class="f-t" x="278.5" y="113.6" text-anchor="middle">10%</text><text class="f-s" x="99" y="154.8" text-anchor="end">경고 중 스팸</text><rect class="f-soft" x="108" y="128" width="111" height="35" rx="5"/><text class="f-t" x="163.5" y="153.6" text-anchor="middle">50%</text><rect class="f-soft" x="223" y="128" width="111" height="35" rx="5"/><text class="f-t" x="278.5" y="153.6" text-anchor="middle">약 8.3%</text></svg></figure>
+<p class="say">10,000건 중 스팸 100건이면 90건 정탐, 정상 9,900건이면 990건 오탐.</p>
+</section>
+
+<section class="slide">
+<h2>독립인 신호는 확률을 바꾸지 않는다</h2>
+<figure class="fig"><svg class="fig-svg fig-wide" viewBox="0 0 760 212" role="img" aria-label="스팸의 기저율 0.1이 경고 후 0.5로 달라지므로 두 사건이 독립이 아니다."><rect class="f-box" x="30" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="135.66666666666669" y="66" text-anchor="middle">확인 전</text><text class="f-cap" x="135.66666666666669" y="105" text-anchor="middle">P(A) = 0.1</text><text class="f-s" x="135.66666666666669" y="139" text-anchor="middle">스팸 기저율</text><line class="f-line" x1="243.33333333333334" y1="105" x2="260.33333333333337" y2="105" marker-end="url(#f-arrow)"/><rect class="f-box" x="263.33333333333337" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="369.00000000000006" y="66" text-anchor="middle">경고를 봄</text><text class="f-cap" x="369.00000000000006" y="105" text-anchor="middle">P(A | B) = 0.5</text><text class="f-s" x="369.00000000000006" y="139" text-anchor="middle">실제로 달라짐</text><line class="f-line" x1="476.66666666666674" y1="105" x2="493.66666666666674" y2="105" marker-end="url(#f-arrow)"/><rect class="f-soft" x="496.6666666666667" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="602.3333333333334" y="66" text-anchor="middle">비교</text><text class="f-cap" x="602.3333333333334" y="105" text-anchor="middle">A와 B는 의존</text><text class="f-s" x="602.3333333333334" y="139" text-anchor="middle">경고가 정보 제공</text></svg><svg class="fig-svg fig-narrow" viewBox="0 0 390 187" role="img" aria-label="스팸의 기저율 0.1이 경고 후 0.5로 달라지므로 두 사건이 독립이 아니다."><rect class="f-box" x="20" y="6" width="350" height="51" rx="5"/><text class="f-s" x="34" y="25" text-anchor="start">확인 전</text><text class="f-cap" x="34" y="47" text-anchor="start">P(A) = 0.1</text><text class="f-s" x="354" y="46" text-anchor="end">스팸 기저율</text><line class="f-line" x1="195" y1="58" x2="195" y2="67" marker-end="url(#f-arrow)"/><rect class="f-box" x="20" y="68" width="350" height="51" rx="5"/><text class="f-s" x="34" y="87" text-anchor="start">경고를 봄</text><text class="f-cap" x="34" y="109" text-anchor="start">P(A | B) = 0.5</text><text class="f-s" x="354" y="108" text-anchor="end">실제로 달라짐</text><line class="f-line" x1="195" y1="120" x2="195" y2="129" marker-end="url(#f-arrow)"/><rect class="f-soft" x="20" y="130" width="350" height="51" rx="5"/><text class="f-s" x="34" y="149" text-anchor="start">비교</text><text class="f-cap" x="34" y="171" text-anchor="start">A와 B는 의존</text><text class="f-s" x="354" y="170" text-anchor="end">경고가 정보 제공</text></svg></figure>
+<p class="say">P(B)&gt;0일 때 P(A | B)=P(A)인 경우 독립.</p>
+</section>
+
+<section class="slide check-slide">
+<h2>잠깐, 직접</h2>
+<div class="check" data-q="q2"></div>
+</section>
+
+<section class="slide">
+<h2>서로 동시에 못 일어남 ≠ 독립</h2>
+<figure class="fig"><svg class="fig-svg fig-wide" viewBox="0 0 760 212" role="img" aria-label="스팸과 정상은 배반이라 교집합이 0이지만, 확률 곱 0.09와 다르므로 독립이 아니다."><rect class="f-box" x="30" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="135.66666666666669" y="66" text-anchor="middle">사건 A</text><text class="f-cap" x="135.66666666666669" y="105" text-anchor="middle">실제 스팸</text><text class="f-s" x="135.66666666666669" y="139" text-anchor="middle">확률 0.1</text><rect class="f-box" x="263.33333333333337" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="369.00000000000006" y="66" text-anchor="middle">사건 C</text><text class="f-cap" x="369.00000000000006" y="105" text-anchor="middle">실제 정상</text><text class="f-s" x="369.00000000000006" y="139" text-anchor="middle">확률 0.9</text><rect class="f-over" x="496.6666666666667" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="602.3333333333334" y="66" text-anchor="middle">둘 다</text><text class="f-cap" x="602.3333333333334" y="105" text-anchor="middle">확률 0</text><text class="f-s" x="602.3333333333334" y="139" text-anchor="middle">0.1×0.9는 0.09</text></svg><svg class="fig-svg fig-narrow" viewBox="0 0 390 187" role="img" aria-label="스팸과 정상은 배반이라 교집합이 0이지만, 확률 곱 0.09와 다르므로 독립이 아니다."><rect class="f-box" x="20" y="6" width="350" height="51" rx="5"/><text class="f-s" x="34" y="25" text-anchor="start">사건 A</text><text class="f-cap" x="34" y="47" text-anchor="start">실제 스팸</text><text class="f-s" x="354" y="46" text-anchor="end">확률 0.1</text><rect class="f-box" x="20" y="68" width="350" height="51" rx="5"/><text class="f-s" x="34" y="87" text-anchor="start">사건 C</text><text class="f-cap" x="34" y="109" text-anchor="start">실제 정상</text><text class="f-s" x="354" y="108" text-anchor="end">확률 0.9</text><rect class="f-over" x="20" y="130" width="350" height="51" rx="5"/><text class="f-s" x="34" y="149" text-anchor="start">둘 다</text><text class="f-cap" x="34" y="171" text-anchor="start">확률 0</text><text class="f-s" x="354" y="170" text-anchor="end">0.1×0.9는 0.09</text></svg></figure>
+<p class="say">독립이면 교집합 확률과 개별 확률의 곱이 같아야 한다.</p>
+</section>
+
+<section class="slide">
+<h2>같은 경고라도 적용 대상 확인</h2>
+<figure class="fig"><svg class="fig-svg fig-wide" viewBox="0 0 760 212" role="img" aria-label="같은 감지율이어도 실제 스팸의 빈도가 다른 메일함에서 경고의 의미는 달라질 수 있다."><rect class="f-box" x="30" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="135.66666666666669" y="66" text-anchor="middle">메일함 A</text><text class="f-cap" x="135.66666666666669" y="105" text-anchor="middle">스팸 10%</text><text class="f-s" x="135.66666666666669" y="139" text-anchor="middle">경고 절반이 정탐</text><rect class="f-box" x="263.33333333333337" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="369.00000000000006" y="66" text-anchor="middle">메일함 B</text><text class="f-cap" x="369.00000000000006" y="105" text-anchor="middle">스팸 1%</text><text class="f-s" x="369.00000000000006" y="139" text-anchor="middle">경고 대부분이 오탐</text><rect class="f-soft" x="496.6666666666667" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="602.3333333333334" y="66" text-anchor="middle">공통 검사</text><text class="f-cap" x="602.3333333333334" y="105" text-anchor="middle">오탐률·기저율</text><text class="f-s" x="602.3333333333334" y="139" text-anchor="middle">경고 해석의 근거</text></svg><svg class="fig-svg fig-narrow" viewBox="0 0 390 187" role="img" aria-label="같은 감지율이어도 실제 스팸의 빈도가 다른 메일함에서 경고의 의미는 달라질 수 있다."><rect class="f-box" x="20" y="6" width="350" height="51" rx="5"/><text class="f-s" x="34" y="25" text-anchor="start">메일함 A</text><text class="f-cap" x="34" y="47" text-anchor="start">스팸 10%</text><text class="f-s" x="354" y="46" text-anchor="end">경고 절반이 정탐</text><rect class="f-box" x="20" y="68" width="350" height="51" rx="5"/><text class="f-s" x="34" y="87" text-anchor="start">메일함 B</text><text class="f-cap" x="34" y="109" text-anchor="start">스팸 1%</text><text class="f-s" x="354" y="108" text-anchor="end">경고 대부분이 오탐</text><rect class="f-soft" x="20" y="130" width="350" height="51" rx="5"/><text class="f-s" x="34" y="149" text-anchor="start">공통 검사</text><text class="f-cap" x="34" y="171" text-anchor="start">오탐률·기저율</text><text class="f-s" x="354" y="170" text-anchor="end">경고 해석의 근거</text></svg></figure>
+<p class="say">모델이 옮겨 갈 곳에서 기저율과 성능을 다시 확인.</p>
+</section>
+
+<section class="slide check-slide">
+<h2>잠깐, 직접</h2>
+<div class="check" data-q="q3"></div>
+</section>
+
+<section class="slide">
+<h2>기저율만 바꿔서 계산</h2>
+<pre data-example="python"><code>import numpy as np
+prior = np.array([.10,.01])
+tp = .9*prior
+fp = .1*(1-prior)
+print((tp/(tp+fp)).round(4).tolist())</code></pre>
+<pre data-output><code>[0.5, 0.0833]</code></pre>
+<p class="say">감지율과 오탐률은 두 조건에서 동일하다.</p>
+</section>
+
+<section class="slide">
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table><tbody><tr><th scope="row">기저율</th><td>새 신호 전에 실제 스팸이 얼마나 흔한가</td></tr><tr><th scope="row">베이즈</th><td>P(A | B) = P(B | A)·P(A) / P(B)</td></tr><tr><th scope="row">독립</th><td>P(A∩B) = P(A)·P(B)</td></tr><tr><th scope="row">배반</th><td>두 사건이 동시에 일어나지 않음</td></tr></tbody></table></div>
+<p class="small muted">개념 사전 · <a href="../../learn/unit.html?u=PR03">독립과 베이즈</a> · <a href="../../learn/unit.html?u=PR02">조건부확률</a></p>
+</section>
+
+</main>
+<script src="../notes.js"></script>
+<script src="../js/core.js"></script>
+<script src="../js/deck.js"></script>
+</body>
+</html>

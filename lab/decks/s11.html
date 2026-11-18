@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>확률의 언어 · 슬라이드 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%238a4b14'/%3E%3Cpath d='M10 8l12 8-12 8z' fill='%23fff'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../style.css">
+</head>
+<body class="deck-body" data-note="S11">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../index.html">슬라이드 교재</a>
+<span class="crumb">덱 11</span>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<main class="deck">
+
+<section class="slide cover-slide">
+<p class="deck-no">덱 11</p>
+<h1>확률의 언어</h1>
+<p class="road"><b>표본공간</b> → <b>사건</b> → <b>교집합</b> → <b>조건부확률</b></p>
+<p class="say">스팸 경고를 봤을 때 실제 스팸일 가능성을 사건으로 표현한다.</p>
+</section>
+
+<section class="slide">
+<h2>표본공간 = 가능한 결과 전체</h2>
+<figure class="fig"><svg class="fig-svg fig-wide" viewBox="0 0 760 212" role="img" aria-label="메일 100개 중 하나를 균일하게 고르며, 스팸 사건은 크기 20, 경고 사건은 크기 30이다."><rect class="f-box" x="30" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="135.66666666666669" y="66" text-anchor="middle">한 번 고름</text><text class="f-cap" x="135.66666666666669" y="105" text-anchor="middle">메일 100개 중 하나</text><text class="f-s" x="135.66666666666669" y="139" text-anchor="middle">모두 같은 확률</text><rect class="f-box" x="263.33333333333337" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="369.00000000000006" y="66" text-anchor="middle">사건 A</text><text class="f-cap" x="369.00000000000006" y="105" text-anchor="middle">실제 스팸</text><text class="f-s" x="369.00000000000006" y="139" text-anchor="middle">A에는 20개</text><rect class="f-soft" x="496.6666666666667" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="602.3333333333334" y="66" text-anchor="middle">사건 B</text><text class="f-cap" x="602.3333333333334" y="105" text-anchor="middle">모델의 경고</text><text class="f-s" x="602.3333333333334" y="139" text-anchor="middle">B에는 30개</text></svg><svg class="fig-svg fig-narrow" viewBox="0 0 390 187" role="img" aria-label="메일 100개 중 하나를 균일하게 고르며, 스팸 사건은 크기 20, 경고 사건은 크기 30이다."><rect class="f-box" x="20" y="6" width="350" height="51" rx="5"/><text class="f-s" x="34" y="25" text-anchor="start">한 번 고름</text><text class="f-cap" x="34" y="47" text-anchor="start">메일 100개 중 하나</text><text class="f-s" x="354" y="46" text-anchor="end">모두 같은 확률</text><rect class="f-box" x="20" y="68" width="350" height="51" rx="5"/><text class="f-s" x="34" y="87" text-anchor="start">사건 A</text><text class="f-cap" x="34" y="109" text-anchor="start">실제 스팸</text><text class="f-s" x="354" y="108" text-anchor="end">A에는 20개</text><rect class="f-soft" x="20" y="130" width="350" height="51" rx="5"/><text class="f-s" x="34" y="149" text-anchor="start">사건 B</text><text class="f-cap" x="34" y="171" text-anchor="start">모델의 경고</text><text class="f-s" x="354" y="170" text-anchor="end">B에는 30개</text></svg></figure>
+<p class="say">한 메일이 두 사건에 동시에 속할 수 있다.</p>
+</section>
+
+<section class="slide">
+<h2>겹치는 결과는 한 칸으로</h2>
+<figure class="fig"><svg class="fig-svg fig-wide" viewBox="0 0 760 140" role="img" aria-label="100개 메일의 교차표. 경고 스팸 15, 미경고 스팸 5, 경고 정상 15, 미경고 정상 65."><text class="f-s" x="245" y="28" text-anchor="middle">경고</text><text class="f-s" x="367" y="28" text-anchor="middle">경고 없음</text><text class="f-s" x="175" y="74.8" text-anchor="end">스팸</text><rect class="f-soft" x="184" y="48" width="118" height="35" rx="5"/><text class="f-t" x="243" y="73.6" text-anchor="middle">15</text><rect class="f-box" x="306" y="48" width="118" height="35" rx="5"/><text class="f-t" x="365" y="73.6" text-anchor="middle">5</text><text class="f-s" x="175" y="114.8" text-anchor="end">정상</text><rect class="f-box" x="184" y="88" width="118" height="35" rx="5"/><text class="f-t" x="243" y="113.6" text-anchor="middle">15</text><rect class="f-box" x="306" y="88" width="118" height="35" rx="5"/><text class="f-t" x="365" y="113.6" text-anchor="middle">65</text></svg><svg class="fig-svg fig-narrow" viewBox="0 0 390 140" role="img" aria-label="100개 메일의 교차표. 경고 스팸 15, 미경고 스팸 5, 경고 정상 15, 미경고 정상 65."><text class="f-s" x="165.5" y="28" text-anchor="middle">경고</text><text class="f-s" x="280.5" y="28" text-anchor="middle">경고 없음</text><text class="f-s" x="99" y="74.8" text-anchor="end">스팸</text><rect class="f-soft" x="108" y="48" width="111" height="35" rx="5"/><text class="f-t" x="163.5" y="73.6" text-anchor="middle">15</text><rect class="f-box" x="223" y="48" width="111" height="35" rx="5"/><text class="f-t" x="278.5" y="73.6" text-anchor="middle">5</text><text class="f-s" x="99" y="114.8" text-anchor="end">정상</text><rect class="f-box" x="108" y="88" width="111" height="35" rx="5"/><text class="f-t" x="163.5" y="113.6" text-anchor="middle">15</text><rect class="f-box" x="223" y="88" width="111" height="35" rx="5"/><text class="f-t" x="278.5" y="113.6" text-anchor="middle">65</text></svg></figure>
+<p class="big">P(A∩B) = 15 / 100</p>
+<p class="say">A∩B에는 실제 스팸이고 경고도 받은 15개만 있다.</p>
+</section>
+
+<section class="slide">
+<h2>또는은 겹친 개수를 한 번 뺀다</h2>
+<figure class="fig"><svg class="fig-svg fig-wide" viewBox="0 0 760 212" role="img" aria-label="스팸이거나 경고인 사건에서는 겹침 15를 한 번 빼어 35를 센다."><rect class="f-box" x="30" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="135.66666666666669" y="66" text-anchor="middle">P(A)</text><text class="f-cap" x="135.66666666666669" y="105" text-anchor="middle">20 / 100</text><text class="f-s" x="135.66666666666669" y="139" text-anchor="middle">스팸</text><line class="f-line" x1="243.33333333333334" y1="105" x2="260.33333333333337" y2="105" marker-end="url(#f-arrow)"/><rect class="f-box" x="263.33333333333337" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="369.00000000000006" y="66" text-anchor="middle">P(B)</text><text class="f-cap" x="369.00000000000006" y="105" text-anchor="middle">30 / 100</text><text class="f-s" x="369.00000000000006" y="139" text-anchor="middle">경고</text><line class="f-line" x1="476.66666666666674" y1="105" x2="493.66666666666674" y2="105" marker-end="url(#f-arrow)"/><rect class="f-soft" x="496.6666666666667" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="602.3333333333334" y="66" text-anchor="middle">합집합</text><text class="f-cap" x="602.3333333333334" y="105" text-anchor="middle">35 / 100</text><text class="f-s" x="602.3333333333334" y="139" text-anchor="middle">20+30−15</text></svg><svg class="fig-svg fig-narrow" viewBox="0 0 390 187" role="img" aria-label="스팸이거나 경고인 사건에서는 겹침 15를 한 번 빼어 35를 센다."><rect class="f-box" x="20" y="6" width="350" height="51" rx="5"/><text class="f-s" x="34" y="25" text-anchor="start">P(A)</text><text class="f-cap" x="34" y="47" text-anchor="start">20 / 100</text><text class="f-s" x="354" y="46" text-anchor="end">스팸</text><line class="f-line" x1="195" y1="58" x2="195" y2="67" marker-end="url(#f-arrow)"/><rect class="f-box" x="20" y="68" width="350" height="51" rx="5"/><text class="f-s" x="34" y="87" text-anchor="start">P(B)</text><text class="f-cap" x="34" y="109" text-anchor="start">30 / 100</text><text class="f-s" x="354" y="108" text-anchor="end">경고</text><line class="f-line" x1="195" y1="120" x2="195" y2="129" marker-end="url(#f-arrow)"/><rect class="f-soft" x="20" y="130" width="350" height="51" rx="5"/><text class="f-s" x="34" y="149" text-anchor="start">합집합</text><text class="f-cap" x="34" y="171" text-anchor="start">35 / 100</text><text class="f-s" x="354" y="170" text-anchor="end">20+30−15</text></svg></figure>
+<p class="say">둘 중 어느 것도 아닌 메일은 나머지 65개.</p>
+</section>
+
+<section class="slide check-slide">
+<h2>잠깐, 직접</h2>
+<div class="check" data-q="q1"></div>
+</section>
+
+<section class="slide">
+<h2>조건을 알면 분모가 줄어든다</h2>
+<figure class="fig"><svg class="fig-svg fig-wide" viewBox="0 0 760 212" role="img" aria-label="경고라는 조건으로 전체에서 경고 30개를 남기고 그중 스팸 15개를 센다."><rect class="f-box" x="30" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="135.66666666666669" y="66" text-anchor="middle">전체 100개</text><text class="f-cap" x="135.66666666666669" y="105" text-anchor="middle">경고 30개</text><text class="f-s" x="135.66666666666669" y="139" text-anchor="middle">B만 선택</text><line class="f-line" x1="243.33333333333334" y1="105" x2="260.33333333333337" y2="105" marker-end="url(#f-arrow)"/><rect class="f-box" x="263.33333333333337" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="369.00000000000006" y="66" text-anchor="middle">그 안의 실제 스팸</text><text class="f-cap" x="369.00000000000006" y="105" text-anchor="middle">15개</text><text class="f-s" x="369.00000000000006" y="139" text-anchor="middle">분자는 A∩B</text><line class="f-line" x1="476.66666666666674" y1="105" x2="493.66666666666674" y2="105" marker-end="url(#f-arrow)"/><rect class="f-soft" x="496.6666666666667" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="602.3333333333334" y="66" text-anchor="middle">조건부확률</text><text class="f-cap" x="602.3333333333334" y="105" text-anchor="middle">15÷30 = 0.5</text><text class="f-s" x="602.3333333333334" y="139" text-anchor="middle">P(A | B)</text></svg><svg class="fig-svg fig-narrow" viewBox="0 0 390 187" role="img" aria-label="경고라는 조건으로 전체에서 경고 30개를 남기고 그중 스팸 15개를 센다."><rect class="f-box" x="20" y="6" width="350" height="51" rx="5"/><text class="f-s" x="34" y="25" text-anchor="start">전체 100개</text><text class="f-cap" x="34" y="47" text-anchor="start">경고 30개</text><text class="f-s" x="354" y="46" text-anchor="end">B만 선택</text><line class="f-line" x1="195" y1="58" x2="195" y2="67" marker-end="url(#f-arrow)"/><rect class="f-box" x="20" y="68" width="350" height="51" rx="5"/><text class="f-s" x="34" y="87" text-anchor="start">그 안의 실제 스팸</text><text class="f-cap" x="34" y="109" text-anchor="start">15개</text><text class="f-s" x="354" y="108" text-anchor="end">분자는 A∩B</text><line class="f-line" x1="195" y1="120" x2="195" y2="129" marker-end="url(#f-arrow)"/><rect class="f-soft" x="20" y="130" width="350" height="51" rx="5"/><text class="f-s" x="34" y="149" text-anchor="start">조건부확률</text><text class="f-cap" x="34" y="171" text-anchor="start">15÷30 = 0.5</text><text class="f-s" x="354" y="170" text-anchor="end">P(A | B)</text></svg></figure>
+<p class="say">‘경고인 것 중 스팸’은 15/30. ‘스팸 중 경고’는 15/20.</p>
+</section>
+
+<section class="slide">
+<h2>∪ 밖에는 두 조건이 모두 없다</h2>
+<figure class="fig"><svg class="fig-svg fig-wide" viewBox="0 0 760 119" role="img" aria-label="네 영역은 서로 겹치지 않으며 마지막 65개가 합집합의 여집합이다."><text class="f-s" x="245" y="28" text-anchor="middle">A만</text><text class="f-s" x="367" y="28" text-anchor="middle">A와 B</text><text class="f-s" x="489" y="28" text-anchor="middle">B만</text><text class="f-s" x="611" y="28" text-anchor="middle">둘 다 없음</text><text class="f-s" x="175" y="74.8" text-anchor="end">메일 수</text><rect class="f-box" x="184" y="48" width="118" height="35" rx="5"/><text class="f-t" x="243" y="73.6" text-anchor="middle">5</text><rect class="f-box" x="306" y="48" width="118" height="35" rx="5"/><text class="f-t" x="365" y="73.6" text-anchor="middle">15</text><rect class="f-box" x="428" y="48" width="118" height="35" rx="5"/><text class="f-t" x="487" y="73.6" text-anchor="middle">15</text><rect class="f-soft" x="550" y="48" width="118" height="35" rx="5"/><text class="f-t" x="609" y="73.6" text-anchor="middle">65</text></svg><svg class="fig-svg fig-narrow" viewBox="0 0 390 119" role="img" aria-label="네 영역은 서로 겹치지 않으며 마지막 65개가 합집합의 여집합이다."><text class="f-s" x="141.25" y="28" text-anchor="middle">A만</text><text class="f-s" x="207.75" y="28" text-anchor="middle">A와 B</text><text class="f-s" x="274.25" y="28" text-anchor="middle">B만</text><text class="f-s" x="340.75" y="28" text-anchor="middle">둘 다 없음</text><text class="f-s" x="99" y="74.8" text-anchor="end">메일 수</text><rect class="f-box" x="108" y="48" width="62.5" height="35" rx="5"/><text class="f-t" x="139.25" y="73.6" text-anchor="middle">5</text><rect class="f-box" x="174.5" y="48" width="62.5" height="35" rx="5"/><text class="f-t" x="205.75" y="73.6" text-anchor="middle">15</text><rect class="f-box" x="241" y="48" width="62.5" height="35" rx="5"/><text class="f-t" x="272.25" y="73.6" text-anchor="middle">15</text><rect class="f-soft" x="307.5" y="48" width="62.5" height="35" rx="5"/><text class="f-t" x="338.75" y="73.6" text-anchor="middle">65</text></svg></figure>
+<p class="big">(A∪B)ᶜ = Aᶜ∩Bᶜ</p>
+<p class="say">‘A 또는 B가 아님’은 표현이 모호하므로 ‘A도 B도 아님’으로 써 본다.</p>
+</section>
+
+<section class="slide check-slide">
+<h2>잠깐, 직접</h2>
+<div class="check" data-q="q2"></div>
+</section>
+
+<section class="slide">
+<h2>순서를 기억하면 세는 답이 바뀐다</h2>
+<figure class="fig"><svg class="fig-svg fig-wide" viewBox="0 0 760 212" role="img" aria-label="종류 3개에서 순서 있게 서로 다른 두 토큰 6, 순서를 무시하면 3, 재사용이 가능하면 9."><rect class="f-box" x="30" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="135.66666666666669" y="66" text-anchor="middle">다른 토큰 둘</text><text class="f-cap" x="135.66666666666669" y="105" text-anchor="middle">3×2 = 6</text><text class="f-s" x="135.66666666666669" y="139" text-anchor="middle">순서 있음 · xy와 yx</text><rect class="f-box" x="263.33333333333337" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="369.00000000000006" y="66" text-anchor="middle">묶음으로</text><text class="f-cap" x="369.00000000000006" y="105" text-anchor="middle">3개</text><text class="f-s" x="369.00000000000006" y="139" text-anchor="middle">순서 없음 · xy=yx</text><rect class="f-soft" x="496.6666666666667" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="602.3333333333334" y="66" text-anchor="middle">재사용 허용</text><text class="f-cap" x="602.3333333333334" y="105" text-anchor="middle">3×3 = 9</text><text class="f-s" x="602.3333333333334" y="139" text-anchor="middle">순서 있음 · xx도 가능</text></svg><svg class="fig-svg fig-narrow" viewBox="0 0 390 187" role="img" aria-label="종류 3개에서 순서 있게 서로 다른 두 토큰 6, 순서를 무시하면 3, 재사용이 가능하면 9."><rect class="f-box" x="20" y="6" width="350" height="51" rx="5"/><text class="f-s" x="34" y="25" text-anchor="start">다른 토큰 둘</text><text class="f-cap" x="34" y="47" text-anchor="start">3×2 = 6</text><text class="f-s" x="354" y="46" text-anchor="end">순서 있음 · xy와 yx</text><rect class="f-box" x="20" y="68" width="350" height="51" rx="5"/><text class="f-s" x="34" y="87" text-anchor="start">묶음으로</text><text class="f-cap" x="34" y="109" text-anchor="start">3개</text><text class="f-s" x="354" y="108" text-anchor="end">순서 없음 · xy=yx</text><rect class="f-soft" x="20" y="130" width="350" height="51" rx="5"/><text class="f-s" x="34" y="149" text-anchor="start">재사용 허용</text><text class="f-cap" x="34" y="171" text-anchor="start">3×3 = 9</text><text class="f-s" x="354" y="170" text-anchor="end">순서 있음 · xx도 가능</text></svg></figure>
+<p class="say">경우의 수로 확률을 내려면 각 결과가 같은 확률인지 확인.</p>
+</section>
+
+<section class="slide">
+<h2>모형은 조건을 붙여 다음을 맞힌다</h2>
+<figure class="fig"><svg class="fig-svg fig-wide" viewBox="0 0 760 212" role="img" aria-label="모델 경고를 본 상태에서 실제 스팸일 가능성을 P(A|B)로 묻는다."><rect class="f-box" x="30" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="135.66666666666669" y="66" text-anchor="middle">관측</text><text class="f-cap" x="135.66666666666669" y="105" text-anchor="middle">메일에 경고 표시</text><text class="f-s" x="135.66666666666669" y="139" text-anchor="middle">B를 이미 앎</text><line class="f-line" x1="243.33333333333334" y1="105" x2="260.33333333333337" y2="105" marker-end="url(#f-arrow)"/><rect class="f-box" x="263.33333333333337" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="369.00000000000006" y="66" text-anchor="middle">질문</text><text class="f-cap" x="369.00000000000006" y="105" text-anchor="middle">정말 스팸?</text><text class="f-s" x="369.00000000000006" y="139" text-anchor="middle">A의 조건부확률</text><line class="f-line" x1="476.66666666666674" y1="105" x2="493.66666666666674" y2="105" marker-end="url(#f-arrow)"/><rect class="f-soft" x="496.6666666666667" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="602.3333333333334" y="66" text-anchor="middle">비교</text><text class="f-cap" x="602.3333333333334" y="105" text-anchor="middle">P(A | B)</text><text class="f-s" x="602.3333333333334" y="139" text-anchor="middle">경고가 주는 정보</text></svg><svg class="fig-svg fig-narrow" viewBox="0 0 390 187" role="img" aria-label="모델 경고를 본 상태에서 실제 스팸일 가능성을 P(A|B)로 묻는다."><rect class="f-box" x="20" y="6" width="350" height="51" rx="5"/><text class="f-s" x="34" y="25" text-anchor="start">관측</text><text class="f-cap" x="34" y="47" text-anchor="start">메일에 경고 표시</text><text class="f-s" x="354" y="46" text-anchor="end">B를 이미 앎</text><line class="f-line" x1="195" y1="58" x2="195" y2="67" marker-end="url(#f-arrow)"/><rect class="f-box" x="20" y="68" width="350" height="51" rx="5"/><text class="f-s" x="34" y="87" text-anchor="start">질문</text><text class="f-cap" x="34" y="109" text-anchor="start">정말 스팸?</text><text class="f-s" x="354" y="108" text-anchor="end">A의 조건부확률</text><line class="f-line" x1="195" y1="120" x2="195" y2="129" marker-end="url(#f-arrow)"/><rect class="f-soft" x="20" y="130" width="350" height="51" rx="5"/><text class="f-s" x="34" y="149" text-anchor="start">비교</text><text class="f-cap" x="34" y="171" text-anchor="start">P(A | B)</text><text class="f-s" x="354" y="170" text-anchor="end">경고가 주는 정보</text></svg></figure>
+<p class="say">경고 전의 스팸 확률은 0.2, 경고를 본 뒤에는 0.5다.</p>
+</section>
+
+<section class="slide check-slide">
+<h2>잠깐, 직접</h2>
+<div class="check" data-q="q3"></div>
+</section>
+
+<section class="slide">
+<h2>교차표의 분모 두 가지</h2>
+<pre data-example="python"><code>import numpy as np
+counts = np.array([[15,5],[15,65]])
+print(int(counts.sum()))
+print(float(counts[0,0]/counts[:,0].sum()))
+print(float(counts[0,0]/counts[0,:].sum()))</code></pre>
+<pre data-output><code>100
+0.5
+0.75</code></pre>
+<p class="say">같은 15를 써도 열 합과 행 합은 다르다.</p>
+</section>
+
+<section class="slide">
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table><tbody><tr><th scope="row">사건</th><td>가능한 결과들 중 모아 둔 부분집합</td></tr><tr><th scope="row">합집합</th><td>A 또는 B, 겹친 결과는 한 번</td></tr><tr><th scope="row">여집합</th><td>해당 사건 밖</td></tr><tr><th scope="row">조건부확률</th><td>이미 아는 사건으로 분모를 제한</td></tr></tbody></table></div>
+<p class="small muted">개념 사전 · <a href="../../learn/unit.html?u=DM01">집합과 관계</a> · <a href="../../learn/unit.html?u=DM03">세는 법</a> · <a href="../../learn/unit.html?u=PR01">확률의 시작</a> · <a href="../../learn/unit.html?u=PR02">조건부확률</a></p>
+</section>
+
+</main>
+<script src="../notes.js"></script>
+<script src="../js/core.js"></script>
+<script src="../js/deck.js"></script>
+</body>
+</html>

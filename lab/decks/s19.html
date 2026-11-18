@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>학습 코드와 안정화 · 슬라이드 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%238a4b14'/%3E%3Cpath d='M10 8l12 8-12 8z' fill='%23fff'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../style.css">
+</head>
+<body class="deck-body" data-note="S19">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../index.html">슬라이드 교재</a>
+<span class="crumb">덱 19</span>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<main class="deck">
+
+<section class="slide cover-slide">
+<p class="deck-no">덱 19</p>
+<h1>학습 코드와 안정화</h1>
+<p class="road"><b>학습 루프</b> → <b>배치</b> → <b>안정화</b> → <b>재실행</b></p>
+<p class="say">역전파 한 번을 반복할 때 무엇을 초기화하고 기록하는지 확인한다.</p>
+</section>
+
+<section class="slide">
+<h2>예측하고, 미분하고, 움직인다</h2>
+<figure class="fig"><svg class="fig-svg fig-wide" viewBox="0 0 760 212" role="img" aria-label="순전파로 손실을 얻고 역전파로 경사를 계산한 뒤 최적화기로 가중치를 갱신한다."><rect class="f-box" x="30" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="135.66666666666669" y="66" text-anchor="middle">1 · 순전파</text><text class="f-cap" x="135.66666666666669" y="105" text-anchor="middle">model(x)</text><text class="f-s" x="135.66666666666669" y="139" text-anchor="middle">손실 한 수 계산</text><line class="f-line" x1="243.33333333333334" y1="105" x2="260.33333333333337" y2="105" marker-end="url(#f-arrow)"/><rect class="f-box" x="263.33333333333337" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="369.00000000000006" y="66" text-anchor="middle">2 · 역전파</text><text class="f-cap" x="369.00000000000006" y="105" text-anchor="middle">loss.backward()</text><text class="f-s" x="369.00000000000006" y="139" text-anchor="middle">경사를 쌓음</text><line class="f-line" x1="476.66666666666674" y1="105" x2="493.66666666666674" y2="105" marker-end="url(#f-arrow)"/><rect class="f-soft" x="496.6666666666667" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="602.3333333333334" y="66" text-anchor="middle">3 · 갱신</text><text class="f-cap" x="602.3333333333334" y="105" text-anchor="middle">optimizer.step()</text><text class="f-s" x="602.3333333333334" y="139" text-anchor="middle">경사를 보고 이동</text></svg><svg class="fig-svg fig-narrow" viewBox="0 0 390 187" role="img" aria-label="순전파로 손실을 얻고 역전파로 경사를 계산한 뒤 최적화기로 가중치를 갱신한다."><rect class="f-box" x="20" y="6" width="350" height="51" rx="5"/><text class="f-s" x="34" y="25" text-anchor="start">1 · 순전파</text><text class="f-cap" x="34" y="47" text-anchor="start">model(x)</text><text class="f-s" x="354" y="46" text-anchor="end">손실 한 수 계산</text><line class="f-line" x1="195" y1="58" x2="195" y2="67" marker-end="url(#f-arrow)"/><rect class="f-box" x="20" y="68" width="350" height="51" rx="5"/><text class="f-s" x="34" y="87" text-anchor="start">2 · 역전파</text><text class="f-cap" x="34" y="109" text-anchor="start">loss.backward()</text><text class="f-s" x="354" y="108" text-anchor="end">경사를 쌓음</text><line class="f-line" x1="195" y1="120" x2="195" y2="129" marker-end="url(#f-arrow)"/><rect class="f-soft" x="20" y="130" width="350" height="51" rx="5"/><text class="f-s" x="34" y="149" text-anchor="start">3 · 갱신</text><text class="f-cap" x="34" y="171" text-anchor="start">optimizer.step()</text><text class="f-s" x="354" y="170" text-anchor="end">경사를 보고 이동</text></svg></figure>
+<p class="say">보통 배치 시작마다 zero_grad로 이전 경사를 지운다.</p>
+</section>
+
+<section class="slide">
+<h2>배치 축에 자료 몇 개가 들어가나?</h2>
+<figure class="fig"><svg class="fig-svg fig-wide" viewBox="0 0 760 140" role="img" aria-label="다섯 항을 크기 2로 나누면 끝 배치에는 한 항만 있다."><text class="f-s" x="245" y="28" text-anchor="middle">배치 1</text><text class="f-s" x="367" y="28" text-anchor="middle">배치 2</text><text class="f-s" x="489" y="28" text-anchor="middle">배치 3</text><text class="f-s" x="175" y="74.8" text-anchor="end">x</text><rect class="f-box" x="184" y="48" width="118" height="35" rx="5"/><text class="f-t" x="243" y="73.6" text-anchor="middle">1,2</text><rect class="f-box" x="306" y="48" width="118" height="35" rx="5"/><text class="f-t" x="365" y="73.6" text-anchor="middle">3,4</text><rect class="f-box" x="428" y="48" width="118" height="35" rx="5"/><text class="f-t" x="487" y="73.6" text-anchor="middle">5</text><text class="f-s" x="175" y="114.8" text-anchor="end">y=2x</text><rect class="f-box" x="184" y="88" width="118" height="35" rx="5"/><text class="f-t" x="243" y="113.6" text-anchor="middle">2,4</text><rect class="f-box" x="306" y="88" width="118" height="35" rx="5"/><text class="f-t" x="365" y="113.6" text-anchor="middle">6,8</text><rect class="f-box" x="428" y="88" width="118" height="35" rx="5"/><text class="f-t" x="487" y="113.6" text-anchor="middle">10</text></svg><svg class="fig-svg fig-narrow" viewBox="0 0 390 140" role="img" aria-label="다섯 항을 크기 2로 나누면 끝 배치에는 한 항만 있다."><text class="f-s" x="152.33333333333334" y="28" text-anchor="middle">배치 1</text><text class="f-s" x="241" y="28" text-anchor="middle">배치 2</text><text class="f-s" x="329.6666666666667" y="28" text-anchor="middle">배치 3</text><text class="f-s" x="99" y="74.8" text-anchor="end">x</text><rect class="f-box" x="108" y="48" width="84.66666666666667" height="35" rx="5"/><text class="f-t" x="150.33333333333334" y="73.6" text-anchor="middle">1,2</text><rect class="f-box" x="196.66666666666669" y="48" width="84.66666666666667" height="35" rx="5"/><text class="f-t" x="239.00000000000003" y="73.6" text-anchor="middle">3,4</text><rect class="f-box" x="285.33333333333337" y="48" width="84.66666666666667" height="35" rx="5"/><text class="f-t" x="327.6666666666667" y="73.6" text-anchor="middle">5</text><text class="f-s" x="99" y="114.8" text-anchor="end">y=2x</text><rect class="f-box" x="108" y="88" width="84.66666666666667" height="35" rx="5"/><text class="f-t" x="150.33333333333334" y="113.6" text-anchor="middle">2,4</text><rect class="f-box" x="196.66666666666669" y="88" width="84.66666666666667" height="35" rx="5"/><text class="f-t" x="239.00000000000003" y="113.6" text-anchor="middle">6,8</text><rect class="f-box" x="285.33333333333337" y="88" width="84.66666666666667" height="35" rx="5"/><text class="f-t" x="327.6666666666667" y="113.6" text-anchor="middle">10</text></svg></figure>
+<p class="say">DataLoader는 자료를 배치로 넘긴다. 끝 배치를 유지할지 결정.</p>
+</section>
+
+<section class="slide">
+<h2>시작 가중치는 미분 크기에도 영향</h2>
+<figure class="fig"><svg class="fig-svg fig-wide" viewBox="0 0 760 212" role="img" aria-label="tanh 입력 크기가 지나치게 크면 포화 구간에서 기울기가 작아진다."><rect class="f-box" x="30" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="135.66666666666669" y="66" text-anchor="middle">tanh의 입력</text><text class="f-cap" x="135.66666666666669" y="105" text-anchor="middle">작은 |z|</text><text class="f-s" x="135.66666666666669" y="139" text-anchor="middle">기울기가 큼</text><rect class="f-box" x="263.33333333333337" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="369.00000000000006" y="66" text-anchor="middle">tanh의 입력</text><text class="f-cap" x="369.00000000000006" y="105" text-anchor="middle">큰 |z|</text><text class="f-s" x="369.00000000000006" y="139" text-anchor="middle">출력이 ±1 부근</text><rect class="f-over" x="496.6666666666667" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="602.3333333333334" y="66" text-anchor="middle">뒤로 전달</text><text class="f-cap" x="602.3333333333334" y="105" text-anchor="middle">포화 구간</text><text class="f-s" x="602.3333333333334" y="139" text-anchor="middle">경사가 줄어듦</text></svg><svg class="fig-svg fig-narrow" viewBox="0 0 390 187" role="img" aria-label="tanh 입력 크기가 지나치게 크면 포화 구간에서 기울기가 작아진다."><rect class="f-box" x="20" y="6" width="350" height="51" rx="5"/><text class="f-s" x="34" y="25" text-anchor="start">tanh의 입력</text><text class="f-cap" x="34" y="47" text-anchor="start">작은 |z|</text><text class="f-s" x="354" y="46" text-anchor="end">기울기가 큼</text><rect class="f-box" x="20" y="68" width="350" height="51" rx="5"/><text class="f-s" x="34" y="87" text-anchor="start">tanh의 입력</text><text class="f-cap" x="34" y="109" text-anchor="start">큰 |z|</text><text class="f-s" x="354" y="108" text-anchor="end">출력이 ±1 부근</text><rect class="f-over" x="20" y="130" width="350" height="51" rx="5"/><text class="f-s" x="34" y="149" text-anchor="start">뒤로 전달</text><text class="f-cap" x="34" y="171" text-anchor="start">포화 구간</text><text class="f-s" x="354" y="170" text-anchor="end">경사가 줄어듦</text></svg></figure>
+<p class="say">입력 표준화·분산에 맞춘 초기화로 지나친 활성 규모를 피한다.</p>
+</section>
+
+<section class="slide check-slide">
+<h2>잠깐, 직접</h2>
+<div class="check" data-q="q1"></div>
+</section>
+
+<section class="slide">
+<h2>갱신 방법이 들고 있는 다른 정보</h2>
+<figure class="fig"><svg class="fig-svg fig-wide" viewBox="0 0 760 119" role="img" aria-label="SGD는 현재 기울기, 모멘텀은 최근 흐름, Adam은 경사와 경사 제곱의 이동 통계를 이용한다."><text class="f-s" x="245" y="28" text-anchor="middle">SGD</text><text class="f-s" x="367" y="28" text-anchor="middle">모멘텀</text><text class="f-s" x="489" y="28" text-anchor="middle">Adam</text><text class="f-s" x="175" y="74.8" text-anchor="end">기억</text><rect class="f-box" x="184" y="48" width="118" height="35" rx="5"/><text class="f-t" x="243" y="73.6" text-anchor="middle">현재 경사</text><rect class="f-box" x="306" y="48" width="118" height="35" rx="5"/><text class="f-t" x="365" y="73.6" text-anchor="middle">최근 경사</text><rect class="f-box" x="428" y="48" width="118" height="35" rx="5"/><text class="f-t" x="487" y="73.6" text-anchor="middle">경사와 제곱</text></svg><svg class="fig-svg fig-narrow" viewBox="0 0 390 119" role="img" aria-label="SGD는 현재 기울기, 모멘텀은 최근 흐름, Adam은 경사와 경사 제곱의 이동 통계를 이용한다."><text class="f-s" x="152.33333333333334" y="28" text-anchor="middle">SGD</text><text class="f-s" x="241" y="28" text-anchor="middle">모멘텀</text><text class="f-s" x="329.6666666666667" y="28" text-anchor="middle">Adam</text><text class="f-s" x="99" y="74.8" text-anchor="end">기억</text><rect class="f-box" x="108" y="48" width="84.66666666666667" height="35" rx="5"/><text class="f-t" x="150.33333333333334" y="73.6" text-anchor="middle">현재 경사</text><rect class="f-box" x="196.66666666666669" y="48" width="84.66666666666667" height="35" rx="5"/><text class="f-t" x="239.00000000000003" y="73.6" text-anchor="middle">최근 경사</text><rect class="f-box" x="285.33333333333337" y="48" width="84.66666666666667" height="35" rx="5"/><text class="f-t" x="327.6666666666667" y="73.6" text-anchor="middle">경사와 제곱</text></svg></figure>
+<p class="say">Adam은 매개변수별 규모도 바꾼다. 실제 학습률 선택은 여전히 필요.</p>
+</section>
+
+<section class="slide">
+<h2>학습 안정화와 과대적합에는 다른 장치</h2>
+<figure class="fig"><svg class="fig-svg fig-wide" viewBox="0 0 760 212" role="img" aria-label="정규화는 활성 규모, 잔차는 경사 경로, dropout은 학습 중 임의 활성 비활성화를 다룬다."><rect class="f-box" x="30" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="135.66666666666669" y="66" text-anchor="middle">활성 정규화</text><text class="f-cap" x="135.66666666666669" y="105" text-anchor="middle">값의 규모 조절</text><text class="f-s" x="135.66666666666669" y="139" text-anchor="middle">어느 축인지 확인</text><rect class="f-box" x="263.33333333333337" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="369.00000000000006" y="66" text-anchor="middle">잔차 연결</text><text class="f-cap" x="369.00000000000006" y="105" text-anchor="middle">+ x</text><text class="f-s" x="369.00000000000006" y="139" text-anchor="middle">입력 경로도 전달</text><rect class="f-soft" x="496.6666666666667" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="602.3333333333334" y="66" text-anchor="middle">dropout</text><text class="f-cap" x="602.3333333333334" y="105" text-anchor="middle">일부 활성 끄기</text><text class="f-s" x="602.3333333333334" y="139" text-anchor="middle">훈련 모드에서 사용</text></svg><svg class="fig-svg fig-narrow" viewBox="0 0 390 187" role="img" aria-label="정규화는 활성 규모, 잔차는 경사 경로, dropout은 학습 중 임의 활성 비활성화를 다룬다."><rect class="f-box" x="20" y="6" width="350" height="51" rx="5"/><text class="f-s" x="34" y="25" text-anchor="start">활성 정규화</text><text class="f-cap" x="34" y="47" text-anchor="start">값의 규모 조절</text><text class="f-s" x="354" y="46" text-anchor="end">어느 축인지 확인</text><rect class="f-box" x="20" y="68" width="350" height="51" rx="5"/><text class="f-s" x="34" y="87" text-anchor="start">잔차 연결</text><text class="f-cap" x="34" y="109" text-anchor="start">+ x</text><text class="f-s" x="354" y="108" text-anchor="end">입력 경로도 전달</text><rect class="f-soft" x="20" y="130" width="350" height="51" rx="5"/><text class="f-s" x="34" y="149" text-anchor="start">dropout</text><text class="f-cap" x="34" y="171" text-anchor="start">일부 활성 끄기</text><text class="f-s" x="354" y="170" text-anchor="end">훈련 모드에서 사용</text></svg></figure>
+<p class="say">dropout은 훈련 중 일부 출력을 무작위로 꺼 과대적합을 줄이는 데 쓴다.</p>
+</section>
+
+<section class="slide">
+<h2>평가 모드와 경사 끄기는 다르다</h2>
+<figure class="fig"><svg class="fig-svg fig-wide" viewBox="0 0 760 212" role="img" aria-label="eval은 모델 동작을 바꾸고 no_grad는 경사 추적을 중단하는 별개 기능."><rect class="f-box" x="30" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="135.66666666666669" y="66" text-anchor="middle">훈련</text><text class="f-cap" x="135.66666666666669" y="105" text-anchor="middle">model.train()</text><text class="f-s" x="135.66666666666669" y="139" text-anchor="middle">학습용 동작</text><rect class="f-box" x="263.33333333333337" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="369.00000000000006" y="66" text-anchor="middle">평가</text><text class="f-cap" x="369.00000000000006" y="105" text-anchor="middle">model.eval()</text><text class="f-s" x="369.00000000000006" y="139" text-anchor="middle">dropout 끄기 등</text><rect class="f-soft" x="496.6666666666667" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="602.3333333333334" y="66" text-anchor="middle">별도 기능</text><text class="f-cap" x="602.3333333333334" y="105" text-anchor="middle">no_grad()</text><text class="f-s" x="602.3333333333334" y="139" text-anchor="middle">미분 그래프 저장 안 함</text></svg><svg class="fig-svg fig-narrow" viewBox="0 0 390 187" role="img" aria-label="eval은 모델 동작을 바꾸고 no_grad는 경사 추적을 중단하는 별개 기능."><rect class="f-box" x="20" y="6" width="350" height="51" rx="5"/><text class="f-s" x="34" y="25" text-anchor="start">훈련</text><text class="f-cap" x="34" y="47" text-anchor="start">model.train()</text><text class="f-s" x="354" y="46" text-anchor="end">학습용 동작</text><rect class="f-box" x="20" y="68" width="350" height="51" rx="5"/><text class="f-s" x="34" y="87" text-anchor="start">평가</text><text class="f-cap" x="34" y="109" text-anchor="start">model.eval()</text><text class="f-s" x="354" y="108" text-anchor="end">dropout 끄기 등</text><rect class="f-soft" x="20" y="130" width="350" height="51" rx="5"/><text class="f-s" x="34" y="149" text-anchor="start">별도 기능</text><text class="f-cap" x="34" y="171" text-anchor="start">no_grad()</text><text class="f-s" x="354" y="170" text-anchor="end">미분 그래프 저장 안 함</text></svg></figure>
+<p class="say">평가 모드는 층의 동작을 바꾼다. 가중치 갱신은 학습 루프에서 따로 실행한다.</p>
+</section>
+
+<section class="slide check-slide">
+<h2>잠깐, 직접</h2>
+<div class="check" data-q="q2"></div>
+</section>
+
+<section class="slide">
+<h2>숫자가 예상과 다르면 작은 배치부터</h2>
+<figure class="fig"><svg class="fig-svg fig-wide" viewBox="0 0 760 212" role="img" aria-label="시드와 버전을 고정하고 문제 배치의 모양, 수, 손계산 결과를 비교한다."><rect class="f-box" x="30" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="135.66666666666669" y="66" text-anchor="middle">재현</text><text class="f-cap" x="135.66666666666669" y="105" text-anchor="middle">시드와 코드 고정</text><text class="f-s" x="135.66666666666669" y="139" text-anchor="middle">환경·라이브러리 버전</text><line class="f-line" x1="243.33333333333334" y1="105" x2="260.33333333333337" y2="105" marker-end="url(#f-arrow)"/><rect class="f-box" x="263.33333333333337" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="369.00000000000006" y="66" text-anchor="middle">확인</text><text class="f-cap" x="369.00000000000006" y="105" text-anchor="middle">행·열·dtype</text><text class="f-s" x="369.00000000000006" y="139" text-anchor="middle">assert로 조건 검사</text><line class="f-line" x1="476.66666666666674" y1="105" x2="493.66666666666674" y2="105" marker-end="url(#f-arrow)"/><rect class="f-soft" x="496.6666666666667" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="602.3333333333334" y="66" text-anchor="middle">비교</text><text class="f-cap" x="602.3333333333334" y="105" text-anchor="middle">손계산 한 발</text><text class="f-s" x="602.3333333333334" y="139" text-anchor="middle">출력·오류 기록</text></svg><svg class="fig-svg fig-narrow" viewBox="0 0 390 187" role="img" aria-label="시드와 버전을 고정하고 문제 배치의 모양, 수, 손계산 결과를 비교한다."><rect class="f-box" x="20" y="6" width="350" height="51" rx="5"/><text class="f-s" x="34" y="25" text-anchor="start">재현</text><text class="f-cap" x="34" y="47" text-anchor="start">시드와 코드 고정</text><text class="f-s" x="354" y="46" text-anchor="end">환경·라이브러리 버전</text><line class="f-line" x1="195" y1="58" x2="195" y2="67" marker-end="url(#f-arrow)"/><rect class="f-box" x="20" y="68" width="350" height="51" rx="5"/><text class="f-s" x="34" y="87" text-anchor="start">확인</text><text class="f-cap" x="34" y="109" text-anchor="start">행·열·dtype</text><text class="f-s" x="354" y="108" text-anchor="end">assert로 조건 검사</text><line class="f-line" x1="195" y1="120" x2="195" y2="129" marker-end="url(#f-arrow)"/><rect class="f-soft" x="20" y="130" width="350" height="51" rx="5"/><text class="f-s" x="34" y="149" text-anchor="start">비교</text><text class="f-cap" x="34" y="171" text-anchor="start">손계산 한 발</text><text class="f-s" x="354" y="170" text-anchor="end">출력·오류 기록</text></svg></figure>
+<p class="say">손계산과 처음 갈라지는 줄을 찾는다. 재실행할 때 쓴 가중치·구성·환경 버전도 남긴다.</p>
+</section>
+
+<section class="slide check-slide">
+<h2>잠깐, 직접</h2>
+<div class="check" data-q="q3"></div>
+</section>
+
+<section class="slide">
+<h2>PyTorch로 한 가중치 세 번 갱신</h2>
+<pre data-example="python"><code>import torch
+x = torch.tensor([[1.], [2.]])
+y = 2*x
+model = torch.nn.Linear(1, 1, bias=False)
+with torch.no_grad():
+    model.weight.zero_()
+opt = torch.optim.SGD(model.parameters(), lr=.1)
+model.train()
+for _ in range(3):
+    opt.zero_grad()
+    loss = (model(x)-y).square().mean()
+    loss.backward()
+    opt.step()
+model.eval()
+with torch.no_grad():
+    print(f&quot;{model.weight.item():.2f} {(model(x)-y).square().mean().item():.5f}&quot;)</code></pre>
+<pre data-output><code>1.75 0.15625</code></pre>
+<p class="say">초기 w=0에서 1, 1.5, 1.75로 가며 손실이 줄어든다.</p>
+</section>
+
+<section class="slide">
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table><tbody><tr><th scope="row">훈련 순서</th><td>예측, 손실, 경사 계산, 갱신</td></tr><tr><th scope="row">배치</th><td>사례 일부로 경사 추정</td></tr><tr><th scope="row">평가 모드</th><td>학습 전용 동작을 평가 규칙으로 전환</td></tr><tr><th scope="row">재현</th><td>코드·자료·버전·시드·장치 기록</td></tr></tbody></table></div>
+<p class="small muted">개념 사전 · <a href="../../learn/unit.html?u=DL03">학습 코드</a> · <a href="../../learn/unit.html?u=DL04">학습을 안정시키기</a> · <a href="../../learn/unit.html?u=PY08">디버깅과 검증</a> · <a href="../../learn/unit.html?u=PY09">패키지와 환경</a> · <a href="../../learn/unit.html?u=OP04">확률적 최적화</a></p>
+</section>
+
+</main>
+<script src="../notes.js"></script>
+<script src="../js/core.js"></script>
+<script src="../js/deck.js"></script>
+</body>
+</html>

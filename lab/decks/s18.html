@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>역전파 · 슬라이드 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%238a4b14'/%3E%3Cpath d='M10 8l12 8-12 8z' fill='%23fff'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../style.css">
+</head>
+<body class="deck-body" data-note="S18">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../index.html">슬라이드 교재</a>
+<span class="crumb">덱 18</span>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<main class="deck">
+
+<section class="slide cover-slide">
+<p class="deck-no">덱 18</p>
+<h1>역전파</h1>
+<p class="road"><b>계산그래프</b> → <b>연쇄법칙</b> → <b>합쳐지는 경사</b> → <b>검산</b></p>
+<p class="say">모델이 틀렸을 때 어느 가중치가 얼마나 책임지는지 뒤에서 계산한다.</p>
+</section>
+
+<section class="slide">
+<h2>한 표본의 계산을 한 칸씩</h2>
+<figure class="fig"><svg class="fig-svg fig-wide" viewBox="0 0 760 212" role="img" aria-label="x 2와 w 3이 곱해져 h6, 편향을 더해 z7, 제곱손실 4가 된다."><rect class="f-box" x="30" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="135.66666666666669" y="66" text-anchor="middle">입력 x=2, w=3</text><text class="f-cap" x="135.66666666666669" y="105" text-anchor="middle">h = wx = 6</text><text class="f-s" x="135.66666666666669" y="139" text-anchor="middle">곱</text><line class="f-line" x1="243.33333333333334" y1="105" x2="260.33333333333337" y2="105" marker-end="url(#f-arrow)"/><rect class="f-box" x="263.33333333333337" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="369.00000000000006" y="66" text-anchor="middle">편향 1</text><text class="f-cap" x="369.00000000000006" y="105" text-anchor="middle">z = h+1 = 7</text><text class="f-s" x="369.00000000000006" y="139" text-anchor="middle">예측</text><line class="f-line" x1="476.66666666666674" y1="105" x2="493.66666666666674" y2="105" marker-end="url(#f-arrow)"/><rect class="f-soft" x="496.6666666666667" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="602.3333333333334" y="66" text-anchor="middle">실제 y=5</text><text class="f-cap" x="602.3333333333334" y="105" text-anchor="middle">L = (z−5)² = 4</text><text class="f-s" x="602.3333333333334" y="139" text-anchor="middle">손실</text></svg><svg class="fig-svg fig-narrow" viewBox="0 0 390 187" role="img" aria-label="x 2와 w 3이 곱해져 h6, 편향을 더해 z7, 제곱손실 4가 된다."><rect class="f-box" x="20" y="6" width="350" height="51" rx="5"/><text class="f-s" x="34" y="25" text-anchor="start">입력 x=2, w=3</text><text class="f-cap" x="34" y="47" text-anchor="start">h = wx = 6</text><text class="f-s" x="354" y="46" text-anchor="end">곱</text><line class="f-line" x1="195" y1="58" x2="195" y2="67" marker-end="url(#f-arrow)"/><rect class="f-box" x="20" y="68" width="350" height="51" rx="5"/><text class="f-s" x="34" y="87" text-anchor="start">편향 1</text><text class="f-cap" x="34" y="109" text-anchor="start">z = h+1 = 7</text><text class="f-s" x="354" y="108" text-anchor="end">예측</text><line class="f-line" x1="195" y1="120" x2="195" y2="129" marker-end="url(#f-arrow)"/><rect class="f-soft" x="20" y="130" width="350" height="51" rx="5"/><text class="f-s" x="34" y="149" text-anchor="start">실제 y=5</text><text class="f-cap" x="34" y="171" text-anchor="start">L = (z−5)² = 4</text><text class="f-s" x="354" y="170" text-anchor="end">손실</text></svg></figure>
+<p class="say">순전파에서는 나중 계산에 필요한 중간값도 남긴다.</p>
+</section>
+
+<section class="slide">
+<h2>마지막 손실에서 기울기가 출발</h2>
+<figure class="fig"><svg class="fig-svg fig-wide" viewBox="0 0 760 212" role="img" aria-label="손실의 z 경사는 4, z의 h 경사는 1이다."><rect class="f-box" x="30" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="135.66666666666669" y="66" text-anchor="middle">손실 L</text><text class="f-cap" x="135.66666666666669" y="105" text-anchor="middle">4</text><text class="f-s" x="135.66666666666669" y="139" text-anchor="middle">z=7, y=5</text><rect class="f-box" x="263.33333333333337" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="369.00000000000006" y="66" text-anchor="middle">z가 변하면</text><text class="f-cap" x="369.00000000000006" y="105" text-anchor="middle">dL/dz = 4</text><text class="f-s" x="369.00000000000006" y="139" text-anchor="middle">2(z−5)</text><rect class="f-soft" x="496.6666666666667" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="602.3333333333334" y="66" text-anchor="middle">h에서 z로</text><text class="f-cap" x="602.3333333333334" y="105" text-anchor="middle">dz/dh = 1</text><text class="f-s" x="602.3333333333334" y="139" text-anchor="middle">편향 +1</text></svg><svg class="fig-svg fig-narrow" viewBox="0 0 390 187" role="img" aria-label="손실의 z 경사는 4, z의 h 경사는 1이다."><rect class="f-box" x="20" y="6" width="350" height="51" rx="5"/><text class="f-s" x="34" y="25" text-anchor="start">손실 L</text><text class="f-cap" x="34" y="47" text-anchor="start">4</text><text class="f-s" x="354" y="46" text-anchor="end">z=7, y=5</text><rect class="f-box" x="20" y="68" width="350" height="51" rx="5"/><text class="f-s" x="34" y="87" text-anchor="start">z가 변하면</text><text class="f-cap" x="34" y="109" text-anchor="start">dL/dz = 4</text><text class="f-s" x="354" y="108" text-anchor="end">2(z−5)</text><rect class="f-soft" x="20" y="130" width="350" height="51" rx="5"/><text class="f-s" x="34" y="149" text-anchor="start">h에서 z로</text><text class="f-cap" x="34" y="171" text-anchor="start">dz/dh = 1</text><text class="f-s" x="354" y="170" text-anchor="end">편향 +1</text></svg></figure>
+<p class="say">역전파는 가장 끝에서 그 앞 값이 바뀔 때의 효과부터.</p>
+</section>
+
+<section class="slide">
+<h2>각 경로의 변화율을 곱한다</h2>
+<figure class="fig"><svg class="fig-svg fig-wide" viewBox="0 0 760 212" role="img" aria-label="w 경사는 4×1×2=8이며 입력 x의 경사는 4×1×w=12."><rect class="f-box" x="30" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="135.66666666666669" y="66" text-anchor="middle">z의 경사</text><text class="f-cap" x="135.66666666666669" y="105" text-anchor="middle">4</text><text class="f-s" x="135.66666666666669" y="139" text-anchor="middle">손실에서 옴</text><line class="f-line" x1="243.33333333333334" y1="105" x2="260.33333333333337" y2="105" marker-end="url(#f-arrow)"/><rect class="f-box" x="263.33333333333337" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="369.00000000000006" y="66" text-anchor="middle">dh/dw</text><text class="f-cap" x="369.00000000000006" y="105" text-anchor="middle">x = 2</text><text class="f-s" x="369.00000000000006" y="139" text-anchor="middle">곱셈의 변화율</text><line class="f-line" x1="476.66666666666674" y1="105" x2="493.66666666666674" y2="105" marker-end="url(#f-arrow)"/><rect class="f-soft" x="496.6666666666667" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="602.3333333333334" y="66" text-anchor="middle">w의 경사</text><text class="f-cap" x="602.3333333333334" y="105" text-anchor="middle">4·1·2 = 8</text><text class="f-s" x="602.3333333333334" y="139" text-anchor="middle">가중치별 책임</text></svg><svg class="fig-svg fig-narrow" viewBox="0 0 390 187" role="img" aria-label="w 경사는 4×1×2=8이며 입력 x의 경사는 4×1×w=12."><rect class="f-box" x="20" y="6" width="350" height="51" rx="5"/><text class="f-s" x="34" y="25" text-anchor="start">z의 경사</text><text class="f-cap" x="34" y="47" text-anchor="start">4</text><text class="f-s" x="354" y="46" text-anchor="end">손실에서 옴</text><line class="f-line" x1="195" y1="58" x2="195" y2="67" marker-end="url(#f-arrow)"/><rect class="f-box" x="20" y="68" width="350" height="51" rx="5"/><text class="f-s" x="34" y="87" text-anchor="start">dh/dw</text><text class="f-cap" x="34" y="109" text-anchor="start">x = 2</text><text class="f-s" x="354" y="108" text-anchor="end">곱셈의 변화율</text><line class="f-line" x1="195" y1="120" x2="195" y2="129" marker-end="url(#f-arrow)"/><rect class="f-soft" x="20" y="130" width="350" height="51" rx="5"/><text class="f-s" x="34" y="149" text-anchor="start">w의 경사</text><text class="f-cap" x="34" y="171" text-anchor="start">4·1·2 = 8</text><text class="f-s" x="354" y="170" text-anchor="end">가중치별 책임</text></svg></figure>
+<p class="say">입력 쪽을 미분하면 x가 아니라 w=3을 곱해 12.</p>
+</section>
+
+<section class="slide check-slide">
+<h2>잠깐, 직접</h2>
+<div class="check" data-q="q1"></div>
+</section>
+
+<section class="slide">
+<h2>두 곳에서 쓰인 값은 경사를 더한다</h2>
+<figure class="fig"><svg class="fig-svg fig-wide" viewBox="0 0 760 212" role="img" aria-label="L=h²+h에서 h가 두 곳에 쓰여 두 경사를 더한다."><rect class="f-box" x="30" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="135.66666666666669" y="66" text-anchor="middle">h²로 가는 길</text><text class="f-cap" x="135.66666666666669" y="105" text-anchor="middle">2h</text><text class="f-s" x="135.66666666666669" y="139" text-anchor="middle">h=2에서 4</text><rect class="f-box" x="263.33333333333337" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="369.00000000000006" y="66" text-anchor="middle">h로 가는 길</text><text class="f-cap" x="369.00000000000006" y="105" text-anchor="middle">1</text><text class="f-s" x="369.00000000000006" y="139" text-anchor="middle">h=2에서도 1</text><rect class="f-soft" x="496.6666666666667" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="602.3333333333334" y="66" text-anchor="middle">h로 돌아오면</text><text class="f-cap" x="602.3333333333334" y="105" text-anchor="middle">4+1 = 5</text><text class="f-s" x="602.3333333333334" y="139" text-anchor="middle">두 경로의 기여</text></svg><svg class="fig-svg fig-narrow" viewBox="0 0 390 187" role="img" aria-label="L=h²+h에서 h가 두 곳에 쓰여 두 경사를 더한다."><rect class="f-box" x="20" y="6" width="350" height="51" rx="5"/><text class="f-s" x="34" y="25" text-anchor="start">h²로 가는 길</text><text class="f-cap" x="34" y="47" text-anchor="start">2h</text><text class="f-s" x="354" y="46" text-anchor="end">h=2에서 4</text><rect class="f-box" x="20" y="68" width="350" height="51" rx="5"/><text class="f-s" x="34" y="87" text-anchor="start">h로 가는 길</text><text class="f-cap" x="34" y="109" text-anchor="start">1</text><text class="f-s" x="354" y="108" text-anchor="end">h=2에서도 1</text><rect class="f-soft" x="20" y="130" width="350" height="51" rx="5"/><text class="f-s" x="34" y="149" text-anchor="start">h로 돌아오면</text><text class="f-cap" x="34" y="171" text-anchor="start">4+1 = 5</text><text class="f-s" x="354" y="170" text-anchor="end">두 경로의 기여</text></svg></figure>
+<p class="say">한 경로를 따라선 곱하고 여러 갈래가 모이면 더한다.</p>
+</section>
+
+<section class="slide">
+<h2>ReLU가 닫히면 이 길의 경사는 0</h2>
+<figure class="fig"><svg class="fig-svg fig-wide" viewBox="0 0 760 140" role="img" aria-label="ReLU의 음수 구간 기울기는 0, 양수 구간 기울기는 1."><text class="f-s" x="245" y="28" text-anchor="middle">z=−3</text><text class="f-s" x="367" y="28" text-anchor="middle">z=1</text><text class="f-s" x="175" y="74.8" text-anchor="end">ReLU</text><rect class="f-box" x="184" y="48" width="118" height="35" rx="5"/><text class="f-t" x="243" y="73.6" text-anchor="middle">0</text><rect class="f-box" x="306" y="48" width="118" height="35" rx="5"/><text class="f-t" x="365" y="73.6" text-anchor="middle">1</text><text class="f-s" x="175" y="114.8" text-anchor="end">그 점의 기울기</text><rect class="f-soft" x="184" y="88" width="118" height="35" rx="5"/><text class="f-t" x="243" y="113.6" text-anchor="middle">0</text><rect class="f-box" x="306" y="88" width="118" height="35" rx="5"/><text class="f-t" x="365" y="113.6" text-anchor="middle">1</text></svg><svg class="fig-svg fig-narrow" viewBox="0 0 390 140" role="img" aria-label="ReLU의 음수 구간 기울기는 0, 양수 구간 기울기는 1."><text class="f-s" x="165.5" y="28" text-anchor="middle">z=−3</text><text class="f-s" x="280.5" y="28" text-anchor="middle">z=1</text><text class="f-s" x="99" y="74.8" text-anchor="end">ReLU</text><rect class="f-box" x="108" y="48" width="111" height="35" rx="5"/><text class="f-t" x="163.5" y="73.6" text-anchor="middle">0</text><rect class="f-box" x="223" y="48" width="111" height="35" rx="5"/><text class="f-t" x="278.5" y="73.6" text-anchor="middle">1</text><text class="f-s" x="99" y="114.8" text-anchor="end">그 점의 기울기</text><rect class="f-soft" x="108" y="88" width="111" height="35" rx="5"/><text class="f-t" x="163.5" y="113.6" text-anchor="middle">0</text><rect class="f-box" x="223" y="88" width="111" height="35" rx="5"/><text class="f-t" x="278.5" y="113.6" text-anchor="middle">1</text></svg></figure>
+<p class="say">0에서는 좌우 미분이 다르다. 구현이 선택한 값은 확인할 수 있다.</p>
+</section>
+
+<section class="slide check-slide">
+<h2>잠깐, 직접</h2>
+<div class="check" data-q="q2"></div>
+</section>
+
+<section class="slide">
+<h2>미니배치 경사로 전체 경사를 어림한다</h2>
+<figure class="fig"><svg class="fig-svg fig-wide" viewBox="0 0 760 119" role="img" aria-label="가중치가 고정인 두 예에서 경사 8,−4를 계산하고 평균 2를 구한다."><text class="f-s" x="245" y="28" text-anchor="middle">표본 A</text><text class="f-s" x="367" y="28" text-anchor="middle">표본 B</text><text class="f-s" x="489" y="28" text-anchor="middle">같이 평균</text><text class="f-s" x="175" y="74.8" text-anchor="end">현재 w의 경사</text><rect class="f-box" x="184" y="48" width="118" height="35" rx="5"/><text class="f-t" x="243" y="73.6" text-anchor="middle">8</text><rect class="f-box" x="306" y="48" width="118" height="35" rx="5"/><text class="f-t" x="365" y="73.6" text-anchor="middle">-4</text><rect class="f-soft" x="428" y="48" width="118" height="35" rx="5"/><text class="f-t" x="487" y="73.6" text-anchor="middle">2</text></svg><svg class="fig-svg fig-narrow" viewBox="0 0 390 119" role="img" aria-label="가중치가 고정인 두 예에서 경사 8,−4를 계산하고 평균 2를 구한다."><text class="f-s" x="152.33333333333334" y="28" text-anchor="middle">표본 A</text><text class="f-s" x="241" y="28" text-anchor="middle">표본 B</text><text class="f-s" x="329.6666666666667" y="28" text-anchor="middle">같이 평균</text><text class="f-s" x="99" y="74.8" text-anchor="end">현재 w의 경사</text><rect class="f-box" x="108" y="48" width="84.66666666666667" height="35" rx="5"/><text class="f-t" x="150.33333333333334" y="73.6" text-anchor="middle">8</text><rect class="f-box" x="196.66666666666669" y="48" width="84.66666666666667" height="35" rx="5"/><text class="f-t" x="239.00000000000003" y="73.6" text-anchor="middle">-4</text><rect class="f-soft" x="285.33333333333337" y="48" width="84.66666666666667" height="35" rx="5"/><text class="f-t" x="327.6666666666667" y="73.6" text-anchor="middle">2</text></svg></figure>
+<p class="say">미니배치를 바꾸면 쓰는 경사도 흔들린다. 전체 배치를 계산할 수도 있다.</p>
+</section>
+
+<section class="slide">
+<h2>수치 미분으로 계산 한 줄을 검산</h2>
+<figure class="fig"><svg class="fig-svg fig-wide" viewBox="0 0 760 212" role="img" aria-label="가중치 3을 좌우로 조금 바꾼 뒤 손실 차이를 2ε로 나누면 8과 일치한다."><rect class="f-box" x="30" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="135.66666666666669" y="66" text-anchor="middle">기준</text><text class="f-cap" x="135.66666666666669" y="105" text-anchor="middle">w=3</text><text class="f-s" x="135.66666666666669" y="139" text-anchor="middle">해석 경사 8</text><line class="f-line" x1="243.33333333333334" y1="105" x2="260.33333333333337" y2="105" marker-end="url(#f-arrow)"/><rect class="f-box" x="263.33333333333337" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="369.00000000000006" y="66" text-anchor="middle">좌우 흔들기</text><text class="f-cap" x="369.00000000000006" y="105" text-anchor="middle">3±ε</text><text class="f-s" x="369.00000000000006" y="139" text-anchor="middle">손실 두 번 계산</text><line class="f-line" x1="476.66666666666674" y1="105" x2="493.66666666666674" y2="105" marker-end="url(#f-arrow)"/><rect class="f-soft" x="496.6666666666667" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="602.3333333333334" y="66" text-anchor="middle">중심차분</text><text class="f-cap" x="602.3333333333334" y="105" text-anchor="middle">(L₊−L₋)/(2ε)</text><text class="f-s" x="602.3333333333334" y="139" text-anchor="middle">8에 가까움</text></svg><svg class="fig-svg fig-narrow" viewBox="0 0 390 187" role="img" aria-label="가중치 3을 좌우로 조금 바꾼 뒤 손실 차이를 2ε로 나누면 8과 일치한다."><rect class="f-box" x="20" y="6" width="350" height="51" rx="5"/><text class="f-s" x="34" y="25" text-anchor="start">기준</text><text class="f-cap" x="34" y="47" text-anchor="start">w=3</text><text class="f-s" x="354" y="46" text-anchor="end">해석 경사 8</text><line class="f-line" x1="195" y1="58" x2="195" y2="67" marker-end="url(#f-arrow)"/><rect class="f-box" x="20" y="68" width="350" height="51" rx="5"/><text class="f-s" x="34" y="87" text-anchor="start">좌우 흔들기</text><text class="f-cap" x="34" y="109" text-anchor="start">3±ε</text><text class="f-s" x="354" y="108" text-anchor="end">손실 두 번 계산</text><line class="f-line" x1="195" y1="120" x2="195" y2="129" marker-end="url(#f-arrow)"/><rect class="f-soft" x="20" y="130" width="350" height="51" rx="5"/><text class="f-s" x="34" y="149" text-anchor="start">중심차분</text><text class="f-cap" x="34" y="171" text-anchor="start">(L₊−L₋)/(2ε)</text><text class="f-s" x="354" y="170" text-anchor="end">8에 가까움</text></svg></figure>
+<p class="say">자동미분도 모형과 손실을 제대로 연결했는지 함께 검증.</p>
+</section>
+
+<section class="slide check-slide">
+<h2>잠깐, 직접</h2>
+<div class="check" data-q="q3"></div>
+</section>
+
+<section class="slide">
+<h2>해석 경사와 중심차분</h2>
+<pre data-example="python"><code>import numpy as np
+x, w, y = 2., 3., 5.
+loss = lambda w: (w*x + 1 - y)**2
+eps = 1e-5
+analytic = 2*(w*x+1-y)*x
+numeric = (loss(w+eps)-loss(w-eps))/(2*eps)
+assert np.isclose(analytic,numeric,rtol=0,atol=1e-8)
+print(f&quot;{loss(w):.0f} {analytic:.0f} {numeric:.4f}&quot;)</code></pre>
+<pre data-output><code>4 8 8.0000</code></pre>
+<p class="say">손실, 가중치의 해석 경사, 수치 경사를 대조한다.</p>
+</section>
+
+<section class="slide">
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table><tbody><tr><th scope="row">순전파</th><td>입력과 현재 가중치로 값 계산</td></tr><tr><th scope="row">역전파</th><td>경로 안에서 국소 기울기를 곱함</td></tr><tr><th scope="row">분기</th><td>각 경로에서 온 경사를 합침</td></tr><tr><th scope="row">미니배치</th><td>표본 경사들을 평균해 갱신</td></tr></tbody></table></div>
+<p class="small muted">개념 사전 · <a href="../../learn/unit.html?u=DL02">신경망의 학습 원리</a> · <a href="../../learn/unit.html?u=OP04">확률적 최적화</a> · <a href="../../learn/unit.html?u=CA04">여러 변수의 변화</a></p>
+</section>
+
+</main>
+<script src="../notes.js"></script>
+<script src="../js/core.js"></script>
+<script src="../js/deck.js"></script>
+</body>
+</html>

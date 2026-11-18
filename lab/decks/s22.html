@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>실험을 믿을 수 있게 · 슬라이드 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%238a4b14'/%3E%3Cpath d='M10 8l12 8-12 8z' fill='%23fff'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../style.css">
+</head>
+<body class="deck-body" data-note="S22">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../index.html">슬라이드 교재</a>
+<span class="crumb">덱 22</span>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<main class="deck">
+
+<section class="slide cover-slide">
+<p class="deck-no">덱 22</p>
+<h1>실험을 믿을 수 있게</h1>
+<p class="road"><b>질문</b> → <b>짝 비교</b> → <b>검정</b> → <b>재현</b></p>
+<p class="say">새 기능을 붙인 모델이 더 빠르다는 말을 어떤 비교로 뒷받침할까?</p>
+</section>
+
+<section class="slide">
+<h2>먼저 달라졌다고 볼 양을 정한다</h2>
+<figure class="fig"><svg class="fig-svg fig-wide" viewBox="0 0 760 212" role="img" aria-label="같은 작업에서 캐시를 켜고 끈 뒤 장비별 지연 차이를 한 값씩 구한다."><rect class="f-box" x="30" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="135.66666666666669" y="66" text-anchor="middle">질문</text><text class="f-cap" x="135.66666666666669" y="105" text-anchor="middle">캐시를 켜면?</text><text class="f-s" x="135.66666666666669" y="139" text-anchor="middle">나머지 코드 고정</text><line class="f-line" x1="243.33333333333334" y1="105" x2="260.33333333333337" y2="105" marker-end="url(#f-arrow)"/><rect class="f-box" x="263.33333333333337" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="369.00000000000006" y="66" text-anchor="middle">주 지표</text><text class="f-cap" x="369.00000000000006" y="105" text-anchor="middle">완료 지연(ms)</text><text class="f-s" x="369.00000000000006" y="139" text-anchor="middle">기준 − 대안</text><line class="f-line" x1="476.66666666666674" y1="105" x2="493.66666666666674" y2="105" marker-end="url(#f-arrow)"/><rect class="f-soft" x="496.6666666666667" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="602.3333333333334" y="66" text-anchor="middle">실험 단위</text><text class="f-cap" x="602.3333333333334" y="105" text-anchor="middle">장비별 한 차이</text><text class="f-s" x="602.3333333333334" y="139" text-anchor="middle">각 장비 반복은 묶음</text></svg><svg class="fig-svg fig-narrow" viewBox="0 0 390 187" role="img" aria-label="같은 작업에서 캐시를 켜고 끈 뒤 장비별 지연 차이를 한 값씩 구한다."><rect class="f-box" x="20" y="6" width="350" height="51" rx="5"/><text class="f-s" x="34" y="25" text-anchor="start">질문</text><text class="f-cap" x="34" y="47" text-anchor="start">캐시를 켜면?</text><text class="f-s" x="354" y="46" text-anchor="end">나머지 코드 고정</text><line class="f-line" x1="195" y1="58" x2="195" y2="67" marker-end="url(#f-arrow)"/><rect class="f-box" x="20" y="68" width="350" height="51" rx="5"/><text class="f-s" x="34" y="87" text-anchor="start">주 지표</text><text class="f-cap" x="34" y="109" text-anchor="start">완료 지연(ms)</text><text class="f-s" x="354" y="108" text-anchor="end">기준 − 대안</text><line class="f-line" x1="195" y1="120" x2="195" y2="129" marker-end="url(#f-arrow)"/><rect class="f-soft" x="20" y="130" width="350" height="51" rx="5"/><text class="f-s" x="34" y="149" text-anchor="start">실험 단위</text><text class="f-cap" x="34" y="171" text-anchor="start">장비별 한 차이</text><text class="f-s" x="354" y="170" text-anchor="end">각 장비 반복은 묶음</text></svg></figure>
+<p class="say">독립 장비가 네 대라면 실행 횟수가 열두 번이어도 독립 장비는 네 대.</p>
+</section>
+
+<section class="slide">
+<h2>같은 장비 안에서 두 조건을 비교</h2>
+<figure class="fig"><svg class="fig-svg fig-wide" viewBox="0 0 760 119" role="img" aria-label="장비 A,B,C,D의 기준에서 대안을 뺀 지연 차이가 1,2,3,4ms."><text class="f-s" x="245" y="28" text-anchor="middle">A</text><text class="f-s" x="367" y="28" text-anchor="middle">B</text><text class="f-s" x="489" y="28" text-anchor="middle">C</text><text class="f-s" x="611" y="28" text-anchor="middle">D</text><text class="f-s" x="175" y="74.8" text-anchor="end">절감(ms)</text><rect class="f-box" x="184" y="48" width="118" height="35" rx="5"/><text class="f-t" x="243" y="73.6" text-anchor="middle">1</text><rect class="f-box" x="306" y="48" width="118" height="35" rx="5"/><text class="f-t" x="365" y="73.6" text-anchor="middle">2</text><rect class="f-soft" x="428" y="48" width="118" height="35" rx="5"/><text class="f-t" x="487" y="73.6" text-anchor="middle">3</text><rect class="f-soft" x="550" y="48" width="118" height="35" rx="5"/><text class="f-t" x="609" y="73.6" text-anchor="middle">4</text></svg><svg class="fig-svg fig-narrow" viewBox="0 0 390 119" role="img" aria-label="장비 A,B,C,D의 기준에서 대안을 뺀 지연 차이가 1,2,3,4ms."><text class="f-s" x="141.25" y="28" text-anchor="middle">A</text><text class="f-s" x="207.75" y="28" text-anchor="middle">B</text><text class="f-s" x="274.25" y="28" text-anchor="middle">C</text><text class="f-s" x="340.75" y="28" text-anchor="middle">D</text><text class="f-s" x="99" y="74.8" text-anchor="end">절감(ms)</text><rect class="f-box" x="108" y="48" width="62.5" height="35" rx="5"/><text class="f-t" x="139.25" y="73.6" text-anchor="middle">1</text><rect class="f-box" x="174.5" y="48" width="62.5" height="35" rx="5"/><text class="f-t" x="205.75" y="73.6" text-anchor="middle">2</text><rect class="f-soft" x="241" y="48" width="62.5" height="35" rx="5"/><text class="f-t" x="272.25" y="73.6" text-anchor="middle">3</text><rect class="f-soft" x="307.5" y="48" width="62.5" height="35" rx="5"/><text class="f-t" x="338.75" y="73.6" text-anchor="middle">4</text></svg></figure>
+<p class="say">장비별 과제와 예산은 같게. 켬 묶음과 끔 묶음 중 어느 쪽을 먼저 할지 장비마다 독립으로 무작위 배정.</p>
+</section>
+
+<section class="slide">
+<h2>캐시를 뺀 조건과 비교한다</h2>
+<figure class="fig"><svg class="fig-svg fig-wide" viewBox="0 0 760 212" role="img" aria-label="같은 조건에서 캐시만 바꾼 뒤 네 장비 평균 절감 2.5ms를 계산한다."><rect class="f-box" x="30" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="135.66666666666669" y="66" text-anchor="middle">대조</text><text class="f-cap" x="135.66666666666669" y="105" text-anchor="middle">캐시 끔</text><text class="f-s" x="135.66666666666669" y="139" text-anchor="middle">같은 모델·과제</text><rect class="f-box" x="263.33333333333337" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="369.00000000000006" y="66" text-anchor="middle">대안</text><text class="f-cap" x="369.00000000000006" y="105" text-anchor="middle">캐시 켬</text><text class="f-s" x="369.00000000000006" y="139" text-anchor="middle">같은 예산과 기기</text><rect class="f-soft" x="496.6666666666667" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="602.3333333333334" y="66" text-anchor="middle">차이</text><text class="f-cap" x="602.3333333333334" y="105" text-anchor="middle">평균 2.5ms</text><text class="f-s" x="602.3333333333334" y="139" text-anchor="middle">네 독립 장비</text></svg><svg class="fig-svg fig-narrow" viewBox="0 0 390 187" role="img" aria-label="같은 조건에서 캐시만 바꾼 뒤 네 장비 평균 절감 2.5ms를 계산한다."><rect class="f-box" x="20" y="6" width="350" height="51" rx="5"/><text class="f-s" x="34" y="25" text-anchor="start">대조</text><text class="f-cap" x="34" y="47" text-anchor="start">캐시 끔</text><text class="f-s" x="354" y="46" text-anchor="end">같은 모델·과제</text><rect class="f-box" x="20" y="68" width="350" height="51" rx="5"/><text class="f-s" x="34" y="87" text-anchor="start">대안</text><text class="f-cap" x="34" y="109" text-anchor="start">캐시 켬</text><text class="f-s" x="354" y="108" text-anchor="end">같은 예산과 기기</text><rect class="f-soft" x="20" y="130" width="350" height="51" rx="5"/><text class="f-s" x="34" y="149" text-anchor="start">차이</text><text class="f-cap" x="34" y="171" text-anchor="start">평균 2.5ms</text><text class="f-s" x="354" y="170" text-anchor="end">네 독립 장비</text></svg></figure>
+<p class="say">중단·시간 제한과 실패를 포함할 규칙을 자료를 보기 전에 고정.</p>
+</section>
+
+<section class="slide check-slide">
+<h2>잠깐, 직접</h2>
+<div class="check" data-q="q1"></div>
+</section>
+
+<section class="slide">
+<h2>차이가 없었다면 어떤 값도 나올까?</h2>
+<figure class="fig"><svg class="fig-svg fig-wide" viewBox="0 0 760 212" role="img" aria-label="귀무가설에서 짝의 표지를 바꾸어 가능한 16개 부호를 만들면 두 배치가 절대 비교값 2.5에 도달한다."><rect class="f-box" x="30" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="135.66666666666669" y="66" text-anchor="middle">귀무 모형</text><text class="f-cap" x="135.66666666666669" y="105" text-anchor="middle">캐시 효과 없음</text><text class="f-s" x="135.66666666666669" y="139" text-anchor="middle">짝 안에서 표지 교환</text><line class="f-line" x1="243.33333333333334" y1="105" x2="260.33333333333337" y2="105" marker-end="url(#f-arrow)"/><rect class="f-box" x="263.33333333333337" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="369.00000000000006" y="66" text-anchor="middle">가능한 부호 배치</text><text class="f-cap" x="369.00000000000006" y="105" text-anchor="middle">2⁴ = 16</text><text class="f-s" x="369.00000000000006" y="139" text-anchor="middle">장비별로 독립</text><line class="f-line" x1="476.66666666666674" y1="105" x2="493.66666666666674" y2="105" marker-end="url(#f-arrow)"/><rect class="f-soft" x="496.6666666666667" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="602.3333333333334" y="66" text-anchor="middle">관측만큼 극단적</text><text class="f-cap" x="602.3333333333334" y="105" text-anchor="middle">2개</text><text class="f-s" x="602.3333333333334" y="139" text-anchor="middle">전부 + 또는 전부 −</text></svg><svg class="fig-svg fig-narrow" viewBox="0 0 390 187" role="img" aria-label="귀무가설에서 짝의 표지를 바꾸어 가능한 16개 부호를 만들면 두 배치가 절대 비교값 2.5에 도달한다."><rect class="f-box" x="20" y="6" width="350" height="51" rx="5"/><text class="f-s" x="34" y="25" text-anchor="start">귀무 모형</text><text class="f-cap" x="34" y="47" text-anchor="start">캐시 효과 없음</text><text class="f-s" x="354" y="46" text-anchor="end">짝 안에서 표지 교환</text><line class="f-line" x1="195" y1="58" x2="195" y2="67" marker-end="url(#f-arrow)"/><rect class="f-box" x="20" y="68" width="350" height="51" rx="5"/><text class="f-s" x="34" y="87" text-anchor="start">가능한 부호 배치</text><text class="f-cap" x="34" y="109" text-anchor="start">2⁴ = 16</text><text class="f-s" x="354" y="108" text-anchor="end">장비별로 독립</text><line class="f-line" x1="195" y1="120" x2="195" y2="129" marker-end="url(#f-arrow)"/><rect class="f-soft" x="20" y="130" width="350" height="51" rx="5"/><text class="f-s" x="34" y="149" text-anchor="start">관측만큼 극단적</text><text class="f-cap" x="34" y="171" text-anchor="start">2개</text><text class="f-s" x="354" y="170" text-anchor="end">전부 + 또는 전부 −</text></svg></figure>
+<p class="big">p = 2 / 16 = 0.125</p>
+<p class="say">캐시 켬·끔이 장비마다 같은 지연을 낸다는 귀무가설 아래, 배정에 맞춰 표지를 바꾼다.</p>
+</section>
+
+<section class="slide">
+<h2>p값은 귀무가설의 참일 확률이 아니다</h2>
+<figure class="fig"><svg class="fig-svg fig-wide" viewBox="0 0 760 212" role="img" aria-label="p값 0.125는 기준 0.05보다 크므로 귀무가설을 기각하지 않고 효과 규모도 별도로 본다."><rect class="f-box" x="30" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="135.66666666666669" y="66" text-anchor="middle">기각 기준</text><text class="f-cap" x="135.66666666666669" y="105" text-anchor="middle">0.05</text><text class="f-s" x="135.66666666666669" y="139" text-anchor="middle">미리 정함</text><rect class="f-box" x="263.33333333333337" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="369.00000000000006" y="66" text-anchor="middle">실험에서</text><text class="f-cap" x="369.00000000000006" y="105" text-anchor="middle">p = 0.125</text><text class="f-s" x="369.00000000000006" y="139" text-anchor="middle">기각하지 않음</text><rect class="f-soft" x="496.6666666666667" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="602.3333333333334" y="66" text-anchor="middle">또 남는 질문</text><text class="f-cap" x="602.3333333333334" y="105" text-anchor="middle">효과·표본 수</text><text class="f-s" x="602.3333333333334" y="139" text-anchor="middle">이 기준에선 기각 불가</text></svg><svg class="fig-svg fig-narrow" viewBox="0 0 390 187" role="img" aria-label="p값 0.125는 기준 0.05보다 크므로 귀무가설을 기각하지 않고 효과 규모도 별도로 본다."><rect class="f-box" x="20" y="6" width="350" height="51" rx="5"/><text class="f-s" x="34" y="25" text-anchor="start">기각 기준</text><text class="f-cap" x="34" y="47" text-anchor="start">0.05</text><text class="f-s" x="354" y="46" text-anchor="end">미리 정함</text><rect class="f-box" x="20" y="68" width="350" height="51" rx="5"/><text class="f-s" x="34" y="87" text-anchor="start">실험에서</text><text class="f-cap" x="34" y="109" text-anchor="start">p = 0.125</text><text class="f-s" x="354" y="108" text-anchor="end">기각하지 않음</text><rect class="f-soft" x="20" y="130" width="350" height="51" rx="5"/><text class="f-s" x="34" y="149" text-anchor="start">또 남는 질문</text><text class="f-cap" x="34" y="171" text-anchor="start">효과·표본 수</text><text class="f-s" x="354" y="170" text-anchor="end">이 기준에선 기각 불가</text></svg></figure>
+<p class="say">4대의 정확한 양측 검정에서는 최소 p가 0.125다. 기준 0.05에서는 어떤 결과도 기각할 수 없다.</p>
+</section>
+
+<section class="slide check-slide">
+<h2>잠깐, 직접</h2>
+<div class="check" data-q="q2"></div>
+</section>
+
+<section class="slide">
+<h2>입력부터 결과까지 다시 실행 가능</h2>
+<figure class="fig"><svg class="fig-svg fig-wide" viewBox="0 0 760 212" role="img" aria-label="동일 자료와 코드 버전, 명령, 실행 조건, 출력 등 비교 내용을 기록한다."><rect class="f-box" x="30" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="135.66666666666669" y="66" text-anchor="middle">입력</text><text class="f-cap" x="135.66666666666669" y="105" text-anchor="middle">파일·키·해시</text><text class="f-s" x="135.66666666666669" y="139" text-anchor="middle">같은 자료인지</text><line class="f-line" x1="243.33333333333334" y1="105" x2="260.33333333333337" y2="105" marker-end="url(#f-arrow)"/><rect class="f-box" x="263.33333333333337" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="369.00000000000006" y="66" text-anchor="middle">버전</text><text class="f-cap" x="369.00000000000006" y="105" text-anchor="middle">Git 커밋·패키지</text><text class="f-s" x="369.00000000000006" y="139" text-anchor="middle">실행 명령</text><line class="f-line" x1="476.66666666666674" y1="105" x2="493.66666666666674" y2="105" marker-end="url(#f-arrow)"/><rect class="f-soft" x="496.6666666666667" y="37" width="211.33333333333334" height="134" rx="5"/><text class="f-s" x="602.3333333333334" y="66" text-anchor="middle">조건</text><text class="f-cap" x="602.3333333333334" y="105" text-anchor="middle">시드·장비·출력</text><text class="f-s" x="602.3333333333334" y="139" text-anchor="middle">실패도 기록</text></svg><svg class="fig-svg fig-narrow" viewBox="0 0 390 187" role="img" aria-label="동일 자료와 코드 버전, 명령, 실행 조건, 출력 등 비교 내용을 기록한다."><rect class="f-box" x="20" y="6" width="350" height="51" rx="5"/><text class="f-s" x="34" y="25" text-anchor="start">입력</text><text class="f-cap" x="34" y="47" text-anchor="start">파일·키·해시</text><text class="f-s" x="354" y="46" text-anchor="end">같은 자료인지</text><line class="f-line" x1="195" y1="58" x2="195" y2="67" marker-end="url(#f-arrow)"/><rect class="f-box" x="20" y="68" width="350" height="51" rx="5"/><text class="f-s" x="34" y="87" text-anchor="start">버전</text><text class="f-cap" x="34" y="109" text-anchor="start">Git 커밋·패키지</text><text class="f-s" x="354" y="108" text-anchor="end">실행 명령</text><line class="f-line" x1="195" y1="120" x2="195" y2="129" marker-end="url(#f-arrow)"/><rect class="f-soft" x="20" y="130" width="350" height="51" rx="5"/><text class="f-s" x="34" y="149" text-anchor="start">조건</text><text class="f-cap" x="34" y="171" text-anchor="start">시드·장비·출력</text><text class="f-s" x="354" y="170" text-anchor="end">실패도 기록</text></svg></figure>
+<p class="say">터미널 명령 한 줄과 기대하는 출력 표로 검산 지점을 남긴다.</p>
+</section>
+
+<section class="slide">
+<h2>같은 평균 뒤에 장비별 차이를 같이</h2>
+<figure class="fig"><svg class="fig-svg fig-wide" viewBox="0 0 760 203" role="img" aria-label="장비별 절감은 1,2,3,4ms이며 같은 평균 뒤의 변동도 나타난다."><line class="f-ink" x1="166" y1="14" x2="166" y2="178"/><line class="f-ink" x1="166" y1="182" x2="666" y2="182"/><text class="f-s" x="156" y="45" text-anchor="end">장비 A</text><rect class="f-soft" x="166" y="26" width="125" height="28" rx="5"/><text class="f-s" x="301" y="46" text-anchor="start">1ms</text><text class="f-s" x="156" y="85" text-anchor="end">장비 B</text><rect class="f-soft" x="166" y="66" width="250" height="28" rx="5"/><text class="f-s" x="426" y="86" text-anchor="start">2ms</text><text class="f-s" x="156" y="125" text-anchor="end">장비 C</text><rect class="f-soft" x="166" y="106" width="375" height="28" rx="5"/><text class="f-s" x="551" y="126" text-anchor="start">3ms</text><text class="f-s" x="156" y="165" text-anchor="end">장비 D</text><rect class="f-fill" x="166" y="146" width="500" height="28" rx="5"/><text class="f-s" x="676" y="166" text-anchor="start">4ms</text></svg><svg class="fig-svg fig-narrow" viewBox="0 0 390 203" role="img" aria-label="장비별 절감은 1,2,3,4ms이며 같은 평균 뒤의 변동도 나타난다."><line class="f-ink" x1="92" y1="14" x2="92" y2="178"/><line class="f-ink" x1="92" y1="182" x2="330" y2="182"/><text class="f-s" x="82" y="45" text-anchor="end">장비 A</text><rect class="f-soft" x="92" y="26" width="59.5" height="28" rx="5"/><text class="f-s" x="161.5" y="46" text-anchor="start">1ms</text><text class="f-s" x="82" y="85" text-anchor="end">장비 B</text><rect class="f-soft" x="92" y="66" width="119" height="28" rx="5"/><text class="f-s" x="221" y="86" text-anchor="start">2ms</text><text class="f-s" x="82" y="125" text-anchor="end">장비 C</text><rect class="f-soft" x="92" y="106" width="178.5" height="28" rx="5"/><text class="f-s" x="280.5" y="126" text-anchor="start">3ms</text><text class="f-s" x="82" y="165" text-anchor="end">장비 D</text><rect class="f-fill" x="92" y="146" width="238" height="28" rx="5"/><text class="f-s" x="340" y="166" text-anchor="start">4ms</text></svg></figure>
+<p class="say">장비 4개라는 분모와 차이의 방향을 적고 효과의 크기도 보고한다.</p>
+</section>
+
+<section class="slide check-slide">
+<h2>잠깐, 직접</h2>
+<div class="check" data-q="q3"></div>
+</section>
+
+<section class="slide">
+<h2>16가지 부호로 양쪽 꼬리 계산</h2>
+<pre data-example="python"><code>from itertools import product
+d = [1,2,3,4]
+sums = [sum(v*b for v,b in zip(d,sign))
+        for sign in product([-1,1],repeat=4)]
+extreme = sum(abs(v)&gt;=abs(sum(d)) for v in sums)
+print(sum(d)/len(d), extreme, len(sums), extreme/len(sums))</code></pre>
+<pre data-output><code>2.5 2 16 0.125</code></pre>
+<p class="say">무작위 배정이 허용한 경우만 생성한다.</p>
+</section>
+
+<section class="slide">
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table><tbody><tr><th scope="row">실험 단위</th><td>독립으로 배정하거나 비교하는 단위</td></tr><tr><th scope="row">ablation</th><td>구성 하나를 뺀 조건과 원래 조건의 비교</td></tr><tr><th scope="row">p값</th><td>귀무가설 아래 관측값만큼 또는 더 극단적인 결과가 나올 확률</td></tr><tr><th scope="row">재현 기록</th><td>입력·버전·명령·시드·실패 결과</td></tr></tbody></table></div>
+<p class="small muted">개념 사전 · <a href="../../learn/unit.html?u=ST04">가설검정</a> · <a href="../../learn/unit.html?u=ST08">실험의 설계</a> · <a href="../../learn/unit.html?u=RS01">연구 가능한 질문</a> · <a href="../../learn/unit.html?u=RS04">재현 가능한 실험</a> · <a href="../../learn/unit.html?u=RS05">비교의 타당성</a> · <a href="../../learn/unit.html?u=SY06">터미널과 Linux</a> · <a href="../../learn/unit.html?u=SY07">버전과 협업</a></p>
+</section>
+
+</main>
+<script src="../notes.js"></script>
+<script src="../js/core.js"></script>
+<script src="../js/deck.js"></script>
+</body>
+</html>
