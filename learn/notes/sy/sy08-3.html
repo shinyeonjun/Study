@@ -52,7 +52,7 @@
 <text class="f-s" x="277" y="121" text-anchor="middle">연산 30</text>
 <rect class="f-box" x="352" y="100" width="40" height="32" rx="0"/>
 <text class="f-s" x="372" y="121" text-anchor="middle">8</text>
-<text class="f-s" x="411" y="121" text-anchor="middle">합 50ms</text>
+<text class="f-s" x="402" y="121" text-anchor="start">합 50ms</text>
 <line class="f-ink" x1="142" y1="159" x2="661" y2="159" marker-end="url(#f-arrow)"/>
 <line class="f-ink" x1="142" y1="154" x2="142" y2="165"/>
 <text class="f-s" x="142" y="186" text-anchor="middle">0</text>
@@ -74,6 +74,7 @@
 <div class="check" data-q="q2"></div>
 <h2>처리 시간의 일부만 바꾸면 남은 부분은 그대로다</h2>
 <p>전체 100ms 중 순차 작업에 20ms, 병렬로 나눌 계산에 80ms가 걸립니다. 계산 80ms 부분만 4배 빨라져 20ms가 되면 총 시간은 40ms입니다. 전체 속도 향상은 100/40=2.5배입니다. 계산 부분을 아무리 줄여도 남은 20ms는 처리해야 합니다. 이 단순 비교는 작업을 나누거나 다시 합치는 추가 비용을 0으로 놓았습니다.</p>
+<p>이 관계를 <b>암달의 법칙</b>(Amdahl's law)이라고 합니다. 전체 시간에서 빨라지는 부분의 비율을 p, 그 부분의 속도 배율을 s라 하면 전체 속도 향상은 1 ÷ ((1 − p) + p ÷ s)입니다. 위 예는 p = 0.8, s = 4이므로 1 ÷ (0.2 + 0.2) = 2.5배이고, s를 아무리 키워도 1 ÷ 0.2 = 5배를 넘지 못합니다.</p>
 <figure class="fig">
 <svg class="fig-svg" viewBox="0 0 760 186" role="img" aria-label="이전 100ms는 순차 20과 계산 80이다. 계산만 4배 빨라지면 이후 40ms는 순차 20과 계산 20이다.">
 <text class="f-s" x="124" y="64" text-anchor="end">개선 전</text>
