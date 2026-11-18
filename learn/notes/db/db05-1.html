@@ -38,6 +38,8 @@
 
 <h2>여러 키를 담는 페이지에서 읽을 범위를 고르기</h2>
 <p><b class="key">B-tree</b> 계열의 구조는 키를 작은 구간으로 나누어 저장합니다. 디스크의 자료를 읽는 단위 중 하나인 페이지에 여러 키나 자식 페이지를 찾을 정보가 들어갑니다. 맨 위에서 키 범위를 확인하고 필요한 하위 페이지로 내려갑니다. 목표 금액을 처음 찾은 뒤에는 키 순서대로 필요한 범위를 읽을 수 있습니다.</p>
+<p>한 페이지에 자식 페이지를 가리키는 항목이 많이 들어가므로 트리는 넓고 낮습니다. 한 노드가 가리킬 수 있는 자식 수를 <b class="key">팬아웃</b>(fan-out) <var>f</var>라 하면, 높이 <var>h</var>인 트리는 맨 아래에서 최대 약 <var>f</var><sup><var>h</var></sup>개 구간을 구분합니다. <var>f</var>=100이면 높이 3으로 100<sup>3</sup>=1,000,000개, 높이 4로 1억 개를 구분하므로 키 하나를 찾을 때 읽는 페이지 수는 약 log<sub><var>f</var></sub> <var>N</var>으로 아주 느리게 늘어납니다. 자식이 2개인 이진 탐색 트리라면 백만 개에 약 20단계(log<sub>2</sub> 1,000,000 ≈ 19.9)가 필요합니다. B-tree는 삽입·삭제 때 노드를 나누거나 합쳐 모든 잎의 깊이를 같게 유지하므로 이 높이가 한쪽으로 치우치지 않습니다.</p>
+<p>많은 DBMS가 쓰는 변형인 <b class="key">B+tree</b>는 모든 키 항목을 잎에 두고 위쪽 노드에는 길 안내용 키만 두며, 잎끼리 순서대로 이어 둡니다. 범위 검색은 첫 잎을 찾은 뒤 옆 잎으로 차례로 넘어가며 읽습니다. 반면 해시 인덱스는 키를 해시값으로 바로 찾으므로 등호 검색에는 빠르지만 <code>&gt;=</code> 같은 범위나 정렬에는 쓰지 못합니다.</p>
 <figure class="fig">
 <svg class="fig-svg" viewBox="0 0 760 282" role="img" aria-label="B-tree 탐색의 단순 모형. 금액 15000원 이상을 찾기 위해 키 구간을 나누는 위쪽 칸에서 오른쪽 그룹으로 내려간다.">
 <text class="f-cap" x="380" y="30" text-anchor="middle">금액을 기준으로 정렬한 인덱스 키</text>
@@ -143,6 +145,7 @@ db.close()</code></pre>
   rows: [(102, 15000), (104, 15000)]
 after ['SEARCH orders USING COVERING INDEX idx_orders_total (total_won&gt;?)']
   rows: [(102, 15000), (104, 15000)]</code></pre>
+<p>인덱스를 만든 뒤 정렬 단계가 사라진 이유는 인덱스 항목이 이미 <code>total_won</code> 순서이고, 같은 금액끼리는 행 ID 순서로 놓여 있기 때문입니다. <code>order_id</code>는 <code>INTEGER PRIMARY KEY</code>라 행 ID와 같은 값이므로 인덱스를 앞에서부터 읽기만 해도 <code>ORDER BY total_won, order_id</code>가 만족됩니다. 같은 이유로 SELECT의 두 열이 모두 인덱스 항목 안에 있어 원본 행을 읽지 않는 COVERING INDEX가 됩니다.</p>
 <div class="check" data-q="q5"></div><div class="check" data-q="q6"></div>
 
 <h2>저장과 갱신에도 비용이 생긴다</h2>

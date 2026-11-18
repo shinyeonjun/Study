@@ -34,6 +34,7 @@
 <h2>같은 키를 가진 행의 짝 만들기</h2>
 <p><code>customers AS c JOIN orders AS o ON c.customer_id = o.customer_id</code>는 고객 번호가 일치하는 고객 행과 주문 행의 짝을 만듭니다. <code>AS c</code>와 <code>AS o</code>는 각각 표의 별칭입니다. 두 표에 <code>customer_id</code>라는 열이 있으므로 어떤 표의 열인지 <code>c.customer_id</code>처럼 명시합니다.</p>
 <p><b class="key">INNER JOIN</b>에서는 <code>ON</code>의 조건이 참인 짝만 결과에 나타납니다. 고객 1에게 주문 101, 102가 있고 고객 2에 주문 103, 104가 있습니다. 고객 3은 주문과 짝이 없으므로 이 결합에는 나오지 않습니다. 결과에서 한 행의 입도는 고객 한 명에서 고객과 주문의 짝으로 바뀝니다.</p>
+<p>ON 조건 없이 두 표의 모든 짝을 만드는 결합은 <b class="key">CROSS JOIN</b>(카티션 곱)이며, 고객 3명과 주문 4건이면 3×4=12행입니다. INNER JOIN은 이 12개 짝 가운데 ON 조건이 TRUE인 4개만 남긴 것으로 볼 수 있습니다. 그래서 ON 조건을 빠뜨리거나 잘못 쓰면 행이 곱으로 불어납니다.</p>
 <figure class="fig">
 <svg class="fig-svg" viewBox="0 0 760 209" role="img" aria-label="고객 1,2는 두 결합에서 주문 두 건씩과 연결되고 고객 3은 왼쪽 결합에서만 NULL인 결과 행으로 남는다.">
 <text class="f-cap" x="380" y="29" text-anchor="middle">고객을 왼쪽에 두고 주문 연결</text>
@@ -76,7 +77,9 @@
 
 <h2>왼쪽의 모든 고객을 보존하기</h2>
 <p><b class="key">LEFT JOIN</b>은 조건을 만족하는 짝을 모두 돌려주며, 짝이 없는 왼쪽 행에 한해 오른쪽 열이 모두 NULL로 채워진 결과 행을 한 줄 돌려줍니다. 정상 주문 원본에서 주문 번호는 NULL이 아니지만, 결과의 주문 번호는 손님 3에게 주문 짝이 없어서 NULL입니다. 예제 자료에서 주문에 연결됐지만 쿠폰액만 NULL인 경우도 있습니다. 이 두 경우를 구별하려면 오른쪽 주문의 기본 키가 NULL인지 확인합니다.</p>
-<p>LEFT JOIN으로 고객별 주문 건수를 세면 주문 없는 고객 3의 결과에도 한 행이 있습니다. 따라서 <code>COUNT(*)</code>는 1이고 <code>COUNT(o.order_id)</code>는 0입니다. 오른쪽 표의 존재할 때 필수인 열을 세면 주문 건수가 됩니다.</p>
+<p>LEFT JOIN으로 고객별 주문 건수를 세면 주문 없는 고객 3의 결과에도 한 행이 있습니다. 따라서 <code>COUNT(*)</code>는 1이고 <code>COUNT(o.order_id)</code>는 0입니다. 오른쪽 표에서 행이 있으면 반드시 값이 있는 열(기본 키 등)을 세면 주문 건수가 됩니다.</p>
+<p>반대 방향으로 오른쪽 표의 행을 모두 보존하는 것이 <code>RIGHT JOIN</code>이고, <code>orders RIGHT JOIN customers</code>는 <code>customers LEFT JOIN orders</code>와 같은 행을 냅니다(열 순서만 다름). 양쪽의 짝 없는 행을 모두 보존하면 <code>FULL OUTER JOIN</code>입니다. SQLite는 3.39.0부터 두 결합을 지원하고, MySQL에는 FULL OUTER JOIN이 없어 LEFT JOIN과 RIGHT JOIN 결과를 UNION으로 합쳐 같은 결과를 만듭니다. LEFT·RIGHT·FULL을 묶어 <b class="key">외부 조인</b>(outer join)이라고 합니다.</p>
+<p>주문이 <em>없는</em> 고객만 찾으려면 LEFT JOIN 뒤에 <code>WHERE o.order_id IS NULL</code>을 붙입니다. 짝이 없어서 NULL로 채워진 행만 남으므로 이 자료에서는 고객 3만 나옵니다. 이런 질의를 <b class="key">안티 조인</b>(anti join)이라고 하며, <a href="db03-3.html">DB03·3</a>의 <code>NOT EXISTS</code>로도 같은 결과를 얻습니다.</p>
 <div class="check" data-q="q3"></div><div class="check" data-q="q4"></div>
 
 <h2>먼저 짝의 기준을 좁힐까, 결과 행을 걸러낼까?</h2>

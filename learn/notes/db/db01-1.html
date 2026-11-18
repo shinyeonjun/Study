@@ -61,6 +61,7 @@
 <h2>표의 정의와 그날의 내용</h2>
 <p><b class="key">스키마</b>는 표의 이름, 열 이름과 유형, 키, 값의 제약 등 데이터를 기록하는 구조입니다. <code>customer_id INTEGER PRIMARY KEY</code>는 이 표의 정수 고객 식별자를 정합니다. <code>name TEXT NOT NULL</code>은 표시 이름의 데이터 유형과 누락 금지를 정합니다. Mina를 고객으로 추가하는 일은 그 정의에 맞는 값을 입력하는 일입니다. 고객의 이메일을 저장할 열 자체를 새로 만들면 표의 구조가 달라집니다.</p>
 <p>결과에 순서가 필요하다면 <code>ORDER BY</code>로 정합니다. 행이 파일에 들어간 순서로 결과가 나온다고 가정할 수 없습니다. 관계 모델을 바탕으로 한 데이터베이스라도 SQL 질의 결과에는 같은 값의 행을 여러 개 담을 수 있습니다. 이름이 같은 두 고객에게서 이름만 조회하면 같은 문자열이 두 번 나옵니다. 두 이름을 하나로 묶는 일과 두 고객을 같은 사람으로 보는 일은 구분합니다.</p>
+<div class="box"><p class="box-k">관계 모델의 용어</p><p>관계 모델(Codd, 1970)에서 표는 <b class="key">릴레이션</b>(relation), 행은 <b class="key">튜플</b>(tuple), 열은 <b class="key">속성</b>(attribute)이라 부릅니다. 한 속성이 가질 수 있는 값 전체의 집합을 <b class="key">도메인</b>(domain)이라 하고, 속성의 개수를 <b class="key">차수</b>(degree), 튜플의 개수를 <b class="key">카디널리티</b>(cardinality)라고 합니다. 위 customers는 차수 2, 카디널리티 3입니다. 릴레이션 이름과 속성 목록인 스키마는 잘 바뀌지 않는 틀이고, 어느 순간 표에 들어 있는 튜플 전체는 <b class="key">인스턴스</b>(instance)라고 합니다.</p><p>'관계형'의 관계는 표와 표 사이의 연결이 아니라 수학의 관계, 곧 여러 도메인의 곱집합의 부분집합을 뜻합니다. 표 사이의 연결은 다음 장의 키로 표현합니다. 이론의 릴레이션은 튜플의 집합이므로 똑같은 튜플이 두 번 있을 수 없고 튜플 사이에 순서도 없습니다. 실제 SQL 표와 질의 결과는 같은 행이 여러 번 나올 수 있는 모음(멀티셋)이라는 점이 다르며, 결과에서 중복 행을 없애려면 <code>SELECT DISTINCT</code>를 씁니다.</p></div>
 <div class="check" data-q="q3"></div><div class="check" data-q="q4"></div>
 
 <h2>질문에 맞는 표를 고르기</h2>
@@ -151,6 +152,7 @@ customer rows: 3 order rows: 4</code></pre>
 <h2>한눈에 정리</h2>
 <div class="table-wrap"><table><thead><tr><th scope="col">개념</th><th scope="col">확인할 것</th></tr></thead><tbody>
 <tr><th scope="row"><b class="key">스키마</b></th><td>값을 담는 구조와 규칙을 뜻한다.</td></tr>
+<tr><th scope="row"><b class="key">릴레이션·튜플·속성</b></th><td>표·행·열의 관계 모델 이름. 이론의 릴레이션은 중복 없는 집합, SQL 결과는 중복을 허용한다.</td></tr>
 <tr><th scope="row"><b class="key">입도</b></th><td>행 한 줄이 나타내는 대상을 정한다.</td></tr>
 <tr><th scope="row"><b class="key">행 순서</b></th><td>SELECT 결과에 순서가 필요하면 ORDER BY를 명시한다.</td></tr>
 </tbody></table></div><div class="box sum"><p class="box-k">다음 장으로</p><p><a href="db01-2.html">다음 장</a>에서는 고객과 주문, 주문과 상품을 키로 연결합니다.</p></div>

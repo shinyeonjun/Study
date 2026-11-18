@@ -153,7 +153,7 @@ sort by amount ['SCAN orders', 'USE TEMP B-TREE FOR ORDER BY']
 <div class="check" data-q="q5"></div><div class="check" data-q="q6"></div>
 
 <h2>가장 오래 걸리는 일부터 찾기</h2>
-<p>예컨대 질의 한 번이 5ms이지만 주문 목록마다 100번 호출하면 순차적으로 SQL 호출에만 500ms가 듭니다. 다른 한 번의 정렬이 30ms라면 합계에서 먼저 볼 것은 반복 호출입니다. 반대로 한 번의 JOIN이 수십만 줄을 만들면 <a href="db03-2.html">결합의 입도</a>와 행 수를 확인합니다.</p>
+<p>예컨대 질의 한 번이 5ms이지만 주문 목록마다 100번 호출하면 순차적으로 SQL 호출에만 500ms가 듭니다. 다른 한 번의 정렬이 30ms라면 합계에서 먼저 볼 것은 반복 호출입니다. 목록을 한 번(1) 가져온 뒤 항목마다 질의를 한 번씩(N) 더 보내는 이런 모양을 <b class="key">N+1 질의 문제</b>라고 부르며, 보통 JOIN이나 <code>IN (…)</code>으로 필요한 행을 한 번에 가져와 줄입니다. 반대로 한 번의 JOIN이 수십만 줄을 만들면 <a href="db03-2.html">결합의 입도</a>와 행 수를 확인합니다.</p>
 <figure class="fig">
 <svg class="fig-svg" viewBox="0 0 760 246" role="img" aria-label="선택적 필터, 결합 행 폭증, 정렬·반환량, 반복 호출을 실제 증거와 연결한다.">
 <text class="f-cap" x="380" y="29" text-anchor="middle">느린 이유에 맞춰 확인할 증거</text>

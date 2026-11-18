@@ -64,6 +64,13 @@
 <figcaption>기본 키와 유일성에서 검사하는 속성은 다를 수 있습니다. 업무 코드의 고유성도 따로 명시합니다.</figcaption>
 </figure>
 <p>예제에서는 고객 표시 이름은 같을 수 있고, 고객의 외부 계정 코드는 같으면 안 됩니다. <code>UNIQUE</code>를 외부 코드에 두고, 주 식별자인 <code>customer_id</code>는 기본 키로 유지합니다. 외래 키는 참조 존재를 검사하지만 참조 열이 선택 사항이면 NULL을 허용할 수 있습니다. 모든 주문에 반드시 고객이 있다면 외래 키에 <code>NOT NULL</code>도 같이 둡니다.</p>
+<p>외래 키에는 참조되는 행이 지워지거나 그 키가 바뀔 때의 동작(<b class="key">참조 동작</b>)도 정할 수 있습니다. 아무것도 적지 않으면 <code>NO ACTION</code>이며, 주문이 남아 있는 고객을 지우려 하면 이 장의 예제 표에서 <code>FOREIGN KEY constraint failed</code> 오류로 거부됩니다.</p>
+<div class="table-wrap"><table><thead><tr><th scope="col">ON DELETE 동작</th><th scope="col">고객 1을 지울 때 주문 101·102는</th></tr></thead><tbody>
+<tr><th scope="row">NO ACTION · RESTRICT</th><td>참조가 남아 있으면 삭제를 거부한다(기본값은 NO ACTION).</td></tr>
+<tr><th scope="row">CASCADE</th><td>주문도 함께 지운다.</td></tr>
+<tr><th scope="row">SET NULL</th><td>주문의 customer_id를 NULL로 바꾼다. 그 열이 NOT NULL이면 실패한다.</td></tr>
+</tbody></table></div>
+<p>NO ACTION과 RESTRICT는 검사 시점만 다릅니다(RESTRICT는 즉시, NO ACTION은 문장 끝이나 지연 설정 시 커밋 때). 주문처럼 남겨야 하는 거래 기록에 CASCADE를 걸면 고객 하나를 지울 때 이력까지 사라지므로 신중히 고릅니다.</p>
 <div class="check" data-q="q1"></div><div class="check" data-q="q2"></div><div class="check" data-q="q3"></div>
 
 <h2>0보다 작은 값과 값 없음</h2>

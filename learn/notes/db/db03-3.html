@@ -49,11 +49,12 @@
 </svg>
 <figcaption>SQL에서 WHERE total_won > (SELECT AVG(total_won) FROM orders)의 괄호 안쪽은 비교할 평균 한 값을 냅니다.</figcaption>
 </figure>
-<p>비교하려는 값이 하나이면 서브쿼리가 한 값만 내도록 명시합니다. 여러 행을 반환한 스칼라 서브쿼리를 SQLite가 허용하는 방식에 기대면 다른 DB의 동작과 다를 수 있습니다. 여러 행을 확인할 때는 목적에 맞게 존재 여부나 집합에 속하는지를 묻습니다.</p>
+<p>비교하려는 값이 하나이면 서브쿼리가 한 값만 내도록 명시합니다. 스칼라 서브쿼리가 여러 행을 돌려주면 SQLite는 오류 없이 첫 행의 값만 쓰지만, PostgreSQL과 MySQL은 오류를 냅니다. SQLite의 방식에 기대면 어느 행이 쓰였는지 알 수 없고 다른 DB에서 실패합니다. 여러 행을 확인할 때는 목적에 맞게 존재 여부(<code>EXISTS</code>)나 집합에 속하는지(<code>IN</code>)를 묻습니다. <code>customer_id IN (SELECT customer_id FROM orders)</code>는 서브쿼리가 돌려준 값 목록 중 하나와 같으면 참입니다.</p>
 <div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
 
 <h2>행이 하나라도 있는지 묻기</h2>
-<p><code>WHERE EXISTS (SELECT 1 FROM orders AS o WHERE o.customer_id=c.customer_id AND o.status='paid')</code>는 외부에서 현재 보는 고객 <code>c</code>에 대해 결제 완료 주문이 한 건이라도 있는지를 묻습니다. 바깥 행의 값을 쓰므로 <strong>상관 서브쿼리</strong>입니다. 여기서 <code>SELECT 1</code>은 한 주문의 값에 관심 없음을 드러냅니다. 존재 조건만 검사하므로 한 고객의 주문이 여러 건이어도 고객 결과 행은 하나입니다.</p>
+<p><code>WHERE EXISTS (SELECT 1 FROM orders AS o WHERE o.customer_id=c.customer_id AND o.status='paid')</code>는 외부에서 현재 보는 고객 <code>c</code>에 대해 결제 완료 주문이 한 건이라도 있는지를 묻습니다. 바깥 행의 값을 쓰므로 <strong>상관 서브쿼리</strong>입니다. 여기서 <code>SELECT 1</code>은 한 주문의 값에 관심 없음을 드러냅니다. 존재 조건만 검사하므로 한 고객의 주문이 여러 건이어도 고객 결과 행은 하나입니다. 반대로 <code>NOT EXISTS</code>는 조건에 맞는 행이 하나도 없을 때 참이며, 주문이 없는 고객 3을 찾을 때 씁니다.</p>
+<div class="box trap"><p class="box-k">시험 함정 · NOT IN과 NULL</p><p>주문 없는 고객을 <code>WHERE customer_id NOT IN (SELECT customer_id FROM orders)</code>로 찾으면 이 자료에서는 고객 3이 나옵니다. 그런데 서브쿼리 결과에 NULL이 하나라도 섞이면 결과가 0행이 됩니다. <code>3 NOT IN (1, 2, NULL)</code>은 <code>3 &lt;&gt; 1 AND 3 &lt;&gt; 2 AND 3 &lt;&gt; NULL</code>과 같고, 마지막 비교가 UNKNOWN이라 전체가 TRUE가 될 수 없기 때문입니다(<a href="db02-1.html">3값 논리</a>). 이 교재의 <code>orders.customer_id</code>는 NOT NULL이라 안전하지만, NULL이 들어올 수 있는 열에는 <code>NOT EXISTS</code>나 LEFT JOIN 뒤 <code>IS NULL</code>로 찾는 안티 조인을 씁니다.</p></div>
 <div class="check" data-q="q3"></div><div class="check" data-q="q4"></div>
 
 <h2>주문 행을 유지하며 묶음으로 계산하기</h2>
@@ -115,7 +116,7 @@
 </svg>
 <figcaption>고객이 바뀔 때 누적 값과 순번을 새로 시작합니다. 주문마다 한 행을 유지합니다.</figcaption>
 </figure>
-<p>윈도 안의 정렬은 계산 순서에 적용합니다. 결과 출력 순서를 보장하려면 SELECT의 마지막에 별도로 <code>ORDER BY</code>를 씁니다. SQLite에서 날짜만 윈도 정렬에 쓰고 프레임을 생략하면 기본 RANGE 프레임이 날짜가 같은 행들을 한꺼번에 포함합니다. 첫날 금액 10과 5, 다음 날 7이라면 날짜별 계산 결과는 15, 15, 22입니다. 주문 번호까지 순서를 정하고 ROWS로 처음부터 현재 행까지 포함하면 10, 15, 22로 한 행씩 늘어납니다.</p>
+<p>윈도 안의 정렬은 계산 순서에 적용합니다. 결과 출력 순서를 보장하려면 SELECT의 마지막에 별도로 <code>ORDER BY</code>를 씁니다. 윈도에 ORDER BY만 쓰고 프레임을 생략하면 표준 SQL의 기본 프레임 <code>RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW</code>가 적용됩니다(SQLite·PostgreSQL 모두 같음). RANGE는 정렬 값이 같은 행(동점)을 한꺼번에 현재 행으로 취급하므로, 날짜만으로 정렬하면 같은 날짜의 행들이 함께 포함됩니다. 첫날 금액 10과 5, 다음 날 7이라면 날짜별 계산 결과는 15, 15, 22입니다. 주문 번호까지 순서를 정하고 ROWS로 처음부터 현재 행까지 포함하면 10, 15, 22로 한 행씩 늘어납니다.</p>
 <div class="check" data-q="q5"></div><div class="check" data-q="q6"></div>
 
 <h2>세 조회를 같은 데이터에서 실행</h2>

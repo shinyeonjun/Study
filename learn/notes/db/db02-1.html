@@ -85,6 +85,14 @@
 <h2>값을 모를 때와 0을 확인했을 때</h2>
 <p><code>coupon_won</code>의 값이 0이면 쿠폰 할인액이 0으로 확인된 경우이고, <code>NULL</code>은 기록에서 할인액을 알 수 없는 경우입니다. NULL 값에 대해 <code>coupon_won = 0</code>을 평가하면 결과가 미지(UNKNOWN)가 됩니다. SQL의 <code>WHERE</code>에는 참만 남습니다. 따라서 이 조건으로 NULL 기록까지 찾을 수 없습니다.</p>
 <p>누락된 쿠폰 기록은 <code>coupon_won IS NULL</code>, 기록이 있는 경우는 <code>coupon_won IS NOT NULL</code>로 확인합니다. 모르는 값과의 <code>= NULL</code> 비교도 참이 되지 않으므로 NULL 여부를 확인할 때에는 <code>IS NULL</code>을 사용합니다.</p>
+<p>SQL의 조건식은 참(TRUE)·거짓(FALSE)·미지(UNKNOWN) 세 값 가운데 하나가 되는 <b class="key">3값 논리</b>를 따릅니다. 비교하는 값에 NULL이 있으면 결과가 UNKNOWN이 되고, 그 UNKNOWN이 AND·OR·NOT을 거칠 때의 규칙은 아래 표와 같습니다. 원리는 하나입니다. UNKNOWN 자리에 참과 거짓 중 무엇을 넣어도 결과가 같으면 그 결과로 정해지고, 넣는 값에 따라 달라지면 UNKNOWN입니다.</p>
+<div class="table-wrap"><table><thead><tr><th scope="col">A</th><th scope="col">B</th><th scope="col">A AND B</th><th scope="col">A OR B</th></tr></thead><tbody>
+<tr><td>TRUE</td><td>UNKNOWN</td><td>UNKNOWN</td><td>TRUE</td></tr>
+<tr><td>FALSE</td><td>UNKNOWN</td><td>FALSE</td><td>UNKNOWN</td></tr>
+<tr><td>UNKNOWN</td><td>UNKNOWN</td><td>UNKNOWN</td><td>UNKNOWN</td></tr>
+</tbody></table></div>
+<p><code>NOT UNKNOWN</code>도 UNKNOWN입니다. WHERE는 TRUE인 행만 남기므로 FALSE와 UNKNOWN은 똑같이 걸러집니다.</p>
+<div class="box trap"><p class="box-k">흔한 실수</p><p>'쿠폰액이 0이 아닌 주문'을 <code>WHERE coupon_won &lt;&gt; 0</code>으로 찾으면 이 자료에서는 102만 남고, 쿠폰액이 NULL인 101과 103도 빠집니다. <code>NULL &lt;&gt; 0</code> 역시 UNKNOWN이기 때문입니다. <code>= 0</code>으로 고른 행과 <code>&lt;&gt; 0</code>으로 고른 행을 합해도 전체가 되지 않습니다. NULL 행까지 원하면 <code>coupon_won &lt;&gt; 0 OR coupon_won IS NULL</code>처럼 따로 적습니다.</p></div>
 <div class="check" data-q="q3"></div><div class="check" data-q="q4"></div>
 
 <h2>질의의 틀을 고정하고 값만 보내기</h2>
@@ -103,6 +111,28 @@
 <figcaption>자리표시자에는 비교값을 전달합니다. 열 이름과 정렬 방향은 질의 구조에서 정합니다.</figcaption>
 </figure>
 <p>자리표시자로 채우는 것은 값입니다. 선택할 열이나 정렬 방향을 화면에서 고르게 할 때는 애플리케이션이 미리 마련한 몇 개의 질의 중 하나를 고릅니다. 데이터베이스 드라이버에 따라 값의 자리표시자 문법은 다를 수 있으므로 여기서는 Python의 <code>sqlite3</code> 문법을 씁니다.</p>
+<div class="box trap"><p class="box-k">흔한 실수 · 문자열로 SQL 조립하기</p><p>입력값을 f-string이나 <code>+</code>로 SQL 문장에 끼워 넣으면, 입력 안의 따옴표가 문자열을 닫고 그 뒤가 SQL 구문으로 해석됩니다. 이렇게 입력으로 질의의 구조를 바꾸는 공격을 <b class="key">SQL 주입</b>(SQL injection)이라고 합니다. 아래에서 상태 값으로 <code>x' OR '1'='1</code>을 받으면 조립한 문장의 조건이 <code>status = 'x' OR '1'='1'</code>이 되어 항상 참이고, 주문 네 건이 모두 나옵니다. 바인딩하면 같은 입력이 그 글자 그대로의 값 하나로 비교되어 일치하는 행이 없습니다. 드라이버는 SQL 문장과 값을 따로 전달하므로 값이 구문으로 해석되지 않습니다.</p></div>
+<p class="small">실행 예제</p>
+<pre data-example="python"><code>import sqlite3
+
+with sqlite3.connect(&quot;:memory:&quot;) as db:
+    db.execute(&quot;CREATE TABLE orders (order_id INTEGER PRIMARY KEY, status TEXT NOT NULL)&quot;)
+    db.executemany(&quot;INSERT INTO orders VALUES (?, ?)&quot;,
+                   [(101, &quot;paid&quot;), (102, &quot;paid&quot;), (103, &quot;pending&quot;), (104, &quot;paid&quot;)])
+    user_input = &quot;x' OR '1'='1&quot;
+
+    unsafe = f&quot;SELECT order_id FROM orders WHERE status = '{user_input}' ORDER BY order_id&quot;
+    print(unsafe)
+    print(&quot;concatenated:&quot;, db.execute(unsafe).fetchall())
+    safe = db.execute(
+        &quot;SELECT order_id FROM orders WHERE status = ? ORDER BY order_id&quot;, (user_input,)
+    ).fetchall()
+    print(&quot;bound:&quot;, safe)
+db.close()</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>SELECT order_id FROM orders WHERE status = 'x' OR '1'='1' ORDER BY order_id
+concatenated: [(101,), (102,), (103,), (104,)]
+bound: []</code></pre>
 <div class="check" data-q="q5"></div><div class="check" data-q="q6"></div>
 
 <h2>조건과 값의 개수를 맞추기</h2>

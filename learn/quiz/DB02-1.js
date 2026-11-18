@@ -47,5 +47,29 @@
     "type": "short",
     "q": "조회에 WHERE total_won >= ?를 쓰면서 Python에서 최소액이 0 이상인지 별도로 검사합니다. 두 역할을 설명하세요.",
     "a": "범위 검사는 업무에 맞는 입력인지 평가하고 값 바인딩은 해당 입력을 질의의 값 위치에 전달합니다."
+  },
+  {
+    "id": "q9",
+    "type": "mc",
+    "q": "쿠폰액 coupon_won이 NULL, 0, 500인 세 행에 WHERE coupon_won <> 0을 적용합니다. 남는 행은?",
+    "options": [
+      {
+        "t": "세 행 모두",
+        "why": "0 <> 0은 FALSE이므로 0인 행은 확실히 빠집니다."
+      },
+      {
+        "t": "남는 행이 없다",
+        "why": "500 <> 0은 TRUE입니다. 전체가 UNKNOWN이 되는 것은 비교 값 자체가 NULL인 행뿐입니다."
+      },
+      {
+        "t": "500인 행 하나",
+        "why": "500 <> 0은 TRUE, 0 <> 0은 FALSE, NULL <> 0은 UNKNOWN입니다. WHERE는 TRUE인 행만 남기므로 500 한 행입니다."
+      },
+      {
+        "t": "NULL과 500인 두 행",
+        "why": "NULL은 0이 아니라고 생각하기 쉽지만 NULL과의 비교는 UNKNOWN이고 WHERE를 통과하지 못합니다. NULL까지 원하면 OR coupon_won IS NULL을 붙입니다."
+      }
+    ],
+    "answer": 2
   }
 ];
