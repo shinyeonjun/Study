@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dropout과 가중치 패널티로 과적합 다루기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e8c'/%3E%3Cpath d='M8 22V10m8 12V14m8 8V6' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="DL04-2">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+
+<header class="chapter">
+<p class="chap-sub">딥러닝 · DL04 학습을 안정시키기</p>
+<p class="chap-num">DL04·2</p>
+<h1>Dropout과 가중치 패널티로 과적합 다루기</h1>
+<p class="lead">일부 활성값을 잠시 가리는 방법과 손실에 가중치의 크기를 더하는 방법을 계산합니다. 훈련과 평가에서 무엇이 바뀌는지 확인합니다.</p>
+</header>
+
+<div class="goal">
+<h2>이 장을 읽고 나면</h2>
+<ul>
+<li>dropout 확률과 유지된 활성값의 배율을 계산한다.</li>
+<li>훈련 모드와 평가 모드의 출력 차이를 확인한다.</li>
+<li>손실의 패널티와 검증 손실을 분리해 기록한다.</li>
+</ul>
+</div>
+<h2>일부 활성값의 통과를 훈련 중에 무작위로 정한다</h2>
+<p><b class="key">Dropout</b>은 훈련할 때 활성값의 일부를 확률 p로 0으로 바꿉니다. 이 장의 <code>nn.Dropout</code>은 원소 단위입니다. 0≤p&lt;1이고 활성값이 그대로 지나갈 때는 1/(1−p)배 합니다. 예를 들어 p=0.5, 활성 [1,2,3,4]에 샘플 마스크 [1,0,1,0]가 나왔다면 [2,0,6,0]입니다. 입력이 고정되어 있을 때 두 경우의 확률을 평균하면 각 활성의 기대값은 원래 값과 같습니다.</p>
+<p>확률 0.5는 항상 절반이 지워진다는 의미가 아닙니다. 같은 입력으로도 여러 순전파에서 다른 마스크가 나옵니다. 일부 표현에 지나치게 의존하지 않게 하는 <b>정규화(regularization)</b> 방법 가운데 하나입니다. 데이터와 모델에 따라 효과가 다를 수 있어 기준 모델과 검증 결과를 비교합니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 257" role="img" aria-label="원래 활성 1,2,3,4에 샘플 마스크 1,0,1,0을 적용하고 유지값을 두 배 하면 2,0,6,0이며, 평가 출력은 원래와 같은 1,2,3,4.">
+<text class="f-cap" x="380" y="33" text-anchor="middle">p=0.5에서 가능한 훈련 순전파 하나</text>
+<text class="f-t" x="180" y="82" text-anchor="end">원래 활성</text>
+<rect class="f-box" x="206" y="58" width="120" height="38" rx="3"/>
+<text class="f-t" x="266" y="83" text-anchor="middle">1</text>
+<rect class="f-box" x="332" y="58" width="120" height="38" rx="3"/>
+<text class="f-t" x="392" y="83" text-anchor="middle">2</text>
+<rect class="f-box" x="458" y="58" width="120" height="38" rx="3"/>
+<text class="f-t" x="518" y="83" text-anchor="middle">3</text>
+<rect class="f-box" x="584" y="58" width="120" height="38" rx="3"/>
+<text class="f-t" x="644" y="83" text-anchor="middle">4</text>
+<text class="f-t" x="180" y="128" text-anchor="end">이번 마스크</text>
+<rect class="f-box" x="206" y="104" width="120" height="38" rx="3"/>
+<text class="f-t" x="266" y="129" text-anchor="middle">1</text>
+<rect class="f-box" x="332" y="104" width="120" height="38" rx="3"/>
+<text class="f-t" x="392" y="129" text-anchor="middle">0</text>
+<rect class="f-box" x="458" y="104" width="120" height="38" rx="3"/>
+<text class="f-t" x="518" y="129" text-anchor="middle">1</text>
+<rect class="f-box" x="584" y="104" width="120" height="38" rx="3"/>
+<text class="f-t" x="644" y="129" text-anchor="middle">0</text>
+<text class="f-t" x="180" y="174" text-anchor="end">훈련 출력</text>
+<rect class="f-soft" x="206" y="150" width="120" height="38" rx="3"/>
+<text class="f-t" x="266" y="175" text-anchor="middle">2</text>
+<rect class="f-box" x="332" y="150" width="120" height="38" rx="3"/>
+<text class="f-t" x="392" y="175" text-anchor="middle">0</text>
+<rect class="f-soft" x="458" y="150" width="120" height="38" rx="3"/>
+<text class="f-t" x="518" y="175" text-anchor="middle">6</text>
+<rect class="f-box" x="584" y="150" width="120" height="38" rx="3"/>
+<text class="f-t" x="644" y="175" text-anchor="middle">0</text>
+<text class="f-t" x="180" y="220" text-anchor="end">평가 출력</text>
+<rect class="f-box" x="206" y="196" width="120" height="38" rx="3"/>
+<text class="f-t" x="266" y="221" text-anchor="middle">1</text>
+<rect class="f-box" x="332" y="196" width="120" height="38" rx="3"/>
+<text class="f-t" x="392" y="221" text-anchor="middle">2</text>
+<rect class="f-box" x="458" y="196" width="120" height="38" rx="3"/>
+<text class="f-t" x="518" y="221" text-anchor="middle">3</text>
+<rect class="f-box" x="584" y="196" width="120" height="38" rx="3"/>
+<text class="f-t" x="644" y="221" text-anchor="middle">4</text>
+</svg>
+<figcaption>가림의 유무와 나눗셈 배율을 동시에 적용하므로, 평가할 때 다시 0.5를 곱할 필요가 없습니다.</figcaption>
+</figure>
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+
+<h2>목적함수에서 가중치가 커질 때 치르는 값을 정한다</h2>
+<p>다른 방법으로 훈련 목적을 데이터 손실 + λ·Σwᵢ²로 정할 수 있습니다. 이 <b>L2 패널티</b>에서 w=(3,4)라면 제곱합은 25이고 λ=0.1을 곱하면 2.5가 추가됩니다. 이 글은 ½을 넣지 않는 정의를 택했습니다. 따라서 데이터 손실과 별도로 w에 더하는 기울기는 2λw입니다.</p>
+<p>훗날 옵티마이저에서 <code>weight_decay</code> 인자를 쓰게 되면 논문의 λ와 같은 수치·규칙인지 확인합니다. 예를 들어 업데이트에서 따로 가중치를 줄이는 AdamW의 규칙은 손실에 L2를 더하는 방법과 일반적으로 다릅니다. 검증에서 비교할 때는 데이터 손실과 패널티를 따로 기록해 어떤 값이 줄었는지 알 수 있게 합니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 211" role="img" aria-label="가중치 3과 4의 제곱합 25에 0.1을 곱해 2.5를 목적함수에 더한다.">
+<text class="f-cap" x="380" y="33" text-anchor="middle">패널티 계산의 모양</text>
+<text class="f-t" x="180" y="82" text-anchor="end">가중치</text>
+<rect class="f-box" x="206" y="58" width="246" height="38" rx="3"/>
+<text class="f-t" x="329" y="83" text-anchor="middle">w₁=3</text>
+<rect class="f-box" x="458" y="58" width="246" height="38" rx="3"/>
+<text class="f-t" x="581" y="83" text-anchor="middle">w₂=4</text>
+<text class="f-t" x="180" y="128" text-anchor="end">제곱</text>
+<rect class="f-box" x="206" y="104" width="246" height="38" rx="3"/>
+<text class="f-t" x="329" y="129" text-anchor="middle">w₁²=9</text>
+<rect class="f-box" x="458" y="104" width="246" height="38" rx="3"/>
+<text class="f-t" x="581" y="129" text-anchor="middle">w₂²=16</text>
+<text class="f-t" x="180" y="174" text-anchor="end">합에 λ를 곱함</text>
+<rect class="f-box" x="206" y="150" width="246" height="38" rx="3"/>
+<text class="f-t" x="329" y="175" text-anchor="middle">9+16=25</text>
+<rect class="f-soft" x="458" y="150" width="246" height="38" rx="3"/>
+<text class="f-t" x="581" y="175" text-anchor="middle">0.1×25=2.5</text>
+</svg>
+<figcaption>같은 상황에서 λ를 바꾸면 데이터 손실에 더하는 항도 바뀝니다.</figcaption>
+</figure>
+<div class="check" data-q="q3"></div>
+<div class="check" data-q="q4"></div>
+
+<h2>평가할 때 모듈을 평가 상태로 바꾼다</h2>
+<p>PyTorch에서 <code>model.train()</code>과 <code>model.eval()</code>은 등록된 하위 모듈의 훈련 상태도 바꿉니다. <code>nn.Dropout</code>은 평가에서 입력을 그대로 통과시킵니다. 이 상태 전환과 <code>torch.no_grad()</code>는 역할이 다릅니다. 기울기 계산만 껐다고 dropout의 가림이 멈추지는 않습니다.</p>
+<div class="check" data-q="q5"></div>
+<div class="check" data-q="q6"></div>
+<pre data-example="python"><code>import torch
+from torch import nn
+
+torch.set_num_threads(1)
+torch.manual_seed(29)
+x = torch.ones(8)
+drop = nn.Dropout(p=0.5)
+drop.train()
+with torch.no_grad():
+    sampled = torch.stack([drop(x) for _ in range(16)])
+drop.eval()
+with torch.no_grad():
+    evaluated = drop(x)
+print(&quot;training values:&quot;, torch.unique(sampled).tolist())
+print(&quot;eval equals input:&quot;, torch.equal(evaluated, x))
+
+w = torch.tensor([3.0, 4.0], requires_grad=True)
+penalty = 0.1 * w.square().sum()
+penalty.backward()
+print(&quot;penalty:&quot;, f&quot;{penalty.item():.1f}&quot;)
+print(&quot;penalty gradient:&quot;, [round(v, 1) for v in w.grad.tolist()])</code></pre>
+<pre data-output><code>training values: [0.0, 2.0]
+eval equals input: True
+penalty: 2.5
+penalty gradient: [0.6, 0.8]</code></pre>
+<p class="small">실행 환경은 Python 3.14.6과 PyTorch 2.14.1+cu130의 CPU입니다. 난수 시드는 29입니다. 같은 시드를 써도 PyTorch 버전이나 장치가 바뀌면 난수열과 세부 결과가 달라질 수 있습니다.</p><p>예제는 평가에 들어가기 전에 <code>eval()</code>을 호출합니다. 평가 후 같은 모형으로 학습을 계속할 때는 <code>train()</code>으로 돌립니다. 함수형 <code>torch.nn.functional.dropout</code>을 직접 쓰면 모듈의 상태에 따라 동작하도록 <code>training=self.training</code>을 명시하는 패턴을 확인합니다.</p>
+
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://docs.pytorch.org/docs/stable/generated/torch.nn.Dropout.html">PyTorch · Dropout 배율과 평가 상태</a></li>
+<li><a href="https://docs.pytorch.org/docs/stable/generated/torch.optim.AdamW.html">PyTorch · AdamW의 분리된 가중치 감쇠</a></li>
+<li><a href="https://jmlr.org/papers/v15/srivastava14a.html">Srivastava 외 · Dropout</a></li>
+<li><a href="dl03-2.html">DL03 · 학습 모드와 평가 모드</a></li>
+</ul>
+
+<h2>확인 문제</h2>
+<p>아직 풀지 않은 문제입니다. 먼저 식이나 근거를 적어 보고 해설을 확인합니다.</p>
+<div id="quiz"></div>
+
+<section class="work" id="tools"></section>
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

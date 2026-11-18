@@ -496,6 +496,20 @@ window.BDA_CHAPTERS = {
     {"id": "OP03-1", "title": "최솟값을 정의하고 한 변수에서 내려가기", "href": "notes/op/op03-1.html"},
     {"id": "OP03-2", "title": "두 매개변수에서 기울기를 계산하고 멈추기", "href": "notes/op/op03-2.html"}
   ],
+  OP04: [
+    {"id": "OP04-1", "title": "미니배치에서 기울기의 평균과 변동 계산하기", "href": "notes/op/op04-1.html"},
+    {"id": "OP04-2", "title": "모멘텀과 Adam이 이전 기울기를 사용하는 방식", "href": "notes/op/op04-2.html"}
+  ],
+  OP05: [
+    {"id": "OP05-1", "title": "볼록집합과 볼록함수에서 국소 최소가 전역이 되는 이유", "href": "notes/op/op05-1.html"},
+    {"id": "OP05-2", "title": "제약의 경계와 KKT 조건에서 최소점 읽기", "href": "notes/op/op05-2.html"},
+    {"id": "OP05-3", "title": "쌍대 문제의 하한으로 최적값 확인하기", "href": "notes/op/op05-3.html"}
+  ],
+  OP06: [
+    {"id": "OP06-1", "title": "L1과 L2 벌점이 계수를 줄이는 방식 비교하기", "href": "notes/op/op06-1.html"},
+    {"id": "OP06-2", "title": "같은 예측도 특징 단위에 따라 벌점이 달라지는 이유", "href": "notes/op/op06-2.html"},
+    {"id": "OP06-3", "title": "사전분포의 모양에서 MAP와 계수 벌점 읽기", "href": "notes/op/op06-3.html"}
+  ],
   OP07: [
     {"id": "OP07-1", "title": "드문 결과의 자기정보량과 평균 부호 길이", "href": "notes/op/op07-1.html"},
     {"id": "OP07-2", "title": "교차엔트로피와 KL, 실제와 다른 확률의 비용", "href": "notes/op/op07-2.html"},
@@ -509,6 +523,27 @@ window.BDA_CHAPTERS = {
   AI01: [
     {"id": "AI01-1", "title": "인공지능이 푸는 문제와 출력 읽기", "href": "notes/ai/ai01-1.html"},
     {"id": "AI01-2", "title": "규칙과 학습을 구분하고 AI 계열 연결하기", "href": "notes/ai/ai01-2.html"}
+  ],
+  AI02: [
+    {"id": "AI02-1", "title": "상태와 목표가 같아도 가장 좋은 경로의 기준은 다르다", "href": "notes/ai/ai02-1.html"},
+    {"id": "AI02-2", "title": "A*는 이미 쓴 비용과 남은 비용의 추정값을 합친다", "href": "notes/ai/ai02-2.html"}
+  ],
+  AI03: [
+    {"id": "AI03-1", "title": "제약을 만족하는 배치와 백트래킹", "href": "notes/ai/ai03-1.html"},
+    {"id": "AI03-2", "title": "참과 거짓으로 규칙을 적는 명제와 술어", "href": "notes/ai/ai03-2.html"},
+    {"id": "AI03-3", "title": "사실을 바꾸는 행동으로 계획 만들기", "href": "notes/ai/ai03-3.html"}
+  ],
+  AI04: [
+    {"id": "AI04-1", "title": "상대도 고르는 게임에서 minimax와 α–β 가지치기", "href": "notes/ai/ai04-1.html"},
+    {"id": "AI04-2", "title": "우연의 평균을 구하는 expectimax와 표본으로 보는 MCTS", "href": "notes/ai/ai04-2.html"}
+  ],
+  AI05: [
+    {"id": "AI05-1", "title": "베이즈망으로 조건부독립과 증거를 계산하기", "href": "notes/ai/ai05-1.html"},
+    {"id": "AI05-2", "title": "숨은 마르코프 모형에서 시점마다 믿음 갱신하기", "href": "notes/ai/ai05-2.html"}
+  ],
+  AI06: [
+    {"id": "AI06-1", "title": "기대 효용과 완전한 정보의 가치", "href": "notes/ai/ai06-1.html"},
+    {"id": "AI06-2", "title": "불완전한 관측을 살지 결정하는 순차 선택", "href": "notes/ai/ai06-2.html"}
   ],
   ML01: [
     {"id": "ML01-1", "title": "한 행의 뜻과 예측할 값부터 정하기", "href": "notes/ml/ml01-1.html"},
@@ -578,6 +613,41 @@ window.BDA_CHAPTERS = {
     {"id": "DL03-2", "title": "학습 루프와 평가 루프 실행하기", "href": "notes/dl/dl03-2.html"},
     {"id": "DL03-3", "title": "state_dict로 저장하고 같은 예측 되찾기", "href": "notes/dl/dl03-3.html"}
   ],
+  DL04: [
+    {"id": "DL04-1", "title": "초기화와 기울기의 크기를 함께 살피기", "href": "notes/dl/dl04-1.html"},
+    {"id": "DL04-2", "title": "Dropout과 가중치 패널티로 과적합 다루기", "href": "notes/dl/dl04-2.html"},
+    {"id": "DL04-3", "title": "정규화의 축과 잔차 연결의 경로", "href": "notes/dl/dl04-3.html"}
+  ],
+  DL05: [
+    {"id": "DL05-1", "title": "필터를 옮겨 합성곱의 출력 칸 계산하기", "href": "notes/dl/dl05-1.html"},
+    {"id": "DL05-2", "title": "채널을 섞어 새 특징을 만들고 풀링하기", "href": "notes/dl/dl05-2.html"}
+  ],
+  DL06: [
+    {"id": "DL06-1", "title": "순환 상태로 입력 순서를 읽고 시간을 거슬러 미분하기", "href": "notes/dl/dl06-1.html"},
+    {"id": "DL06-2", "title": "LSTM과 GRU가 상태를 남기는 비율", "href": "notes/dl/dl06-2.html"},
+    {"id": "DL06-3", "title": "길이가 다른 순서를 한 배치에 넣고 패딩을 제외하기", "href": "notes/dl/dl06-3.html"}
+  ],
+  DL07: [
+    {"id": "DL07-1", "title": "토큰 번호를 임베딩으로 읽고 내적하기", "href": "notes/dl/dl07-1.html"},
+    {"id": "DL07-2", "title": "Q와 K로 점수를 정하고 V를 가중합하기", "href": "notes/dl/dl07-2.html"},
+    {"id": "DL07-3", "title": "어텐션의 마스크를 질문 행과 키 열에 맞추기", "href": "notes/dl/dl07-3.html"}
+  ],
+  DL08: [
+    {"id": "DL08-1", "title": "Transformer에 위치 정보와 잔차 연결을 넣는 이유", "href": "notes/dl/dl08-1.html"},
+    {"id": "DL08-2", "title": "미래를 가리고 다음 토큰의 확률로 학습하기", "href": "notes/dl/dl08-2.html"},
+    {"id": "DL08-3", "title": "PyTorch 블록에서 차원과 미래 토큰 차단을 확인하기", "href": "notes/dl/dl08-3.html"}
+  ],
+  DL09: [
+    {"id": "DL09-1", "title": "오토인코더에서 잠재값 하나로 두 값을 복원하기", "href": "notes/dl/dl09-1.html"},
+    {"id": "DL09-2", "title": "변분 오토인코더의 잠재분포와 ELBO 계산하기", "href": "notes/dl/dl09-2.html"},
+    {"id": "DL09-3", "title": "GAN에서 생성 분포와 판별기의 목표 분리하기", "href": "notes/dl/dl09-3.html"},
+    {"id": "DL09-4", "title": "확산 모형에서 잡음을 더하고 예측해 걷어내기", "href": "notes/dl/dl09-4.html"}
+  ],
+  DL10: [
+    {"id": "DL10-1", "title": "사전학습 표현을 고정하고 새 출력층 학습하기", "href": "notes/dl/dl10-1.html"},
+    {"id": "DL10-2", "title": "자기지도 대조학습에서 가까워질 표현 정하기", "href": "notes/dl/dl10-2.html"},
+    {"id": "DL10-3", "title": "모델 크기와 추론 지연·처리량을 따로 재기", "href": "notes/dl/dl10-3.html"}
+  ],
   RL01: [
     {"id": "RL01-1", "title": "에이전트와 환경: 무엇을 보고 무엇을 바꾸나", "href": "notes/rl/rl01-1.html"},
     {"id": "RL01-2", "title": "정책을 따라 경험 한 줄씩 기록하기", "href": "notes/rl/rl01-2.html"}
@@ -632,9 +702,37 @@ window.BDA_CHAPTERS = {
     {"id": "RS01-1", "title": "질문에서 가설로: 조작적 정의와 측정", "href": "notes/rs/rs01-1.html"},
     {"id": "RS01-2", "title": "큰 질문을 작은 비교로: 가정과 반례", "href": "notes/rs/rs01-2.html"}
   ],
+  RS02: [
+    {"id": "RS02-1", "title": "검색어를 만들고 연구 원문까지 찾기", "href": "notes/rs/rs02-1.html"},
+    {"id": "RS02-2", "title": "버전·정정과 연구 영어를 확인하기", "href": "notes/rs/rs02-2.html"}
+  ],
+  RS03: [
+    {"id": "RS03-1", "title": "논문을 여러 번 읽고 주장과 근거 연결하기", "href": "notes/rs/rs03-1.html"},
+    {"id": "RS03-2", "title": "논문의 표·그림에서 근거와 한계 읽기", "href": "notes/rs/rs03-2.html"}
+  ],
+  RS04: [
+    {"id": "RS04-1", "title": "같은 입력과 실행을 찾을 기록 만들기", "href": "notes/rs/rs04-1.html"},
+    {"id": "RS04-2", "title": "난수 시드와 작은 재현 검사", "href": "notes/rs/rs04-2.html"}
+  ],
+  RS05: [
+    {"id": "RS05-1", "title": "같은 검증 조건에서 기준과 후보 비교하기", "href": "notes/rs/rs05-1.html"},
+    {"id": "RS05-2", "title": "정보 누출·동일 예산·구성 요소 제외 실험", "href": "notes/rs/rs05-2.html"}
+  ],
   RS06: [
     {"id": "RS06-1", "title": "효과의 크기와 추정의 불확실성을 함께 보여 주기", "href": "notes/rs/rs06-1.html"},
     {"id": "RS06-2", "title": "실패까지 읽히는 그림과 캡션 쓰기", "href": "notes/rs/rs06-2.html"}
+  ],
+  RS07: [
+    {"id": "RS07-1", "title": "공개 결과의 계산을 작은 범위에서 재현하기", "href": "notes/rs/rs07-1.html"},
+    {"id": "RS07-2", "title": "한 조건을 바꾸고 재현 실패를 분류하기", "href": "notes/rs/rs07-2.html"}
+  ],
+  RS08: [
+    {"id": "RS08-1", "title": "경과시간·CPU 시간·최고 메모리 측정하기", "href": "notes/rs/rs08-1.html"},
+    {"id": "RS08-2", "title": "실험 횟수·장치 시간·비용의 예산 세우기", "href": "notes/rs/rs08-2.html"}
+  ],
+  RS09: [
+    {"id": "RS09-1", "title": "연구 질문에서 최종 결과까지 보고서 쓰기", "href": "notes/rs/rs09-1.html"},
+    {"id": "RS09-2", "title": "가장 큰 오차·한계·다음 실험 적기", "href": "notes/rs/rs09-2.html"}
   ],
   RS10: [
     {"id": "RS10-1", "title": "연구 자료의 이용 조건과 식별 위험 확인하기", "href": "notes/rs/rs10-1.html"},

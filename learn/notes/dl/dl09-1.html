@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>오토인코더에서 잠재값 하나로 두 값을 복원하기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="DL09-1">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">딥러닝</p>
+<p class="chap-num">DL09·1</p>
+<h1>오토인코더에서 잠재값 하나로 두 값을 복원하기</h1>
+<p class="lead">입력을 작은 벡터로 줄였다가 다시 늘려 봅니다. 원래 값을 얼마나 잘 되돌리는지와 새로운 데이터를 어떻게 만들 수 있는지는 다른 질문입니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>인코더·잠재 공간·디코더를 구분한다.</li><li>작은 선형 예제에서 복원과 손실을 계산한다.</li><li>같은 잠재값으로 겹친 입력을 왜 되돌릴 수 없는지 설명한다.</li></ul></div>
+
+<h2>기록을 줄이고 나중에 다시 펼친다</h2>
+<p>센서가 두 개 내놓은 값 (a,b)을 하나의 값으로 줄인다고 합시다. 인코더가 z=(a+b)/2로 줄이고 디코더가 (z,z)로 펼칩니다. z는 압축된 표현을 담은 <strong>잠재값</strong>입니다. 연습용 매개변수는 미리 정해 두었습니다. 실제 오토인코더는 두 변환의 매개변수를 복원 오차에 맞춰 학습합니다.</p>
+<div class="table-wrap"><table><thead><tr><th scope="col">입력</th><th scope="col">잠재 z</th><th scope="col">복원</th><th scope="col">특징당 평균제곱오차</th></tr></thead><tbody><tr><td>(2,4)</td><td>3</td><td>(3,3)</td><td>(1²+1²)/2=1</td></tr><tr><td>(3,3)</td><td>3</td><td>(3,3)</td><td>0</td></tr><tr><td>(5,1)</td><td>3</td><td>(3,3)</td><td>(2²+2²)/2=4</td></tr></tbody></table></div>
+<div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 241" role="img" aria-label="두 센서 값 (2,4)와 (5,1)은 디코더에서 같은 대각선의 점 (3,3)으로 복원">
+<line class="f-line" x1="157" y1="212" x2="635.8" y2="212" marker-end="url(#f-arrow)"/><line class="f-line" x1="157" y1="212" x2="157" y2="25" marker-end="url(#f-arrow)"/><line class="f-dash" x1="157" y1="212" x2="577" y2="42"/><line class="f-ink" x1="325" y1="76" x2="409" y2="110" marker-end="url(#f-arrow)"/><line class="f-ink" x1="577" y1="178" x2="409" y2="110" marker-end="url(#f-arrow)"/><circle cx="325" cy="76" r="5" class="f-fill"/><circle cx="409" cy="110" r="5" class="f-fill"/><circle cx="577" cy="178" r="5" class="f-fill"/><text class="f-s" x="291" y="63" text-anchor="middle">입력 (2,4)</text><text class="f-s" x="431" y="91" text-anchor="middle">복원 (3,3)</text><text class="f-s" x="602" y="162" text-anchor="middle">입력 (5,1)</text><text class="f-s" x="654" y="215" text-anchor="middle">센서 a</text><text class="f-s" x="156" y="17" text-anchor="middle">센서 b</text>
+</svg><figcaption>두 센서 값의 평균이 같으면 같은 z가 저장됩니다. 센서 사이의 차이는 이 디코더로 복구하지 못합니다.</figcaption></figure>
+<h2>여러 원본이 같은 좌표에 모일 수 있다</h2>
+<p>세 기록 모두 잠재값 3이므로 디코더가 어떤 입력을 받았든 복원은 (3,3)입니다. 입력 (2,4)와 (5,1)을 알아보려면 평균 이외의 정보도 보존해야 합니다. 차원을 줄이면 모델이 무엇을 버려도 되는지 복원 손실과 데이터가 알려 줍니다. 잡음 제거처럼 일부 정보를 버리는 것이 목표인 문제도 있습니다.</p>
+<div class="check" data-q="q3"></div><div class="check" data-q="q4"></div>
+<pre data-example="python"><code>import numpy as np
+
+values = np.array([[2., 4.], [3., 3.], [5., 1.]])
+encoded = values.mean(axis=1, keepdims=True)
+restored = np.repeat(encoded, 2, axis=1)
+loss_per_record = ((values-restored)**2).mean(axis=1)
+assert encoded.shape == (3, 1) and restored.shape == values.shape
+print(&quot;잠재값:&quot;, encoded.ravel().tolist())
+print(&quot;복원:&quot;, restored.tolist())
+print(&quot;행별 MSE:&quot;, loss_per_record.tolist())</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>잠재값: [3.0, 3.0, 3.0]
+복원: [[3.0, 3.0], [3.0, 3.0], [3.0, 3.0]]
+행별 MSE: [1.0, 0.0, 4.0]</code></pre>
+<div class="check" data-q="q5"></div>
+<h2>복원을 넘어 새 값을 만들고 싶을 때</h2>
+<p>복원 모형에서는 실제 입력을 인코더로 보내 어떤 z를 사용할지 정합니다. 그 z 분포가 어떤 모양인지 따로 정의하지 않았다면 임의로 고른 z에서 나오는 입력의 의미를 예측하기 어렵습니다. 생성에 쓰려면 어떤 잠재값을 뽑을지와 그 값에서 어떤 관측을 내는지에 대한 모형을 추가할 수 있습니다. 다음 장은 잠재분포가 있는 변분 오토인코더를 살핍니다.</p>
+<div class="check" data-q="q6"></div>
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>오토인코더는 잠재값으로 입력을 줄이고 복원합니다. 무엇을 잃었는지는 작은 원본과 복원의 차이에서 압니다.</p></div>
+
+<h2>참고 자료</h2>
+<ul><li><a href="https://doi.org/10.1126/science.1127647">Hinton·Salakhutdinov · Reducing the Dimensionality of Data with Neural Networks</a></li><li><a href="../py/py10-1.html">공부 교재 · NumPy 배열 축</a></li></ul>
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

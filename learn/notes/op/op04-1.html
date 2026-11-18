@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>미니배치에서 기울기의 평균과 변동 계산하기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="OP04-1">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">수치 계산·최적화</p>
+<p class="chap-num">OP04·1</p>
+<h1>미니배치에서 기울기의 평균과 변동 계산하기</h1>
+<p class="lead">전체 표에서 같은 기울기를 계산할 수도 있고, 일부 표본으로 빠르게 한 걸음을 옮길 수도 있습니다. 둘의 평균과 변동을 작은 자료로 비교합니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>개별 표본과 전체 배치의 기울기를 계산한다.</li><li>같은 지점에서 미니배치를 다시 뽑았을 때의 변동을 설명한다.</li><li>배치 크기와 갱신 횟수, 보폭의 역할을 구분한다.</li></ul></div>
+
+<h2>변수 위치 하나를 고정하고 네 기록을 본다</h2>
+<p>한 값 w로 네 기록 y=[1,3,5,7]을 예측합니다. 한 건의 손실을 ½(w−y)²로 두면 그 기울기는 w−y입니다. 현재 w=0이면 네 기울기는 −1, −3, −5, −7입니다. 전체 배치의 평균 기울기는 −4입니다. 학습률 0.1로 한 걸음 움직이면 w는 0−0.1×(−4)=0.4가 됩니다.</p>
+<div class="table-wrap"><table><thead><tr><th scope="col">이번 갱신에 본 자료</th><th scope="col">w=0에서 기울기</th><th scope="col">학습률 0.1의 다음 w</th></tr></thead><tbody><tr><td>전체 네 건</td><td>−4</td><td>0.4</td></tr><tr><td>y=7 한 건</td><td>−7</td><td>0.7</td></tr><tr><td>y=1, 3 두 건</td><td>(−1−3)/2=−2</td><td>0.2</td></tr></tbody></table></div>
+<div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
+<p><strong>확률적 경사하강(SGD)</strong>은 한 건이나 작은 미니배치의 평균 기울기를 사용해 갱신합니다. 무작위 표본을 뽑으면 어느 쪽으로 얼마나 움직일지가 달라질 수 있습니다. 그렇다고 그 값이 쓸모없는 것은 아닙니다. 같은 w에서 모든 행이 똑같은 확률로 뽑히면 표본 기울기의 기대값은 전체 기울기입니다.</p>
+<h2>독립으로 두 건씩 뽑았을 때</h2>
+<p>이 장에서는 복원추출로 각 기록을 같은 확률로 뽑습니다. 평균 −4와의 차이는 3, 1, −1, −3입니다. 이 차이의 제곱 평균은 5이므로 한 건 기울기의 분산은 5입니다. 독립인 두 건을 평균 내면 그 분산은 (5+5)/4=2.5가 됩니다. 같은 방법으로 b건의 독립 표본 평균 분산은 5/b입니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 239" role="img" aria-label="두 건의 가능한 순서쌍 16개는 평균 기울기 −7부터 −1까지 각각 1,2,3,4,3,2,1개">
+<line class="f-line" x1="113" y1="173" x2="665" y2="173"/><line class="f-line" x1="113" y1="173" x2="113" y2="34"/><line class="f-dash" x1="113" y1="144" x2="648" y2="144"/><text class="f-s" x="94" y="148" text-anchor="end">1</text><line class="f-dash" x1="113" y1="115" x2="648" y2="115"/><text class="f-s" x="94" y="119" text-anchor="end">2</text><line class="f-dash" x1="113" y1="86" x2="648" y2="86"/><text class="f-s" x="94" y="90" text-anchor="end">3</text><line class="f-dash" x1="113" y1="57" x2="648" y2="57"/><text class="f-s" x="94" y="61" text-anchor="end">4</text><rect class="f-box" x="148" y="144" width="34" height="29" rx="3"/><text class="f-s" x="165" y="194" text-anchor="middle">-7</text><rect class="f-box" x="219" y="115" width="34" height="58" rx="3"/><text class="f-s" x="236" y="194" text-anchor="middle">-6</text><rect class="f-box" x="290" y="86" width="34" height="87" rx="3"/><text class="f-s" x="307" y="194" text-anchor="middle">-5</text><rect class="f-soft" x="361" y="57" width="34" height="116" rx="3"/><text class="f-s" x="378" y="194" text-anchor="middle">-4</text><rect class="f-box" x="432" y="86" width="34" height="87" rx="3"/><text class="f-s" x="449" y="194" text-anchor="middle">-3</text><rect class="f-box" x="503" y="115" width="34" height="58" rx="3"/><text class="f-s" x="520" y="194" text-anchor="middle">-2</text><rect class="f-box" x="574" y="144" width="34" height="29" rx="3"/><text class="f-s" x="591" y="194" text-anchor="middle">-1</text><text class="f-s" x="113" y="24" text-anchor="middle">순서쌍 수</text><text class="f-s" x="376" y="220" text-anchor="middle">두 표본의 평균 기울기</text>
+</svg><figcaption>각 막대가 나타내는 순서쌍은 모두 같은 확률입니다. 예를 들어 기울기 −4는 두 값의 합이 −8인 네 가지에서 나옵니다.</figcaption></figure>
+<div class="check" data-q="q3"></div><div class="check" data-q="q4"></div>
+<pre data-example="python"><code>from itertools import product
+from statistics import mean, pvariance
+
+gradients = [-1, -3, -5, -7]
+minibatches = [mean(pair) for pair in product(gradients, repeat=2)]
+print(&quot;전체 배치 기울기:&quot;, mean(gradients))
+print(&quot;한 건 분산:&quot;, pvariance(gradients))
+print(&quot;두 건 배치:&quot;, len(minibatches), mean(minibatches), pvariance(minibatches))</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>전체 배치 기울기: -4
+한 건 분산: 5
+두 건 배치: 16 -4 2.5</code></pre>
+<h2>몇 건을 읽고 몇 번 갱신했는지 함께 기록한다</h2>
+<p>네 건을 한 번씩 읽을 때 배치 크기가 4면 한 번, 배치 크기가 2면 두 번 갱신합니다. 첫 갱신 뒤 w가 바뀌므로 두 미니배치의 기울기를 간단히 합해서 전체 배치 갱신과 같다고 할 수 없습니다. 전체 순서를 섞고 복원 없이 배치를 만드는 절차에는 위의 독립 복원추출 분산 공식이 그대로 적용되지는 않습니다.</p>
+<p>큰 배치는 기울기가 흔들리는 정도를 줄일 수 있지만 곧바로 학습 효율이 더 좋다는 뜻은 아닙니다. 한 번 갱신할 때 필요한 자료, 메모리, 갱신 횟수와 학습률을 같은 비교 조건에서 기록합니다.</p>
+<div class="check" data-q="q5"></div><div class="check" data-q="q6"></div>
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>미니배치 기울기는 전체 방향의 근사입니다. 표본 선택, 배치 크기와 갱신 횟수를 구분합니다.</p></div>
+
+<h2>참고 자료</h2>
+<ul><li><a href="https://arxiv.org/abs/1606.04838">Bottou·Curtis·Nocedal · Optimization Methods for Large-Scale Machine Learning</a></li><li><a href="op03-1.html">공부 교재 · 경사하강</a></li></ul>
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

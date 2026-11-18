@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>같은 검증 조건에서 기준과 후보 비교하기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="RS05-1">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">연구 기초 · RS05 비교의 타당성</p>
+<p class="chap-num">RS05·1</p>
+<h1>같은 검증 조건에서 기준과 후보 비교하기</h1>
+<p class="lead">다음 해 CO₂ 연평균을 예측합니다. 지난 값 그대로 쓰는 기준과 최근 변화율을 한 번 더 더하는 후보를 같은 날짜와 지표에서 비교합니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul>
+<li>질문과 맞는 baseline을 정한다.</li>
+<li>연도순 개발·검증·최종 평가를 분리한다.</li>
+<li>같은 예측 날짜와 사용할 수 있는 정보만으로 MAE를 비교한다.</li>
+</ul></div>
+
+<h2>비교 전에 무엇을 예측할지 정하기</h2>
+<p>이 실습의 질문은 마우나로아 1년 앞 연평균을 예측할 때 최근 증가량을 더하는 규칙이 단순 기준보다 검증 오차가 작은가입니다. 미래에 사용할 수 없는 자료를 미리 보지 않습니다. 현재 CSV에 정리된 직전 연도의 연평균은 다음 해를 예측할 때 사용할 수 있다고 가정합니다. 실제 당시의 공개·정정 시점을 복원하는 실험은 아닙니다.</p><figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 203" role="img" aria-label="개발용 이력, 검증용 5년, 최종 평가용 5년을 시간순으로 분리">
+<text class="f-cap" x="380" y="31" text-anchor="middle">연도 순으로 단계 분리</text>
+<rect class="f-box" x="50" y="62" width="182" height="51"/>
+<text class="f-t" x="141" y="92.5" text-anchor="middle">개발용 이력</text>
+<text class="f-s" x="141" y="141" text-anchor="middle">1990–2009</text>
+<rect class="f-soft" x="289" y="62" width="182" height="51"/>
+<text class="f-t" x="380" y="92.5" text-anchor="middle">검증 구간</text>
+<text class="f-s" x="380" y="141" text-anchor="middle">2010–2014</text>
+<rect class="f-box" x="528" y="62" width="182" height="51"/>
+<text class="f-t" x="619" y="92.5" text-anchor="middle">최종 평가</text>
+<text class="f-s" x="619" y="141" text-anchor="middle">2015–2019</text>
+<line class="f-line" x1="236" y1="89" x2="285" y2="89" marker-end="url(#f-arrow)"/>
+<line class="f-line" x1="475" y1="89" x2="524" y2="89" marker-end="url(#f-arrow)"/>
+</svg>
+<figcaption>2010년 예측 시점에는 2009년까지의 연평균만 사용할 수 있습니다.</figcaption>
+</figure>
+<p>개발용 이력에서 방법을 작성하고, 2010–2014년의 같은 5개 예측으로 규칙을 검증합니다. 2015–2019년은 선택이 끝날 때까지 최종 평가용으로 둡니다. 한 시점에서 5년을 한번에 맞추는 문제가 아니라 매년 직전 해의 관측을 얻어 다음 1년을 예측하는 절차입니다.</p><div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
+
+<h2>간단한 기준과 공통 지표</h2>
+<p><b class="key">baseline</b>은 새 방법이 어떤 기준에서 얼마나 다른지 볼 기준 방법입니다. 이 비교의 기준은 직전 해 값입니다. 후보는 예측할 연도를 <var>t</var>라 하면 <code>(y[t−1]−y[t−3])/2</code>를 직전 해 값에 더합니다. 예로 2010년에는 2009년 387.64와 2007년 384.02를 사용해 2년간의 평균 연간 증가 1.81 ppm을 얻습니다.</p><figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 172" role="img" aria-label="2010년 직전값 기준의 오차는 2.46ppm, 2년 변화율 후보의 오차는 0.65ppm.">
+<text class="f-cap" x="380" y="29" text-anchor="middle">2010년의 기준과 변화량 후보</text>
+<rect class="f-soft" x="67" y="43" width="218" height="37"/>
+<text class="f-s" x="176" y="66.5" text-anchor="middle">규칙</text>
+<rect class="f-soft" x="285" y="43" width="126" height="37"/>
+<text class="f-s" x="348" y="66.5" text-anchor="middle">예측(ppm)</text>
+<rect class="f-soft" x="411" y="43" width="126" height="37"/>
+<text class="f-s" x="474" y="66.5" text-anchor="middle">실제(ppm)</text>
+<rect class="f-soft" x="537" y="43" width="156" height="37"/>
+<text class="f-s" x="615" y="66.5" text-anchor="middle">절대오차(ppm)</text>
+<rect class="f-box" x="67" y="80" width="218" height="37"/>
+<text class="f-t" x="176" y="103.5" text-anchor="middle">직전 연평균만</text>
+<rect class="f-box" x="285" y="80" width="126" height="37"/>
+<text class="f-t" x="348" y="103.5" text-anchor="middle">387.64</text>
+<rect class="f-box" x="411" y="80" width="126" height="37"/>
+<text class="f-t" x="474" y="103.5" text-anchor="middle">390.10</text>
+<rect class="f-box" x="537" y="80" width="156" height="37"/>
+<text class="f-t" x="615" y="103.5" text-anchor="middle">2.46</text>
+<rect class="f-box" x="67" y="117" width="218" height="37"/>
+<text class="f-t" x="176" y="140.5" text-anchor="middle">직전 값 + 최근 2년 변화율</text>
+<rect class="f-box" x="285" y="117" width="126" height="37"/>
+<text class="f-t" x="348" y="140.5" text-anchor="middle">389.45</text>
+<rect class="f-box" x="411" y="117" width="126" height="37"/>
+<text class="f-t" x="474" y="140.5" text-anchor="middle">390.10</text>
+<rect class="f-box" x="537" y="117" width="156" height="37"/>
+<text class="f-t" x="615" y="140.5" text-anchor="middle">0.65</text>
+</svg>
+<figcaption>한 해의 차이만으로 이후 모든 해의 우열을 정할 수 없습니다.</figcaption>
+</figure>
+<p>두 규칙을 같은 연도에서 평가합니다. <a href="../../unit.html?u=ML03">MAE</a>는 해마다 예측값에서 실제값을 뺀 절댓값의 평균이며, 값이 작을수록 이 지표에서 오차가 작습니다. 단위는 관측과 같은 ppm입니다.</p><div class="check" data-q="q3"></div><div class="check" data-q="q4"></div>
+
+<h2>같은 다섯 연도에서 검증</h2>
+<p>예제는 저장소의 최상위 폴더에서 실행합니다. 실습에 사용하는 <a href="../../labs/mauna-loa/annual_co2.csv">30개 연도의 CSV</a>와 <a href="../../labs/mauna-loa/SOURCE.md">출처와 변환 기록</a>을 함께 확인할 수 있습니다.</p><p class="small">실행 예제</p>
+<pre data-example="python"><code>import csv
+from decimal import Decimal
+from pathlib import Path
+
+source = Path(&quot;learn/labs/mauna-loa/annual_co2.csv&quot;)
+with source.open(encoding=&quot;utf-8&quot;, newline=&quot;&quot;) as stream:
+    records = list(csv.DictReader(stream))
+series = {int(row[&quot;year&quot;]): Decimal(row[&quot;mean_ppm&quot;]) for row in records}
+assert len(records) == len(series) == 30 and sorted(series) == list(range(1990, 2020))
+
+def forecast(year, k):
+    latest = series[year - 1]
+    if k == 0:
+        return latest
+    growth = (latest - series[year - 1 - k]) / k
+    return latest + growth
+
+def errors(start, stop, k):
+    return [abs(forecast(year, k) - series[year]) for year in range(start, stop)]
+
+def avg(values):
+    return sum(values) / len(values)
+
+for k in (0, 2):
+    mistakes = errors(2010, 2015, k)
+    print(f&quot;k={k}, n={len(mistakes)}, MAE={avg(mistakes):.4f} ppm&quot;)
+    print(f&quot;  2010 forecast={forecast(2010, k):.3f}, observed={series[2010]:.2f}&quot;)</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>k=0, n=5, MAE=2.2340 ppm
+  2010 forecast=387.640, observed=390.10
+k=2, n=5, MAE=0.4430 ppm
+  2010 forecast=389.450, observed=390.10</code></pre>
+<p>후보의 검증 MAE가 2.2340−0.4430=1.7910 ppm 작습니다. 이 수치는 2010–2014년의 기술적 비교입니다. 같은 후보가 다른 기간이나 다른 관측소에서도 이득을 준다는 근거는 별도로 필요합니다.</p><div class="check" data-q="q5"></div><div class="check" data-q="q6"></div>
+
+<h2>기준을 유리하거나 불리하게 만들지 않기</h2>
+<p>두 방법의 예측 시점, 입력 공개 범위와 지표를 맞춥니다. 각 연도마다 이미 사용할 수 있는 과거 값은 두 방법에 모두 열어 둡니다. 출력에 맞춰 평가 기간을 바꾸면 비교의 의미도 달라집니다. 다음 장에서 정보가 뒤에서 앞으로 새는 경우와 예산 차이를 봅니다.</p><div class="check" data-q="q7"></div><div class="check" data-q="q8"></div>
+
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table><thead><tr><th scope="col">개념</th><th scope="col">확인할 것</th></tr></thead><tbody>
+<tr><th scope="row"><b class="key">기준</b></th><td>측정할 이득의 비교점을 정한다.</td></tr>
+<tr><th scope="row"><b class="key">정보 시점</b></th><td>예측을 할 때 알 수 있는 값만 쓴다.</td></tr>
+<tr><th scope="row"><b class="key">평가</b></th><td>같은 기간·지표에서 비교하고 새 기간은 보존한다.</td></tr>
+</tbody></table></div><div class="box sum"><p class="box-k">다음 장으로</p><p><a href="rs05-2.html">다음 장</a>에서는 누출, 동일 예산, 구성 요소 제외 실험을 다룹니다.</p></div>
+
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://gml.noaa.gov/ccgg/trends/data.html">NOAA GML · Mauna Loa 연평균 CO₂ 자료</a></li>
+<li><a href="https://otexts.com/fpp3/tscv.html">Hyndman·Athanasopoulos · 예측 교재의 시계열 검증</a></li>
+<li><a href="https://scikit-learn.org/stable/common_pitfalls.html#data-leakage">scikit-learn · 데이터 누출과 평가 분할</a></li>
+</ul>
+<h2>확인 문제</h2>
+<p>직접 계산하거나 설명을 먼저 적고 답을 확인해 보세요.</p>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

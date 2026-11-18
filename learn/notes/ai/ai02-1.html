@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>상태와 목표가 같아도 가장 좋은 경로의 기준은 다르다 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e8c'/%3E%3Cpath d='M8 22V10m8 12V14m8 8V6' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="AI02-1">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+
+<header class="chapter">
+<p class="chap-sub">인공지능 · AI02 탐색</p>
+<p class="chap-num">AI02·1</p>
+<h1>상태와 목표가 같아도 가장 좋은 경로의 기준은 다르다</h1>
+<p class="lead">가상의 자료 상자를 도착점으로 옮깁니다. 몇 번에 도착하는지와 얼마가 드는지에 따라 같은 지도에서도 다른 길을 선택합니다.</p>
+</header>
+
+<div class="goal">
+<h2>이 장을 읽고 나면</h2>
+<ul>
+<li>탐색에서 초기 상태·행동·전이·목표·비용을 명시한다.</li>
+<li>BFS와 균일비용 탐색의 후보 선택 규칙을 비교한다.</li>
+<li>목표에 도달할 수 있는 조건과 최소 비용을 보장하는 조건을 구별한다.</li>
+</ul>
+</div>
+
+<h2>무엇을 알아야 다음 행동을 정할 수 있는가</h2>
+<p>시작점 S에서 도착점 G까지 자료 상자를 옮깁니다. 각 길은 지금 위치만 알면 이용 가능하며, 길의 비용도 고정입니다. 이때 <b class="key">상태</b>는 현재 위치 하나로 충분합니다. 배터리 1개가 있어야 여는 문이 추가되면 같은 위치에서도 할 수 있는 행동이 다릅니다. 그때는 위치와 남은 배터리를 함께 상태로 적습니다.</p>
+<p>탐색 문제에는 초기 상태, 상태에서 가능한 행동, 행동 뒤의 상태, <b class="key">목표 판정</b>, 비용을 둡니다. 여기서 초기 상태는 S, 행동은 화살표 하나를 따라가기, 목표 판정은 현재 상태가 G인지입니다. 모든 가능한 상태와 이동을 합쳐 <b>상태공간</b>이라 합니다. 같은 위치에 들어오는 경로가 여럿이어도 위치 상태는 하나입니다. 후보 기록에는 누적 비용과 경로처럼 어느 길로 왔는지도 따로 저장할 수 있습니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 192" role="img" aria-label="S에서 A로 비용 3, A에서 G로 비용 1이다. S에서 B, B에서 C, C에서 G는 각각 비용 1이다.">
+<rect class="f-box" x="66" y="68" width="50" height="44" rx="3"/>
+<text class="f-cap" x="91" y="96" text-anchor="middle">S</text>
+<rect class="f-box" x="260" y="30" width="50" height="44" rx="3"/>
+<text class="f-cap" x="285" y="58" text-anchor="middle">A</text>
+<rect class="f-box" x="260" y="115" width="50" height="44" rx="3"/>
+<text class="f-cap" x="285" y="143" text-anchor="middle">B</text>
+<rect class="f-box" x="460" y="115" width="50" height="44" rx="3"/>
+<text class="f-cap" x="485" y="143" text-anchor="middle">C</text>
+<rect class="f-soft" x="642" y="61" width="50" height="44" rx="3"/>
+<text class="f-cap" x="667" y="89" text-anchor="middle">G</text>
+<line class="f-line" x1="118" y1="85" x2="255" y2="56" marker-end="url(#f-arrow)"/>
+<text class="f-s" x="180" y="62" text-anchor="middle">3</text>
+<line class="f-line" x1="118" y1="100" x2="255" y2="132" marker-end="url(#f-arrow)"/>
+<text class="f-s" x="180" y="131" text-anchor="middle">1</text>
+<line class="f-line" x1="313" y1="53" x2="637" y2="82" marker-end="url(#f-arrow)"/>
+<text class="f-s" x="467" y="62" text-anchor="middle">1</text>
+<line class="f-line" x1="313" y1="137" x2="455" y2="137" marker-end="url(#f-arrow)"/>
+<text class="f-s" x="382" y="126" text-anchor="middle">1</text>
+<line class="f-line" x1="513" y1="132" x2="637" y2="91" marker-end="url(#f-arrow)"/>
+<text class="f-s" x="570" y="111" text-anchor="middle">1</text>
+</svg>
+<figcaption>화살표는 한 번의 이동이다. 간선 수는 위쪽 두 개와 아래쪽 세 개, 비용은 각각 4와 3이다.</figcaption>
+</figure>
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+<h2>간선 수와 비용을 서로 다른 순서로 비교한다</h2>
+<p><b class="key">BFS</b>(너비 우선 탐색)는 먼저 들어온 후보를 먼저 꺼냅니다. 새로 발견한 상태를 큐에 넣을 때 기록하면 같은 상태를 반복해서 넣지 않습니다. 시작 S에서 이웃 A, B를 순서대로 넣으면 두 번 이동해 A를 거친 G를 먼저 만납니다. 길이는 2지만 비용은 3+1=4입니다. BFS는 이동 횟수에 대해 최적이며, 모든 간선 비용이 같은 양수라면 비용도 최소입니다.</p>
+<p><b class="key">균일비용 탐색</b>(UCS)은 누적 비용 g가 가장 작은 후보부터 꺼냅니다. <a href="../cs/cs07-2.html">다익스트라</a>와 같은 완화 원리로, 상태까지 더 싼 후보를 찾으면 비용과 경로를 바꿉니다. 이 예에서는 B(1), C(2)를 거치고 G에 비용 3으로 도착합니다. 목표를 처음 <em>생성할 때</em> 바로 반환하면 더 싼 목표 경로를 놓칠 수 있습니다. 예를 들어 S의 이웃 목록에 비용 5의 직행 S→G가 있었다면, S를 확장하는 단계에서 경로 비용 5로 끝내게 됩니다. UCS에서는 저장된 최저 비용과 일치하는 목표 후보를 최소 힙에서 <em>꺼낼 때</em> 멈춥니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 171" role="img" aria-label="BFS 결과는 S→A→G, 이동 2와 비용 4다. 균일비용 결과는 S→B→C→G, 이동 3과 비용 3이다.">
+<rect class="f-box" x="56" y="44" width="312" height="78" rx="3"/>
+<text class="f-cap" x="212" y="71" text-anchor="middle">BFS · 이동 횟수</text>
+<text class="f-t" x="212" y="100" text-anchor="middle">S → A → G · 2회 / 4점</text>
+<rect class="f-soft" x="392" y="44" width="312" height="78" rx="3"/>
+<text class="f-cap" x="548" y="71" text-anchor="middle">균일비용 · 지불한 비용</text>
+<text class="f-t" x="548" y="100" text-anchor="middle">S → B → C → G · 3회 / 3점</text>
+</svg>
+<figcaption>해결하려는 비용의 정의를 먼저 정해야 같은 결과를 비교할 수 있다.</figcaption>
+</figure>
+<p><b class="key">완전성</b>은 해가 있으면 찾아내는 성질입니다. <b class="key">최적성</b>은 찾아낸 해가 목표 기준에서 최소 비용이라는 성질입니다. 유한 그래프에서 상태를 적절히 기록하는 BFS는 목표가 도달 가능하면 찾습니다. 유한 그래프에서 가중치가 0 이상이고 더 저렴할 때만 고치는 UCS도 완전하며 비용 최적입니다. 무한 상태공간에서는 별도 조건이 필요합니다. 이웃 수가 유한하고 모든 행동 비용에 양의 공통 하한이 있으면, 유한한 비용의 목표보다 싼 후보를 무한히 펼치는 문제를 피할 수 있습니다.</p>
+<div class="check" data-q="q3"></div>
+<div class="check" data-q="q4"></div>
+<div class="check" data-q="q5"></div>
+<div class="check" data-q="q6"></div>
+<h2>같은 지도에서 두 기준의 결과를 확인한다</h2>
+<pre data-example="python"><code>from collections import deque
+from heapq import heappop, heappush
+
+graph = {&quot;S&quot;: [(&quot;A&quot;, 3), (&quot;B&quot;, 1)], &quot;A&quot;: [(&quot;G&quot;, 1)],
+         &quot;B&quot;: [(&quot;C&quot;, 1)], &quot;C&quot;: [(&quot;G&quot;, 1)], &quot;G&quot;: []}
+
+def hops():
+    queue = deque([(&quot;S&quot;, (&quot;S&quot;,), 0)])
+    seen = {&quot;S&quot;}
+    while queue:
+        node, path, charge = queue.popleft()
+        if node == &quot;G&quot;:
+            return path, charge
+        for nxt, cost in graph[node]:
+            if nxt not in seen:
+                seen.add(nxt)
+                queue.append((nxt, path + (nxt,), charge + cost))
+
+def cheapest():
+    heap = [(0, &quot;S&quot;, (&quot;S&quot;,))]
+    best = {&quot;S&quot;: 0}
+    while heap:
+        charge, node, path = heappop(heap)
+        if charge != best[node]:
+            continue
+        if node == &quot;G&quot;:
+            return path, charge
+        for nxt, cost in graph[node]:
+            total = charge + cost
+            if total &lt; best.get(nxt, float(&quot;inf&quot;)):
+                best[nxt] = total
+                heappush(heap, (total, nxt, path + (nxt,)))
+
+for name, search in ((&quot;BFS&quot;, hops), (&quot;UCS&quot;, cheapest)):
+    path, charge = search()
+    print(name, &quot; -&gt; &quot;.join(path), len(path) - 1, charge)</code></pre>
+<pre data-output><code>BFS S -&gt; A -&gt; G 2 4
+UCS S -&gt; B -&gt; C -&gt; G 3 3</code></pre>
+<p>이 출력의 마지막 두 수는 이동 횟수와 비용입니다. 실습에서 목표는 G 하나지만 목표 판정을 함수로 두면 조건을 만족하는 여러 상태 중 하나를 찾을 수 있습니다.</p>
+
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table>
+<thead><tr><th scope="col">핵심어</th><th scope="col">기억할 기준</th></tr></thead>
+<tbody>
+<tr><td><b class="key">상태공간</b></td><td>다음 행동과 전이에 필요한 정보를 상태로 표현한다.</td></tr>
+<tr><td><b class="key">BFS</b></td><td>큐의 발견 순서에 따라 가장 적은 간선 수의 해를 찾는다.</td></tr>
+<tr><td><b class="key">균일비용</b></td><td>출발부터 들어간 비용이 가장 작은 후보를 선택한다.</td></tr>
+</tbody></table></div>
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>먼저 목표와 비용을 정의하고, 그 기준에 맞춰 꺼낼 후보의 순서를 정한다.</p></div>
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://inst.eecs.berkeley.edu/~cs188/textbook/search/uninformed.html">UC Berkeley CS188 · BFS와 균일비용 탐색</a></li>
+<li><a href="https://aima.cs.berkeley.edu/global-index.html">Russell·Norvig, Artificial Intelligence: A Modern Approach 4판 · 3장 탐색으로 문제 풀기</a></li>
+</ul>
+
+<h2>확인 문제</h2>
+<p>아직 풀지 않은 문제입니다. 먼저 식이나 근거를 적어 보고 해설을 확인합니다.</p>
+<div id="quiz"></div>
+
+<section class="work" id="tools"></section>
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

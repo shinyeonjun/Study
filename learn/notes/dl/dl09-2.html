@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>변분 오토인코더의 잠재분포와 ELBO 계산하기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="DL09-2">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">딥러닝</p>
+<p class="chap-num">DL09·2</p>
+<h1>변분 오토인코더의 잠재분포와 ELBO 계산하기</h1>
+<p class="lead">입력을 하나의 잠재값에 붙이는 대신 잠재값의 분포를 정합니다. 복원 우도와 그 분포를 사전에서 멀어지게 하는 비용을 가우스 예제로 검산합니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>VAE의 인코더 분포, 사전, 디코더를 구분한다.</li><li>복원 음의 로그우도와 KL의 합을 계산한다.</li><li>표준 정규 난수와 재매개변수화의 역할을 설명한다.</li></ul></div>
+
+<h2>입력을 받아 잠재값의 분포를 만든다</h2>
+<p>이 변분 오토인코더의 예에서 잠재변수 z의 사전 p(z)는 표준정규분포입니다. 디코더 p(x|z)는 평균 z, 분산 1인 정규분포입니다. 인코더 q(z|x)는 관측 x를 보고 잠재분포의 평균 μ와 분산 v를 내놓습니다. 관측 x=2에서 인코더가 q=N(μ=1,v=0.5)를 줬다고 합시다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 160" role="img" aria-label="VAE에서 관측의 잠재분포를 만들고 복원과 사전 차이를 평가">
+<rect class="f-box" x="42" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="135" y="61" text-anchor="middle">관측 x=2</text><text class="f-s" x="135" y="89" text-anchor="middle">인코더</text><text class="f-s" x="135" y="110" text-anchor="middle">q(z|x)의 평균·분산</text><line class="f-line" x1="235" y1="84" x2="278" y2="84" marker-end="url(#f-arrow)"/><rect class="f-soft" x="287" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="380" y="61" text-anchor="middle">잠재 z</text><text class="f-s" x="380" y="89" text-anchor="middle">q에서 추출</text><text class="f-s" x="380" y="110" text-anchor="middle">p(z)와 차이 비교</text><line class="f-line" x1="480" y1="84" x2="523" y2="84" marker-end="url(#f-arrow)"/><rect class="f-box" x="532" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="625" y="61" text-anchor="middle">관측 복원</text><text class="f-s" x="625" y="89" text-anchor="middle">디코더 p(x|z)</text><text class="f-s" x="625" y="110" text-anchor="middle">x의 로그우도</text>
+</svg><figcaption>학습은 복원·사전 관계의 균형을 사용합니다. 새로 생성할 때는 보통 사전에서 z를 뽑아 디코더를 적용합니다.</figcaption></figure>
+<div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
+<h2>재구성과 사전 차이를 더해 점수화한다</h2>
+<p>VAE의 한 예에서 최대화할 ELBO는 q에서의 평균 로그복원 우도에서 KL(q(z|x) ∥ p(z))를 뺀 값입니다. 부호를 바꾸면 최소화할 수 있습니다. 디코더의 분산이 1이라 음의 로그복원 우도의 평균은 ½[E[(x−z)²]+ln(2π)]입니다. E[(x−z)²]=(x−μ)²+v이고, 이 예에서는 1+0.5=1.5입니다.</p>
+<p>가우스 q와 표준정규 사전의 KL은 ½(μ²+v−1−ln v)입니다. μ=1, v=0.5를 넣으면 ½(0.5+ln 2)≈0.596574입니다. 재구성 비용 약 1.668939와 더하면 약 2.265512입니다. 앞 항은 관측의 평균 부적합, 뒤 항은 잠재분포와 사전의 차이입니다.</p>
+<div class="table-wrap"><table><thead><tr><th scope="col">항</th><th scope="col">이 예의 값</th></tr></thead><tbody><tr><td>기대 제곱오차</td><td>1.5</td></tr><tr><td>음의 로그복원 우도 평균</td><td>1.668939</td></tr><tr><td>KL(q ∥ 사전)</td><td>0.596574</td></tr><tr><td>음의 ELBO</td><td>2.265512</td></tr></tbody></table></div>
+<div class="check" data-q="q3"></div><div class="check" data-q="q4"></div>
+<pre data-example="python"><code>from math import isclose, log, pi
+
+x, mean, variance = 2.0, 1.0, 0.5
+reconstruction = ((x-mean)**2 + variance + log(2*pi))/2
+divergence = (mean**2 + variance - 1 - log(variance))/2
+negative_elbo = reconstruction + divergence
+negative_log_evidence = (x*x/2 + log(4*pi))/2
+assert isclose(negative_elbo, negative_log_evidence)
+print(&quot;복원 비용:&quot;, f&quot;{reconstruction:.6f}&quot;)
+print(&quot;KL:&quot;, f&quot;{divergence:.6f}&quot;)
+print(&quot;음의 ELBO:&quot;, f&quot;{negative_elbo:.6f}&quot;)</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>복원 비용: 1.668939
+KL: 0.596574
+음의 ELBO: 2.265512</code></pre>
+<div class="check" data-q="q5"></div>
+<p>이 작은 정규 문제에서는 정확한 사후가 N(1,0.5)에 해당하고 x의 주변분포는 N(0,2)입니다. 그래서 q와 실제 사후의 KL 간격이 0입니다. 일반적인 신경망 디코더에서는 이처럼 정확한 주변확률을 구하기 어려우며 간격이 남을 수 있습니다.</p>
+<h2>난수가 달라도 평균과 표준편차를 학습할 길을 만든다</h2>
+<p>z를 q에서 직접 뽑는 대신 ε를 표준정규에서 뽑아 z=μ+√v·ε로 만들 수 있습니다. 이는 평균 μ, 분산 v인 같은 분포를 얻는 계산입니다. <strong>재매개변수화</strong>를 쓰면 ε를 고정한 한 번의 계산에서 z가 μ·√v에 어떻게 의존하는지 미분할 수 있습니다. 복원 비용을 여러 표본으로 근사할 때 시드와 표본 수를 기록합니다.</p>
+<div class="check" data-q="q6"></div>
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>VAE는 잠재분포의 표본으로 관측을 복원하고, 사전과의 KL도 함께 고려합니다.</p></div>
+
+<h2>참고 자료</h2>
+<ul><li><a href="https://arxiv.org/abs/1312.6114">Kingma·Welling · Auto-Encoding Variational Bayes</a></li><li><a href="../op/op08-3.html">공부 교재 · ELBO와 KL 간격</a></li></ul>
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

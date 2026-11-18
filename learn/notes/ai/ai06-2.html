@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>불완전한 관측을 살지 결정하는 순차 선택 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e8c'/%3E%3Cpath d='M8 22V10m8 12V14m8 8V6' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="AI06-2">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+
+<header class="chapter">
+<p class="chap-sub">인공지능 · AI06 합리적 선택</p>
+<p class="chap-num">AI06·2</p>
+<h1>불완전한 관측을 살지 결정하는 순차 선택</h1>
+<p class="lead">날씨 안내에 오류가 있다고 하자. 안내가 오면 확률을 갱신하고, 장소 선택에서 얻는 개선이 안내 비용보다 큰지 본다.</p>
+</header>
+
+<div class="goal">
+<h2>이 장을 읽고 나면</h2>
+<ul>
+<li>관측 확률과 관측 후 상태의 확률을 구분해 계산한다.</li>
+<li>먼저 정보를 얻고 다음에 행동을 고르는 순차 결정을 평가한다.</li>
+<li>관측, 숨은 상태, 믿음 분포, 정책을 연결한다.</li>
+</ul>
+</div>
+
+<h2>안내는 날씨를 알려 주는 불완전한 관측이다</h2>
+<p>워크숍 실외 효용은 맑으면 8, 비면 −4이고 실내는 늘 4다. 맑을 확률은 3/4, 비는 1/4이다. 장소를 정하기 전 ‘맑음 안내’ 또는 ‘비 주의’를 받을 수 있다. 실제로 맑으면 맑음 안내가 4/5, 비 주의가 1/5다. 실제로 비면 맑음 안내가 1/5, 비 주의가 4/5다. 정보 사용을 검토하는 시점부터 행사까지 모형 속 날씨 상태는 같으며, 안내나 장소 선택에 의해 날씨가 달라지지 않는다.</p>
+<p>맑음 안내는 맑으면서 안내가 맞았거나 비가 오는데 안내가 틀렸을 때 온다. 그 확률은 (3/4)(4/5)+(1/4)(1/5)=13/20이다. 그 가운데 실제로 맑은 몫은 12/20이므로 P(맑음 | 맑음 안내)=12/13이다. 비 주의 확률은 7/20이고, 그중 맑지만 비 주의가 뜬 경우는 3/20이므로 P(맑음 | 비 주의)=3/7이다. <a href="ai05-1.html">베이즈망의 증거 정규화</a>와 같은 계산이다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 171" role="img" aria-label="날씨와 안내의 네 결합확률을 안내별로 분류">
+<text class="f-s" x="159" y="31" text-anchor="middle">실제 날씨</text>
+<text class="f-s" x="394" y="31" text-anchor="middle">맑음 안내</text>
+<text class="f-s" x="619" y="31" text-anchor="middle">비 주의</text>
+<line class="f-ink" x1="50" y1="43" x2="709" y2="43"/>
+<line class="f-ink" x1="50" y1="115" x2="709" y2="115"/>
+<text class="f-t" x="159" y="69" text-anchor="middle">맑음</text>
+<text class="f-t" x="394" y="69" text-anchor="middle">12/20</text>
+<text class="f-t" x="619" y="69" text-anchor="middle">3/20</text>
+<text class="f-t" x="159" y="103" text-anchor="middle">비</text>
+<text class="f-t" x="394" y="103" text-anchor="middle">1/20</text>
+<text class="f-t" x="619" y="103" text-anchor="middle">4/20</text>
+<text class="f-t" x="159" y="137" text-anchor="middle">안내 전체</text>
+<text class="f-t" x="394" y="137" text-anchor="middle">13/20</text>
+<text class="f-t" x="619" y="137" text-anchor="middle">7/20</text>
+</svg>
+<figcaption>칸 하나는 날씨와 안내의 결합확률이다. 안내를 이미 알고 있다면 각 열의 합이 사후확률 계산의 분모다.</figcaption>
+</figure>
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+<div class="check" data-q="q3"></div>
+<h2>뒤에서부터 가장 좋은 행동을 고른다</h2>
+<p>맑음 안내 후 실외의 기대효용은 (12/13)·8+(1/13)·(−4)=92/13이다. 비 주의 후에는 (3/7)·8+(4/7)·(−4)=8/7이다. 실내 값은 안내와 무관하게 4다. 따라서 맑음 안내에는 실외, 비 주의에는 실내가 유리하다. 이 <b class="key">정책</b>은 아직 어떤 관측이 올지 몰라도 관측마다 어떤 행동을 고를지 적은 규칙이다.</p>
+<p>이제 첫 결정으로 돌아간다. 관측에 따라 최선인 행동 값을 관측 확률로 가중해 (13/20)(92/13)+(7/20)·4=6을 얻는다. 안내가 없는 최선의 기대효용은 5다. 비용 전 정보의 기대 가치(EVSI)는 1이다. 같은 행동과 효용을 두고 날씨를 정확히 알 수 있다면 관측별 최선 규칙보다 더 낮은 기대효용을 얻을 이유가 없다. 앞 장의 완전 정보 가치 2가 이 안내의 정보 가치 1보다 큰 것도 확인할 수 있다.</p>
+<p>안내 비용이 0.5효용점이라면 정책의 순가치는 5.5이므로 안내를 먼저 얻는다. 비용이 1.5라면 4.5이므로 안내 없이 실외를 택한다. 비용이 정확히 1이면 두 선택의 기대효용이 같다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 160" role="img" aria-label="관측을 얻는 비용 0.5일 때 두 첫 행동의 순가치">
+<rect class="f-box" x="24" y="57" width="157" height="39" rx="3"/>
+<text class="f-t" x="102" y="82" text-anchor="middle">첫 선택</text>
+<line class="f-ink" x1="181" y1="66" x2="283" y2="35" marker-end="url(#f-arrow)"/>
+<line class="f-ink" x1="181" y1="88" x2="283" y2="115" marker-end="url(#f-arrow)"/>
+<rect class="f-box" x="287" y="16" width="212" height="42" rx="3"/>
+<text class="f-t" x="393" y="42" text-anchor="middle">안내 없이 실외</text>
+<rect class="f-box" x="287" y="96" width="212" height="42" rx="3"/>
+<text class="f-t" x="393" y="122" text-anchor="middle">안내 후 정책 적용</text>
+<line class="f-ink" x1="499" y1="37" x2="567" y2="37" marker-end="url(#f-arrow)"/>
+<line class="f-ink" x1="499" y1="117" x2="567" y2="117" marker-end="url(#f-arrow)"/>
+<rect class="f-box" x="572" y="16" width="164" height="42" rx="3"/>
+<text class="f-t" x="654" y="42" text-anchor="middle">5</text>
+<rect class="f-box" x="572" y="96" width="164" height="42" rx="3"/>
+<text class="f-t" x="654" y="122" text-anchor="middle">6 − 0.5 = 5.5</text>
+</svg>
+<figcaption>안내를 받을지 평가하기 전에 안내별 마지막 행동의 최선을 계산한다. 두 순가치를 비교하면 안내받기가 0.5효용점 높다.</figcaption>
+</figure>
+<div class="check" data-q="q4"></div>
+<div class="check" data-q="q5"></div>
+<div class="check" data-q="q6"></div>
+<h2>관측을 처리할 최선 규칙을 계산한다</h2>
+<p>다음 코드는 관측별 실제 날씨의 결합확률과 사후확률을 계산하고, 안내를 받은 다음 할 행동을 선택한다. 마지막에 안내 비용을 바꾸어 첫 행동을 비교한다.</p>
+<pre data-example="python"><code>from fractions import Fraction as F
+
+prior = {&quot;dry&quot;: F(3, 4), &quot;rain&quot;: F(1, 4)}
+signals = {
+    &quot;clear&quot;: {&quot;dry&quot;: F(4, 5), &quot;rain&quot;: F(1, 5)},
+    &quot;warning&quot;: {&quot;dry&quot;: F(1, 5), &quot;rain&quot;: F(4, 5)},
+}
+payoff = {&quot;outdoor&quot;: {&quot;dry&quot;: 8, &quot;rain&quot;: -4},
+          &quot;indoor&quot;: {&quot;dry&quot;: 4, &quot;rain&quot;: 4}}
+
+
+def values(belief):
+    return {a: sum(belief[s] * outcomes[s] for s in belief)
+            for a, outcomes in payoff.items()}
+
+
+with_signal = F(0)
+for signal, likelihood in signals.items():
+    joint = {s: prior[s] * likelihood[s] for s in prior}
+    p_signal = sum(joint.values())
+    posterior = {s: p / p_signal for s, p in joint.items()}
+    utility = values(posterior)
+    action = max(utility, key=utility.get)
+    with_signal += p_signal * utility[action]
+    print(signal, p_signal, posterior[&quot;dry&quot;], action, utility[action])
+
+without = max(values(prior).values())
+print(&quot;without:&quot;, without, &quot;gross:&quot;, with_signal, &quot;gain:&quot;, with_signal - without)
+for cost in (F(1, 2), F(3, 2)):
+    net = with_signal - cost
+    print(&quot;cost:&quot;, cost, &quot;net:&quot;, net, &quot;buy:&quot;, net &gt; without)</code></pre>
+<pre data-output><code>clear 13/20 12/13 outdoor 92/13
+warning 7/20 3/7 indoor 4
+without: 5 gross: 6 gain: 1
+cost: 1/2 net: 11/2 buy: True
+cost: 3/2 net: 9/2 buy: False</code></pre>
+<h2>관측을 받아도 숨은 상태는 남는다</h2>
+<p>관측은 ‘맑음 안내’라는 신호고 상태는 실제 날씨다. 현재 정보로 상태에 배정한 확률을 <b class="key">믿음 상태</b>(belief state)라고 한다. 이 장에서는 관측 뒤 맑을 확률 하나로 이진 상태의 분포를 표현했다. 원래 상태를 모두 알 수 없는 환경에서는 지금까지의 행동과 관측으로 상태의 분포를 갱신하고, 그 분포에서 어떤 행동을 할지 정할 수 있다.</p>
+<p><a href="../rl/rl04-1.html">완전 관측 MDP</a>는 의사결정에 필요한 현재 상태를 알 수 있는 경우를 다룬다. 상태가 직접 보이지 않으면서 행동에 따라 상태가 변하는 순차 모델은 부분 관측 MDP(POMDP)로 확장할 수 있다. 그 경우 다음 관측을 받기 전에 행동에 따른 상태 전이를 먼저 반영한다. 이 장에서는 날씨가 두 선택 사이에 변하지 않아 그 전이가 필요 없었다. <a href="ai05-2.html">HMM의 예측과 관측 갱신</a>에서 행동 없는 버전의 두 단계를 계산했다.</p>
+
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table>
+<thead><tr><th scope="col">핵심어</th><th scope="col">기억할 기준</th></tr></thead>
+<tbody>
+<tr><td><b class="key">관측 우도</b></td><td>상태를 알고 있을 때 그 관측이 나올 확률</td></tr>
+<tr><td><b class="key">믿음 상태</b></td><td>현재까지의 정보로 얻은 숨은 상태의 분포</td></tr>
+<tr><td><b class="key">정책</b></td><td>결정 시점에 이용할 수 있는 정보에 따라 행동을 고르는 규칙</td></tr>
+<tr><td><b class="key">순가치</b></td><td>관측 정책의 가중 평균 효용에서 관측 비용을 뺀 값</td></tr>
+</tbody></table></div>
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>관측별 최선 행동을 먼저 구하고, 관측 확률로 평균한 뒤 비용을 빼 첫 결정을 한다.</p></div>
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://inst.eecs.berkeley.edu/~cs188/textbook/vpis/vpi.html">UC Berkeley CS188 · 완전 정보의 가치</a></li>
+<li><a href="https://aima.cs.berkeley.edu/global-index.html">Russell·Norvig, Artificial Intelligence: A Modern Approach 4판 · 정보의 가치와 복합 의사결정</a></li>
+</ul>
+
+<h2>확인 문제</h2>
+<p>아직 풀지 않은 문제입니다. 먼저 식이나 근거를 적어 보고 해설을 확인합니다.</p>
+<div id="quiz"></div>
+
+<section class="work" id="tools"></section>
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

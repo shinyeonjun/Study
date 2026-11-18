@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>자기지도 대조학습에서 가까워질 표현 정하기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="DL10-2">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">딥러닝</p>
+<p class="chap-num">DL10·2</p>
+<h1>자기지도 대조학습에서 가까워질 표현 정하기</h1>
+<p class="lead">사람이 입력마다 정답 범주를 붙이지 않아도 입력 자체에서 학습 신호를 만들 수 있습니다. 세 이미지 후보 중 같은 원본에서 온 표현을 고르는 손실을 계산합니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>자기지도 학습 신호와 평가용 라벨을 구분한다.</li><li>유사도와 온도를 대조 손실에 적용한다.</li><li>양성 쌍의 정의와 배치 내 음성의 한계를 설명한다.</li></ul></div>
+
+<h2>어떤 두 입력을 같은 대상으로 볼 것인가</h2>
+<p>한 그림에서 서로 다른 두 자르기 결과를 만든다고 합시다. 두 결과는 같은 원본에서 왔으므로 양성 쌍으로 정합니다. 다른 원본에서 만든 결과를 비교에 넣을 수 있습니다. 모델이 답해야 할 쌍의 종류는 원본과 변환으로 생성됐습니다. 분류용 정답처럼 사람이 입력마다 붙여 주지 않아도 학습 신호가 생깁니다. 이런 방식이 <strong>자기지도</strong>의 한 예입니다.</p>
+<p>그림을 자를 때 관심 대상이 완전히 사라지면 두 입력이 같아야 한다는 가정이 약해집니다. 자료에서 무엇을 같게 보고 무엇을 구분할 것인지와 작업 목적을 연결합니다.</p>
+<div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 160" role="img" aria-label="자기지도 대조 학습의 기준 표현, 양성과 후보 음성, 로그 손실">
+<rect class="f-box" x="42" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="135" y="61" text-anchor="middle">기준 표현</text><text class="f-s" x="135" y="89" text-anchor="middle">한 원본의 첫째 변환</text><text class="f-s" x="135" y="110" text-anchor="middle">anchor</text><line class="f-line" x1="235" y1="84" x2="278" y2="84" marker-end="url(#f-arrow)"/><rect class="f-soft" x="287" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="380" y="61" text-anchor="middle">후보 표현</text><text class="f-s" x="380" y="89" text-anchor="middle">같은 원본 하나</text><text class="f-s" x="380" y="110" text-anchor="middle">다른 원본 둘</text><line class="f-line" x1="480" y1="84" x2="523" y2="84" marker-end="url(#f-arrow)"/><rect class="f-box" x="532" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="625" y="61" text-anchor="middle">목표 계산</text><text class="f-s" x="625" y="89" text-anchor="middle">유사도 ÷ 온도</text><text class="f-s" x="625" y="110" text-anchor="middle">양성의 로그확률</text>
+</svg><figcaption>이 장은 한 기준점에서의 손실을 계산합니다. 실제 대조 학습은 배치의 여러 기준점에 적용할 수 있습니다.</figcaption></figure>
+<h2>내적을 확률의 분자로 바꾼다</h2>
+<p>이미 정규화된 길이 1의 벡터를 사용합니다. 기준 표현이 (1,0)이고 후보가 양성 (1,0), 다른 후보 (0,1)과 (−1,0)이면 내적은 각각 1, 0, −1입니다. 온도 τ=0.5로 나누면 소프트맥스 입력은 2, 0, −2입니다. 이 셋에서 양성의 확률은 약 0.866813입니다. 선택할 확률을 높이도록 음의 로그확률 약 0.142932를 줄입니다.</p>
+<div class="table-wrap"><table><thead><tr><th scope="col">후보</th><th scope="col">기준과의 내적</th><th scope="col">τ=0.5로 나눈 점수</th></tr></thead><tbody><tr><td>같은 원본</td><td>1</td><td>2</td></tr><tr><td>다른 후보 1</td><td>0</td><td>0</td></tr><tr><td>다른 후보 2</td><td>−1</td><td>−2</td></tr></tbody></table></div>
+<div class="check" data-q="q3"></div><div class="check" data-q="q4"></div>
+<pre data-example="python"><code>from math import exp, log
+
+scores = [1, 0, -1]
+for temperature in (0.5, 1.0):
+    logits = [score/temperature for score in scores]
+    largest = max(logits)
+    weights = [exp(value-largest) for value in logits]
+    positive = weights[0]/sum(weights)
+    print(&quot;온도&quot;, temperature, &quot;양성 확률&quot;, f&quot;{positive:.6f}&quot;,
+          &quot;손실&quot;, f&quot;{-log(positive):.6f}&quot;)</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>온도 0.5 양성 확률 0.866813 손실 0.142932
+온도 1.0 양성 확률 0.665241 손실 0.407606</code></pre>
+<div class="check" data-q="q5"></div>
+<h2>쌍 규칙이 표현 평가를 대신하지 않는다</h2>
+<p>온도를 낮추면 같은 순위에서 높은 점수와 낮은 점수의 차이가 커집니다. 양성 쌍이 잘못 정해졌거나 비슷한 의미의 다른 원본이 음성으로 들어가면, 그런 차이를 키우는 것이 목표와 어긋날 수 있습니다. 배치 후보가 무엇인지 확인하고, 학습한 표현이 뒤의 독립 문제에서 필요한 정보를 담았는지 출력층 학습이나 검색 평가로 검토합니다.</p>
+<div class="check" data-q="q6"></div>
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>자기지도 대조학습에서는 쌍의 정의가 훈련 신호입니다. 실제로 필요한 표현이 되었는지는 별도로 평가합니다.</p></div>
+
+<h2>참고 자료</h2>
+<ul><li><a href="https://arxiv.org/abs/2002.05709">Chen 외 · SimCLR</a></li><li><a href="../la/la02-1.html">공부 교재 · 내적</a></li><li><a href="../ml/ml05-2.html">공부 교재 · 소프트맥스</a></li></ul>
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>모델 크기와 추론 지연·처리량을 따로 재기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="DL10-3">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">딥러닝</p>
+<p class="chap-num">DL10·3</p>
+<h1>모델 크기와 추론 지연·처리량을 따로 재기</h1>
+<p class="lead">모델이 작으면 어떤 자원을 덜 쓰는지, 묶음으로 처리하면 누가 더 오래 기다리는지 계산합니다. 자료 수와 평가 분할까지 맞춰 실제 비교를 준비합니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>가중치의 저장 바이트를 근사한다.</li><li>한 요청 지연과 초당 처리량을 계산하고 구분한다.</li><li>표현·예산·정확도를 함께 비교할 조건을 적는다.</li></ul></div>
+
+<h2>가중치 수와 저장 형식을 함께 봐야 한다</h2>
+<p>매개변수가 200만 개인 모형을 가정합니다. 각 가중치를 32비트, 즉 4바이트로 저장하면 가중치 배열은 800만 바이트(8MB)입니다. 8비트 값만 저장한다면 200만 바이트(2MB)입니다. 여기서 MB는 100만 바이트입니다. 실제 모델 파일에는 배열을 해석할 스케일 등 추가 정보가 있을 수 있고, 실행 중 임시 배열이나 토큰의 이전 계산을 보관하는 캐시도 메모리를 더 씁니다.</p>
+<div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
+<h2>한 번에 몇 건을 처리하는지 기록한다</h2>
+<p>가상 측정에서 한 건만 처리하면 6ms, 여덟 건을 한 묶음으로 처리하면 40ms라고 합시다. 묶음 가운데 각 요청이 완성 결과를 받는 시점은 40ms입니다. 초당 처리량은 8/0.040=200건입니다. 한 건씩에서는 1/0.006≈166.67건/초입니다. 이 계산은 연속으로 가득 처리할 때의 수치이며, 요청이 충분히 모이기까지 기다리는 시간은 따로 잽니다.</p>
+<div class="table-wrap"><table><thead><tr><th scope="col">가상 방식</th><th scope="col">묶음 크기</th><th scope="col">묶음 시간</th><th scope="col">연속 처리량</th></tr></thead><tbody><tr><td>개별 처리</td><td>1</td><td>6ms</td><td>166.67건/초</td></tr><tr><td>일괄 처리</td><td>8</td><td>40ms</td><td>200건/초</td></tr></tbody></table></div>
+<div class="check" data-q="q3"></div><div class="check" data-q="q4"></div>
+<pre data-example="python"><code>from fractions import Fraction as F
+
+parameters = 2_000_000
+for width in (32, 8):
+    mb = F(parameters*width, 8*1_000_000)
+    print(width, &quot;비트 가중치 배열:&quot;, mb, &quot;MB&quot;)
+for batch, milliseconds in ((1, 6), (8, 40)):
+    rate = F(batch*1000, milliseconds)
+    print(batch, &quot;건 묶음:&quot;, f&quot;{float(rate):.2f}&quot;, &quot;건/초&quot;)</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>32 비트 가중치 배열: 8 MB
+8 비트 가중치 배열: 2 MB
+1 건 묶음: 166.67 건/초
+8 건 묶음: 200.00 건/초</code></pre>
+<div class="check" data-q="q5"></div>
+<h2>속도 표의 바깥 조건을 맞춘다</h2>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 160" role="img" aria-label="추론 효율의 조건, 비용, 품질을 이어 평가">
+<rect class="f-box" x="42" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="135" y="61" text-anchor="middle">조건 고정</text><text class="f-s" x="135" y="89" text-anchor="middle">입출력 길이·배치</text><text class="f-s" x="135" y="110" text-anchor="middle">장치·버전·정밀도</text><line class="f-line" x1="235" y1="84" x2="278" y2="84" marker-end="url(#f-arrow)"/><rect class="f-soft" x="287" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="380" y="61" text-anchor="middle">따로 재기</text><text class="f-s" x="380" y="89" text-anchor="middle">첫 응답과 끝 시간</text><text class="f-s" x="380" y="110" text-anchor="middle">처리량과 메모리</text><line class="f-line" x1="480" y1="84" x2="523" y2="84" marker-end="url(#f-arrow)"/><rect class="f-box" x="532" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="625" y="61" text-anchor="middle">품질 확인</text><text class="f-s" x="625" y="89" text-anchor="middle">동일한 평가 자료</text><text class="f-s" x="625" y="110" text-anchor="middle">정확도·오류 사례</text>
+</svg><figcaption>가중치 메모리가 줄어도 특정 장치에서 빨라질지는 시스템 옵션과 실제 측정에 달려 있습니다.</figcaption></figure>
+<p>생성 모형을 비교할 때는 입력을 읽고 첫 토큰이 나오기까지의 시간과, 그 이후 남은 토큰들을 생성하는 시간을 나눌 수 있습니다. 같은 모델도 입력과 출력 길이에 따라 속도가 달라집니다. 첫 실행과 충분히 실행한 뒤 결과가 다른지도 봅니다.</p>
+<p>훈련 자료 규모를 바꿀 때는 고유한 자료 수와 중복, 학습 횟수 및 모델 크기도 기록합니다. 자료의 개수가 많았다는 사실만으로 평가 향상의 원인을 알 수 없습니다. 다른 정밀도나 작은 모델을 검토할 때에는 실제로 줄인 자원과 같은 평가에서의 품질을 같이 보고합니다.</p>
+<div class="check" data-q="q6"></div>
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>저장 크기, 대기 시간, 초당 건수, 모델 품질을 따로 측정하고 같은 입력·장치 조건에서 해석합니다.</p></div>
+
+<h2>참고 자료</h2>
+<ul><li><a href="https://docs.pytorch.org/tutorials/recipes/recipes/benchmark.html">PyTorch · Benchmark recipes</a></li><li><a href="../sy/sy08-3.html">공부 교재 · CPU·GPU와 측정</a></li><li><a href="../ml/ml11-1.html">공부 교재 · 모델 평가 원칙</a></li></ul>
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

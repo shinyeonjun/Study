@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>쌍대 문제의 하한으로 최적값 확인하기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="OP05-3">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">수치 계산·최적화</p>
+<p class="chap-num">OP05·3</p>
+<h1>쌍대 문제의 하한으로 최적값 확인하기</h1>
+<p class="lead">가능한 후보 하나를 찾아도 더 좋은 후보가 없다는 사실은 따로 보일 수 있습니다. 모든 후보의 손실보다 작거나 같은 수를 만들고, 그 수를 가장 높여 봅니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>최소화 문제에서 쌍대 함수가 하한인 이유를 설명한다.</li><li>간단한 이차식의 쌍대 함수와 최대값을 계산한다.</li><li>원래 값과 쌍대값의 간격을 해석한다.</li></ul></div>
+
+<h2>가능한 점을 찾으면 최솟값의 위쪽을 안다</h2>
+<p>f(w)=(w−3)²를 w≤2에서 작게 만드는 문제를 다시 봅니다. 후보 w=2는 가능하고 손실이 1이므로, 전체의 최적값은 1 이하입니다. 답이 확실하려면 어떤 허용점도 1보다 작게 만들 수 없다는 하한이 필요합니다.</p>
+<div class="check" data-q="q1"></div>
+<h2>제약에 맞는 점에서는 라그랑주 값이 원래 값보다 크지 않다</h2>
+<p>λ≥0에 대해 L(w,λ)=f(w)+λ(w−2)를 만듭니다. 허용점이라면 w−2≤0이므로 L(w,λ)≤f(w)입니다. 이제 <strong>허용 범위를 풀고</strong> 모든 실수 w에서 L을 가장 작게 한 값을 q(λ)라 합시다. 이 값은 어느 특정 허용점의 L보다 작거나 같습니다. 따라서 q(λ)≤L(w,λ)≤f(w)가 모든 허용 w에서 성립합니다. 이렇게 얻은 q를 <strong>쌍대 함수</strong>라고 합니다.</p>
+<div class="check" data-q="q2"></div><div class="check" data-q="q3"></div>
+<h2>하한을 가장 크게 하는 승수를 찾는다</h2>
+<p>λ를 하나 고정하면 L은 w에 대한 이차식입니다. 도함수 2(w−3)+λ가 0인 w=3−λ/2에서 최소입니다. 이를 대입하면 q(λ)=λ−λ²/4입니다. λ≥0에서 이 식은 1−(λ−2)²/4이므로 가장 큰 값은 λ=2에서 1입니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 228" role="img" aria-label="쌍대 하한 q(λ)는 λ 0,1,2,3,4에서 0,0.75,1,0.75,0">
+<line class="f-line" x1="111" y1="163" x2="652" y2="163"/><line class="f-line" x1="132" y1="181" x2="132" y2="30"/><line class="f-dash" x1="132" y1="72" x2="616" y2="72"/><path class="f-ink" d="M132.00 163.00 L140.07 157.03 L148.13 151.27 L156.20 145.71 L164.27 140.35 L172.33 135.19 L180.40 130.24 L188.47 125.49 L196.53 120.94 L204.60 116.59 L212.67 112.44 L220.73 108.50 L228.80 104.76 L236.87 101.22 L244.93 97.88 L253.00 94.75 L261.07 91.82 L269.13 89.09 L277.20 86.56 L285.27 84.23 L293.33 82.11 L301.40 80.19 L309.47 78.47 L317.53 76.95 L325.60 75.64 L333.67 74.53 L341.73 73.62 L349.80 72.91 L357.87 72.40 L365.93 72.10 L374.00 72.00 L382.07 72.10 L390.13 72.40 L398.20 72.91 L406.27 73.62 L414.33 74.53 L422.40 75.64 L430.47 76.95 L438.53 78.47 L446.60 80.19 L454.67 82.11 L462.73 84.23 L470.80 86.56 L478.87 89.09 L486.93 91.82 L495.00 94.75 L503.07 97.88 L511.13 101.22 L519.20 104.76 L527.27 108.50 L535.33 112.44 L543.40 116.59 L551.47 120.94 L559.53 125.49 L567.60 130.24 L575.67 135.19 L583.73 140.35 L591.80 145.71 L599.87 151.27 L607.93 157.03 L616.00 163.00"/><circle cx="132" cy="163" r="5" class="f-fill"/><text class="f-s" x="132" y="190" text-anchor="middle">0</text><circle cx="253" cy="94.75" r="5" class="f-fill"/><text class="f-s" x="253" y="190" text-anchor="middle">1</text><circle cx="374" cy="72" r="5" class="f-fill"/><text class="f-s" x="374" y="190" text-anchor="middle">2</text><circle cx="495" cy="94.75" r="5" class="f-fill"/><text class="f-s" x="495" y="190" text-anchor="middle">3</text><circle cx="616" cy="163" r="5" class="f-fill"/><text class="f-s" x="616" y="190" text-anchor="middle">4</text><text class="f-s" x="129" y="21" text-anchor="middle">쌍대 하한</text><text class="f-s" x="609" y="51" text-anchor="middle">원래 문제의 최솟값 1</text><text class="f-s" x="645" y="211" text-anchor="middle">승수 λ</text>
+</svg><figcaption>승수를 선택해 얻을 수 있는 하한 중 가장 큰 값이 원래 문제의 후보 손실 1과 맞닿았습니다.</figcaption></figure>
+<div class="check" data-q="q4"></div><div class="check" data-q="q5"></div>
+<pre data-example="python"><code>from fractions import Fraction as F
+
+for multiplier in range(5):
+    w = 3 - F(multiplier, 2)
+    value = (w-3)**2 + multiplier*(w-2)
+    assert value == multiplier - F(multiplier**2, 4)
+    print(multiplier, w, value)</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>0 3 0
+1 5/2 3/4
+2 2 1
+3 3/2 3/4
+4 1 0</code></pre>
+<h2>위에서 얻은 값과 아래에서 얻은 값을 비교한다</h2>
+<p>이 예에서는 허용 후보로 얻은 상한과 쌍대 하한이 모두 1이라 최적값을 확정할 수 있습니다. 일반적으로 쌍대 문제의 값은 원래 최소 문제의 값보다 클 수 없습니다. 이를 약한 쌍대성이라 합니다. 둘의 차이가 0이면 강한 쌍대성이 성립합니다. 볼록 문제에서 제약을 엄격히 만족하는 점의 존재처럼 강한 쌍대성을 보장하는 추가 조건이 있습니다. 계산에서 상한과 하한에 간격이 있으면 현재 후보가 얼마나 개선될 여지가 있는지 범위를 말할 수 있습니다.</p>
+<div class="check" data-q="q6"></div>
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>최솟값을 위에서는 실행 가능한 후보로, 아래에서는 쌍대 함수로 제한합니다.</p></div>
+
+<h2>참고 자료</h2>
+<ul><li><a href="https://web.stanford.edu/~boyd/cvxbook/">Boyd·Vandenberghe · Convex Optimization, Duality</a></li><li><a href="op05-2.html">공부 교재 · 라그랑주 함수와 KKT</a></li></ul>
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

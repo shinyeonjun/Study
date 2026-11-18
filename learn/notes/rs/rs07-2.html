@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>한 조건을 바꾸고 재현 실패를 분류하기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="RS07-2">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">연구 기초 · RS07 작은 재현</p>
+<p class="chap-num">RS07·2</p>
+<h1>한 조건을 바꾸고 재현 실패를 분류하기</h1>
+<p class="lead">2010–2014년 검증의 예측 날짜와 평가식을 고정합니다. 최근 증가량을 계산하는 간격만 2년에서 5년으로 바꾼 뒤 예상과 다른 결과를 어디부터 조사할지 정합니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul>
+<li>하나의 요인만 다르게 설정해 비교한다.</li>
+<li>똑같은 검증 구간에서 두 MAE와 차이를 계산한다.</li>
+<li>실행·입력·측정 정의·통계 변동 문제를 구분한다.</li>
+</ul></div>
+
+<h2>유지할 조건과 바꿀 조건을 먼저 적기</h2>
+<p>질문은 “마우나로아 1년 앞 예측에서 최근 추세의 길이 <code>k</code>만 바꾸면 검증에서 오차가 어떻게 달라지는가?”입니다. 예측 연도가 <var>t</var>일 때 최근 <var>k</var>년의 평균 증가율은 <code>(y[t−1]−y[t−1−k])/k</code>입니다. 2010년의 <code>k=5</code>는 2009년과 2004년 값을 써서 <code>(387.64−377.70)/5=1.988</code> ppm/년입니다.</p><figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 172" role="img" aria-label="검증 구간에서 k=2의 평균절대오차는 0.4430, k=5는 0.3576이다.">
+<text class="f-cap" x="380" y="29" text-anchor="middle">같은 검증에서 최근 변화의 기간만 바꿈</text>
+<rect class="f-soft" x="59" y="43" width="126" height="37"/>
+<text class="f-s" x="122" y="66.5" text-anchor="middle">k</text>
+<rect class="f-soft" x="185" y="43" width="259" height="37"/>
+<text class="f-s" x="314.5" y="66.5" text-anchor="middle">2010년 증가율(ppm/년)</text>
+<rect class="f-soft" x="444" y="43" width="257" height="37"/>
+<text class="f-s" x="572.5" y="66.5" text-anchor="middle">2010–2014 MAE(ppm)</text>
+<rect class="f-box" x="59" y="80" width="126" height="37"/>
+<text class="f-t" x="122" y="103.5" text-anchor="middle">2</text>
+<rect class="f-box" x="185" y="80" width="259" height="37"/>
+<text class="f-t" x="314.5" y="103.5" text-anchor="middle">1.810</text>
+<rect class="f-box" x="444" y="80" width="257" height="37"/>
+<text class="f-t" x="572.5" y="103.5" text-anchor="middle">0.4430</text>
+<rect class="f-box" x="59" y="117" width="126" height="37"/>
+<text class="f-t" x="122" y="140.5" text-anchor="middle">5</text>
+<rect class="f-box" x="185" y="117" width="259" height="37"/>
+<text class="f-t" x="314.5" y="140.5" text-anchor="middle">1.988</text>
+<rect class="f-box" x="444" y="117" width="257" height="37"/>
+<text class="f-t" x="572.5" y="140.5" text-anchor="middle">0.3576</text>
+</svg>
+<figcaption>k는 1년 앞 예측에 쓸 최근 변화량을 몇 년 간격에서 구했는지 뜻합니다.</figcaption>
+</figure>
+<p>입력 파일, 예측 지평, 검증 날짜 2010~2014, 오차 MAE는 고정합니다. 후보는 2년과 5년 두 개입니다. 2015~2019 자료는 최종 평가 쪽에 둡니다. 후보를 검증한 뒤 결과를 보고 평가 자료를 바꾸지 않습니다.</p><div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
+
+<h2>검증 오차를 비교하고 후보를 정한다</h2>
+<p>예제는 저장소의 최상위 폴더에서 실행합니다. 실습에 사용하는 <a href="../../labs/mauna-loa/annual_co2.csv">30개 연도의 CSV</a>와 <a href="../../labs/mauna-loa/SOURCE.md">출처와 변환 기록</a>을 함께 확인할 수 있습니다.</p><p class="small">실행 예제</p>
+<pre data-example="python"><code>import csv
+from decimal import Decimal
+from pathlib import Path
+
+source = Path(&quot;learn/labs/mauna-loa/annual_co2.csv&quot;)
+with source.open(encoding=&quot;utf-8&quot;, newline=&quot;&quot;) as stream:
+    records = list(csv.DictReader(stream))
+series = {int(row[&quot;year&quot;]): Decimal(row[&quot;mean_ppm&quot;]) for row in records}
+assert len(records) == len(series) == 30 and sorted(series) == list(range(1990, 2020))
+
+def forecast(year, k):
+    latest = series[year - 1]
+    if k == 0:
+        return latest
+    growth = (latest - series[year - 1 - k]) / k
+    return latest + growth
+
+def errors(start, stop, k):
+    return [abs(forecast(year, k) - series[year]) for year in range(start, stop)]
+
+def avg(values):
+    return sum(values) / len(values)
+
+choices = {}
+for k in (2, 5):
+    e = errors(2010, 2015, k)
+    choices[k] = avg(e)
+    print(f&quot;k={k}: MAE={choices[k]:.4f} ppm&quot;)
+chosen = min(choices, key=choices.get)
+print(&quot;chosen on validation:&quot;, chosen)
+print(f&quot;validation change (5 - 2): {choices[5] - choices[2]:.4f} ppm&quot;)</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>k=2: MAE=0.4430 ppm
+k=5: MAE=0.3576 ppm
+chosen on validation: 5
+validation change (5 - 2): -0.0854 ppm</code></pre>
+<p>정해 둔 후보 둘 중 이 검증 구간에서 더 작은 값을 얻은 <code>k=5</code>를 다음 평가에 사용합니다. 두 설정의 차이 0.0854 ppm은 다섯 연도의 검증 결과입니다. 모든 맥락에서 다섯 해 간격이 최선이라는 규칙을 얻은 것은 아닙니다.</p><div class="check" data-q="q3"></div><div class="check" data-q="q4"></div>
+
+<h2>불일치에서 먼저 구분할 것</h2>
+<p>예제가 끝나지 않는 일과 예제가 끝나 다른 수치가 나온 일은 다르게 진단합니다. 입력 참조가 사라진 경우에는 자료 확보를 확인합니다. 숫자가 조금 다르면 열의 단위와 반올림 순서, 허용 오차를 확인합니다. 같은 조건의 무작위 실험에서는 시드의 재현과 반복 간 변동을 구분합니다.</p><figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 246" role="img" aria-label="실행 실패와 입력 차이, 계산 차이, 반복에 따른 변동을 구별한다.">
+<text class="f-cap" x="380" y="29" text-anchor="middle">재현 결과가 다를 때 첫 확인</text>
+<rect class="f-soft" x="51.5" y="43" width="266" height="37"/>
+<text class="f-s" x="184.5" y="66.5" text-anchor="middle">현상</text>
+<rect class="f-soft" x="317.5" y="43" width="391" height="37"/>
+<text class="f-s" x="513" y="66.5" text-anchor="middle">먼저 확인할 것</text>
+<rect class="f-box" x="51.5" y="80" width="266" height="37"/>
+<text class="f-t" x="184.5" y="103.5" text-anchor="middle">코드가 시작되지 않음</text>
+<rect class="f-box" x="317.5" y="80" width="391" height="37"/>
+<text class="f-t" x="513" y="103.5" text-anchor="middle">실행 폴더, Python 버전, 의존성</text>
+<rect class="f-box" x="51.5" y="117" width="266" height="37"/>
+<text class="f-t" x="184.5" y="140.5" text-anchor="middle">연도가 한 행 적음</text>
+<rect class="f-box" x="317.5" y="117" width="391" height="37"/>
+<text class="f-t" x="513" y="140.5" text-anchor="middle">입력 판본, 열·정렬, 누락과 제외</text>
+<rect class="f-box" x="51.5" y="154" width="266" height="37"/>
+<text class="f-t" x="184.5" y="177.5" text-anchor="middle">행은 같고 숫자만 몇 자리 차이</text>
+<rect class="f-box" x="317.5" y="154" width="391" height="37"/>
+<text class="f-t" x="513" y="177.5" text-anchor="middle">단위, 중간 반올림, 허용 오차</text>
+<rect class="f-box" x="51.5" y="191" width="266" height="37"/>
+<text class="f-t" x="184.5" y="214.5" text-anchor="middle">같은 조건에서 반복 점수가 흔들림</text>
+<rect class="f-box" x="317.5" y="191" width="391" height="37"/>
+<text class="f-t" x="513" y="214.5" text-anchor="middle">시드, 독립 실행 단위, 설정과 산포</text>
+</svg>
+<figcaption>의도적으로 바꾼 조건은 실패 원인과 구분해 기록합니다.</figcaption>
+</figure>
+<p>예로 CSV를 바꿔 2013년 행이 빠졌다면 검증 MAE를 네 행으로 비교하기 전에 누락으로 기록합니다. 입력과 규칙이 같은 상태에서도 예측값이 틀리면 2010년의 하나를 손으로 계산해 기호와 인덱스를 확인합니다.</p><div class="check" data-q="q5"></div><div class="check" data-q="q6"></div>
+
+<h2>실패와 개선을 함께 기록</h2>
+<p>실행 로그에는 예상, 실제, 가장 작은 재현 예, 바뀐 조건과 확인한 자료를 적습니다. “안 됨”만 남기면 다음 사람이 다시 어디서 막힐지 모릅니다. 원인을 아직 확인하지 못했으면 가능성을 확정 사실과 구분합니다. 예제의 범위를 더 크게 넓힐 때는 <a href="rs08-1.html">시간과 메모리</a>도 따로 봅니다.</p><div class="check" data-q="q7"></div><div class="check" data-q="q8"></div>
+
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table><thead><tr><th scope="col">개념</th><th scope="col">확인할 것</th></tr></thead><tbody>
+<tr><th scope="row"><b class="key">한 요인</b></th><td>날짜, 지표 등 조건을 고정하고 하나만 변경한다.</td></tr>
+<tr><th scope="row"><b class="key">선택</b></th><td>검증에서 고르고 최종 자료는 보존한다.</td></tr>
+<tr><th scope="row"><b class="key">실패 분석</b></th><td>실행 여부, 자료, 정의와 변동을 분리해서 확인한다.</td></tr>
+</tbody></table></div><div class="box sum"><p class="box-k">다음 장으로</p><p><a href="rs08-1.html">다음 장</a>에서는 계산에 쓴 자원을 어떻게 측정하는지 확인합니다.</p></div>
+
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://gml.noaa.gov/ccgg/trends/data.html">NOAA GML · Mauna Loa 연평균 CO₂ 자료</a></li>
+<li><a href="https://otexts.com/fpp3/tscv.html">Hyndman·Athanasopoulos · 예측 교재의 시계열 검증</a></li>
+<li><a href="https://www.acm.org/publications/policies/artifact-review-and-badging-current">ACM · 연구 산출물 평가 정의</a></li>
+</ul>
+<h2>확인 문제</h2>
+<p>직접 계산하거나 설명을 먼저 적고 답을 확인해 보세요.</p>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>L1과 L2 벌점이 계수를 줄이는 방식 비교하기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="OP06-1">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">수치 계산·최적화</p>
+<p class="chap-num">OP06·1</p>
+<h1>L1과 L2 벌점이 계수를 줄이는 방식 비교하기</h1>
+<p class="lead">자료만 맞추면 5가 좋지만, 계수가 커지는 데도 값을 매기면 어느 수를 고를까요? 한 변수에서 왜 L1이 정확한 0을 만들 수 있는지 계산합니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>적합 손실과 계수 벌점을 구분한다.</li><li>한 계수의 L2 축소와 L1의 문턱값을 계산한다.</li><li>벌점의 세기를 검증 자료로 선택하는 이유를 설명한다.</li></ul></div>
+
+<h2>손실에서 데이터에 맞추는 부분과 벌점을 나눈다</h2>
+<p>기록에 맞춘 오차를 단순화해 ½(w−5)²로 둡니다. w는 선택하는 계수입니다. 손실만 보면 w=5가 최적입니다. 여기에 큰 계수에 비용을 부과하는 <strong>정규화</strong>를 더합니다. λ≥0은 비용을 얼마나 강하게 적용할지 정하는 설정입니다.</p>
+<p>L2 예제에서는 λw²/2를 더합니다. 미분값은 (w−5)+λw이므로 0인 곳은 w=5/(1+λ)입니다. λ=1이면 2.5, λ=4이면 1입니다. λ가 커질수록 0에 가까워지지만 이 한 계수 예에서는 유한한 λ에서 정확한 0은 되지 않습니다.</p>
+<div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
+<h2>절대값을 더하면 0에서 경사가 꺾인다</h2>
+<p>L1 예제에서는 λ|w|를 더합니다. w&gt;0이면 미분값은 w−5+λ, w&lt;0이면 w−5−λ입니다. λ가 5보다 작을 때 양의 해는 5−λ입니다. λ≥5이면 양수 쪽의 경사는 0 또는 양수로 시작하고 음수 쪽은 계속 내려와, 둘 사이인 0에서 최소입니다. 그래서 이 예의 답은 max(5−λ,0)입니다.</p>
+<p>데이터에만 맞춘 계수 z가 음수일 때는 좌우가 바뀝니다. 기본 손실이 ½(w−z)²인 경우 L1 해는 부호를 유지해 |z|에서 λ를 뺀 뒤, 결과가 음수면 0에 둡니다. 예로 z=−2와 λ=1에서는 w=−1입니다. 여러 특징에서 일부 계수가 0이 되는 결과를 희소성이라고 합니다.</p>
+<div class="check" data-q="q3"></div><div class="check" data-q="q4"></div>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 246" role="img" aria-label="λ가 0에서 5가 되면서 L2는 5에서 5/6, L1은 5에서 0으로 감소">
+<line class="f-line" x1="108" y1="182" x2="676" y2="182"/><line class="f-line" x1="133" y1="194" x2="133" y2="31"/><path class="f-line" d="M133.00 47.00 L141.67 57.38 L150.33 66.29 L159.00 74.00 L167.67 80.75 L176.33 86.71 L185.00 92.00 L193.67 96.74 L202.33 101.00 L211.00 104.86 L219.67 108.36 L228.33 111.57 L237.00 114.50 L245.67 117.20 L254.33 119.69 L263.00 122.00 L271.67 124.14 L280.33 126.14 L289.00 128.00 L297.67 129.74 L306.33 131.38 L315.00 132.91 L323.67 134.35 L332.33 135.71 L341.00 137.00 L349.67 138.22 L358.33 139.37 L367.00 140.46 L375.67 141.50 L384.33 142.49 L393.00 143.43 L401.67 144.33 L410.33 145.18 L419.00 146.00 L427.67 146.78 L436.33 147.53 L445.00 148.25 L453.67 148.94 L462.33 149.60 L471.00 150.24 L479.67 150.85 L488.33 151.43 L497.00 152.00 L505.67 152.55 L514.33 153.07 L523.00 153.58 L531.67 154.07 L540.33 154.54 L549.00 155.00 L557.67 155.44 L566.33 155.87 L575.00 156.29 L583.67 156.69 L592.33 157.08 L601.00 157.45 L609.67 157.82 L618.33 158.18 L627.00 158.52 L635.67 158.86 L644.33 159.18 L653.00 159.50"/><path class="f-ink" d="M133.00 47.00 L141.67 49.25 L150.33 51.50 L159.00 53.75 L167.67 56.00 L176.33 58.25 L185.00 60.50 L193.67 62.75 L202.33 65.00 L211.00 67.25 L219.67 69.50 L228.33 71.75 L237.00 74.00 L245.67 76.25 L254.33 78.50 L263.00 80.75 L271.67 83.00 L280.33 85.25 L289.00 87.50 L297.67 89.75 L306.33 92.00 L315.00 94.25 L323.67 96.50 L332.33 98.75 L341.00 101.00 L349.67 103.25 L358.33 105.50 L367.00 107.75 L375.67 110.00 L384.33 112.25 L393.00 114.50 L401.67 116.75 L410.33 119.00 L419.00 121.25 L427.67 123.50 L436.33 125.75 L445.00 128.00 L453.67 130.25 L462.33 132.50 L471.00 134.75 L479.67 137.00 L488.33 139.25 L497.00 141.50 L505.67 143.75 L514.33 146.00 L523.00 148.25 L531.67 150.50 L540.33 152.75 L549.00 155.00 L557.67 157.25 L566.33 159.50 L575.00 161.75 L583.67 164.00 L592.33 166.25 L601.00 168.50 L609.67 170.75 L618.33 173.00 L627.00 175.25 L635.67 177.50 L644.33 179.75 L653.00 182.00"/><text class="f-s" x="133" y="203" text-anchor="middle">0</text><text class="f-s" x="237" y="203" text-anchor="middle">1</text><text class="f-s" x="341" y="203" text-anchor="middle">2</text><text class="f-s" x="445" y="203" text-anchor="middle">3</text><text class="f-s" x="549" y="203" text-anchor="middle">4</text><text class="f-s" x="653" y="203" text-anchor="middle">5</text><text class="f-s" x="114" y="186" text-anchor="end">0</text><text class="f-s" x="114" y="118.5" text-anchor="end">2.5</text><text class="f-s" x="114" y="51" text-anchor="end">5</text><text class="f-s" x="132" y="24" text-anchor="middle">계수 w</text><text class="f-s" x="614" y="140" text-anchor="middle">L2</text><text class="f-s" x="627" y="175" text-anchor="middle">L1</text><text class="f-s" x="380" y="226" text-anchor="middle">벌점 세기 λ</text>
+</svg><figcaption>그래프는 기본 손실과 벌점 정의를 고정한 예입니다. L1의 기울기 꺾임 때문에 λ=5부터 계수가 0입니다.</figcaption></figure>
+<pre data-example="python"><code>from fractions import Fraction as F
+
+def ridge(z, weight):
+    return z / (1 + weight)
+
+def lasso(z, weight):
+    size = max(abs(z) - weight, 0)
+    return -size if z &lt; 0 else size
+
+for weight in (0, 1, 4, 5):
+    print(&quot;λ&quot;, weight, &quot;L2&quot;, ridge(F(5), weight), &quot;L1&quot;, lasso(F(5), weight))
+print(&quot;음의 z에서 L1:&quot;, lasso(F(-2), 1))</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>λ 0 L2 5 L1 5
+λ 1 L2 5/2 L1 4
+λ 4 L2 1 L1 1
+λ 5 L2 5/6 L1 0
+음의 z에서 L1: -1</code></pre>
+<h2>훈련 자료에서 가장 작은 벌점을 고르는 문제가 아니다</h2>
+<p>새 자료에 더 잘 일반화하도록 λ를 정할 수 있습니다. 높은 λ에서는 계수가 작아지지만 관련 있는 신호까지 줄어들 수 있습니다. 훈련 폴드에서 각 λ의 계수를 적합하고 검증 폴드에서 목적에 맞는 예측 지표로 비교합니다. 훈련 손실에 더한 벌점과 보고하는 시험 예측 오차에는 여전히 다른 역할이 있습니다.</p>
+<div class="check" data-q="q5"></div><div class="check" data-q="q6"></div>
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>L2는 제곱으로 계수를 줄이고, L1은 절대값의 꺾임에서 일정 범위의 계수를 0으로 만들 수 있습니다.</p></div>
+
+<h2>참고 자료</h2>
+<ul><li><a href="https://doi.org/10.1111/j.2517-6161.1996.tb02080.x">Tibshirani · Regression Shrinkage and Selection via the Lasso</a></li><li><a href="https://scikit-learn.org/stable/modules/linear_model.html">scikit-learn · Ridge와 Lasso</a></li></ul>
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>제약의 경계와 KKT 조건에서 최소점 읽기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="OP05-2">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">수치 계산·최적화</p>
+<p class="chap-num">OP05·2</p>
+<h1>제약의 경계와 KKT 조건에서 최소점 읽기</h1>
+<p class="lead">가장 좋은 실수값이 허용 구간 밖에 있으면 기울기가 0인 점만 찾아서는 부족합니다. 경계에서 목적함수의 방향과 제약의 역할을 함께 계산합니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>활성 제약과 느슨한 제약을 구분한다.</li><li>간단한 부등식에서 라그랑주 승수와 KKT 조건을 계산한다.</li><li>제약의 부호와 승수의 조건을 연결한다.</li></ul></div>
+
+<h2>제약을 벗어난 최적값을 확인한다</h2>
+<p>목적함수 f(w)=(w−3)²를 작게 하고 싶습니다. 허용 범위가 w≤2라면 제한 없는 최솟값 w=3은 사용할 수 없습니다. w≤2에서 3에 가장 가까운 값인 w=2가 답입니다. 여기서 제약 g(w)=w−2≤0은 w=2에서 g=0이 되므로 <strong>활성</strong>입니다. 범위가 w≤4라면 w=3이 답이고, 그때 g(w)=w−4=−1이므로 제약에 여유가 있습니다.</p>
+<div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 160" role="img" aria-label="제약에 걸린 이차 목적함수에서 경계가 최적이 되는 과정">
+<rect class="f-box" x="42" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="135" y="61" text-anchor="middle">목적함수</text><text class="f-s" x="135" y="89" text-anchor="middle">(w − 3)²</text><text class="f-s" x="135" y="110" text-anchor="middle">w=3에서 가장 낮음</text><line class="f-line" x1="235" y1="84" x2="278" y2="84" marker-end="url(#f-arrow)"/><rect class="f-soft" x="287" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="380" y="61" text-anchor="middle">허용 제약</text><text class="f-s" x="380" y="89" text-anchor="middle">w ≤ 2</text><text class="f-s" x="380" y="110" text-anchor="middle">w=3은 불가능</text><line class="f-line" x1="480" y1="84" x2="523" y2="84" marker-end="url(#f-arrow)"/><rect class="f-box" x="532" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="625" y="61" text-anchor="middle">경계에서 비교</text><text class="f-s" x="625" y="89" text-anchor="middle">w=2에서 최소</text><text class="f-s" x="625" y="110" text-anchor="middle">제약이 활성</text>
+</svg><figcaption>경계에서 멈췄다는 사실과 목적함수 도함수가 0이라는 사실은 서로 다릅니다.</figcaption></figure>
+<h2>기울기와 경계의 영향을 한 식에 넣는다</h2>
+<p>g≤0인 부등식에 대해 라그랑주 함수 L(w,λ)=f(w)+λg(w)를 만듭니다. 여기서는 λ≥0으로 둡니다. 이 형태의 <strong>KKT 조건</strong>은 다음과 같습니다.</p>
+<div class="table-wrap"><table><thead><tr><th scope="col">조건</th><th scope="col">이 예의 식</th><th scope="col">쓰임</th></tr></thead><tbody><tr><td>원래 제약</td><td>w−2≤0</td><td>w가 허용 범위에 있음</td></tr><tr><td>승수의 부호</td><td>λ≥0</td><td>부등식에 맞는 방향</td></tr><tr><td>정지 조건</td><td>2(w−3)+λ=0</td><td>합친 함수의 w 기울기가 0</td></tr><tr><td>상보성</td><td>λ(w−2)=0</td><td>제약에 여유가 있으면 λ=0</td></tr></tbody></table></div>
+<p>w=2에서는 f의 기울기가 −2이고 g의 기울기는 1입니다. 정지 조건을 만족하려면 λ=2입니다. w=2는 허용되고 λ가 양수이며 λ·0=0입니다. 가능 범위 안쪽에 답이 있다고 가정하면 g&lt;0이므로 λ=0이고 정지 조건에서 w=3을 얻습니다. 3은 허용 범위를 벗어나므로 이 경우는 성립하지 않습니다.</p>
+<div class="check" data-q="q3"></div><div class="check" data-q="q4"></div>
+<pre data-example="python"><code>for bound in (2, 4):
+    w = min(3, bound)
+    multiplier = max(0, 2*(3-bound))
+    objective = (w-3)**2
+    g = w-bound
+    assert g &lt;= 0 and multiplier &gt;= 0
+    assert 2*(w-3) + multiplier == 0
+    assert multiplier*g == 0
+    print(&quot;상한:&quot;, bound, &quot;w:&quot;, w, &quot;λ:&quot;, multiplier, &quot;손실:&quot;, objective)</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>상한: 2 w: 2 λ: 2 손실: 1
+상한: 4 w: 3 λ: 0 손실: 0</code></pre>
+<h2>조건의 범위를 함께 적는다</h2>
+<p>이 문제는 볼록한 목적함수와 선형 부등식으로 이루어져 있고 제약을 엄격하게 만족하는 w=1도 있습니다. 여기서는 KKT를 만족하는 점이 전역 최적입니다. 모든 비볼록 문제에서 정지 조건을 확인하는 것만으로 전역 최적이라고 말할 수는 없습니다. 등식 제약 h(w)=0을 라그랑주 함수에 더할 때는 h를 양·음 방향에서 함께 제약하므로 승수의 부호를 부등식처럼 λ≥0으로 제한하지 않습니다.</p>
+<div class="check" data-q="q5"></div><div class="check" data-q="q6"></div>
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>제약 가능성, 승수 부호, 정지 조건, 상보성을 함께 확인해 경계에서의 답을 찾습니다.</p></div>
+
+<h2>참고 자료</h2>
+<ul><li><a href="https://web.stanford.edu/~boyd/cvxbook/">Boyd·Vandenberghe · Convex Optimization, Duality</a></li><li><a href="op05-1.html">공부 교재 · 볼록성과 전역 최소</a></li></ul>
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

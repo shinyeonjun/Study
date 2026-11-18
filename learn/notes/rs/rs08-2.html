@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>실험 횟수·장치 시간·비용의 예산 세우기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="RS08-2">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">연구 기초 · RS08 자원과 비용</p>
+<p class="chap-num">RS08·2</p>
+<h1>실험 횟수·장치 시간·비용의 예산 세우기</h1>
+<p class="lead">두 설정을 세 시드로 평가합니다. 설정별 본 실행과 탐색, 실패 재실행까지 계산해 보고 언제 점검하고 멈출지 정합니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul>
+<li>실행 횟수·경과시간·GPU 시간을 계산한다.</li>
+<li>탐색과 실패를 포함한 예산을 비교한다.</li>
+<li>실제 비용·저장 공간과 결과를 함께 남긴다.</li>
+</ul></div>
+
+<h2>곱셈에 포함할 실험을 적기</h2>
+<p>설정 두 개를 세 시드에서 각각 한 번 실행하면 6회입니다. 모두 GPU 한 대에서 20분을 사용하면 120 GPU-분, 즉 2 GPU-시간입니다. 20분 동안 두 대를 쓰면 장치 시간은 40 GPU-분이 됩니다. 장치 시간과 실제 경과 시간은 작업이 여러 대에서 얼마나 겹쳤는지에 따라 다릅니다.</p><figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 246" role="img" aria-label="본 실행 120 GPU-분과 탐색 40, 재실행 20을 더한 계획 상한은 180 GPU-분.">
+<text class="f-cap" x="380" y="29" text-anchor="middle">가상의 연구 예산 180 GPU-분</text>
+<rect class="f-soft" x="61" y="43" width="194" height="37"/>
+<text class="f-s" x="158" y="66.5" text-anchor="middle">항목</text>
+<rect class="f-soft" x="255" y="43" width="285" height="37"/>
+<text class="f-s" x="397.5" y="66.5" text-anchor="middle">계산</text>
+<rect class="f-soft" x="540" y="43" width="159" height="37"/>
+<text class="f-s" x="619.5" y="66.5" text-anchor="middle">GPU-분</text>
+<rect class="f-box" x="61" y="80" width="194" height="37"/>
+<text class="f-t" x="158" y="103.5" text-anchor="middle">본 실행</text>
+<rect class="f-box" x="255" y="80" width="285" height="37"/>
+<text class="f-t" x="397.5" y="103.5" text-anchor="middle">설정 2 × 시드 3 × 20분</text>
+<rect class="f-box" x="540" y="80" width="159" height="37"/>
+<text class="f-t" x="619.5" y="103.5" text-anchor="middle">120</text>
+<rect class="f-box" x="61" y="117" width="194" height="37"/>
+<text class="f-t" x="158" y="140.5" text-anchor="middle">후보 탐색</text>
+<rect class="f-box" x="255" y="117" width="285" height="37"/>
+<text class="f-t" x="397.5" y="140.5" text-anchor="middle">추가 탐색에 허용</text>
+<rect class="f-box" x="540" y="117" width="159" height="37"/>
+<text class="f-t" x="619.5" y="140.5" text-anchor="middle">40</text>
+<rect class="f-box" x="61" y="154" width="194" height="37"/>
+<text class="f-t" x="158" y="177.5" text-anchor="middle">실패 재실행</text>
+<rect class="f-box" x="255" y="154" width="285" height="37"/>
+<text class="f-t" x="397.5" y="177.5" text-anchor="middle">남겨 둔 한 번</text>
+<rect class="f-box" x="540" y="154" width="159" height="37"/>
+<text class="f-t" x="619.5" y="177.5" text-anchor="middle">20</text>
+<rect class="f-box" x="61" y="191" width="194" height="37"/>
+<text class="f-t" x="158" y="214.5" text-anchor="middle">총 상한</text>
+<rect class="f-box" x="255" y="191" width="285" height="37"/>
+<text class="f-t" x="397.5" y="214.5" text-anchor="middle">120 + 40 + 20</text>
+<rect class="f-box" x="540" y="191" width="159" height="37"/>
+<text class="f-t" x="619.5" y="214.5" text-anchor="middle">180</text>
+</svg>
+<figcaption>모두 단일 GPU 사용을 가정한 모의 계획입니다.</figcaption>
+</figure>
+<p>학습에만 시간을 배정하면 평가와 실패 복구의 비용이 숨을 수 있습니다. 후보를 고르는 비용까지 같은 비교에 넣을지, 사전에 쓴 실험과 최종 실행을 구분할지 정합니다.</p><div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
+
+<h2>비용과 저장의 단위를 쓰기</h2>
+<p>교육용 가정으로 GPU 한 대의 시간당 값이 1,200원이라고 두면 본 실행의 계산 비용은 2,400원입니다. 실제 요금에서는 유휴 시간, 여러 장치, 저장 및 데이터 이동을 포함하는지 확인합니다. 학습 결과를 150 MiB씩 실행 6회마다 하나 보존하면 체크포인트만 900 MiB입니다. 임시 파일과 로그는 별도입니다.</p><figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 203" role="img" aria-label="계획된 예산을 실제 기록과 대조해 다음 실행에 쓸 범위를 구한다.">
+<text class="f-cap" x="380" y="31" text-anchor="middle">예산, 실제 사용, 남은 여유를 연결</text>
+<rect class="f-box" x="50" y="62" width="182" height="51"/>
+<text class="f-t" x="141" y="92.5" text-anchor="middle">시작 전</text>
+<text class="f-s" x="141" y="141" text-anchor="middle">횟수와 시간 상한</text>
+<rect class="f-soft" x="289" y="62" width="182" height="51"/>
+<text class="f-t" x="380" y="92.5" text-anchor="middle">실행한 뒤</text>
+<text class="f-s" x="380" y="141" text-anchor="middle">장치 사용량과 실패</text>
+<rect class="f-box" x="528" y="62" width="182" height="51"/>
+<text class="f-t" x="619" y="92.5" text-anchor="middle">다음 선택</text>
+<text class="f-s" x="619" y="141" text-anchor="middle">남은 예산과 우선순위</text>
+<line class="f-line" x1="236" y1="89" x2="285" y2="89" marker-end="url(#f-arrow)"/>
+<line class="f-line" x1="475" y1="89" x2="524" y2="89" marker-end="url(#f-arrow)"/>
+</svg>
+<figcaption>실패한 반복도 장치를 사용했다면 소비량을 기록합니다.</figcaption>
+</figure>
+<p>잘 끝난 실행만 계산하면 실제 자원 소비가 작게 보입니다. 한도를 먼저 적고 어떤 비교를 끝낼지, 어떤 고장·초과에 중단할지 정합니다. 계획 단계에서 명시하는 비용과 수행 뒤 측정한 비용을 구분합니다.</p><div class="check" data-q="q3"></div><div class="check" data-q="q4"></div>
+
+<h2>계획된 예산을 코드로 검산</h2>
+<p class="small">실행 예제</p>
+<pre data-example="python"><code>settings, seeds = 2, 3
+minutes_per_run = 20
+runs = settings * seeds
+training = runs * minutes_per_run
+search, retry = 40, 20
+cap = training + search + retry
+won_per_gpu_hour = 1200
+print(&quot;runs:&quot;, runs)
+print(&quot;training GPU-min:&quot;, training, &quot;cap:&quot;, cap)
+print(f&quot;training / cap cost: {training/60*won_per_gpu_hour:.0f} / {cap/60*won_per_gpu_hour:.0f} won&quot;)
+print(&quot;checkpoint MiB:&quot;, runs * 150)</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>runs: 6
+training GPU-min: 120 cap: 180
+training / cap cost: 2400 / 3600 won
+checkpoint MiB: 900</code></pre>
+<p>시간과 요금은 계산을 위한 모의 값입니다. 마우나로아의 간단한 실습은 CPU에서 실행할 수 있습니다. 실험을 크게 확대하려면 실제 입력 크기와 장치를 먼저 기록합니다.</p><div class="check" data-q="q5"></div><div class="check" data-q="q6"></div>
+
+<h2>공정한 비교의 예산을 공개</h2>
+<p>시간 제한이 같은 비교와 환경 상호작용 수가 같은 비교는 다른 질문에 답합니다. 목표를 정한 뒤 예산의 단위와 바뀐 조건을 보고합니다. 실험 과정에서 시도를 추가했다면 적용 시점과 이유를 남깁니다. <a href="rs05-2.html">동일 조건</a>과 보고서의 결과 표가 연결되는 부분입니다.</p><div class="check" data-q="q7"></div><div class="check" data-q="q8"></div>
+
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table><thead><tr><th scope="col">개념</th><th scope="col">확인할 것</th></tr></thead><tbody>
+<tr><th scope="row"><b class="key">예산</b></th><td>설정과 반복 수, 실행별 장치 사용량을 곱한다.</td></tr>
+<tr><th scope="row"><b class="key">사용량</b></th><td>탐색·실패·저장 비용을 빠짐없이 정리한다.</td></tr>
+<tr><th scope="row"><b class="key">공개</b></th><td>비교에서 맞춘 한도와 실제 차이를 함께 적는다.</td></tr>
+</tbody></table></div><div class="box sum"><p class="box-k">다음 장으로</p><p><a href="rs09-1.html">다음 장</a>에서 앞의 연구를 한 보고서로 정리합니다.</p></div>
+
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://arxiv.org/html/1709.06560v3">Henderson 외 · Deep Reinforcement Learning that Matters, arXiv v3 원문</a></li>
+<li><a href="https://docs.python.org/3/library/time.html">Python · perf_counter와 process_time</a></li>
+<li><a href="https://docs.nvidia.com/cuda/cuda-c-best-practices-guide/index.html#timing">NVIDIA · CUDA 타이밍과 데이터 이동</a></li>
+</ul>
+<h2>확인 문제</h2>
+<p>직접 계산하거나 설명을 먼저 적고 답을 확인해 보세요.</p>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

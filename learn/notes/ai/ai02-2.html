@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>A*는 이미 쓴 비용과 남은 비용의 추정값을 합친다 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e8c'/%3E%3Cpath d='M8 22V10m8 12V14m8 8V6' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="AI02-2">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+
+<header class="chapter">
+<p class="chap-sub">인공지능 · AI02 탐색</p>
+<p class="chap-num">AI02·2</p>
+<h1>A*는 이미 쓴 비용과 남은 비용의 추정값을 합친다</h1>
+<p class="lead">목적지에 당장 가까워 보이는 길만 고르면 이미 비싼 길로 돌아왔을 수도 있습니다. 실제로 지불한 비용과 아직 남은 거리의 추정을 합칩니다.</p>
+</header>
+
+<div class="goal">
+<h2>이 장을 읽고 나면</h2>
+<ul>
+<li>g·h·f를 구분해 A*의 다음 후보를 계산한다.</li>
+<li>허용적 휴리스틱과 일관적 휴리스틱을 구별한다.</li>
+<li>과대 추정에서 최적성 보장이 깨질 수 있음을 예로 계산한다.</li>
+</ul>
+</div>
+
+<h2>추정값은 후보의 순서를 정하는 데 쓰인다</h2>
+<p>앞 장의 지도에서 S→A는 3, A→G는 1입니다. S→B→C→G는 각 간선 비용이 1입니다. <b class="key">휴리스틱</b> h(n)은 현재 상태 n에서 목표까지 남은 최소 비용의 추정입니다. g(n)은 지금 후보가 출발점부터 실제 지불한 누적 비용입니다. <b class="key">A*</b>는 <code>f(n)=g(n)+h(n)</code>이 작은 후보를 먼저 처리합니다. h가 언제나 0이면 UCS와 같은 우선순위입니다.</p>
+<div class="table-wrap"><table>
+<thead><tr><th scope="col">상태</th><th scope="col">처음 의미 있는 g</th><th scope="col">h</th><th scope="col">f</th></tr></thead>
+<tbody>
+<tr><td>S</td><td>0</td><td>3</td><td>3</td></tr>
+<tr><td>A</td><td>3</td><td>1</td><td>4</td></tr>
+<tr><td>B</td><td>1</td><td>2</td><td>3</td></tr>
+<tr><td>C (B에서)</td><td>2</td><td>1</td><td>3</td></tr>
+<tr><td>G (C에서)</td><td>3</td><td>0</td><td>3</td></tr>
+</tbody></table></div>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 180" role="img" aria-label="S의 이웃 후보에서 A의 f=3+1=4, B의 f=1+2=3이다. A*는 B를 먼저 선택한다.">
+<rect class="f-box" x="66" y="45" width="281" height="83" rx="3"/>
+<text class="f-cap" x="206.5" y="72" text-anchor="middle">A</text>
+<text class="f-t" x="206.5" y="105" text-anchor="middle">g 3 + h 1 = 4</text>
+<rect class="f-soft" x="413" y="45" width="281" height="83" rx="3"/>
+<text class="f-cap" x="553.5" y="72" text-anchor="middle">B</text>
+<text class="f-t" x="553.5" y="105" text-anchor="middle">g 1 + h 2 = 3</text>
+<text class="f-s" x="380" y="155" text-anchor="middle">비교하는 것은 추정 합계 f이다.</text>
+</svg>
+<figcaption>실제 경로 비용을 고칠 때는 추정치를 빼고 g가 줄었는지 확인한다.</figcaption>
+</figure>
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+<h2>남은 비용을 과대평가하는지와 이웃 간의 약속을 구분한다</h2>
+<p><b class="key">허용적</b> 휴리스틱은 참 최소 남은 비용보다 큰 값을 주지 않습니다. 여기서는 목표에서 h=0이고 모든 h가 0 이상인 경우를 다룹니다. 예의 B에서 C→G까지 두 번 각각 1을 지불하므로 h(B)=2는 허용적입니다. <b class="key">일관적</b> 휴리스틱은 매 간선 n→m에 <code>h(n) ≤ 비용(n,m)+h(m)</code>을 만족합니다. 이미 지불한 비용을 더해 보면 경로를 따라 f가 내려가지 않는 조건입니다. h(G)=0이면 각 간선의 부등식을 목표까지 이어 붙여 허용성도 얻습니다.</p>
+<p>허용적이지만 일관적이지 않은 값을 만들 수 있습니다. 이 지도의 진짜 남은 비용을 앞의 표 그대로 두되 B의 h만 0으로 낮춥니다. 여전히 어디서도 과대평가하지 않습니다. 그러나 S→B의 부등식은 3≤1+0이라 성립하지 않습니다. 일관적일 때는 최소 f로 처리된 상태의 g를 다시 고칠 필요 없이 확정할 수 있습니다. 허용적이어도 일관성이 없다면 이미 처리한 상태로 더 싼 경로를 발견할 때 다시 후보로 올리는 방식이 필요할 수 있습니다.</p>
+<div class="check" data-q="q3"></div>
+<div class="check" data-q="q4"></div>
+<h2>낙관적 추정이 목표를 일찍 확정하는 데 왜 필요한가</h2>
+<p>유한한 그래프, 비음수 간선 비용, 목표 h=0, 그리고 더 낮은 g를 발견하면 상태를 다시 후보로 올리는 예제를 생각합니다. 아직 최적 목표가 반환되지 않았다면, 최적 경로 위에는 그 경로를 따라 해당 상태까지의 최소 비용 g로 도달한 후보가 남습니다. 허용적인 h를 더한 그 후보의 f는 최적 비용을 넘지 않습니다. 더 비싼 목표 후보는 h=0이라 자신의 더 큰 비용이 곧 f입니다. 더 비싼 후보가 먼저 꺼내질 수 없다는 것이 최적성의 요지입니다. 유한 그래프에서 비용이 엄격히 개선될 때만 상태를 다시 넣으면 갱신은 유한 번이고 도달 가능한 목표도 찾아냅니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 187" role="img" aria-label="정상 h에서 B의 f는 3이라 A보다 먼저다. h(B)를 9로 과대평가하면 B f=10이 되어 비용 4인 목표를 먼저 꺼낼 수 있다.">
+<rect class="f-soft" x="35" y="43" width="298" height="85" rx="3"/>
+<text class="f-cap" x="184" y="68" text-anchor="middle">허용적 추정</text>
+<text class="f-s" x="184" y="99" text-anchor="middle">B: 1+2=3 → 목표 3</text>
+<rect class="f-box" x="427" y="43" width="298" height="85" rx="3"/>
+<text class="f-cap" x="576" y="68" text-anchor="middle">B만 과대 추정</text>
+<text class="f-s" x="576" y="99" text-anchor="middle">B: 1+9=10 → 목표 4 먼저</text>
+<text class="f-s" x="380" y="158" text-anchor="middle">두 경우 모두 실제 최적 비용은 3이다.</text>
+</svg>
+<figcaption>추정 규칙만 바꿨다. 과대 추정이 항상 오답을 만든다는 뜻은 아니지만 일반 보장을 잃는다.</figcaption>
+</figure>
+<div class="check" data-q="q5"></div>
+<div class="check" data-q="q6"></div>
+<h2>같은 그래프에 추정값 두 종류를 넣는다</h2>
+<pre data-example="python"><code>from heapq import heappop, heappush
+
+graph = {&quot;S&quot;: [(&quot;A&quot;, 3), (&quot;B&quot;, 1)], &quot;A&quot;: [(&quot;G&quot;, 1)],
+         &quot;B&quot;: [(&quot;C&quot;, 1)], &quot;C&quot;: [(&quot;G&quot;, 1)], &quot;G&quot;: []}
+
+def astar(h):
+    heap = [(h[&quot;S&quot;], 0, &quot;S&quot;, (&quot;S&quot;,))]
+    best = {&quot;S&quot;: 0}
+    popped = []
+    while heap:
+        _f, g, state, route = heappop(heap)
+        if g != best[state]:
+            continue
+        popped.append(state)
+        if state == &quot;G&quot;:
+            return &quot; &quot;.join(popped), route, g
+        for nxt, step in graph[state]:
+            next_g = g + step
+            if next_g &lt; best.get(nxt, float(&quot;inf&quot;)):
+                best[nxt] = next_g
+                heappush(heap, (next_g + h[nxt], next_g, nxt, route + (nxt,)))
+
+normal = {&quot;S&quot;: 3, &quot;A&quot;: 1, &quot;B&quot;: 2, &quot;C&quot;: 1, &quot;G&quot;: 0}
+for estimate in (normal, dict(normal, B=9)):
+    order, route, cost = astar(estimate)
+    print(order, &quot;::&quot;, &quot; -&gt; &quot;.join(route), cost)</code></pre>
+<pre data-output><code>S B C G :: S -&gt; B -&gt; C -&gt; G 3
+S A G :: S -&gt; A -&gt; G 4</code></pre>
+<p>이 예는 과대 추정에서 어떤 후보를 먼저 꺼내는지 보여 줍니다. 더 큰 그래프의 정확한 비용을 모를 때에는 실제 문제를 조금 단순하게 풀어 얻는 비용을 h의 하한 후보로 사용할 수 있습니다. 추가 제약을 풀어 선택을 늘리면 최소 비용은 커지지 않습니다.</p>
+
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table>
+<thead><tr><th scope="col">핵심어</th><th scope="col">기억할 기준</th></tr></thead>
+<tbody>
+<tr><td><b class="key">g와 h</b></td><td>지금까지 지불한 비용과 남은 비용의 추정을 구분한다.</td></tr>
+<tr><td><b class="key">허용성과 일관성</b></td><td>과대 추정을 피하며, 일관성은 한 간선을 건널 때도 부등식을 지킨다.</td></tr>
+<tr><td><b class="key">A*</b></td><td>최소 f를 꺼내고 더 나은 경로를 발견하면 후보를 갱신한다.</td></tr>
+</tbody></table></div>
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>휴리스틱이 탐색 순서를 바꿀 때, 최소 비용 보장에 필요한 전제를 함께 적는다.</p></div>
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://inst.eecs.berkeley.edu/~cs188/textbook/search/informed.html">UC Berkeley CS188 · 휴리스틱과 A*</a></li>
+<li><a href="https://aima.cs.berkeley.edu/global-index.html">Russell·Norvig, Artificial Intelligence: A Modern Approach 4판 · 3장 휴리스틱 탐색</a></li>
+</ul>
+
+<h2>확인 문제</h2>
+<p>아직 풀지 않은 문제입니다. 먼저 식이나 근거를 적어 보고 해설을 확인합니다.</p>
+<div id="quiz"></div>
+
+<section class="work" id="tools"></section>
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

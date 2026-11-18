@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>사실을 바꾸는 행동으로 계획 만들기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e8c'/%3E%3Cpath d='M8 22V10m8 12V14m8 8V6' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="AI03-3">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+
+<header class="chapter">
+<p class="chap-sub">인공지능 · AI03 제약·논리·계획</p>
+<p class="chap-num">AI03·3</p>
+<h1>사실을 바꾸는 행동으로 계획 만들기</h1>
+<p class="lead">받은 자료를 요약해 보낸다. 현재 사실, 행동을 할 수 있는 조건, 행동 뒤에 달라지는 사실을 구분한다.</p>
+</header>
+
+<div class="goal">
+<h2>이 장을 읽고 나면</h2>
+<ul>
+<li>상태를 참인 사실의 집합으로 표시한다.</li>
+<li>행동의 전제, 추가 목록, 삭제 목록으로 새 상태를 구한다.</li>
+<li>목표가 참이 되는 행동 순서를 탐색한다.</li>
+</ul>
+</div>
+
+<h2>계획은 상태를 바꾸는 행동 순서다</h2>
+<p>첫 상태에서 받은 편지함에 자료가 있다. 할 일은 자료를 꺼내고, 요약하고, 보내는 것이다. 자료를 보관하는 행동도 가능하다고 하자. 보관함에서 자료를 꺼내는 행동은 이 모형의 행동 목록에 없다. 일을 진행하기 전에 현재 어떤 사실이 참인지, 각각의 행동이 가능해지려면 무엇이 참이어야 하는지 적는다.</p>
+<p>모형의 사실 이름은 <code>inbox</code>(자료가 받은 편지함에 있음), <code>raw</code>(작업 중인 원본이 있음), <code>summary</code>(요약이 있음), <code>archived</code>(원본을 보관함), <code>sent</code>(보냄)이다. 시작 상태는 {inbox}다. 목표 조건은 <code>sent</code>가 참인 상태라는 뜻의 {sent}다. 이 유한 합성 모형에서는 현재 참인 사실만 집합에 넣고, 빠진 사실은 거짓으로 해석한다. 실제 자료의 ‘아직 모름’까지 거짓으로 취급하려면 별도 가정이 필요하다.</p>
+<div class="table-wrap"><table>
+<thead><tr><th scope="col">행동</th><th scope="col">전제</th><th scope="col">추가</th><th scope="col">삭제</th></tr></thead>
+<tbody>
+<tr><td>receive (꺼내기)</td><td>inbox</td><td>raw</td><td>inbox</td></tr>
+<tr><td>process (요약)</td><td>raw</td><td>summary</td><td>raw</td></tr>
+<tr><td>send (보내기)</td><td>summary</td><td>sent</td><td>없음</td></tr>
+<tr><td>store (보관)</td><td>raw</td><td>archived</td><td>raw</td></tr>
+</tbody></table></div>
+<h2>전제가 충족되면 사실을 교체한다</h2>
+<p>행동의 전제 집합이 현재 상태의 부분집합일 때 그 행동을 할 수 있다. 다음 상태는 (현재 상태 − 삭제 집합) ∪ 추가 집합이다. 두 효과 목록에 없는 사실은 유지한다. 여기서는 전제와 목표를 긍정 사실의 집합으로 나타내는 간단한 STRIPS식 표현을 사용한다. 행동은 성공 여부가 확률로 갈리지 않는다고 가정한다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 145" role="img" aria-label="자료 처리의 상태와 실패로 끝나는 보관 분기">
+<rect class="f-box" x="17" y="45" width="151" height="34" rx="3"/>
+<text class="f-t" x="92" y="67" text-anchor="middle">inbox</text>
+<rect class="f-box" x="209" y="45" width="151" height="34" rx="3"/>
+<text class="f-t" x="284" y="67" text-anchor="middle">raw</text>
+<rect class="f-box" x="397" y="45" width="151" height="34" rx="3"/>
+<text class="f-t" x="472" y="67" text-anchor="middle">summary</text>
+<rect class="f-box" x="586" y="45" width="151" height="34" rx="3"/>
+<text class="f-t" x="661" y="67" text-anchor="middle">summary, sent</text>
+<line class="f-ink" x1="168" y1="61" x2="206" y2="61" marker-end="url(#f-arrow)"/>
+<text class="f-s" x="188.5" y="36" text-anchor="middle">receive</text>
+<line class="f-ink" x1="360" y1="61" x2="394" y2="61" marker-end="url(#f-arrow)"/>
+<text class="f-s" x="378.5" y="36" text-anchor="middle">process</text>
+<line class="f-ink" x1="548" y1="61" x2="583" y2="61" marker-end="url(#f-arrow)"/>
+<text class="f-s" x="567" y="36" text-anchor="middle">send</text>
+<line class="f-ink" x1="285" y1="79" x2="285" y2="104" marker-end="url(#f-arrow)"/>
+<text class="f-s" x="347" y="97" text-anchor="middle">store</text>
+<rect class="f-box" x="209" y="107" width="151" height="28" rx="3"/>
+<text class="f-t" x="284" y="126" text-anchor="middle">archived</text>
+</svg>
+<figcaption>보관은 실행할 수 있지만 이후 목표 상태로 가는 행동이 없다. 보내기는 summary를 삭제하지 않으므로 두 사실이 남는다.</figcaption>
+</figure>
+<p>상태 {raw}에서 요약과 보관이 모두 가능하다. 요약하면 {summary}, 보관하면 {archived}가 된다. 보관은 현재 가능한 행동이지만 목표를 이루는 계획의 첫 부분으로는 적합하지 않다. 계획 문제를 풀려면 현재 행동의 가능성과 이후 목표까지의 거리를 함께 본다.</p>
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+<div class="check" data-q="q3"></div>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 128" role="img" aria-label="목표 사실 집합과 상태의 포함 관계">
+<rect class="f-box" x="33" y="20" width="308" height="92" rx="3"/>
+<text class="f-t" x="187" y="46" text-anchor="middle">후보 상태 {summary, sent}</text>
+<text class="f-s" x="187" y="78" text-anchor="middle">목표 {sent} ⊆ 후보 상태</text>
+<text class="f-s" x="187" y="99" text-anchor="middle">목표 충족</text>
+<rect class="f-box" x="418" y="20" width="308" height="92" rx="3"/>
+<text class="f-t" x="572" y="46" text-anchor="middle">후보 상태 {archived}</text>
+<text class="f-s" x="572" y="78" text-anchor="middle">목표 {sent} ⊄ 후보 상태</text>
+<text class="f-s" x="572" y="99" text-anchor="middle">목표 미충족</text>
+</svg>
+<figcaption>목표를 만족하는 상태에는 목표에 적지 않은 사실이 더 있어도 된다.</figcaption>
+</figure>
+<h2>같은 상태를 다시 넣지 않는 너비 우선 탐색</h2>
+<p>모든 행동의 비용을 한 번으로 센다. <a href="ai02-1.html">AI02의 BFS</a>로 가장 짧은 행동 순서를 찾을 수 있다. 상태를 변경 불가능한 <code>frozenset</code>으로 만들면 <code>seen</code>에 넣고 중복 여부를 확인할 수 있다. 이 모형은 현재 상태가 같으면 이후 가능한 행동과 목표 판정도 같다.</p>
+<pre data-example="python"><code>from collections import deque
+
+actions = {
+    &quot;receive&quot;: ({&quot;inbox&quot;}, {&quot;raw&quot;}, {&quot;inbox&quot;}),
+    &quot;process&quot;: ({&quot;raw&quot;}, {&quot;summary&quot;}, {&quot;raw&quot;}),
+    &quot;send&quot;: ({&quot;summary&quot;}, {&quot;sent&quot;}, set()),
+    &quot;store&quot;: ({&quot;raw&quot;}, {&quot;archived&quot;}, {&quot;raw&quot;}),
+}
+start = frozenset({&quot;inbox&quot;})
+goal = {&quot;sent&quot;}
+queue = deque([(start, [])])
+seen = {start}
+while queue:
+    state, path = queue.popleft()
+    if goal &lt;= state:
+        print(&quot; -&gt; &quot;.join(path))
+        print(&quot;actions:&quot;, len(path))
+        print(&quot;final facts:&quot;, &quot;, &quot;.join(sorted(state)))
+        break
+    for name, (before, add, remove) in actions.items():
+        if before &lt;= state:
+            child = (state - remove) | add
+            if child not in seen:
+                seen.add(child)
+                queue.append((child, path + [name]))
+else:
+    print(&quot;no plan&quot;)</code></pre>
+<pre data-output><code>receive -&gt; process -&gt; send
+actions: 3
+final facts: sent, summary</code></pre>
+<p>행동 비용이 달라지면 <a href="ai02-1.html">UCS</a>로 최소 비용 계획을 찾을 수 있다. 실행 후 상황을 관측해 그때마다 다음 행동을 바꿔야 하는 문제에서는 하나의 고정 목록 대신 관측에 따른 선택 규칙이 필요하다. <a href="ai06-2.html">AI06의 순차 결정</a>에서 그 차이를 계산한다.</p>
+
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table>
+<thead><tr><th scope="col">핵심어</th><th scope="col">기억할 기준</th></tr></thead>
+<tbody>
+<tr><td><b class="key">상태</b></td><td>지금 참인 사실의 집합</td></tr>
+<tr><td><b class="key">전제와 효과</b></td><td>실행 조건과 추가·삭제할 사실</td></tr>
+<tr><td><b class="key">목표 판정</b></td><td>목표 집합이 현재 상태의 부분집합인가 확인</td></tr>
+<tr><td><b class="key">계획</b></td><td>시작 상태에서 목표 조건까지 가는 실행 가능한 행동 열</td></tr>
+</tbody></table></div>
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>행동의 전제가 충족된 상태에서만 효과를 적용하고, 새 상태마다 목표를 검사한다.</p></div>
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://aima.cs.berkeley.edu/global-index.html">Russell·Norvig, Artificial Intelligence: A Modern Approach 4판 · 자동 계획</a></li>
+<li><a href="https://inst.eecs.berkeley.edu/~cs188/textbook/search/uninformed.html">UC Berkeley CS188 · BFS와 균일비용 탐색</a></li>
+</ul>
+
+<h2>확인 문제</h2>
+<p>아직 풀지 않은 문제입니다. 먼저 식이나 근거를 적어 보고 해설을 확인합니다.</p>
+<div id="quiz"></div>
+
+<section class="work" id="tools"></section>
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

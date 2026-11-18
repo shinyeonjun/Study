@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>연구 질문에서 최종 결과까지 보고서 쓰기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="RS09-1">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">연구 기초 · RS09 연구 보고서</p>
+<p class="chap-num">RS09·1</p>
+<h1>연구 질문에서 최종 결과까지 보고서 쓰기</h1>
+<p class="lead">무엇을 물었고 무엇을 바꿨는지 적은 뒤, 검증에서 고른 규칙을 따로 둔 2015–2019년 자료에 적용합니다. 같은 시간 범위와 MAE를 비교하고 주장 범위를 씁니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul>
+<li>질문·방법·결과·해석의 역할을 나눠 적는다.</li>
+<li>검증에서 정한 규칙을 최종 구간에 적용해 차이를 계산한다.</li>
+<li>수치의 대상과 불확실성의 범위를 보고한다.</li>
+</ul></div>
+
+<h2>질문과 평가 대상을 먼저 붙이기</h2>
+<p>이 보고서의 질문은 “마우나로아 연평균 CO₂를 직전 값에 기반해 1년 앞 예측할 때 최근 증가율을 더하면 직전 값 기준보다 오차가 작은가?”입니다. 자료는 NOAA/GML과 Scripps의 실습 CSV 1990–2019년입니다. 현재 보관본을 사용한 시간순 평가이고 실제 당시 자료 공개 환경을 재현하지는 않습니다.</p><figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 203" role="img" aria-label="같은 2015–2019년 다섯 해에서 1년 앞 예측 MAE의 차이를 보고한다.">
+<text class="f-cap" x="380" y="31" text-anchor="middle">질문과 방법이 결과의 해석을 제한</text>
+<rect class="f-box" x="50" y="62" width="182" height="51"/>
+<text class="f-t" x="141" y="92.5" text-anchor="middle">질문</text>
+<text class="f-s" x="141" y="141" text-anchor="middle">1년 앞 오차를 줄이는가?</text>
+<rect class="f-soft" x="289" y="62" width="182" height="51"/>
+<text class="f-t" x="380" y="92.5" text-anchor="middle">방법</text>
+<text class="f-s" x="380" y="141" text-anchor="middle">같은 연도와 MAE</text>
+<rect class="f-box" x="528" y="62" width="182" height="51"/>
+<text class="f-t" x="619" y="92.5" text-anchor="middle">결과</text>
+<text class="f-s" x="619" y="141" text-anchor="middle">5개 최종 평가 연도</text>
+<line class="f-line" x1="236" y1="89" x2="285" y2="89" marker-end="url(#f-arrow)"/>
+<line class="f-line" x1="475" y1="89" x2="524" y2="89" marker-end="url(#f-arrow)"/>
+</svg>
+<figcaption>자료, 비교 규칙, 평가 단위를 결과에 연결합니다.</figcaption>
+</figure>
+<p>방법에는 각 연도 직전까지의 관측만 사용했다고 씁니다. 검증 연도 2010–2014에 변화율 기간 2년과 5년을 비교해 <a href="rs07-2.html">k=5를 선택</a>했습니다. 최종 평가는 그 규칙과 기준을 2015–2019년에 같은 방법으로 적용합니다.</p><div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
+
+<h2>두 지표와 차이를 함께 보고</h2>
+<p>다섯 최종 연도의 평균 절대오차는 기준에서 2.5680 ppm, 선택한 5년 변화율을 더한 규칙에서 0.5056 ppm입니다. 절대 감소는 2.0624 ppm입니다. 기준 MAE를 분모로 둔 상대 감소는 약 80.3%입니다. 상대 감소만 쓰면 오차의 물리적 단위와 기준을 알기 어려우므로 세 값 중 필요한 것을 함께 표기합니다.</p><figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 224" role="img" aria-label="2015–2019년의 1년 앞 평가에서 직전값 기준 MAE 2.5680ppm, 5년 변화율 MAE 0.5056ppm.">
+<text class="f-cap" x="380" y="29" text-anchor="middle">최종 평가의 평균 절대오차 (ppm)</text>
+<text class="f-s" x="173" y="83" text-anchor="end">직전값 기준</text>
+<text class="f-s" x="173" y="134" text-anchor="end">5년 변화율</text>
+<rect class="f-box" x="200" y="61" width="462.24" height="36"/>
+<rect class="f-soft" x="200" y="111" width="91.01" height="36"/>
+<text class="f-t" x="672.24" y="84" text-anchor="start">2.5680</text>
+<text class="f-t" x="301.01" y="134" text-anchor="start">0.5056</text>
+<line class="f-ink" x1="200" y1="170" x2="704" y2="170"/>
+<line class="f-ink" x1="200" y1="170" x2="200" y2="176"/>
+<text class="f-s" x="200" y="197" text-anchor="middle">0</text>
+<line class="f-ink" x1="290" y1="170" x2="290" y2="176"/>
+<text class="f-s" x="290" y="197" text-anchor="middle">0.5</text>
+<line class="f-ink" x1="380" y1="170" x2="380" y2="176"/>
+<text class="f-s" x="380" y="197" text-anchor="middle">1</text>
+<line class="f-ink" x1="470" y1="170" x2="470" y2="176"/>
+<text class="f-s" x="470" y="197" text-anchor="middle">1.5</text>
+<line class="f-ink" x1="560" y1="170" x2="560" y2="176"/>
+<text class="f-s" x="560" y="197" text-anchor="middle">2</text>
+<line class="f-ink" x1="650" y1="170" x2="650" y2="176"/>
+<text class="f-s" x="650" y="197" text-anchor="middle">2.5</text>
+</svg>
+<figcaption>0에서 출발한 수평 막대는 다섯 해의 MAE입니다. 작을수록 여기서 정의한 예측 오차가 작습니다.</figcaption>
+</figure>
+<p>이 차이는 다섯 확인 연도의 관측된 요약입니다. 검증 기간의 지표와 혼용하지 않습니다. 인접 연도에는 시간 의존성이 있을 수 있고 표본이 적으므로 독립 표본의 간단한 신뢰구간을 이 수치에 붙이지 않았습니다.</p><div class="check" data-q="q3"></div><div class="check" data-q="q4"></div>
+
+<h2>결과가 다시 나오는 과정</h2>
+<p>예제는 저장소의 최상위 폴더에서 실행합니다. 실습에 사용하는 <a href="../../labs/mauna-loa/annual_co2.csv">30개 연도의 CSV</a>와 <a href="../../labs/mauna-loa/SOURCE.md">출처와 변환 기록</a>을 함께 확인할 수 있습니다.</p><p class="small">실행 예제</p>
+<pre data-example="python"><code>import csv
+from decimal import Decimal
+from pathlib import Path
+
+source = Path(&quot;learn/labs/mauna-loa/annual_co2.csv&quot;)
+with source.open(encoding=&quot;utf-8&quot;, newline=&quot;&quot;) as stream:
+    records = list(csv.DictReader(stream))
+series = {int(row[&quot;year&quot;]): Decimal(row[&quot;mean_ppm&quot;]) for row in records}
+assert len(records) == len(series) == 30 and sorted(series) == list(range(1990, 2020))
+
+def forecast(year, k):
+    latest = series[year - 1]
+    if k == 0:
+        return latest
+    growth = (latest - series[year - 1 - k]) / k
+    return latest + growth
+
+def errors(start, stop, k):
+    return [abs(forecast(year, k) - series[year]) for year in range(start, stop)]
+
+def avg(values):
+    return sum(values) / len(values)
+
+baseline = avg(errors(2015, 2020, 0))
+chosen = avg(errors(2015, 2020, 5))
+change = baseline - chosen
+print(f&quot;held-out n={len(range(2015, 2020))}&quot;)
+print(f&quot;baseline={baseline:.4f}, chosen={chosen:.4f} ppm&quot;)
+print(f&quot;MAE decrease={change:.4f} ppm&quot;)
+print(f&quot;relative to baseline={100 * change / baseline:.1f}%&quot;)</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>held-out n=5
+baseline=2.5680, chosen=0.5056 ppm
+MAE decrease=2.0624 ppm
+relative to baseline=80.3%</code></pre>
+<p>이 예제를 <code>report_mauna_loa.py</code>라는 파일에 복사했다면 저장소 최상위 폴더에서 <code>python report_mauna_loa.py</code>로 실행합니다. 여기서는 표준 라이브러리만 사용했고 난수는 없습니다. 입력의 판본, 실행에 쓴 Python과 기대 결과는 위 코드와 함께 기록합니다.</p><div class="check" data-q="q5"></div><div class="check" data-q="q6"></div>
+
+<h2>보고서 한 문단으로 정리</h2>
+<div class="box sum"><p class="box-k">보고 예</p><p>NOAA/GML·Scripps 마우나로아 연평균의 고정 사본으로 1년 앞 예측을 평가했다. 2010–2014년 검증에서 5년 변화율 규칙을 고정하고, 2015–2019년의 다섯 해에서 직전값 기준과 비교했다. 기준 MAE 2.5680 ppm과 후보 0.5056 ppm의 차이는 2.0624 ppm이었다. 한 지점의 현재 보관 연평균을 사용한 기술적 비교이며 새로운 기간·다른 지점에 곧바로 적용할 근거는 없다.</p></div>
+<p>결과는 계산해 관찰한 사실이고, 해석은 그 결과가 질문에 어떻게 답하는지 설명하는 일입니다. 다음 장에서 가장 오차가 큰 해와 후속 실험을 구체적으로 정합니다.</p><div class="check" data-q="q7"></div><div class="check" data-q="q8"></div>
+
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table><thead><tr><th scope="col">개념</th><th scope="col">확인할 것</th></tr></thead><tbody>
+<tr><th scope="row"><b class="key">방법</b></th><td>어떤 질문에서 자료와 규칙을 비교했는지 적는다.</td></tr>
+<tr><th scope="row"><b class="key">결과</b></th><td>기간과 단위, 기준과 차이를 함께 적는다.</td></tr>
+<tr><th scope="row"><b class="key">범위</b></th><td>실제로 검증한 결과와 다음 연구를 구분한다.</td></tr>
+</tbody></table></div><div class="box sum"><p class="box-k">다음 장으로</p><p><a href="rs09-2.html">다음 장</a>에서는 큰 오차와 다음 실험, 검토 기록을 남깁니다.</p></div>
+
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://gml.noaa.gov/ccgg/trends/data.html">NOAA GML · Mauna Loa 연평균 CO₂ 자료</a></li>
+<li><a href="https://otexts.com/fpp3/tscv.html">Hyndman·Athanasopoulos · 예측 교재의 시계열 검증</a></li>
+<li><a href="https://www.acm.org/publications/policies/artifact-review-and-badging-current">ACM · 연구 산출물 평가 정의</a></li>
+</ul>
+<h2>확인 문제</h2>
+<p>직접 계산하거나 설명을 먼저 적고 답을 확인해 보세요.</p>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

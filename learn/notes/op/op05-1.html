@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>볼록집합과 볼록함수에서 국소 최소가 전역이 되는 이유 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="OP05-1">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">수치 계산·최적화</p>
+<p class="chap-num">OP05·1</p>
+<h1>볼록집합과 볼록함수에서 국소 최소가 전역이 되는 이유</h1>
+<p class="lead">두 후보 사이의 중간 지점을 만들 수 있는지, 그 지점의 손실이 두 끝점의 평균보다 커지는지를 봅니다. 이 두 조건이 있으면 가까운 곳의 최소를 전체로 연결할 수 있습니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>두 점 사이의 선분으로 볼록집합을 판별한다.</li><li>함숫값과 두 끝점 사이의 직선 높이를 비교한다.</li><li>볼록 최적화에서 국소 최솟값이 전역인 이유를 설명한다.</li></ul></div>
+
+<h2>두 후보 사이의 이동이 가능한가</h2>
+<p>어떤 집합에서 두 점 x와 y를 고릅니다. 0≤t≤1에 대해 (1−t)x+ty로 그 사이를 잇습니다. 모든 두 점의 선분 전체가 집합 안에 있다면 <strong>볼록집합</strong>입니다. 구간 [0,2]는 0과 2의 중간 1도 포함하고 어느 두 다른 값 사이도 포함합니다. 두 점으로만 이뤄진 {0,2}는 중간 1을 포함하지 않아 볼록하지 않습니다. 두 값이 모두 허용돼도 그 값을 섞은 후보까지 허용된다는 조건은 별개입니다.</p>
+<div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
+<h2>사이에서 손실이 어디에 놓이는가</h2>
+<p>볼록집합 위의 <strong>볼록함수</strong>는 f((1−t)x+ty) ≤ (1−t)f(x)+tf(y)를 만족합니다. 왼쪽은 중간 입력을 먼저 구해 함수로 보낸 값, 오른쪽은 두 끝점의 함숫값을 같은 비율로 섞은 값입니다. f(x)=x², x=0, y=2, t=0.5에서 왼쪽은 f(1)=1, 오른쪽은 [f(0)+f(2)]/2=2입니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 231" role="img" aria-label="볼록 이차식에서 입력 0과 2의 중간 1의 함수값은 1이고 두 끝점 연결선의 높이는 2">
+<line class="f-line" x1="118" y1="178" x2="675" y2="178"/><line class="f-line" x1="170" y1="194" x2="170" y2="22"/><path class="f-ink" d="M119.50 176.19 L127.55 176.72 L135.60 177.16 L143.65 177.51 L151.69 177.76 L159.74 177.93 L167.79 178.00 L175.84 177.98 L183.89 177.86 L191.94 177.66 L199.98 177.36 L208.03 176.97 L216.08 176.49 L224.13 175.92 L232.18 175.25 L240.23 174.49 L248.27 173.65 L256.32 172.70 L264.37 171.67 L272.42 170.54 L280.47 169.33 L288.52 168.02 L296.57 166.62 L304.61 165.12 L312.66 163.54 L320.71 161.86 L328.76 160.09 L336.81 158.22 L344.86 156.27 L352.90 154.22 L360.95 152.09 L369.00 149.85 L377.05 147.53 L385.10 145.12 L393.15 142.61 L401.20 140.01 L409.24 137.32 L417.29 134.54 L425.34 131.66 L433.39 128.70 L441.44 125.64 L449.49 122.48 L457.53 119.24 L465.58 115.91 L473.63 112.48 L481.68 108.96 L489.73 105.35 L497.78 101.64 L505.82 97.85 L513.87 93.96 L521.92 89.98 L529.97 85.91 L538.02 81.74 L546.07 77.49 L554.12 73.14 L562.16 68.70 L570.21 64.16 L578.26 59.54 L586.31 54.82 L594.36 50.01 L602.41 45.11 L610.45 40.12 L618.50 35.04 L626.55 29.86 L634.60 24.59"/><line class="f-dash" x1="170" y1="178" x2="574" y2="62"/><line class="f-line" x1="372" y1="178" x2="372" y2="120"/><circle cx="170" cy="178" r="5" class="f-fill"/><circle cx="574" cy="62" r="5" class="f-fill"/><circle cx="372" cy="149" r="5" class="f-fill"/><circle cx="372" cy="120" r="5" class="f-fill"/><text class="f-s" x="589" y="92" text-anchor="middle">함수 f(x)=x²</text><text class="f-s" x="483" y="64" text-anchor="middle">끝점을 잇는 선</text><text class="f-s" x="319" y="154" text-anchor="middle">함수값 1</text><text class="f-s" x="322" y="116" text-anchor="middle">선의 높이 2</text><text class="f-s" x="170" y="213" text-anchor="middle">0</text><text class="f-s" x="372" y="213" text-anchor="middle">1</text><text class="f-s" x="574" y="213" text-anchor="middle">2</text><text class="f-s" x="654" y="214" text-anchor="middle">입력 x</text>
+</svg><figcaption>이 수직 비교가 어느 두 끝점과 어느 중간 비율에서도 성립하는 것이 볼록성입니다.</figcaption></figure>
+<div class="check" data-q="q3"></div><div class="check" data-q="q4"></div>
+<p>한 번의 중간점 검산은 그림의 예입니다. x²의 전체 조건은 오른쪽에서 왼쪽을 빼서 t(1−t)(x−y)²가 나오는지 확인하면 됩니다. 세 항이 모두 음이 아니므로 차이는 0 이상입니다. 반대로 −x²의 같은 두 점에서 중간값 −1은 끝점 평균 −2보다 높으므로 이 함수는 해당 구간에서 볼록하지 않습니다.</p>
+<pre data-example="python"><code>from fractions import Fraction as F
+
+x, y, t = F(0), F(2), F(1, 2)
+z = (1-t)*x + t*y
+lhs = z*z
+rhs = (1-t)*x*x + t*y*y
+print(&quot;중간 입력과 함숫값:&quot;, z, lhs)
+print(&quot;끝점 함수값의 평균:&quot;, rhs)
+print(&quot;두 높이의 차이:&quot;, rhs-lhs)
+assert rhs-lhs == t*(1-t)*(x-y)**2</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>중간 입력과 함숫값: 1 1
+끝점 함수값의 평균: 2
+두 높이의 차이: 1</code></pre>
+<h2>가까운 곳에서 더 좋은 값이 없다면</h2>
+<p>볼록집합 안의 x가 국소 최소라고 합시다. 만약 더 좋은 y가 있다면 둘 사이의 작은 비율 t를 고를 수 있습니다. 새 점은 x에 아주 가깝고 집합 안에 있습니다. 볼록함수 부등식의 오른쪽 (1−t)f(x)+tf(y)는 f(x)보다 작습니다. 그러면 실제 새 점의 함수값도 f(x)보다 작아 국소 최소와 충돌합니다. 따라서 이 조건에서 국소 최소는 전역 최소입니다.</p>
+<p>서로 다른 두 점에 대해 0&lt;t&lt;1에서 부등식이 항상 엄격하면 <em>엄격 볼록</em>이라고 합니다. 그런 함수가 볼록집합에서 최솟값을 실제로 가진다면 최소점은 하나뿐입니다. 두 최소점이 있다면 가운데에서 더 작아져야 하기 때문입니다.</p>
+<div class="check" data-q="q5"></div><div class="check" data-q="q6"></div>
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>허용 영역은 선분을 포함하고 손실은 선의 높이 아래에 있을 때, 멀리의 더 좋은 점을 가까운 점과 연결해 확인할 수 있습니다.</p></div>
+
+<h2>참고 자료</h2>
+<ul><li><a href="https://web.stanford.edu/~boyd/cvxbook/">Boyd·Vandenberghe · Convex Optimization</a></li><li><a href="op03-1.html">공부 교재 · 목적함수</a></li></ul>
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

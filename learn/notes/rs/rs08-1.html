@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>경과시간·CPU 시간·최고 메모리 측정하기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="RS08-1">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">연구 기초 · RS08 자원과 비용</p>
+<p class="chap-num">RS08·1</p>
+<h1>경과시간·CPU 시간·최고 메모리 측정하기</h1>
+<p class="lead">같은 계산이라도 데이터를 기다리는 시간과 CPU가 사용된 시간은 다를 수 있습니다. 어느 범위를 재었는지 밝히고 결과 검산과 성능 숫자를 구분합니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul>
+<li>경과시간, CPU 시간, GPU 완료 시각을 구분한다.</li>
+<li>최고 메모리의 측정 범위와 도구를 설명한다.</li>
+<li>입력·준비 실행·반복·장치가 같은지 확인한다.</li>
+</ul></div>
+
+<h2>어떤 작업의 시작부터 끝까지?</h2>
+<p>파일 읽기, 변환, 계산, 출력 저장에서 어디까지 시간이 필요한지 정합니다. 사용자 입장에서 전체 결과가 준비되는 시간이면 모두 포함합니다. 한 알고리즘의 연산만 보고 싶으면 같은 준비가 끝난 상태에서 시작을 정합니다.</p><figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 203" role="img" aria-label="입력과 준비 조건을 맞춘 다음 지정 범위를 실행하고 완료 후 시간을 읽는다.">
+<text class="f-cap" x="380" y="31" text-anchor="middle">측정의 첫 줄과 마지막 줄을 정하기</text>
+<rect class="f-box" x="50" y="62" width="182" height="51"/>
+<text class="f-t" x="141" y="92.5" text-anchor="middle">시작 전</text>
+<text class="f-s" x="141" y="141" text-anchor="middle">입력·장치·준비 실행</text>
+<rect class="f-soft" x="289" y="62" width="182" height="51"/>
+<text class="f-t" x="380" y="92.5" text-anchor="middle">실행</text>
+<text class="f-s" x="380" y="141" text-anchor="middle">전처리·계산·저장</text>
+<rect class="f-box" x="528" y="62" width="182" height="51"/>
+<text class="f-t" x="619" y="92.5" text-anchor="middle">시간 기록</text>
+<text class="f-s" x="619" y="141" text-anchor="middle">완료를 확인하고 읽기</text>
+<line class="f-line" x1="236" y1="89" x2="285" y2="89" marker-end="url(#f-arrow)"/>
+<line class="f-line" x1="475" y1="89" x2="524" y2="89" marker-end="url(#f-arrow)"/>
+</svg>
+<figcaption>GPU 작업이 비동기라면 반환 시각과 장치의 실제 종료 시각을 구분합니다.</figcaption>
+</figure>
+<p><code>perf_counter()</code>로 두 시각의 차이를 재면 경과시간을 얻습니다. <code>process_time()</code>의 차이는 현재 프로세스에서 사용한 사용자와 시스템 CPU 시간을 합친 값입니다. 잠들거나 응답을 기다리는 경과시간은 그 CPU 시간에 들어가지 않습니다. 여러 코어를 사용하는 경우 전체 CPU 시간과 경과시간을 같은 값으로 읽지 않습니다.</p><div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
+
+<h2>장치의 계산과 데이터 이동, 메모리 최고점</h2>
+<p>별도 메모리를 가진 GPU에 입력을 옮기고 결과를 가져온다면, 연산만의 시간과 이동까지 포함한 시간을 나눕니다. GPU 실행 요청이 빨리 반환되더라도 장치가 계산을 마칠 때까지 기다리는 동기화가 필요한 측정도 있습니다. 어떤 런타임·장치에서 어떤 범위를 쟀는지 기록합니다.</p><figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 246" role="img" aria-label="경과시간과 CPU 시간, Python 메모리 추적량, 장치 메모리는 다른 측정량이다.">
+<text class="f-cap" x="380" y="29" text-anchor="middle">시간과 메모리가 가리키는 양</text>
+<rect class="f-soft" x="48" y="43" width="216" height="37"/>
+<text class="f-s" x="156" y="66.5" text-anchor="middle">측정</text>
+<rect class="f-soft" x="264" y="43" width="448" height="37"/>
+<text class="f-s" x="488" y="66.5" text-anchor="middle">포함 범위의 예</text>
+<rect class="f-box" x="48" y="80" width="216" height="37"/>
+<text class="f-t" x="156" y="103.5" text-anchor="middle">경과시간</text>
+<rect class="f-box" x="264" y="80" width="448" height="37"/>
+<text class="f-t" x="488" y="103.5" text-anchor="middle">대기까지 포함하는 시작과 끝의 차이</text>
+<rect class="f-box" x="48" y="117" width="216" height="37"/>
+<text class="f-t" x="156" y="140.5" text-anchor="middle">프로세스 CPU 시간</text>
+<rect class="f-box" x="264" y="117" width="448" height="37"/>
+<text class="f-t" x="488" y="140.5" text-anchor="middle">프로세스가 CPU에서 일한 시간</text>
+<rect class="f-box" x="48" y="154" width="216" height="37"/>
+<text class="f-t" x="156" y="177.5" text-anchor="middle">Python 할당 최고량</text>
+<rect class="f-box" x="264" y="154" width="448" height="37"/>
+<text class="f-t" x="488" y="177.5" text-anchor="middle">추적을 시작한 뒤 포착한 최고 사용량</text>
+<rect class="f-box" x="48" y="191" width="216" height="37"/>
+<text class="f-t" x="156" y="214.5" text-anchor="middle">장치 메모리</text>
+<rect class="f-box" x="264" y="191" width="448" height="37"/>
+<text class="f-t" x="488" y="214.5" text-anchor="middle">GPU가 배정하거나 실제 사용한 공간</text>
+</svg>
+<figcaption>보고서에는 측정 방법과 범위가 함께 필요합니다.</figcaption>
+</figure>
+<p><code>tracemalloc</code>은 Python이 추적하는 할당을 확인합니다. 프로세스 전체의 거주 메모리나 GPU 메모리 전체와 같은 수치가 아닙니다. 최고량은 추적을 시작한 시각과 입력 크기, 어떤 구간에서 최대를 기록했는지와 함께 봅니다.</p><div class="check" data-q="q3"></div><div class="check" data-q="q4"></div>
+
+<h2>값과 시간 측정을 섞지 않고 실행</h2>
+<p>예제는 저장소의 최상위 폴더에서 실행합니다. 실습에 사용하는 <a href="../../labs/mauna-loa/annual_co2.csv">30개 연도의 CSV</a>와 <a href="../../labs/mauna-loa/SOURCE.md">출처와 변환 기록</a>을 함께 확인할 수 있습니다.</p><p class="small">실행 예제</p>
+<pre data-example="python"><code>import csv
+from decimal import Decimal
+from pathlib import Path
+
+source = Path(&quot;learn/labs/mauna-loa/annual_co2.csv&quot;)
+with source.open(encoding=&quot;utf-8&quot;, newline=&quot;&quot;) as stream:
+    records = list(csv.DictReader(stream))
+series = {int(row[&quot;year&quot;]): Decimal(row[&quot;mean_ppm&quot;]) for row in records}
+assert len(records) == len(series) == 30 and sorted(series) == list(range(1990, 2020))
+from statistics import median
+from time import perf_counter, process_time
+import tracemalloc
+
+wall_start = perf_counter()
+cpu_start = process_time()
+actual_change = series[2019] - series[1990]
+cpu_seconds = process_time() - cpu_start
+wall_seconds = perf_counter() - wall_start
+print(&quot;result ppm:&quot;, actual_change)
+print(&quot;measured nonnegative wall / CPU:&quot;, wall_seconds &gt;= 0, cpu_seconds &gt;= 0)
+
+tracemalloc.start()
+buffer = bytearray(1024)
+_, peak = tracemalloc.get_traced_memory()
+print(&quot;tracked peak includes payload:&quot;, peak &gt;= len(buffer))
+tracemalloc.stop()
+
+example_ms = [20, 22, 51]
+print(&quot;illustrative median ms:&quot;, median(example_ms))</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>result ppm: 57.20
+measured nonnegative wall / CPU: True True
+tracked peak includes payload: True
+illustrative median ms: 22</code></pre>
+<p>이 실측 구간은 파일을 읽은 뒤 차이 한 번을 구하는 범위입니다. 실제 측정 숫자는 환경에 따라 다르므로 출력은 결과값과 측정 조건의 간단한 검사만 고정합니다. 마지막 세 시간값은 중앙값 계산을 보여 주는 모의 로그입니다.</p><div class="check" data-q="q5"></div><div class="check" data-q="q6"></div>
+
+<h2>실측값을 비교할 수 있게 남기기</h2>
+<p>같은 입력, 장치, 동시 작업, 캐시와 준비 실행 조건에서 여러 번 측정할 수 있습니다. 첫 실행이 유독 느리면 초기화나 데이터 로드를 별도로 살핍니다. 중앙값을 보고해도 최대 지연과 실패를 함께 남깁니다. 프로파일러를 쓰면 느린 구간을 찾을 수 있지만 관찰 도구의 비용은 성능 기록에서 구분합니다.</p><div class="check" data-q="q7"></div><div class="check" data-q="q8"></div>
+
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table><thead><tr><th scope="col">개념</th><th scope="col">확인할 것</th></tr></thead><tbody>
+<tr><th scope="row"><b class="key">경과시간</b></th><td>실제 완료까지 걸린 시간을 확인한다.</td></tr>
+<tr><th scope="row"><b class="key">CPU·GPU</b></th><td>연산·대기·이동을 구분하고 종료를 확인한다.</td></tr>
+<tr><th scope="row"><b class="key">메모리</b></th><td>측정 도구가 추적하는 범위와 최고량을 함께 적는다.</td></tr>
+</tbody></table></div><div class="box sum"><p class="box-k">다음 장으로</p><p><a href="rs08-2.html">다음 장</a>에서는 여러 설정에 쓸 예산을 계산합니다.</p></div>
+
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://docs.python.org/3/library/time.html">Python · perf_counter와 process_time</a></li>
+<li><a href="https://docs.python.org/3/library/tracemalloc.html">Python · tracemalloc의 추적 범위와 최고량</a></li>
+<li><a href="https://docs.nvidia.com/cuda/cuda-c-best-practices-guide/index.html#timing">NVIDIA · CUDA 타이밍과 데이터 이동</a></li>
+</ul>
+<h2>확인 문제</h2>
+<p>직접 계산하거나 설명을 먼저 적고 답을 확인해 보세요.</p>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

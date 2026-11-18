@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>논문을 여러 번 읽고 주장과 근거 연결하기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="RS03-1">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">연구 기초 · RS03 논문 읽기</p>
+<p class="chap-num">RS03·1</p>
+<h1>논문을 여러 번 읽고 주장과 근거 연결하기</h1>
+<p class="lead">Henderson 외의 실제 강화학습 논문을 엽니다. 처음에는 무엇을 묻는지, 다음에는 어떤 비교를 했는지, 마지막에는 결론이 어디까지 성립하는지 확인합니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul>
+<li>연구 문제, 기여, 방법과 근거를 구분한다.</li>
+<li>원문의 절·표·그림을 연결해 두 번째 읽기를 한다.</li>
+<li>판단에 필요한 선수 개념을 역으로 찾는다.</li>
+</ul></div>
+
+<h2>첫 읽기에서 물음과 기여 찾기</h2>
+<p>연구 <strong>문제</strong>는 여러 강화학습 실험 결과에서 보이는 차이가 방법의 이득인지, 설정 때문에 생긴 차이인지 판단하기 어렵다는 점입니다. Henderson 외가 제시한 <strong>기여</strong>는 시드·환경·구현과 설정을 달리한 여러 실험을 살펴보고, 비교와 보고에서 필요한 조건을 제안한 것입니다. 단일 새 모델을 만들어 모든 과제를 해결했다는 유형의 기여와는 다릅니다.</p><figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 203" role="img" aria-label="첫 번째는 질문과 주장, 두 번째는 비교와 실험 조건, 세 번째는 근거와 한계를 찾는다.">
+<text class="f-cap" x="380" y="31" text-anchor="middle">목적을 바꿔 다시 읽기</text>
+<rect class="f-box" x="50" y="62" width="182" height="51"/>
+<text class="f-t" x="141" y="92.5" text-anchor="middle">첫 읽기</text>
+<text class="f-s" x="141" y="141" text-anchor="middle">질문과 주요 주장</text>
+<rect class="f-soft" x="289" y="62" width="182" height="51"/>
+<text class="f-t" x="380" y="92.5" text-anchor="middle">두 번째</text>
+<text class="f-s" x="380" y="141" text-anchor="middle">실험 축과 비교 대상</text>
+<rect class="f-box" x="528" y="62" width="182" height="51"/>
+<text class="f-t" x="619" y="92.5" text-anchor="middle">세 번째</text>
+<text class="f-s" x="619" y="141" text-anchor="middle">설정과 근거·제한</text>
+<line class="f-line" x1="236" y1="89" x2="285" y2="89" marker-end="url(#f-arrow)"/>
+<line class="f-line" x1="475" y1="89" x2="524" y2="89" marker-end="url(#f-arrow)"/>
+</svg>
+<figcaption>모르는 기호를 처음부터 모두 풀이하지 않고, 주장 평가에 필요한 항목을 다음 읽기에 확인합니다.</figcaption>
+</figure>
+<p>초록에서 주장을 잡고 서론의 이전 연구 맥락을 봅니다. 첫 읽기에서 궁금한 점은 질문으로 남깁니다. 예로 “시드를 다르게 한다는 말은 학습 실행을 새로 한다는 뜻인가?”를 방법에 대조할 수 있습니다.</p><div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
+
+<h2>방법에서 바뀐 조건과 반복 단위 확인</h2>
+<p>Methodology에서는 Hopper-v1과 HalfCheetah-v1이라는 두 환경의 실험을 설명합니다. 많은 비교는 OpenAI Baselines 구현을 쓰지만, 구현을 비교하는 조건도 별도로 있습니다. 평가에 서로 다른 다섯 시드의 학습 반복을 사용하고, 여러 설정의 비교에서 같은 시드 묶음을 사용했다고 설명합니다.</p><figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 246" role="img" aria-label="초록과 서론, 방법, 결과, 토의에서 각각 확인할 질문.">
+<text class="f-cap" x="380" y="29" text-anchor="middle">Henderson 외 논문의 읽기 지도</text>
+<rect class="f-soft" x="53" y="43" width="226" height="37"/>
+<text class="f-s" x="166" y="66.5" text-anchor="middle">찾은 위치</text>
+<rect class="f-soft" x="279" y="43" width="428" height="37"/>
+<text class="f-s" x="493" y="66.5" text-anchor="middle">이번 읽기에서 적을 것</text>
+<rect class="f-box" x="53" y="80" width="226" height="37"/>
+<text class="f-t" x="166" y="103.5" text-anchor="middle">초록·서론</text>
+<rect class="f-box" x="279" y="80" width="428" height="37"/>
+<text class="f-t" x="493" y="103.5" text-anchor="middle">기존 강화학습 실험을 비교하기 어려운 이유</text>
+<rect class="f-box" x="53" y="117" width="226" height="37"/>
+<text class="f-t" x="166" y="140.5" text-anchor="middle">Methodology</text>
+<rect class="f-box" x="279" y="117" width="428" height="37"/>
+<text class="f-t" x="493" y="140.5" text-anchor="middle">환경·구현·시드·요약 단위</text>
+<rect class="f-box" x="53" y="154" width="226" height="37"/>
+<text class="f-t" x="166" y="177.5" text-anchor="middle">Table 1·Figure 2</text>
+<rect class="f-box" x="279" y="154" width="428" height="37"/>
+<text class="f-t" x="493" y="177.5" text-anchor="middle">정책망 설정을 바꾼 실제 비교</text>
+<rect class="f-box" x="53" y="191" width="226" height="37"/>
+<text class="f-t" x="166" y="214.5" text-anchor="middle">Discussion</text>
+<rect class="f-box" x="279" y="191" width="428" height="37"/>
+<text class="f-t" x="493" y="214.5" text-anchor="middle">근거의 범위와 권고 사항</text>
+</svg>
+<figcaption>논문의 새 기여를 주장한 문장과 그 주장을 뒷받침하는 실험을 연결합니다.</figcaption>
+</figure>
+<p>Table 1의 한 숫자는 200만 학습 타임스텝 이후 마지막 100개 궤적 수익을 평가한 다섯 실행으로부터 요약됩니다. 숫자가 어디에서 계산되었는지 적으면 궤적과 학습 반복을 섞기 어렵습니다. 표를 확인한 뒤 별도로 부록과 실험 코드를 봅니다.</p><div class="check" data-q="q3"></div><div class="check" data-q="q4"></div>
+
+<h2>증거를 읽는 데 필요한 개념을 거슬러 가기</h2>
+<p>표의 결과가 “평균 ± 표준오차”라고 되어 있고 그 단어가 생소하다면, 먼저 <a href="../../unit.html?u=ST03">표준오차</a>를 확인합니다. 수익의 대상이 궁금하면 <a href="../../unit.html?u=RL03">강화학습의 수익</a> 정의와 원문의 평가 절차를 읽습니다. 이해에 필요한 선행 개념을 확인하면 같은 표에 돌아와 질문을 계속할 수 있습니다.</p>
+<p class="small">실행 예제</p>
+<pre data-example="python"><code>training_steps = 2_000_000
+trials = 5
+evaluation_trajectories_per_trial = 100
+print(&quot;training steps per trial:&quot;, training_steps)
+print(&quot;trajectory entries:&quot;, trials * evaluation_trajectories_per_trial)
+print(&quot;trial-level SE count:&quot;, trials)</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>training steps per trial: 2000000
+trajectory entries: 500
+trial-level SE count: 5</code></pre>
+<p>500은 표 설명에 따라 한 조건에서 집계에 들어갈 궤적 수를 센 값입니다. 각각을 별도의 독립 학습 반복으로 볼 수 없습니다. 이 코드의 출력은 원문의 단위 검산이며 실험 실행 결과를 다시 추정하지 않습니다.</p><div class="check" data-q="q5"></div><div class="check" data-q="q6"></div><div class="check" data-q="q7"></div><div class="check" data-q="q8"></div>
+
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table><thead><tr><th scope="col">개념</th><th scope="col">확인할 것</th></tr></thead><tbody>
+<tr><th scope="row"><b class="key">문제·기여</b></th><td>어떤 부족함을 해결하고 무엇을 새로 보였는지 찾는다.</td></tr>
+<tr><th scope="row"><b class="key">방법</b></th><td>설정, 예산, 시드와 평가 단위를 기록한다.</td></tr>
+<tr><th scope="row"><b class="key">선수 개념</b></th><td>근거를 읽는 데 필요한 개념을 확인하고 표로 돌아온다.</td></tr>
+</tbody></table></div><div class="box sum"><p class="box-k">다음 장으로</p><p><a href="rs03-2.html">다음 장</a>에서 실제 Table 1의 두 행을 비교합니다.</p></div>
+
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://arxiv.org/html/1709.06560v3">Henderson 외 · Deep Reinforcement Learning that Matters, arXiv v3 원문</a></li>
+<li><a href="https://arxiv.org/abs/1709.06560v3">arXiv · 1709.06560v3 제목·저자·수정 이력</a></li>
+</ul>
+<h2>확인 문제</h2>
+<p>직접 계산하거나 설명을 먼저 적고 답을 확인해 보세요.</p>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

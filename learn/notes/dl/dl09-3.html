@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GAN에서 생성 분포와 판별기의 목표 분리하기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="DL09-3">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">딥러닝</p>
+<p class="chap-num">DL09·3</p>
+<h1>GAN에서 생성 분포와 판별기의 목표 분리하기</h1>
+<p class="lead">생성 모형이 두 결과 중 하나를 만들고, 판별기는 그 결과의 출처를 맞힙니다. 두 분포를 알고 있는 아주 작은 예에서 판별기와 생성기의 역할을 계산합니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>생성기와 판별기가 최적화하는 방향을 구분한다.</li><li>두 결과에서 최적 판별기의 값을 계산한다.</li><li>일부 결과만 반복하는 모드 붕괴를 해석한다.</li></ul></div>
+
+<h2>같은 두 결과가 서로 다른 비율로 나온다</h2>
+<p>데이터와 생성기가 A 또는 B를 냅니다. 관측 자료에서 A 비율은 0.75, B 비율은 0.25입니다. 현재 생성기에서는 반대로 A 0.25, B 0.75입니다. 생성기는 난수에서 예를 만들고 판별기 D는 입력이 자료에서 왔을지 점수로 냅니다. D(A)=0.75라면 A의 점수가 자료 쪽으로 높다는 뜻입니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 225" role="img" aria-label="자료와 생성기의 A 확률은 0.75와 0.25, B 확률은 0.25와 0.75">
+<line class="f-line" x1="124" y1="157" x2="667" y2="157"/><line class="f-line" x1="126" y1="157" x2="126" y2="24"/><line class="f-dash" x1="128" y1="157" x2="650" y2="157"/><text class="f-s" x="112" y="161" text-anchor="end">0</text><line class="f-dash" x1="128" y1="127" x2="650" y2="127"/><text class="f-s" x="112" y="131" text-anchor="end">0.25</text><line class="f-dash" x1="128" y1="97" x2="650" y2="97"/><text class="f-s" x="112" y="101" text-anchor="end">0.5</text><line class="f-dash" x1="128" y1="67" x2="650" y2="67"/><text class="f-s" x="112" y="71" text-anchor="end">0.75</text><line class="f-dash" x1="128" y1="37" x2="650" y2="37"/><text class="f-s" x="112" y="41" text-anchor="end">1</text><rect class="f-soft" x="223" y="67" width="50" height="90" rx="3"/><rect class="f-box" x="282" y="127" width="50" height="30" rx="3"/><text class="f-t" x="277" y="181" text-anchor="middle">A</text><rect class="f-soft" x="471" y="127" width="50" height="30" rx="3"/><rect class="f-box" x="530" y="67" width="50" height="90" rx="3"/><text class="f-t" x="525" y="181" text-anchor="middle">B</text><text class="f-s" x="129" y="16" text-anchor="middle">확률</text><text class="f-s" x="368" y="207" text-anchor="middle">왼쪽 자료 · 오른쪽 생성기</text>
+</svg><figcaption>분포가 다르므로 한 결과 A와 B를 보고도 어느 쪽에서 더 자주 나오는지 비교할 수 있습니다.</figcaption></figure>
+<div class="check" data-q="q1"></div>
+<h2>두 분포를 고정하고 판별기만 최적화한다</h2>
+<p>원래 GAN의 목적을 간단히 쓰면 V=자료에서의 평균 ln D + 생성 예에서의 평균 ln(1−D)입니다. 판별기는 V를 크게 하고 생성기는 원래 최소·최대 게임에서 V를 작게 합니다. 이 장에서는 먼저 생성기를 고정합니다.</p>
+<p>A에 대해 D(A)=d라고 놓으면 V의 A 항은 0.75 ln d+0.25 ln(1−d)입니다. 미분해 0을 놓으면 0.75/d=0.25/(1−d)여서 d=0.75입니다. 일반적으로 두 확률의 합이 양수인 결과 x에서 최적 값은 D*(x)=p자료(x)/(p자료(x)+p생성(x))입니다. B에서는 0.25입니다.</p>
+<div class="check" data-q="q2"></div><div class="check" data-q="q3"></div>
+<div class="table-wrap"><table><thead><tr><th scope="col">결과</th><th scope="col">자료의 확률</th><th scope="col">생성기의 확률</th><th scope="col">최적 D</th></tr></thead><tbody><tr><td>A</td><td>0.75</td><td>0.25</td><td>0.75</td></tr><tr><td>B</td><td>0.25</td><td>0.75</td><td>0.25</td></tr></tbody></table></div>
+<pre data-example="python"><code>from math import log
+
+real = (0.75, 0.25)
+fake = (0.25, 0.75)
+optimal = [p/(p+q) for p, q in zip(real, fake)]
+
+def objective(scores):
+    return sum(p*log(d) + q*log(1-d)
+               for p, q, d in zip(real, fake, scores))
+
+print(&quot;판별기:&quot;, optimal)
+print(&quot;D=0.5일 때:&quot;, f&quot;{objective([0.5, 0.5]):.6f}&quot;)
+print(&quot;최적 판별기에서:&quot;, f&quot;{objective(optimal):.6f}&quot;)</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>판별기: [0.75, 0.25]
+D=0.5일 때: -1.386294
+최적 판별기에서: -1.124670</code></pre>
+<div class="check" data-q="q4"></div><div class="check" data-q="q5"></div>
+<h2>좋은 판별기가 나왔다고 생성이 잘된 것은 아니다</h2>
+<p>상대적으로 뚜렷한 차이가 있으면 판별 점수가 자료와 생성 예를 더 잘 구분합니다. 반대로 두 분포가 같으면 위 계산의 D*는 등장하는 모든 결과에서 0.5입니다. 실제 학습에서는 생성기 업데이트에 다른 형태의 손실을 택하기도 합니다. 원 논문은 초기에 기울기가 약해지는 것을 피하기 위한 손실 변형도 제안합니다.</p>
+<p>생성기가 A만 계속 내면 A 자료와 비슷하게 보이는 예를 만들 수도 있지만, B가 전혀 없는 분포는 원래 자료와 다릅니다. 여러 종류가 있어야 할 자료에서 소수 결과만 반복하는 현상을 모드 붕괴라 합니다. 그럴듯한 사례 하나에 더해 전체 생성 예의 다양성도 확인합니다.</p>
+<div class="check" data-q="q6"></div>
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>판별기는 출처를 구분하고 생성기는 그 차이를 줄이는 방향으로 업데이트합니다. 분포 전체가 닮는지를 따로 확인합니다.</p></div>
+
+<h2>참고 자료</h2>
+<ul><li><a href="https://arxiv.org/abs/1406.2661">Goodfellow 외 · Generative Adversarial Networks</a></li><li><a href="../op/op07-2.html">공부 교재 · 로그 손실과 교차엔트로피</a></li></ul>
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

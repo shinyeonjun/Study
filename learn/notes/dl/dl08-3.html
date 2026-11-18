@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PyTorch 블록에서 차원과 미래 토큰 차단을 확인하기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="DL08-3">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">딥러닝</p>
+<p class="chap-num">DL08·3</p>
+<h1>PyTorch 블록에서 차원과 미래 토큰 차단을 확인하기</h1>
+<p class="lead">앞 장의 마스크를 작은 Transformer 블록에서 직접 씁니다. 마지막 토큰만 바꿔 앞 위치의 출력이 그대로인지 검사합니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>머리 수와 토큰 표현 차원을 연결한다.</li><li>attention·잔차·층 정규화·토큰별 변환의 차원을 확인한다.</li><li>미래 토큰을 바꿔 인과 마스크를 검증한다.</li></ul></div>
+
+<h2>세 위치가 각각 네 개의 특징을 가진다</h2>
+<p>배치 하나에서 세 토큰을 처리하고 표현 차원은 4라고 둡니다. 입력 배열은 (배치, 위치, 특징)=(1,3,4)입니다. attention 머리를 두 개로 두면 각 머리의 질의·키·값은 특징 차원 2로 계산됩니다. 이를 다시 합쳐 길이 4의 표현을 만들 수 있으므로 입력과 더하는 잔차의 형태가 맞습니다.</p>
+<div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 160" role="img" aria-label="작은 Transformer에서 배치·토큰·특징 모양과 마스크 확인">
+<rect class="f-box" x="42" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="135" y="61" text-anchor="middle">배치 입력</text><text class="f-s" x="135" y="89" text-anchor="middle">모양 (1, 3, 4)</text><text class="f-s" x="135" y="110" text-anchor="middle">위치별 특징 벡터</text><line class="f-line" x1="235" y1="84" x2="278" y2="84" marker-end="url(#f-arrow)"/><rect class="f-soft" x="287" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="380" y="61" text-anchor="middle">자기 attention</text><text class="f-s" x="380" y="89" text-anchor="middle">머리 2개, 머리당 2</text><text class="f-s" x="380" y="110" text-anchor="middle">미래 위치를 차단</text><line class="f-line" x1="480" y1="84" x2="523" y2="84" marker-end="url(#f-arrow)"/><rect class="f-box" x="532" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="625" y="61" text-anchor="middle">출력</text><text class="f-s" x="625" y="89" text-anchor="middle">잔차와 Token별 변환</text><text class="f-s" x="625" y="110" text-anchor="middle">모양 (1, 3, 4)</text>
+</svg><figcaption>아래 모델은 블록 동작을 확인합니다. 토큰 임베딩, 출력 어휘층과 실제 훈련은 포함하지 않습니다.</figcaption></figure>
+<h2>같은 마스크라도 라이브러리의 참·거짓 의미를 확인한다</h2>
+<p>이 예의 <code>torch.nn.MultiheadAttention</code>에서 불리언 마스크가 True인 쿼리·키 위치는 attend하지 않도록 차단합니다. <code>triu(diagonal=1)</code>로 대각선 위만 True를 만듭니다. 각 머리의 첫 위치는 자기 첫 위치만 볼 수 있으므로, 평가 모드에서는 그 행의 가중치가 [1,0,0]이어야 합니다.</p>
+<p>모형 출력과 가중치 배열의 차원을 확인합니다. 배치 모양은 유지되고, 머리별 가중치 모양은 (배치, 머리, 쿼리, 키)=(1,2,3,3)입니다. 각 위치의 피드포워드 모형과 층 정규화는 다른 토큰과 섞지 않습니다.</p>
+<div class="check" data-q="q3"></div><div class="check" data-q="q4"></div>
+<pre data-example="python"><code>import torch
+from torch import nn
+
+torch.manual_seed(17)
+
+class TinyBlock(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.attention = nn.MultiheadAttention(4, 2, batch_first=True)
+        self.norm1 = nn.LayerNorm(4)
+        self.feedforward = nn.Sequential(nn.Linear(4, 8), nn.ReLU(), nn.Linear(8, 4))
+        self.norm2 = nn.LayerNorm(4)
+
+    def forward(self, input_values, mask):
+        attention, weights = self.attention(
+            input_values, input_values, input_values, attn_mask=mask,
+            average_attn_weights=False,
+        )
+        features = self.norm1(input_values + attention)
+        return self.norm2(features + self.feedforward(features)), weights
+
+model = TinyBlock().eval()
+values = torch.arange(12, dtype=torch.float32).reshape(1, 3, 4)
+modified = values.clone()
+modified[0, 2] += torch.tensor([4., 0., -3., 2.])
+blocked = torch.ones(3, 3, dtype=torch.bool).triu(diagonal=1)
+with torch.no_grad():
+    before, weights = model(values, blocked)
+    after, _ = model(modified, blocked)
+    same = torch.allclose(before[:, :2], after[:, :2], atol=1e-6)
+    assert same
+print(&quot;출력:&quot;, tuple(before.shape))
+print(&quot;머리별 가중치:&quot;, tuple(weights.shape))
+print(&quot;첫 위치 가중치:&quot;, weights[0, 0, 0].tolist())
+print(&quot;앞 두 위치 동일:&quot;, same)</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>출력: (1, 3, 4)
+머리별 가중치: (1, 2, 3, 3)
+첫 위치 가중치: [1.0, 0.0, 0.0]
+앞 두 위치 동일: True</code></pre>
+<div class="check" data-q="q5"></div>
+<h2>그림이 맞아도 실제 축을 검사한다</h2>
+<p>마지막 벡터만 바꾼 뒤 1, 2번 위치의 출력에 차이가 없다면 이 입력에서 미래 값이 앞쪽에 전달되지 않았음을 확인한 것입니다. 또 패딩이 있는 실제 데이터에서는 가짜로 채운 토큰 위치를 별도로 가려야 합니다. 각 라이브러리 함수에서 마스크 형태와 True의 의미를 확인하고, 아주 작은 모양의 입력으로 먼저 테스트합니다.</p>
+<div class="check" data-q="q6"></div>
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>블록에서 배치·위치·특징 축을 읽고, 미래 입력을 바꾸는 작은 시험으로 마스크가 맞게 적용되는지 봅니다.</p></div>
+
+<h2>참고 자료</h2>
+<ul><li><a href="https://arxiv.org/abs/1706.03762">Vaswani 외 · Attention Is All You Need</a></li><li><a href="https://docs.pytorch.org/docs/stable/generated/torch.nn.MultiheadAttention.html">PyTorch · MultiheadAttention 입력과 마스크</a></li><li><a href="dl08-2.html">공부 교재 · 미래 위치가 차단된 예측</a></li></ul>
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

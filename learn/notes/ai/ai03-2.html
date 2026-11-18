@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>참과 거짓으로 규칙을 적는 명제와 술어 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e8c'/%3E%3Cpath d='M8 22V10m8 12V14m8 8V6' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="AI03-2">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+
+<header class="chapter">
+<p class="chap-sub">인공지능 · AI03 제약·논리·계획</p>
+<p class="chap-num">AI03·2</p>
+<h1>참과 거짓으로 규칙을 적는 명제와 술어</h1>
+<p class="lead">‘목록에 넣었으면 태그가 있다’라는 규칙을 확인한다. 문장 하나의 참·거짓에서 출발해 여러 대상에 같은 규칙을 적용하고 반례를 찾는다.</p>
+</header>
+
+<div class="goal">
+<h2>이 장을 읽고 나면</h2>
+<ul>
+<li>함의의 참·거짓을 구하고 전건 긍정과 역을 구분한다.</li>
+<li>술어, 대상의 범위, 양화사를 사용해 규칙을 읽는다.</li>
+<li>모든 대상에 대한 규칙을 반례 하나로 반박한다.</li>
+</ul>
+</div>
+
+<h2>명제는 주어진 상황에서 참 또는 거짓이다</h2>
+<p>문서 A의 ‘A가 목록에 있다’를 <var>P</var>, ‘A에 태그가 있다’를 <var>Q</var>라 쓰자. 이 판단이 각각 참 또는 거짓 중 하나로 정해진 상황을 다룬다. P와 Q를 연결해 P∧Q(둘 다 참), P∨Q(하나 이상 참), ¬P(P의 부정), P→Q(P이면 Q)를 만들 수 있다. 명제 논리에서는 문장 전체를 하나의 기호로 다룬다.</p>
+<p><b class="key">함의</b> P→Q는 어떤 행이 규칙을 어기는지 표시한다. P가 참인데 Q가 거짓일 때만 거짓이다. 목록에 없는 문서에는 P가 거짓이므로, 태그의 유무와 관계없이 이 규칙에 위배되지 않는다. 함의는 원인이나 발견 순서의 설명이 필요할 때 별도 정보를 함께 쓴다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 168" role="img" aria-label="고전 논리에서 함의의 참과 거짓">
+<text class="f-s" x="174" y="28" text-anchor="middle">P 목록 포함</text>
+<text class="f-s" x="386" y="28" text-anchor="middle">Q 태그 있음</text>
+<text class="f-s" x="596" y="28" text-anchor="middle">P → Q</text>
+<line class="f-ink" x1="70" y1="38" x2="690" y2="38"/>
+<text class="f-t" x="174" y="58" text-anchor="middle">참</text>
+<text class="f-t" x="386" y="58" text-anchor="middle">참</text>
+<text class="f-t" x="596" y="58" text-anchor="middle">참</text>
+<rect class="f-box" x="72" y="63" width="614" height="25" rx="3"/>
+<text class="f-t" x="174" y="83" text-anchor="middle">참</text>
+<text class="f-t" x="386" y="83" text-anchor="middle">거짓</text>
+<text class="f-t" x="596" y="83" text-anchor="middle">거짓</text>
+<text class="f-t" x="174" y="108" text-anchor="middle">거짓</text>
+<text class="f-t" x="386" y="108" text-anchor="middle">참</text>
+<text class="f-t" x="596" y="108" text-anchor="middle">참</text>
+<text class="f-t" x="174" y="133" text-anchor="middle">거짓</text>
+<text class="f-t" x="386" y="133" text-anchor="middle">거짓</text>
+<text class="f-t" x="596" y="133" text-anchor="middle">참</text>
+</svg>
+<figcaption>문서가 목록에 있고 태그가 없을 때 거짓이다. P가 거짓인 두 행은 규칙이 금지하는 경우에 해당하지 않는다.</figcaption>
+</figure>
+<p>P와 P→Q가 둘 다 참이면 Q도 참이다. 이를 <b class="key">전건 긍정</b>이라고 한다. Q와 P→Q만 알 때는 P까지 확정할 수 없다. 그림의 첫 행과 셋째 행은 모두 Q와 P→Q가 참인데 P가 서로 다르다.</p>
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+<div class="check" data-q="q3"></div>
+<h2>술어는 대상 자리를 가진다</h2>
+<p><code>Listed(x)</code>는 ‘대상 <var>x</var>가 목록에 있다’, <code>Tagged(x)</code>는 ‘<var>x</var>에 태그가 있다’라는 술어다. 문서가 A, B, C 세 개라는 <b class="key">대상의 범위</b>를 정하면, <code>Listed(A)</code>와 같이 대상을 채운 문장의 참·거짓을 자료와 대조할 수 있다. ∀는 주어진 범위의 모든 대상, ∃는 한 대상 이상을 뜻한다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 157" role="img" aria-label="문서 A B C의 목록 포함과 태그 유무">
+<text class="f-s" x="142" y="29" text-anchor="middle">문서</text>
+<text class="f-s" x="318" y="29" text-anchor="middle">Listed(x)</text>
+<text class="f-s" x="494" y="29" text-anchor="middle">Tagged(x)</text>
+<text class="f-s" x="658" y="29" text-anchor="middle">규칙 위반</text>
+<line class="f-ink" x1="58" y1="40" x2="711" y2="40"/>
+<text class="f-t" x="142" y="59" text-anchor="middle">A</text>
+<text class="f-t" x="318" y="59" text-anchor="middle">참</text>
+<text class="f-t" x="494" y="59" text-anchor="middle">참</text>
+<text class="f-t" x="658" y="59" text-anchor="middle"></text>
+<rect class="f-box" x="57" y="68" width="656" height="25" rx="3"/>
+<text class="f-t" x="142" y="84" text-anchor="middle">B</text>
+<text class="f-t" x="318" y="84" text-anchor="middle">참</text>
+<text class="f-t" x="494" y="84" text-anchor="middle">거짓</text>
+<text class="f-t" x="658" y="84" text-anchor="middle">있음</text>
+<text class="f-t" x="142" y="109" text-anchor="middle">C</text>
+<text class="f-t" x="318" y="109" text-anchor="middle">거짓</text>
+<text class="f-t" x="494" y="109" text-anchor="middle">참</text>
+<text class="f-t" x="658" y="109" text-anchor="middle"></text>
+</svg>
+<figcaption>∀x (Listed(x) → Tagged(x))는 B 때문에 거짓이다. ∃x (Listed(x) ∧ Tagged(x))는 A 때문에 참이다.</figcaption>
+</figure>
+<p>보편 문장을 검사할 때는 반례가 하나라도 있는지 본다. 존재 문장은 맞는 대상 하나를 제시하면 성립한다. 양화사 순서도 의미를 바꾼다. 작업 A, B에 쓸 수 있는 기기가 각각 X, Y 한 대씩이면 ‘모든 작업에 그 작업을 할 기기가 하나 있다’는 참이다. ‘모든 작업을 할 수 있는 기기가 하나 있다’는 거짓이다.</p>
+<h2>대상이 세 개일 때 규칙을 코드로 검사한다</h2>
+<p>파이썬에서 P→Q는 <code>not p or q</code>로 계산한다. 아래의 두 집합은 세 문서 각각의 실제 참·거짓을 알고 있다고 가정한 자료다. 값을 조사하지 못한 문서까지 실제로 거짓이라고 확정하려면 추가 가정이나 자료가 필요하다.</p>
+<pre data-example="python"><code>items = [&quot;A&quot;, &quot;B&quot;, &quot;C&quot;]
+listed = {&quot;A&quot;, &quot;B&quot;}
+tagged = {&quot;A&quot;, &quot;C&quot;}
+counterexamples = [x for x in items if x in listed and x not in tagged]
+witnesses = [x for x in items if x in listed and x in tagged]
+rule = all(x not in listed or x in tagged for x in items)
+print(&quot;all listed are tagged:&quot;, rule)
+print(&quot;counterexamples:&quot;, counterexamples)
+print(&quot;some listed are tagged:&quot;, bool(witnesses))
+print(&quot;witnesses:&quot;, witnesses)</code></pre>
+<pre data-output><code>all listed are tagged: False
+counterexamples: ['B']
+some listed are tagged: True
+witnesses: ['A']</code></pre>
+<div class="check" data-q="q4"></div>
+<div class="check" data-q="q5"></div>
+<div class="check" data-q="q6"></div>
+<p>이 예의 규칙은 문서 속성을 선언하는 지식 표현이다. 어떤 사실이 바뀌면 참·거짓도 달라질 수 있다. <a href="../dm/dm02-1.html">이산수학의 조건과 결론</a>에서 함의와 양화사의 부정을 이어서 연습할 수 있다. 다음 장에서는 현재 사실 집합을 검사해 실행할 행동을 고르고, 행동 뒤에 사실 집합이 어떻게 바뀌는지 명시한다.</p>
+
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table>
+<thead><tr><th scope="col">핵심어</th><th scope="col">기억할 기준</th></tr></thead>
+<tbody>
+<tr><td><b class="key">함의 P→Q</b></td><td>P가 참이고 Q가 거짓인 조합을 금지하는 문장</td></tr>
+<tr><td><b class="key">술어</b></td><td>대상을 인자로 받아 참·거짓을 표현하는 식</td></tr>
+<tr><td><b class="key">∀와 ∃</b></td><td>범위의 모든 대상과 범위 안의 한 대상 이상</td></tr>
+</tbody></table></div>
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>양화사가 걸리는 대상의 범위를 적고, 모든 대상의 규칙에는 반례를, 존재에는 해당 대상을 찾는다.</p></div>
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://inst.eecs.berkeley.edu/~cs188/textbook/logic/">UC Berkeley CS188 · 명제·일차 논리</a></li>
+<li><a href="https://aima.cs.berkeley.edu/global-index.html">Russell·Norvig, Artificial Intelligence: A Modern Approach 4판 · 논리적 에이전트와 일차 논리</a></li>
+</ul>
+
+<h2>확인 문제</h2>
+<p>아직 풀지 않은 문제입니다. 먼저 식이나 근거를 적어 보고 해설을 확인합니다.</p>
+<div id="quiz"></div>
+
+<section class="work" id="tools"></section>
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>
