@@ -157,6 +157,7 @@ print(f&quot;percentile interval=[{low:.3f}, {high:.3f}] ms&quot;)</code></pre>
 bootstrap SE=1.230 ms
 percentile interval=[7.125, 11.875] ms</code></pre>
 <p><code>default_rng(41)</code>은 같은 실행을 확인하기 위해 난수 생성기의 시작 상태를 고정합니다. <code>n</code>은 실제 관측 수, <code>B</code>는 원표본을 두고 컴퓨터가 재표집한 횟수입니다. B를 늘리면 같은 경험분포에서 계산한 표준오차와 분위수의 난수 오차를 줄일 수 있습니다. 원표본에 들어 있는 정보는 그대로입니다.</p>
+<p>검산해 봅니다. 이 표본의 편차 제곱합은 98이므로 s² = 98/7 = 14, 공식 표준오차 추정값은 <code>s/√n = √14/√8 ≈ 1.323 ms</code>입니다. 평균의 부트스트랩 표준오차는 B가 무한히 커지면 경험분포의 분산(n으로 나눈 98/8 = 12.25)을 쓴 <code>√12.25/√8 ≈ 1.237 ms</code>로 수렴합니다. 출력된 1.230은 이 값에 B=20,000의 난수 오차가 더해진 결과입니다. n으로 나눈 분산을 쓰므로 작은 표본에서는 s/√n보다 약간 작게 나옵니다(<a href="st02-2.html">n−1로 나누는 이유</a> 참고).</p>
 <div class="check" data-q="q6"></div>
 <div class="check" data-q="q7"></div>
 
@@ -177,6 +178,7 @@ percentile interval=[7.125, 11.875] ms</code></pre>
 <tr><th scope="row"><b class="key">부트스트랩 표준오차</b></th><td>재표집 통계량의 분포가 퍼진 정도</td></tr>
 <tr><th scope="row"><b class="key">백분위수 구간</b></th><td>재표집 통계량 분포에서 지정한 분위수를 구간 양끝에 사용</td></tr>
 </tbody></table></div>
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>부트스트랩은 원표본의 경험분포에서 크기 n으로 복원 재표집해 통계량의 표집분포를 근사하며, B를 늘려도 원표본의 정보와 대표성 한계는 그대로다.</p></div>
 <div class="box sum"><p class="box-k">다음 단원으로</p><p><a href="../../unit.html?u=ST04">ST04</a>에서는 정해 둔 기준값이 관측 자료와 어느 정도 잘 맞는지 검정합니다.</p></div>
 
 <h2>참고 자료</h2>

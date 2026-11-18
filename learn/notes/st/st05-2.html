@@ -22,7 +22,7 @@
 <svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
 
 <header class="chapter">
-<p class="chap-sub">통계 · ST05 기본 검정 선택</p>
+<p class="chap-sub">통계와 실험 설계 · ST05 기본 검정 선택</p>
 <p class="chap-num">ST05·2</p>
 <h1>비율과 분할표: 정확이항 검정과 카이제곱 검정</h1>
 <p class="lead">결과가 성공·실패처럼 범주로 기록되면 한 모집단의 성공확률이 기준과 다른지, 다른 범주에 따라 성공 비율이 달라지는지 나누어 묻습니다.</p>
@@ -100,6 +100,10 @@
 </figure>
 <p>독립이라면 각 행에서 전체 성공 비율 24/40이 적용됩니다. <b class="key">기대 도수</b>는 (행 합×열 합)/전체 합입니다. 예로 A 성공은 20×24/40=12입니다. 기대 도수는 귀무가설 기준이며 정수일 필요는 없습니다. 관측 비율은 A가 16/20=80%, B가 8/20=40%입니다. 이 차이 40%p로 어느 방향으로 얼마나 차이 나는지 보고할 수 있습니다.</p>
 <p>피어슨 <b class="key">카이제곱 통계량</b>은 <code>Σ(O−E)²/E</code>입니다. A 성공 칸은 (16−12)²/12=4/3을 보탭니다. 네 칸을 더하면 20/3≈6.6667이며 자유도는 (행 수−1)(열 수−1)=1입니다. 여기서는 연속성 보정을 끄고 이 피어슨 통계량 그대로 계산해 근사 p값 0.0098을 얻습니다. 독립을 기각해도 유형이 성공의 원인이라는 결론에는 추가 설계가 필요합니다.</p>
+<p>χ²는 표본 수가 커지면 같은 연관에서도 커지므로 연관의 크기는 따로 적습니다. 2×2 표에서는 비율 차이 0.80−0.40=40%p, 오즈비 <code>(16×12)/(4×8)=6</code>, 그리고 <b class="key">φ 계수</b> <code>φ=√(χ²/N)=√(6.667/40)≈0.41</code>을 씁니다. 행이나 열이 3개 이상이면 <code>√(χ²/(N·(min(행 수, 열 수)−1)))</code>인 크라메르 V(Cramér's V)를 씁니다. 둘 다 0(연관 없음)에서 1 사이입니다.</p>
+<div class="box"><p class="box-k">같은 통계량, 다른 질문 · 적합도 검정</p><p>범주 변수 <em>하나</em>의 분포가 정해 둔 비율과 맞는지 묻는 것이 카이제곱 <b class="key">적합도 검정</b>입니다. 기대 도수는 N × (가설의 비율)입니다. 예를 들어 독립인 업무 60건이 세 유형에 1/3씩 배분된다는 H₀ 아래 기대 도수는 20, 20, 20입니다. 관측이 25, 20, 15라면</p>
+<p class="calc">χ² = (25−20)²/20 + (20−20)²/20 + (15−20)²/20 = 1.25 + 0 + 1.25 = 2.5<br>자유도 = 범주 수 − 1 = 2, p = P(χ²₂ ≥ 2.5) ≈ 0.287</p>
+<p>독립성 검정은 변수 두 개의 연관, 적합도 검정은 변수 하나와 기준 분포의 일치를 묻습니다. 기대 비율을 자료에서 추정했다면 추정한 모수 수만큼 자유도를 더 뺍니다.</p></div>
 <div class="check" data-q="q4"></div>
 <div class="check" data-q="q5"></div>
 <div class="check" data-q="q6"></div>
@@ -123,6 +127,16 @@ print(f"χ²={result.statistic:.4f}, df={result.dof}, p={result.pvalue:.4f}")</c
 기대 도수: [[12, 8], [12, 8]]
 χ²=6.6667, df=1, p=0.0098</code></pre>
 <p>여기서 기대 도수가 모두 정수이므로 표시할 때만 정수로 바꿨습니다. 일반적인 검정에서 기대 도수를 반올림한 뒤 통계량을 계산하지 않습니다.</p>
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table><thead><tr><th scope="col">질문</th><th scope="col">방법</th><th scope="col">핵심 계산·조건</th></tr></thead><tbody>
+<tr><th scope="row">한 비율이 기준과 다른가</th><td><b class="key">정확이항 검정</b></td><td>H₀의 Bin(n, p₀) 확률을 직접 더함. 독립·같은 p</td></tr>
+<tr><th scope="row">두 범주 변수가 연관되는가</th><td>카이제곱 <b class="key">독립성 검정</b></td><td>E=(행 합×열 합)/N, Σ(O−E)²/E, 자유도 (r−1)(c−1)</td></tr>
+<tr><th scope="row">한 범주 변수가 기준 비율을 따르는가</th><td>카이제곱 <b class="key">적합도 검정</b></td><td>E=N×비율, 자유도 k−1</td></tr>
+<tr><th scope="row">기대 도수가 작은 2×2</th><td>Fisher 정확검정</td><td>기대 도수 5 미만 칸이 많으면 근사가 나빠짐</td></tr>
+<tr><th scope="row">같은 대상의 전후 이진 결과</th><td>McNemar 검정</td><td>바뀐 쌍(불일치)만 사용</td></tr>
+</tbody></table></div>
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>범주 자료는 관측 도수와 H₀ 아래 기대 도수를 비교하며, 독립 관측·충분한 기대 도수를 확인하고 비율 차이·오즈비·φ로 연관의 크기를 함께 보고한다.</p></div>
+
 <h2>참고 자료</h2>
 <ul><li><a href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.binomtest.html">SciPy · binomtest</a></li>
 <li><a href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.chi2_contingency.html">SciPy · chi2_contingency</a></li>

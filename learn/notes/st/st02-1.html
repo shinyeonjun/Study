@@ -29,13 +29,13 @@
 
 <h2>알고 싶은 값과 손에 든 값</h2>
 <p>검사 환경이 일정해서 매번 성공할 확률을 같은 p라고 가정합니다. p는 모형이 설명하고자 하는 양이며 그 실제 값은 모릅니다. 지금 손에 있는 것은 1, 1, 0, 1이라는 네 결과뿐입니다.</p>
-<div class="table-wrap"><table><thead><tr><th scope="col">용어</th><th scope="col">검사 예제</th></tr></thead><tbody><tr><td><b class="key">모수</b></td><td>모형의 미지 성공확률 p.</td></tr><tr><td>통계량</td><td>표본에서만 계산하는 양. 성공 횟수나 표본성공률.</td></tr><tr><td><b class="key">추정량</b></td><td>모수를 추정하는 데 쓰는 규칙. 예: 표본성공률 p̂ = (X₁+…+Xₙ)/n.</td></tr><tr><td>추정값</td><td>관측 데이터를 규칙에 넣은 결과. 여기서는 3/4 = 0.75.</td></tr></tbody></table></div>
+<div class="table-wrap"><table><thead><tr><th scope="col">용어</th><th scope="col">검사 예제</th></tr></thead><tbody><tr><td><b class="key">모수</b>(parameter)</td><td>모형의 미지 성공확률 p. 무엇을 추정할지 정한 목표량(estimand)이 모형 안에서는 이 모수로 표현됩니다.</td></tr><tr><td>통계량(statistic)</td><td>표본에서만 계산하는 양. 성공 횟수나 표본성공률.</td></tr><tr><td><b class="key">추정량</b>(estimator)</td><td>모수를 추정하는 데 쓰는 규칙. 자료가 들어오기 전에는 확률변수입니다. 예: 표본성공률 p̂ = (X₁+…+Xₙ)/n.</td></tr><tr><td>추정값(estimate)</td><td>관측 데이터를 규칙에 넣은 결과. 고정된 숫자입니다. 여기서는 3/4 = 0.75.</td></tr></tbody></table></div>
 <p>표본이 바뀌면 통계량과 추정값이 바뀔 수 있습니다. 같은 장비와 조건에서 성공확률이 유지된다는 모형에서는 그때마다 p가 바뀌었다고 결론 내리지 않습니다. 어떤 시간대의 장비 기록인지, 매번 같은 조건인지부터 확인합니다.</p>
 <div class="check" data-q="q1"></div>
 <div class="check" data-q="q2"></div>
 <h2>데이터를 고정하고 p만 바꾸기</h2>
 <p>먼저 p = 0.5일 때 순서까지 지정한 기록 (1, 1, 0, 1)이 나올 확률은 0.5 × 0.5 × (1−0.5) × 0.5 = 0.0625입니다. 독립 시행이라는 가정으로 네 기록의 확률을 곱했습니다.</p>
-<p>이제 실제 본 기록은 하나로 고정하고 p를 바꿉니다. 이때 각 후보 p에 대응해 얻는 함수를 <b class="key">우도</b>(가능도)라고 합니다.</p>
+<p>이제 실제 본 기록은 하나로 고정하고 p를 바꿉니다. 이때 각 후보 p에 대응해 얻는 함수를 <b class="key">우도</b>(가능도, likelihood)라고 합니다. 우도를 가장 크게 만드는 후보를 추정값으로 고르는 방법이 <b class="key">최대우도 추정</b>(maximum likelihood estimation, MLE)입니다.</p>
 <p class="calc">L(p) = Pₚ(X₁=1, X₂=1, X₃=0, X₄=1) = p³(1−p)</p>
 <p>가능한 데이터들을 확률로 비교할 때에는 p를 고정합니다. 우도로 후보를 비교할 때에는 데이터가 고정되고 p가 변합니다. 예를 들어 L(0.75)는 “p가 0.75일 확률”이 아니라 그 후보 아래에서 관측된 기록의 확률입니다. 그래서 후보 전체에 대한 우도의 합이 1일 필요가 없습니다.</p>
 <figure class="fig"><svg class="fig-svg" viewBox="0 0 760 160" role="img" aria-label="기록을 고정하고 p의 후보를 하나씩 바꾸어 관측 기록의 확률을 비교한다.">
@@ -64,6 +64,15 @@
 <div class="check" data-q="q6"></div>
 <h2>답에 모형 가정을 함께 적는다</h2>
 <p>검사 결과가 연속 시점에서 서로 강하게 관련되거나 기기 설정을 중간에 바꿨다면, 한 가지 p로 독립 시행을 묘사한 우도식을 다시 살펴야 합니다. 네 번 중 세 번의 성공은 관측 사실입니다. p = 0.75라는 최대우도 추정은 모형 아래에서 얻은 결과이고, 데이터가 달라질 때 얼마나 움직일지는 다음 장에서 봅니다.</p>
+
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table><thead><tr><th scope="col">낱말</th><th scope="col">이 장의 예</th></tr></thead><tbody>
+<tr><th scope="row"><b class="key">모수</b></th><td>모형의 미지 성공확률 p (고정, 모름)</td></tr>
+<tr><th scope="row"><b class="key">추정량</b> / 추정값</th><td>규칙 p̂ = (X₁+…+Xₙ)/n / 이번 자료의 값 0.75</td></tr>
+<tr><th scope="row"><b class="key">우도</b></th><td>자료를 고정하고 p의 함수로 본 관측 확률 L(p) = p³(1−p). p의 확률이 아님</td></tr>
+<tr><th scope="row"><b class="key">최대우도 추정</b></th><td>로그우도 k·ln p + (n−k)·ln(1−p)를 최대로 → p̂ = k/n. 독립·같은 p 가정에 기댐</td></tr>
+</tbody></table></div>
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>우도는 관측을 고정하고 모수 후보를 바꿔 본 관측 확률이며, 이를 최대로 하는 값(베르누이에서는 k/n)이 모형 가정 아래의 최대우도 추정값이다.</p></div>
 
 <h2>참고 자료</h2>
 <ul><li><a href="https://online.stat.psu.edu/stat415/Lesson04">Penn State STAT 415 · Maximum Likelihood Estimation</a></li><li><a href="https://online.stat.psu.edu/stat415/Lesson02">Penn State STAT 415 · Estimation</a></li></ul>

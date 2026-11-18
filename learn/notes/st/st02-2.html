@@ -29,10 +29,10 @@
 
 <h2>반복하면 추정값도 확률변수</h2>
 <p>성공확률 p인 검사를 n번 하고 성공 비율 p̂을 계산합니다. 실제 데이터가 들어오기 전에는 p̂이 어느 값일지 확정되지 않습니다. p=0.75, n=4로 고정해도 성공 횟수에 따라 p̂은 0, 0.25, 0.5, 0.75, 1 중 하나입니다.</p>
-<div class="box "><p class="box-k">정의</p><p>추정량 T의 <b class="key">편향</b>은 E[T] − θ입니다. 반복해서 평균을 내면 목표 모수 θ에 비해 얼마나 높거나 낮은지를 뜻합니다. <b class="key">분산</b> Var(T)는 매 표본에서 달라지는 T가 자신의 기대값을 중심으로 얼마나 흔들리는지를 제곱 단위로 나타냅니다.</p></div>
+<div class="box "><p class="box-k">정의</p><p>추정량 T의 <b class="key">편향</b>은 E[T] − θ입니다. 반복해서 평균을 내면 목표 모수 θ에 비해 얼마나 높거나 낮은지를 뜻합니다. <b class="key">분산</b> Var(T)는 매 표본에서 달라지는 T가 자신의 기댓값을 중심으로 얼마나 흔들리는지를 제곱 단위로 나타냅니다.</p></div>
 <p>모형에서 가능한 모든 θ에 대해 편향이 0인 추정량을 <b>불편 추정량</b>이라고 부릅니다. 불편한 추정량도 개별 표본에서는 참값과 크게 다를 수 있습니다. 한 번 참값과 일치하는 추정값만 보고 편향이 0이라고 판단할 수도 없습니다.</p>
 <figure class="fig"><svg class="fig-svg" viewBox="0 0 760 160" role="img" aria-label="모수는 고정되고 표본을 다시 뽑을 때 추정량의 중심과 산포를 평가한다.">
-<rect class="f-box" x="42" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="135" y="61" text-anchor="middle">모두에게 같은 모형</text><text class="f-s" x="135" y="89" text-anchor="middle">참값 θ는 고정</text><text class="f-s" x="135" y="110" text-anchor="middle">표본마다 자료가 달라진다</text><line class="f-line" x1="235" y1="84" x2="278" y2="84" marker-end="url(#f-arrow)"/><rect class="f-soft" x="287" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="380" y="61" text-anchor="middle">기대값 E[T]</text><text class="f-s" x="380" y="89" text-anchor="middle">표본을 반복한 중심</text><text class="f-s" x="380" y="110" text-anchor="middle">θ와의 차이가 편향</text><line class="f-line" x1="480" y1="84" x2="523" y2="84" marker-end="url(#f-arrow)"/><rect class="f-box" x="532" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="625" y="61" text-anchor="middle">변동 Var(T)</text><text class="f-s" x="625" y="89" text-anchor="middle">E[T] 주변의 산포</text><text class="f-s" x="625" y="110" text-anchor="middle">표본마다 흔들림</text>
+<rect class="f-box" x="42" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="135" y="61" text-anchor="middle">모두에게 같은 모형</text><text class="f-s" x="135" y="89" text-anchor="middle">참값 θ는 고정</text><text class="f-s" x="135" y="110" text-anchor="middle">표본마다 자료가 달라진다</text><line class="f-line" x1="235" y1="84" x2="278" y2="84" marker-end="url(#f-arrow)"/><rect class="f-soft" x="287" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="380" y="61" text-anchor="middle">기댓값 E[T]</text><text class="f-s" x="380" y="89" text-anchor="middle">표본을 반복한 중심</text><text class="f-s" x="380" y="110" text-anchor="middle">θ와의 차이가 편향</text><line class="f-line" x1="480" y1="84" x2="523" y2="84" marker-end="url(#f-arrow)"/><rect class="f-box" x="532" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="625" y="61" text-anchor="middle">변동 Var(T)</text><text class="f-s" x="625" y="89" text-anchor="middle">E[T] 주변의 산포</text><text class="f-s" x="625" y="110" text-anchor="middle">표본마다 흔들림</text>
 </svg><figcaption>편향은 반복 평균의 위치이고, 분산은 그 평균 주변의 퍼짐이다.</figcaption></figure>
 <div class="check" data-q="q1"></div>
 <div class="check" data-q="q2"></div>
@@ -69,8 +69,25 @@ for name, values in ((&quot;p_hat&quot;, raw), (&quot;T&quot;, shrunk)):
 <pre data-output><code>p_hat 0.0 0.046875 0.046875
 T -0.125 0.01171875 0.02734375</code></pre>
 <p>성공 횟수 0~4 각각에 대응하는 확률을 이항분포로 구하고, 확률을 가중치로 써 직접 평균 냈습니다. <code>Fraction</code>으로 분수를 정확히 다룬 뒤 출력할 때만 소수로 바꿨습니다. 실전의 p는 모르는 값이므로, 하나의 p에서 유리했다는 결과를 다른 모든 모수 값에서 유리하다고 해석하지 않습니다.</p>
+<h2>분산 추정에서 n−1로 나누는 이유</h2>
+<p>편향의 가장 유명한 예는 모분산 σ²의 추정입니다. 독립이고 같은 분포에서 나온 X₁,…,Xₙ에 대해 편차 제곱합 <code>Σ(Xᵢ−X̄)²</code>를 n으로 나눈 값은 평균적으로 σ²보다 작습니다. 표본평균 X̄가 바로 그 자료에 가장 가깝게 맞춰진 중심이라, μ를 기준으로 잰 것보다 편차가 작게 나오기 때문입니다.</p>
+<p class="calc">① Σ(Xᵢ−μ)² = Σ(Xᵢ−X̄)² + n(X̄−μ)²  (교차항 2(X̄−μ)Σ(Xᵢ−X̄)는 Σ(Xᵢ−X̄)=0이라 사라짐)<br>② 기댓값을 취하면 nσ² = E[Σ(Xᵢ−X̄)²] + n·(σ²/n)<br>③ 따라서 E[Σ(Xᵢ−X̄)²] = (n−1)σ²</p>
+<p>그래서 n으로 나눈 추정량의 기댓값은 <code>(n−1)σ²/n</code>이고 편향은 <code>−σ²/n</code>입니다. n−1로 나눈 표본분산 <code>s² = Σ(Xᵢ−X̄)²/(n−1)</code>은 불편 추정량입니다. 정규 모형에서 σ²의 최대우도 추정값은 n으로 나눈 쪽이므로, 최대우도 추정량이 늘 불편한 것은 아닙니다. 또 s²가 불편해도 그 제곱근 s는 σ를 평균적으로 약간 작게 추정합니다. 불편성은 변환하면 보존되지 않습니다.</p>
+<div class="box ex"><p class="box-k">풀이 예제 · 가능한 표본을 모두 열거</p><p>X가 0과 2를 각각 확률 1/2로 내면 μ=1, σ²=1입니다. n=2로 독립 표본을 뽑으면 (0,0), (0,2), (2,0), (2,2)가 각각 확률 1/4입니다. 편차 제곱합은 차례로 0, 2, 2, 0입니다.</p>
+<p class="calc">n으로 나눔: 0, 1, 1, 0 → 기댓값 (0+1+1+0)/4 = 0.5 = (2−1)/2 × 1 → 편향 −0.5<br>n−1로 나눔: 0, 2, 2, 0 → 기댓값 (0+2+2+0)/4 = 1 = σ² → 편향 0</p></div>
+<div class="check" data-q="q10"></div>
+
 <h2>어떤 오차인지 먼저 말한다</h2>
 <p>추정량의 편향은 지정한 표집·모형 아래에서의 반복 특성입니다. 조사 대상이 원래 모집단과 다르거나 센서가 체계적으로 다르게 읽히면, 수식 안에서 좋은 성질을 가진 추정량도 실제 질문에 틀린 답을 낼 수 있습니다. 추정 규칙을 고치기 전에 자료 수집 구조도 확인합니다.</p>
+
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table><thead><tr><th scope="col">낱말</th><th scope="col">정의와 이 장의 값</th></tr></thead><tbody>
+<tr><th scope="row"><b class="key">편향</b></th><td>E[T] − θ. 반복 표집했을 때 중심의 어긋남. 한 번의 오차가 아님</td></tr>
+<tr><th scope="row"><b class="key">분산</b></th><td>Var(T). p̂이면 p(1−p)/n, p=0.75·n=4에서 0.046875</td></tr>
+<tr><th scope="row"><b class="key">평균제곱오차</b></th><td>MSE = Var(T) + 편향². T=(p̂+0.5)/2는 p=0.75에서 0.02734375</td></tr>
+<tr><th scope="row"><b class="key">불편 추정량</b></th><td>모든 θ에서 편향 0. 예: p̂, n−1로 나눈 s². n으로 나눈 분산은 편향 −σ²/n</td></tr>
+</tbody></table></div>
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>추정량은 반복 표집에서의 성질로 평가하며, 정확도는 편향 제곱과 분산을 더한 MSE로 함께 비교한다.</p></div>
 
 <h2>참고 자료</h2>
 <ul><li><a href="https://online.stat.psu.edu/stat415/Lesson02">Penn State STAT 415 · Estimation</a></li></ul>
