@@ -73,7 +73,7 @@
 </svg>
 <figcaption>0.9는 목표 Actor 값이다. 1.1은 계산 중간값이라 실제 행동 범위 밖에 있다.</figcaption>
 </figure>
-<p>두 Critic은 같은 보수적 목표에 맞추더라도 서로 독립으로 초기화한 가치 예측기입니다. 기본 TD3에서는 Actor와 목표망을 Critic보다 덜 자주 갱신합니다. 예를 들어 Critic을 두 번 갱신한 뒤 Actor를 한 번 고칩니다. 원래 TD3에서 Actor 경사에 쓰는 값은 첫 번째 Critic의 출력이며, 두 Critic의 최소를 쓰는 곳은 앞에서 계산한 목표입니다.</p>
+<p>두 Critic은 같은 보수적 목표에 맞추더라도 서로 독립으로 초기화한 가치 예측기입니다. 기본 TD3에서는 Actor와 목표망을 Critic보다 덜 자주 갱신합니다. 예를 들어 Critic을 두 번 갱신한 뒤 Actor를 한 번 고칩니다. 원래 TD3에서 Actor 경사에 쓰는 값은 첫 번째 Critic의 출력이며, 두 Critic의 최소를 쓰는 곳은 앞에서 계산한 목표입니다. 목표망은 DQN처럼 일정 주기마다 통째로 복사하지 않고, 갱신할 때마다 조금씩 따라가게 합니다: 목표 가중치 ← τ×온라인 가중치 + (1−τ)×목표 가중치. TD3 논문은 τ=0.005를 썼습니다. 이를 <b>폴리야크 평균</b>(soft update)이라 하며, 아래 SAC도 같은 방식을 씁니다.</p>
 <div class="check" data-q="q3"></div>
 <div class="check" data-q="q4"></div>
 <h2>SAC는 행동을 뽑는 분포와 그 무작위성도 다룬다</h2>
