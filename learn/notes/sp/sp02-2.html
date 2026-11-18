@@ -39,6 +39,8 @@
 <h2>물체의 모양을 각 칸의 종류로 표현한다</h2>
 <p><b class="key">의미 분할</b>은 이미지의 각 픽셀을 배경, 부품 등 한 클래스로 배정합니다. 같은 종류의 개별 물체도 따로 구분하고 싶다면 <em>인스턴스 분할</em>이라는 별도 결과가 필요합니다. 이 장은 부품 1과 배경 0의 두 값만 포함합니다.</p>
 <p>정답에서 부품 픽셀은 5, 예측에선 4, 겹치는 것은 3입니다. 따라서 부품 IoU는 3/(5+4−3)=0.5이고, <b>Dice</b>는 2×3/(5+4)=2/3입니다. 배경으로 맞힌 픽셀도 3이라 전체 픽셀 정확도는 (3+3)/9=2/3입니다. 다수의 배경을 잘 맞히는 점수와 부품 영역을 맞히는 점수를 함께 봅니다.</p>
+<div class="box"><p class="box-k">정의 · 한 클래스의 IoU와 Dice</p>
+<p>정답 픽셀 집합 G, 예측 픽셀 집합 P에 대해 IoU = |G∩P| / |G∪P|, Dice = 2|G∩P| / (|G|+|P|)입니다. 픽셀마다 양성·음성을 세면 IoU = TP/(TP+FP+FN), Dice = 2TP/(2TP+FP+FN)이므로 Dice는 그 클래스의 F1 점수와 같습니다. 두 값은 Dice = 2·IoU/(1+IoU)로 서로 바뀌어 순위는 같고, 0과 1 사이에서는 Dice가 IoU보다 큽니다. 이 예는 TP 3, FP 1, FN 2라 IoU 3/6, Dice 6/9입니다.</p></div>
 <figure class="fig">
 <svg class="fig-svg" viewBox="0 0 760 260" role="img" aria-label="정답 1이 5개, 예측 1이 4개, 공통 1이 3개라서 부품 IoU는 0.5, Dice는 2/3이다.">
 <text class="f-cap" x="380" y="30" text-anchor="middle">값 1은 부품, 0은 배경</text>
@@ -150,6 +152,18 @@ print(&quot;flipped mask:&quot;, flipped)</code></pre>
 pixel accuracy and foreground dice: 0.666667 0.666667
 flipped mask: [[1, 1, 1], [0, 0, 1], [0, 0, 1]]</code></pre>
 <p>예제는 두 클래스 모두 합집합이 있는 한 장의 배열입니다. 실험 보고서에서는 원본 그룹을 어떻게 분리했는지와 제외한 픽셀·클래스를 함께 적습니다.</p>
+
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table><thead><tr><th scope="col">개념</th><th scope="col">뜻</th><th scope="col">이 장의 예</th></tr></thead><tbody>
+<tr><td><b class="key">의미 분할</b></td><td>픽셀마다 클래스 하나 (같은 클래스 물체는 구분 안 함)</td><td>부품 1, 배경 0</td></tr>
+<tr><td>인스턴스 분할</td><td>같은 클래스라도 물체마다 다른 마스크</td><td>—</td></tr>
+<tr><td>픽셀 정확도</td><td>맞힌 픽셀 / 전체 픽셀. 배경이 많으면 높게 나옴</td><td>6/9</td></tr>
+<tr><td>IoU · <b class="key">Dice</b></td><td>|G∩P|/|G∪P|, 2|G∩P|/(|G|+|P|)</td><td>0.5, 2/3</td></tr>
+<tr><td><b class="key">mIoU</b></td><td>클래스별 IoU의 평균</td><td>(0.5+0.5)/2 = 0.5</td></tr>
+<tr><td><b class="key">증강</b></td><td>기하 변환은 마스크에도 똑같이, 크기 변경은 최근접</td><td>좌우 반전</td></tr>
+<tr><td>분할 단위</td><td>같은 촬영·원본은 한쪽 분할에만</td><td>세션 단위 분할</td></tr>
+</tbody></table></div>
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>분할은 클래스별 IoU·Dice로 채점하고, 증강의 기하 변환은 정답 마스크에도 같이 적용하며, 비슷한 프레임이 훈련과 시험에 나뉘지 않게 원본 단위로 분할한다.</p></div>
 
 <h2>참고 자료</h2>
 <ul>

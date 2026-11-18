@@ -44,10 +44,10 @@
 <line class="f-ink" x1="620" y1="93" x2="620" y2="153"/>
 <circle class="f-box" cx="140" cy="78" r="15"/>
 <text class="f-t" x="140" y="82" text-anchor="middle">A</text>
-<text class="f-s" x="140" y="115" text-anchor="middle">차수 2</text>
+<text class="f-s" x="118" y="82" text-anchor="end">차수 2</text>
 <circle class="f-box" cx="140" cy="168" r="15"/>
 <text class="f-t" x="140" y="172" text-anchor="middle">B</text>
-<text class="f-s" x="140" y="205" text-anchor="middle">차수 2</text>
+<text class="f-s" x="118" y="172" text-anchor="end">차수 2</text>
 <circle class="f-soft" cx="295" cy="123" r="15"/>
 <text class="f-t" x="295" y="127" text-anchor="middle">C</text>
 <text class="f-s" x="295" y="160" text-anchor="middle">차수 3</text>
@@ -56,14 +56,20 @@
 <text class="f-s" x="465" y="160" text-anchor="middle">차수 3</text>
 <circle class="f-box" cx="620" cy="78" r="15"/>
 <text class="f-t" x="620" y="82" text-anchor="middle">E</text>
-<text class="f-s" x="620" y="115" text-anchor="middle">차수 2</text>
+<text class="f-s" x="642" y="82" text-anchor="start">차수 2</text>
 <circle class="f-box" cx="620" cy="168" r="15"/>
 <text class="f-t" x="620" y="172" text-anchor="middle">F</text>
-<text class="f-s" x="620" y="205" text-anchor="middle">차수 2</text>
+<text class="f-s" x="642" y="172" text-anchor="start">차수 2</text>
 </svg>
 <figcaption>C–D만 제거하면 삼각형 두 개가 서로 닿지 않습니다.</figcaption>
 </figure>
-<p><strong>차수</strong>는 직접 이어진 이웃 수입니다. 정규화한 차수 중심성은 단순 무방향 그래프에서 <var>n−1</var>로 나눈 값입니다. C는 <var>3/5=.6</var>입니다. <strong>매개중심성</strong>은 자신을 끝점으로 하지 않는 쌍의 최단 경로 가운데 노드를 지나가는 몫을 더합니다. 여기서는 최단 경로가 유일합니다. C를 통하는 쌍은 A,B 중 하나와 D,E,F 중 하나의 <var>2×3=6</var>개입니다.</p><div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
+<p><strong>차수</strong>는 직접 이어진 이웃 수입니다. 정규화한 차수 중심성은 단순 무방향 그래프에서 <var>n−1</var>로 나눈 값입니다. C는 <var>3/5=.6</var>입니다. <strong>매개중심성</strong>은 자신을 끝점으로 하지 않는 쌍의 최단 경로 가운데 노드를 지나가는 몫을 더합니다. 여기서는 최단 경로가 유일합니다. C를 통하는 쌍은 A,B 중 하나와 D,E,F 중 하나의 <var>2×3=6</var>개입니다.</p>
+<div class="box"><p class="box-k">정의 · 네 가지 중심성</p>
+<p><b>차수 중심성</b>: 이웃 수 deg(v). 정규화하면 deg(v)/(n−1).<br>
+<b>매개중심성</b>: Σ_{s≠v≠t} σ_st(v)/σ_st. σ_st는 s–t 최단 경로의 수, σ_st(v)는 그중 v를 지나는 수입니다. 무방향 그래프는 쌍 {s,t}를 한 번씩 셉니다.<br>
+<b>근접 중심성</b>(closeness): (n−1) / Σ_u d(v,u). d는 최단 거리입니다. 모두에게 가까울수록 큽니다.<br>
+<b>고유벡터 중심성</b>: 중요한 이웃과 연결될수록 중요하다는 정의로, 인접행렬 A의 가장 큰 고윳값에 대한 고유벡터 x(Ax=λx)의 성분을 씁니다. 방향 그래프에서 이를 변형해 웹 문서 순위에 쓴 것이 PageRank입니다(다음 장의 랜덤 워크와 연결됩니다).</p></div>
+<p>이 그래프에서 C까지의 거리는 A,B,D가 1, E,F가 2라 합이 7이고 근접 중심성은 5/7≈0.714입니다. A는 B,C가 1, D가 2, E,F가 3이라 합 10, 근접 중심성 5/10=0.5입니다. 다리 양 끝인 C와 D가 차수·매개·근접 모두에서 가장 높지만, 지표마다 묻는 질문은 다릅니다.</p><div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
 
 <h2>이웃끼리 연결되었는지와 공동체</h2>
 <p>국소 군집계수는 한 노드의 이웃 사이에 가능한 간선 중 실제 있는 비율입니다. C의 세 이웃 A,B,D에는 가능한 짝이 세 개지만 A–B만 연결되어 <var>1/3</var>입니다. A의 이웃 B,C는 서로 연결되어 값이 1입니다. 이웃이 한 명 이하라 분모가 0이면 쓰는 도구의 관례를 확인합니다.</p><figure class="fig">
@@ -112,10 +118,11 @@
 </svg>
 <figcaption>자기와 직접 연결된 수를 세는 것과 남의 최단 경로에 얼마나 있는지 세는 것은 다른 계산입니다.</figcaption>
 </figure>
-<p>공동체는 안쪽 연결이 상대적으로 많은 노드 묶음입니다. 이 그래프를 삼각형 둘로 분리한 <strong>모듈성</strong>은 같은 묶음 안에 실제로 놓인 간선의 비중에서 차수를 기준으로 한 기준 모형의 기대 비중을 뺍니다. 한 삼각형에서 전체 7개 간선 중 내부 간선이 3개, 전체 차수 14 중 묶음의 차수 합이 7입니다. 두 묶음의 모듈성은 <var>2[3/7−(7/14)²]=5/14</var>입니다. 공동체가 연결 성분과 반드시 같지는 않습니다.</p><div class="check" data-q="q3"></div><div class="check" data-q="q4"></div>
+<p>공동체는 안쪽 연결이 상대적으로 많은 노드 묶음입니다. 이 그래프를 삼각형 둘로 분리한 <strong>모듈성</strong>은 같은 묶음 안에 실제로 놓인 간선의 비중에서 차수를 기준으로 한 기준 모형의 기대 비중을 뺍니다. 한 삼각형에서 전체 7개 간선 중 내부 간선이 3개, 전체 차수 14 중 묶음의 차수 합이 7입니다. 식으로는 간선 수 m, 묶음 c의 내부 간선 수 L_c, 묶음 c에 속한 노드의 차수 합 d_c에 대해 <var>Q=Σ_c [L_c/m − (d_c/2m)²]</var>입니다. 두 묶음의 모듈성은 <var>2[3/7−(7/14)²]=5/14≈0.357</var>입니다. Q가 0이면 차수만 맞춘 무작위 연결과 다를 바 없고, 클수록 묶음 안 연결이 기대보다 많습니다. 모든 노드를 한 묶음에 넣으면 Q=1−1=0입니다. 공동체가 연결 성분과 반드시 같지는 않습니다.</p><div class="check" data-q="q3"></div><div class="check" data-q="q4"></div>
 
 <h2>랜덤 연결과 비교하기</h2>
-<p><var>G(n,p)</var>에서는 가능한 각 간선을 확률 <var>p</var>로 독립 생성합니다. 노드 6개에 <var>p=.2</var>이면 후보 간선이 15개이고 기대 연결 수는 3개입니다. 한 노드의 다섯 간선이 모두 없을 확률은 <var>.8⁵</var>입니다. 기대 고립 노드 수는 <var>6×.8⁵=1.96608</var>입니다. 실제 한 번 그린다면 고립 노드 수는 정수입니다. 여러 모형을 기준으로 비교할 때 무엇을 보존하는지 기록합니다.</p><div class="check" data-q="q5"></div><div class="check" data-q="q6"></div>
+<p><var>G(n,p)</var>에서는 가능한 각 간선을 확률 <var>p</var>로 독립 생성합니다. 노드 6개에 <var>p=.2</var>이면 후보 간선이 15개이고 기대 연결 수는 3개입니다. 한 노드의 다섯 간선이 모두 없을 확률은 <var>.8⁵</var>입니다. 기대 고립 노드 수는 <var>6×.8⁵=1.96608</var>입니다. 실제 한 번 그린다면 고립 노드 수는 정수입니다. 여러 모형을 기준으로 비교할 때 무엇을 보존하는지 기록합니다.</p>
+<p>G(n,p)에서 한 노드의 차수는 나머지 n−1개와 각각 독립으로 연결되므로 이항분포 Bin(n−1, p)를 따르고 평균은 (n−1)p입니다(이 예는 5×0.2=1). 또 한 노드의 두 이웃이 서로 연결될 확률도 그냥 p이므로 기대 국소 군집계수는 p입니다. 이 장의 그래프를 비교하려면 간선 밀도를 맞춘 p=7/15≈0.467을 써야 하고, 그때 기대 군집계수는 약 0.467입니다. 실제 그래프의 평균 국소 군집계수는 (1+1+1/3+1/3+1+1)/6=7/9≈0.778로 더 높습니다. 같은 밀도의 무작위 연결보다 삼각형이 많다는 뜻입니다. 실제 사회망처럼 군집이 높으면서 평균 거리가 짧은 구조는 Watts–Strogatz의 <b>작은 세상</b> 모형으로, 차수가 큰 소수의 허브가 있는 두꺼운 꼬리 차수 분포는 Barabási–Albert의 <b>선호적 연결</b> 모형으로 설명하기도 합니다. G(n,p)는 이런 특징이 우연인지 따져 볼 기준선입니다.</p><div class="check" data-q="q5"></div><div class="check" data-q="q6"></div>
 
 <h2>그래프와 기대값을 직접 재계산</h2>
 <p class="small">실행 예제</p>
@@ -150,14 +157,17 @@ random expected isolates: 1.96608</code></pre>
 <div class="table-wrap"><table><thead><tr><th scope="col">개념</th><th scope="col">확인할 것</th></tr></thead><tbody>
 <tr><th scope="row"><b class="key">차수와 매개</b></th><td>직접 이웃과 경로 중간의 역할을 구분한다.</td></tr>
 <tr><th scope="row"><b class="key">군집과 공동체</b></th><td>이웃 결합과 묶음 내부 연결을 다른 단위로 본다.</td></tr>
-<tr><th scope="row"><b class="key">랜덤 모형</b></th><td>실제 그래프와 비교할 간선 생성 기준을 정한다.</td></tr>
+<tr><th scope="row"><b class="key">근접·고유벡터</b></th><td>모두와의 거리 합의 역수 / 중요한 이웃과의 연결. C의 근접 5/7</td></tr>
+<tr><th scope="row"><b class="key">모듈성</b></th><td>묶음 내부 간선 비율 − 차수 기준 기대 비율. 두 삼각형 분할 5/14</td></tr>
+<tr><th scope="row"><b class="key">랜덤 모형</b></th><td>G(n,p): 기대 간선 수 C(n,2)p, 차수 Bin(n−1,p), 기대 군집계수 p.</td></tr>
 </tbody></table></div><div class="box sum"><p class="box-k">다음 장으로</p><p><a href="sp05-2.html">다음 장</a>에서는 이 간선 위로 움직이는 값을 추적합니다.</p></div>
 
 <h2>참고 자료</h2>
 <ul>
 <li><a href="https://www.cs.cornell.edu/home/kleinber/networks-book/">Easley·Kleinberg · Networks, Crowds, and Markets 저자 교재</a></li>
 <li><a href="https://doi.org/10.1073/pnas.0601602103">Newman(2006) · 모듈성과 공동체 구조</a></li>
-<li><a href="https://www.stat.cmu.edu/~brian/780/bibliography/09%20Other%20Models/Gilbert%20-%201959%20-%20Random%20graphs.pdf">Gilbert(1959) · 독립 간선 랜덤 그래프</a></li>
+<li><a href="https://doi.org/10.1214/aoms/1177706098">Gilbert(1959) · Random Graphs (독립 간선 랜덤 그래프)</a></li>
+<li><a href="https://doi.org/10.1038/30918">Watts·Strogatz(1998) · 작은 세상 네트워크</a></li>
 </ul>
 <h2>확인 문제</h2>
 <p>직접 계산하거나 설명을 먼저 적고 답을 확인해 보세요.</p>

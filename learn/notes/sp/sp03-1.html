@@ -32,7 +32,7 @@
 </ul></div>
 
 <h2>자기 시계열의 과거를 입력으로</h2>
-<p>AR(<var>p</var>)은 현재 값을 같은 시계열의 이전 <var>p</var>개 값에 회귀시키는 모형입니다. 예를 들어 AR(2)는 <var>yₜ=c+φ₁yₜ₋₁+φ₂yₜ₋₂+εₜ</var>입니다. <var>εₜ</var>는 현재 모형이 미리 알지 못하는 새 충격입니다. 예측할 때 미래 충격의 조건부 평균이 0이라는 가정을 사용합니다. 보통 계수는 학습 구간에서 추정하고 아래는 주어진 계수를 씁니다.</p><figure class="fig">
+<p>AR(<var>p</var>)은 현재 값을 같은 시계열의 이전 <var>p</var>개 값에 회귀시키는 모형입니다. 예를 들어 AR(2)는 <var>yₜ=c+φ₁yₜ₋₁+φ₂yₜ₋₂+εₜ</var>입니다. <var>εₜ</var>는 현재 모형이 미리 알지 못하는 새 충격으로, <b>혁신</b>(innovation)이라고 부릅니다. 보통 평균 0, 분산 σ²이고 시점끼리 상관이 없는 백색잡음으로 둡니다. 예측할 때 미래 충격의 조건부 평균이 0이라는 가정을 사용합니다. 보통 계수는 학습 구간에서 추정하고 아래는 주어진 계수를 씁니다.</p><figure class="fig">
 <svg class="fig-svg" viewBox="0 0 760 246" role="img" aria-label="현재 6에서 충격의 조건부 평균이 0일 때 AR(1) 점예측 4, 3, 2.5.">
 <text class="f-cap" x="380" y="29" text-anchor="middle">AR(1)에서 이전 예측을 다음 입력으로</text>
 <rect class="f-soft" x="77" y="43" width="155" height="37"/>
@@ -68,10 +68,12 @@
 </svg>
 <figcaption>중간의 실제값을 모르는 여러 단계 앞 예측에서는 앞의 점예측을 이어 씁니다.</figcaption>
 </figure>
-<p>AR(1)의 예는 <var>c=1, φ=1/2</var>입니다. 현재 6에서 다음이 4, 다시 3, 그다음은 2.5입니다. <var>|φ|&lt;1</var>이면 기존 값의 영향이 점차 작아지고 예측은 <var>c/(1−φ)=2</var>에 접근합니다. 장기 평균에 도달한다고 해서 이후 관측값이 모두 2인 것은 아닙니다.</p><div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
+<p>AR(1)의 예는 <var>c=1, φ=1/2</var>입니다. 현재 6에서 다음이 4, 다시 3, 그다음은 2.5입니다. <var>|φ|&lt;1</var>이면 기존 값의 영향이 점차 작아지고 예측은 <var>c/(1−φ)=2</var>에 접근합니다. 장기 평균에 도달한다고 해서 이후 관측값이 모두 2인 것은 아닙니다.</p>
+<div class="box"><p class="box-k">정의 · 정상성과 AR(1)의 조건</p>
+<p>평균·분산이 시점에 따라 변하지 않고, 두 시점의 공분산이 시차(간격)에만 의존하는 시계열을 (약)<b class="key">정상</b>(stationary) 시계열이라고 합니다. AR(1) <var>yₜ=c+φyₜ₋₁+εₜ</var>는 <var>|φ|&lt;1</var>일 때 정상이며, 그때 평균은 <var>μ=c/(1−φ)</var>(양변의 기댓값에서 μ=c+φμ), 분산은 <var>σ²/(1−φ²)</var>입니다. h단계 앞 점예측은 <var>μ+φʰ(yₜ−μ)</var>로, 현재 값과 평균의 차이가 매 단계 φ배로 줄어듭니다. 이 예에서는 <var>2+(1/2)ʰ·4</var>이므로 h=1,2,3에서 4, 3, 2.5입니다. <var>φ=1</var>이면 확률보행(random walk)이 되어 분산이 시간에 따라 커지고, 정상이 아닙니다.</p></div><div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
 
 <h2>추세와 계절성에 어떤 변환을 적용할까?</h2>
-<p>평균이 계속 바뀌는 자료를 안정한 AR로 다루기 어려울 수 있습니다. <a href="../../unit.html?u=ST10">첫 차분</a> <var>yₜ−yₜ₋₁</var>은 인접 변화, 계절 차분 <var>yₜ−yₜ₋ₘ</var>은 같은 계절 위치의 차이입니다. <var>m</var>은 관측 단위의 주기입니다. ARIMA(<var>p,d,q</var>)는 <var>d</var>번 차분한 계열에 과거 값 <var>p</var>개와 과거 혁신 <var>q</var>개를 두는 모형입니다. 이동평균 부분은 최근 관측값의 산술 평균을 내는 방식과 다릅니다.</p>
+<p>평균이 계속 바뀌는 자료를 안정한 AR로 다루기 어려울 수 있습니다. <a href="../../unit.html?u=ST10">첫 차분</a> <var>yₜ−yₜ₋₁</var>은 인접 변화, 계절 차분 <var>yₜ−yₜ₋ₘ</var>은 같은 계절 위치의 차이입니다. <var>m</var>은 관측 단위의 주기입니다. ARIMA(<var>p,d,q</var>)는 <var>d</var>번 차분한 계열에 과거 값 <var>p</var>개와 과거 혁신 <var>q</var>개를 두는 모형입니다. 이동평균 부분은 최근 관측값의 산술 평균을 내는 방식과 다릅니다. 예를 들어 MA(1)은 <var>yₜ=c+εₜ+θεₜ₋₁</var>로, 지난 시점의 혁신을 입력으로 씁니다. 계절 차분과 계절 시차 항까지 넣은 모형은 계절 ARIMA로 <var>(p,d,q)(P,D,Q)ₘ</var>처럼 적습니다.</p>
 <p>이전 두 날짜의 반복을 보는 계절 기준에서 예측은 <var>yₜ₋₂</var>입니다. 다음 표의 합성 자료는 두 날짜 주기가 있지만 전체 높이도 올라갑니다.</p><figure class="fig">
 <svg class="fig-svg" viewBox="0 0 760 209" role="img" aria-label="날짜 5~7의 관측 18,24,22를 직전값 또는 두 날 전 값과 비교한다.">
 <text class="f-cap" x="380" y="29" text-anchor="middle">일부 시점의 두 시차 입력 비교</text>
@@ -113,6 +115,7 @@
 
 <h2>예측 가능한 정보만 사용하여 검증</h2>
 <p>날짜 5를 예측할 때 날짜 4까지의 값만 씁니다. 날짜 5의 관측이 공개된 뒤 날짜 6을 예측하는 실험과 처음부터 날짜 5~7을 한꺼번에 예측하는 실험은 사용할 정보가 다릅니다. 특징·변환·계수 선택은 각 평가 시점에 허용된 과거만 사용합니다.</p>
+<p>이를 체계적으로 하는 방법이 <b class="key">이동 원점</b>(rolling origin) 검증, 또는 시계열 교차검증입니다. 예측을 시작하는 시점(원점)을 날짜 4, 5, 6으로 한 칸씩 옮기며, 매번 원점까지의 자료만으로 모형을 정하고 그 뒤 h단계(이 장은 h=1)를 예측해 오차를 모읍니다. 무작위로 섞는 k겹 교차검증은 미래 값으로 과거를 맞히는 경우가 생기므로 시계열 예측 평가에 그대로 쓰지 않습니다. 아래 코드의 MAE(평균 절대 오차, 절대 오차의 평균)는 원점 4, 5, 6에서의 한 단계 앞 오차를 모은 것입니다.</p>
 <p class="small">실행 예제</p>
 <pre data-example="python"><code>from fractions import Fraction as F
 
@@ -135,9 +138,10 @@ lag 2 [4, 4, 4] MAE 4</code></pre>
 
 <h2>한눈에 정리</h2>
 <div class="table-wrap"><table><thead><tr><th scope="col">개념</th><th scope="col">확인할 것</th></tr></thead><tbody>
-<tr><th scope="row"><b class="key">AR</b></th><td>과거 같은 계열의 값을 계수와 곱한다.</td></tr>
+<tr><th scope="row"><b class="key">AR</b></th><td>과거 같은 계열의 값을 계수와 곱한다. AR(1)은 |φ|&lt;1이면 정상이고 평균 c/(1−φ).</td></tr>
+<tr><th scope="row"><b class="key">ARIMA</b>(p,d,q)</th><td>d번 차분한 계열에 과거 값 p개와 과거 혁신 q개.</td></tr>
 <tr><th scope="row"><b class="key">계절성</b></th><td>같은 주기 위치를 비교할 간격을 정한다.</td></tr>
-<tr><th scope="row"><b class="key">검증</b></th><td>실제 예측 시점에 볼 수 있는 정보로 평가한다.</td></tr>
+<tr><th scope="row"><b class="key">이동 원점</b> 검증</th><td>원점을 옮기며 그때까지의 정보로만 예측해 오차를 모은다.</td></tr>
 </tbody></table></div><div class="box sum"><p class="box-k">다음 장으로</p><p><a href="sp03-2.html">다음 장</a>에서는 관측값이 숨은 수준과 달라지는 모형을 계산합니다.</p></div>
 
 <h2>참고 자료</h2>

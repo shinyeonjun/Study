@@ -115,7 +115,9 @@ for gamma, delta in [(F(1, 5), F(0)), (F(1, 5), F(1, 4)),
 gamma=0.20, delta=0.25: bias=0.05, scenario=+0.05
 gamma=0.40, delta=0.25: bias=0.10, scenario=+0.00
 gamma=0.40, delta=0.50: bias=0.20, scenario=-0.10</code></pre>
-<p>0을 만드는 한 조합과 더 큰 변화를 만드는 조합을 공개합니다. 실제 자료에서 그 조합이 가능할 근거와 반대 근거를 별도로 적습니다.</p><div class="check" data-q="q5"></div><div class="check" data-q="q6"></div><div class="check" data-q="q7"></div><div class="check" data-q="q8"></div>
+<p>0을 만드는 한 조합과 더 큰 변화를 만드는 조합을 공개합니다. 실제 자료에서 그 조합이 가능할 근거와 반대 근거를 별도로 적습니다.</p>
+<div class="more"><p class="box-k">더 알아보기 · E-값</p>
+<p>가산 모형 대신 위험비(risk ratio) 척도로 요약하는 민감도 지표도 널리 쓰입니다. VanderWeele·Ding(2017)의 <b>E-값</b>은 관측된 위험비 RR(&gt;1)을 측정하지 않은 교란변수 하나가 완전히 설명해 없애려면, 그 변수가 처리와도 결과와도 위험비 척도에서 최소 얼마만큼 연관되어야 하는지를 나타내며 E = RR + √(RR×(RR−1))로 계산합니다. 이 층의 .80/.70 ≈ 1.143이면 E ≈ 1.55입니다. 값이 1에 가까울수록 약한 교란으로도 결론이 뒤집힐 수 있다는 뜻입니다.</p></div><div class="check" data-q="q5"></div><div class="check" data-q="q6"></div><div class="check" data-q="q7"></div><div class="check" data-q="q8"></div>
 
 <h2>한눈에 정리</h2>
 <div class="table-wrap"><table><thead><tr><th scope="col">개념</th><th scope="col">확인할 것</th></tr></thead><tbody>
@@ -127,7 +129,8 @@ gamma=0.40, delta=0.50: bias=0.20, scenario=-0.10</code></pre>
 <h2>참고 자료</h2>
 <ul>
 <li><a href="https://miguelhernan.org/whatifbook">Hernán·Robins · Causal Inference: What If 저자 교재</a></li>
-<li><a href="https://doi.org/10.1111/rssb.12348">Cinelli·Hazlett · 미측정 교란의 민감도 분석</a></li>
+<li><a href="https://doi.org/10.1111/rssb.12348">Cinelli·Hazlett(2020) · 미측정 교란의 민감도 분석</a></li>
+<li><a href="https://doi.org/10.7326/M16-2607">VanderWeele·Ding(2017) · E-값을 이용한 관찰연구의 민감도 분석</a></li>
 </ul>
 <h2>확인 문제</h2>
 <p>직접 계산하거나 설명을 먼저 적고 답을 확인해 보세요.</p>
