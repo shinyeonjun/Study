@@ -40,6 +40,7 @@
 <h2>정확히 그 점에 넣는 질문과 주변에서 다가가는 질문</h2>
 <p><code>f(x) = (x² − 9)/(x − 3)</code>에는 3을 넣을 수 없습니다. 하지만 x≠3인 가까운 값에서는 <code>f(x) = x + 3</code>이라는 같은 계산을 합니다. 이때 <code>|f(x) − 6| = |x − 3|</code>입니다. x가 3에 가까워지는 만큼 출력도 6에 가까워지므로 <code>lim<sub>x→3</sub> f(x) = 6</code>입니다(AL06·1).</p>
 <p><b class="key">함수의 극한</b> <code>lim<sub>x→a</sub> f(x) = L</code>은 a 바로 주변의 서로 다른 입력으로 다가가면 함수값이 L에 원하는 만큼 가까워진다는 말입니다. x=a를 빼고 그 주변을 봅니다. 여기서는 a 양쪽에 a와 다른 정의역의 점이 얼마든지 가깝게 있다고 가정합니다. 주어진 모든 허용 오차 ε&gt;0마다 양수 δ가 있어서, 정의역의 x가 <code>0 &lt; |x−a| &lt; δ</code>를 만족하면 <code>|f(x)−L| &lt; ε</code>여야 합니다. 이 예에서는 δ=ε이면 됩니다.</p>
+<p>이제 x≠3에서는 f와 같은 <code>g(x) = x + 3</code>이고, 3에서만 값을 따로 <code>g(3) = 1</code>로 정한 함수 g를 생각합니다. 아래 그림이 g의 그래프입니다.</p>
 <figure class="fig">
 <svg class="fig-svg" viewBox="0 0 760 301" role="img" aria-label="x가 3이 아닐 때 직선 x+3을 따른다. (3,6)은 열린 점이다. x=3에 해당하는 실제 출력 1을 채운 점 (3,1)로 표시했다.">
 <text class="f-cap" x="94" y="24" text-anchor="start">g(x)</text>
@@ -80,7 +81,7 @@
 </svg>
 <figcaption>x=3의 값은 채운 점에서 읽고 주변이 향하는 값은 열린 점의 높이에서 읽는다.</figcaption>
 </figure>
-<p>3에서 값 1을 따로 정한 g는 주변의 식이 f와 같으므로 역시 극한이 6입니다. 하지만 g(3)=1입니다. 그래프에서 열린 점 (3,6)은 주변 선이 향하는 곳이고, 채운 점 (3,1)은 3에 정확히 넣은 값입니다.</p>
+<p>g는 주변의 식이 f와 같으므로 역시 극한이 6입니다. 하지만 g(3)=1입니다. 그래프에서 열린 점 (3,6)은 주변 선이 향하는 곳이고, 채운 점 (3,1)은 3에 정확히 넣은 값입니다.</p>
 <p class="small">실행 예제</p>
 <pre data-example="python"><code>from fractions import Fraction as F
 
@@ -100,7 +101,7 @@ for x in (F(29,10), F(299,100), F(3), F(301,100), F(31,10)):
 <div class="check" data-q="q3"></div>
 
 <h2>왼쪽과 오른쪽을 따로 확인한다</h2>
-<p><code>lim<sub>x→a⁻</sub></code>는 a보다 작은 값에서 다가가는 <b class="key">좌극한</b>입니다. <code>lim<sub>x→a⁺</sub></code>는 a보다 큰 값에서 다가가는 <b class="key">우극한</b>입니다. a 양쪽에서 접근할 수 있는 이 장의 예에서는, 좌극한과 우극한이 둘 다 존재하고 같은 실수 L일 때 양쪽 극한이 L입니다.</p>
+<p><code>lim<sub>x→a⁻</sub></code>는 a보다 작은 값에서 다가가는 <b class="key">좌극한</b>입니다. <code>lim<sub>x→a⁺</sub></code>는 a보다 큰 값에서 다가가는 <b class="key">우극한</b>입니다. a 양쪽에서 접근할 수 있는 이 장의 예에서는, 좌극한과 우극한이 둘 다 존재하고 같은 실수 L일 때, 그리고 그때에만 양쪽 극한이 L입니다.</p>
 <p>예를 들어 <code>j(x)=1 (x&lt;3), j(x)=4 (x≥3)</code>으로 둡니다. 왼쪽에서는 계속 1, 오른쪽에서는 계속 4입니다. 따라서 좌극한은 1, 우극한은 4이고 둘이 달라 양쪽 극한은 없습니다. j(3)=4가 있어도 판단은 그대로입니다.</p>
 <figure class="fig">
 <svg class="fig-svg" viewBox="0 0 760 301" role="img" aria-label="x가 3보다 작으면 j(x)=1, x가 3 이상이면 j(x)=4이다. 왼쪽 그래프의 끝 (3,1)은 빈 점, 오른쪽 시작 (3,4)는 채운 점이다.">
