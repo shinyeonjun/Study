@@ -111,7 +111,7 @@
 <p>기준선은 <var>ŷ<sub>t</sub>=y<sub>t−1</sub></var>입니다. 후보는 최근 k년의 평균 연간 변화량을 마지막 값에 더하며 k=3 또는 k=6만 비교합니다. 선택 기준은 2002–2006년에 얻은 평균 절대오차(MAE)이고 동점이면 기간이 짧은 후보를 고릅니다. 보류 평가에는 MAE와 큰 오류를 더 크게 반영하는 제곱평균제곱근오차(RMSE)를 적습니다. 구간 폭을 설정하는 기준과 범위를 다음 장에서도 바꾸지 않습니다.</p>
 <div class="check" data-q="q5"></div>
 <div class="check" data-q="q6"></div>
-<h2>이어 풀기와 증명</h2>
+<h2>이어 풀기</h2>
 <p>자료 검사와 모형 평가를 두 단계로 기록합니다. 다음 해의 값을 안다는 가정을 무엇으로 검증할 수 있는지도 적습니다.</p>
 <div class="check" data-q="q7"></div>
 <div class="check" data-q="q8"></div>
@@ -150,12 +150,12 @@ development 12 1990 2001
 selection 5 2002 2006
 calibration 5 2007 2011
 holdout 8 2012 2019</code></pre>
-<p>저장소 최상위에서 실행합니다. 해시는 UTF-8로 읽고 줄바꿈을 표준으로 통일한 텍스트에 적용합니다. 이 실습의 현재 입력을 식별하며, 해시가 같아도 당시 공개일이나 자료의 대표성까지 보장하지는 않습니다.</p>
+<p>CSV를 저장한 같은 작업 폴더에서 실행합니다. 해시는 UTF-8로 읽고 줄바꿈을 표준으로 통일한 텍스트에 적용합니다. 이 실습의 현재 입력을 식별하며, 해시가 같아도 당시 공개일이나 자료의 대표성까지 보장하지는 않습니다.</p>
 <h2>참고 자료</h2>
 <ul>
 <li><a href="https://gml.noaa.gov/ccgg/trends/data.html">NOAA GML · Trends in Atmospheric Carbon Dioxide 자료</a></li>
 <li><a href="https://gml.noaa.gov/webdata/ccgg/trends/co2/co2_annmean_mlo.txt">NOAA GML · 연평균 원자료와 생성본</a></li>
-<li><a href="https://otexts.com/fpp3/toolbox.html#time-series-cross-validation">Hyndman·Athanasopoulos · Time Series Cross-Validation</a></li>
+<li><a href="https://otexts.com/fpp3/toolbox.html#sec-tscv">Hyndman·Athanasopoulos · Time Series Cross-Validation</a></li>
 <li><a href="da09-3.html">DA09-3 자료 계약 실습</a></li>
 </ul>
 <h2>확인 문제</h2>

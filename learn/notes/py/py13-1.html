@@ -34,7 +34,8 @@
 </svg><figcaption>같은 원소별 덧셈이라도 저장 형식이 실제 수학의 합을 담을 수 있는지 확인한다.</figcaption></figure>
 <div class="check" data-q="q1"></div><div class="check" data-q="q2"></div><div class="check" data-q="q3"></div>
 <h2>어느 단계에서 자료형을 바꾸는가</h2>
-<p><code>a.astype(np.uint16) + b.astype(np.uint16)</code>는 270이 들어가는 칸으로 <em>입력을</em> 옮겨 덧셈을 합니다. <code>(a+b).astype(np.uint16)</code>는 이미 14가 된 값을 옮깁니다. <code>np.sum</code>은 작은 정수를 더할 때 기본으로 더 넓은 정수형을 쓸 수 있지만, <code>a+b</code>와 같은 규칙으로 생각하면 틀립니다. 집계의 <code>dtype</code>도 명시할 수 있습니다. 넓힌 정수도 범위가 있으므로 최악의 합을 미리 따져야 합니다.</p>
+<p><code>a.astype(np.uint16) + b.astype(np.uint16)</code>는 270이 들어가는 칸으로 <em>입력을</em> 옮겨 덧셈을 합니다. <code>(a+b).astype(np.uint16)</code>는 이미 14가 된 값을 옮깁니다. <code>np.sum</code>은 규칙이 다릅니다. 플랫폼 기본 정수보다 좁은 정수(<code>uint8</code>, <code>int8</code> 등)를 합할 때는 누적 자료형을 기본 정수(64비트 환경의 NumPy 2에서 <code>uint64</code>·<code>int64</code>)로 넓히므로 <code>values.sum()</code>은 270을 냅니다. 원소별 연산 <code>a+b</code>에는 이런 넓힘이 없습니다. 집계의 <code>dtype</code>도 명시할 수 있습니다. 넓힌 정수도 범위가 있으므로 최악의 합을 미리 따져야 합니다.</p>
+<div class="box trap"><p class="box-k">흔한 실수</p><p>배열 연산의 정수 넘침은 경고 없이 조용히 일어납니다. 스칼라 <code>np.uint8(250)+np.uint8(20)</code>은 <code>RuntimeWarning: overflow encountered in scalar add</code>를 내고 14를 돌려주지만, 같은 계산을 배열로 하면 아무 메시지도 없습니다. 또 NumPy 2에서는 Python 정수를 섞을 때 배열의 자료형을 유지하므로, <code>np.uint8(250)+300</code>처럼 Python 정수 자체가 범위 밖이면 <code>OverflowError</code>가 납니다. 경고가 없다는 사실을 정상의 증거로 쓰지 않습니다.</p></div>
 <div class="check" data-q="q4"></div>
 <h2>실수의 저장 간격과 덧셈 순서</h2>
 <p><code>float64</code>는 실수를 유한한 비트로 근사합니다. 저장 간격은 크기에 따라 달라집니다. 1.0에서 바로 다음 큰 수까지는 2⁻⁵²입니다. 10¹⁶은 2⁵³과 2⁵⁴ 사이에 있으며 이 구간에서 이웃한 저장값의 간격은 2입니다. 따라서 10¹⁶+1은 정확히 두 칸의 중간이고, 일반적인 가장 가까운 짝수 쪽 반올림으로 10¹⁶에 저장됩니다. 뒤에서 10¹⁶을 빼면 1을 되찾을 수 없습니다.</p>
