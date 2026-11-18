@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>희소 선형계에서 전조건화와 중단 기준을 함께 설계하기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="LA14-3">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">선형대수 · 희소 선형계</p>
+<p class="chap-num">LA14·3</p>
+<h1>희소 선형계에서 전조건화와 중단 기준을 함께 설계하기</h1>
+<p class="lead">좌표마다 식의 크기가 크게 다르면 같은 잔차 기준으로도 풀이가 느려질 수 있습니다. 문제를 바꾸지 않고 계산에 쓰는 스케일을 바꾼 뒤, 두 풀이를 같은 원래 잔차로 비교합니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>희소 행렬을 채워 만들지 않고 행렬과 벡터의 곱을 계산할 수 있다.</li><li>양의 대각 전조건화가 원래 선형계의 해를 유지함을 보일 수 있다.</li><li>변환 전후의 반복 수, 원래 잔차, 실제 계수 오차를 따로 비교할 수 있다.</li></ul></div>
+
+<h2>0을 보관하지 않고 인접한 값만 읽는다</h2>
+<p>점 n개가 한 줄에 있을 때 각 점의 값이 바로 옆 점과만 관계있다고 합시다. B의 대각은 4, 대각 바로 위와 아래는 −1, 나머지는 0이라고 둡니다. 가운데 행에서는 (Bv)ᵢ=4vᵢ−vᵢ₋₁−vᵢ₊₁입니다. 양끝은 있는 이웃만 뺍니다. 지금 필요한 것은 B 전체를 작성하는 일이 아니라 입력 벡터를 주면 이 규칙을 실행하는 함수입니다. 저장해야 하는 0이 많을 때 이런 <b class="key">희소 행렬</b> 구조를 풀이에 활용할 수 있습니다.</p>
+<p>B는 대칭입니다. 임의의 실수 벡터 v에서 vᵀBv=4Σvᵢ²−2Σvᵢvᵢ₊₁입니다. 2|ab|≤a²+b²이고 한 좌표는 이웃 쌍에 최대 두 번 나타나므로 |2Σvᵢvᵢ₊₁|≤2Σvᵢ²입니다. 따라서 모든 v에서 2‖v‖² ≤ vᵀBv ≤ 6‖v‖²입니다. B는 양의 정부호이고 고유값은 [2,6]에 있으므로 조건수 κ₂(B)≤3입니다.</p>
+<div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
+<h2>같은 관계라도 좌표마다 스케일이 다르면</h2>
+<p>양의 대각행렬 S=diag(s₁,…,sₙ)을 두고 A=SBS를 만들겠습니다. 실제로는 입력에 s를 곱하고 B의 희소 규칙을 적용한 뒤 각 출력을 다시 sᵢ로 곱하면 됩니다. s는 0.1에서 10 사이로 변하도록 놓습니다. 대각 성분이 4sᵢ²라 가장 큰 대각과 가장 작은 대각의 비는 10,000입니다.</p>
+<p>A도 정부호입니다. v≠0이면 Sv≠0이라 vᵀAv=(Sv)ᵀB(Sv)&gt;0입니다. 하지만 Rayleigh 몫을 대각이 가장 큰 좌표의 단위벡터와 가장 작은 좌표에 각각 넣어 보면, λ<sub>max</sub>는 큰 대각 이상이고 λ<sub>min</sub>은 작은 대각 이하입니다. 따라서 κ₂(A)≥10,000입니다. 이 선형계에서는 각 좌표의 단위 차이가 좋은 수치 조건을 가릴 수 있습니다.</p>
+<div class="check" data-q="q3"></div>
+<h2>해를 유지하는 대각 전조건화</h2>
+<p><b class="key">전조건화</b>는 풀기 좋은 형태를 만들기 위해 행렬을 변환하는 전략입니다. 이번에는 A의 대각만 가지고 D=diag(A)를 만든 뒤 C=D<sup>−1/2</sup>로 둡니다. x=Cy를 Ax=b에 넣고 양변에 C를 곱하면 CACy=Cb입니다. C가 가역이므로 y를 풀어 x=Cy로 되돌리면 처음 해와 같습니다. CAC는 대칭 양의 정부호라 같은 켤레기울기법을 적용할 수 있습니다.</p>
+<p>이 예에서는 D=4S², C=(1/2)S⁻¹이므로 CAC=B/4입니다. B의 고유값들이 1/4배 되어도 최대와 최소의 비는 변하지 않습니다. 그래서 바뀐 문제의 조건수는 3 이하입니다. 실제로는 대각만으로 효과가 나지 않는 행렬도 있습니다. 스케일을 적용할 때 쓰는 비용과 반복이 줄어든 정도를 함께 측정합니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 160" role="img" aria-label="대각 스케일을 조정한 뒤 변환된 해를 원래 좌표로 돌려 같은 잔차로 검사">
+<rect class="f-box" x="42" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="135" y="61" text-anchor="middle">좌표마다 다른 A</text><text class="f-s" x="135" y="89" text-anchor="middle">A=SBS, 큰 대각 비</text><text class="f-s" x="135" y="110" text-anchor="middle">κ₂(A) ≥ 10,000</text><line class="f-line" x1="235" y1="84" x2="278" y2="84" marker-end="url(#f-arrow)"/><rect class="f-soft" x="287" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="380" y="61" text-anchor="middle">양의 대각 변환</text><text class="f-s" x="380" y="89" text-anchor="middle">C=(1/2)S⁻¹, x=Cy</text><text class="f-s" x="380" y="110" text-anchor="middle">CAC=B/4를 풂</text><line class="f-line" x1="480" y1="84" x2="523" y2="84" marker-end="url(#f-arrow)"/><rect class="f-box" x="532" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="625" y="61" text-anchor="middle">같은 방정식을 검산</text><text class="f-s" x="625" y="89" text-anchor="middle">원래 b−Ax를 계산</text><text class="f-s" x="625" y="110" text-anchor="middle">κ₂(CAC) ≤ 3</text>
+</svg><figcaption>변환은 해가 나타나는 좌표와 계산의 조건수를 바꿉니다. 원래 선형계에서의 정답은 그대로입니다.</figcaption></figure>
+<div class="check" data-q="q4"></div><div class="check" data-q="q5"></div>
+<h2>중단 기준을 같은 단위로 재야 비교할 수 있다</h2>
+<p>변환된 문제의 잔차는 Cb−CACy=C(b−Ax)입니다. 따라서 변환된 계산에서 들고 있는 잔차에 C⁻¹을 적용하면 원래 단위의 잔차가 됩니다. 아래 두 반복 모두 원래 기준 ‖b−Ax‖/‖b‖≤10⁻⁹로 멈춥니다. 부동소수점 반복 중 갱신한 잔차는 참 계산과 어긋날 수 있으므로, 갱신 잔차로 반복을 멈춘 뒤 원래 b−Ax를 다시 계산해 같은 기준을 확인합니다. 참 해를 독립으로 검산할 수 있도록 x*=(1,…,1)을 선택해 b를 만들어 둡니다.</p>
+<pre data-example="python"><code>import numpy as np
+
+def banded(v):
+    y = 4 * v.copy()
+    y[1:] -= v[:-1]
+    y[:-1] -= v[1:]
+    return y
+
+def cg(matvec, rhs, to_original, limit):
+    x = np.zeros_like(rhs)
+    r = rhs.copy()
+    p = r.copy()
+    rr = r @ r
+    target = 1e-9 * np.linalg.norm(rhs * to_original)
+    if rr == 0:
+        return x, 0
+    for step in range(1, limit + 1):
+        ap = matvec(p)
+        alpha = rr / (p @ ap)
+        x += alpha * p
+        r -= alpha * ap
+        next_rr = r @ r
+        if np.linalg.norm(r * to_original) &lt;= target:
+            return x, step
+        p = r + (next_rr / rr) * p
+        rr = next_rr
+    raise RuntimeError(&quot;did not reach requested tolerance&quot;)
+
+size = 20
+scale = np.geomspace(.1, 10, size)
+def apply(v):
+    return scale * banded(scale * v)
+
+rhs = apply(np.ones(size))
+plain, steps_plain = cg(apply, rhs, 1., 6 * size)
+c = .5 / scale
+y, steps_scaled = cg(lambda v: c * apply(c * v), c * rhs, 1 / c, 6 * size)
+scaled = c * y
+for label, solution, steps in ((&quot;원래&quot;, plain, steps_plain), (&quot;변환&quot;, scaled, steps_scaled)):
+    residual = np.linalg.norm(rhs - apply(solution)) / np.linalg.norm(rhs)
+    assert residual &lt;= 1e-9
+    error = np.max(np.abs(solution - 1))
+    print(label, &quot;반복:&quot;, steps, &quot;상대 잔차:&quot;, f&quot;{residual:.2e}&quot;, &quot;최대 계수 오차:&quot;, f&quot;{error:.2e}&quot;)
+assert steps_scaled &lt; steps_plain</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>원래 반복: 34 상대 잔차: 8.42e-10 최대 계수 오차: 2.24e-08
+변환 반복: 14 상대 잔차: 4.52e-10 최대 계수 오차: 2.45e-07</code></pre>
+<p>이 실행에서는 반복 수가 34에서 14로 줄었습니다. 상대 잔차는 변환의 해가 더 작았는데, 최대 계수 오차는 원래 풀이가 더 작았습니다. 중단 조건이 두 근사해의 모든 계수를 같은 정확도로 맞추는 조건은 아니기 때문입니다. 이 예와 다른 자료에서는 반복 수와 잔차가 달라질 수 있습니다. 보고서에는 사용한 문제, 오차 단위, 구현과 중단 기준을 함께 적습니다.</p>
+<div class="check" data-q="q6"></div>
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table><thead><tr><th scope="col">도구</th><th scope="col">쓰는 이유</th></tr></thead><tbody><tr><td>희소 행렬곱</td><td>0을 포함한 n×n 배열을 만들지 않고 정해진 이웃만 사용한다.</td></tr><tr><td>전조건화</td><td>가역인 좌표 변환으로 같은 원래 해를 유지하면서 반복하기 좋은 선형계를 만든다.</td></tr><tr><td>공정한 비교</td><td>원래 좌표의 잔차로 멈추고, 반복 수와 계수 오차를 따로 기록한다.</td></tr></tbody></table></div>
+
+<h2>참고 자료</h2>
+<ul><li><a href="https://github.com/mitmath/18335">MIT 18.335 · 수치 선형대수와 전조건화</a></li><li><a href="https://fncbook.com/python/minrescg/">Driscoll·Braun · Krylov methods in linear algebra</a></li></ul>
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

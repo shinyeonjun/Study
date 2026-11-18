@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>논문의 주장, 수치, 적용 조건을 근거표에 옮기기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="RS11-2">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">연구 방법 · 선행연구</p>
+<p class="chap-num">RS11·2</p>
+<h1>논문의 주장, 수치, 적용 조건을 근거표에 옮기기</h1>
+<p class="lead">두 논문에서 ‘결과를 더 신뢰할 수 있다’는 말을 봐도, 독립 반복의 단위와 표의 수치는 다를 수 있습니다. 원문의 위치까지 남기는 추출표를 만들고 작은 수치 예로 집계의 차이를 확인합니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>논문 주장을 확인 가능한 근거와 함께 한 줄로 옮길 수 있다.</li><li>훈련 실행, 평가 궤적, 과제 수를 독립 반복 수와 구분할 수 있다.</li><li>과제를 층으로 고정한 재표집에서 무엇이 다시 뽑히는지 설명하고 검산할 수 있다.</li></ul></div>
+
+<h2>문장 하나와 수치 하나는 같은 종류의 증거가 아니다</h2>
+<p>같은 연구에 관해 초록에는 큰 주장이 있고, 결과 표에는 특정 실험 조건에서 잰 수치가 있습니다. 추출표에 최소한 연구와 판본, 원문 위치, 대상과 비교 조건, 결과 변수와 단위, 독립 반복 수, 불확실성의 종류, 근거가 허용하는 결론을 넣습니다. 값이 불명확하면 공란 또는 미확인으로 기록하고 어디까지 찾아봤는지 남깁니다.</p>
+<p>원문에서 읽은 사실과 내가 해석한 내용을 다른 칸에 씁니다. 예를 들어 ‘표준오차를 보고했다’는 원문에서 확인한 사실입니다. ‘다른 환경에서도 현상이 같다’는 그 표 하나만으로는 확인할 수 없는 해석입니다. 나중에 해석을 바꾸더라도 어떤 행의 어떤 수치를 근거로 했는지 남아야 합니다.</p>
+<div class="check" data-q="q1"></div>
+<h2>공개 원문 두 편에서 실제로 뽑아 보기</h2>
+<p>아래는 근거의 위치와 반복 단위를 옮기는 별도의 추출 연습입니다. 앞 장의 가상 2020년 이후 검색 조건은 여기 적용하지 않습니다.</p>
+<div class="table-wrap"><table><thead><tr><th scope="col">원문과 위치</th><th scope="col">그 위치에서 확인할 수 있는 내용</th><th scope="col">이 근거를 사용할 때의 범위</th></tr></thead><tbody><tr><td>Henderson 외, arXiv v3의 Table 1</td><td>정책 구조와 활성화 함수 등의 비교입니다. 2백만 훈련 표본 후 마지막 100개 궤적의 평균 반환값을 구하고, 실험 수 5에 걸친 평균과 표준오차를 표시합니다.</td><td>마지막 100개 궤적은 평가에 쓰인 묶음입니다. 같은 학습 정책의 평가 궤적을 각각 별개의 훈련 실행으로 세지 않습니다.</td></tr><tr><td>Agarwal 외, NeurIPS 2021 §4.1</td><td>과제를 층으로 두고 각 과제 안의 실행을 복원 추출한 뒤, 여러 과제의 집계 통계량을 다시 계산하는 구간 추정을 제안합니다.</td><td>과제 목록을 고정하고 실행을 다시 뽑은 사례입니다. 과제까지 임의로 다시 뽑는 모든 설정의 변동을 이 결과로 추정했다고 쓰지 않습니다.</td></tr></tbody></table></div>
+<p>첫 행의 표준오차는 5회 실행이라는 단위와 함께 읽습니다. ‘500개 독립 훈련 결과’가 아닙니다. 둘째 행은 과제들의 집계에 관한 방법과 그 평가를 기록합니다. 표준오차, 표준편차, 층화 부트스트랩 구간은 서로 다른 양이라 같은 기호 ±로 보고했더라도 종류를 확인해야 합니다. 현재 추출표는 두 원문에서 확인한 두 항목입니다. 어떤 방법이 모든 환경에서 우수하다는 결론을 내려면 별도의 실험이 필요합니다.</p>
+<div class="check" data-q="q2"></div><div class="check" data-q="q3"></div>
+<h2>재표집의 단위를 바꾸면 질문이 바뀐다</h2>
+<p>여기부터는 계산을 설명하기 위한 독립적인 가상 자료입니다. 같은 과제·반복 설정에서 새 방법과 기준 방법을 짝지어 비교했고, 두 방법의 성능 차를 과제별로 받았다고 합시다. 과제 A의 두 차는 1,3이고 B의 두 차는 −3,−1입니다. 두 과제의 평균 차에 같은 비중을 주면 (2+(−2))/2=0입니다. 하나의 과제만 제시할 때 보고하는 방향과 크기가 달라집니다.</p>
+<p>과제 A,B를 둘 다 유지한 채 반복 차만 다시 뽑으려면, A에서는 1 또는 3을 복원해 두 번, B에서는 −3 또는 −1을 복원해 두 번 뽑습니다. 원래 비교가 짝이 있으면 단일 점수를 풀어 섞기보다 차를 낸 그 짝을 재표집합니다. 각 과제에서 가능한 순서쌍은 4개라 합치면 16개입니다. 예를 들어 A 순서쌍 (3,3)과 B 순서쌍 (−1,−1)에서 전체 평균은 (3−1)/2=1입니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 160" role="img" aria-label="과제는 고정하고 각 과제의 비교 차를 두 번씩 복원 추출해 재표집하는 예">
+<rect class="f-box" x="42" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="135" y="61" text-anchor="middle">과제 A</text><text class="f-s" x="135" y="89" text-anchor="middle">복원으로 차 두 개 재표집</text><text class="f-s" x="135" y="110" text-anchor="middle">가능한 순서쌍 4개</text><line class="f-line" x1="235" y1="84" x2="278" y2="84" marker-end="url(#f-arrow)"/><rect class="f-soft" x="287" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="380" y="61" text-anchor="middle">과제 B</text><text class="f-s" x="380" y="89" text-anchor="middle">복원으로 차 두 개 재표집</text><text class="f-s" x="380" y="110" text-anchor="middle">가능한 순서쌍 4개</text><line class="f-line" x1="480" y1="84" x2="523" y2="84" marker-end="url(#f-arrow)"/><rect class="f-box" x="532" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="625" y="61" text-anchor="middle">과제별 평균을 합침</text><text class="f-s" x="625" y="89" text-anchor="middle">두 과제에 같은 비중</text><text class="f-s" x="625" y="110" text-anchor="middle">전체 순서 조합 16개</text>
+</svg><figcaption>이 시범의 16개 분포는 가상 표본을 반복해 얻습니다. 새 과제에서 효과가 변하는 범위는 직접 추정하지 않습니다.</figcaption></figure>
+<div class="check" data-q="q4"></div><div class="check" data-q="q5"></div>
+<h2>복원 추출에서 가능한 조합을 모두 세기</h2>
+<pre data-example="python"><code>from collections import Counter
+from fractions import Fraction as F
+from itertools import product
+
+task_a = (1, 3)
+task_b = (-3, -1)
+task_means = [F(sum(rows), len(rows)) for rows in (task_a, task_b)]
+point = sum(task_means) / len(task_means)
+counts = Counter(F(sum(a) + sum(b), 4)
+                 for a in product(task_a, repeat=2)
+                 for b in product(task_b, repeat=2))
+assert sum(counts.values()) == 16
+assert sum(value * count for value, count in counts.items()) == 16 * point
+print(&quot;과제별 평균:&quot;, *task_means)
+print(&quot;종합 평균:&quot;, point)
+print(&quot;재표집 분포:&quot;)
+for value, count in sorted(counts.items()):
+    print(value, count)</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>과제별 평균: 2 -2
+종합 평균: 0
+재표집 분포:
+-1 1
+-1/2 4
+0 6
+1/2 4
+1 1</code></pre>
+<p>실험이 과제당 두 번뿐이라 어떤 정밀도의 추정을 할 수 있는지는 제한됩니다. 이 예는 복원 추출의 가능한 조합과 고정한 단위를 보여 줍니다. 위 다섯 결과를 그대로 ‘95% 신뢰구간’으로 부르려면 구간을 만드는 규칙과 표본 수에서의 성능을 별도로 검토해야 합니다.</p>
+<div class="check" data-q="q6"></div>
+<h2>원문 확인 기록까지 재현한다</h2>
+<p>표의 한 행을 넘겨받은 사람은 논문의 판본과 표 번호를 열어 반복 수, 단위, 측정값을 다시 찾을 수 있어야 합니다. 과제별 결과가 없거나 비교 방법의 훈련 예산이 다르면 ‘비교 불가 조건’을 남깁니다. 적어 둔 조건이 비슷해 보인다고 바로 평균을 합치기 전에, 내가 던진 연구 질문이 두 연구에서 같은 대상과 측정을 가리키는지 확인합니다. 나중에 효과를 합치는 계산은 이 추출표가 정확해야 의미가 있습니다.</p>
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table><thead><tr><th scope="col">표에 남길 근거</th><th scope="col">확인할 질문</th></tr></thead><tbody><tr><td>원문과 판본</td><td>다른 사람이 그 절과 표를 찾을 수 있는가.</td></tr><tr><td>실험 단위와 지표</td><td>과제, 훈련 실행, 평가 궤적을 몇 번씩 사용했는가.</td></tr><tr><td>불확실성의 종류</td><td>무엇을 고정하고 무엇을 다시 추출했는가.</td></tr><tr><td>범위와 해석</td><td>결과가 어떤 과제, 예산, 비교 조건에만 해당하는가.</td></tr></tbody></table></div>
+
+<h2>참고 자료</h2>
+<ul><li><a href="https://arxiv.org/abs/1709.06560v3">Henderson 외 · Deep Reinforcement Learning that Matters, v3 Table 1</a></li><li><a href="https://proceedings.neurips.cc/paper/2021/hash/f514cec81cb148559cf475e7426eed5e-Abstract.html">Agarwal 외 · Deep Reinforcement Learning at the Edge of the Statistical Precipice, §4.1</a></li></ul>
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

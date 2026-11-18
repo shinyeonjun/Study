@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>배열 확장의 최악·평균·상각 비용을 구분하기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e8c'/%3E%3Cpath d='M8 22V10m8 12V14m8 8V6' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="CS09-3">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+
+<header class="chapter">
+<p class="chap-sub">자료구조·알고리즘 · CS09 점화식과 알고리즘 복잡도의 증명</p>
+<p class="chap-num">CS09·3</p>
+<h1>배열 확장의 최악·평균·상각 비용을 구분하기</h1>
+<p class="lead">일부 삽입은 배열 전체를 복사하지만 그 일이 매번 일어나지는 않습니다. 여러 연산의 누적 비용을 구한 뒤, 확률에 대한 평균과 차이를 따집니다.</p>
+</header>
+
+<div class="goal">
+<h2>이 장을 읽고 나면</h2>
+<ul>
+<li>용량을 두 배로 늘리는 배열에서 한 삽입의 비용을 구한다.</li>
+<li>복사 수열과 잠재 함수 두 방법으로 상각 상수를 증명한다.</li>
+<li>최악·평균·상각의 결론이 무엇을 보장하는지 구분한다.</li>
+</ul>
+</div>
+
+<h2>용량과 들어 있는 개수는 다릅니다</h2>
+<p>연속된 칸에 값을 담는 동적 배열을 둡니다. 실제 사용 개수 m과 예약된 용량 C를 구별합니다. 처음에는 m=0, C=1입니다. 뒤에 하나를 넣을 빈칸이 있으면 쓰기 한 번입니다. 꽉 차면 용량을 2C로 늘리고 기존 C개를 복사한 뒤 새 항목을 씁니다. 이 장은 새 배열을 구현하는 부수적인 메모리 비용을 쓰기 개수로 설명하며 시간과 상수는 구현에 따라 달라질 수 있습니다.</p>
+<p>여덟 번째까지 넣으면 비용은 [1,2,3,1,5,1,1,1]입니다. 아홉 번째는 꽉 찬 여덟 개를 모두 복사하므로 실제 비용 9입니다. 최악 한 번의 비용은 배열에 이미 든 원소 수 규모인 Θ(m)까지 올라갑니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 196" role="img" aria-label="빈 배열에 아홉 번 삽입할 때 실제 쓰기 횟수">
+<line class="f-ink" x1="77" y1="147" x2="706" y2="147"/>
+<line class="f-ink" x1="77" y1="147" x2="77" y2="29"/>
+<line class="f-ink" x1="71" y1="147" x2="77" y2="147"/>
+<text class="f-s" x="65" y="151" text-anchor="end">0</text>
+<line class="f-ink" x1="71" y1="114" x2="77" y2="114"/>
+<text class="f-s" x="65" y="118" text-anchor="end">3</text>
+<line class="f-ink" x1="71" y1="81" x2="77" y2="81"/>
+<text class="f-s" x="65" y="85" text-anchor="end">6</text>
+<line class="f-ink" x1="71" y1="48" x2="77" y2="48"/>
+<text class="f-s" x="65" y="52" text-anchor="end">9</text>
+<rect class="f-box" x="100" y="136" width="38" height="11" rx="0"/>
+<text class="f-s" x="119" y="130" text-anchor="middle">1</text>
+<text class="f-s" x="119" y="172" text-anchor="middle">1</text>
+<rect class="f-soft" x="164" y="125" width="38" height="22" rx="0"/>
+<text class="f-s" x="183" y="119" text-anchor="middle">2</text>
+<text class="f-s" x="183" y="172" text-anchor="middle">2</text>
+<rect class="f-soft" x="228" y="114" width="38" height="33" rx="0"/>
+<text class="f-s" x="247" y="108" text-anchor="middle">3</text>
+<text class="f-s" x="247" y="172" text-anchor="middle">3</text>
+<rect class="f-box" x="292" y="136" width="38" height="11" rx="0"/>
+<text class="f-s" x="311" y="130" text-anchor="middle">1</text>
+<text class="f-s" x="311" y="172" text-anchor="middle">4</text>
+<rect class="f-soft" x="356" y="92" width="38" height="55" rx="0"/>
+<text class="f-s" x="375" y="86" text-anchor="middle">5</text>
+<text class="f-s" x="375" y="172" text-anchor="middle">5</text>
+<rect class="f-box" x="420" y="136" width="38" height="11" rx="0"/>
+<text class="f-s" x="439" y="130" text-anchor="middle">1</text>
+<text class="f-s" x="439" y="172" text-anchor="middle">6</text>
+<rect class="f-box" x="484" y="136" width="38" height="11" rx="0"/>
+<text class="f-s" x="503" y="130" text-anchor="middle">1</text>
+<text class="f-s" x="503" y="172" text-anchor="middle">7</text>
+<rect class="f-box" x="548" y="136" width="38" height="11" rx="0"/>
+<text class="f-s" x="567" y="130" text-anchor="middle">1</text>
+<text class="f-s" x="567" y="172" text-anchor="middle">8</text>
+<rect class="f-soft" x="612" y="48" width="38" height="99" rx="0"/>
+<text class="f-s" x="631" y="42" text-anchor="middle">9</text>
+<text class="f-s" x="631" y="172" text-anchor="middle">9</text>
+<text class="f-s" x="690" y="171" text-anchor="middle">삽입 번호</text>
+</svg>
+<figcaption>세로 한 단위는 쓰기 한 번입니다. 2,3,5,9번째에 기존 데이터를 복사합니다.</figcaption>
+</figure>
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+<div class="check" data-q="q3"></div>
+<h2>어떤 입력 값이든 삽입열 전체를 합산합니다</h2>
+<p>n번 삽입에서 새로운 항목을 쓰는 데 n번, 각 용량을 확장하면서 1,2,4,… 크기의 복사가 듭니다. 마지막 복사가 2ᵏ라면 2ᵏ&lt;n입니다. 1+2+⋯+2ᵏ=2ᵏ⁺¹−1&lt;2n이어서 합이 3n 미만입니다. n=9에서는 복사 합 15와 새 쓰기 9를 더해 24입니다. 따라서 임의의 값들을 이 규칙에 따라 순차적으로 삽입할 때 <b class="key">상각 비용</b>, 즉 전체 비용을 연산에 나눈 부담의 상계는 O(1)입니다. 삭제나 다른 용량 정책을 적용하면 기존 증명을 그대로 가져올 수 있는지 다시 봅니다.</p>
+<p>같은 보장을 잠재 함수 Φ로도 계산합니다. 자료구조 상태에 <code>Φ=2m−C+1</code>을 붙이고, 상각 비용을 실제 비용+(새 Φ−이전 Φ)로 정의합니다. 처음 Φ는 0입니다. 삽입만 한다면 확장 직후의 m은 용량의 절반보다 크고 용량은 다음 확장까지 유지되므로 Φ는 항상 음이 아닙니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 156" role="img" aria-label="용량 4에서 5번째 삽입할 때 실제 5와 잠재량 변화 −2를 합하면 3">
+<rect class="f-box" x="18" y="37" width="222" height="61" rx="3"/>
+<text class="f-t" x="129" y="63" text-anchor="middle">삽입 전</text>
+<text class="f-s" x="129" y="83" text-anchor="middle">m=4, C=4, Φ=5</text>
+<rect class="f-box" x="269" y="37" width="222" height="61" rx="3"/>
+<text class="f-t" x="380" y="63" text-anchor="middle">삽입 후</text>
+<text class="f-s" x="380" y="83" text-anchor="middle">m=5, C=8, Φ=3</text>
+<rect class="f-soft" x="520" y="37" width="222" height="61" rx="3"/>
+<text class="f-t" x="631" y="63" text-anchor="middle">상각 비용</text>
+<text class="f-s" x="631" y="83" text-anchor="middle">실제 5 + (3−5) = 3</text>
+<line class="f-ink" x1="240" y1="67" x2="265" y2="67" marker-end="url(#f-arrow)"/>
+<line class="f-ink" x1="491" y1="67" x2="516" y2="67" marker-end="url(#f-arrow)"/>
+<text class="f-s" x="380" y="132" text-anchor="middle">Φ = 2m − C + 1</text>
+</svg>
+<figcaption>크기와 용량이 달라지면서 저장해 두었던 상각 비용 일부를 복사에 씁니다.</figcaption>
+</figure>
+<p>확장 없는 삽입에서 실제 비용 1과 잠재량 증가 2가 합쳐져 3입니다. 확장에서는 기존 m=C, 새 m=C+1, 새 용량 2C입니다. Φ는 C+1에서 3으로 바뀌고 실제 비용은 C+1이므로, 합은 (C+1)+(3−(C+1))=3입니다. 연산열에서 Φ 변화들을 합하면 중간 값들이 지워져 새 Φ−초기 Φ만 남습니다. 새 Φ가 음이 아니므로 실제 전체 비용은 상각 비용 합 3n 이하입니다.</p>
+<div class="check" data-q="q4"></div>
+<div class="check" data-q="q5"></div>
+<div class="check" data-q="q6"></div>
+<h2>평균을 낼 때의 확률 전제와 비교합니다</h2>
+<p>길이 4의 목록에서 네 위치 중 하나를 같은 확률로 찾는 순차 탐색이라면 비교 횟수의 <b>평균</b>은 (1+2+3+4)/4=2.5입니다. 위치 선택 분포를 바꾸면 평균이 바뀝니다. 배열 삽입의 상각 상계는 ‘운이 좋아 대부분 싸다’는 확률 전제가 필요 없습니다. 최악 한 연산은 반응 시간의 큰 지연을 설명하고, 평균은 명시한 입력 분포에서의 기대 비용이며, 상각은 정한 연산열의 누적 보장입니다.</p>
+<pre data-example="python"><code>cells = [None]
+size = 0
+actual_total = 0
+charges = []
+def potential(m, c):
+    return 2*m-c+1
+
+for value in range(1, 10):
+    old = potential(size, len(cells))
+    actual = 1
+    if size == len(cells):
+        larger = [None] * (2*len(cells))
+        for i in range(size):
+            larger[i] = cells[i]
+        actual += size
+        cells = larger
+    cells[size] = value
+    size += 1
+    actual_total += actual
+    charge = actual + potential(size,len(cells)) - old
+    charges.append(charge)
+    print(size, len(cells), actual, charge)
+assert cells[:size] == list(range(1, 10))
+print(&quot;actual / charged:&quot;, actual_total, sum(charges))</code></pre>
+<pre data-output><code>1 1 1 3
+2 2 2 3
+3 4 3 3
+4 4 1 3
+5 8 5 3
+6 8 1 3
+7 8 1 3
+8 8 1 3
+9 16 9 3
+actual / charged: 24 27</code></pre>
+<p>표의 네 열은 삽입 번호, 용량, 실제 쓰기, 상각 비용입니다. 계산용 리스트는 이 글의 쓰기 비용 모형을 구현한 것이며 Python 리스트 자체가 항상 같은 용량 규칙을 쓴다고 가정하지 않습니다.</p>
+
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table>
+<thead><tr><th scope="col">핵심어</th><th scope="col">기억할 기준</th></tr></thead>
+<tbody>
+<tr><td><b class="key">실제 비용</b></td><td>이번에 복사하고 새 칸에 쓴 횟수</td></tr>
+<tr><td><b class="key">누적 상계</b></td><td>확장이 드문 성질로 전체 연산열 비용을 제한</td></tr>
+<tr><td><b class="key">잠재 함수</b></td><td>상태 변화와 실제 비용을 함께 합산</td></tr>
+<tr><td><b class="key">평균과 상각</b></td><td>입력에 대한 확률 기댓값과 연산열 전체의 비용 보장을 구별</td></tr>
+</tbody></table></div>
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>느린 한 번이 있다는 사실과, 모든 연산을 합쳐 얼마나 들지에 대한 보장은 함께 성립합니다.</p></div>
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://ocw.mit.edu/courses/6-046j-design-and-analysis-of-algorithms-spring-2015/resources/lecture-5-amortization-amortized-analysis/">MIT 6.046J · 상각 분석</a></li>
+<li><a href="https://ocw.mit.edu/courses/6-006-introduction-to-algorithms-spring-2020/pages/lecture-notes/">MIT 6.006 · 알고리즘 강의 노트</a></li>
+</ul>
+
+<h2>확인 문제</h2>
+<p>아직 풀지 않은 문제입니다. 먼저 식이나 근거를 적어 보고 해설을 확인합니다.</p>
+<div id="quiz"></div>
+
+<section class="work" id="tools"></section>
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

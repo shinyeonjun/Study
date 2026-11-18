@@ -267,6 +267,7 @@ body.hide-keys .key.shown { background: var(--hl); }
 .f-none { fill: none; stroke: var(--accent); stroke-width: 1.4; }
 .f-line { fill: none; stroke: var(--accent); stroke-width: 1.4; }
 .f-ink { fill: none; stroke: var(--muted); stroke-width: 1.4; }
+.f-grid { fill: none; stroke: var(--muted); stroke-width: 1; }
 .f-dash { fill: none; stroke: var(--muted); stroke-width: 1; stroke-dasharray: 5 4; }
 .f-fill { fill: var(--accent); stroke: none; }
 .f-t { fill: var(--text); font-size: 14px; }

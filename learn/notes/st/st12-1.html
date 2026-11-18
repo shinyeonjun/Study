@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>지수족에서 평균·분산을 읽고 GLM의 연결함수 정하기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="ST12-1">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">통계 · ST12 일반화선형모형과 추론</p>
+<p class="chap-num">ST12·1</p>
+<h1>지수족에서 평균·분산을 읽고 GLM의 연결함수 정하기</h1>
+<p class="lead">합격 여부와 한 시간의 요청 건수는 같은 범위의 값이 아닙니다. 분포가 자료의 조건부 평균과 분산을 어떻게 정하는지 유도하고, 직선으로 만들 양을 고릅니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2>
+<ul>
+<li>정규화 함수의 도함수에서 평균과 분산을 유도한다.</li>
+<li>베르누이·포아송·정규 모형의 자연모수와 분산을 계산한다.</li>
+<li>응답 분포, 선형예측자, 연결함수로 GLM을 정의한다.</li>
+</ul></div>
+<h2>평균을 직선으로 쓰면 어디에서 막힐까</h2>
+<p>장치 점검의 성공 여부는 0 또는 1입니다. 조건이 같을 때 성공의 평균은 성공확률 p라서 0과 1 사이여야 합니다. 한 시간의 요청 수는 0,1,2,…이고 그 평균 μ는 양의 실수일 수 있습니다. 설명변수 x에 대해 직선 <var>β₀+β₁x</var>를 그대로 평균으로 두면 입력 범위가 넓어질 때 가능한 평균의 범위를 벗어날 수 있습니다. 예를 들어 <var>1−0.2x</var>는 <var>x=8</var>에서 −.6입니다.</p>
+<p><b class="key">일반화선형모형(GLM)</b>은 세 부분으로 정합니다. 설명변수 x를 주었을 때 응답 Y가 따르는 <b>분포</b>, 계수와 입력의 곱을 모은 <b>선형예측자</b> <var>η=x<sup>⊤</sup>β</var>, 그리고 조건부 평균 <var>μ=E[Y|x]</var>를 η로 보내는 <b class="key">연결함수</b> <var>g(μ)=η</var>입니다. 입력 x를 고정한 뒤 응답들이 독립이라는 모형을 이 단원에서 사용합니다. 직선이 되는 대상은 η입니다.</p>
+<div class="check" data-q="q1"></div>
+<h2>정규화에 필요한 항을 계산한다</h2>
+<p>스칼라 응답의 <b class="key">지수족</b> 중 GLM에서 사용할 꼴은 다음과 같습니다. 점의 확률질량 또는 연속 밀도 f를 모두 포함합니다. <var>θ</var>는 자연모수, <var>φ</var>는 여기서 고정한 산포 인수, <var>a(φ)&gt;0</var>입니다. <var>c(y,φ)</var>는 θ와 무관합니다. 적분 또는 합이 1이 되도록 만드는 <var>b(θ)</var>가 중요합니다.</p>
+<div class="eq"><var>f(y;θ,φ)=exp([yθ−b(θ)]/a(φ)+c(y,φ)).</var></div>
+<p>예를 들어 Bernoulli에서 <var>p=P(Y=1)</var>이면 <var>f(y)=p<sup>y</sup>(1−p)<sup>1−y</sup></var>입니다. 로그를 <var>y log[p/(1−p)]+log(1−p)</var>로 정리합니다. 따라서 <var>θ=log[p/(1−p)]</var>, <var>b(θ)=log(1+e<sup>θ</sup>)</var>, <var>a=1</var>, <var>c=0</var>입니다. Poisson에서 <var>f(y)=e<sup>−μ</sup> μ<sup>y</sup>/y!</var>를 로그로 바꾸면 <var>θ=log μ</var>, <var>b(θ)=e<sup>θ</sup></var>, <var>a=1</var>, <var>c(y)=−log(y!)</var>가 됩니다. 여기서는 <var>0&lt;p&lt;1</var>, <var>μ&gt;0</var>에서 작업합니다.</p>
+<p>정규모형 <var>N(μ,v)</var>에서 알려진 <var>v&gt;0</var>을 고정하면 밀도의 지수 부분을 <var>(yμ−μ²/2)/v−y²/(2v)</var>로 펼칠 수 있습니다. 이 꼴에서는 <var>θ=μ</var>, <var>b(θ)=θ²/2</var>, <var>a=v</var>입니다. <var>c(y,v)=−y²/(2v)−log(2πv)/2</var>는 μ와 무관합니다.</p>
+<div class="check" data-q="q2"></div>
+<div class="check" data-q="q3"></div>
+<h2>정규화 식을 미분해 평균과 분산을 얻는다</h2>
+<p>지지가 θ에 따라 바뀌지 않고 합 또는 적분을 미분과 교환할 수 있다고 합시다. ST11의 점수 식을 쓰면 <var>∂log f/∂θ=[Y−b′(θ)]/a(φ)</var>입니다. 점수의 평균이 0이라 <var>E[Y]=b′(θ)</var>입니다. 또 그 분산은 <var>Var(Y)/a(φ)²</var>이며 음의 로그우도 이계 미분은 <var>b″(θ)/a(φ)</var>입니다. 동일한 Fisher 정보를 나타내는 두 식을 같다고 두면</p>
+<div class="eq"><var>E[Y]=b′(θ), Var(Y)=a(φ)b″(θ).</var></div>
+<p>Bernoulli에서 <var>b′=e<sup>θ</sup>/(1+e<sup>θ</sup>)=p</var>, 이를 다시 미분하면 <var>b″=p(1−p)</var>입니다. Poisson에서 1차·2차 도함수가 모두 <var>e<sup>θ</sup>=μ</var>입니다. 정규에서는 <var>b′=θ</var>, <var>b″=1</var>이라 분산이 v에 머뭅니다. 평균이 달라질 때 분산이 어떻게 바뀔지도 모델 선택의 일부입니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 215" role="img" aria-label="베르누이는 로짓과 p(1−p), 포아송은 로그와 μ, 정규는 항등과 v로 대응한다.">
+<text class="f-cap" x="380" y="30" text-anchor="middle">자연모수 및 조건부 분산</text>
+<rect class="f-soft" x="36.5" y="49" width="146" height="38"/>
+<text class="f-t" x="109.5" y="73" text-anchor="middle">응답 분포</text>
+<rect class="f-soft" x="182.5" y="49" width="241" height="38"/>
+<text class="f-t" x="303" y="73" text-anchor="middle">정준 연결 g(μ)</text>
+<rect class="f-soft" x="423.5" y="49" width="130" height="38"/>
+<text class="f-t" x="488.5" y="73" text-anchor="middle">평균</text>
+<rect class="f-soft" x="553.5" y="49" width="170" height="38"/>
+<text class="f-t" x="638.5" y="73" text-anchor="middle">조건부 분산</text>
+<rect class="f-box" x="36.5" y="87" width="146" height="38"/>
+<text class="f-s" x="109.5" y="111" text-anchor="middle">Bernoulli</text>
+<rect class="f-box" x="182.5" y="87" width="241" height="38"/>
+<text class="f-s" x="303" y="111" text-anchor="middle">log[p/(1−p)]</text>
+<rect class="f-box" x="423.5" y="87" width="130" height="38"/>
+<text class="f-s" x="488.5" y="111" text-anchor="middle">p</text>
+<rect class="f-box" x="553.5" y="87" width="170" height="38"/>
+<text class="f-s" x="638.5" y="111" text-anchor="middle">p(1−p)</text>
+<rect class="f-box" x="36.5" y="125" width="146" height="38"/>
+<text class="f-s" x="109.5" y="149" text-anchor="middle">Poisson</text>
+<rect class="f-box" x="182.5" y="125" width="241" height="38"/>
+<text class="f-s" x="303" y="149" text-anchor="middle">log μ</text>
+<rect class="f-box" x="423.5" y="125" width="130" height="38"/>
+<text class="f-s" x="488.5" y="149" text-anchor="middle">μ</text>
+<rect class="f-box" x="553.5" y="125" width="170" height="38"/>
+<text class="f-s" x="638.5" y="149" text-anchor="middle">μ</text>
+<rect class="f-box" x="36.5" y="163" width="146" height="38"/>
+<text class="f-s" x="109.5" y="187" text-anchor="middle">Normal</text>
+<rect class="f-box" x="182.5" y="163" width="241" height="38"/>
+<text class="f-s" x="303" y="187" text-anchor="middle">μ</text>
+<rect class="f-box" x="423.5" y="163" width="130" height="38"/>
+<text class="f-s" x="488.5" y="187" text-anchor="middle">μ</text>
+<rect class="f-box" x="553.5" y="163" width="170" height="38"/>
+<text class="f-s" x="638.5" y="187" text-anchor="middle">v</text>
+</svg><figcaption>정준 연결에서는 η와 자연모수 θ가 일치한다.</figcaption></figure>
+<div class="check" data-q="q4"></div>
+<div class="check" data-q="q5"></div>
+<h2>역연결로 예측의 단위를 되찾는다</h2>
+<p>연결함수 <var>g</var>와 그 역함수 <var>g<sup>−1</sup></var>의 방향을 구별합니다. 먼저 x에 계수를 곱해 <var>η</var>를 구하고, 평균은 <var>μ=g<sup>−1</sup>(η)</var>입니다. Bernoulli의 역로짓은 <var>e<sup>η</sup>/(1+e<sup>η</sup>)</var>이라 0~1 사이에 머뭅니다. Poisson은 <var>e<sup>η</sup></var>라 평균이 양수입니다. <b class="key">정준 연결</b>은 <var>η=θ</var>가 되는 연결입니다. 다른 연결도 응답 평균의 범위에 맞고 해석 가능한지 확인한 뒤 쓸 수 있습니다. 보호할 값은 분포가 요구하는 평균 범위와 연구 질문의 단위입니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 264" role="img" aria-label="η에 −1,0,1을 넣으면 베르누이 평균은 약 .269,.5,.731, 포아송 평균은 약 .368,1,2.718이다.">
+<text class="f-cap" x="380" y="29" text-anchor="middle">같은 선형예측자를 두 응답 평균으로 바꾼다</text>
+<line class="f-ink" x1="136" y1="190" x2="644" y2="190" marker-end="url(#f-arrow)"/>
+<line class="f-ink" x1="136" y1="190" x2="136" y2="49" marker-end="url(#f-arrow)"/>
+<line class="f-ink" x1="136" y1="190" x2="136" y2="196"/>
+<text class="f-s" x="136" y="212" text-anchor="middle">−1</text>
+<line class="f-ink" x1="259.5" y1="190" x2="259.5" y2="196"/>
+<text class="f-s" x="259.5" y="212" text-anchor="middle">−.5</text>
+<line class="f-ink" x1="383" y1="190" x2="383" y2="196"/>
+<text class="f-s" x="383" y="212" text-anchor="middle">0</text>
+<line class="f-ink" x1="506.5" y1="190" x2="506.5" y2="196"/>
+<text class="f-s" x="506.5" y="212" text-anchor="middle">.5</text>
+<line class="f-ink" x1="630" y1="190" x2="630" y2="196"/>
+<text class="f-s" x="630" y="212" text-anchor="middle">1</text>
+<line class="f-grid" x1="131" y1="190" x2="630" y2="190"/>
+<text class="f-s" x="125" y="194" text-anchor="end">0</text>
+<line class="f-grid" x1="131" y1="144.66666666666666" x2="630" y2="144.66666666666666"/>
+<text class="f-s" x="125" y="148.66666666666666" text-anchor="end">1</text>
+<line class="f-grid" x1="131" y1="99.33333333333333" x2="630" y2="99.33333333333333"/>
+<text class="f-s" x="125" y="103.33333333333333" text-anchor="end">2</text>
+<line class="f-grid" x1="131" y1="54" x2="630" y2="54"/>
+<text class="f-s" x="125" y="58" text-anchor="end">3</text>
+<polyline class="f-line" fill="none" points="136,177.808 148.35,177.357 160.7,176.896 173.05,176.426 185.4,175.946 197.75,175.456 210.1,174.958 222.45,174.451 234.8,173.936 247.15,173.414 259.5,172.885 271.85,172.349 284.2,171.807 296.55,171.26 308.9,170.708 321.25,170.152 333.6,169.592 345.95,169.03 358.3,168.466 370.65,167.9 383,167.333 395.35,166.767 407.7,166.201 420.05,165.637 432.4,165.074 444.75,164.515 457.1,163.959 469.45,163.407 481.8,162.859 494.15,162.318 506.5,161.782 518.85,161.253 531.2,160.73 543.55,160.216 555.9,159.709 568.25,159.211 580.6,158.721 592.95,158.241 605.3,157.77 617.65,157.309 630,156.859"/>
+<polyline class="f-dash" fill="none" points="136,173.323 148.35,172.468 160.7,171.569 173.05,170.624 185.4,169.63 197.75,168.586 210.1,167.488 222.45,166.334 234.8,165.121 247.15,163.845 259.5,162.504 271.85,161.094 284.2,159.612 296.55,158.054 308.9,156.416 321.25,154.694 333.6,152.884 345.95,150.981 358.3,148.981 370.65,146.878 383,144.667 395.35,142.342 407.7,139.899 420.05,137.33 432.4,134.63 444.75,131.791 457.1,128.806 469.45,125.669 481.8,122.371 494.15,118.903 506.5,115.258 518.85,111.426 531.2,107.397 543.55,103.162 555.9,98.71 568.25,94.029 580.6,89.109 592.95,83.936 605.3,78.498 617.65,72.781 630,66.771"/>
+<text class="f-s" x="650" y="236" text-anchor="middle">선형예측자 η</text>
+<text class="f-s" x="120" y="44" text-anchor="end">조건부 평균</text>
+</svg><figcaption>실선은 성공확률, 점선은 한 구간의 기대 요청 수다. 세로 수의 해석 단위가 모형마다 다르다.</figcaption></figure>
+<div class="check" data-q="q6"></div>
+<h2>이어 풀기와 증명</h2>
+<p>우도의 결합과 정규화 항을 먼저 찾습니다. 미분식은 독립 관측을 추가했을 때도 어떤 부분이 바뀌는지 생각하며 확인합니다.</p>
+<div class="check" data-q="q7"></div>
+<div class="check" data-q="q8"></div>
+<div class="check" data-q="q9"></div>
+<h2>파이썬으로 같은 계산 검산하기</h2>
+<pre data-example="python"><code>from math import exp, log
+
+eta = log(2)
+bernoulli_mean = exp(eta) / (1 + exp(eta))
+poisson_mean = exp(eta)
+normal_mean, variance = 2.0, 3.0
+for model, mean, var in (
+    (&quot;Bernoulli&quot;, bernoulli_mean, bernoulli_mean*(1-bernoulli_mean)),
+    (&quot;Poisson&quot;, poisson_mean, poisson_mean),
+    (&quot;Normal&quot;, normal_mean, variance),
+):
+    print(f&quot;{model}: mean={mean:.6f} variance={var:.6f}&quot;)
+print(&quot;linear mean outside support:&quot;, f&quot;{1-0.2*8:.1f}&quot;)</code></pre>
+<p class="aside">실행 결과</p>
+<pre data-output><code>Bernoulli: mean=0.666667 variance=0.222222
+Poisson: mean=2.000000 variance=2.000000
+Normal: mean=2.000000 variance=3.000000
+linear mean outside support: -0.6</code></pre>
+<p>같은 <var>η=log 2</var>에서 Bernoulli 평균은 2/3, Poisson 평균은 2입니다. 정규 행은 알려진 v=3인 정규모형에 <var>η=2</var>를 넣은 별도 예입니다. 다음 장은 이 평균 함수를 사용해 관측된 두 조건의 계수를 계산합니다.</p>
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://web.stanford.edu/class/stats305b/slides/Generalized-linear-models.html">Stanford STATS 305B · Generalized Linear Models</a></li>
+<li><a href="https://cs229.stanford.edu/lectures-spring2022/main_notes.pdf">Stanford CS229 · 지수족과 GLM 강의 노트</a></li>
+<li><a href="st11-2.html">ST11-2 점수함수와 정칙 가정</a></li>
+</ul>
+<h2>확인 문제</h2>
+<p>조건과 단위를 먼저 적은 뒤 해설을 확인합니다.</p>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

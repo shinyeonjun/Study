@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RTT·손실·유효 처리량의 분모와 끝 시각 맞추기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e8c'/%3E%3Cpath d='M8 22V10m8 12V14m8 8V6' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="NW17-1">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+
+<header class="chapter">
+<p class="chap-sub">네트워크 · NW17 네트워크 성능 측정과 해석</p>
+<p class="chap-num">NW17·1</p>
+<h1>RTT·손실·유효 처리량의 분모와 끝 시각 맞추기</h1>
+<p class="lead">같은 자료에서 패킷 손실률, 제시간에 끝나지 않은 비율, 성공한 응답의 지연을 얻습니다. 분모가 무엇인지 먼저 정하면 숫자가 맞물립니다.</p>
+</header>
+
+<div class="goal">
+<h2>이 장을 읽고 나면</h2>
+<ul>
+<li>측정 계층·대상·시간창을 먼저 정의한다.</li>
+<li>패킷 손실률과 앱의 마감 미완료율을 따로 구한다.</li>
+<li>성공 표본의 백분위수와 유효 처리량을 계산하고 제한을 설명한다.</li>
+</ul>
+</div>
+
+<h2>시작점과 끝점을 먼저 정합니다</h2>
+<p><b class="key">RTT</b>는 요청을 보내고 그에 대응하는 반응이 돌아오기까지 걸린 왕복 시간입니다. 시계 하나에서 두 시각을 기록하고, 반응이 어느 요청에 속하는지 연결해야 합니다. 앱이 응답을 만들기 위해 기다리는 시간이 포함된 경우에는 링크 전파 지연만의 측정이 아닙니다. 다른 두 시계의 시각을 그냥 빼는 한 방향 지연과도 조건이 다릅니다.</p>
+<p>이번 합성 실험의 항목 A~E는 각 1,000 유용 바이트이며 공통 시작점은 t=0입니다. 전송 기록에는 첫 시도 다섯 개와 B의 재시도 한 개가 있습니다. 모델은 B의 첫 시도와 E의 시도가 전달되지 않았다고 표시합니다. 앱에서는 A가 20 ms, 재시도한 B가 50 ms, C가 80 ms에 완료됩니다. D는 105 ms에 완료되고 E는 이 실행에서는 끝나지 않습니다. 이 완료 지연은 별도로 실행한 RTT 측정과 구분합니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 159" role="img" aria-label="도착 시각 20, 50, 80, 105와 마감 100 ms">
+<line class="f-ink" x1="83" y1="75" x2="704" y2="75" marker-end="url(#f-arrow)"/>
+<circle class="f-fill" cx="83" cy="75" r="4"/>
+<text class="f-s" x="83" y="102" text-anchor="middle">0</text>
+<circle class="f-fill" cx="193" cy="75" r="4"/>
+<text class="f-s" x="193" y="116" text-anchor="middle">20</text>
+<circle class="f-fill" cx="358" cy="75" r="4"/>
+<text class="f-s" x="358" y="102" text-anchor="middle">50</text>
+<circle class="f-fill" cx="523" cy="75" r="4"/>
+<text class="f-s" x="523" y="116" text-anchor="middle">80</text>
+<circle class="f-fill" cx="633" cy="75" r="4"/>
+<text class="f-s" x="633" y="102" text-anchor="middle">100</text>
+<circle class="f-fill" cx="660.5" cy="75" r="4"/>
+<text class="f-s" x="660.5" y="116" text-anchor="middle">105</text>
+<text class="f-s" x="193" y="46" text-anchor="middle">A</text>
+<text class="f-s" x="358" y="29" text-anchor="middle">B</text>
+<text class="f-s" x="523" y="46" text-anchor="middle">C</text>
+<text class="f-s" x="633" y="29" text-anchor="middle">마감</text>
+<line class="f-dash" x1="633" y1="51" x2="633" y2="124"/>
+<text class="f-s" x="660.5" y="46" text-anchor="middle">D</text>
+<text class="f-s" x="335" y="139" text-anchor="middle">E는 이 실행에서 완료되지 않음</text>
+</svg>
+<figcaption>눈금은 시뮬레이터 기준 ms입니다. 마감 뒤 D의 도착은 100ms까지의 유효 처리량 집계에 넣지 않습니다.</figcaption>
+</figure>
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+<div class="check" data-q="q3"></div>
+<h2>패킷의 실패, 업무의 실패, 성공한 항목의 지연을 구분합니다</h2>
+<p>송신 시도 여섯 개 중 두 개에서 패킷이 손실됐으므로 <b class="key">시도 손실률</b>은 2/6입니다. 앱의 100 ms 마감까지는 총 다섯 항목 중 두 개가 미완료라 미완료율은 2/5입니다. D처럼 마감 이후에 도착한 항목을 ‘패킷이 물리적으로 사라졌다’고 분류하지 않습니다. 이 예에서 시도 손실 여부는 시뮬레이터가 알고 있는 값입니다. 실제 송신 쪽에서 응답을 관측하지 못했다면 결과에는 늦은 응답, 응답 경로 손실, 측정 종료 등도 섞였을 수 있습니다.</p>
+<p>마감 내 성공한 표본만 놓고 초기 순위를 1로 세는 <b class="key">가까운 순위</b>(nearest rank) 백분위수를 구합니다. 값이 n개면 p에 대해 ⌈pn⌉ 위치를 읽습니다. 세 값 [20,50,80]에서 p50은 2위인 50 ms, p95는 3위인 80 ms입니다. ‘완료자 중 p95=80’은 미완료 둘을 포함한 전체 응답의 p95를 뜻하지 않습니다. 표본 수가 작을수록 높은 분위수는 표본의 가장 큰 값과 같아지기 쉽습니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 153" role="img" aria-label="같은 실행의 다른 세 분모">
+<rect class="f-box" x="20" y="41" width="211" height="63" rx="3"/>
+<text class="f-t" x="125" y="67" text-anchor="middle">패킷 시도 손실</text>
+<text class="f-s" x="125" y="89" text-anchor="middle">2/6</text>
+<rect class="f-box" x="271" y="41" width="211" height="63" rx="3"/>
+<text class="f-t" x="376" y="67" text-anchor="middle">앱 마감 미완료</text>
+<text class="f-s" x="376" y="89" text-anchor="middle">2/5</text>
+<rect class="f-box" x="522" y="41" width="211" height="63" rx="3"/>
+<text class="f-t" x="627" y="67" text-anchor="middle">완료 지연 p95</text>
+<text class="f-s" x="627" y="89" text-anchor="middle">3개 중 3번째 → 80ms</text>
+<text class="f-s" x="380" y="133" text-anchor="middle">시도·항목·시간 표본은 각각 다른 모집단</text>
+</svg>
+<figcaption>패킷 시도 단위의 손실과 앱 항목 단위의 미완료를 따로 기록합니다.</figcaption>
+</figure>
+<p><b class="key">유효 처리량</b>은 정한 구간에 도착한 새 앱 바이트를 구간의 길이로 나눈 값입니다. 0~100 ms 동안 새로 완료한 앱 바이트는 A,B,C의 3,000입니다. 이미 완료한 바이트의 복사본, 헤더, 늦게 도착한 D는 이 구간의 분자에 넣지 않습니다. 3,000×8/0.1=240,000 bit/s입니다. 같은 기간의 링크 부하를 구할 때는 재전송 시도나 헤더 등 목적에 맞는 다른 바이트들을 셉니다.</p>
+<div class="check" data-q="q4"></div>
+<div class="check" data-q="q5"></div>
+<div class="check" data-q="q6"></div>
+<h2>같은 기록에서 분모를 바꾸어 세 값을 계산합니다</h2>
+<pre data-example="python"><code>from fractions import Fraction as F
+from math import ceil
+
+outcomes = {&quot;A&quot;: 20, &quot;B&quot;: 50, &quot;C&quot;: 80, &quot;D&quot;: 105, &quot;E&quot;: None}
+attempt_delivered = [True, False, True, True, True, False]
+limit_ms = 100
+timely = sorted(t for t in outcomes.values() if t is not None and t &lt;= limit_ms)
+def quantile(values, p):
+    return values[ceil(p * len(values)) - 1] if values else None
+
+print(&quot;attempt loss:&quot;, F(attempt_delivered.count(False), len(attempt_delivered)))
+print(&quot;deadline misses:&quot;, F(len(outcomes)-len(timely), len(outcomes)))
+print(&quot;complete sample p50/p95:&quot;, quantile(timely, .5), quantile(timely, .95))
+print(&quot;goodput bps:&quot;, F(len(timely)*1000*8*1000, limit_ms))
+echo = [(0,16), (12,31), (25,None), (60,94)]
+print(&quot;observed RTT:&quot;, [arrival-start for start,arrival in echo if arrival is not None])</code></pre>
+<pre data-output><code>attempt loss: 1/3
+deadline misses: 2/5
+complete sample p50/p95: 50 80
+goodput bps: 240000
+observed RTT: [16, 19, 34]</code></pre>
+<p>RTT의 세 값은 별도 모의 반향 요청 묶음입니다. 네 요청 중 하나는 시각을 얻지 못했다는 상태를 함께 남깁니다. 다음 장에서는 여러 시나리오마다 이 같은 분모와 시각을 고정해 큐 설정만 비교합니다.</p>
+
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table>
+<thead><tr><th scope="col">핵심어</th><th scope="col">기억할 기준</th></tr></thead>
+<tbody>
+<tr><td><b class="key">왕복 지연</b></td><td>대응하는 반응을 동일 시계에서 연결해 잰 시간</td></tr>
+<tr><td><b class="key">시도 손실률</b></td><td>패킷 시도 중 전달되지 않은 비율</td></tr>
+<tr><td><b class="key">조건부 분위수</b></td><td>마감까지 완료한 표본과 같은 지정 집단의 지연에서 계산</td></tr>
+<tr><td><b class="key">유효 처리량</b></td><td>정한 구간 안에서 처음 완료한 앱 바이트율</td></tr>
+</tbody></table></div>
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>똑같은 실행이라도 무엇을 세고 언제까지 보았는지를 붙여야 숫자를 비교할 수 있습니다.</p></div>
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://www.rfc-editor.org/rfc/rfc2330.html">IETF RFC 2330 · IP 성능 측정 프레임워크</a></li>
+<li><a href="https://www.rfc-editor.org/rfc/rfc2681.html">IETF RFC 2681 · 왕복 지연 지표</a></li>
+<li><a href="https://www.rfc-editor.org/rfc/rfc6349.html">IETF RFC 6349 · TCP 처리량 측정 프레임워크</a></li>
+</ul>
+
+<h2>확인 문제</h2>
+<p>아직 풀지 않은 문제입니다. 먼저 식이나 근거를 적어 보고 해설을 확인합니다.</p>
+<div id="quiz"></div>
+
+<section class="work" id="tools"></section>
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

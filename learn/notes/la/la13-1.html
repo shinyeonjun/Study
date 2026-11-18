@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>피벗이 있는 가우스 소거에서 PA=LU가 성립하는 이유 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="LA13-1">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">선형대수 · 수치 분해</p>
+<p class="chap-num">LA13·1</p>
+<h1>피벗이 있는 가우스 소거에서 PA=LU가 성립하는 이유</h1>
+<p class="lead">가우스 소거에서 0이나 매우 작은 수로 나누어야 할 때 행을 바꿉니다. 그때 이미 기록한 소거 배수도 함께 움직여야 하는 이유를 3×3 예와 함께 증명합니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>부분 피벗 선택의 기준과 소거 배수를 계산할 수 있다.</li><li>행 교환을 P와 이전 L에 기록해 PA=LU를 유도할 수 있다.</li><li>여러 우변을 두 삼각 풀이로 풀고 분해와 잔차를 검산할 수 있다.</li></ul></div>
+
+<h2>0으로 나누지 않고 소거를 시작한다</h2>
+<p>A=[[0,2,1],[2,1,0],[4,1,2]]를 소거해 봅시다. 첫 번째 행을 기준으로 첫 열을 지우려면 피벗 0으로 나누어야 합니다. 아래에는 2와 4가 있으므로 첫 행을 바꿀 수 있습니다. 현재 열에서 아직 소거하지 않은 행 중 절댓값이 가장 큰 성분을 피벗으로 선택하는 방법을 <b class="key">부분 피벗</b>이라고 합니다. 이 예에서는 첫째 행과 셋째 행을 바꿔 4를 위로 올립니다.</p>
+<p>절댓값 최대 피벗을 쓰면 그 열의 다른 성분을 피벗으로 나눈 배수의 절댓값은 1 이하입니다. 예를 들어 아래 값 2를 지우는 배수는 2/4=1/2입니다. 이 국소적인 조건은 실수 연산 전체에서 오차가 얼마나 쌓일지 자동으로 보장하지는 않습니다. 소거 중 다른 성분이 얼마나 커지는지, 원래 A의 조건수가 어떤지도 실제 오차에 영향을 줍니다.</p>
+<div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
+<h2>소거를 거꾸로 읽으면 아래 삼각 인자가 된다</h2>
+<p>행 i에서 아래의 특정 성분을 없애기 위해 행 k의 ℓ<sub>ik</sub>배를 빼면, 반대 연산은 행 k의 같은 배수를 더하는 것입니다. 첫 단계에서 피벗 행 u₁의 ℓ<sub>i1</sub>배를 빼면 이후 행에 첫 열이 0인 남은 부분이 생깁니다. 그 행을 복구할 때는 피벗 행의 배수 ℓ<sub>i1</sub>만큼을 더해야 합니다. 이 수를 첫 열 아래에 저장합니다.</p>
+<p>k단계 이후의 행을 일반적으로 읽으면, 이미 정해진 위 삼각행렬 U의 행 u₁,…,uₖ와 저장된 배수 ℓ<sub>i1</sub>,…,ℓ<sub>ik</sub>의 선형결합에 아직 남은 미처리 행을 더한 것이 원래 행입니다. 다음 피벗으로 i행과 j행의 자리를 서로 바꾸면 원래 행과 미처리 행의 대응도 바뀝니다. 그래서 이전까지 저장한 배수도 i와 j 사이에서 교환합니다. 이 대응을 유지하며 끝까지 소거하면 미처리 부분이 사라지고, 교환을 반영한 각 원래 행이 U 행들의 결합으로 표현됩니다.</p>
+<div class="box "><p class="box-k">분해의 식</p><p>P는 원래 행의 순서를 바꾼 순열행렬, L은 대각이 1이고 아래에 소거 배수를 담은 행렬, U는 소거를 마친 위 삼각행렬입니다. 행 교환과 소거를 일관되게 기록하면 <b class="key">PA=LU</b>입니다. Ax=b를 풀 때는 좌변 행만 바꾸지 말고 우변도 Pb로 바꿉니다.</p></div>
+<div class="check" data-q="q3"></div>
+<h2>두 번째 피벗에서 이미 계산한 값도 옮긴다</h2>
+<p>첫 피벗 뒤 원래 행의 순서는 (3,2,1)입니다. 둘째 행 (2,1,0)에서 피벗 행의 1/2을 빼면 (0,1/2,−1)이고, 셋째 행 (0,2,1)은 배수 0이라 그대로입니다. 둘째 열의 피벗은 2이므로 둘째·셋째 행을 다시 바꿉니다. 이때 첫 열의 배수 1/2와 0도 함께 움직입니다. 그러고 나면 둘째 열에서 아래 값을 없애는 배수는 (1/2)/2=1/4이며 마지막 성분은 −1−(1/4)=−5/4입니다.</p>
+<div class="table-wrap"><table><thead><tr><th scope="col">최종 행</th><th scope="col">PA의 원래 행 번호</th><th scope="col">L의 행</th><th scope="col">U의 행</th></tr></thead><tbody><tr><td>1</td><td>3</td><td>(1,0,0)</td><td>(4,1,2)</td></tr><tr><td>2</td><td>1</td><td>(0,1,0)</td><td>(0,2,1)</td></tr><tr><td>3</td><td>2</td><td>(1/2,1/4,1)</td><td>(0,0,−5/4)</td></tr></tbody></table></div>
+<p>셋째 행을 다시 만들어 봅시다. (1/2)(4,1,2)+(1/4)(0,2,1)+(0,0,−5/4)=(2,1,0)입니다. 만약 두 번째 행 교환에서 첫 소거 배수를 옮기지 않았다면, L의 셋째 행 첫 배수가 0이어서 원래 행의 첫 값 2를 되살리지 못했을 것입니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 160" role="img" aria-label="두 번의 피벗에서 원래 행의 번호와 이전 소거 배수를 함께 이동">
+<rect class="f-box" x="42" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="135" y="61" text-anchor="middle">첫 피벗</text><text class="f-s" x="135" y="89" text-anchor="middle">원래 행 순서 3, 2, 1</text><text class="f-s" x="135" y="110" text-anchor="middle">배수 1/2와 0을 저장</text><line class="f-line" x1="235" y1="84" x2="278" y2="84" marker-end="url(#f-arrow)"/><rect class="f-soft" x="287" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="380" y="61" text-anchor="middle">둘째 피벗</text><text class="f-s" x="380" y="89" text-anchor="middle">행 순서가 3, 1, 2로 바뀜</text><text class="f-s" x="380" y="110" text-anchor="middle">이전 두 배수도 함께 교환</text><line class="f-line" x1="480" y1="84" x2="523" y2="84" marker-end="url(#f-arrow)"/><rect class="f-box" x="532" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="625" y="61" text-anchor="middle">마지막 소거</text><text class="f-s" x="625" y="89" text-anchor="middle">둘째 피벗 행의 1/4을 뺌</text><text class="f-s" x="625" y="110" text-anchor="middle">아래 배수는 (1/2, 1/4)</text>
+</svg><figcaption>각 행과 배수의 대응이 유지되어야 PA와 LU가 같은 행렬이 됩니다.</figcaption></figure>
+<div class="check" data-q="q4"></div><div class="check" data-q="q5"></div>
+<h2>분해를 검산하고 우변을 풀어 본다</h2>
+<p>b=(7,4,12)이면 Pb=(12,7,4)입니다. Lz=Pb의 첫 값 12와 둘째 값 7을 대입하면 셋째 값은 4−(1/2)×12−(1/4)×7=−15/4입니다. Ux=z에서는 마지막부터 x₃=3, x₂=2, x₁=1을 얻습니다. 아래 구현은 찾은 순열과 배수를 직접 저장한 뒤 분해를 확인합니다. 두 삼각계는 하나씩 대입해 풉니다. <code>np.linalg.solve</code>는 원래 Ax=b를 두 번째 방법으로 풀어 결과를 검산하는 데 사용합니다.</p>
+<pre data-example="python"><code>import numpy as np
+
+a = np.array([[0., 2., 1.], [2., 1., 0.], [4., 1., 2.]])
+u = a.copy()
+n = len(a)
+permutation = np.arange(n)
+l = np.eye(n)
+for k in range(n):
+    pivot = k + np.argmax(np.abs(u[k:, k]))
+    if u[pivot, k] == 0:
+        raise ValueError(&quot;zero pivot in this example&quot;)
+    u[[k, pivot], :] = u[[pivot, k], :]
+    permutation[[k, pivot]] = permutation[[pivot, k]]
+    l[[k, pivot], :k] = l[[pivot, k], :k]
+    for row in range(k + 1, n):
+        multiplier = u[row, k] / u[k, k]
+        l[row, k] = multiplier
+        u[row, k:] -= multiplier * u[k, k:]
+        u[row, k] = 0.0
+
+b = np.array([7., 4., 12.])
+z = np.empty(n)
+for k in range(n):
+    z[k] = b[permutation[k]] - l[k, :k] @ z[:k]
+x = np.empty(n)
+for k in range(n - 1, -1, -1):
+    x[k] = (z[k] - u[k, k+1:] @ x[k+1:]) / u[k, k]
+assert np.allclose(a[permutation, :], l @ u)
+assert np.allclose(a @ x, b)
+assert np.allclose(np.linalg.solve(a, b), x)
+print(&quot;원래 행 번호:&quot;, (permutation + 1).tolist())
+print(&quot;U의 대각:&quot;, np.diag(u).tolist())
+print(&quot;중간 벡터:&quot;, z.tolist())
+print(&quot;해:&quot;, x.tolist())</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>원래 행 번호: [3, 1, 2]
+U의 대각: [4.0, 2.0, -1.25]
+중간 벡터: [12.0, 7.0, -3.75]
+해: [1.0, 2.0, 3.0]</code></pre>
+<div class="check" data-q="q6"></div>
+<h2>비용과 한계를 같이 기록한다</h2>
+<p>밀집 행렬에서 각 피벗은 남은 행과 열의 사각 블록을 갱신합니다. 상수배로 보면 단계별 작업은 (n−1)²,(n−2)²,…,1이고 합은 O(n³)입니다. 분해한 뒤 한 우변에 대해 각 삼각형을 한 번씩 훑는 비용은 O(n²)입니다. 같은 A에 우변이 여러 개면 분해를 한 번 쓰고 순열과 삼각 풀이를 반복할 수 있습니다.</p>
+<p>이 코드는 정확한 0만 검사하는 작은 예제입니다. 수치적으로 거의 특이한 자료를 판별하려면 스케일과 오차를 고려한 별도 기준을 적용합니다. 배수가 커지는 문제는 피벗으로 줄일 수 있습니다. 예를 들어 A=[[10⁻⁸,1],[1,1]]을 위 행 그대로 풀면 첫 배수는 10⁸이고 행을 바꾸면 10⁻⁸입니다. 그것만으로 참 해에 대한 모든 오차가 사라지는 것은 아닙니다. 계산된 PA와 LU의 차이, Ax와 b의 잔차, 조건수는 각각 다른 정보를 제공합니다.</p>
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table><thead><tr><th scope="col">확인 대상</th><th scope="col">계산과 이유</th></tr></thead><tbody><tr><td>부분 피벗</td><td>현재 열의 남은 성분 중 절댓값 최대를 선택한다.</td></tr><tr><td>행 교환 기록</td><td>U의 행, 순열 P, 이미 만든 L의 앞 열을 함께 바꾼다.</td></tr><tr><td>시스템 풀이</td><td>Lz=Pb, Ux=z 순서로 푼 뒤 Ax=b를 검사한다.</td></tr></tbody></table></div>
+
+<h2>참고 자료</h2>
+<ul><li><a href="https://ocw.mit.edu/courses/18-06-linear-algebra-spring-2010/pages/calendar/">MIT 18.06 · LU와 행 순열</a></li><li><a href="https://fncbook.com/pivoting/">Driscoll·Braun · Fundamentals of Numerical Computation, Pivoting</a></li></ul>
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

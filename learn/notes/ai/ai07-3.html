@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>드문 관측에서 거절 표본과 우도 가중치를 비교하기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="AI07-3">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">인공지능 · 확률 그래프 모형</p>
+<p class="chap-num">AI07·3</p>
+<h1>드문 관측에서 거절 표본과 우도 가중치를 비교하기</h1>
+<p class="lead">관측을 재현하는 표본만 남기면 원리상 올바른 분포를 얻습니다. 하지만 그 관측이 드물면 계산을 많이 하고도 쓸 자료가 없을 수 있습니다. 우도를 가중치에 남기는 방식이 어떻게 달라지는지 정확한 사후로 확인합니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>거절 표본의 수락 분포와 표본을 하나도 못 얻을 확률을 계산할 수 있다.</li><li>우도 가중치의 분자와 분모가 추정하는 확률을 각각 설명할 수 있다.</li><li>정확 계산과 반복 실행, 가중치 진단을 함께 써서 근사 결과를 평가할 수 있다.</li></ul></div>
+
+<h2>두 상태에서 둘 다 드물지만 빈도가 다르다</h2>
+<p>가상의 장치 상태 A는 0과 1이 각각 절반이고, 관심 관측 E는 드물게 보고되는 신호입니다. P(E=1|A=0)=0.001, P(E=1|A=1)=0.009라고 둡니다. 합쳐 보면 신호를 보고하는 확률은 (1/2)(0.001+0.009)=0.005입니다. 실제로 신호를 봤다면 A=1과 함께 나타날 확률 0.0045를 관측확률 0.005로 나눠 P(A=1|E=1)=0.9를 얻습니다.</p>
+<p>변수가 두 개라 여기서는 답을 정확히 계산할 수 있습니다. 이 값을 검산 기준으로 남겨 두고, 상태와 관측을 자료처럼 생성해 계산하는 두 방법을 비교합니다. 더 큰 모형에서 정확한 인자 표를 만들기 어려울 때 생각할 수 있는 방법입니다.</p>
+<div class="check" data-q="q1"></div>
+<h2>관측을 따라가지 못한 표본을 버리기</h2>
+<p><b class="key">거절 표본 추출</b>에서는 먼저 A를 사전 확률에서 뽑고, 해당 상태에 맞춰 E도 뽑습니다. E=1인 표본만 남기고 그 안에서 A=1의 비율을 셉니다. 이를 수락한 표본의 조건부 분포라고 봅니다. 예를 들어 A=1인 전체 발생확률 중 관측을 맞힌 결합확률이 0.0045이고, 아무 상태든 관측을 맞힌 확률은 0.005입니다. 따라서 수락된 표본이 A=1일 확률은 정확히 0.9입니다.</p>
+<p>하지만 200번 독립 시도에서 수락 수의 기댓값은 200×0.005=1입니다. 200번 모두 실패할 확률은 (1−0.005)<sup>200</sup>≈0.3670입니다. 그런 실행에서는 조건부 비율을 계산할 분모가 없습니다. 하나를 수락해도 비율은 0이나 1밖에 될 수 없습니다. 수락 확률을 알면 뽑으려는 유효 표본 수를 얻기 위해 필요한 반복 수를 미리 가늠할 수 있습니다.</p>
+<div class="check" data-q="q2"></div><div class="check" data-q="q3"></div>
+<h2>관측을 고정하고 우도만큼 카운트에 반영하기</h2>
+<p><b class="key">우도 가중치</b>는 E=1을 고정하고 A만 사전에서 표본으로 뽑습니다. A=a에서 관측 E=1이 나올 확률 w(a)=P(E=1|A=a)를 그 표본의 무게로 둡니다. 표본마다 0.001 또는 0.009를 받으므로 드물다는 이유로 모든 표본을 버리는 일이 없습니다.</p>
+<p>표본으로 계산한 사후 추정값은 A=1 표본의 가중치 합을 전체 가중치 합으로 나눈 값입니다. 양쪽을 표본 수 n으로 나누어 보면 무슨 양을 추정하는지 드러납니다.</p>
+<div class="table-wrap"><table><thead><tr><th scope="col">표본에서 잰 평균</th><th scope="col">사전분포에 따른 기댓값</th></tr></thead><tbody><tr><td>(1/n) Σ 1[Aᵢ=1]w(Aᵢ)</td><td>Σₐ P(A=a)·1[a=1]·P(E=1|A=a) = P(A=1,E=1)</td></tr><tr><td>(1/n) Σ w(Aᵢ)</td><td>Σₐ P(A=a)·P(E=1|A=a) = P(E=1)</td></tr></tbody></table></div>
+<p>각 평균은 독립 사전 표본을 많이 뽑으면 해당 기댓값에 가까워집니다. 분모의 참값이 양수라면 비율은 0.9에 가까워집니다. 두 추정 평균의 비라 유한한 표본에서 항상 무편향이라고 결론 내릴 수는 없습니다. 다른 모형에서 관측이 어떤 변수의 부모이기도 하면, 그 뒤 변수를 표본으로 뽑을 때 고정된 관측값을 부모 값으로 사용합니다. 그래야 표본을 만드는 분포와 곱하는 우도의 역할이 일치합니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 160" role="img" aria-label="드문 관측을 버리지 않고 상태에 조건부 우도를 곱해 사후 확률을 추정">
+<rect class="f-box" x="42" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="135" y="61" text-anchor="middle">상태는 사전에서</text><text class="f-s" x="135" y="89" text-anchor="middle">A=0 또는 1을 표본으로</text><text class="f-s" x="135" y="110" text-anchor="middle">표본 수는 200으로 동일</text><line class="f-line" x1="235" y1="84" x2="278" y2="84" marker-end="url(#f-arrow)"/><rect class="f-soft" x="287" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="380" y="61" text-anchor="middle">관측은 우도로</text><text class="f-s" x="380" y="89" text-anchor="middle">A=0의 무게 0.001</text><text class="f-s" x="380" y="110" text-anchor="middle">A=1의 무게 0.009</text><line class="f-line" x1="480" y1="84" x2="523" y2="84" marker-end="url(#f-arrow)"/><rect class="f-box" x="532" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="625" y="61" text-anchor="middle">가중치의 비율</text><text class="f-s" x="625" y="89" text-anchor="middle">A=1인 쪽의 합</text><text class="f-s" x="625" y="110" text-anchor="middle">전체 합으로 정규화</text>
+</svg><figcaption>각 가중치는 관측을 맞힌 횟수가 아니라, 해당 상태라면 관측할 확률입니다.</figcaption></figure>
+<div class="check" data-q="q4"></div><div class="check" data-q="q5"></div>
+<h2>같은 후보로 두 추론을 실행한다</h2>
+<pre data-example="python"><code>from math import fsum
+from random import Random
+
+for seed in (19, 61):
+    rng = Random(seed)
+    states = [int(rng.random() &lt; .5) for _ in range(200)]
+    weights = [(.001, .009)[state] for state in states]
+
+    accepted = [state for state, w in zip(states, weights) if rng.random() &lt; w]
+    rejection = f&quot;{sum(accepted) / len(accepted):.4f}&quot; if accepted else &quot;계산 불가&quot;
+    total = fsum(weights)
+    estimate = fsum(state * w for state, w in zip(states, weights)) / total
+    ess = total**2 / fsum(w*w for w in weights)
+    print(seed, &quot;수락&quot;, len(accepted), &quot;거절법&quot;, rejection)
+    print(f&quot;우도 가중 {estimate:.4f}, 유효 크기 {ess:.2f}&quot;)
+print(f&quot;수락 0개의 확률: {.995**200:.4f}&quot;)</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>19 수락 0 거절법 계산 불가
+우도 가중 0.9182, 유효 크기 130.37
+61 수락 2 거절법 0.5000
+우도 가중 0.9135, 유효 크기 128.07
+수락 0개의 확률: 0.3670</code></pre>
+<p>각 반복의 수락 수와 가중치의 <b class="key">유효 표본 크기</b>를 기록했습니다. 이 진단의 정의는 (Σw)²/Σw²입니다. 모든 표본에 같은 양수 가중치가 주어지면 전체 표본 수와 같고, 한 표본에 무게가 쏠리면 1에 가까워집니다. 이 수가 130이라고 해서 정확히 130개의 서로 독립인 사후 표본을 얻었다는 뜻은 아닙니다. 우도의 곱이 한두 표본에 집중될 수 있는지 보기 위한 요약입니다. 실제 오차는 질의 대상과 표본 분포에도 의존합니다.</p>
+<div class="check" data-q="q6"></div>
+<h2>한 번 실행한 결과와 알고리즘 평가를 구분한다</h2>
+<p>시드 19는 거절 표본이 없어 추정값끼리 비교할 수 없습니다. 시드 61에서는 거절 추정 0.5보다 우도 가중 추정 0.9135가 정확한 답 0.9에 더 가깝습니다. 일반적인 우열을 결론 내리려면 시드를 미리 여러 개 정하고, 같은 예산에서 오차·분모 0 빈도·실행 시간을 비교해야 합니다. 조건부 관측을 더 여럿 추가하면 가중치가 극단적으로 달라지기도 합니다. 작은 문제에서 정확한 값을 기준으로 비교한 뒤 큰 모형에서 오차가 얼마나 허용되는지 기록합니다.</p>
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table><thead><tr><th scope="col">방법</th><th scope="col">결과와 확인할 값</th></tr></thead><tbody><tr><td>거절 표본</td><td>수락 표본은 올바른 조건부 분포를 따른다. 수락 수가 작거나 0일 수 있다.</td></tr><tr><td>우도 가중</td><td>관측을 고정해 각각의 우도를 가중치로 쓴다. 분모와 가중치 집중을 확인한다.</td></tr><tr><td>비교 실험</td><td>정확한 기준과 동일 예산을 고정하고 오차·실패·시간을 여러 실행에서 잰다.</td></tr></tbody></table></div>
+
+<h2>참고 자료</h2>
+<ul><li><a href="https://inst.eecs.berkeley.edu/~cs188/textbook/bayes-nets/approximate.html">UC Berkeley CS 188 · 거절 표본과 우도 가중치</a></li><li><a href="../op/op08-2.html">기존 교재 · 중요도 표본</a></li></ul>
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

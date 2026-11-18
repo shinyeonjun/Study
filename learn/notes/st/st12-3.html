@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fisher scoring을 가중 최소제곱으로 구현하고 잔차를 진단하기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="ST12-3">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">통계 · ST12 일반화선형모형과 추론</p>
+<p class="chap-num">ST12·3</p>
+<h1>Fisher scoring을 가중 최소제곱으로 구현하고 잔차를 진단하기</h1>
+<p class="lead">GLM에서 평균에 따른 변동이 바뀌면 모든 행을 같은 비중으로 업데이트할 수 없습니다. 점수와 정보행렬을 유도하고, 작은 포아송 회귀의 가중치·계수·진단을 검산합니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2>
+<ul>
+<li>조건부 평균의 미분에서 점수와 정보행렬을 얻는다.</li>
+<li>Fisher scoring 한 번이 IRLS 한 번과 같은 이유를 증명한다.</li>
+<li>Poisson 회귀의 적합과 잔차를 계산하고 추론이 실패할 조건을 판단한다.</li>
+</ul></div>
+<h2>같은 단위를 먼저 맞춘 뒤 한 걸음을 고른다</h2>
+<p>각 행의 선형예측자를 <var>η<sub>i</sub>=x<sub>i</sub><sup>⊤</sup>β+o<sub>i</sub></var>로 둡니다. <var>o<sub>i</sub></var>는 알려진 오프셋으로, 없으면 0입니다. <var>μ<sub>i</sub>=g<sup>−1</sup>(η<sub>i</sub>)</var>, <var>d<sub>i</sub>=dμ<sub>i</sub>/dη<sub>i</sub></var>, <var>V<sub>i</sub>=Var(Y<sub>i</sub>|x<sub>i</sub>)</var>라고 두겠습니다. 반복 한 걸음 동안 이 기호들은 모두 현재 β에서 평가합니다. 내부의 정칙 모형에서 응답은 조건부 독립이며 적합점에서 <var>V<sub>i</sub>&gt;0</var>, <var>d<sub>i</sub>≠0</var>이라 합시다.</p>
+<p>지수족에서 한 행의 자연모수 점수는 <var>(y<sub>i</sub>−μ<sub>i</sub>)/a</var>입니다. <var>dμ/dθ=b″=V/a</var>이므로 연쇄법칙으로 η의 점수는 <var>(y<sub>i</sub>−μ<sub>i</sub>)d<sub>i</sub>/V<sub>i</sub></var>입니다. 설계행렬 X의 i번째 행이 <var>x<sub>i</sub><sup>⊤</sup></var>라면 계수의 점수 벡터는 <var>S=X<sup>⊤</sup>u</var>, <var>u<sub>i</sub>=(y<sub>i</sub>−μ<sub>i</sub>)d<sub>i</sub>/V<sub>i</sub></var>입니다. 평균 0이고 독립인 행 기여의 공분산을 더하면 정보행렬은 <var>I=X<sup>⊤</sup>WX</var>, <var>W=diag(d<sub>i</sub>²/V<sub>i</sub>)</var>입니다.</p>
+<p>뉴턴법은 점수의 실제 미분을 쓰고, <b class="key">Fisher scoring</b>은 그 음의 기댓값인 정보행렬을 씁니다. 이는 현재 점수 S에서 새 점수를 <var>S−IΔ</var>로 근사해 0에 맞추는 계산입니다. <var>IΔ=S</var>를 풀고 <var>β+Δ</var>로 갱신합니다. 정준 연결인 Poisson 로그 연결과 Bernoulli 로짓에서는 로그우도의 β에 대한 이계 미분이 y의 값과 무관해서 이 두 방식이 같습니다.</p>
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+<h2>가중치가 들어간 새 표를 적는다</h2>
+<p>현재 η에 응답 잔차를 기울기로 나눈 값을 보태 <b class="key">작업 반응</b> <var>z<sub>i</sub>=η<sub>i</sub>+(y<sub>i</sub>−μ<sub>i</sub>)/d<sub>i</sub></var>를 만듭니다. 이 값은 응답을 η 단위로 옮긴 일차 근사입니다. <var>w<sub>i</sub>=d<sub>i</sub>²/V<sub>i</sub></var>이므로 <var>w<sub>i</sub>(z<sub>i</sub>−η<sub>i</sub>)=u<sub>i</sub></var>입니다. 그 결과 <var>IΔ=X<sup>⊤</sup>W(z−η)</var>이고 <var>η=Xβ+o</var>를 넣어 정리하면</p>
+<div class="eq"><var>X<sup>⊤</sup>WX(β+Δ)=X<sup>⊤</sup>W(z−o).</var></div>
+<p>이는 <var>z−o</var>를 X로 적합하는 가중 최소제곱의 정규방정식입니다. 계산할 때는 각 행에 <var>√w<sub>i</sub></var>를 곱한 배열을 직접 최소제곱으로 풉니다. 새 β에서 μ·z·w를 다시 구하므로 <b class="key">반복 재가중 최소제곱(IRLS)</b>입니다. 같은 가중치를 끝까지 쓰는 한 번의 선형회귀와 구분합니다. 가중치가 양수라도 X의 열이 종속이면 정보행렬은 특이합니다. 중복된 열이나 다른 디자인 문제는 먼저 확인합니다.</p>
+<p>Poisson 로그 연결에서 <var>d<sub>i</sub>=μ<sub>i</sub>=V<sub>i</sub></var>라 <var>w<sub>i</sub>=μ<sub>i</sub></var>입니다. Bernoulli 로짓의 한 개인 응답에서는 <var>d<sub>i</sub>=p<sub>i</sub>(1−p<sub>i</sub>)=V<sub>i</sub></var>라 <var>w<sub>i</sub>=p<sub>i</sub>(1−p<sub>i</sub>)</var>입니다. 같은 p가 있는 n명의 비율을 한 행으로 쓰면 비율의 분산을 쓰므로 가중치에 n을 곱합니다.</p>
+<div class="check" data-q="q3"></div>
+<div class="check" data-q="q4"></div>
+<h2>작은 관측에서 첫 반복을 두 방식으로 구한다</h2>
+<p>같은 길이의 독립 인쇄 관측 여섯 구간의 합성 자료입니다. <var>x=(−1,−1,0,0,1,1)</var>, <var>y=(0,2,1,3,2,4)</var>입니다. 시작점 <var>β=(log 2,0)</var>이면 모든 <var>η=log 2</var>, <var>μ=2</var>, <var>w=2</var>입니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 215" role="img" aria-label="첫 Poisson IRLS에서 세 x마다 두 관측을 넣고 μ와 w는 항상 2다.">
+<text class="f-cap" x="380" y="30" text-anchor="middle">첫 가중 최소제곱에 들어가는 작업 반응</text>
+<rect class="f-soft" x="57.5" y="49" width="90" height="38"/>
+<text class="f-t" x="102.5" y="73" text-anchor="middle">x</text>
+<rect class="f-soft" x="147.5" y="49" width="164" height="38"/>
+<text class="f-t" x="229.5" y="73" text-anchor="middle">두 관측 y</text>
+<rect class="f-soft" x="311.5" y="49" width="119" height="38"/>
+<text class="f-t" x="371" y="73" text-anchor="middle">공통 w</text>
+<rect class="f-soft" x="430.5" y="49" width="272" height="38"/>
+<text class="f-t" x="566.5" y="73" text-anchor="middle">두 작업 반응 z</text>
+<rect class="f-box" x="57.5" y="87" width="90" height="38"/>
+<text class="f-s" x="102.5" y="111" text-anchor="middle">−1</text>
+<rect class="f-box" x="147.5" y="87" width="164" height="38"/>
+<text class="f-s" x="229.5" y="111" text-anchor="middle">0, 2</text>
+<rect class="f-box" x="311.5" y="87" width="119" height="38"/>
+<text class="f-s" x="371" y="111" text-anchor="middle">2</text>
+<rect class="f-box" x="430.5" y="87" width="272" height="38"/>
+<text class="f-s" x="566.5" y="111" text-anchor="middle">log 2−1, log 2</text>
+<rect class="f-box" x="57.5" y="125" width="90" height="38"/>
+<text class="f-s" x="102.5" y="149" text-anchor="middle">0</text>
+<rect class="f-box" x="147.5" y="125" width="164" height="38"/>
+<text class="f-s" x="229.5" y="149" text-anchor="middle">1, 3</text>
+<rect class="f-box" x="311.5" y="125" width="119" height="38"/>
+<text class="f-s" x="371" y="149" text-anchor="middle">2</text>
+<rect class="f-box" x="430.5" y="125" width="272" height="38"/>
+<text class="f-s" x="566.5" y="149" text-anchor="middle">log 2−.5, log 2+.5</text>
+<rect class="f-box" x="57.5" y="163" width="90" height="38"/>
+<text class="f-s" x="102.5" y="187" text-anchor="middle">1</text>
+<rect class="f-box" x="147.5" y="163" width="164" height="38"/>
+<text class="f-s" x="229.5" y="187" text-anchor="middle">2, 4</text>
+<rect class="f-box" x="311.5" y="163" width="119" height="38"/>
+<text class="f-s" x="371" y="187" text-anchor="middle">2</text>
+<rect class="f-box" x="430.5" y="163" width="272" height="38"/>
+<text class="f-s" x="566.5" y="187" text-anchor="middle">log 2, log 2+1</text>
+</svg><figcaption>같은 x에서 관측이 두 번이므로 표의 각 행에는 실제 설계행렬 두 행이 있다.</figcaption></figure>
+<p><var>Σx=0</var>, <var>Σx²=4</var>라 <var>I=diag(12,8)</var>입니다. Poisson의 점수는 <var>S=X<sup>⊤</sup>(y−μ)=(0,4)</var>입니다. 따라서 <var>Δ=(0,.5)</var>이고 다음 β는 <var>(log 2,.5)</var>입니다. IRLS에서도 <var>z−o=z</var>를 가중치 2로 적합하면 같은 결과를 얻습니다. 이후 반복에서 평균과 가중치가 달라집니다.</p>
+<div class="check" data-q="q5"></div>
+<h2>계수와 표준오차를 계산한 뒤 진단한다</h2>
+<p>최종 기울기는 약 .522442입니다. 1 증가할 때 발생률비는 <var>e<sup>.522442</sup>≈1.686141</var>입니다. 참 모형에서 독립이고 계수가 내부에서 잘 추정되며 표본이 충분하다면 정보행렬의 역이 MLE 공분산의 근사입니다. 대각 성분을 제곱근으로 읽은 <var>SE(β̂₁)≈.377769</var>는 이 예의 계산값입니다. 관측 여섯 개에서는 정규근사나 검정에 곧바로 높은 신뢰를 부여하기 어렵습니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 264" role="img" aria-label="x=−1,0,1에서 관측 평균은 1,2,3이고 Poisson 모형의 적합 평균은 약 1.085,1.830,3.085다.">
+<text class="f-cap" x="380" y="29" text-anchor="middle">그룹별 관측 평균과 포아송 적합 평균</text>
+<line class="f-ink" x1="136" y1="190" x2="644" y2="190" marker-end="url(#f-arrow)"/>
+<line class="f-ink" x1="136" y1="190" x2="136" y2="49" marker-end="url(#f-arrow)"/>
+<line class="f-ink" x1="136" y1="190" x2="136" y2="196"/>
+<text class="f-s" x="136" y="212" text-anchor="middle">−1</text>
+<line class="f-ink" x1="383" y1="190" x2="383" y2="196"/>
+<text class="f-s" x="383" y="212" text-anchor="middle">0</text>
+<line class="f-ink" x1="630" y1="190" x2="630" y2="196"/>
+<text class="f-s" x="630" y="212" text-anchor="middle">1</text>
+<line class="f-grid" x1="131" y1="190" x2="630" y2="190"/>
+<text class="f-s" x="125" y="194" text-anchor="end">0</text>
+<line class="f-grid" x1="131" y1="156" x2="630" y2="156"/>
+<text class="f-s" x="125" y="160" text-anchor="end">1</text>
+<line class="f-grid" x1="131" y1="122" x2="630" y2="122"/>
+<text class="f-s" x="125" y="126" text-anchor="end">2</text>
+<line class="f-grid" x1="131" y1="88" x2="630" y2="88"/>
+<text class="f-s" x="125" y="92" text-anchor="end">3</text>
+<line class="f-grid" x1="131" y1="54" x2="630" y2="54"/>
+<text class="f-s" x="125" y="58" text-anchor="end">4</text>
+<polyline class="f-line" fill="none" points="136,153.105 383,127.79 630,85.105"/>
+<circle class="f-fill" cx="136" cy="153.105" r="3.5"/>
+<circle class="f-fill" cx="383" cy="127.79" r="3.5"/>
+<circle class="f-fill" cx="630" cy="85.105" r="3.5"/>
+<polyline class="f-dash" fill="none" points="136,156 383,122 630,88"/>
+<circle class="f-fill" cx="136" cy="156" r="3.5"/>
+<circle class="f-fill" cx="383" cy="122" r="3.5"/>
+<circle class="f-fill" cx="630" cy="88" r="3.5"/>
+<text class="f-s" x="650" y="236" text-anchor="middle">설명변수 x</text>
+<text class="f-s" x="120" y="44" text-anchor="end">구간당 평균</text>
+</svg><figcaption>실선은 세 x에서의 적합값을 이은 선, 점선은 각 x의 관측 두 건을 평균한 값이다. 진단 통계량은 평균 세 개가 아닌 여섯 관측을 사용한다.</figcaption></figure>
+<p>Poisson에서 <b class="key">Pearson 잔차</b>는 <var>(y−μ̂)/√μ̂</var>입니다. 여섯 잔차 제곱합을 잔차 자유도 <var>6−2=4</var>로 나누면 약 .908542입니다. 포아송의 분산 가정이 맞는지 검토할 때 이 비가 크게 올라갈 때뿐 아니라 조건별 잔차 패턴, 구간의 반복 의존, 누락 변수, 노출 단위, 몇 개의 영향 큰 점을 함께 봅니다. 값이 1에 가깝다는 사실만으로 가정이 입증되지는 않습니다.</p>
+<p><b class="key">이탈도(deviance)</b>는 각 행의 평균을 따로 적합하는 포화모형과 현재 모형의 로그우도 차에 2를 곱한 값입니다. Poisson에서는 <var>2Σ[y log(y/μ̂)−(y−μ̂)]</var>이며 y=0의 <var>y log(y/μ̂)</var>는 극한값 0을 씁니다. 이 예는 약 4.547909입니다. Pearson 통계량과 다른 양입니다. 같은 자료에 맞춘 두 중첩 모형 등에서 이탈도 차를 추론에 쓰려면 내포 관계와 정칙·표본 조건을 함께 확인합니다.</p>
+<p>반복값이 크기만 커지는 경우에는 유한 MLE가 있는지 다시 봅니다. 예를 들어 x=0에서 응답이 모두 0이고 x=1에서 모두 1인 이진 로지스틱 자료에서는 절편을 <var>−t</var>, 기울기를 <var>2t</var>로 보내면 두 조건을 점점 완전히 분리합니다. 로그우도는 상한에 가까워지지만 유한한 계수는 그 상한에 닿지 않습니다. 작은 점수나 한 번의 종료만으로 적합이 끝났다고 판단하기 어려운 이유입니다.</p>
+<div class="check" data-q="q6"></div>
+<h2>이어 풀기와 증명</h2>
+<p>한 행의 가중치와 작업 반응을 직접 계산한 뒤 정규방정식에서 나온 갱신과 비교합니다. 마지막 문항에서는 진단 수치가 클 때 무엇을 다시 확인할지 구체화합니다.</p>
+<div class="check" data-q="q7"></div>
+<div class="check" data-q="q8"></div>
+<div class="check" data-q="q9"></div>
+<h2>파이썬으로 같은 계산 검산하기</h2>
+<pre data-example="python"><code>from math import exp, lgamma, log
+import numpy as np
+
+x = np.repeat([-1.0, 0.0, 1.0], 2)
+y = np.array([0, 2, 1, 3, 2, 4], dtype=float)
+X = np.column_stack((np.ones(len(x)), x))
+beta = np.array([log(y.mean()), 0.0])
+
+def loglik(b):
+    eta = X @ b
+    return float(y @ eta - np.exp(eta).sum()
+                 - sum(lgamma(value + 1) for value in y))
+
+for i in range(20):
+    eta = X @ beta
+    mu = np.exp(eta)
+    z = eta + (y - mu) / mu
+    sqrt_w = np.sqrt(mu)
+    next_beta = np.linalg.lstsq(sqrt_w[:, None] * X, sqrt_w * z,
+                                rcond=None)[0]
+    assert loglik(next_beta) &gt;= loglik(beta) - 1e-10
+    if i == 0:
+        print(&quot;first:&quot;, [round(float(v), 6) for v in next_beta])
+    if np.max(np.abs(next_beta - beta)) &lt; 1e-10:
+        beta = next_beta
+        break
+    beta = next_beta
+else:
+    raise RuntimeError(&quot;the example did not converge&quot;)
+
+mu = np.exp(X @ beta)
+score = X.T @ (y - mu)
+assert np.max(np.abs(score)) &lt; 1e-8
+info = X.T @ (mu[:, None] * X)
+covariance = np.linalg.solve(info, np.eye(2))
+slope_se = np.sqrt(covariance[1, 1])
+pearson = float(((y - mu)**2 / mu).sum())
+deviance = 2 * sum((value * log(value / m) if value &gt; 0 else 0)
+                   - (value - m) for value, m in zip(y, mu))
+print(&quot;estimated:&quot;, [round(float(v), 6) for v in beta])
+print(&quot;fitted means:&quot;, [round(float(m), 6) for m in mu[::2]])
+print(f&quot;rate ratio: {exp(beta[1]):.6f}, slope SE: {slope_se:.6f}&quot;)
+print(f&quot;Pearson/df: {pearson/(len(y)-2):.6f}, deviance: {deviance:.6f}&quot;)</code></pre>
+<p class="aside">실행 결과</p>
+<pre data-output><code>first: [0.693147, 0.5]
+estimated: [0.604157, 0.522442]
+fitted means: [1.085146, 1.829708, 3.085146]
+rate ratio: 1.686141, slope SE: 0.377769
+Pearson/df: 0.908542, deviance: 4.547909</code></pre>
+<p>이 예제의 업데이트는 로그우도가 낮아지지 않는지와 최종 점수의 크기를 따로 검사합니다. 다른 자료에서는 한 번에 큰 폭으로 갱신할 때 로그우도가 감소할 수 있습니다. 그때는 단계 크기를 줄이거나 적합 방식과 모형의 조건을 다시 봅니다.</p>
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://web.stanford.edu/class/stats305b/slides/Generalized-linear-models.html">Stanford STATS 305B · Fisher Scoring, IRLS and Deviance</a></li>
+<li><a href="st12-2.html">ST12-2 로지스틱과 포아송 우도</a></li>
+<li><a href="st07-3.html">ST07-3 회귀 잔차 해석</a></li>
+</ul>
+<h2>확인 문제</h2>
+<p>조건과 단위를 먼저 적은 뒤 해설을 확인합니다.</p>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

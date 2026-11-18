@@ -221,6 +221,16 @@ window.BDA_CHAPTERS = {
     {"id": "CS08-2", "title": "남은 금액을 상태로 만들고 작은 답을 재사용하기", "href": "notes/cs/cs08-2.html"},
     {"id": "CS08-3", "title": "결정 문제에서 답을 찾기와 검증하기", "href": "notes/cs/cs08-3.html"}
   ],
+  CS09: [
+    {"id": "CS09-1", "title": "점화식을 펼치고 층별 비용을 합치는 증명", "href": "notes/cs/cs09-1.html"},
+    {"id": "CS09-2", "title": "병합의 정확한 비교 상한과 비교 정렬의 결정 트리 하한", "href": "notes/cs/cs09-2.html"},
+    {"id": "CS09-3", "title": "배열 확장의 최악·평균·상각 비용을 구분하기", "href": "notes/cs/cs09-3.html"}
+  ],
+  CS10: [
+    {"id": "CS10-1", "title": "정렬된 맵을 회전해 높이를 제한하기", "href": "notes/cs/cs10-1.html"},
+    {"id": "CS10-2", "title": "힙의 아래부터 구성하고 선형 시간 상계 세우기", "href": "notes/cs/cs10-2.html"},
+    {"id": "CS10-3", "title": "서로소 집합의 합치기와 경로 압축을 비용으로 확인하기", "href": "notes/cs/cs10-3.html"}
+  ],
   SY01: [
     {"id": "SY01-1", "title": "같은 비트를 어떤 정수로 읽을지 정한다", "href": "notes/sy/sy01-1.html"},
     {"id": "SY01-2", "title": "문자·픽셀·소리를 바이트로 기록한다", "href": "notes/sy/sy01-2.html"}
@@ -320,6 +330,14 @@ window.BDA_CHAPTERS = {
     {"id": "NW15-2", "title": "VLAN의 전달 영역과 라우터의 최장 접두사 일치 연결하기", "href": "notes/nw/nw15-2.html"},
     {"id": "NW15-3", "title": "IPv6 이웃 탐색의 멀티캐스트와 캐시 상태", "href": "notes/nw/nw15-3.html"}
   ],
+  NW16: [
+    {"id": "NW16-1", "title": "HTTP/2에서 섞어 보내고 TCP에서 함께 기다리는 경우", "href": "notes/nw/nw16-1.html"},
+    {"id": "NW16-2", "title": "QUIC 연결의 공통 제약과 HTTP/3의 별도 의존성", "href": "notes/nw/nw16-2.html"}
+  ],
+  NW17: [
+    {"id": "NW17-1", "title": "RTT·손실·유효 처리량의 분모와 끝 시각 맞추기", "href": "notes/nw/nw17-1.html"},
+    {"id": "NW17-2", "title": "같은 입력에 큐 한도만 바꾸고 차이를 보고하기", "href": "notes/nw/nw17-2.html"}
+  ],
   DB01: [
     {"id": "DB01-1", "title": "표, 스키마, 한 행의 의미", "href": "notes/db/db01-1.html"},
     {"id": "DB01-2", "title": "기본 키, 외래 키와 복합 키", "href": "notes/db/db01-2.html"}
@@ -408,6 +426,15 @@ window.BDA_CHAPTERS = {
     {"id": "LA12-1", "title": "잔차의 직교성에서 정규방정식과 QR 풀이를 유도하기", "href": "notes/la/la12-1.html"},
     {"id": "LA12-2", "title": "거의 겹치는 열에서 조건수와 절단 SVD가 알려 주는 것", "href": "notes/la/la12-2.html"}
   ],
+  LA13: [
+    {"id": "LA13-1", "title": "피벗이 있는 가우스 소거에서 PA=LU가 성립하는 이유", "href": "notes/la/la13-1.html"},
+    {"id": "LA13-2", "title": "Householder 반사로 QR을 만들고 직교성을 검사하기", "href": "notes/la/la13-2.html"}
+  ],
+  LA14: [
+    {"id": "LA14-1", "title": "양의 정부호 선형계를 이차함수의 최소점으로 읽기", "href": "notes/la/la14-1.html"},
+    {"id": "LA14-2", "title": "켤레기울기법에서 이미 맞춘 방향을 다시 건드리지 않기", "href": "notes/la/la14-2.html"},
+    {"id": "LA14-3", "title": "희소 선형계에서 전조건화와 중단 기준을 함께 설계하기", "href": "notes/la/la14-3.html"}
+  ],
   CA01: [
     {"id": "CA01-1", "title": "항을 크게 보낼 때와 두 점을 좁힐 때", "href": "notes/ca/ca01-1.html"},
     {"id": "CA01-2", "title": "함수의 극한과 연속: 그 점과 그 주변", "href": "notes/ca/ca01-2.html"}
@@ -439,6 +466,21 @@ window.BDA_CHAPTERS = {
   CA08: [
     {"id": "CA08-1", "title": "차분식으로 상태의 다음 값과 안정성 읽기", "href": "notes/ca/ca08-1.html"},
     {"id": "CA08-2", "title": "미분방정식을 오일러 한 걸음으로 계산하기", "href": "notes/ca/ca08-2.html"}
+  ],
+  CA09: [
+    {"id": "CA09-1", "title": "곡선의 매개화와 일을 재는 선적분", "href": "notes/ca/ca09-1.html"},
+    {"id": "CA09-2", "title": "퍼텐셜을 찾고 경로 독립을 증명하기", "href": "notes/ca/ca09-2.html"},
+    {"id": "CA09-3", "title": "Green 정리로 경계의 순환과 평면 내부를 비교하기", "href": "notes/ca/ca09-3.html"}
+  ],
+  CA10: [
+    {"id": "CA10-1", "title": "곡면의 접벡터에서 법선과 유속 구하기", "href": "notes/ca/ca10-1.html"},
+    {"id": "CA10-2", "title": "Stokes 정리로 공간 경계의 순환을 계산하기", "href": "notes/ca/ca10-2.html"},
+    {"id": "CA10-3", "title": "발산정리로 닫힌 표면과 입체 내부를 비교하기", "href": "notes/ca/ca10-3.html"}
+  ],
+  RA01: [
+    {"id": "RA01-1", "title": "상계와 상한에서 실수의 완비성 읽기", "href": "notes/ra/ra01-1.html"},
+    {"id": "RA01-2", "title": "ε–N으로 수렴을 증명하고 단조수렴을 유도하기", "href": "notes/ra/ra01-2.html"},
+    {"id": "RA01-3", "title": "부분수열과 Cauchy 조건으로 극한의 존재를 판단하기", "href": "notes/ra/ra01-3.html"}
   ],
   PR01: [
     {"id": "PR01-1", "title": "가능한 결과와 그중에 묻는 사건", "href": "notes/pr/pr01-1.html"}
@@ -526,6 +568,21 @@ window.BDA_CHAPTERS = {
     {"id": "ST10-1", "title": "시간의 순서, 자기상관과 과거만 쓴 검증", "href": "notes/st/st10-1.html"},
     {"id": "ST10-2", "title": "반복 측정의 단위를 정하고 묶음으로 재표집하기", "href": "notes/st/st10-2.html"}
   ],
+  ST11: [
+    {"id": "ST11-1", "title": "우도에서 자료의 순서와 충분통계량을 분리하기", "href": "notes/st/st11-1.html"},
+    {"id": "ST11-2", "title": "점수함수와 Fisher 정보로 추정 오차의 하한 구하기", "href": "notes/st/st11-2.html"},
+    {"id": "ST11-3", "title": "편향·일치성을 비교하고 우도가 경계에서 실패하는 이유 찾기", "href": "notes/st/st11-3.html"}
+  ],
+  ST12: [
+    {"id": "ST12-1", "title": "지수족에서 평균·분산을 읽고 GLM의 연결함수 정하기", "href": "notes/st/st12-1.html"},
+    {"id": "ST12-2", "title": "로지스틱과 포아송 우도에서 오즈비와 발생률비 계산하기", "href": "notes/st/st12-2.html"},
+    {"id": "ST12-3", "title": "Fisher scoring을 가중 최소제곱으로 구현하고 잔차를 진단하기", "href": "notes/st/st12-3.html"}
+  ],
+  ST13: [
+    {"id": "ST13-1", "title": "허용된 재배정을 열거해 정확한 순열 p값 얻기", "href": "notes/st/st13-1.html"},
+    {"id": "ST13-2", "title": "경험분포를 다시 뽑아 표준오차와 구간 얻기", "href": "notes/st/st13-2.html"},
+    {"id": "ST13-3", "title": "쌍과 군집을 통째로 다시 뽑아 의존을 보존하기", "href": "notes/st/st13-3.html"}
+  ],
   OP01: [
     {"id": "OP01-1", "title": "부동소수점으로 값을 저장할 때 생기는 반올림", "href": "notes/op/op01-1.html"},
     {"id": "OP01-2", "title": "상쇄와 표현 범위를 피하는 계산식 고르기", "href": "notes/op/op01-2.html"}
@@ -586,6 +643,11 @@ window.BDA_CHAPTERS = {
   AI06: [
     {"id": "AI06-1", "title": "기대 효용과 완전한 정보의 가치", "href": "notes/ai/ai06-1.html"},
     {"id": "AI06-2", "title": "불완전한 관측을 살지 결정하는 순차 선택", "href": "notes/ai/ai06-2.html"}
+  ],
+  AI07: [
+    {"id": "AI07-1", "title": "확률표를 다 만들지 않고 숨은 변수를 제거하기", "href": "notes/ai/ai07-1.html"},
+    {"id": "AI07-2", "title": "같은 주변확률을 구하는데 제거 순서가 왜 계산량을 바꾸는가", "href": "notes/ai/ai07-2.html"},
+    {"id": "AI07-3", "title": "드문 관측에서 거절 표본과 우도 가중치를 비교하기", "href": "notes/ai/ai07-3.html"}
   ],
   ML01: [
     {"id": "ML01-1", "title": "한 행의 뜻과 예측할 값부터 정하기", "href": "notes/ml/ml01-1.html"},
@@ -779,6 +841,10 @@ window.BDA_CHAPTERS = {
   RS10: [
     {"id": "RS10-1", "title": "연구 자료의 이용 조건과 식별 위험 확인하기", "href": "notes/rs/rs10-1.html"},
     {"id": "RS10-2", "title": "집단별 영향과 연구 기여·AI 도움 기록하기", "href": "notes/rs/rs10-2.html"}
+  ],
+  RS11: [
+    {"id": "RS11-1", "title": "검색과 포함 기준을 다시 실행할 수 있게 기록하기", "href": "notes/rs/rs11-1.html"},
+    {"id": "RS11-2", "title": "논문의 주장, 수치, 적용 조건을 근거표에 옮기기", "href": "notes/rs/rs11-2.html"}
   ],
   BD01: [
     {"id": "BD01-1", "title": "분석 기획 실습에서 업무 결정과 평가 기준 맞추기", "href": "notes/bd/bd01-1.html"},

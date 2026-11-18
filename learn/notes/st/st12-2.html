@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>로지스틱과 포아송 우도에서 오즈비와 발생률비 계산하기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="ST12-2">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">통계 · ST12 일반화선형모형과 추론</p>
+<p class="chap-num">ST12·2</p>
+<h1>로지스틱과 포아송 우도에서 오즈비와 발생률비 계산하기</h1>
+<p class="lead">조건 사이의 성공률과 요청 건수를 비교합니다. 어떤 분모가 필요한지 먼저 적고, 로지스틱 계수와 포아송 계수를 두 개의 작은 자료에서 직접 구합니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2>
+<ul>
+<li>베르누이와 포아송 회귀의 조건부 로그우도를 쓴다.</li>
+<li>이진 설명변수의 로지스틱 계수를 오즈비와 확률차로 해석한다.</li>
+<li>노출 시간을 오프셋으로 넣어 건수와 발생률을 구별한다.</li>
+</ul></div>
+<h2>성공 비율은 어떤 자료에서 계산했는가</h2>
+<p>같은 문제를 다른 방식으로 표시한 두 조건에서 사용자가 정답을 맞혔는지 관측했다고 합시다. 합성 자료의 관측 단위는 서로 다른 사용자의 한 번 응답입니다. 조건 <var>x=0</var>에서 8명 중 2명, <var>x=1</var>에서 8명 중 6명이 답에 성공했습니다. x를 고정한 뒤 응답은 각각 베르누이이고 서로 독립이라고 가정합니다. 설명변수와 결과가 함께 변하는 관측에서 계수만으로 표시 방식의 인과 효과를 확정할 수는 없습니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 177" role="img" aria-label="조건 0에서 2/8 성공과 오즈 1/3, 조건 1에서 6/8 성공과 오즈 3이다.">
+<text class="f-cap" x="380" y="30" text-anchor="middle">같은 성공률 표에서 오즈와 확률을 따로 읽는다</text>
+<rect class="f-soft" x="59" y="49" width="116" height="38"/>
+<text class="f-t" x="117" y="73" text-anchor="middle">조건 x</text>
+<rect class="f-soft" x="175" y="49" width="160" height="38"/>
+<text class="f-t" x="255" y="73" text-anchor="middle">성공 / 관측</text>
+<rect class="f-soft" x="335" y="49" width="176" height="38"/>
+<text class="f-t" x="423" y="73" text-anchor="middle">성공확률 p̂</text>
+<rect class="f-soft" x="511" y="49" width="190" height="38"/>
+<text class="f-t" x="606" y="73" text-anchor="middle">성공 오즈</text>
+<rect class="f-box" x="59" y="87" width="116" height="38"/>
+<text class="f-s" x="117" y="111" text-anchor="middle">0</text>
+<rect class="f-box" x="175" y="87" width="160" height="38"/>
+<text class="f-s" x="255" y="111" text-anchor="middle">2 / 8</text>
+<rect class="f-box" x="335" y="87" width="176" height="38"/>
+<text class="f-s" x="423" y="111" text-anchor="middle">1/4</text>
+<rect class="f-box" x="511" y="87" width="190" height="38"/>
+<text class="f-s" x="606" y="111" text-anchor="middle">1/3</text>
+<rect class="f-box" x="59" y="125" width="116" height="38"/>
+<text class="f-s" x="117" y="149" text-anchor="middle">1</text>
+<rect class="f-box" x="175" y="125" width="160" height="38"/>
+<text class="f-s" x="255" y="149" text-anchor="middle">6 / 8</text>
+<rect class="f-box" x="335" y="125" width="176" height="38"/>
+<text class="f-s" x="423" y="149" text-anchor="middle">3/4</text>
+<rect class="f-box" x="511" y="125" width="190" height="38"/>
+<text class="f-s" x="606" y="149" text-anchor="middle">3</text>
+</svg><figcaption>확률은 성공을 전체로 나누고, 성공 오즈는 성공을 실패로 나눈다.</figcaption></figure>
+<p>로지스틱 회귀는 <var>η<sub>i</sub>=β₀+β₁x<sub>i</sub></var>, <var>p<sub>i</sub>=1/(1+e<sup>−η<sub>i</sub></sup>)</var>입니다. 베르누이 로그우도를 독립 관측에 대해 더하면 두 가지 동치 표현이 나옵니다.</p>
+<div class="eq"><var>ℓ(β)=Σ[y<sub>i</sub> log p<sub>i</sub>+(1−y<sub>i</sub>)log(1−p<sub>i</sub>)]=Σ[y<sub>i</sub>η<sub>i</sub>−log(1+e<sup>η<sub>i</sub></sup>)].</var></div>
+<p>같은 x를 가진 n명에서 성공 수 s만 남기면 <var>s log p+(n−s)log(1−p)</var>로 계산합니다. 성공 수의 확률을 쓰면 조합 항도 붙지만 β에 무관합니다. 이 예에서 절편과 이진 x가 있어 두 조건의 로짓을 독립적으로 정할 수 있습니다. 두 조건에서 모두 성공과 실패가 있으므로 각각의 최댓점은 <var>p̂₀=1/4</var>, <var>p̂₁=3/4</var>입니다.</p>
+<p>두 로짓의 차가 <var>β̂₁=log 3−log(1/3)=log 9</var>입니다. 즉 x가 한 단위 높을 때 맞힐 <b class="key">오즈</b>가 9배입니다. 확률이 9배라는 뜻은 아닙니다. 같은 표에서 확률비는 3배이고, 차이는 <var>3/4−1/4=1/2</var>, 즉 50퍼센트포인트입니다. 연속 x에서도 증가 전 확률에 따라 같은 오즈비가 다른 확률차를 만듭니다. 예를 들어 기준 확률이 .1이면 오즈는 1/9, 여기에 9를 곱하면 오즈 1과 확률 .5를 얻습니다.</p>
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+<div class="check" data-q="q3"></div>
+<h2>두 관측 시간이 다르면 건수와 발생률을 분리한다</h2>
+<p>같은 장비에서 인쇄 요청을 관측하는 두 합성 구간을 둡니다. 첫 조건은 4시간 2건, 둘째는 6시간 9건입니다. 한 행은 서로 독립인 관측 구간 하나이며, 시간 t가 알려져 있고 각 구간 내 평균 발생률이 일정하다고 가정합니다. 시간당 발생률 <var>r(x)</var>와 구간의 기대 건수 <var>μ=t·r(x)</var>는 역할이 다릅니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 177" role="img" aria-label="조건 0의 4시간 2건은 .5건/시간이며, 조건 1의 6시간 9건은 1.5건/시간이다.">
+<text class="f-cap" x="380" y="30" text-anchor="middle">요청 건수를 노출 시간으로 나눈다</text>
+<rect class="f-soft" x="61.5" y="49" width="117" height="38"/>
+<text class="f-t" x="120" y="73" text-anchor="middle">조건 x</text>
+<rect class="f-soft" x="178.5" y="49" width="154" height="38"/>
+<text class="f-t" x="255.5" y="73" text-anchor="middle">요청 (건)</text>
+<rect class="f-soft" x="332.5" y="49" width="161" height="38"/>
+<text class="f-t" x="413" y="73" text-anchor="middle">노출 (시간)</text>
+<rect class="f-soft" x="493.5" y="49" width="205" height="38"/>
+<text class="f-t" x="596" y="73" text-anchor="middle">적합 발생률 (건/시간)</text>
+<rect class="f-box" x="61.5" y="87" width="117" height="38"/>
+<text class="f-s" x="120" y="111" text-anchor="middle">0</text>
+<rect class="f-box" x="178.5" y="87" width="154" height="38"/>
+<text class="f-s" x="255.5" y="111" text-anchor="middle">2</text>
+<rect class="f-box" x="332.5" y="87" width="161" height="38"/>
+<text class="f-s" x="413" y="111" text-anchor="middle">4</text>
+<rect class="f-box" x="493.5" y="87" width="205" height="38"/>
+<text class="f-s" x="596" y="111" text-anchor="middle">0.5</text>
+<rect class="f-box" x="61.5" y="125" width="117" height="38"/>
+<text class="f-s" x="120" y="149" text-anchor="middle">1</text>
+<rect class="f-box" x="178.5" y="125" width="154" height="38"/>
+<text class="f-s" x="255.5" y="149" text-anchor="middle">9</text>
+<rect class="f-box" x="332.5" y="125" width="161" height="38"/>
+<text class="f-s" x="413" y="149" text-anchor="middle">6</text>
+<rect class="f-box" x="493.5" y="125" width="205" height="38"/>
+<text class="f-s" x="596" y="149" text-anchor="middle">1.5</text>
+</svg><figcaption>기대 건수의 비 9/2와 단위 시간의 발생률비 3을 비교한다.</figcaption></figure>
+<p><var>Y<sub>i</sub>∼Poisson(μ<sub>i</sub>)</var>이고 <var>log r(x)=β₀+β₁x</var>이면</p>
+<div class="eq"><var>η<sub>i</sub>=log μ<sub>i</sub>=log t<sub>i</sub>+β₀+β₁x<sub>i</sub>, ℓ=Σ[y<sub>i</sub>η<sub>i</sub>−e<sup>η<sub>i</sub></sup>−log(y<sub>i</sub>!)].</var></div>
+<p><var>log t<sub>i</sub></var>를 <b class="key">오프셋(offset)</b>이라고 합니다. 계수를 1로 고정해 노출 시간을 두 배로 늘리면 같은 발생률에서 기대 건수도 두 배가 되게 합니다. 입력 시간 <var>t<sub>i</sub>&gt;0</var>이 필요합니다. 반복 구간에서 같은 x의 r을 공유하면 점수 <var>∂ℓ/∂log r=Σy−rΣt</var>입니다. <var>Σy&gt;0</var>이면 합한 건수와 합한 시간의 비가 양수인 최대우도 발생률입니다. <var>Σy=0</var>이면 로그우도가 <var>r↓0</var>에서 상한에 접근하므로 <var>log r</var>에 유한한 최대화 값이 없습니다. <a href="st11-3.html">우도의 경계 사례</a>와 같은 방식으로 모수 범위를 확인합니다.</p>
+<p>각 조건을 따로 맞출 수 있는 이 예에서 <var>r̂₀=.5</var>, <var>r̂₁=1.5</var>입니다. 따라서 <var>β̂₀=log .5</var>, <var>β̂₁=log 3</var>입니다. x가 1 증가할 때 다른 조건을 고정한 발생률은 3배입니다. 다음 관측을 모두 2시간씩 한다면 예상 건수는 1건과 3건입니다. 기대 건수가 정수일 필요는 없으며, 실제 한 구간의 건수는 모형에 따라 흔들립니다.</p>
+<div class="check" data-q="q4"></div>
+<div class="check" data-q="q5"></div>
+<div class="check" data-q="q6"></div>
+<h2>이어 풀기와 증명</h2>
+<p>우도를 쓰기 전에 새 자료의 독립 단위와 노출 분모를 적습니다. 마지막 문제에서는 관측을 두 줄로 나눠도 우도 비교 및 적합 발생률이 유지되는지 증명합니다.</p>
+<div class="check" data-q="q7"></div>
+<div class="check" data-q="q8"></div>
+<div class="check" data-q="q9"></div>
+<h2>파이썬으로 같은 계산 검산하기</h2>
+<pre data-example="python"><code>from math import exp, lgamma, log, log1p
+
+successes, totals = (2, 6), (8, 8)
+probability = tuple(s/n for s, n in zip(successes, totals))
+log_odds = tuple(log(p) - log1p(-p) for p in probability)
+beta_logit = log_odds[1] - log_odds[0]
+ell = sum(s*log(p) + (n-s)*log1p(-p)
+          for s, n, p in zip(successes, totals, probability))
+print(f&quot;logit coefficients: {log_odds[0]:.6f} {beta_logit:.6f}&quot;)
+print(f&quot;odds ratio: {exp(beta_logit):.1f}, probability difference: {probability[1]-probability[0]:.2f}&quot;)
+print(f&quot;Bernoulli log likelihood: {ell:.6f}&quot;)
+
+counts, exposure = (2, 9), (4, 6)
+rate = tuple(y/t for y, t in zip(counts, exposure))
+mu = tuple(t*r for t, r in zip(exposure, rate))
+beta_poisson = log(rate[1]) - log(rate[0])
+ell = sum(y*log(m) - m - lgamma(y+1) for y, m in zip(counts, mu))
+print(f&quot;Poisson coefficients: {log(rate[0]):.6f} {beta_poisson:.6f}&quot;)
+print(f&quot;rate ratio: {exp(beta_poisson):.1f}, expected counts for 2h: {[2*r for r in rate]}&quot;)
+print(f&quot;Poisson log likelihood: {ell:.6f}&quot;)</code></pre>
+<p class="aside">실행 결과</p>
+<pre data-output><code>logit coefficients: -1.098612 2.197225
+odds ratio: 9.0, probability difference: 0.50
+Bernoulli log likelihood: -8.997362
+Poisson coefficients: -0.693147 1.098612
+rate ratio: 3.0, expected counts for 2h: [1.0, 3.0]
+Poisson log likelihood: -3.333659</code></pre>
+<p>로지스틱 쪽은 개인 응답의 우도를 계산합니다. Poisson 쪽의 <code>lgamma(y+1)</code>는 정수 y에서 <var>log(y!)</var>입니다. 두 로그우도는 관측과 응답 모형이 각각 다른 값입니다. 어느 모델이 상대적으로 나은지 보려면 같은 질문과 같은 자료에서 비교 기준을 먼저 정합니다.</p>
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://web.stanford.edu/class/stats305b/slides/Generalized-linear-models.html">Stanford STATS 305B · Generalized Linear Models</a></li>
+<li><a href="https://cs229.stanford.edu/lectures-spring2022/main_notes.pdf">Stanford CS229 · Logistic Regression 강의 노트</a></li>
+<li><a href="../ml/ml05-1.html">ML05-1 로지스틱 손실</a></li>
+</ul>
+<h2>확인 문제</h2>
+<p>조건과 단위를 먼저 적은 뒤 해설을 확인합니다.</p>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

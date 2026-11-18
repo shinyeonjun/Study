@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>곡면의 접벡터에서 법선과 유속 구하기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e8c'/%3E%3Cpath d='M8 22V10m8 12V14m8 8V6' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="CA10-1">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+
+<header class="chapter">
+<p class="chap-sub">미적분 · CA10 곡면과 벡터 적분</p>
+<p class="chap-num">CA10·1</p>
+<h1>곡면의 접벡터에서 법선과 유속 구하기</h1>
+<p class="lead">기울어진 면을 바람이 통과할 때 어느 성분을 더해야 할까요? 매개변수 격자의 작은 칸이 곡면에서 어떤 면적과 방향을 갖는지 외적으로 구합니다.</p>
+</header>
+
+<div class="goal">
+<h2>이 장을 읽고 나면</h2>
+<ul>
+<li>곡면 매개화의 두 접벡터와 외적을 구하고 정칙성을 검사한다.</li>
+<li>무방향 면적 요소와 방향 있는 면적벡터를 구분한다.</li>
+<li>그래프 곡면과 원기둥 옆면에서 유속을 직접 계산한다.</li>
+</ul>
+</div>
+<h2>작은 매개변수 사각형을 곡면 위로 옮긴다</h2>
+
+<p>곡선은 변수 하나로 길 위의 점을 찾습니다. 곡면의 작은 조각은 변수 두 개 <var>(u,v)</var>로 점을 찾습니다. 예로 밑면에서 x,y를 움직이며 높이 <var>z=x+2y</var>를 지정하면 <var>r(u,v)=(u,v,u+2v)</var>입니다. 이처럼 평면의 영역 <var>D</var>에서 3차원 공간으로 가는 벡터함수 <var>r:D→ℝ³</var>를 <b class="key">곡면 매개화</b>라고 합니다.</p>
+<p>v를 고정하고 u만 바꾸면 하나의 곡선을 얻고, 그 접벡터는 <var>rᵤ=∂r/∂u</var>입니다. 같은 방식으로 <var>rᵥ</var>를 얻습니다. 두 벡터의 외적 <var>N=rᵤ×rᵥ</var>이 0이 아니면 두 접벡터가 독립이라 그 점의 접평면을 펼칩니다. 이 조건을 <strong>정칙</strong>이라 합니다. 아래에서는 매개화가 연속 미분 가능하고 내부를 한 번 덮는 정칙 조각을 사용합니다. 모서리, 이음선, 극처럼 한 조각으로 다루기 어려운 점은 곡면을 나누거나 다른 좌표를 써서 처리합니다.</p>
+<p>매개변수의 한 변이 <var>Δu</var>, 다른 변이 <var>Δv</var>인 칸은 곡면에서 1차 근사로 <var>rᵤΔu</var>, <var>rᵥΔv</var>가 만드는 평행사변형입니다. 두 벡터 <var>a,b</var>의 평행사변형 넓이는 <var>‖a×b‖=‖a‖‖b‖sin θ</var>이므로, 곡면에서의 작은 면적은 <var>‖N‖ΔuΔv</var>입니다. 점점 작은 직사각형 근사를 합하면 곡면 면적 요소를 얻습니다.</p>
+<div class="calc"><var>dS=‖rᵤ×rᵥ‖ du dv.</var></div>
+<p>속도 한 개의 크기가 곡선 길이 요소를 만들고, 두 접벡터 외적의 크기가 곡면 면적 요소를 만듭니다. 예로 <var>r(u,v)=(3u,2v,0)</var>이면 단위 매개변수 정사각형에 대응하는 실제 평면 넓이는 <var>‖(3,0,0)×(0,2,0)‖=6</var>입니다.</p>
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+
+<h2>스칼라 면적과 벡터장 유속의 차이를 계산한다</h2>
+
+<p>스칼라장 <var>g</var>를 면적에 대해 더하면 <var>∬<sub>S</sub>g dS = ∬<sub>D</sub>g(r(u,v))‖N‖du dv</var>입니다. 예컨대 표면 밀도라면 질량입니다. 벡터장 <var>F</var>가 면을 가로지르는 정도를 재려면, 먼저 면의 어느 쪽으로 향하는 것을 양이라고 할지 정해야 합니다. 법선이 연속적으로 한쪽을 향하도록 고른 곡면을 <b class="key">방향이 지정된 곡면</b>이라 합니다.</p>
+<p>단위법선을 <var>n</var>이라 하면 <var>F·n</var>은 단위 면적당 법선 성분입니다. <var>n=N/‖N‖</var>을 골랐다면 <var>n dS=N du dv</var>라서 유속은 아래와 같습니다.</p>
+<div class="calc"><var>∬<sub>S</sub>F·n dS = ∬<sub>D</sub>F(r(u,v))·(rᵤ×rᵥ) du dv.</var></div>
+<p>반대 법선을 고르면 부호를 뒤집습니다. 장이 면과 평행하면 내적이 0입니다. 물이 흐르는 속도장이 m/s이고 면적이 m²라면 이 유속은 m³/s입니다. 외적을 사용한 식에서 면적 요소를 다시 곱하면 길이 보정이 두 번 들어갑니다. 단위법선 <var>n</var>에는 <var>dS</var>, 정규화하지 않은 외적 <var>N</var>에는 <var>du dv</var>를 짝지으세요.</p>
+<p>곡면이 <var>z=f(x,y)</var>라면 <var>r(x,y)=(x,y,f(x,y))</var>, 접벡터는 <var>(1,0,fₓ)</var>와 <var>(0,1,fᵧ)</var>입니다. 외적은 <var>N=(-fₓ,-fᵧ,1)</var>입니다. z성분이 양수여서 이 부호가 위쪽입니다. 아래는 <var>-N</var>입니다.</p>
+<div class="check" data-q="q3"></div>
+
+<h2>기울어진 삼각형에서 면적과 유속을 모두 구한다</h2>
+
+<p><var>S</var>는 <var>D={0≤y≤x≤1}</var> 위의 <var>z=x+2y</var>이고 위쪽을 양으로 정합니다. 여기서 <var>N=(-1,-2,1)</var>, <var>‖N‖=√6</var>입니다. 밑면의 넓이가 1/2이므로 곡면 넓이는 <var>√6/2</var>입니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 301" role="img" aria-label="xy평면의 삼각형에 높이 z=x+2y를 더해 (0,0,0),(1,0,1),(1,1,3)을 잇는 곡면. 위 법선은 (−1,−2,1)">
+<text class="f-cap" x="380" y="28" text-anchor="middle">같은 밑면 위에서 높이와 법선을 구한다</text>
+<polygon class="f-box" points="161,230 296,255 246,280"/>
+<polygon class="f-soft" points="161,230 296,205 246,130"/>
+<line class="f-grid" x1="296" y1="255" x2="296" y2="205" stroke-dasharray="4 4"/><line class="f-grid" x1="246" y1="280" x2="246" y2="130" stroke-dasharray="4 4"/>
+<line class="f-ink" x1="161" y1="230" x2="296" y2="205"/>
+<line class="f-ink" x1="296" y1="205" x2="246" y2="130"/>
+<line class="f-ink" x1="246" y1="130" x2="161" y2="230"/>
+<line class="f-line" x1="234" y1="181" x2="209" y2="94" marker-end="url(#f-arrow)"/>
+<text class="f-cap" x="209" y="80" text-anchor="middle">N=(−1,−2,1)</text>
+<text class="f-t" x="126" y="220" text-anchor="middle">(0,0,0)</text>
+<text class="f-t" x="351" y="210" text-anchor="middle">(1,0,1)</text>
+<text class="f-t" x="293" y="122" text-anchor="middle">(1,1,3)</text>
+<text class="f-s" x="437" y="135" text-anchor="start">rₓ=(1,0,1)</text>
+<text class="f-s" x="437" y="168" text-anchor="start">rᵧ=(0,1,2)</text>
+<text class="f-cap" x="437" y="202" text-anchor="start">rₓ×rᵧ=(−1,−2,1)</text>
+<text class="f-s" x="437" y="237" text-anchor="start">밑면 0≤y≤x≤1</text>
+</svg>
+<figcaption>높이 차를 점선으로 연결했습니다. 위쪽 법선은 z성분이 양수이고 접선 rₓ, rᵧ에는 모두 수직입니다.</figcaption>
+</figure>
+<p><b>위쪽 유속.</b> <var>F=(x,0,z)</var>를 곡면에 넣으면 <var>F(r)·N=-x+(x+2y)=2y</var>입니다. <var>y=0</var>부터 <var>y=x</var>까지 먼저 적분해 <var>x²</var>을 얻고 이를 <var>x=0</var>부터 1까지 적분하면 <var>1/3</var>입니다. 아래쪽 유속은 <var>-1/3</var>입니다. 같은 경우에 <var>F=(x,y,z)</var>를 쓰면 <var>-x-2y+z=0</var>입니다. 원점을 지나는 이 평면에서 위치벡터 자체는 평면과 나란하기 때문입니다.</p>
+<div class="check" data-q="q4"></div>
+<div class="check" data-q="q5"></div>
+
+<h2>원기둥 옆면의 바깥 방향을 선택한다</h2>
+
+<p>반지름 <var>R&gt;0</var>, 높이 <var>h&gt;0</var>인 원기둥에서 옆면을 <var>r(θ,z)=(R cos θ,R sin θ,z)</var>, <var>0≤θ≤2π</var>, <var>0≤z≤h</var>로 적습니다. θ의 양 끝이 같은 이음선이지만 내부의 곡면을 한 번 덮습니다. <var>r<sub>θ</sub>=(-R sin θ,R cos θ,0)</var>, <var>r<sub>z</sub>=(0,0,1)</var>이므로 외적 <var>N=(R cos θ,R sin θ,0)</var>은 원기둥 축에서 멀어지는 바깥 방향입니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 165" role="img" aria-label="각도 0과 파이 나누기 2에서 원기둥 옆면의 접벡터와 외적이 바깥을 향하는 방향">
+<text class="f-cap" x="380" y="33" text-anchor="middle">원기둥 옆면에서 두 접벡터가 정하는 방향</text>
+<text class="f-t" x="180" y="82" text-anchor="end">θ = 0</text>
+<rect class="f-box" x="206" y="58" width="162" height="38" rx="3"/>
+<text class="f-t" x="287" y="83" text-anchor="middle">rθ=(0,R,0)</text>
+<rect class="f-box" x="374" y="58" width="162" height="38" rx="3"/>
+<text class="f-t" x="455" y="83" text-anchor="middle">rz=(0,0,1)</text>
+<rect class="f-box" x="542" y="58" width="162" height="38" rx="3"/>
+<text class="f-t" x="623" y="83" text-anchor="middle">N=(R,0,0)</text>
+<text class="f-t" x="180" y="128" text-anchor="end">θ = π/2</text>
+<rect class="f-box" x="206" y="104" width="162" height="38" rx="3"/>
+<text class="f-t" x="287" y="129" text-anchor="middle">rθ=(−R,0,0)</text>
+<rect class="f-box" x="374" y="104" width="162" height="38" rx="3"/>
+<text class="f-t" x="455" y="129" text-anchor="middle">rz=(0,0,1)</text>
+<rect class="f-box" x="542" y="104" width="162" height="38" rx="3"/>
+<text class="f-t" x="623" y="129" text-anchor="middle">N=(0,R,0)</text>
+</svg>
+<figcaption>매개변수 순서가 (θ,z)이면 외적이 축에서 멀어지는 쪽입니다. (z,θ) 순서라면 외적이 반대입니다.</figcaption>
+</figure>
+<p>벡터장 <var>F(x,y,z)=(x,y,0)</var>에서는 내적이 <var>R²(cos²θ+sin²θ)=R²</var>라 옆면 유속은 <var>2πR²h</var>입니다. 면적은 <var>2πRh</var>이므로 법선 성분의 크기 <var>R</var>에 면적을 곱해도 같습니다. 원기둥의 위·아래 원판을 같이 적분한다면 각각의 법선을 더 지정해야 합니다.</p>
+<p><b>좌표에서 생기는 예외.</b> 평면 원판 <var>r(ρ,θ)=(ρ cos θ,ρ sin θ,0)</var>에서 <var>ρ=0</var>이면 <var>r<sub>θ</sub>=0</var>이고 외적도 0입니다. 원판 자체가 찢어졌다는 뜻은 아닙니다. 원점에서 모든 θ가 한 점을 나타내기 때문에 극좌표가 그 자리의 접평면을 표현하지 못합니다. 직교좌표 <var>r(u,v)=(u,v,0)</var>는 원점에서도 정칙입니다.</p>
+<div class="check" data-q="q6"></div>
+<h2>손계산을 Python으로 검산한다</h2>
+<pre data-example="python"><code>from fractions import Fraction as F
+from math import sqrt
+
+def cross(a, b):
+    return (
+        a[1]*b[2] - a[2]*b[1],
+        a[2]*b[0] - a[0]*b[2],
+        a[0]*b[1] - a[1]*b[0],
+    )
+
+def dot(a, b):
+    return sum(x*y for x, y in zip(a, b))
+
+normal = cross((1, 0, 1), (0, 1, 2))
+print(&quot;normal:&quot;, normal)
+print(&quot;area:&quot;, round(sqrt(dot(normal, normal)) / 2, 6))
+# 이중적분에서 y 적분을 마친 x^2를 3점 공식으로 적분
+flux = (F(0)**2 + 4*F(1, 2)**2 + F(1)**2) / 6
+print(&quot;up/down flux:&quot;, flux, -flux)
+radius, height = 2, 3
+print(&quot;cylinder-side flux / pi:&quot;, 2 * radius**2 * height)</code></pre>
+<pre data-output><code>normal: (-1, -2, 1)
+area: 1.224745
+up/down flux: 1/3 -1/3
+cylinder-side flux / pi: 24</code></pre>
+<p class="small">Python 3.14.6으로 실행했습니다. 면적은 소수 여섯 자리로 표시했고, 삼각형 유속은 분수로 정확하게 계산했습니다.</p>
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://openstax.org/books/calculus-volume-3/pages/6-6-surface-integrals">OpenStax, Calculus Volume 3 §6.6 Surface Integrals</a></li>
+<li><a href="https://ocw.mit.edu/courses/18-02-multivariable-calculus-fall-2007/pages/lecture-notes/">MIT 18.02, 강의 26–27</a></li>
+<li><a href="ca09-1.html">CA09-1 매개화와 접선</a></li>
+</ul>
+
+<h2>확인 문제</h2>
+<p>아직 풀지 않은 문제입니다. 먼저 식이나 근거를 적어 보고 해설을 확인합니다.</p>
+<div id="quiz"></div>
+
+<section class="work" id="tools"></section>
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

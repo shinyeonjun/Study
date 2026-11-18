@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Green 정리로 경계의 순환과 평면 내부를 비교하기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e8c'/%3E%3Cpath d='M8 22V10m8 12V14m8 8V6' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="CA09-3">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+
+<header class="chapter">
+<p class="chap-sub">미적분 · CA09 벡터장과 선적분</p>
+<p class="chap-num">CA09·3</p>
+<h1>Green 정리로 경계의 순환과 평면 내부를 비교하기</h1>
+<p class="lead">삼각형의 세 변을 직접 걸어 적분한 값과 내부의 미분을 모두 더한 값을 맞춰 봅니다. 영역이 구멍을 가지면 왜 안쪽 경계의 방향을 바꿔야 하는지도 증명에서 읽어 냅니다.</p>
+</header>
+
+<div class="goal">
+<h2>이 장을 읽고 나면</h2>
+<ul>
+<li>Green 정리의 순환형을 두 편미분의 적분으로 유도한다.</li>
+<li>같은 삼각형에서 경계 적분과 이중적분을 각각 구한다.</li>
+<li>구멍 있는 영역의 경계 방향 및 유속형을 판별한다.</li>
+</ul>
+</div>
+<h2>계산을 시작하기 전에 닫힌 경계와 방향을 확인한다</h2>
+
+<p>평면에서 <var>F=(P,Q)</var>를 따라 한 바퀴 돌아오는 일을 <b class="key">순환</b>이라고 합니다. 이 장에서 <var>D</var>는 유계이고 경계가 유한 개의 서로 겹치지 않는 조각별 매끄러운 단순 폐곡선으로 이루어진 영역입니다. <var>F</var>의 두 성분은 경계를 포함한 영역의 닫힘을 담는 열린 집합에서 연속 미분 가능하다고 가정합니다. <var>∂D</var>는 영역의 <strong>전체 경계</strong>입니다. 이를 <b>양의 방향</b>으로 돌면 진행하면서 영역이 왼쪽에 놓입니다. 구멍이 없는 삼각형에서는 반시계 방향입니다.</p>
+<div class="box"><p class="box-k">Green 정리 · 순환형</p>
+<div class="calc"><var>∮<sub>∂D</sub> P dx+Q dy = ∬<sub>D</sub> (Qₓ−Pᵧ) dA.</var></div>
+<p>왼쪽은 경계의 접선방향을 따라 실제로 이동하며 적분합니다. 오른쪽은 내부 점마다 회전 방향을 나타내는 편미분의 차를 면적에 대해 더합니다.</p></div>
+<p>이 등식은 경계를 한 바퀴 반대로 돌면 왼쪽의 부호가 바뀐다는 사실과 같이 사용해야 합니다. 방향과 두 편미분의 순서를 동시에 기억하는 방법은 <var>F=(-y,x)</var>를 넣어 보는 것입니다. 단위원 위 반시계 접선과 항상 같은 방향이라 순환이 양수이고, <var>Qₓ−Pᵧ=1−(-1)=2</var>여서 오른쪽도 양수입니다.</p>
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+
+<h2>한 쌍의 경계 높이에서 기본정리를 써서 유도한다</h2>
+
+<p>먼저 <var>D={(x,y): a≤x≤b, g(x)≤y≤h(x)}</var>처럼 세로줄과 만나는 부분이 한 구간인 경우를 봅시다. 경계 위쪽과 아래쪽 함수는 조각별 매끄러워 이 적분이 가능하다고 합시다. <var>-Pᵧ</var>부터 안쪽 y 적분을 하면 <var>P(x,g(x))−P(x,h(x))</var>입니다. 아래 경계에서는 <var>x=a→b</var>, 위에서는 <var>x=b→a</var>로 이동합니다. 두 수직 옆변의 <var>dx</var>는 0이므로 <var>∮P dx=−∬ Pᵧ dA</var>입니다.</p>
+<p>이번에는 가로줄이 <var>ℓ(y)≤x≤r(y)</var>, <var>c≤y≤d</var>를 만나는 경우입니다. <var>Qₓ</var>를 x에 관해 먼저 적분하면 <var>Q(r(y),y)−Q(ℓ(y),y)</var>입니다. 양의 방향에서 오른쪽은 아래에서 위, 왼쪽은 위에서 아래로 움직입니다. 수평 옆변의 <var>dy=0</var>이어서 <var>∮Q dy=∬ Qₓ dA</var>를 얻습니다. 두 종류의 설명이 모두 가능한 영역에서는 이 둘을 더해 정리를 증명했습니다.</p>
+<p>이런 작은 영역들로 분할할 수 있는 경우, 공통 변은 두 조각이 서로 반대 방향으로 지나므로 선적분이 상쇄됩니다. 이중적분은 겹치지 않는 내부 조각에서 합쳐집니다. 따라서 바깥 경계와 실제 구멍 둘레만 남습니다. 예컨대 고리를 상하 반쪽으로 나누면 자른 선분들은 합칠 때 없어집니다. 이 논증은 이런 유한 분할이 가능한 영역에 대한 증명이고, 정리의 더 일반적인 판본은 경계의 정칙성을 이용합니다.</p>
+<div class="check" data-q="q3"></div>
+
+<h2>세 변과 내부에서 7/6을 각각 구한다</h2>
+
+<p>앞서 다룬 곡선의 매개화에서 이어서, <var>D={0≤y≤x≤1}</var>, <var>F=(-y,x²)</var>라 둡니다. 삼각형의 꼭짓점을 반시계로 <var>(0,0)→(1,0)→(1,1)→(0,0)</var>으로 지납니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 324" role="img" aria-label="0≤y≤x≤1인 삼각형에서 (0,0), (1,0), (1,1) 순서. x=1/2의 세로 적분 범위는 0부터 1/2">
+<text class="f-cap" x="380" y="28" text-anchor="middle">삼각형의 경계는 밑변에서 시작해 반시계로 돈다</text>
+<line class="f-grid" x1="111.4" y1="281" x2="465" y2="281" marker-end="url(#f-arrow)"/>
+<line class="f-grid" x1="140" y1="296.6" x2="140" y2="60" marker-end="url(#f-arrow)"/>
+<text class="f-s" x="480.6" y="284.25" text-anchor="middle">x</text>
+<text class="f-s" x="140" y="49.599999999999994" text-anchor="middle">y</text>
+<polygon class="f-soft" points="140,281 270,281 270,151"/>
+<line class="f-line" x1="140" y1="281" x2="270" y2="281"/>
+<line class="f-line" x1="270" y1="281" x2="270" y2="151"/>
+<line class="f-line" x1="270" y1="151" x2="140" y2="281"/>
+<line class="f-line" x1="197.2" y1="281" x2="229.7" y2="281" marker-end="url(#f-arrow)"/>
+<line class="f-line" x1="270" y1="231.6" x2="270" y2="197.8" marker-end="url(#f-arrow)"/>
+<line class="f-line" x1="240.10000000000002" y1="180.89999999999998" x2="211.5" y2="209.5" marker-end="url(#f-arrow)"/>
+<line class="f-grid" x1="205" y1="281" x2="205" y2="216"/>
+<circle class="f-fill" cx="205" cy="216" r="4"/>
+<circle class="f-fill" cx="140" cy="281" r="4"/>
+<circle class="f-fill" cx="270" cy="281" r="4"/>
+<circle class="f-fill" cx="270" cy="151" r="4"/>
+<text class="f-s" x="134.8" y="307" text-anchor="middle">(0,0)</text>
+<text class="f-s" x="270" y="307" text-anchor="middle">(1,0)</text>
+<text class="f-s" x="280.4" y="131.5" text-anchor="middle">(1,1)</text>
+<text class="f-s" x="208.9" y="252.4" text-anchor="middle">D</text>
+<text class="f-s" x="311.6" y="216" text-anchor="middle">x = 1</text>
+<text class="f-s" x="197.2" y="184.8" text-anchor="middle">y = x</text>
+</svg>
+<figcaption>F=(-y,x²)의 접선 성분 적분은 밑변 0, 오른쪽 1, 대각선 1/6입니다. 세로 조각의 위쪽이 y=x라 이중적분의 안쪽 범위가 0부터 x입니다.</figcaption>
+</figure>
+<ol>
+<li>밑변은 <var>y=0,dy=0</var>이므로 <var>-y dx +x²dy=0</var>입니다.</li>
+<li>오른쪽 변은 <var>x=1,dx=0</var>, <var>y:0→1</var>이라 <var>∫<sub>0</sub><sup>1</sup>1dy=1</var>입니다.</li>
+<li>대각선은 <var>x=y=t</var>, <var>t:1→0</var>입니다. <var>∫<sub>1</sub><sup>0</sup>(−t+t²)dt=1/6</var>이므로 순환의 합은 <var>7/6</var>입니다.</li>
+</ol>
+<p>영역에서 <var>Qₓ−Pᵧ=2x+1</var>입니다. 먼저 <var>y</var>를 0부터 <var>x</var>까지 적분하면 <var>x(2x+1)</var>, 다음으로 x를 0부터 1까지 적분하면 <var>2/3+1/2=7/6</var>입니다. 이 예에서는 경계를 세 조각으로 계산한 값과 내부를 이중적분한 값이 일치합니다.</p>
+<div class="check" data-q="q4"></div>
+
+<h2>법선 방향으로 재는 유속과 구멍의 방향</h2>
+
+<p><var>r′(t)=(x′,y′)</var>가 양의 경계 방향일 때 오른쪽이 바깥입니다. 접선을 오른쪽으로 90° 돌린 <var>(y′,−x′)</var>를 단위벡터로 나누고 <var>ds</var>를 곱하면 <var>n ds=(dy,−dx)</var>입니다. 따라서 평면 <b class="key">유속</b>(flux), 즉 바깥으로 향하는 법선 성분의 적분은 <var>∮ F·n ds = ∮ P dy−Q dx</var>입니다. 순환형에 <var>(−Q,P)</var>를 넣어 유속형을 얻습니다.</p>
+<div class="calc"><var>∮<sub>∂D</sub> F·n ds = ∬<sub>D</sub>(Pₓ+Qᵧ)dA.</var></div>
+<p><b>같은 삼각형의 유속.</b> <var>F=(x,2y)</var>이면 내부에서 <var>Pₓ+Qᵧ=3</var>이라 <var>3×(1/2)=3/2</var>입니다. 경계의 밑변에서는 <var>Q=0</var>, 오른쪽 변에서는 <var>P=1</var>이라 유속이 1, 대각선에서는 <var>Pdy−Qdx=(t−2t)dt</var>를 1에서 0까지 적분해 <var>1/2</var>를 더합니다. 유속은 경계를 관통하는 성분, 순환은 경계를 따라 도는 성분입니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 290" role="img" aria-label="고리 영역의 바깥 경계의 방향은 반시계, 안쪽 경계 방향은 시계">
+<text class="f-cap" x="380" y="29" text-anchor="middle">안쪽 경계에서는 이동 방향이 시계 방향</text>
+<path class="f-soft" fill-rule="evenodd" d="M 349 149 a100 100 0 1 1 -200 0 a100 100 0 1 1 200 0 M 300 149 a51 51 0 1 1 -102 0 a51 51 0 1 1 102 0"/>
+<circle class="f-line" cx="249" cy="149" r="100"/>
+<circle class="f-line" cx="249" cy="149" r="51"/>
+<path class="f-line" fill="none" d="M349 149 A100 100 0 0 0 335.6 99" marker-end="url(#f-arrow)"/>
+<path class="f-line" fill="none" d="M300 149 A51 51 0 0 1 293.17 174.5" marker-end="url(#f-arrow)"/>
+<text class="f-t" x="249" y="154" text-anchor="middle">빈 부분</text>
+<text class="f-cap" x="556" y="111" text-anchor="middle">바깥 경계  +2π</text>
+<text class="f-cap" x="556" y="154" text-anchor="middle">안쪽 경계  −2π</text>
+<text class="f-cap" x="556" y="197" text-anchor="middle">두 경계의 합  0</text>
+</svg>
+<figcaption>고리의 안과 밖을 가르는 두 원을 모두 경계에 넣습니다. 바깥쪽과 안쪽에서 걸을 때도 영역은 각 진행 방향의 왼쪽에 놓입니다.</figcaption>
+</figure>
+<p>원점을 뺀 평면의 반례 <var>F=(-y/(x²+y²),x/(x²+y²))</var>를 <var>1≤√(x²+y²)≤2</var>에 적용하면, 장은 고리의 경계와 내부 모두에서 매끄럽습니다. 내부의 <var>Qₓ−Pᵧ=0</var>이고, 바깥 원의 순환 <var>2π</var>와 안쪽 원의 순환 <var>−2π</var>를 더해도 0입니다. 반지름 2의 원판 전체에 곧바로 적용하면 장이 원점에서 정의되지 않아 가정이 깨집니다.</p>
+<p><b>응용.</b> 순환형에 <var>F=(-y/2,x/2)</var>를 넣으면 <var>Qₓ−Pᵧ=1</var>이라 영역의 넓이는 <var>(1/2)∮(x dy−y dx)</var>입니다. 다음 단원에서는 경계를 따르는 순환과 바깥을 가로지르는 흐름을 3차원에서 각각 확장합니다.</p>
+<div class="check" data-q="q5"></div>
+<div class="check" data-q="q6"></div>
+<h2>손계산을 Python으로 검산한다</h2>
+<pre data-example="python"><code>from fractions import Fraction as F
+
+def integrate(f):
+    return (f(F(0)) + 4*f(F(1, 2)) + f(F(1))) / 6
+
+# 양의 경계 순서: 밑변, 오른쪽, 역방향 대각선
+circulation = [F(0), F(1), -integrate(lambda t: -t + t*t)]
+inside_circulation = integrate(lambda x: x*(2*x + 1))
+flux = [F(0), F(1), -integrate(lambda t: -t)]
+inside_flux = integrate(lambda x: 3*x)
+
+print(&quot;circulation edges:&quot;, &quot;, &quot;.join(map(str, circulation)))
+print(&quot;circulation totals:&quot;, sum(circulation), inside_circulation)
+print(&quot;flux edges:&quot;, &quot;, &quot;.join(map(str, flux)))
+print(&quot;flux totals:&quot;, sum(flux), inside_flux)</code></pre>
+<pre data-output><code>circulation edges: 0, 1, 1/6
+circulation totals: 7/6 7/6
+flux edges: 0, 1, 1/2
+flux totals: 3/2 3/2</code></pre>
+<p class="small">Python 3.14.6으로 실행했습니다. 대각선의 매개변수는 1에서 0으로 줄어드므로, 코드에서는 0에서 1까지 구한 값 앞에 음의 부호를 붙였습니다.</p>
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://openstax.org/books/calculus-volume-3/pages/6-4-greens-theorem">OpenStax, Calculus Volume 3 §6.4 Green’s Theorem</a></li>
+<li><a href="https://ocw.mit.edu/courses/18-02-multivariable-calculus-fall-2007/pages/lecture-notes/">MIT 18.02, 강의 22–24</a></li>
+<li><a href="ca06-2.html">CA06-2 이중적분과 변수변환</a></li>
+</ul>
+
+<h2>확인 문제</h2>
+<p>아직 풀지 않은 문제입니다. 먼저 식이나 근거를 적어 보고 해설을 확인합니다.</p>
+<div id="quiz"></div>
+
+<section class="work" id="tools"></section>
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

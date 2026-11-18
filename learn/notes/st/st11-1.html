@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>우도에서 자료의 순서와 충분통계량을 분리하기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="ST11-1">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">통계 · ST11 우도·충분통계량·추정</p>
+<p class="chap-num">ST11·1</p>
+<h1>우도에서 자료의 순서와 충분통계량을 분리하기</h1>
+<p class="lead">성공 세 번이 관측되었을 때 두 기록의 순서가 다릅니다. 어떤 모형에서는 같은 우도가 나오고, 정규모형에서는 추정하려는 모수에 따라 보관해야 할 요약값이 달라집니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2>
+<ul>
+<li>결합확률과 로그우도를 베르누이와 정규 표본에서 직접 유도한다.</li>
+<li>충분성의 조건부분포와 인수분해를 연결한다.</li>
+<li>정규분산을 함께 추정할 때 평균 외의 정보가 필요한 이유를 계산한다.</li>
+</ul></div>
+<h2>관측을 고정하면 하나의 함수가 남는다</h2>
+<p>독립인 센서 점검 다섯 번에서 성공을 1, 실패를 0으로 기록합니다. X<sub>i</sub>는 모두 같은 베르누이 모수 p를 가집니다. X 한 개가 정확히 x일 확률은 <var>p<sup>x</sup>(1−p)<sup>1−x</sup></var>입니다. 독립이면 다섯 확률을 곱할 수 있습니다. 아래에서 <var>s=Σx<sub>i</sub></var>는 성공 수입니다.</p>
+<div class="eq"><var>L(p;x)=p<sup>s</sup>(1−p)<sup>n−s</sup>, ℓ(p;x)=s log p+(n−s) log(1−p) (0&lt;p&lt;1)</var></div>
+<p>관측 순서가 <code>10101</code>이면 p=.6에서 우도는 <var>.6³·.4²=.03456</var>입니다. <code>11100</code>도 같습니다. <b class="key">순서 있는 기록 하나</b>의 확률과 <b class="key">성공이 셋이라는 사건</b>의 확률은 다릅니다. 후자는 같은 성공 수인 10개 기록의 확률을 더한 .3456입니다. 비교할 p에 공통인 10을 곱해도 우도의 최댓점은 바뀌지 않습니다. 우도는 관측을 고정하고 p에 따라 비교하는 함수이므로 p에 대한 확률분포로 해석하지 않습니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 264" role="img" aria-label="다섯 번 중 세 번 성공일 때 p=.6에서 상대우도가 1이고 양 끝에서 0이다.">
+<text class="f-cap" x="380" y="29" text-anchor="middle">다섯 번 중 세 번 성공한 기록의 상대우도</text>
+<line class="f-ink" x1="136" y1="190" x2="644" y2="190" marker-end="url(#f-arrow)"/>
+<line class="f-ink" x1="136" y1="190" x2="136" y2="49" marker-end="url(#f-arrow)"/>
+<line class="f-ink" x1="136" y1="190" x2="136" y2="196"/>
+<text class="f-s" x="136" y="212" text-anchor="middle">0</text>
+<line class="f-ink" x1="234.8" y1="190" x2="234.8" y2="196"/>
+<text class="f-s" x="234.8" y="212" text-anchor="middle">.2</text>
+<line class="f-ink" x1="333.6" y1="190" x2="333.6" y2="196"/>
+<text class="f-s" x="333.6" y="212" text-anchor="middle">.4</text>
+<line class="f-ink" x1="432.4" y1="190" x2="432.4" y2="196"/>
+<text class="f-s" x="432.4" y="212" text-anchor="middle">.6</text>
+<line class="f-ink" x1="531.2" y1="190" x2="531.2" y2="196"/>
+<text class="f-s" x="531.2" y="212" text-anchor="middle">.8</text>
+<line class="f-ink" x1="630" y1="190" x2="630" y2="196"/>
+<text class="f-s" x="630" y="212" text-anchor="middle">1</text>
+<line class="f-grid" x1="131" y1="190" x2="630" y2="190"/>
+<text class="f-s" x="125" y="194" text-anchor="end">0</text>
+<line class="f-grid" x1="131" y1="122" x2="630" y2="122"/>
+<text class="f-s" x="125" y="126" text-anchor="end">.5</text>
+<line class="f-grid" x1="131" y1="54" x2="630" y2="54"/>
+<text class="f-s" x="125" y="58" text-anchor="end">1</text>
+<polyline class="f-line" fill="none" points="136,190 145.88,189.97 155.76,189.768 165.64,189.249 175.52,188.295 185.4,186.813 195.28,184.734 205.16,182.014 215.04,178.627 224.92,174.568 234.8,169.852 244.68,164.507 254.56,158.579 264.44,152.125 274.32,145.218 284.2,137.938 294.08,130.374 303.96,122.626 313.84,114.797 323.72,106.996 333.6,99.333 343.48,91.923 353.36,84.877 363.24,78.307 373.12,72.322 383,67.025 392.88,62.515 402.76,58.882 412.64,56.207 422.52,54.56 432.4,54 442.28,54.572 452.16,56.307 462.04,59.216 471.92,63.296 481.8,68.521 491.68,74.846 501.56,82.203 511.44,90.499 521.32,99.615 531.2,109.407 541.08,119.701 550.96,130.291 560.84,140.941 570.72,151.383 580.6,161.313 590.48,170.389 600.36,178.233 610.24,184.429 620.12,188.518 630,190"/>
+<text class="f-s" x="650" y="236" text-anchor="middle">성공 확률 p</text>
+<text class="f-s" x="120" y="44" text-anchor="end">상대우도</text>
+</svg><figcaption>세로값은 우도를 가능한 최대 우도 .03456으로 나눈 값이다.</figcaption></figure>
+<p>로그에서 기울기를 구하면 <var>ℓ′=s/p−(n−s)/(1−p)</var>입니다. 두 항을 합치면 분자가 <var>s−np</var>라서 <var>0&lt;s&lt;n</var>일 때 기울기는 <var>p=s/n</var> 전에는 양수, 뒤에는 음수입니다. 이 예에서는 <var>p̂=3/5</var>입니다. 성공 수가 0 또는 n이면 모수 공간의 경계를 따로 봅니다.</p>
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+<div class="check" data-q="q3"></div>
+<h2>왜 성공 수만 남겨도 모수 정보가 보존될까</h2>
+<p>통계량 T가 <b class="key">충분</b>하다는 것은, T를 알고 난 후 자료 X의 조건부분포에 모수가 남지 않는다는 뜻입니다. 위 모형에서 <var>0&lt;p&lt;1</var>라면 성공이 s번이라는 조건 아래 가능한 순서 각각의 조건부확률은 <var>1/C(n,s)</var>입니다. 따라서 순서를 버려도 p를 구별할 정보는 더 잃지 않습니다. 시점마다 p가 바뀌거나 실패 후 성공 가능성이 달라지는 모형을 쓰면 순서가 다른 정보를 줄 수 있습니다.</p>
+<p><b class="key">Neyman–Fisher 인수분해</b>는 공통 기준인 계수측도 또는 길이측도에 대해 자료의 확률질량이나 밀도를 <var>f<sub>θ</sub>(x)=g<sub>θ</sub>(T(x))h(x)</var> 꼴로 쓸 수 있으면 T가 충분하다는 기준을 줍니다. h는 모수와 무관하고, 모수에 의존하는 부분은 T를 통해서만 자료를 읽습니다. 예를 들어 이산 모형에서 <var>T=t</var>인 자료만 모아 분모의 확률을 계산하면 <var>g<sub>θ</sub>(t)Σ h(x)</var>입니다. 이 사건의 확률이 양수라면 분자와 분모의 <var>g<sub>θ</sub>(t)</var>가 상쇄됩니다. 연속 자료에서도 대응하는 밀도와 조건부분포를 사용합니다. 모든 자료에 대해 같은 두 함수 꼴이 성립하는지 확인해야 합니다.</p>
+<div class="check" data-q="q4"></div>
+<h2>정규 우도에서는 중심과 제곱합이 남는다</h2>
+<p>기기가 일정한 길이를 반복 측정한다고 합시다. 관측 단위는 한 번의 측정이며, 모형은 독립 <var>N(μ,σ²)</var>, <var>σ²&gt;0</var>입니다. 한 관측의 밀도 <var>(2πσ²)<sup>−1/2</sup> exp(−(x−μ)²/(2σ²))</var>를 n번 곱하고 로그를 취합니다. 연속 자료는 밀도를 곱한 우도를 쓰며 관측한 점 자체의 확률은 0입니다.</p>
+<div class="eq"><var>ℓ(μ,σ²;x)=−(n/2) log(2πσ²)−[Σx<sub>i</sub>²−2μΣx<sub>i</sub>+nμ²]/(2σ²)</var></div>
+<p>모수가 모두 미지라면 자료는 <var>(Σx<sub>i</sub>,Σx<sub>i</sub>²)</var>를 통해서만 식에 나타납니다. 같은 내용을 <var>(x̄,Q)</var>, <var>Q=Σ(x<sub>i</sub>−x̄)²</var>로 둘 수 있습니다. σ²를 알고 μ만 모르면 제곱합 항을 모수에 무관한 부분에 넣을 수 있어 <var>Σx<sub>i</sub></var>만으로 충분합니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 177" role="img" aria-label="길이 A [2,4,6]와 B [3,4,5]는 평균 4지만 중심 제곱합이 각각 8과 2다.">
+<text class="f-cap" x="380" y="30" text-anchor="middle">같은 평균을 가진 두 길이 기록</text>
+<rect class="f-soft" x="59" y="49" width="160" height="38"/>
+<text class="f-t" x="139" y="73" text-anchor="middle">기록</text>
+<rect class="f-soft" x="219" y="49" width="220" height="38"/>
+<text class="f-t" x="329" y="73" text-anchor="middle">측정값 (cm)</text>
+<rect class="f-soft" x="439" y="49" width="108" height="38"/>
+<text class="f-t" x="493" y="73" text-anchor="middle">평균 (cm)</text>
+<rect class="f-soft" x="547" y="49" width="154" height="38"/>
+<text class="f-t" x="624" y="73" text-anchor="middle">Q (cm²)</text>
+<rect class="f-box" x="59" y="87" width="160" height="38"/>
+<text class="f-s" x="139" y="111" text-anchor="middle">A</text>
+<rect class="f-box" x="219" y="87" width="220" height="38"/>
+<text class="f-s" x="329" y="111" text-anchor="middle">2, 4, 6</text>
+<rect class="f-box" x="439" y="87" width="108" height="38"/>
+<text class="f-s" x="493" y="111" text-anchor="middle">4</text>
+<rect class="f-box" x="547" y="87" width="154" height="38"/>
+<text class="f-s" x="624" y="111" text-anchor="middle">8</text>
+<rect class="f-box" x="59" y="125" width="160" height="38"/>
+<text class="f-s" x="139" y="149" text-anchor="middle">B</text>
+<rect class="f-box" x="219" y="125" width="220" height="38"/>
+<text class="f-s" x="329" y="149" text-anchor="middle">3, 4, 5</text>
+<rect class="f-box" x="439" y="125" width="108" height="38"/>
+<text class="f-s" x="493" y="149" text-anchor="middle">4</text>
+<rect class="f-box" x="547" y="125" width="154" height="38"/>
+<text class="f-s" x="624" y="149" text-anchor="middle">2</text>
+</svg><figcaption>정규 모형에서 두 표본의 우도 비는 σ²에 따라 달라진다.</figcaption></figure>
+<p>각 표본에서 <var>Σ(x<sub>i</sub>−μ)²=Q+n(x̄−μ)²</var>입니다. 이 항이 최소인 <var>μ̂=x̄</var>를 먼저 넣습니다. <var>v=σ²</var>에 대한 기울기는 <var>−n/(2v)+Q/(2v²)=(Q−nv)/(2v²)</var>이므로 <var>Q&gt;0</var>이면 최대우도 분산은 <var>v̂=Q/n</var>입니다. A에선 <var>8/3 cm²</var>, B에선 <var>2/3 cm²</var>입니다. 두 표본에 공통인 μ를 어느 값으로 정해도 평균이 같아서 <var>n(x̄−μ)²</var>는 우도 비에서 상쇄됩니다. <var>L<sub>A</sub>/L<sub>B</sub>=exp(−3/σ²)</var>이므로 두 자료의 우도를 구별하려면 σ²에 관한 정보가 남아 있어야 합니다.</p>
+<div class="check" data-q="q5"></div>
+<div class="check" data-q="q6"></div>
+<h2>이어 풀기와 증명</h2>
+<p>하나의 요약에서 지워지는 정보를 직접 찾아봅니다. 증명에서는 어떤 양이 θ에 무관한지 표시하고, 새 자료의 최대우도는 로그 기울기로 해를 확인합니다.</p>
+<div class="check" data-q="q7"></div>
+<div class="check" data-q="q8"></div>
+<div class="check" data-q="q9"></div>
+<h2>파이썬으로 같은 계산 검산하기</h2>
+<pre data-example="python"><code>from fractions import Fraction
+from math import exp, log, pi
+
+p = Fraction(3, 5)
+for sample in [(1, 0, 1, 0, 1), (1, 1, 1, 0, 0)]:
+    s = sum(sample)
+    likelihood = p**s * (1 - p)**(len(sample) - s)
+    print(&quot;Bernoulli:&quot;, s, likelihood, f&quot;{float(likelihood):.5f}&quot;)
+
+def normal_loglik(data, mean, variance):
+    residual_ss = sum((x - mean)**2 for x in data)
+    return -len(data) * log(2 * pi * variance) / 2 - residual_ss / (2 * variance)
+
+a, b = (2, 4, 6), (3, 4, 5)
+for data in [a, b]:
+    n = len(data)
+    mean = Fraction(sum(data), n)
+    q = sum((x - mean)**2 for x in data)
+    print(&quot;Normal:&quot;, mean, q, q / n)
+for variance in [1, 3]:
+    ratio = exp(normal_loglik(a, 4, variance) - normal_loglik(b, 4, variance))
+    print(&quot;same mean, ratio:&quot;, variance, f&quot;{ratio:.6f}&quot;)</code></pre>
+<p class="aside">실행 결과</p>
+<pre data-output><code>Bernoulli: 3 108/3125 0.03456
+Bernoulli: 3 108/3125 0.03456
+Normal: 4 8 8/3
+Normal: 4 2 2/3
+same mean, ratio: 1 0.049787
+same mean, ratio: 3 0.367879</code></pre>
+<p>A와 B의 비가 분산 1에서 약 .049787, 분산 3에서 약 .367879로 달라집니다. 실행값에서 우도를 옮겨 비교할 때는 같은 자료와 같은 모형의 모수를 비교합니다. 이 예의 자료는 요약의 차이를 드러내기 위해 만든 값입니다.</p>
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://ocw.mit.edu/courses/18-655-mathematical-statistics-spring-2016/bbbca14a2009e47add8c7ea2a49daa41_MIT18_655S16_LecNote6.pdf">MIT 18.655 · Sufficiency 강의 노트</a></li>
+<li><a href="st02-1.html">ST02 모수·통계량·우도</a></li>
+</ul>
+<h2>확인 문제</h2>
+<p>조건과 단위를 먼저 적은 뒤 해설을 확인합니다.</p>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

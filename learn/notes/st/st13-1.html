@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>허용된 재배정을 열거해 정확한 순열 p값 얻기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="ST13-1">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">통계 · ST13 순열 검정과 부트스트랩</p>
+<p class="chap-num">ST13·1</p>
+<h1>허용된 재배정을 열거해 정확한 순열 p값 얻기</h1>
+<p class="lead">네 관측 중 어느 두 개가 처리군인지 다시 정해 봅니다. 바꿀 수 있는 단위를 먼저 고르고, 전부 열거한 p값과 일부만 다시 뽑은 p값을 구별합니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2>
+<ul>
+<li>교환가능성이 부여되는 자료 생성 가정을 설명한다.</li>
+<li>두 군의 평균 차이를 열거해 양측 및 단측 정확 p값을 계산한다.</li>
+<li>몬테카를로 순열에서 동률과 관측값을 포함한 p값을 계산한다.</li>
+</ul></div>
+<h2>무엇을 바꿀 수 있는지는 배정이 정한다</h2>
+<p>네 사람이 한 번씩 과제를 풀었습니다. A,B,C,D의 결과는 순서대로 1,2,4,5점입니다. 합성 실험에서 처리군은 네 명 중 두 명을 <b>같은 확률</b>로 골랐습니다. 관측된 처리군은 C,D입니다. 여기서 확인할 귀무가설은 ‘모든 사람에게 처리가 결과를 전혀 바꾸지 않는다’입니다. 각 개인의 처리했을 때 결과와 하지 않았을 때 결과가 같다는 <b class="key">날카로운 귀무가설</b>(sharp null)입니다.</p>
+<p>이 귀무가설 아래 배정을 바꿔도 네 사람의 결과값은 고정할 수 있습니다. 바꾸는 것은 처리와 대조를 적은 꼬리표입니다. 배정 설계가 허용한 여섯 꼬리표 배치가 모두 같은 확률입니다. 꼬리표를 사람들 사이에서 어떤 고정된 순열로 옮겨도 같은 여섯 배치가 같은 확률로 나옵니다. 이런 분포의 불변성을 <b class="key">교환가능성</b>이라고 합니다. 관측 비교에서도 두 집단의 모든 관측이 서로 독립이고 동일한 분포라는 귀무가설 아래에는 꼬리표를 교환할 수 있습니다. 같은 평균을 가진다는 조건만으로 전체 분포의 교환가능성이 생기지는 않습니다. 예를 들어 한 군이 ±1을 반반, 다른 군이 ±3을 반반 받으면 두 평균은 0이지만 값의 크기만으로 어느 군인지 판별할 수 있습니다.</p>
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+<h2>관측한 차이보다 극단적인 배정을 모두 센다</h2>
+<p>통계량 <var>T</var>는 처리군 평균에서 대조군 평균을 뺀 수입니다. 관측 배정의 두 평균은 4.5점과 1.5점이라 <var>T<sub>obs</sub>=3</var>점입니다. 어느 방향의 차이도 크게 보면 <var>|T|</var>를 사용하고, 증가만을 검정하도록 사전에 정했으면 <var>T</var>의 오른쪽 꼬리를 씁니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 329" role="img" aria-label="처리군 AB,AC,AD,BC,BD,CD에서 T는 −3,−1,0,0,1,3이다.">
+<text class="f-cap" x="380" y="30" text-anchor="middle">완전 무작위 배정에서 처리군 두 명을 바꾸기</text>
+<rect class="f-soft" x="58" y="49" width="143" height="38"/>
+<text class="f-t" x="129.5" y="73" text-anchor="middle">처리군</text>
+<rect class="f-soft" x="201" y="49" width="169" height="38"/>
+<text class="f-t" x="285.5" y="73" text-anchor="middle">처리 평균</text>
+<rect class="f-soft" x="370" y="49" width="169" height="38"/>
+<text class="f-t" x="454.5" y="73" text-anchor="middle">대조 평균</text>
+<rect class="f-soft" x="539" y="49" width="163" height="38"/>
+<text class="f-t" x="620.5" y="73" text-anchor="middle">차이 T</text>
+<rect class="f-box" x="58" y="87" width="143" height="38"/>
+<text class="f-s" x="129.5" y="111" text-anchor="middle">A, B</text>
+<rect class="f-box" x="201" y="87" width="169" height="38"/>
+<text class="f-s" x="285.5" y="111" text-anchor="middle">1.5</text>
+<rect class="f-box" x="370" y="87" width="169" height="38"/>
+<text class="f-s" x="454.5" y="111" text-anchor="middle">4.5</text>
+<rect class="f-box" x="539" y="87" width="163" height="38"/>
+<text class="f-s" x="620.5" y="111" text-anchor="middle">−3</text>
+<rect class="f-box" x="58" y="125" width="143" height="38"/>
+<text class="f-s" x="129.5" y="149" text-anchor="middle">A, C</text>
+<rect class="f-box" x="201" y="125" width="169" height="38"/>
+<text class="f-s" x="285.5" y="149" text-anchor="middle">2.5</text>
+<rect class="f-box" x="370" y="125" width="169" height="38"/>
+<text class="f-s" x="454.5" y="149" text-anchor="middle">3.5</text>
+<rect class="f-box" x="539" y="125" width="163" height="38"/>
+<text class="f-s" x="620.5" y="149" text-anchor="middle">−1</text>
+<rect class="f-box" x="58" y="163" width="143" height="38"/>
+<text class="f-s" x="129.5" y="187" text-anchor="middle">A, D</text>
+<rect class="f-box" x="201" y="163" width="169" height="38"/>
+<text class="f-s" x="285.5" y="187" text-anchor="middle">3</text>
+<rect class="f-box" x="370" y="163" width="169" height="38"/>
+<text class="f-s" x="454.5" y="187" text-anchor="middle">3</text>
+<rect class="f-box" x="539" y="163" width="163" height="38"/>
+<text class="f-s" x="620.5" y="187" text-anchor="middle">0</text>
+<rect class="f-box" x="58" y="201" width="143" height="38"/>
+<text class="f-s" x="129.5" y="225" text-anchor="middle">B, C</text>
+<rect class="f-box" x="201" y="201" width="169" height="38"/>
+<text class="f-s" x="285.5" y="225" text-anchor="middle">3</text>
+<rect class="f-box" x="370" y="201" width="169" height="38"/>
+<text class="f-s" x="454.5" y="225" text-anchor="middle">3</text>
+<rect class="f-box" x="539" y="201" width="163" height="38"/>
+<text class="f-s" x="620.5" y="225" text-anchor="middle">0</text>
+<rect class="f-box" x="58" y="239" width="143" height="38"/>
+<text class="f-s" x="129.5" y="263" text-anchor="middle">B, D</text>
+<rect class="f-box" x="201" y="239" width="169" height="38"/>
+<text class="f-s" x="285.5" y="263" text-anchor="middle">3.5</text>
+<rect class="f-box" x="370" y="239" width="169" height="38"/>
+<text class="f-s" x="454.5" y="263" text-anchor="middle">2.5</text>
+<rect class="f-box" x="539" y="239" width="163" height="38"/>
+<text class="f-s" x="620.5" y="263" text-anchor="middle">1</text>
+<rect class="f-box" x="58" y="277" width="143" height="38"/>
+<text class="f-s" x="129.5" y="301" text-anchor="middle">C, D</text>
+<rect class="f-box" x="201" y="277" width="169" height="38"/>
+<text class="f-s" x="285.5" y="301" text-anchor="middle">4.5</text>
+<rect class="f-box" x="370" y="277" width="169" height="38"/>
+<text class="f-s" x="454.5" y="301" text-anchor="middle">1.5</text>
+<rect class="f-box" x="539" y="277" width="163" height="38"/>
+<text class="f-s" x="620.5" y="301" text-anchor="middle">3</text>
+</svg><figcaption>관측 배정 C,D는 가능한 배정 자체에 들어 있다.</figcaption></figure>
+<div class="eq"><var>양측 정확 p값 = #{배정 중 |T|≥|T<sub>obs</sub>|} / #{허용된 배정 전부} = 2/6.</var></div>
+<p><var>|T|≥3</var>인 것은 A,B와 C,D입니다. 증가 방향의 단측에서 <var>T≥3</var>인 것은 C,D 하나라 1/6입니다. <b>관측값과 같은 값도 꼬리에 포함</b>합니다. 배정 수가 적으면 p값도 몇 종류만 나옵니다. 귀무가설이 참일 때 유의수준 α를 넘겨 잘못 기각하지 않는 이유는, 배정을 극단성 순서로 정렬하면 <var>p≤α</var>인 배정이 최대 <var>⌊α·6⌋</var>개이기 때문입니다. 같은 통계량이 여러 개이면 그 묶음의 꼬리 수를 동일하게 적용하므로 배정이 더 남을 수 있습니다. 이 예에서 α=.05로 가능한 기각은 없습니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 253" role="img" aria-label="차이 T가 −3,−2,−1,0,1,2,3일 때 배정 수는 1,0,1,2,1,0,1이다.">
+<text class="f-cap" x="380" y="28" text-anchor="middle">순열의 귀무분포에서 양 끝 두 배정이 꼬리다</text>
+<line class="f-ink" x1="126" y1="185" x2="649" y2="185" marker-end="url(#f-arrow)"/>
+<line class="f-ink" x1="126" y1="185" x2="126" y2="45" marker-end="url(#f-arrow)"/>
+<line class="f-grid" x1="126" y1="185" x2="636" y2="185"/>
+<text class="f-s" x="116" y="189" text-anchor="end">0</text>
+<line class="f-grid" x1="126" y1="120" x2="636" y2="120"/>
+<text class="f-s" x="116" y="124" text-anchor="end">1</text>
+<line class="f-grid" x1="126" y1="55" x2="636" y2="55"/>
+<text class="f-s" x="116" y="59" text-anchor="end">2</text>
+<rect class="f-soft" x="160" y="120" width="36" height="65"/>
+<text class="f-s" x="178" y="205" text-anchor="middle">−3</text>
+<text class="f-s" x="178" y="113" text-anchor="middle">1</text>
+<rect class="f-soft" x="227.66666666666669" y="185" width="36" height="0"/>
+<text class="f-s" x="245.66666666666669" y="205" text-anchor="middle">−2</text>
+<text class="f-s" x="245.66666666666669" y="178" text-anchor="middle">0</text>
+<rect class="f-soft" x="295.33333333333337" y="120" width="36" height="65"/>
+<text class="f-s" x="313.33333333333337" y="205" text-anchor="middle">−1</text>
+<text class="f-s" x="313.33333333333337" y="113" text-anchor="middle">1</text>
+<rect class="f-soft" x="363" y="55" width="36" height="130"/>
+<text class="f-s" x="381" y="205" text-anchor="middle">0</text>
+<text class="f-s" x="381" y="48" text-anchor="middle">2</text>
+<rect class="f-soft" x="430.6666666666667" y="120" width="36" height="65"/>
+<text class="f-s" x="448.6666666666667" y="205" text-anchor="middle">1</text>
+<text class="f-s" x="448.6666666666667" y="113" text-anchor="middle">1</text>
+<rect class="f-soft" x="498.33333333333326" y="185" width="36" height="0"/>
+<text class="f-s" x="516.3333333333333" y="205" text-anchor="middle">2</text>
+<text class="f-s" x="516.3333333333333" y="178" text-anchor="middle">0</text>
+<rect class="f-soft" x="566" y="120" width="36" height="65"/>
+<text class="f-s" x="584" y="205" text-anchor="middle">3</text>
+<text class="f-s" x="584" y="113" text-anchor="middle">1</text>
+<text class="f-s" x="638" y="225" text-anchor="middle">차이 T (점)</text>
+<text class="f-s" x="114" y="43" text-anchor="end">배정 수</text>
+</svg><figcaption>두 꼬리가 모두 |T|=3으로 관측된 극단성과 같다.</figcaption></figure>
+<div class="check" data-q="q3"></div>
+<div class="check" data-q="q4"></div>
+<h2>모든 배정을 셀 수 없으면 복원 추출을 쓴다</h2>
+<p>큰 표에서는 가능한 배정이 매우 많습니다. 그중 B개를 독립이고 균등하게 <b>복원 추출</b>하고 관측보다 같거나 더 극단적인 수 <var>r</var>을 셉니다. 관측 배정도 포함해 비교할 수 있는 순열 p값을</p>
+<div class="eq"><var>p<sub>MC</sub> = (r+1)/(B+1)</var></div>
+<p>로 둡니다. 이 규칙에서 관측 배정은 B번 반복으로 새로 뽑은 것이 아니면서, 귀무가설과 배정 설계 아래에는 그 B개와 같은 분포를 가집니다. 따라서 관측값을 포함한 <var>B+1</var>개의 극단성이 귀무가설 아래 교환가능합니다. 동률을 포함한 꼬리 순위는 정확 열거와 같은 순위 논증으로 잘못 기각하는 확률을 제한합니다. 동일 배정을 뽑는 경우도 복원 추출에서 생길 수 있습니다. <var>r=0</var>에서도 가능한 최소 p값은 <var>1/(B+1)</var>입니다. 시드를 고정해 계산을 재현하고, B가 작으면 시드에 따른 결과의 변동도 확인합니다.</p>
+<p>정확 열거의 분모는 가능한 배정 전체라 이미 관측 배정을 포함합니다. 여기에 1을 또 더하지 않습니다. 배정 확률이 서로 다르면 꼬리의 확률을 합해야 합니다. 층 안에서만 두 방법을 배정했으면 층마다 그 배정을 유지하며 바꾸고, 한 쌍에서 하나씩 받았다면 쌍 내부의 두 꼬리표만 바꿉니다. 정한 배정 모델과 다른 순열을 사용하면 정확성 보장이 달라집니다.</p>
+<div class="check" data-q="q5"></div>
+<div class="check" data-q="q6"></div>
+<h2>이어 풀기와 증명</h2>
+<p>허용된 배정을 먼저 구한 뒤 통계량과 꼬리 기준을 따로 적습니다. 마지막 문제에서 시드와 무관한 분모의 역할을 설명합니다.</p>
+<div class="check" data-q="q7"></div>
+<div class="check" data-q="q8"></div>
+<div class="check" data-q="q9"></div>
+<h2>파이썬으로 같은 계산 검산하기</h2>
+<pre data-example="python"><code>from fractions import Fraction
+from itertools import combinations
+from random import Random
+
+values = (1, 2, 4, 5)
+total = sum(values)
+differences = []
+for treated in combinations(range(len(values)), 2):
+    selected_sum = sum(values[i] for i in treated)
+    difference = Fraction(selected_sum, 2) - Fraction(total-selected_sum, 2)
+    differences.append(difference)
+observed = differences[-1]
+two_sided = sum(abs(d) &gt;= abs(observed) for d in differences)
+one_sided = sum(d &gt;= observed for d in differences)
+print(&quot;exact differences:&quot;, [int(d) for d in differences])
+print(&quot;exact p:&quot;, Fraction(two_sided, len(differences)),
+      Fraction(one_sided, len(differences)))
+
+B = 19
+sampled = Random(2306).choices(differences, k=B)
+r = sum(abs(d) &gt;= abs(observed) for d in sampled)
+print(&quot;Monte Carlo:&quot;, r, B, Fraction(r+1, B+1))</code></pre>
+<p class="aside">실행 결과</p>
+<pre data-output><code>exact differences: [-3, -1, 0, 0, 1, 3]
+exact p: 1/3 1/6
+Monte Carlo: 6 19 7/20</code></pre>
+<p>이 시드에서 몬테카를로 p값은 7/20=.35입니다. 정확 열거의 1/3과 같아야 하는 값이 아닙니다. 프로그램은 서로 다른 여섯 배정에 대응하는 리스트를 그대로 복원 추출합니다. 중복인 0 차이를 집합으로 바꾸면 배정마다 같은 확률이라는 조건이 깨집니다.</p>
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://arxiv.org/abs/1411.7565">Hemerik·Goeman · Exact Testing with Random Permutations</a></li>
+<li><a href="https://arxiv.org/abs/1603.05766">Phipson·Smyth · 계산한 순열 p값의 유한 표본 보정</a></li>
+<li><a href="https://arxiv.org/abs/1809.07419">Wu·Ding · 무작위 실험에서 약한 귀무가설</a></li>
+<li><a href="st04-1.html">ST04-1 가설검정</a></li>
+</ul>
+<h2>확인 문제</h2>
+<p>조건과 단위를 먼저 적은 뒤 해설을 확인합니다.</p>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>편향·일치성을 비교하고 우도가 경계에서 실패하는 이유 찾기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="ST11-3">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">통계 · ST11 우도·충분통계량·추정</p>
+<p class="chap-num">ST11·3</p>
+<h1>편향·일치성을 비교하고 우도가 경계에서 실패하는 이유 찾기</h1>
+<p class="lead">표본 수가 적을 때의 편향과 자료가 늘 때의 수렴은 서로 다른 질문입니다. 베르누이 비율과 균등분포의 끝점으로 계산하고, 미분 공식이 실패하는 경우를 구체적으로 찾습니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2>
+<ul>
+<li>편향·분산·MSE와 일치성을 다른 기준으로 설명한다.</li>
+<li>표본 크기에 따른 추정량의 차이를 계산하고 수렴을 보인다.</li>
+<li>경계와 이동하는 지지집합에서 정칙 공식이 실패하는 조건을 확인한다.</li>
+</ul></div>
+<h2>유한 표본의 평균과 표본을 늘린 극한</h2>
+<p>모수 θ의 추정량 <var>T<sub>n</sub></var>은 같은 크기 n의 자료를 다시 뽑으면 달라집니다. <b class="key">편향</b>은 그 기대값에서 θ를 뺀 수이고, 불편이면 모든 θ에서 그 수가 0입니다. <b class="key">일치성</b>은 <var>n→∞</var>일 때 임의의 <var>ε&gt;0</var>에 대해 <var>P<sub>θ</sub>(|T<sub>n</sub>−θ|&gt;ε)→0</var>이라는 뜻입니다. 예를 들어 독립 Bernoulli(p)에서 <var>T<sub>n</sub>=X<sub>1</sub></var>은 항상 불편하지만, 첫 시행만 계속 쓰므로 <var>p=.5</var>, <var>ε=.25</var>에서 벗어날 확률이 1입니다.</p>
+<p>독립 표본 평균 <var>S/n</var>은 기대값 p이고 분산 <var>p(1−p)/n</var>입니다. Chebyshev 부등식으로 <var>P(|S/n−p|&gt;ε)≤p(1−p)/(nε²)</var>라서 일치합니다. <var>T<sub>n</sub>=(S+1)/(n+2)</var>는 가상의 성공 한 번과 실패 한 번을 더한 규칙입니다. 편향은 <var>(1−2p)/(n+2)</var>, 분산은 <var>np(1−p)/(n+2)²</var>입니다. <var>T<sub>n</sub>−S/n=(1−2S/n)/(n+2)</var>의 크기가 <var>1/(n+2)</var> 이하이므로 이것도 일치합니다.</p>
+<p>제곱오차의 기댓값은 <var>MSE=Var(T)+Bias(T)²</var>입니다. <var>T−θ=(T−E[T])+(E[T]−θ)</var>를 제곱한 뒤 평균하면 교차항이 0이 됩니다. 아래 결과에서 n=4, p=.25일 때 새 규칙의 MSE <var>1/36</var>이 표본 비율의 <var>3/64</var>보다 작습니다. p=.01에서도 같은 두 규칙의 MSE를 비교해 봅시다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 177" role="img" aria-label="n=4인 Bernoulli 모형에서 p=.25의 표본 비율 MSE는 3/64, 가상 관측 규칙은 1/36이다.">
+<text class="f-cap" x="380" y="30" text-anchor="middle">성공확률에 따라 달라지는 추정량의 MSE</text>
+<rect class="f-soft" x="52.5" y="49" width="142" height="38"/>
+<text class="f-t" x="123.5" y="73" text-anchor="middle">참 p</text>
+<rect class="f-soft" x="194.5" y="49" width="239" height="38"/>
+<text class="f-t" x="314" y="73" text-anchor="middle">S/4의 MSE</text>
+<rect class="f-soft" x="433.5" y="49" width="274" height="38"/>
+<text class="f-t" x="570.5" y="73" text-anchor="middle">(S+1)/6의 MSE</text>
+<rect class="f-box" x="52.5" y="87" width="142" height="38"/>
+<text class="f-s" x="123.5" y="111" text-anchor="middle">.25</text>
+<rect class="f-box" x="194.5" y="87" width="239" height="38"/>
+<text class="f-s" x="314" y="111" text-anchor="middle">3/64 ≈ .046875</text>
+<rect class="f-box" x="433.5" y="87" width="274" height="38"/>
+<text class="f-s" x="570.5" y="111" text-anchor="middle">1/36 ≈ .027778</text>
+<rect class="f-box" x="52.5" y="125" width="142" height="38"/>
+<text class="f-s" x="123.5" y="149" text-anchor="middle">.01</text>
+<rect class="f-box" x="194.5" y="125" width="239" height="38"/>
+<text class="f-s" x="314" y="149" text-anchor="middle">.002475</text>
+<rect class="f-box" x="433.5" y="125" width="274" height="38"/>
+<text class="f-s" x="570.5" y="149" text-anchor="middle">.027778 (반올림)</text>
+</svg><figcaption>한 모수에서 MSE가 줄었다는 결과는 다른 모수에서도 같은 순서를 보장하지 않는다.</figcaption></figure>
+<p>p=.01의 정확한 새 규칙 MSE는 <var>[4(.01)(.99)+(.98)²]/36=1/36</var>입니다. n=4에서는 이 식의 분자가 정리하면 1이 됩니다. p=.01에서는 표본 비율의 .002475가 더 작습니다.</p>
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+<div class="check" data-q="q3"></div>
+<h2>허용되는 모수 범위에서 최댓값이 있는가</h2>
+<p>독립 Bernoulli 네 번이 모두 성공이면 <var>L(p)=p⁴</var>는 <var>0&lt;p&lt;1</var>에서 계속 증가합니다. 모수 공간이 <var>[0,1]</var>이면 경계 <var>p=1</var>이 MLE입니다. 모수 공간이 <var>(0,1)</var>이면 우도의 상한은 1이지만 이를 달성하는 점이 없습니다. 점수 0이라는 규칙을 기계적으로 적용하면 여기서 답을 얻을 수 없습니다.</p>
+<p>정규 모형에서 평균과 분산이 모두 미지이고 모든 관측이 같은 값 c이면 <var>μ=c</var>를 넣었을 때 제곱항은 0입니다. <var>σ²↓0</var>에서 <var>−(n/2)log(2πσ²)→∞</var>라서 양의 분산 범위 안 최대우도가 없습니다. 분산 0의 점질량을 같은 정규 밀도 공식에 대입할 수 없습니다. 정규 연속 모형에서 독립 관측이 두 개 이상이면 정확히 같은 값만 나올 사건의 확률은 0이지만, 반올림된 자료나 n=1의 경우 이 문제를 따로 만날 수 있습니다.</p>
+<div class="check" data-q="q4"></div>
+<div class="check" data-q="q5"></div>
+<h2>관측 범위도 모수와 함께 움직이는 경우</h2>
+<p><var>X<sub>i</sub>∼Uniform(0,θ)</var> 독립 표본에서 θ&gt;0을 추정합니다. 밀도는 계산에 편하도록 <var>0≤x≤θ</var>에서 <var>1/θ</var>로 택합니다. 연속분포의 끝점 밀도값을 이렇게 정한 것은 우도에서 쓰는 관례이며 적분 확률에는 영향이 없습니다. 또한 관측이 모두 0인 확률은 0이므로 표본 최대값 <var>M&gt;0</var>을 가정합니다.</p>
+<div class="eq"><var>L(θ;x)=θ<sup>−n</sup>·1{min x<sub>i</sub>≥0}·1{M≤θ}, M=max x<sub>i</sub>.</var></div>
+<p>식에서 θ가 붙은 자료의 정보는 M을 통해서만 들어갑니다. <var>θ≥M</var>에서 <var>θ<sup>−n</sup></var>는 감소하므로 MLE는 M입니다. 필요 조건이 <var>θ&gt;M</var>인 밀도 버전을 택하면 M에 접근할 때 같은 상한을 얻지만 달성 여부가 바뀝니다. 여기서는 위 식의 닫힌 지지 버전을 사용합니다. <var>0≤t≤θ</var>에서 <var>P(M≤t)=(t/θ)<sup>n</sup></var>입니다. 모든 관측이 t 이하여야 하고 독립이기 때문입니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 264" role="img" aria-label="균등분포 θ=4에서 최대값 CDF는 n=1의 직선 t/4, n=4의 곡선 (t/4)⁴이다.">
+<text class="f-cap" x="380" y="29" text-anchor="middle">균등 표본의 최대값은 자료가 많아지면 끝점에 가까워진다</text>
+<line class="f-ink" x1="136" y1="190" x2="644" y2="190" marker-end="url(#f-arrow)"/>
+<line class="f-ink" x1="136" y1="190" x2="136" y2="49" marker-end="url(#f-arrow)"/>
+<line class="f-ink" x1="136" y1="190" x2="136" y2="196"/>
+<text class="f-s" x="136" y="212" text-anchor="middle">0</text>
+<line class="f-ink" x1="259.5" y1="190" x2="259.5" y2="196"/>
+<text class="f-s" x="259.5" y="212" text-anchor="middle">1</text>
+<line class="f-ink" x1="383" y1="190" x2="383" y2="196"/>
+<text class="f-s" x="383" y="212" text-anchor="middle">2</text>
+<line class="f-ink" x1="506.5" y1="190" x2="506.5" y2="196"/>
+<text class="f-s" x="506.5" y="212" text-anchor="middle">3</text>
+<line class="f-ink" x1="630" y1="190" x2="630" y2="196"/>
+<text class="f-s" x="630" y="212" text-anchor="middle">4</text>
+<line class="f-grid" x1="131" y1="190" x2="630" y2="190"/>
+<text class="f-s" x="125" y="194" text-anchor="end">0</text>
+<line class="f-grid" x1="131" y1="122" x2="630" y2="122"/>
+<text class="f-s" x="125" y="126" text-anchor="end">.5</text>
+<line class="f-grid" x1="131" y1="54" x2="630" y2="54"/>
+<text class="f-s" x="125" y="58" text-anchor="end">1</text>
+<polyline class="f-line" fill="none" points="136,190 148.35,186.6 160.7,183.2 173.05,179.8 185.4,176.4 197.75,173 210.1,169.6 222.45,166.2 234.8,162.8 247.15,159.4 259.5,156 271.85,152.6 284.2,149.2 296.55,145.8 308.9,142.4 321.25,139 333.6,135.6 345.95,132.2 358.3,128.8 370.65,125.4 383,122 395.35,118.6 407.7,115.2 420.05,111.8 432.4,108.4 444.75,105 457.1,101.6 469.45,98.2 481.8,94.8 494.15,91.4 506.5,88 518.85,84.6 531.2,81.2 543.55,77.8 555.9,74.4 568.25,71 580.6,67.6 592.95,64.2 605.3,60.8 617.65,57.4 630,54"/>
+<polyline class="f-dash" fill="none" points="136,190 148.35,190 160.7,189.999 173.05,189.996 185.4,189.986 197.75,189.967 210.1,189.931 222.45,189.872 234.8,189.782 247.15,189.651 259.5,189.469 271.85,189.222 284.2,188.898 296.55,188.483 308.9,187.959 321.25,187.311 333.6,186.518 345.95,185.563 358.3,184.423 370.65,183.077 383,181.5 395.35,179.668 407.7,177.555 420.05,175.133 432.4,172.374 444.75,169.248 457.1,165.723 469.45,161.767 481.8,157.346 494.15,152.426 506.5,146.969 518.85,140.938 531.2,134.294 543.55,126.998 555.9,119.007 568.25,110.279 580.6,100.77 592.95,90.435 605.3,79.227 617.65,67.098 630,54"/>
+<text class="f-s" x="650" y="236" text-anchor="middle">최대값 기준 t</text>
+<text class="f-s" x="120" y="44" text-anchor="end">P(M ≤ t)</text>
+</svg><figcaption>실선은 n=1, 점선은 n=4다. t=3에서 확률이 .75와 .31640625로 줄어든다.</figcaption></figure>
+<p>t에 미분한 최대값의 밀도는 <var>nt<sup>n−1</sup>/θ<sup>n</sup></var>입니다. t를 곱해 적분하면 <var>E[M]=nθ/(n+1)</var>라서 M은 아래로 편향됩니다. <var>(n+1)M/n</var>은 불편합니다. <var>0&lt;ε&lt;θ</var>일 때 <var>P(|M−θ|&gt;ε)=(1−ε/θ)<sup>n</sup>→0</var>이므로 M은 편향이 있어도 일치합니다.</p>
+<p>이 모형은 증명의 가정을 점검하기 좋은 반례입니다. 거의 확실히 자료가 지지의 내부에 있을 때 로그우도를 θ로 미분하면 <var>−n/θ</var>입니다. 기댓값도 <var>−n/θ</var>로 0이 아닙니다. 실제로 <var>∂(∫<sub>0</sub><sup>θ</sup>(1/θ)dx)=0</var>이지만, 적분 범위의 끝이 움직여 생긴 경계항 <var>+1/θ</var>를 빼고 밀도 내부만 미분하면 <var>−1/θ</var>가 남습니다. 이런 지지에서는 앞 장의 정칙 Cramér–Rao 논증을 적용할 수 없습니다.</p>
+<div class="check" data-q="q6"></div>
+<h2>이어 풀기와 증명</h2>
+<p>편향과 일치성의 시간 범위를 구분합니다. 경계에서 최적점이 있는지 판단할 때에는 모형의 정의역과 점수값을 함께 적습니다.</p>
+<div class="check" data-q="q7"></div>
+<div class="check" data-q="q8"></div>
+<div class="check" data-q="q9"></div>
+<h2>파이썬으로 같은 계산 검산하기</h2>
+<pre data-example="python"><code>from fractions import Fraction as F
+from math import comb
+
+n = 4
+for p in (F(1, 4), F(1, 100)):
+    risks = [F(0), F(0)]
+    for successes in range(n + 1):
+        mass = comb(n, successes) * p**successes * (1 - p)**(n - successes)
+        estimates = (F(successes, n), F(successes + 1, n + 2))
+        for j, estimate in enumerate(estimates):
+            risks[j] += mass * (estimate - p)**2
+    print(&quot;Bernoulli MSE:&quot;, p, *(f&quot;{float(r):.6f}&quot; for r in risks))
+
+theta, t = F(4), F(3)
+for n in (1, 4):
+    print(&quot;uniform maximum:&quot;, n, (t/theta)**n, &quot;mean:&quot;, n*theta/(n + 1))
+sample = [F(3, 5), F(13, 10), F(29, 10), F(7, 2)]
+maximum = max(sample)
+print(&quot;observed MLE and correction:&quot;, maximum, maximum*F(5, 4))</code></pre>
+<p class="aside">실행 결과</p>
+<pre data-output><code>Bernoulli MSE: 1/4 0.046875 0.027778
+Bernoulli MSE: 1/100 0.002475 0.027778
+uniform maximum: 1 3/4 mean: 2
+uniform maximum: 4 81/256 mean: 16/5
+observed MLE and correction: 7/2 35/8</code></pre>
+<p>마지막 출력에서 관측값 3.5보다 보정값 4.375가 큽니다. 불편성은 같은 표본에서 참값에 더 가깝다는 보장이 아닙니다. 한 모형의 반복 평균에 대한 성질입니다.</p>
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://www.mit.edu/~18.655/syllabus.html">MIT 18.655 · Estimation and Asymptotics 강의계획</a></li>
+<li><a href="https://ocw.mit.edu/courses/18-650-statistics-for-applications-fall-2016/pages/lecture-notes/">MIT 18.650 · 추정의 성질 강의 자료</a></li>
+<li><a href="st11-2.html">ST11-2 점수와 정보</a></li>
+</ul>
+<h2>확인 문제</h2>
+<p>조건과 단위를 먼저 적은 뒤 해설을 확인합니다.</p>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

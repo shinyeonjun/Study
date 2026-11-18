@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>경험분포를 다시 뽑아 표준오차와 구간 얻기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="ST13-2">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">통계 · ST13 순열 검정과 부트스트랩</p>
+<p class="chap-num">ST13·2</p>
+<h1>경험분포를 다시 뽑아 표준오차와 구간 얻기</h1>
+<p class="lead">관측이 세 개면 길이 3의 복원 표본을 모두 열거할 수 있습니다. 실제로 받은 표를 고정하고 추정량의 다시 뽑은 분포가 무엇을 근사하는지 봅니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2>
+<ul>
+<li>원 표본 추출과 조건부 부트스트랩 반복을 구별한다.</li>
+<li>비모수 부트스트랩에서 표준오차, 백분위수·기본 구간을 계산한다.</li>
+<li>표본 최대값에서 백분위수 구간이 실패하는 이유를 증명한다.</li>
+</ul></div>
+<h2>관측값 자체를 확률분포로 바꾼다</h2>
+<p>각 관측 건의 대기시간이 같은 모집단에서 독립적으로 나온다고 가정합니다. 그 모형을 설명하는 합성 자료로 <var>x=(1,1,4)</var>분을 사용합니다. 관심 모수는 모집단의 평균입니다. 자료의 평균 <var>T(x)=2</var>분은 추정값 한 개입니다. 새 원자료를 계속 얻을 수 없으므로, <b class="key">비모수 부트스트랩</b>은 현재 표에 있는 세 행 각각에 확률 1/3을 주는 경험분포를 모집단의 대용으로 둡니다. 두 행의 값이 1이라 새 한 번에서 1일 확률은 2/3입니다.</p>
+<p>그 경험분포에서 복원으로 세 번 뽑아 한 새 표 <var>x*</var>를 만들고 같은 추정법 <var>T*</var>를 적용합니다. 필요한 횟수만큼 표 단위로 반복합니다. 표 안에서 뽑는 수 n과 표를 다시 만드는 수 B를 구별합니다. B를 늘리면 이미 받은 세 행에서 계산한 부트스트랩 분포의 수치 오차가 줄어듭니다. 실제 관측 정보를 늘리려면 원자료를 추가해야 합니다.</p>
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+<h2>크기 3의 표를 전부 만들어 분산을 확인한다</h2>
+<p>행 번호를 뽑는 순서는 <var>3³=27</var>개로 모두 같은 확률입니다. 값 4가 k번 선택되면 <var>T*=[(3−k)·1+k·4]/3=1+k</var>입니다. k는 조건부로 <var>Binomial(3,1/3)</var>입니다. k=0이면 두 개의 1인 행 중에서 세 번 고를 수 있어 <var>2³=8</var>개입니다. k=1이면 4가 들어갈 자리 3개와 두 1일 자리를 각각 고르는 4가지가 있어 12개입니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 253" role="img" aria-label="부트스트랩 평균 1,2,3,4의 빈도는 8,12,6,1이다.">
+<text class="f-cap" x="380" y="28" text-anchor="middle">행 번호 27개 조합에서 평균이 나타난 횟수</text>
+<line class="f-ink" x1="126" y1="185" x2="649" y2="185" marker-end="url(#f-arrow)"/>
+<line class="f-ink" x1="126" y1="185" x2="126" y2="45" marker-end="url(#f-arrow)"/>
+<line class="f-grid" x1="126" y1="185" x2="636" y2="185"/>
+<text class="f-s" x="116" y="189" text-anchor="end">0</text>
+<line class="f-grid" x1="126" y1="120" x2="636" y2="120"/>
+<text class="f-s" x="116" y="124" text-anchor="end">6</text>
+<line class="f-grid" x1="126" y1="55" x2="636" y2="55"/>
+<text class="f-s" x="116" y="59" text-anchor="end">12</text>
+<rect class="f-soft" x="160" y="98.33333333333333" width="36" height="86.66666666666667"/>
+<text class="f-s" x="178" y="205" text-anchor="middle">1</text>
+<text class="f-s" x="178" y="91.33333333333333" text-anchor="middle">8</text>
+<rect class="f-soft" x="295.33333333333337" y="55" width="36" height="130"/>
+<text class="f-s" x="313.33333333333337" y="205" text-anchor="middle">2</text>
+<text class="f-s" x="313.33333333333337" y="48" text-anchor="middle">12</text>
+<rect class="f-soft" x="430.6666666666667" y="120" width="36" height="65"/>
+<text class="f-s" x="448.6666666666667" y="205" text-anchor="middle">3</text>
+<text class="f-s" x="448.6666666666667" y="113" text-anchor="middle">6</text>
+<rect class="f-soft" x="566" y="174.16666666666666" width="36" height="10.833333333333343"/>
+<text class="f-s" x="584" y="205" text-anchor="middle">4</text>
+<text class="f-s" x="584" y="167.16666666666666" text-anchor="middle">1</text>
+<text class="f-s" x="638" y="225" text-anchor="middle">새 표의 평균 (분)</text>
+<text class="f-s" x="114" y="43" text-anchor="end">횟수</text>
+</svg><figcaption>같은 값인 두 개의 1분 기록은 서로 다른 행이므로 빈도에 각각 반영된다.</figcaption></figure>
+<p>별표가 붙은 기대값과 분산 <var>E*, Var*</var>는 원자료를 고정한 상태에서 복원 표만 바꿔 평균한 값입니다. <var>E*[T*]=2</var>, <var>Var*(T*)=Var*(k)=3(1/3)(2/3)=2/3</var>입니다. 따라서 평균의 부트스트랩 표준오차는 <var>√(2/3)≈.816497</var>분입니다. 일반적인 독립 표본 평균에서 <var>Var*(X*)=Σ(x<sub>i</sub>−x̄)²/n</var>이며 <var>Var*(X̄*)=Var*(X*)/n</var>입니다. 기존 불편 표본분산으로 구하는 추정 표준오차와 유한 n에서 차이가 나는 것은 <var>n</var>과 <var>n−1</var> 중 어떤 분모로 경험분포의 분산을 계산하는지에 달려 있습니다.</p>
+<div class="check" data-q="q3"></div>
+<div class="check" data-q="q4"></div>
+<h2>꼬리 경계에서 두 방식의 구간을 만든다</h2>
+<p>관측 표의 추정값을 <var>T</var>, 부트스트랩 추정 분포의 q분위수를 <var>Q(q)</var>라 합시다. 이 장의 이산 분위수는 ‘누적확률이 q 이상이 되는 가장 작은 값’입니다. <b class="key">백분위수 구간</b>은 <var>[Q(α/2), Q(1−α/2)]</var>입니다. <b class="key">기본 구간</b>은 <var>T*−T</var>의 꼬리값의 범위를 <var>T−θ</var>가 따르는 오차 범위로 근사한 뒤 θ를 풉니다. 따라서 양 끝을 <var>[2T−Q(1−α/2), 2T−Q(α/2)]</var>로 뒤집습니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 177" role="img" aria-label="T=2, Q(.025)=1, Q(.975)=4이면 백분위수 구간은 [1,4], 기본 구간은 [0,3]이다.">
+<text class="f-cap" x="380" y="30" text-anchor="middle">95% 수준으로 두 가지 구성 비교</text>
+<rect class="f-soft" x="75.5" y="49" width="202" height="38"/>
+<text class="f-t" x="176.5" y="73" text-anchor="middle">구성법</text>
+<rect class="f-soft" x="277.5" y="49" width="235" height="38"/>
+<text class="f-t" x="395" y="73" text-anchor="middle">두 끝에서 쓰는 값</text>
+<rect class="f-soft" x="512.5" y="49" width="172" height="38"/>
+<text class="f-t" x="598.5" y="73" text-anchor="middle">이 자료의 구간 (분)</text>
+<rect class="f-box" x="75.5" y="87" width="202" height="38"/>
+<text class="f-s" x="176.5" y="111" text-anchor="middle">백분위수</text>
+<rect class="f-box" x="277.5" y="87" width="235" height="38"/>
+<text class="f-s" x="395" y="111" text-anchor="middle">Q(.025), Q(.975)</text>
+<rect class="f-box" x="512.5" y="87" width="172" height="38"/>
+<text class="f-s" x="598.5" y="111" text-anchor="middle">[1, 4]</text>
+<rect class="f-box" x="75.5" y="125" width="202" height="38"/>
+<text class="f-s" x="176.5" y="149" text-anchor="middle">기본</text>
+<rect class="f-box" x="277.5" y="125" width="235" height="38"/>
+<text class="f-s" x="395" y="149" text-anchor="middle">2T−Q(.975), 2T−Q(.025)</text>
+<rect class="f-box" x="512.5" y="125" width="172" height="38"/>
+<text class="f-s" x="598.5" y="149" text-anchor="middle">[0, 3]</text>
+</svg><figcaption>4를 제외하면 누적확률이 26/27≈.963이라 .975 분위수는 4다.</figcaption></figure>
+<p>여기서 95%는 두 구간을 구성할 때 입력한 수준입니다. 원자료를 독립적으로 여러 번 다시 얻으면 그때마다 다른 구간이 생깁니다. 그 구간들이 참값을 덮는 비율이 실제 <b class="key">포괄률</b>이며, 근사법마다 가정에 따라 달라집니다. 세 개 관측으로 만든 구간이 모집단 평균을 95% 포함한다고 확정할 수 없습니다. 결측, 독립성, 모집단 꼬리, 추정량의 민감도도 별도로 검토합니다.</p>
+<p>극단적인 실패 예는 <var>Uniform(0,θ)</var>의 끝점 θ를 표본 최대값 M으로 추정할 때입니다. 복원 표본에서 뽑을 수 있는 값은 원래 표 안에만 있으므로 모든 <var>M*≤M</var>입니다. 백분위수 구간의 상단도 M 이하입니다. 연속 모형의 어느 유한 표본에서도 확률 1로 <var>M&lt;θ</var>이므로 여기서 이 구간의 포괄률은 0입니다. B를 아무리 늘려도 모집단의 끝점 정보가 경험분포에 생기지 않습니다. 끝점 모형에서는 모형의 파생 분포로 추론하는 등 질문에 맞는 다른 방법이 필요합니다.</p>
+<div class="check" data-q="q5"></div>
+<div class="check" data-q="q6"></div>
+<h2>이어 풀기와 증명</h2>
+<p>같은 자료가 반복된 횟수를 그대로 두고 분위수를 구합니다. 이어서 구간의 산술과 그 구간이 실제로 포괄하는 빈도를 구분합니다.</p>
+<div class="check" data-q="q7"></div>
+<div class="check" data-q="q8"></div>
+<div class="check" data-q="q9"></div>
+<h2>파이썬으로 같은 계산 검산하기</h2>
+<pre data-example="python"><code>from collections import Counter
+from fractions import Fraction as F
+from itertools import product
+from math import sqrt
+
+sample = (1, 1, 4)
+n = len(sample)
+estimate = F(sum(sample), n)
+means = [F(sum(draw), n) for draw in product(sample, repeat=n)]
+histogram = Counter(means)
+variance = sum((t-estimate)**2 for t in means) / len(means)
+
+def quantile(q):
+    cumulative = 0
+    for value in sorted(histogram):
+        cumulative += histogram[value]
+        if F(cumulative, len(means)) &gt;= q:
+            return value
+    raise ValueError(&quot;q must be between 0 and 1&quot;)
+
+low, high = quantile(F(1, 40)), quantile(F(39, 40))
+assert variance == F(2, 3)
+print(&quot;mean frequencies:&quot;, [(int(v), histogram[v]) for v in sorted(histogram)])
+print(&quot;bootstrap variance, SE:&quot;, variance, f&quot;{sqrt(variance):.6f}&quot;)
+print(&quot;percentile:&quot;, low, high)
+print(&quot;basic:&quot;, 2*estimate-high, 2*estimate-low)</code></pre>
+<p class="aside">실행 결과</p>
+<pre data-output><code>mean frequencies: [(1, 8), (2, 12), (3, 6), (4, 1)]
+bootstrap variance, SE: 2/3 0.816497
+percentile: 1 4
+basic: 0 3</code></pre>
+<p><code>product</code>는 값이 중복된 경우에도 각 입력 위치를 선택지로 둡니다. 따라서 세 행을 복원으로 선택하는 전부를 셉니다. 큰 n에서는 이 열거 대신 난수로 행 인덱스를 뽑습니다. 쌍과 군집에서는 한 행씩 뽑는 규칙부터 바꿉니다.</p>
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://doi.org/10.1214/aos/1176344552">Bradley Efron · Bootstrap Methods: Another Look at the Jackknife</a></li>
+<li><a href="https://inferentialthinking.com/chapters/13/2/Bootstrap.html">Berkeley Data 8 · The Bootstrap</a></li>
+<li><a href="st03-3.html">ST03-3 부트스트랩의 전제</a></li>
+</ul>
+<h2>확인 문제</h2>
+<p>조건과 단위를 먼저 적은 뒤 해설을 확인합니다.</p>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>같은 주변확률을 구하는데 제거 순서가 왜 계산량을 바꾸는가 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="AI07-2">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">인공지능 · 확률 그래프 모형</p>
+<p class="chap-num">AI07·2</p>
+<h1>같은 주변확률을 구하는데 제거 순서가 왜 계산량을 바꾸는가</h1>
+<p class="lead">센서 네 개가 한 공통 상태를 보고 있습니다. 공통 상태부터 합산할 때와 주변 센서부터 없앨 때, 답은 같습니다. 중간에 몇 개의 변수를 한 표에 담는지 계산해 두 방법의 비용을 비교합니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>제거할 변수와 같은 인자에 든 남은 변수로 중간 표의 크기를 계산할 수 있다.</li><li>인자 그래프에서 제거가 새 연결을 만드는 이유를 설명할 수 있다.</li><li>서로 다른 두 제거 순서를 구현해 결과와 최대 중간 작업량을 비교할 수 있다.</li></ul></div>
+
+<h2>가운데 상태 하나와 센서 네 개</h2>
+<p>중앙의 숨은 상태 H에 따라 네 개의 이진 센서 L₁,L₂,L₃,L₄가 각각 신호를 냅니다. H가 주어지면 센서들은 독립입니다. 결합확률은 P(H)·P(L₁|H)·P(L₂|H)·P(L₃|H)·P(L₄|H)입니다. 예에서는 H=0,1의 사전은 절반씩이고, 각 센서 Lᵢ가 1이 될 조건부확률은 H=0에서 1/4, H=1에서 3/4입니다. 이 장에서는 관측을 고정하지 않고 L₁의 주변확률만 구합니다.</p>
+<p>표 한 칸의 주소는 그 인자가 받는 변수들의 값 조합입니다. 인자 하나가 이진 변수 두 개를 받으면 2²=4칸, 네 개를 받으면 2⁴=16칸입니다. 변수가 인자에 들어 있다는 사실은 그 축을 계산에 고려한다는 뜻입니다. 값이 우연히 같아 표를 더 압축할 수 있더라도 이번 계산에서는 모든 조합을 저장하는 밀집 인자만 사용합니다.</p>
+<div class="check" data-q="q1"></div>
+<h2>중심을 먼저 지우면 왜 센서들이 연결되는가</h2>
+<p>H를 첫 순서로 없애면 H가 모든 인자에 있으므로 다섯 개를 곱합니다. 곱의 주소는 (H,L₁,L₂,L₃,L₄)이고, 경우가 32개입니다. H를 합산한 결과는 (L₁,L₂,L₃,L₄)를 받는 16칸짜리 표입니다. 이후 필요 없는 센서 세 개를 하나씩 합치면 8칸, 4칸, 2칸이 됩니다.</p>
+<p>그래프에서는 같은 인자에 들어가는 변수끼리 선으로 연결한다고 생각합니다. 처음에는 H와 각 센서 사이에만 선이 있습니다. H를 없애면 네 센서가 하나의 인자에 들어가므로 각 센서 쌍 사이에 새 연결이 생깁니다. 이를 <b class="key">채움 간선</b>(fill-in edge)이라 부릅니다. 이 연결은 관측값의 조합을 함께 계산해야 함을 뜻하고, 새로운 물리적 원인이 생겼다는 뜻은 아닙니다.</p>
+<div class="check" data-q="q2"></div><div class="check" data-q="q3"></div>
+<h2>주변 센서를 먼저 합치면 작은 표로 충분하다</h2>
+<p>L₂를 먼저 없앨 때 그 변수가 있는 인자는 P(L₂|H) 하나입니다. H=0,1 각각에서 L₂에 대한 합은 1입니다. L₃,L₄도 같습니다. 결과로 남은 H의 항등 인자 세 개와 사전 P(H), P(L₁|H)를 곱한 뒤 H를 합칩니다. 어느 단계에서도 합하기 전 표에 H와 센서 하나를 넘는 변수가 등장하지 않습니다.</p>
+<div class="table-wrap"><table><thead><tr><th scope="col">제거 순서</th><th scope="col">단계별 제거 직전의 최대 표 칸</th><th scope="col">새로 만든 표의 차례</th></tr></thead><tbody><tr><td>H,L₂,L₃,L₄</td><td>32칸</td><td>16 → 8 → 4 → 2</td></tr><tr><td>L₂,L₃,L₄,H</td><td>4칸</td><td>2 → 2 → 2 → 2</td></tr></tbody></table></div>
+<p>어느 방법에서도 L₁=1의 확률은 (1/2)(1/4)+(1/2)(3/4)=1/2입니다. 두 순서는 유한합을 계산하는 순서를 바꾸고, 변수가 없어도 되는 인자를 밖으로 꺼낸 것입니다. 같은 변수 집합을 다 합하면 합의 항이 같으므로 결과도 같습니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 160" role="img" aria-label="중심 제거 순서와 주변 제거 순서의 피크 32칸 대 4칸 및 동일 결과">
+<rect class="f-box" x="42" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="135" y="61" text-anchor="middle">중심부터 제거</text><text class="f-s" x="135" y="89" text-anchor="middle">H와 센서 4개를 곱함</text><text class="f-s" x="135" y="110" text-anchor="middle">확인하는 칸 32개</text><line class="f-line" x1="235" y1="84" x2="278" y2="84" marker-end="url(#f-arrow)"/><rect class="f-soft" x="287" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="380" y="61" text-anchor="middle">주변부터 제거</text><text class="f-s" x="380" y="89" text-anchor="middle">한 번에 H와 센서 1개</text><text class="f-s" x="380" y="110" text-anchor="middle">확인하는 칸 4개</text><line class="f-line" x1="480" y1="84" x2="523" y2="84" marker-end="url(#f-arrow)"/><rect class="f-box" x="532" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="625" y="61" text-anchor="middle">결과</text><text class="f-s" x="625" y="89" text-anchor="middle">P(L₁=0)=1/2</text><text class="f-s" x="625" y="110" text-anchor="middle">P(L₁=1)=1/2</text>
+</svg><figcaption>답이 같으므로 두 방법의 차이는 중간에 고려한 변수와 표의 크기에 있습니다.</figcaption></figure>
+<div class="check" data-q="q4"></div><div class="check" data-q="q5"></div>
+<h2>인자의 범위를 추적하는 작은 구현</h2>
+<p>아래 구현에서 인자 하나는 변수 이름의 순서가 있는 튜플과 확률표입니다. 제거할 변수를 포함하는 인자들의 범위를 합쳐, 각 조합의 값을 곱합니다. 그 조합에서 제거 변수의 위치만 빼면 결과 표에서 더할 위치가 됩니다. 실제 프로그램은 곱 전체를 별도 표로 만들지 않고 곱한 값을 바로 더합니다. 따라서 출력하는 칸 수는 저장한 입력 표의 크기가 아니라 순회한 조합 수입니다.</p>
+<pre data-example="python"><code>from fractions import Fraction as F
+from itertools import product
+from math import prod
+
+def eliminate(factors, variable):
+    touched = [f for f in factors if variable in f[0]]
+    rest = [f for f in factors if variable not in f[0]]
+    scope = sorted({key for names, _ in touched for key in names})
+    survived = tuple(name for name in scope if name != variable)
+    result = {}
+    for bits in product((0, 1), repeat=len(scope)):
+        assignment = dict(zip(scope, bits))
+        weight = prod(table[tuple(assignment[n] for n in names)] for names, table in touched)
+        index = tuple(assignment[n] for n in survived)
+        result[index] = result.get(index, 0) + weight
+    return rest + [(survived, result)], 2 ** len(scope), len(result)
+
+prior = ((&quot;H&quot;,), {(0,): F(1, 2), (1,): F(1, 2)})
+leaves = [((&quot;H&quot;, f&quot;L{i}&quot;), {(0, 0): F(3, 4), (0, 1): F(1, 4),
+                            (1, 0): F(1, 4), (1, 1): F(3, 4)}) for i in range(1, 5)]
+for label, order in ((&quot;중심 먼저&quot;, (&quot;H&quot;, &quot;L2&quot;, &quot;L3&quot;, &quot;L4&quot;)),
+                     (&quot;주변 먼저&quot;, (&quot;L2&quot;, &quot;L3&quot;, &quot;L4&quot;, &quot;H&quot;))):
+    factors = [prior, *leaves]
+    sizes, tables = [], []
+    for var in order:
+        factors, count, written = eliminate(factors, var)
+        sizes.append(count)
+        tables.append(written)
+    [(names, answer)] = factors
+    assert names == (&quot;L1&quot;,) and answer == {(0,): F(1, 2), (1,): F(1, 2)}
+    print(label, &quot;- 최대 순회:&quot;, max(sizes), &quot;결과 표:&quot;, tables)
+    print(&quot;L1=1:&quot;, answer[1,])</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>중심 먼저 - 최대 순회: 32 결과 표: [16, 8, 4, 2]
+L1=1: 1/2
+주변 먼저 - 최대 순회: 4 결과 표: [2, 2, 2, 2]
+L1=1: 1/2</code></pre>
+<div class="check" data-q="q6"></div>
+<h2>어떤 순서를 시도할까</h2>
+<p>이진 변수에서 제거 당시에 남은 이웃이 w개라면, 그 단계에서 곱하는 표는 제거 변수까지 w+1개를 포함하고, 일반 밀집 계산은 2<sup>w+1</sup>개의 조합을 고려합니다. 주어진 순서에서 이 w의 최대를 유도 폭이라고 부릅니다. 실제 크기는 변수마다 가지는 값의 수와 관측을 고정해 떨어져 나간 범위에도 좌우됩니다.</p>
+<p>주변 노드가 적은 변수를 먼저 없애거나, 새 연결이 적게 생기는 후보를 고르는 방법은 합리적인 휴리스틱입니다. 모든 후보 순서를 비교한 최적이라는 증거는 아닙니다. 정확한 표가 너무 커지면 <a href="ai07-3.html">표본 추론</a>을 검토하고, 작은 사례의 정확한 답으로 근사의 오류부터 확인합니다.</p>
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table><thead><tr><th scope="col">확인 대상</th><th scope="col">의미</th></tr></thead><tbody><tr><td><b class='key'>인자 범위</b></td><td>한 입력 조합에서 함께 다뤄야 하는 변수의 집합.</td></tr><tr><td>채움 간선</td><td>제거 후 같은 인자에 놓인 이웃끼리 생기는 연결.</td></tr><tr><td>제거 순서</td><td>정답은 그대로이며 중간 범위와 작업량을 바꾼다.</td></tr></tbody></table></div>
+
+<h2>참고 자료</h2>
+<ul><li><a href="https://inst.eecs.berkeley.edu/~cs188/textbook/bayes-nets/elimination.html">UC Berkeley CS 188 · 변수 제거와 순서</a></li></ul>
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>서로소 집합의 합치기와 경로 압축을 비용으로 확인하기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e8c'/%3E%3Cpath d='M8 22V10m8 12V14m8 8V6' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="CS10-3">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+
+<header class="chapter">
+<p class="chap-sub">자료구조·알고리즘 · CS10 균형 트리와 상각 자료구조</p>
+<p class="chap-num">CS10·3</p>
+<h1>서로소 집합의 합치기와 경로 압축을 비용으로 확인하기</h1>
+<p class="lead">키의 순서는 잊고 같은 그룹에 있는지만 빠르게 묻습니다. 부모 포인터와 그룹 크기를 써서 합치고, 찾을 때 먼 포인터를 짧게 고칩니다.</p>
+</header>
+
+<div class="goal">
+<h2>이 장을 읽고 나면</h2>
+<ul>
+<li>union–find가 나타내는 분할과 부모 숲의 불변식을 설명한다.</li>
+<li>크기에 따른 합치기와 경로 압축의 효과를 각각 증명한다.</li>
+<li>별도의 그래프 탐색으로 무작위 합치기·질의 결과를 대조한다.</li>
+</ul>
+</div>
+
+<h2>동일한 그룹에 있으면 같은 루트로 연결합니다</h2>
+<p>원소 0~7을 처음에 하나씩 다른 그룹으로 둡니다. 자료구조의 <b class="key">find</b>는 부모 포인터를 따라 자기 자신을 가리키는 루트를 찾습니다. <b>union</b>은 두 루트가 다를 때 하나를 다른 것 아래에 붙입니다. 모든 노드가 루트 하나에 닿고, 같은 집합에서만 같은 대표를 얻는다는 것이 핵심 불변식입니다. 대표에 붙은 숫자는 그룹을 부르는 한 방법이며 가장 작아야 한다는 규칙은 없습니다.</p>
+<p>이 장의 예에서는 크기가 같은 두 집합을 합칠 때 첫 번째 인자의 루트를 남깁니다. (0,1),(2,3),(4,5),(6,7) 뒤에 (0,2),(4,6),(0,4)를 합칩니다. 7의 부모는 6, 6의 부모는 4, 4의 부모는 0입니다. find(7)의 결과는 0입니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 177" role="img" aria-label="찾기 7의 부모 경로 7→6→4→0이 7→0으로 바뀜">
+<text class="f-s" x="104" y="50" text-anchor="middle">압축 전</text>
+<text class="f-s" x="104" y="126" text-anchor="middle">압축 후</text>
+<rect class="f-box" x="174" y="32" width="79" height="31" rx="3"/>
+<text class="f-t" x="213" y="53" text-anchor="middle">7</text>
+<line class="f-ink" x1="253" y1="47" x2="306" y2="47" marker-end="url(#f-arrow)"/>
+<rect class="f-box" x="311" y="32" width="79" height="31" rx="3"/>
+<text class="f-t" x="350" y="53" text-anchor="middle">6</text>
+<line class="f-ink" x1="390" y1="47" x2="443" y2="47" marker-end="url(#f-arrow)"/>
+<rect class="f-box" x="448" y="32" width="79" height="31" rx="3"/>
+<text class="f-t" x="487" y="53" text-anchor="middle">4</text>
+<line class="f-ink" x1="527" y1="47" x2="580" y2="47" marker-end="url(#f-arrow)"/>
+<rect class="f-soft" x="585" y="32" width="79" height="31" rx="3"/>
+<text class="f-t" x="624" y="53" text-anchor="middle">0</text>
+<rect class="f-box" x="174" y="109" width="79" height="31" rx="3"/>
+<text class="f-t" x="213" y="130" text-anchor="middle">7</text>
+<rect class="f-soft" x="585" y="109" width="79" height="31" rx="3"/>
+<text class="f-t" x="624" y="130" text-anchor="middle">0</text>
+<line class="f-line" x1="253" y1="124" x2="581" y2="124" marker-end="url(#f-arrow)"/>
+<text class="f-s" x="380" y="163" text-anchor="middle">경로에서 본 6도 0을 직접 가리키도록 변경</text>
+</svg>
+<figcaption>대표는 처음부터 0입니다. 압축이 바꾸는 것은 원소 집합이 아니라 그 대표까지의 부모 포인터입니다.</figcaption>
+</figure>
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+<div class="check" data-q="q3"></div>
+<h2>작은 집합을 큰 쪽 아래에 붙이면 깊이가 제한됩니다</h2>
+<p><b class="key">크기에 따른 합치기</b>는 작은 집합의 루트를 큰 집합의 루트 아래로 옮깁니다. 깊이가 늘어나는 원소는 붙이는 쪽에 속합니다. 그 원소가 속한 새 집합은 예전 크기의 최소 두 배입니다. 어떤 원소의 깊이가 h번 늘었다면 그 성분은 최소 2ʰ개를 가집니다. 원소가 n개라면 깊이가 ⌊log₂n⌋를 넘지 않습니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 153" role="img" aria-label="깊이가 한 층 늘려면 성분 크기가 1,2,4,8 이상">
+<rect class="f-box" x="30" y="40" width="137" height="32" rx="3"/>
+<text class="f-s" x="98" y="61" text-anchor="middle">원래 깊이</text>
+<rect class="f-box" x="171" y="40" width="137" height="32" rx="3"/>
+<text class="f-t" x="239" y="61" text-anchor="middle">0</text>
+<rect class="f-box" x="312" y="40" width="137" height="32" rx="3"/>
+<text class="f-t" x="380" y="61" text-anchor="middle">1</text>
+<rect class="f-box" x="453" y="40" width="137" height="32" rx="3"/>
+<text class="f-t" x="521" y="61" text-anchor="middle">2</text>
+<rect class="f-box" x="594" y="40" width="137" height="32" rx="3"/>
+<text class="f-t" x="662" y="61" text-anchor="middle">3</text>
+<rect class="f-soft" x="30" y="84" width="137" height="32" rx="3"/>
+<text class="f-s" x="98" y="105" text-anchor="middle">필요한 최소 크기</text>
+<rect class="f-soft" x="171" y="84" width="137" height="32" rx="3"/>
+<text class="f-t" x="239" y="105" text-anchor="middle">1</text>
+<rect class="f-soft" x="312" y="84" width="137" height="32" rx="3"/>
+<text class="f-t" x="380" y="105" text-anchor="middle">2</text>
+<rect class="f-soft" x="453" y="84" width="137" height="32" rx="3"/>
+<text class="f-t" x="521" y="105" text-anchor="middle">4</text>
+<rect class="f-soft" x="594" y="84" width="137" height="32" rx="3"/>
+<text class="f-t" x="662" y="105" text-anchor="middle">8</text>
+</svg>
+<figcaption>작은 집합을 큰 집합 아래에 붙일 때만 이 상계를 적용합니다. 압축은 깊이를 늘리지 않습니다.</figcaption>
+</figure>
+<p>find로 방문한 경로의 원소들을 루트에 직접 연결하는 <b class="key">경로 압축</b>은 집합을 유지하면서 그다음 찾기를 짧게 할 수 있습니다. find(7) 뒤에 7과 6은 0을 가리킵니다. 경로에 없던 3은 이전과 같이 2를 볼 수 있습니다. 압축으로 연결이 바뀌어도 서로소 집합의 구성은 바뀌지 않습니다.</p>
+<div class="check" data-q="q4"></div>
+<div class="check" data-q="q5"></div>
+<div class="check" data-q="q6"></div>
+<h2>합치지 않는 구간의 비용을 먼저 제한합니다</h2>
+<p>부모 숲을 한 번 만든 뒤에는 더 합치지 않고 q번 찾기만 한다고 합시다. 루트까지 길이 k인 찾기는 간선 k개를 읽습니다. 그중 마지막 간선을 빼면, 루트에 직접 연결되어 있지 않던 k−1개의 원소의 부모를 루트로 바꿉니다. 이후 합치지 않으므로 이 원소가 같은 종류의 변경을 다시 겪지 않습니다. 이러한 변경은 전체 n개 원소에서 최대 n−1번입니다. 각 find의 마지막 간선에 최대 1번씩을 더하면 전체 간선 읽기는 q+n−1 이하입니다. 이 보장은 어떤 순서로 찾았는지에 대한 확률을 요구하지 않습니다.</p>
+<p>합치기가 계속되면 어떤 원소의 현재 루트도 나중에 다른 루트 아래로 들어가므로 위의 ‘한 번만’ 논리가 그대로 적용되지 않습니다. 경로 압축과 크기·순위에 따른 합치기를 함께 분석하면, 초기화도 포함해 n개 원소와 m번 연산을 보통 O((n+m)α(n))으로 쓸 수 있습니다. α는 아주 느리게 증가하는 역 아커만 함수입니다. 이 강한 상계는 연산열에 대한 별도의 정리이며, 앞의 변경 횟수 계산은 합치기 없는 구간만 증명했습니다.</p>
+<h2>같은 연결을 작은 그래프의 탐색으로 검산합니다</h2>
+<pre data-example="python"><code>from random import Random
+
+class Groups:
+    def __init__(self, n):
+        self.parent = list(range(n))
+        self.size = [1]*n
+
+    def find(self, x):
+        p = self.parent[x]
+        if p != x:
+            self.parent[x] = self.find(p)
+        return self.parent[x]
+
+    def union(self, x, y):
+        a,b = self.find(x),self.find(y)
+        if a == b:
+            return
+        if self.size[a] &lt; self.size[b]:
+            a,b = b,a
+        self.parent[b] = a
+        self.size[a] += self.size[b]
+
+example = Groups(8)
+for x,y in [(0,1),(2,3),(4,5),(6,7),(0,2),(4,6),(0,4)]:
+    example.union(x,y)
+print(&quot;before:&quot;, example.parent)
+print(&quot;find 7:&quot;, example.find(7))
+print(&quot;after:&quot;, example.parent)
+
+def reachable(graph, start):
+    pending = [start]
+    seen = {start}
+    while pending:
+        new = graph[pending.pop()] - seen
+        pending.extend(new)
+        seen.update(new)
+    return seen
+
+n = 12
+groups = Groups(n)
+graph = [set() for _ in range(n)]
+rng = Random(108)
+for _ in range(40):
+    x,y = rng.randrange(n),rng.randrange(n)
+    groups.union(x,y)
+    graph[x].add(y)
+    graph[y].add(x)
+    for u in range(n):
+        expected = reachable(graph,u)
+        assert all((groups.find(u) == groups.find(v)) == (v in expected)
+                   for v in range(n))
+print(&quot;checked snapshots:&quot;, 40)</code></pre>
+<pre data-output><code>before: [0, 0, 0, 2, 0, 4, 4, 6]
+find 7: 0
+after: [0, 0, 0, 2, 0, 4, 0, 0]
+checked snapshots: 40</code></pre>
+<p>두 방식은 표현이 다릅니다. 첫 방식은 숲의 대표, 둘째는 실제로 추가한 연결을 탐색합니다. 각 시점에서 모든 원소 쌍의 결과를 비교했으므로, 작은 예에서 어느 중간 합치기가 틀렸는지 재현할 수 있습니다.</p>
+
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table>
+<thead><tr><th scope="col">핵심어</th><th scope="col">기억할 기준</th></tr></thead>
+<tbody>
+<tr><td><b class="key">find</b></td><td>부모를 따라 집합 대표를 얻음</td></tr>
+<tr><td><b class="key">union</b></td><td>다른 대표 하나를 다른 대표 아래에 연결</td></tr>
+<tr><td><b class="key">크기에 따른 합치기</b></td><td>깊이 증가가 성분 크기의 두 배 증가와 함께 일어남</td></tr>
+<tr><td><b class="key">경로 압축</b></td><td>같은 대표를 유지하며 방문한 경로를 짧게 만듦</td></tr>
+</tbody></table></div>
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>그룹의 동치 관계를 먼저 검증하고, 비용은 합치기 규칙과 조회로 바뀌는 포인터를 나누어 셉니다.</p></div>
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://algs4.cs.princeton.edu/15uf/">Sedgewick·Wayne · Union–find</a></li>
+<li><a href="https://www2.eecs.berkeley.edu/Pubs/TechRpts/1974/28764.html">Tarjan · 효율적인 집합 합치기 분석</a></li>
+</ul>
+
+<h2>확인 문제</h2>
+<p>아직 풀지 않은 문제입니다. 먼저 식이나 근거를 적어 보고 해설을 확인합니다.</p>
+<div id="quiz"></div>
+
+<section class="work" id="tools"></section>
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ε–N으로 수렴을 증명하고 단조수렴을 유도하기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e8c'/%3E%3Cpath d='M8 22V10m8 12V14m8 8V6' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="RA01-2">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+
+<header class="chapter">
+<p class="chap-sub">해석학 · RA01 실수의 완비성과 수열</p>
+<p class="chap-num">RA01·2</p>
+<h1>ε–N으로 수렴을 증명하고 단조수렴을 유도하기</h1>
+<p class="lead">숫자가 어느 값에 가까워 보인다는 관찰을 증명으로 바꿉니다. 허용오차를 먼저 받고 그 뒤의 모든 항에 통하는 번호를 찾은 다음, 극한값을 미리 몰라도 단조성으로 수렴을 보입니다.</p>
+</header>
+
+<div class="goal">
+<h2>이 장을 읽고 나면</h2>
+<ul>
+<li>수렴의 ε–N 정의와 그 부정을 양화사의 순서까지 정확히 쓴다.</li>
+<li>구체적 수열에 대해 정수 N을 고르고 극한의 유일성과 유계성을 증명한다.</li>
+<li>상한에서 단조수렴 정리를 유도하고 점화식에 적용한다.</li>
+</ul>
+</div>
+<h2>허용오차 뒤에 정하는 번호</h2>
+
+<p>실수 수열 <var>(aₙ)</var>은 자연수 <var>n=1,2,…</var>에 각각 실수 하나를 대응시킵니다. 어떤 <var>L</var>에 수렴한다는 말은, 어느 허용오차를 정해도 번호를 충분히 뒤로 보내면 <strong>그 이후의 모든 항</strong>이 허용 구간에 계속 들어온다는 뜻입니다.</p>
+<div class="box"><p class="box-k">정의 · 실수 수열의 수렴</p>
+<p><var>aₙ→L</var>은 <var>∀ε&gt;0 ∃N∈ℕ ∀n≥N, |aₙ−L|&lt;ε</var>를 뜻합니다. ε를 먼저 받고 <var>N</var>을 고릅니다. 고른 <var>N</var>은 같은 ε에 대한 모든 뒷번호를 한꺼번에 다룹니다.</p></div>
+<p><var>|aₙ−L|&lt;ε</var>는 <var>L−ε&lt;aₙ&lt;L+ε</var>와 같습니다. 항이 L에 닿는 것은 허용되지만 구간의 두 끝에 닿으면 엄격한 부등식이 실패합니다. 예를 들어 시험에서 요구한 오차가 0.1 미만인데 실제 오차가 정확히 0.1이면 아직 허용되지 않습니다.</p>
+<p><b>정의를 부정하는 법.</b> “<var>aₙ</var>이 이 특정 <var>L</var>로 수렴하지 않는다”는 <var>∃ε&gt;0 ∀N∈ℕ ∃n≥N, |aₙ−L|≥ε</var>입니다. 어떤 오차 하나를 고정하고, 시작 번호를 어디로 옮겨도 오차 밖의 항을 하나 찾을 수 있어야 합니다. 수열이 모든 실수 극한값을 갖지 않는다고 하려면 이 실패를 모든 후보 L에 대해 보여야 합니다.</p>
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+
+<h2>허용오차에서 거꾸로 N을 계산한다</h2>
+
+<p><var>aₙ=(2n+1)/(n+2)</var>에서 후보 극한 <var>L=2</var>를 골라 봅시다. 식을 <var>aₙ=2−3/(n+2)</var>로 정리하면 오차는 양수 <var>3/(n+2)</var>입니다. 이를 ε보다 작게 만드는 조건은 <var>n&gt;3/ε−2</var>입니다. 아르키메데스 성질로 이 수보다 큰 자연수 <var>N</var>을 하나 골라 두면, <var>n≥N</var>에는 항상 <var>3/(n+2)&lt;ε</var>입니다. 이로써 ε–N 정의를 충족합니다.</p>
+<p><b>오차가 1/10이라면.</b> <var>n&gt;30−2=28</var>이므로 가장 작은 <var>N</var>은 29입니다. <var>a₂₈=57/30=1.9</var>, <var>a₂₉=59/31</var>입니다. 두 번째 항의 오차 <var>3/31</var>은 <var>1/10</var>보다 작고 첫 번째의 오차는 정확히 <var>1/10</var>입니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 206" role="img" aria-label="a₂₈=1.9는 중심 2, 오차 0.1인 열린 띠의 경계에 놓이고, a₂₉는 띠 안에 있다">
+<text class="f-cap" x="380" y="30" text-anchor="middle">ε = 1/10일 때 열린 허용 구간</text>
+<line class="f-grid" x1="93" y1="105" x2="683" y2="105" marker-end="url(#f-arrow)"/>
+<line class="f-line" x1="180" y1="105" x2="580" y2="105"/>
+<circle class="f-box" cx="180" cy="105" r="7"/>
+<circle class="f-box" cx="580" cy="105" r="7"/>
+<circle class="f-fill" cx="380" cy="105" r="5"/>
+<circle class="f-fill" cx="186.452" cy="105" r="3"/>
+<text class="f-s" x="180" y="79" text-anchor="middle">a₂₈ = 1.9</text>
+<text class="f-cap" x="380" y="79" text-anchor="middle">L = 2</text>
+<line class="f-grid" x1="186.452" y1="111" x2="230" y2="151"/>
+<text class="f-s" x="243" y="170" text-anchor="middle">a₂₉ = 59/31</text>
+<text class="f-t" x="180" y="131" text-anchor="middle">1.9</text>
+<text class="f-t" x="380" y="131" text-anchor="middle">2</text>
+<text class="f-t" x="580" y="131" text-anchor="middle">2.1</text>
+</svg>
+<figcaption>a₂₈은 경계에 있어 엄격한 |aₙ−2|<0.1에 실패합니다. a₂₉부터는 모두 허용 구간에 들어갑니다.</figcaption>
+</figure>
+<p>정의는 가장 작은 <var>N</var>을 요구하지 않습니다. <var>ε=1/10</var>에서 <var>N=30</var>도 옳습니다. 반대로 어떤 큰 번호 하나에서만 우연히 허용 범위에 든다고 해서 뒤의 모든 항이 들어오는 것은 아닙니다. 이 예에서는 <var>3/(n+2)</var>가 감소한다는 부등식을 사용했습니다.</p>
+<div class="check" data-q="q3"></div>
+
+<h2>수렴하면 극한은 하나이고, 항 전체가 유계다</h2>
+
+<p><b>유일성 증명.</b> 같은 수열이 서로 다른 두 값 <var>L,M</var>으로 수렴한다고 합시다. <var>ε=|L−M|/3&gt;0</var>을 양쪽 정의에 넣어 <var>N₁,N₂</var>를 고릅니다. <var>n≥max(N₁,N₂)</var>에서 삼각부등식으로 <var>|L−M|≤|L−aₙ|+|aₙ−M|&lt;2|L−M|/3</var>입니다. 이것은 불가능하므로 두 극한은 같습니다.</p>
+<p><b>유계성 증명.</b> <var>aₙ→L</var>에서 <var>ε=1</var>로 두면 어느 시점 이후에 <var>|aₙ|≤|L|+|aₙ−L|&lt;|L|+1</var>입니다. 이전의 항은 유한 개이고 각각 실수입니다. 그 절댓값들과 <var>|L|+1</var>의 최댓값을 잡으면 모든 항의 절댓값이 그 이하입니다. “유계”는 모든 항이 하나의 유한한 범위에 있다는 뜻입니다.</p>
+<p>유계의 역은 성립하지 않습니다. <var>aₙ=(-1)ⁿ</var>은 항상 −1 또는 1이어서 유계지만, 임의의 <var>N</var> 뒤에도 짝수와 홀수가 모두 있습니다. 하나의 극한값 <var>L</var>가 있다면 ε=1/2에서 두 종류의 항이 모두 L에서 1/2보다 가까워야 합니다. 삼각부등식은 두 항 사이의 거리 2가 1보다 작다고 하므로 모순입니다.</p>
+<div class="check" data-q="q4"></div>
+
+<h2>단조인 경우에는 상한을 극한으로 사용할 수 있다</h2>
+
+<div class="box"><p class="box-k">정리 · 단조수렴</p><p>실수 수열에서 <var>aₙ≤aₙ₊₁</var>이고 위로 유계이면 <var>aₙ→sup{aₙ:n≥1}</var>입니다. <var>aₙ≥aₙ₊₁</var>이고 아래로 유계이면 하한으로 수렴합니다.</p></div>
+<p>첫 수열의 상한을 <var>s</var>라고 두면 존재는 실수의 완비성에서 나옵니다. 모든 <var>ε&gt;0</var>에 대해 상한의 성질로 <var>s−ε&lt;a<sub>N</sub>≤s</var>인 항을 하나 고릅니다. 증가하기 때문에 <var>n≥N</var>에서는 <var>a<sub>N</sub>≤aₙ≤s</var>입니다. 따라서 같은 N 뒤의 모든 항은 <var>|aₙ−s|&lt;ε</var>를 만족합니다. 감소하는 경우에는 <var>-aₙ</var>에 증가 정리를 적용해 부호를 돌려줍니다.</p>
+<p>상계 조건을 빼면 <var>aₙ=n</var>처럼 증가하지만 어떤 실수에도 수렴하지 않습니다. 위로 유계 조건만 쓰면 <var>(-1)ⁿ</var>이 반례입니다. 증명에서 상계는 상한의 존재를, 증가성은 가까운 항 이후에 허용 구간을 떠나지 않음을 보장합니다.</p>
+<p><b>점화식에서 극한을 미리 단정하지 않는다.</b> <var>a₁=0</var>, <var>aₙ₊₁=aₙ+(2−aₙ)/3</var>입니다. <var>aₙ≤2</var>이면 증가량 <var>(2−aₙ)/3≥0</var>이고 다음 항 <var>aₙ₊₁=(2aₙ+2)/3≤2</var>여서 상계를 보존합니다. 처음 항도 2 이하이므로 귀납법으로 증가성과 상계를 확인합니다. 단조수렴 정리로 실제 극한 <var>L</var>이 존재합니다. 이제 두 쪽의 극한을 취하면 <var>L=(2L+2)/3</var>이라 <var>L=2</var>입니다. 이 순서로 쓰면 극한의 존재를 먼저 보장합니다.</p>
+<p>오차의 크기를 알고 싶을 때는 <var>gₙ=2−aₙ</var>으로 바꿉니다. <var>g₁=2</var>, <var>gₙ₊₁=(2/3)gₙ</var>이므로 <var>gₙ=2(2/3)<sup>n−1</sup></var>입니다. ε=1/5에서는 <var>64/243&gt;1/5</var>, <var>128/729&lt;1/5</var>이므로 <var>N=7</var>부터 조건을 만족합니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 211" role="img" aria-label="점화식 수열이 2까지 남긴 간격을 n 1,2,3,6,7에서 정확한 분수로 기록">
+<text class="f-cap" x="380" y="33" text-anchor="middle">2까지 남은 간격이 매번 2/3배</text>
+<text class="f-t" x="180" y="82" text-anchor="end">n</text>
+<rect class="f-box" x="206" y="58" width="94.8" height="38" rx="3"/>
+<text class="f-t" x="253.4" y="83" text-anchor="middle">1</text>
+<rect class="f-box" x="306.8" y="58" width="94.8" height="38" rx="3"/>
+<text class="f-t" x="354.2" y="83" text-anchor="middle">2</text>
+<rect class="f-box" x="407.6" y="58" width="94.8" height="38" rx="3"/>
+<text class="f-t" x="455" y="83" text-anchor="middle">3</text>
+<rect class="f-box" x="508.4" y="58" width="94.8" height="38" rx="3"/>
+<text class="f-t" x="555.8" y="83" text-anchor="middle">6</text>
+<rect class="f-box" x="609.2" y="58" width="94.8" height="38" rx="3"/>
+<text class="f-t" x="656.6" y="83" text-anchor="middle">7</text>
+<text class="f-t" x="180" y="128" text-anchor="end">aₙ</text>
+<rect class="f-box" x="206" y="104" width="94.8" height="38" rx="3"/>
+<text class="f-t" x="253.4" y="129" text-anchor="middle">0</text>
+<rect class="f-box" x="306.8" y="104" width="94.8" height="38" rx="3"/>
+<text class="f-t" x="354.2" y="129" text-anchor="middle">2/3</text>
+<rect class="f-box" x="407.6" y="104" width="94.8" height="38" rx="3"/>
+<text class="f-t" x="455" y="129" text-anchor="middle">10/9</text>
+<rect class="f-box" x="508.4" y="104" width="94.8" height="38" rx="3"/>
+<text class="f-t" x="555.8" y="129" text-anchor="middle">422/243</text>
+<rect class="f-box" x="609.2" y="104" width="94.8" height="38" rx="3"/>
+<text class="f-t" x="656.6" y="129" text-anchor="middle">1330/729</text>
+<text class="f-t" x="180" y="174" text-anchor="end">2−aₙ</text>
+<rect class="f-box" x="206" y="150" width="94.8" height="38" rx="3"/>
+<text class="f-t" x="253.4" y="175" text-anchor="middle">2</text>
+<rect class="f-box" x="306.8" y="150" width="94.8" height="38" rx="3"/>
+<text class="f-t" x="354.2" y="175" text-anchor="middle">4/3</text>
+<rect class="f-box" x="407.6" y="150" width="94.8" height="38" rx="3"/>
+<text class="f-t" x="455" y="175" text-anchor="middle">8/9</text>
+<rect class="f-soft" x="508.4" y="150" width="94.8" height="38" rx="3"/>
+<text class="f-t" x="555.8" y="175" text-anchor="middle">64/243</text>
+<rect class="f-soft" x="609.2" y="150" width="94.8" height="38" rx="3"/>
+<text class="f-t" x="656.6" y="175" text-anchor="middle">128/729</text>
+</svg>
+<figcaption>허용오차 1/5를 기준으로 n=6은 아직 멀고 n=7은 들어옵니다. 이후 간격은 더 줄어듭니다.</figcaption>
+</figure>
+<p>점화식에 극한 숫자를 넣고 푸는 것만으로는 수렴을 보장하지 않습니다. <var>b₁=1, bₙ₊₁=-bₙ</var>에서는 극한이 있다면 <var>L=-L</var>이므로 후보는 0이지만, 항은 ±1을 반복해 0의 어느 작은 허용오차에도 계속 들지 않습니다.</p>
+<div class="check" data-q="q5"></div>
+<div class="check" data-q="q6"></div>
+<h2>손계산을 Python으로 검산한다</h2>
+<pre data-example="python"><code>from fractions import Fraction as F
+
+for n in [28, 29, 30]:
+    a = F(2*n + 1, n + 2)
+    print(n, a, abs(a - 2) &lt; F(1, 10))
+
+a = F(0)
+for n in range(1, 8):
+    if n in [1, 2, 3, 6, 7]:
+        print(n, a, 2 - a, 2 - a &lt; F(1, 5))
+    a += (2 - a) / 3</code></pre>
+<pre data-output><code>28 19/10 False
+29 59/31 True
+30 61/32 True
+1 0 2 False
+2 2/3 4/3 False
+3 10/9 8/9 False
+6 422/243 64/243 False
+7 1330/729 128/729 True</code></pre>
+<p class="small">Python 3.14.6의 분수 연산으로 실행했습니다. 특히 <var>n=28</var>에서 오차가 정확히 1/10이라 <code>False</code>입니다. 뒤의 항들도 계속 조건을 만족한다는 사실은 본문의 감소 부등식으로 보장했습니다.</p>
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://www.jirka.org/ra/html/sec_seqsandlims.html">Jiří Lebl, Basic Analysis I §2.1 Sequences and Limits</a></li>
+<li><a href="ra01-1.html">RA01-1 상한과 완비성</a></li>
+<li><a href="../ca/ca01-1.html">CA01-1 수열의 접근</a></li>
+</ul>
+
+<h2>확인 문제</h2>
+<p>아직 풀지 않은 문제입니다. 먼저 식이나 근거를 적어 보고 해설을 확인합니다.</p>
+<div id="quiz"></div>
+
+<section class="work" id="tools"></section>
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

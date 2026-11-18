@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Stokes 정리로 공간 경계의 순환을 계산하기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e8c'/%3E%3Cpath d='M8 22V10m8 12V14m8 8V6' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="CA10-2">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+
+<header class="chapter">
+<p class="chap-sub">미적분 · CA10 곡면과 벡터 적분</p>
+<p class="chap-num">CA10·2</p>
+<h1>Stokes 정리로 공간 경계의 순환을 계산하기</h1>
+<p class="lead">곡면을 한 겹 벗겨 매개변수 평면에 펴면 경계 선적분을 Green 정리로 계산할 수 있습니다. 곡면 위에서 생기는 그 미분이 왜 벡터장의 회전과 법선의 내적이 되는지 증명합니다.</p>
+</header>
+
+<div class="goal">
+<h2>이 장을 읽고 나면</h2>
+<ul>
+<li>회전의 성분을 구하고 양의 경계 방향을 법선에서 읽는다.</li>
+<li>곡면 한 조각의 Stokes 정리를 Green 정리로 증명한다.</li>
+<li>같은 기울어진 삼각형에서 선적분·회전의 유속을 각각 계산한다.</li>
+</ul>
+</div>
+<h2>순환을 측정하는 세 좌표 방향</h2>
+
+<p>평면의 Green 정리에서 <var>Qₓ−Pᵧ</var>는 한 점을 둘러싼 작은 사각형을 반시계로 돌 때의 순환을 사각형의 면적으로 나누고, 사각형을 그 점으로 줄여 얻는 극한입니다. 공간에서는 회전축에 따라 가로지르는 평면이 달라집니다. <var>F=(P,Q,R)</var>에서 <var>yz</var>평면의 대응 성분은 <var>Rᵧ−Q_z</var>, <var>zx</var>평면에서는 <var>P_z−Rₓ</var>, <var>xy</var>평면에서는 <var>Qₓ−Pᵧ</var>입니다. 평면에서 좌표를 순서대로 놓아 오른손 방향을 정합니다. 세 값을 모은 벡터를 <b class="key">회전</b>(curl)이라 부릅니다.</p>
+<div class="calc"><var>curl F = ∇×F = (Rᵧ−Q<sub>z</sub>, P<sub>z</sub>−Rₓ, Qₓ−Pᵧ).</var></div>
+<p>예로 <var>F=(-y,x²,x)</var>에서 <var>curl F=(0,-1,2x+1)</var>입니다. 첫째는 두 미분이 모두 0, 둘째는 <var>0−1</var>, 셋째는 <var>2x−(-1)</var>입니다. 법선이 축 방향과 일치하지 않을 때는 이 회전벡터와 법선의 내적을 사용합니다.</p>
+<div class="check" data-q="q1"></div>
+
+<h2>경계는 곡면이 정해 주는 방향으로 돈다</h2>
+
+<div class="box"><p class="box-k">Stokes 정리</p>
+<p><var>S</var>를 콤팩트한(공간에서 닫히고 유계인) 방향 있는 조각별 매끄러운 곡면으로 둡니다. 여기서 방향을 준다는 것은 매끄러운 각 조각에서 단위법선을 연속적으로 고르고 맞닿은 조각들에서 방향을 일관되게 잇는다는 뜻입니다. 예를 들어 유한 개의 닫히고 유계인 매개변수 영역의 매끄러운 곡면 조각을 이어 얻는 곡면입니다. 경계 <var>∂S</var>는 조각별로 매끄럽고, <var>F</var>는 <var>S</var>와 경계를 포함하는 열린 집합에서 연속 미분 가능하다고 합시다. 경계와 법선을 호환되게 고르면</p>
+<div class="calc"><var>∮<sub>∂S</sub>F·dr = ∬<sub>S</sub>(curl F)·n dS.</var></div>
+</div>
+<p>오른손 엄지 방향이 법선이고, 감아 쥔 손가락이 가리키는 쪽이 경계의 양의 방향입니다. 이를 경계 가까이에서 해석하면, 고른 법선 방향으로 머리를 두고 경계를 걸을 때 곡면이 왼쪽에 놓입니다. 예로 수평 원판의 위쪽 법선은 위에서 보아 반시계 경계를 정합니다. 법선 또는 경계 방향을 하나만 뒤집으면 두 적분의 부호가 어긋납니다. 둘을 함께 뒤집으면 등식은 유지됩니다.</p>
+<p>위쪽 법선의 <var>xy</var> 평면 조각에서는 오른쪽 적분함수가 정확히 <var>Qₓ−Pᵧ</var>이고, 경계에는 <var>dz=0</var>입니다. 이때는 Green 정리의 순환형이 됩니다. 공간에서 경계는 면이 있어야 정해집니다. 닫힌 공간곡선이라고 해서 어떤 평면 영역의 경계에 자동으로 해당하지는 않습니다.</p>
+<div class="check" data-q="q2"></div>
+<div class="check" data-q="q3"></div>
+
+<h2>매개변수 평면에서 Green 정리를 적용한다</h2>
+
+<p>한 조각을 충분히 매끄러운 정칙 매개화 <var>r(u,v)</var>로 한 번 덮고 방향을 <var>rᵤ×rᵥ</var>로 잡읍시다. 경계의 미소 변위는 <var>dr=rᵤdu+rᵥdv</var>입니다. 평면 매개변수 영역 <var>D</var>의 양의 경계를 따라가면, 그 이미지는 위 방향과 호환됩니다. 평면 Green 정리에 <var>A(u,v)=F(r(u,v))·rᵤ</var>, <var>B(u,v)=F(r(u,v))·rᵥ</var>를 넣으면 왼쪽은 <var>∮(A du+B dv)</var>입니다. 이를 평면 안쪽으로 옮기면 <var>∬(∂ᵤB−∂ᵥA)du dv</var>입니다.</p>
+<p><b>미분을 전개한다.</b> 곱의 미분에서 <var>F(r)·rᵥᵤ</var>와 <var>F(r)·rᵤᵥ</var>는 이계 미분이 연속이므로 상쇄됩니다. 행렬 <var>JF</var>의 (i,j) 성분을 <var>∂ⱼFᵢ</var>로 쓰면, 합성함수의 미분에서 남은 값은 아래와 같습니다.</p>
+<div class="calc"><var>∂ᵤB−∂ᵥA = (JF·rᵤ)·rᵥ − (JF·rᵥ)·rᵤ = (curl F)·(rᵤ×rᵥ).</var></div>
+<p>마지막 등식의 한 쌍을 직접 확인하세요. x,y 성분에서 나오는 항들은 <var>Qₓ(rᵤₓrᵥᵧ−rᵥₓrᵤᵧ)+Pᵧ(rᵤᵧrᵥₓ−rᵥᵧrᵤₓ)</var>입니다. 정리하면 <var>(Qₓ−Pᵧ)(rᵤₓrᵥᵧ−rᵤᵧrᵥₓ)</var>로, 회전의 z성분에 외적의 z성분을 곱한 결과입니다. y,z와 z,x 쌍에서도 같은 방식으로 나머지 두 성분을 얻습니다. 이 사실과 <var>n dS=(rᵤ×rᵥ)du dv</var>를 합치면 한 조각에서 정리가 증명됩니다.</p>
+<p>처음부터 한 매개화로 곡면을 덮기 어려운 경우에는 방향에 맞춘 조각을 이어 붙입니다. 공통 경계는 양쪽 조각에서 반대 방향을 가져 적분에서 상쇄됩니다. 이 설명은 유한 개의 그런 조각으로 나누는 경우를 대상으로 합니다.</p>
+<div class="check" data-q="q4"></div>
+
+<h2>같은 공간 삼각형에서 양쪽을 직접 비교한다</h2>
+
+<p><var>S</var>는 <var>0≤y≤x≤1</var> 위의 <var>z=x+2y</var>이며 위쪽을 고릅니다. <var>F=(-y,x²,x)</var>이고 <var>n dS=(-1,-2,1)dxdy</var>입니다. 회전의 유속 적분함수는 <var>(0,-1,2x+1)·(-1,-2,1)=2x+3</var>입니다. 먼저 y를 적분하면 <var>x(2x+3)</var>이고, 0부터 1까지 적분하면 <var>2/3+3/2=13/6</var>입니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 283" role="img" aria-label="기울어진 삼각형의 위 법선은 (−1,−2,1), 모서리 방향은 A에서 B에서 C에서 A. 각 변의 선적분은 1/2, 3, −4/3">
+<text class="f-cap" x="380" y="28" text-anchor="middle">위 법선에 맞추어 경계를 A → B → C → A로 걷는다</text>
+<polygon class="f-soft" points="161,224 296,179 246,120"/>
+<line class="f-line" x1="161" y1="224" x2="296" y2="179"/>
+<line class="f-line" x1="296" y1="179" x2="246" y2="120"/>
+<line class="f-line" x1="246" y1="120" x2="161" y2="224"/>
+<line class="f-line" x1="194" y1="213" x2="247" y2="195" marker-end="url(#f-arrow)"/>
+<line class="f-line" x1="284" y1="165" x2="266" y2="144" marker-end="url(#f-arrow)"/>
+<line class="f-line" x1="224" y1="147" x2="194" y2="184" marker-end="url(#f-arrow)"/>
+<line class="f-line" x1="234" y1="175" x2="221" y2="81" marker-end="url(#f-arrow)"/>
+<text class="f-cap" x="220" y="66" text-anchor="middle">위 법선</text>
+<text class="f-t" x="114" y="234" text-anchor="middle">A=(0,0,0)</text>
+<text class="f-t" x="371" y="194" text-anchor="middle">B=(1,0,1)</text>
+<text class="f-t" x="310" y="111" text-anchor="middle">C=(1,1,3)</text>
+<text class="f-cap" x="516" y="99" text-anchor="middle">A → B     +1/2</text>
+<text class="f-cap" x="516" y="144" text-anchor="middle">B → C       +3</text>
+<text class="f-cap" x="516" y="189" text-anchor="middle">C → A     −4/3</text>
+<text class="f-cap" x="516" y="230" text-anchor="middle">합계       13/6</text>
+</svg>
+<figcaption>원래 밑면에서 반시계 방향으로 걷는 순서를 높이 z=x+2y로 그대로 올렸습니다. 법선을 뒤집으면 세 변의 진행 방향도 모두 뒤집습니다.</figcaption>
+</figure>
+<p>경계에서는 <var>F·dr=-y dx+x²dy+x dz</var>입니다. (0,0,0)에서 (1,0,1)로 가는 첫 변에서 <var>y=0,z=x</var>라 <var>∫<sub>0</sub><sup>1</sup>x dx=1/2</var>입니다. 둘째 변은 <var>x=1,z=1+2y</var>이므로 <var>∫<sub>0</sub><sup>1</sup>(1+2)dy=3</var>입니다. 마지막 대각선은 <var>(x,y,z)=(t,t,3t)</var>를 <var>1→0</var>으로 지나서 <var>∫<sub>1</sub><sup>0</sup>(t²+2t)dt=-4/3</var>입니다. 합은 <var>1/2+3-4/3=13/6</var>으로 같습니다.</p>
+<div class="check" data-q="q5"></div>
+
+<h2>같은 경계를 가진 다른 곡면을 선택할 수 있다</h2>
+
+<p>벡터장 <var>F=(-y/2,x/2,0)</var>에서 <var>curl F=(0,0,1)</var>입니다. <var>z=0</var>의 단위원이 경계인 위쪽 원판에서 이 회전의 유속은 <var>π</var>입니다. 같은 원을 경계로 갖는 단위 상반구를 바깥 방향으로 잡으면, 경계도 위에서 볼 때 반시계가 됩니다. 따라서 Stokes 정리에 의해 이 곡면에서도 회전의 유속이 <var>π</var>입니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 236" role="img" aria-label="상반구와 수평 원판은 단위원 경계를 공유한다. 둘의 방향을 위로 맞추면 반시계 경계와 플럭스 파이가 같다">
+<text class="f-cap" x="380" y="27" text-anchor="middle">같은 단위원을 경계로 갖는 두 곡면</text>
+<path d="M 77 168 a105 34 0 1 0 210 0 a105 34 0 1 0 -210 0" class="f-soft"/>
+<path d="M 420 168 a105 34 0 1 0 210 0 a105 34 0 1 0 -210 0" class="f-soft"/>
+<path d="M 420 168 a105 105 0 1 1 210 0" class="f-line" fill="none"/>
+<path d="M 287 168 a105 34 0 0 0 -26 -23" class="f-line" fill="none" marker-end="url(#f-arrow)"/>
+<path d="M 630 168 a105 34 0 0 0 -26 -23" class="f-line" fill="none" marker-end="url(#f-arrow)"/>
+<line class="f-line" x1="182" y1="168" x2="182" y2="101" marker-end="url(#f-arrow)"/>
+<line class="f-line" x1="525" y1="63" x2="525" y2="42" marker-end="url(#f-arrow)"/>
+<text class="f-cap" x="182" y="224" text-anchor="middle">위쪽 원판</text>
+<text class="f-cap" x="525" y="224" text-anchor="middle">바깥쪽 상반구</text>
+</svg>
+<figcaption>두 경계가 같은 반시계 방향을 가지면 Stokes 정리가 주는 curl 유속도 같습니다.</figcaption>
+</figure>
+<p>상반구에서 직접 확인할 수 있습니다. <var>r(φ,θ)=(sin φ cos θ,sin φ sin θ,cos φ)</var>, <var>0≤φ≤π/2</var>, <var>0≤θ≤2π</var>로 쓰면 <var>r<sub>φ</sub>×r<sub>θ</sub></var>의 z성분은 <var>cos φ sin φ</var>입니다. 이 항을 <var>φ</var>에 대해 적분하면 <var>1/2</var>, <var>θ</var>까지 적분하면 <var>π</var>입니다. 극 한 점과 이음선은 다른 좌표로 덮거나 그 주변의 면적이 작아지는 극한으로 처리할 수 있습니다.</p>
+<p>곡면을 교체하려면 경계의 모양과 방향이 같고 장이 각각의 곡면 근방에서 필요한 미분을 가져야 합니다. 예컨대 <var>F=(-y/(x²+y²),x/(x²+y²),0)</var>를 단위원의 원판에 적용할 수는 없습니다. 원판 중심에서 장이 정의되지 않아 회전이 0이라는 정보를 원판 전체에 적분할 수 없기 때문입니다.</p>
+<div class="check" data-q="q6"></div>
+<h2>손계산을 Python으로 검산한다</h2>
+<pre data-example="python"><code>from fractions import Fraction as F
+
+def integrate(f):
+    return (f(F(0)) + 4*f(F(1, 2)) + f(F(1))) / 6
+
+edges = (
+    integrate(lambda x: x),
+    integrate(lambda y: F(3)),
+    -integrate(lambda t: t*t + 2*t),
+)
+curl_flux = integrate(lambda x: x * (2*x + 3))
+print(&quot;boundary edges:&quot;, &quot;, &quot;.join(map(str, edges)))
+print(&quot;boundary and curl flux:&quot;, sum(edges), curl_flux)
+print(&quot;hemisphere curl flux / pi:&quot;, 2 * F(1, 2))</code></pre>
+<pre data-output><code>boundary edges: 1/2, 3, -4/3
+boundary and curl flux: 13/6 13/6
+hemisphere curl flux / pi: 1</code></pre>
+<p class="small">Python 3.14.6으로 실행했습니다. 마지막 줄은 구면에서 θ 적분이 <var>2π</var>, φ 적분이 <var>1/2</var>라는 손계산을 그대로 곱합니다.</p>
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://openstax.org/books/calculus-volume-3/pages/6-7-stokes-theorem">OpenStax, Calculus Volume 3 §6.7 Stokes’ Theorem</a></li>
+<li><a href="https://ocw.mit.edu/courses/18-02sc-multivariable-calculus-fall-2010/41527923bc920dd4aace150f72a87f96_MIT18_02SC_MNotes_v13.3.pdf">MIT 18.02SC Mattuck, Stokes 정리의 증명</a></li>
+<li><a href="ca09-3.html">CA09-3 Green 정리</a></li>
+</ul>
+
+<h2>확인 문제</h2>
+<p>아직 풀지 않은 문제입니다. 먼저 식이나 근거를 적어 보고 해설을 확인합니다.</p>
+<div id="quiz"></div>
+
+<section class="work" id="tools"></section>
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

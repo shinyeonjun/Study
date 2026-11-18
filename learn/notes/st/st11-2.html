@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>점수함수와 Fisher 정보로 추정 오차의 하한 구하기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="ST11-2">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">통계 · ST11 우도·충분통계량·추정</p>
+<p class="chap-num">ST11·2</p>
+<h1>점수함수와 Fisher 정보로 추정 오차의 하한 구하기</h1>
+<p class="lead">같은 성공 수라도 어느 p에서 우도를 읽는지에 따라 기울기가 달라집니다. 점수의 반복 변동을 계산하고, 불편 추정량의 분산이 내려갈 수 있는 범위를 증명합니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2>
+<ul>
+<li>점수, 관측 정보, Fisher 정보를 구별한다.</li>
+<li>Bernoulli와 알려진 분산의 정규모형에서 정보를 유도한다.</li>
+<li>정규 조건 아래 Cramér–Rao 하한을 증명하고 달성 조건을 찾는다.</li>
+</ul></div>
+<h2>기울기 하나를 관측값으로 본다</h2>
+<p>새로 자료를 받기 전에 <var>S<sub>θ</sub>(X)=∂ℓ(θ;X)/∂θ</var>를 확률변수로 생각합시다. 이를 <b class="key">점수(score)</b>라고 합니다. Bernoulli 한 번에서 점수는 <var>X/p−(1−X)/(1−p)=(X−p)/[p(1−p)]</var>입니다. p가 1/4일 때 성공하면 4, 실패하면 −4/3입니다. 기울기의 부호는 그 관측이 모형의 모수를 어느 방향으로 밀어주는지 나타냅니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 215" role="img" aria-label="p=1/4인 베르누이에서 점수는 성공일 때 4, 실패일 때 −4/3이다.">
+<text class="f-cap" x="380" y="30" text-anchor="middle">한 관측에서 가능한 점수</text>
+<rect class="f-soft" x="57" y="49" width="148" height="38"/>
+<text class="f-t" x="131" y="73" text-anchor="middle">관측 X</text>
+<rect class="f-soft" x="205" y="49" width="140" height="38"/>
+<text class="f-t" x="275" y="73" text-anchor="middle">확률</text>
+<rect class="f-soft" x="345" y="49" width="190" height="38"/>
+<text class="f-t" x="440" y="73" text-anchor="middle">점수 S</text>
+<rect class="f-soft" x="535" y="49" width="168" height="38"/>
+<text class="f-t" x="619" y="73" text-anchor="middle">S²</text>
+<rect class="f-box" x="57" y="87" width="148" height="38"/>
+<text class="f-s" x="131" y="111" text-anchor="middle">1</text>
+<rect class="f-box" x="205" y="87" width="140" height="38"/>
+<text class="f-s" x="275" y="111" text-anchor="middle">1/4</text>
+<rect class="f-box" x="345" y="87" width="190" height="38"/>
+<text class="f-s" x="440" y="111" text-anchor="middle">4</text>
+<rect class="f-box" x="535" y="87" width="168" height="38"/>
+<text class="f-s" x="619" y="111" text-anchor="middle">16</text>
+<rect class="f-box" x="57" y="125" width="148" height="38"/>
+<text class="f-s" x="131" y="149" text-anchor="middle">0</text>
+<rect class="f-box" x="205" y="125" width="140" height="38"/>
+<text class="f-s" x="275" y="149" text-anchor="middle">3/4</text>
+<rect class="f-box" x="345" y="125" width="190" height="38"/>
+<text class="f-s" x="440" y="149" text-anchor="middle">−4/3</text>
+<rect class="f-box" x="535" y="125" width="168" height="38"/>
+<text class="f-s" x="619" y="149" text-anchor="middle">16/9</text>
+<rect class="f-box" x="57" y="163" width="148" height="38"/>
+<text class="f-s" x="131" y="187" text-anchor="middle">확률로 평균</text>
+<rect class="f-box" x="205" y="163" width="140" height="38"/>
+<text class="f-s" x="275" y="187" text-anchor="middle">1</text>
+<rect class="f-box" x="345" y="163" width="190" height="38"/>
+<text class="f-s" x="440" y="187" text-anchor="middle">0</text>
+<rect class="f-box" x="535" y="163" width="168" height="38"/>
+<text class="f-s" x="619" y="187" text-anchor="middle">16/3</text>
+</svg><figcaption>성공과 실패의 점수는 달라도, 같은 모형에서 반복한 평균은 0이다.</figcaption></figure>
+<p>한 관측의 <b class="key">Fisher 정보</b>는 여기서 <var>I<sub>1</sub>(θ)=E<sub>θ</sub>[S<sub>θ</sub>²]</var>입니다. 점수 평균이 0일 때 점수의 분산과 같습니다. Bernoulli에서 <var>Var(X)=p(1−p)</var>를 쓰면 <var>I<sub>1</sub>(p)=1/[p(1−p)]</var>입니다. 예에서는 <var>16/3</var>입니다. <b class="key">관측 정보</b> <var>−ℓ″(θ;x)</var>는 받은 자료 x의 곡률입니다. Bernoulli n개의 관측 정보는 <var>s/p²+(n−s)/(1−p)²</var>입니다. Fisher 정보는 모집단 모형 아래 평균한 양입니다.</p>
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+<h2>평균 0과 곡률 식에 필요한 조건</h2>
+<p>모수 θ가 열린 구간의 내부에 있고, 모수에 따라서 양의 밀도를 가진 관측 범위가 바뀌지 않는 모형을 생각합시다. 밀도 또는 확률질량이 해당 θ에서 충분히 매끄럽고 적분 또는 합과 미분을 교환할 수 있다고 가정합니다. 이때 <var>∂f<sub>θ</sub>=f<sub>θ</sub>S<sub>θ</sub></var>이므로</p>
+<div class="eq"><var>E<sub>θ</sub>[S<sub>θ</sub>]=∫ ∂f<sub>θ</sub>(x) dx=∂(∫ f<sub>θ</sub>(x) dx)=∂1=0.</var></div>
+<p>이산이면 적분을 합으로 읽습니다. 한 번 더 미분을 교환할 조건이 있으면 <var>∂²f<sub>θ</sub>=f<sub>θ</sub>(S<sub>θ</sub>²+ℓ″)</var>이고 그 적분은 0입니다. 따라서 <var>I<sub>1</sub>=E[−ℓ″]</var>입니다. 모수와 함께 관측 범위가 움직이는 모형에서는 경계 기여가 생길 수 있습니다. 다음 장에서 이 식이 실패하는 사례를 계산합니다.</p>
+<p>독립인 n개의 점수는 더해집니다. 교차항의 평균은 독립과 점수 평균 0 때문에 모두 0입니다. 같은 모형의 표본이라면 <var>I<sub>n</sub>=nI<sub>1</sub></var>입니다. 알려진 분산 <var>v</var>의 독립 정규 표본에서 평균 μ의 점수는 <var>Σ(X<sub>i</sub>−μ)/v</var>이고, 곡률에 음수를 붙이면 자료와 무관한 <var>n/v</var>입니다. 그러므로 μ에 대한 Fisher 정보는 <var>n/v</var>입니다.</p>
+<div class="check" data-q="q3"></div>
+<div class="check" data-q="q4"></div>
+<h2>점을 잘 맞힐 수 있는 정도에 하한을 둔다</h2>
+<p>모수 하나를 추정하며 통계량 <var>T(X)</var>가 모든 θ에서 <var>E<sub>θ</sub>[T]=θ</var>라고 합시다. T는 모수를 모르는 채 자료로만 계산합니다. <var>∂E[T]=E[TS]</var>가 성립하도록 T를 곱한 적분도 미분과 교환할 수 있고, 분산과 정보가 유한하며 정보가 양수라고 가정합니다. 그러면 <var>1=E[TS]=Cov(T,S)</var>입니다. 첫 등식은 불편성의 양변을 θ로 미분했고, 둘째는 점수 평균이 0이라 맞습니다.</p>
+<div class="eq"><var>1 = Cov(T,S)² ≤ Var(T)·Var(S)=Var(T)·I<sub>n</sub>(θ), 따라서 Var(T) ≥ 1/I<sub>n</sub>(θ).</var></div>
+<p>이것이 <b class="key">Cramér–Rao 분산 하한</b>입니다. Cauchy–Schwarz 부등식에서 등호가 되려면 중심을 뺀 <var>T−θ</var>가 점수의 상수배여야 합니다. Bernoulli 표본의 합 점수는 <var>n(p̂−p)/[p(1−p)]</var>라, 표본 비율의 분산 <var>p(1−p)/n</var>이 하한을 달성합니다. 알려진 분산의 정규 평균도 <var>x̄−μ</var>가 점수의 상수배여서 하한 <var>v/n</var>입니다. 이 하한은 각 모형에서 가정을 만족하는 불편 추정량의 분산에 해당합니다. 편향이 있는 추정량의 MSE를 이 값과 곧바로 비교해 우열을 판정할 수 없습니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 215" role="img" aria-label="p=1/4에서 표본 크기 1,2,4에 대한 정보 16/3,32/3,64/3과 분산 하한 3/16,3/32,3/64.">
+<text class="f-cap" x="380" y="30" text-anchor="middle">독립 표본을 두 배로 모으면</text>
+<rect class="f-soft" x="66" y="49" width="164" height="38"/>
+<text class="f-t" x="148" y="73" text-anchor="middle">관측 수 n</text>
+<rect class="f-soft" x="230" y="49" width="219" height="38"/>
+<text class="f-t" x="339.5" y="73" text-anchor="middle">표본 Fisher 정보 Iₙ</text>
+<rect class="f-soft" x="449" y="49" width="245" height="38"/>
+<text class="f-t" x="571.5" y="73" text-anchor="middle">불편 추정량의 분산 하한</text>
+<rect class="f-box" x="66" y="87" width="164" height="38"/>
+<text class="f-s" x="148" y="111" text-anchor="middle">1</text>
+<rect class="f-box" x="230" y="87" width="219" height="38"/>
+<text class="f-s" x="339.5" y="111" text-anchor="middle">16/3</text>
+<rect class="f-box" x="449" y="87" width="245" height="38"/>
+<text class="f-s" x="571.5" y="111" text-anchor="middle">3/16</text>
+<rect class="f-box" x="66" y="125" width="164" height="38"/>
+<text class="f-s" x="148" y="149" text-anchor="middle">2</text>
+<rect class="f-box" x="230" y="125" width="219" height="38"/>
+<text class="f-s" x="339.5" y="149" text-anchor="middle">32/3</text>
+<rect class="f-box" x="449" y="125" width="245" height="38"/>
+<text class="f-s" x="571.5" y="149" text-anchor="middle">3/32</text>
+<rect class="f-box" x="66" y="163" width="164" height="38"/>
+<text class="f-s" x="148" y="187" text-anchor="middle">4</text>
+<rect class="f-box" x="230" y="163" width="219" height="38"/>
+<text class="f-s" x="339.5" y="187" text-anchor="middle">64/3</text>
+<rect class="f-box" x="449" y="163" width="245" height="38"/>
+<text class="f-s" x="571.5" y="187" text-anchor="middle">3/64</text>
+</svg><figcaption>표본 비율의 SD는 하한의 제곱근이라 관측 수를 두 배로 해도 절반이 되지는 않는다.</figcaption></figure>
+<div class="check" data-q="q5"></div>
+<div class="check" data-q="q6"></div>
+<h2>이어 풀기와 증명</h2>
+<p>곱이 되는 부분은 독립으로, 부등식을 만드는 부분은 분산과 공분산으로 설명합니다. 마지막 문제에서는 표본 크기를 바꿔 같은 계산을 다시 검산합니다.</p>
+<div class="check" data-q="q7"></div>
+<div class="check" data-q="q8"></div>
+<div class="check" data-q="q9"></div>
+<h2>파이썬으로 같은 계산 검산하기</h2>
+<pre data-example="python"><code>from fractions import Fraction as F
+from math import comb
+
+n, p = 4, F(1, 4)
+score_mean = F(0)
+information = F(0)
+estimator_variance = F(0)
+for s in range(n + 1):
+    mass = comb(n, s) * p**s * (1 - p)**(n - s)
+    score = (s - n*p) / (p*(1 - p))
+    estimate = F(s, n)
+    score_mean += mass * score
+    information += mass * score**2
+    estimator_variance += mass * (estimate - p)**2
+
+assert score_mean == 0
+assert estimator_variance == 1 / information
+print(&quot;mean score:&quot;, score_mean)
+print(&quot;sample information:&quot;, information)
+print(&quot;bound and variance:&quot;, 1 / information, estimator_variance)</code></pre>
+<p class="aside">실행 결과</p>
+<pre data-output><code>mean score: 0
+sample information: 64/3
+bound and variance: 3/64 3/64</code></pre>
+<p>실행은 가능한 성공 수 0~4를 모두 더합니다. 성공 수의 확률에는 그 수를 만드는 순서 개수 <var>C(n,s)</var>가 들어가야 합니다. 점수나 추정값에는 순서가 필요 없으므로 이 합은 16개 기록을 열거하는 계산과 같습니다.</p>
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://ocw.mit.edu/courses/18-655-mathematical-statistics-spring-2016/resources/lecture-notes/">MIT 18.655 · Mathematical Statistics 강의 노트</a></li>
+<li><a href="https://ocw.mit.edu/courses/18-650-statistics-for-applications-fall-2016/pages/lecture-notes/">MIT 18.650 · Statistics for Applications 강의 노트</a></li>
+<li><a href="st11-1.html">ST11-1 우도 인수분해</a></li>
+</ul>
+<h2>확인 문제</h2>
+<p>조건과 단위를 먼저 적은 뒤 해설을 확인합니다.</p>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

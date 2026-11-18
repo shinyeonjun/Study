@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>발산정리로 닫힌 표면과 입체 내부를 비교하기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e8c'/%3E%3Cpath d='M8 22V10m8 12V14m8 8V6' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="CA10-3">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+
+<header class="chapter">
+<p class="chap-sub">미적분 · CA10 곡면과 벡터 적분</p>
+<p class="chap-num">CA10·3</p>
+<h1>발산정리로 닫힌 표면과 입체 내부를 비교하기</h1>
+<p class="lead">입체를 통과해 빠져나가는 순유속을 두 방법으로 구합니다. 작은 상자의 맞은편 면에서 시작해 발산정리를 유도하고, 어느 정리를 쓸지 경계와 방향으로 결정합니다.</p>
+</header>
+
+<div class="goal">
+<h2>이 장을 읽고 나면</h2>
+<ul>
+<li>발산의 정의와 닫힌 표면의 바깥 방향을 설명한다.</li>
+<li>직육면체에서 발산정리를 기본정리로 유도한다.</li>
+<li>쐐기의 모든 면과 내부를 직접 비교하고 세 정리를 조건에 맞춰 선택한다.</li>
+</ul>
+</div>
+<h2>안에서 모이고 나가는 정도를 편미분으로 잰다</h2>
+
+<p>정육면체의 오른쪽에서 나가는 x 성분의 흐름과 왼쪽에서 들어오는 흐름을 빼 봅시다. 장 <var>F=(P,Q,R)</var>가 위치에 따라 변하면 두 값은 같을 필요가 없습니다. 오른쪽 면의 바깥 법선은 +x, 왼쪽 면의 바깥 법선은 −x입니다. 좁은 너비 <var>Δx</var>에서 두 면의 단위 면적당 유속 합은 <var>P(x+Δx,y,z)−P(x,y,z)</var>이고, 면적을 곱한 뒤 상자 부피로 나누면 <var>Pₓ</var>에 가까워집니다. 다른 두 좌표방향도 같은 방식으로 기여합니다.</p>
+<div class="calc"><var>div F = ∇·F = Pₓ+Qᵧ+R<sub>z</sub>.</var></div>
+<p>이 스칼라를 <b class="key">발산</b>이라 부릅니다. 양수면 작은 부피에서 바깥으로 나가는 양이 들어오는 양보다 크고, 음수면 그 반대입니다. 벡터장 자체의 크기를 말하는 것이 아닙니다. <var>F=(100,0,0)</var>은 양쪽 면의 양이 같아 발산이 0입니다. 속도장이 m/s라면 발산의 단위는 1/s이고, 부피 m³에 적분하면 유속 m³/s입니다.</p>
+<div class="box"><p class="box-k">발산정리 · Gauss 정리</p>
+<p><var>V</var>를 유계 입체, <var>∂V</var>를 그 닫힌 조각별 매끄러운 전체 경계로 둡니다. 장 <var>F</var>가 경계를 포함한 <var>V</var>의 열린 이웃에서 연속 미분 가능하고 단위법선 <var>n</var>이 각 면에서 바깥을 향하면</p>
+<div class="calc"><var>∬<sub>∂V</sub> F·n dS = ∭<sub>V</sub> div F dV.</var></div>
+<p>내부에 빈 구멍이 있다면 그 구멍과 맞닿는 면도 전체 경계에 들어갑니다. 그 면의 바깥쪽은 입체의 재료가 없는 쪽입니다.</p></div>
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+
+<h2>직육면체에서는 면 두 장씩 일변수 적분으로 바뀐다</h2>
+
+<p><var>V=[a,b]×[c,d]×[e,f]</var>입니다. <var>n=(1,0,0)</var>인 <var>x=b</var>면과 <var>n=(-1,0,0)</var>인 <var>x=a</var>면을 합치면 <var>∫<sub>e</sub><sup>f</sup>∫<sub>c</sub><sup>d</sup>[P(b,y,z)−P(a,y,z)]dy dz</var>입니다. 대괄호 안을 <var>∫<sub>a</sub><sup>b</sup>Pₓ(x,y,z)dx</var>로 바꾸면 x 쌍의 유속은 <var>∭<sub>V</sub>Pₓ dV</var>입니다. y 쌍에서도 안쪽에 <var>∫Qᵧdy</var>, z 쌍에서도 <var>∫R<sub>z</sub>dz</var>를 얻습니다. 편미분이 연속이라 이 직육면체에서 적분 순서를 교환할 수 있습니다. 세 값을 합하면 상자에서의 정리가 증명됩니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 211" role="img" aria-label="직육면체의 음의 좌표방향 세 면은 음의 성분을 더하고 양의 좌표방향 세 면은 양의 성분을 더한다">
+<text class="f-cap" x="380" y="33" text-anchor="middle">상자에서 맞은편 두 면이 만드는 항</text>
+<text class="f-t" x="180" y="82" text-anchor="end">x 방향</text>
+<rect class="f-box" x="206" y="58" width="246" height="38" rx="3"/>
+<text class="f-t" x="329" y="83" text-anchor="middle">왼쪽  −P(a,y,z)</text>
+<rect class="f-box" x="458" y="58" width="246" height="38" rx="3"/>
+<text class="f-t" x="581" y="83" text-anchor="middle">오른쪽  +P(b,y,z)</text>
+<text class="f-t" x="180" y="128" text-anchor="end">y 방향</text>
+<rect class="f-box" x="206" y="104" width="246" height="38" rx="3"/>
+<text class="f-t" x="329" y="129" text-anchor="middle">앞쪽  −Q(x,c,z)</text>
+<rect class="f-box" x="458" y="104" width="246" height="38" rx="3"/>
+<text class="f-t" x="581" y="129" text-anchor="middle">뒤쪽  +Q(x,d,z)</text>
+<text class="f-t" x="180" y="174" text-anchor="end">z 방향</text>
+<rect class="f-box" x="206" y="150" width="246" height="38" rx="3"/>
+<text class="f-t" x="329" y="175" text-anchor="middle">밑면  −R(x,y,e)</text>
+<rect class="f-box" x="458" y="150" width="246" height="38" rx="3"/>
+<text class="f-t" x="581" y="175" text-anchor="middle">윗면  +R(x,y,f)</text>
+</svg>
+<figcaption>각 쌍을 더한 값은 해당 성분의 편미분을 한 좌표에 대해 적분한 결과입니다.</figcaption>
+</figure>
+<p>다른 예로 z 방향의 단면이 <var>g(x,y)≤z≤h(x,y)</var>인 입체를 보세요. 윗면의 위쪽 면적벡터의 z성분은 +1, 아랫면의 아래쪽 면적벡터의 z성분은 −1입니다. 벡터장의 z성분만 따로 뽑으면 두 그래프 면은 <var>R(x,y,h)−R(x,y,g)</var>를 밑면에서 적분한 값, 곧 <var>∭R<sub>z</sub>dV</var>를 줍니다. 수직 옆면에서는 z방향 법선 성분이 0입니다. x,y 방향에도 해당 방향의 면을 각각 나눠 같은 방법을 쓸 수 있는 영역이라면 세 성분을 합칠 수 있습니다.</p>
+<p>그런 입체 조각들을 붙일 때는 내부의 공통 면에서 바깥 법선이 서로 반대여서 유속이 상쇄됩니다. 각 조각의 부피 적분은 그대로 합쳐집니다. 이 설명은 직육면체와 세 방향에서 그래프 조각으로 설명되는 경우의 유도를 제공합니다. 일반 정리는 위의 경계 매끄러움 조건에서 적용합니다.</p>
+<div class="check" data-q="q3"></div>
+
+<h2>쐐기의 부피 적분과 다섯 면의 직접 적분</h2>
+
+<p><var>V={0≤y≤x≤1, 0≤z≤x+2y}</var>, <var>F=(x,y,z)</var>라 둡니다. 발산은 3입니다. z를 적분한 부피는 <var>∫<sub>0</sub><sup>1</sup>∫<sub>0</sub><sup>x</sup>(x+2y)dy dx</var>입니다. 안쪽 적분은 <var>x²+x²=2x²</var>이므로 부피는 <var>2/3</var>, 발산의 체적 적분은 <var>3×(2/3)=2</var>입니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 307" role="img" aria-label="쐐기 모양 입체의 밑면은 0≤y≤x≤1인 삼각형, 높이는 x+2y. 바깥 유속은 x=1면에서만 2">
+<text class="f-cap" x="380" y="28" text-anchor="middle">쐐기의 모든 면을 더하면 x=1면만 남는다</text>
+<polygon class="f-box" points="143,216 278,241 228,266"/>
+<polygon class="f-soft" points="278,241 228,266 228,116 278,191"/>
+<polygon class="f-box" points="143,216 278,191 228,116"/>
+<line class="f-ink" x1="143" y1="216" x2="278" y2="241"/>
+<line class="f-ink" x1="143" y1="216" x2="228" y2="266"/>
+<line class="f-ink" x1="278" y1="191" x2="143" y2="216"/>
+<line class="f-ink" x1="228" y1="116" x2="143" y2="216"/>
+<line class="f-ink" x1="278" y1="241" x2="228" y2="266"/>
+<line class="f-ink" x1="278" y1="241" x2="278" y2="191"/>
+<line class="f-ink" x1="228" y1="266" x2="228" y2="116"/>
+<line class="f-ink" x1="278" y1="191" x2="228" y2="116"/>
+<line class="f-line" x1="253" y1="201" x2="325" y2="214" marker-end="url(#f-arrow)"/>
+<text class="f-s" x="216" y="95" text-anchor="middle">윗면 z=x+2y</text>
+<text class="f-t" x="348" y="222" text-anchor="middle">+x</text>
+<text class="f-cap" x="500" y="107" text-anchor="middle">x = 1면  유속 2</text>
+<text class="f-t" x="500" y="150" text-anchor="middle">윗면·밑면  유속 0</text>
+<text class="f-t" x="500" y="191" text-anchor="middle">y = 0면·y = x면  유속 0</text>
+<text class="f-cap" x="500" y="234" text-anchor="middle">부피 2/3 × 발산 3 = 2</text>
+</svg>
+<figcaption>진하게 표시된 면은 x=1에 놓입니다. 그 면에서만 위치벡터가 바깥 단위법선과 양의 내적을 갖습니다.</figcaption>
+</figure>
+<p>바깥 표면을 직접 적분할 때는 영역 조건이 어느 방향을 바깥으로 두는지 먼저 봅니다. <var>x=0</var>이면 <var>y=z=0</var>만 남아 별도의 면이 없습니다. 넓이가 있는 면 다섯 곳을 검사합니다.</p>
+<ul>
+<li>윗면 <var>z=x+2y</var>에서는 입체가 그 아래에 있으므로 바깥 면적벡터가 <var>(-1,-2,1)dxdy</var>입니다. 내적은 <var>-x-2y+z=0</var>입니다.</li>
+<li>밑면 <var>z=0</var>은 아래쪽을 향하며 장의 z성분이 0입니다. <var>y=0</var>면은 −y를 향하며 장의 y성분이 0입니다.</li>
+<li>비스듬한 옆면 <var>y=x</var>에서는 입체가 <var>y−x≤0</var> 쪽이므로 <var>(-1,1,0)</var> 방향이 바깥입니다. 면 위에서는 <var>-x+y=0</var>입니다.</li>
+<li><var>x=1</var>면은 +x를 향하고 <var>F·n=1</var>입니다. <var>0≤y≤1</var>, <var>0≤z≤1+2y</var>에서 적분하면 <var>∫<sub>0</sub><sup>1</sup>(1+2y)dy=2</var>입니다.</li>
+</ul>
+<p>다섯 면을 더한 2가 체적 적분과 일치합니다. 윗면만 떼면 열린 표면입니다. 문제에 그 면만 나왔다면 <a href="ca10-1.html">직접 유속 공식</a>을 쓰거나, 다른 면을 붙인 뒤 그 면들의 유속을 따로 빼야 합니다.</p>
+<div class="check" data-q="q4"></div>
+<div class="check" data-q="q5"></div>
+
+<h2>특이점에서 실패하는 이유와 세 정리 비교</h2>
+
+<p><b>반례.</b> 원점을 뺀 공간에서 <var>F=(x,y,z)/r³</var>, <var>r=√(x²+y²+z²)</var>라고 합시다. <var>r&gt;0</var>에서 편미분을 더하면 <var>div F=3/r³−3(x²+y²+z²)/r⁵=0</var>입니다. 하지만 단위구의 표면에서는 <var>F=n</var>이고 유속은 표면 넓이 <var>4π</var>입니다. 단위구 내부 전체에 장이 정의돼야 하는 발산정리의 가정이 원점에서 실패했기 때문입니다.</p>
+<p>반지름 a와 1 사이의 껍질(<var>0&lt;a&lt;1</var>)에서는 원점이 빠져 있어 정리를 적용할 수 있습니다. 바깥 구에서 <var>+4π</var>, 안쪽 구에서 법선이 원점을 향하므로 장과의 내적은 <var>-1/a²</var>입니다. 면적 <var>4πa²</var>를 곱한 안쪽 유속은 <var>-4π</var>입니다. 두 표면의 합은 내부 발산과 같은 0입니다.</p>
+<div class="table-wrap"><table><thead><tr><th scope="col">정리</th><th scope="col">경계의 적분</th><th scope="col">안쪽의 적분</th><th scope="col">방향 확인</th></tr></thead><tbody>
+<tr><th scope="row">Green 순환형</th><td>평면 폐곡선의 접선 순환</td><td>평면 영역에서 Qₓ−Pᵧ</td><td>진행 방향 왼쪽에 영역</td></tr>
+<tr><th scope="row">Green 유속형</th><td>평면 폐곡선을 가로지르는 유속</td><td>평면 영역에서 Pₓ+Qᵧ</td><td>곡선의 바깥 법선</td></tr>
+<tr><th scope="row">Stokes</th><td>공간곡면의 경계에서 접선 순환</td><td>곡면을 통과하는 curl F의 유속</td><td>법선과 경계를 오른손 규칙으로 연결</td></tr>
+<tr><th scope="row">발산정리</th><td>입체 전체를 감싼 표면의 유속</td><td>입체에서 div F</td><td>닫힌 표면의 바깥 법선</td></tr>
+</tbody></table></div>
+<p>Green 순환형은 위쪽을 향한 평면에 Stokes를 적용한 경우입니다. Green 유속형과 발산정리는 차원이 다르지만 둘 다 바깥 법선 성분과 내부 발산을 잇습니다. 정리를 선택할 때는 계산하고 싶은 양이 접선 순환인지 법선 유속인지, 덮을 영역이 평면·곡면·입체 중 어디에 놓이는지, 장이 적분 영역 전체에서 매끄러운지 확인하세요.</p>
+<div class="check" data-q="q6"></div>
+<h2>손계산을 Python으로 검산한다</h2>
+<pre data-example="python"><code>from fractions import Fraction as F
+
+def integrate(f):
+    return (f(F(0)) + 4*f(F(1, 2)) + f(F(1))) / 6
+
+volume = integrate(lambda x: 2*x*x)
+inside = 3 * volume
+faces = {&quot;top&quot;: F(0), &quot;bottom&quot;: F(0), &quot;y=0&quot;: F(0),
+         &quot;y=x&quot;: F(0), &quot;x=1&quot;: integrate(lambda y: 1 + 2*y)}
+print(&quot;volume:&quot;, volume)
+for name, flux in faces.items():
+    print(name, flux)
+print(&quot;surface and interior:&quot;, sum(faces.values()), inside)</code></pre>
+<pre data-output><code>volume: 2/3
+top 0
+bottom 0
+y=0 0
+y=x 0
+x=1 2
+surface and interior: 2 2</code></pre>
+<p class="small">Python 3.14.6으로 실행했습니다. 0인 면은 내적을 손계산한 값이고, <code>volume</code>과 <code>x=1</code>은 남은 다항식을 분수로 적분한 결과입니다.</p>
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://openstax.org/books/calculus-volume-3/pages/6-8-the-divergence-theorem">OpenStax, Calculus Volume 3 §6.8 The Divergence Theorem</a></li>
+<li><a href="https://ocw.mit.edu/courses/18-02-multivariable-calculus-fall-2007/pages/lecture-notes/">MIT 18.02, 강의 28–29</a></li>
+<li><a href="ca10-2.html">CA10-2 Stokes 정리</a></li>
+</ul>
+
+<h2>확인 문제</h2>
+<p>아직 풀지 않은 문제입니다. 먼저 식이나 근거를 적어 보고 해설을 확인합니다.</p>
+<div id="quiz"></div>
+
+<section class="work" id="tools"></section>
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

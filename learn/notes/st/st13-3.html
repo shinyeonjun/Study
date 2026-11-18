@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>쌍과 군집을 통째로 다시 뽑아 의존을 보존하기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="ST13-3">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">통계 · ST13 순열 검정과 부트스트랩</p>
+<p class="chap-num">ST13·3</p>
+<h1>쌍과 군집을 통째로 다시 뽑아 의존을 보존하기</h1>
+<p class="lead">한 장치에서 두 번 잰 값에는 같은 장치의 특성이 들어 있습니다. 같은 장소에서 모은 여러 기록도 서로 닮을 수 있습니다. 무엇을 독립적으로 다시 뽑을지 정한 뒤 표준오차를 비교합니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2>
+<ul>
+<li>짝을 함께 재표집하고 공분산을 사용해 표준오차 차이를 설명한다.</li>
+<li>독립 단위가 군집인 자료에서 행과 군집 재표집을 구별한다.</li>
+<li>크기가 다른 군집에서 질문에 맞는 평균을 고른다.</li>
+</ul></div>
+<h2>같은 장치의 전·후 값을 한 단위로 남긴다</h2>
+<p>독립적으로 뽑은 장치 세 대의 합성 기록에서 설정 전·후 소비전력을 읽습니다. 두 측정에 장치 고유의 크기나 특성이 공통으로 들어갈 수 있습니다. 질문이 ‘장치 하나에서 평균적으로 얼마나 바뀌었나’라면 관심 통계량은 <var>D<sub>i</sub>=B<sub>i</sub>−A<sub>i</sub></var>의 평균입니다. A는 전, B는 후이고 같은 i를 붙인 두 값은 같은 장치입니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 215" role="img" aria-label="장치별 전후가 (1,2),(4,6),(7,8)일 때 차이는 1,2,1이다.">
+<text class="f-cap" x="380" y="30" text-anchor="middle">짝을 이용해 장치별 차이를 먼저 구한다</text>
+<rect class="f-soft" x="84" y="49" width="140" height="38"/>
+<text class="f-t" x="154" y="73" text-anchor="middle">장치</text>
+<rect class="f-soft" x="224" y="49" width="146" height="38"/>
+<text class="f-t" x="297" y="73" text-anchor="middle">전 (W)</text>
+<rect class="f-soft" x="370" y="49" width="146" height="38"/>
+<text class="f-t" x="443" y="73" text-anchor="middle">후 (W)</text>
+<rect class="f-soft" x="516" y="49" width="160" height="38"/>
+<text class="f-t" x="596" y="73" text-anchor="middle">후−전 (W)</text>
+<rect class="f-box" x="84" y="87" width="140" height="38"/>
+<text class="f-s" x="154" y="111" text-anchor="middle">A</text>
+<rect class="f-box" x="224" y="87" width="146" height="38"/>
+<text class="f-s" x="297" y="111" text-anchor="middle">1</text>
+<rect class="f-box" x="370" y="87" width="146" height="38"/>
+<text class="f-s" x="443" y="111" text-anchor="middle">2</text>
+<rect class="f-box" x="516" y="87" width="160" height="38"/>
+<text class="f-s" x="596" y="111" text-anchor="middle">1</text>
+<rect class="f-box" x="84" y="125" width="140" height="38"/>
+<text class="f-s" x="154" y="149" text-anchor="middle">B</text>
+<rect class="f-box" x="224" y="125" width="146" height="38"/>
+<text class="f-s" x="297" y="149" text-anchor="middle">4</text>
+<rect class="f-box" x="370" y="125" width="146" height="38"/>
+<text class="f-s" x="443" y="149" text-anchor="middle">6</text>
+<rect class="f-box" x="516" y="125" width="160" height="38"/>
+<text class="f-s" x="596" y="149" text-anchor="middle">2</text>
+<rect class="f-box" x="84" y="163" width="140" height="38"/>
+<text class="f-s" x="154" y="187" text-anchor="middle">C</text>
+<rect class="f-box" x="224" y="163" width="146" height="38"/>
+<text class="f-s" x="297" y="187" text-anchor="middle">7</text>
+<rect class="f-box" x="370" y="163" width="146" height="38"/>
+<text class="f-s" x="443" y="187" text-anchor="middle">8</text>
+<rect class="f-box" x="516" y="163" width="160" height="38"/>
+<text class="f-s" x="596" y="187" text-anchor="middle">1</text>
+</svg><figcaption>장치 A를 한 번 더 뽑으면 전 값 1과 후 값 2가 함께 한 번 더 들어간다.</figcaption></figure>
+<p>한 부트스트랩 표에서는 장치 ID 세 개를 복원 추출하고, 각 ID의 두 값을 유지해 차이의 평균을 다시 계산합니다. 평균차라는 목표에서는 <var>(1,2,1)</var>이라는 차이 목록을 그대로 뽑아도 같습니다. 장치마다 한 쌍을 얻고 쌍끼리는 독립이며 같은 모집단에서 왔다는 전제를 둡니다. 날짜마다 새 장치가 아니라 같은 장치가 더 반복되었다면, 날짜의 쌍을 독립 단위로 추가할 수 없습니다.</p>
+<p>전과 후를 다른 표에서 독립으로 뽑으면, 원 자료에 없던 1과 8이 같은 장치 쌍처럼 처리될 수 있습니다. <var>Var(B−A)=Var(B)+Var(A)−2Cov(A,B)</var>에서 공분산 부분을 잃습니다. 이 자료의 경험분포에서 <var>Var*(A)=6</var>, <var>Var*(B)=56/9</var>, <var>Cov*(A,B)=6</var>입니다. 성분 분산은 각각 <var>6,56/9</var>인데 공분산을 반영한 차이의 분산은 <var>2/9</var>입니다.</p>
+<div class="eq"><var>짝 부트스트랩의 평균차 분산 = (2/9)/3 = 2/27. 두 열을 독립 재표집한 분산 = (6+56/9)/3 = 110/27.</var></div>
+<p>같은 장치에서 큰 전 값이 큰 후 값과 연결되어 있으므로 실제 짝을 쓰면 두 값의 공통 변동이 차이에서 대부분 지워집니다. 쌍을 무시할 때 분산이 커지는 방향은 이 예의 양의 공분산을 반영합니다. 다른 의존 구조에서는 오차의 방향이 달라질 수 있습니다.</p>
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+<div class="check" data-q="q3"></div>
+<h2>군집 안에서 보인 반복은 관측 설계의 일부다</h2>
+<p>이번에는 독립적으로 뽑은 세 장소 A,B,C에서 각각 센서 두 개를 읽습니다. 합성 모형에서 각 장소의 두 값은 같은 장소 특성만 반영해 <var>(0,0)</var>, <var>(4,4)</var>, <var>(8,8)</var>입니다. 관측 행은 여섯 개지만 독립적으로 표집된 장소는 세 곳입니다. 장소별 평균을 구한 뒤 장소 평균의 평균을 추정한다고 합시다.</p>
+<p><b class="key">군집 부트스트랩</b>에서는 세 장소 ID를 복원으로 뽑습니다. 예를 들어 B,B,C라면 B에 속한 두 측정이 두 번, C의 두 측정이 한 번 들어갑니다. 두 센서가 함께 움직이는 구조를 유지합니다. 이 예는 군집 크기가 모두 2여서 장소 평균의 평균과 모든 센서값의 평균이 같습니다. 독립이 아닌 센서를 여섯 개의 독립 관측처럼 복원 추출하면 부트스트랩 안에서 장소의 두 센서가 떨어집니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 177" role="img" aria-label="같은 군집 자료에 대해 군집 재표집은 분산 32/9, 개별 행 재표집은 16/9이다.">
+<text class="f-cap" x="380" y="30" text-anchor="middle">장소 단위와 센서 단위의 재표집 차이</text>
+<rect class="f-soft" x="74.5" y="49" width="190" height="38"/>
+<text class="f-t" x="169.5" y="73" text-anchor="middle">재표집 단위</text>
+<rect class="f-soft" x="264.5" y="49" width="169" height="38"/>
+<text class="f-t" x="349" y="73" text-anchor="middle">한 번에 뽑는 수</text>
+<rect class="f-soft" x="433.5" y="49" width="252" height="38"/>
+<text class="f-t" x="559.5" y="73" text-anchor="middle">평균의 부트스트랩 분산</text>
+<rect class="f-box" x="74.5" y="87" width="190" height="38"/>
+<text class="f-s" x="169.5" y="111" text-anchor="middle">장소 전체</text>
+<rect class="f-box" x="264.5" y="87" width="169" height="38"/>
+<text class="f-s" x="349" y="111" text-anchor="middle">3 장소</text>
+<rect class="f-box" x="433.5" y="87" width="252" height="38"/>
+<text class="f-s" x="559.5" y="111" text-anchor="middle">32/9 ≈ 3.5556</text>
+<rect class="f-box" x="74.5" y="125" width="190" height="38"/>
+<text class="f-s" x="169.5" y="149" text-anchor="middle">개별 센서 행</text>
+<rect class="f-box" x="264.5" y="125" width="169" height="38"/>
+<text class="f-s" x="349" y="149" text-anchor="middle">6 행</text>
+<rect class="f-box" x="433.5" y="125" width="252" height="38"/>
+<text class="f-s" x="559.5" y="149" text-anchor="middle">16/9 ≈ 1.7778</text>
+</svg><figcaption>모두 평균을 계산하지만, 행 재표집에서 장소 안의 완전한 동행 구조가 사라진다.</figcaption></figure>
+<p>장소 평균 0,4,8의 경험분포 분산은 <var>(16+0+16)/3=32/3</var>입니다. 장소 세 곳을 뽑으면 이 값을 3으로 나눕니다. 센서별 값도 0,4,8이 각각 두 번이라 값 한 개의 경험분포 분산은 같습니다. 그러나 행을 독립이라고 놓았을 때에는 6으로 나눠 분산 추정이 작아집니다. 같은 군집의 측정이 양의 상관을 갖는 자료에서 흔히 보이는 방향입니다. 독립 단위는 가정과 표집 계획으로 정합니다.</p>
+<div class="check" data-q="q4"></div>
+<div class="check" data-q="q5"></div>
+<h2>크기가 다른 군집에서는 질문을 다시 읽는다</h2>
+<p>이번에는 A가 두 행 <var>(0,0)</var>, B가 네 행 <var>(4,4,4,4)</var>, C가 한 행 <var>(8)</var>이라고 합시다. 각 장소에 같은 비중을 주는 추정은 <var>(0+4+8)/3=4</var>입니다. 관측된 모든 행에 같은 비중을 주면 <var>(0+16+8)/7=24/7</var>입니다. ‘평균 장소가 어땠나’와 ‘관측된 센서 한 건의 평균이 얼마인가’에 따라 결과가 달라집니다. 후자를 관심 통계량으로 정했다면, 군집을 다시 뽑은 뒤 건수와 값의 합을 함께 다시 계산해 나눕니다. 모집단의 관측 행에까지 일반화하려면 군집 표집 확률과 군집 크기 관계도 고려합니다.</p>
+<p>어떤 방법도 새로운 독립 장소를 만들어 주지 못합니다. 장소 세 곳의 분포는 지역 전체를 대표하기에 부족할 수 있습니다. 여러 장소가 같은 날 같은 조건의 영향을 받거나, 장치를 시계열로 여러 번 읽어 시점 사이에도 의존성이 있으면 그 구조에 맞는 설계와 재표집을 따로 검토합니다. 부트스트랩으로 계산한 표준오차에 앞서 독립 단위가 무엇인지 보고에 적습니다.</p>
+<div class="check" data-q="q6"></div>
+<h2>이어 풀기와 증명</h2>
+<p>대상 모집단에서 서로 독립적으로 들어온 단위가 무엇인지 먼저 적습니다. 분산을 비교하기 전에 두 추정량이 같은 질문에 답하는지도 확인합니다.</p>
+<div class="check" data-q="q7"></div>
+<div class="check" data-q="q8"></div>
+<div class="check" data-q="q9"></div>
+<h2>파이썬으로 같은 계산 검산하기</h2>
+<pre data-example="python"><code>from fractions import Fraction as F
+from itertools import product
+from math import sqrt
+
+def boot_means(values):
+    n = len(values)
+    return [F(sum(draw), n) for draw in product(values, repeat=n)]
+
+def variance(values):
+    mean = sum(values) / len(values)
+    return sum((v-mean)**2 for v in values) / len(values)
+
+before, after = [1, 4, 7], [2, 6, 8]
+paired = boot_means([b-a for a, b in zip(before, after)])
+unpaired = [b-a for a, b in product(boot_means(before), boot_means(after))]
+for label, estimates in ((&quot;pairs&quot;, paired), (&quot;independent columns&quot;, unpaired)):
+    v = variance(estimates)
+    print(label, v, f&quot;SE={sqrt(v):.6f}&quot;)
+
+clusters = [(0, 0), (4, 4), (8, 8)]
+nested = boot_means([F(sum(c), len(c)) for c in clusters])
+rows = boot_means([y for c in clusters for y in c])
+print(&quot;cluster and row variances:&quot;, variance(nested), variance(rows))
+
+unequal = [(0, 0), (4, 4, 4, 4), (8,)]
+site_mean = sum(F(sum(c), len(c)) for c in unequal) / len(unequal)
+row_mean = F(sum(sum(c) for c in unequal), sum(len(c) for c in unequal))
+print(&quot;site and row means:&quot;, site_mean, row_mean)</code></pre>
+<p class="aside">실행 결과</p>
+<pre data-output><code>pairs 2/27 SE=0.272166
+independent columns 110/27 SE=2.018434
+cluster and row variances: 32/9 16/9
+site and row means: 4 24/7</code></pre>
+<p>첫 두 줄은 각 경우 가능한 표를 전부 열거해 얻은 조건부 분산입니다. 장소 평균도 분수로 보존해 끝까지 계산합니다. 세 번째 줄을 비교할 때는 모든 장소의 센서 수가 같아서, 장소 평균과 행 평균이 같은 목표량을 계산한다는 조건을 사용했습니다.</p>
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://cameron.econ.ucdavis.edu/research/Cameron_Miller_JHR_2015.pdf">Cameron·Miller · A Practitioner’s Guide to Cluster-Robust Inference</a></li>
+<li><a href="st10-2.html">ST10-2 반복 측정과 묶음 재표집</a></li>
+<li><a href="st13-2.html">ST13-2 경험분포 부트스트랩</a></li>
+</ul>
+<h2>확인 문제</h2>
+<p>조건과 단위를 먼저 적은 뒤 해설을 확인합니다.</p>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>
