@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>중심성·연결·군집과 랜덤 그래프 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="SP05-1">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">전문 연구 경로 · SP05 그래프·네트워크 과학</p>
+<p class="chap-num">SP05·1</p>
+<h1>중심성·연결·군집과 랜덤 그래프</h1>
+<p class="lead">두 삼각형의 사이를 간선 하나로 연결합니다. 이웃이 많은지, 다른 노드 사이에 자주 있는지, 이웃끼리도 연결되는지를 계산합니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul>
+<li>연결 성분과 다리, 차수·매개중심성을 구분한다.</li>
+<li>국소 군집계수와 공동체 모듈성의 목적을 설명한다.</li>
+<li>독립 간선 랜덤 그래프에서 기대 간선 수와 기대 고립 수를 구한다.</li>
+</ul></div>
+
+<h2>누가 연결되어 있는가?</h2>
+<p>이 장은 자기 루프가 없고 연결이 양방향인 단순 그래프입니다. 간선 하나의 길이는 1입니다. <strong>경로</strong>가 있는 노드끼리 서로 닿을 수 있고, 서로 닿을 수 있는 최대 부분을 연결 성분이라고 합니다. C–D가 있을 때는 성분 하나입니다. 그 간선을 제거하면 성분이 둘로 늘어납니다. 이런 간선을 <strong>다리</strong>라고 합니다.</p><figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 232" role="img" aria-label="A-B-C와 D-E-F의 삼각형 사이를 C–D 한 간선이 연결한다. C와 D 차수 3, 나머지 차수 2.">
+<text class="f-cap" x="380" y="26" text-anchor="middle">두 삼각형과 가운데 다리</text>
+<line class="f-ink" x1="140" y1="93" x2="140" y2="153"/>
+<line class="f-ink" x1="154.41" y1="82.18" x2="280.59" y2="118.82"/>
+<line class="f-ink" x1="154.41" y1="163.82" x2="280.59" y2="127.18"/>
+<line class="f-line" x1="310" y1="123" x2="450" y2="123"/>
+<line class="f-ink" x1="479.41" y1="118.82" x2="605.59" y2="82.18"/>
+<line class="f-ink" x1="479.41" y1="127.18" x2="605.59" y2="163.82"/>
+<line class="f-ink" x1="620" y1="93" x2="620" y2="153"/>
+<circle class="f-box" cx="140" cy="78" r="15"/>
+<text class="f-t" x="140" y="82" text-anchor="middle">A</text>
+<text class="f-s" x="140" y="115" text-anchor="middle">차수 2</text>
+<circle class="f-box" cx="140" cy="168" r="15"/>
+<text class="f-t" x="140" y="172" text-anchor="middle">B</text>
+<text class="f-s" x="140" y="205" text-anchor="middle">차수 2</text>
+<circle class="f-soft" cx="295" cy="123" r="15"/>
+<text class="f-t" x="295" y="127" text-anchor="middle">C</text>
+<text class="f-s" x="295" y="160" text-anchor="middle">차수 3</text>
+<circle class="f-soft" cx="465" cy="123" r="15"/>
+<text class="f-t" x="465" y="127" text-anchor="middle">D</text>
+<text class="f-s" x="465" y="160" text-anchor="middle">차수 3</text>
+<circle class="f-box" cx="620" cy="78" r="15"/>
+<text class="f-t" x="620" y="82" text-anchor="middle">E</text>
+<text class="f-s" x="620" y="115" text-anchor="middle">차수 2</text>
+<circle class="f-box" cx="620" cy="168" r="15"/>
+<text class="f-t" x="620" y="172" text-anchor="middle">F</text>
+<text class="f-s" x="620" y="205" text-anchor="middle">차수 2</text>
+</svg>
+<figcaption>C–D만 제거하면 삼각형 두 개가 서로 닿지 않습니다.</figcaption>
+</figure>
+<p><strong>차수</strong>는 직접 이어진 이웃 수입니다. 정규화한 차수 중심성은 단순 무방향 그래프에서 <var>n−1</var>로 나눈 값입니다. C는 <var>3/5=.6</var>입니다. <strong>매개중심성</strong>은 자신을 끝점으로 하지 않는 쌍의 최단 경로 가운데 노드를 지나가는 몫을 더합니다. 여기서는 최단 경로가 유일합니다. C를 통하는 쌍은 A,B 중 하나와 D,E,F 중 하나의 <var>2×3=6</var>개입니다.</p><div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
+
+<h2>이웃끼리 연결되었는지와 공동체</h2>
+<p>국소 군집계수는 한 노드의 이웃 사이에 가능한 간선 중 실제 있는 비율입니다. C의 세 이웃 A,B,D에는 가능한 짝이 세 개지만 A–B만 연결되어 <var>1/3</var>입니다. A의 이웃 B,C는 서로 연결되어 값이 1입니다. 이웃이 한 명 이하라 분모가 0이면 쓰는 도구의 관례를 확인합니다.</p><figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 246" role="img" aria-label="A와 F의 군집계수는 1·매개중심성 0이다. C와 D의 차수 3·군집계수 1/3·매개중심성 6이다.">
+<text class="f-cap" x="380" y="29" text-anchor="middle">한 그래프에서 다른 관계를 세는 지표</text>
+<rect class="f-soft" x="44.5" y="43" width="124" height="37"/>
+<text class="f-s" x="106.5" y="66.5" text-anchor="middle">노드</text>
+<rect class="f-soft" x="168.5" y="43" width="110" height="37"/>
+<text class="f-s" x="223.5" y="66.5" text-anchor="middle">차수</text>
+<rect class="f-soft" x="278.5" y="43" width="206" height="37"/>
+<text class="f-s" x="381.5" y="66.5" text-anchor="middle">국소 군집계수</text>
+<rect class="f-soft" x="484.5" y="43" width="231" height="37"/>
+<text class="f-s" x="600" y="66.5" text-anchor="middle">정규화 전 매개중심성</text>
+<rect class="f-box" x="44.5" y="80" width="124" height="37"/>
+<text class="f-t" x="106.5" y="103.5" text-anchor="middle">A</text>
+<rect class="f-box" x="168.5" y="80" width="110" height="37"/>
+<text class="f-t" x="223.5" y="103.5" text-anchor="middle">2</text>
+<rect class="f-box" x="278.5" y="80" width="206" height="37"/>
+<text class="f-t" x="381.5" y="103.5" text-anchor="middle">1</text>
+<rect class="f-box" x="484.5" y="80" width="231" height="37"/>
+<text class="f-t" x="600" y="103.5" text-anchor="middle">0</text>
+<rect class="f-box" x="44.5" y="117" width="124" height="37"/>
+<text class="f-t" x="106.5" y="140.5" text-anchor="middle">C</text>
+<rect class="f-box" x="168.5" y="117" width="110" height="37"/>
+<text class="f-t" x="223.5" y="140.5" text-anchor="middle">3</text>
+<rect class="f-box" x="278.5" y="117" width="206" height="37"/>
+<text class="f-t" x="381.5" y="140.5" text-anchor="middle">1/3</text>
+<rect class="f-box" x="484.5" y="117" width="231" height="37"/>
+<text class="f-t" x="600" y="140.5" text-anchor="middle">6</text>
+<rect class="f-box" x="44.5" y="154" width="124" height="37"/>
+<text class="f-t" x="106.5" y="177.5" text-anchor="middle">D</text>
+<rect class="f-box" x="168.5" y="154" width="110" height="37"/>
+<text class="f-t" x="223.5" y="177.5" text-anchor="middle">3</text>
+<rect class="f-box" x="278.5" y="154" width="206" height="37"/>
+<text class="f-t" x="381.5" y="177.5" text-anchor="middle">1/3</text>
+<rect class="f-box" x="484.5" y="154" width="231" height="37"/>
+<text class="f-t" x="600" y="177.5" text-anchor="middle">6</text>
+<rect class="f-box" x="44.5" y="191" width="124" height="37"/>
+<text class="f-t" x="106.5" y="214.5" text-anchor="middle">F</text>
+<rect class="f-box" x="168.5" y="191" width="110" height="37"/>
+<text class="f-t" x="223.5" y="214.5" text-anchor="middle">2</text>
+<rect class="f-box" x="278.5" y="191" width="206" height="37"/>
+<text class="f-t" x="381.5" y="214.5" text-anchor="middle">1</text>
+<rect class="f-box" x="484.5" y="191" width="231" height="37"/>
+<text class="f-t" x="600" y="214.5" text-anchor="middle">0</text>
+</svg>
+<figcaption>자기와 직접 연결된 수를 세는 것과 남의 최단 경로에 얼마나 있는지 세는 것은 다른 계산입니다.</figcaption>
+</figure>
+<p>공동체는 안쪽 연결이 상대적으로 많은 노드 묶음입니다. 이 그래프를 삼각형 둘로 분리한 <strong>모듈성</strong>은 같은 묶음 안에 실제로 놓인 간선의 비중에서 차수를 기준으로 한 기준 모형의 기대 비중을 뺍니다. 한 삼각형에서 전체 7개 간선 중 내부 간선이 3개, 전체 차수 14 중 묶음의 차수 합이 7입니다. 두 묶음의 모듈성은 <var>2[3/7−(7/14)²]=5/14</var>입니다. 공동체가 연결 성분과 반드시 같지는 않습니다.</p><div class="check" data-q="q3"></div><div class="check" data-q="q4"></div>
+
+<h2>랜덤 연결과 비교하기</h2>
+<p><var>G(n,p)</var>에서는 가능한 각 간선을 확률 <var>p</var>로 독립 생성합니다. 노드 6개에 <var>p=.2</var>이면 후보 간선이 15개이고 기대 연결 수는 3개입니다. 한 노드의 다섯 간선이 모두 없을 확률은 <var>.8⁵</var>입니다. 기대 고립 노드 수는 <var>6×.8⁵=1.96608</var>입니다. 실제 한 번 그린다면 고립 노드 수는 정수입니다. 여러 모형을 기준으로 비교할 때 무엇을 보존하는지 기록합니다.</p><div class="check" data-q="q5"></div><div class="check" data-q="q6"></div>
+
+<h2>그래프와 기대값을 직접 재계산</h2>
+<p class="small">실행 예제</p>
+<pre data-example="python"><code>from fractions import Fraction as F
+from itertools import combinations
+from math import comb
+
+edges = {&quot;AB&quot;, &quot;AC&quot;, &quot;BC&quot;, &quot;CD&quot;, &quot;DE&quot;, &quot;DF&quot;, &quot;EF&quot;}
+vertices = &quot;ABCDEF&quot;
+adj = {v: {u for u in vertices if &quot;&quot;.join(sorted(u + v)) in edges}
+       for v in vertices}
+for v in (&quot;A&quot;, &quot;C&quot;, &quot;D&quot;, &quot;F&quot;):
+    neighbors = adj[v]
+    linked = sum(b in adj[a] for a, b in combinations(neighbors, 2))
+    print(v, &quot;degree&quot;, len(neighbors), &quot;clustering&quot;, F(linked, comb(len(neighbors), 2)))
+
+modularity = 2 * (F(3, 7) - F(7, 14) ** 2)
+print(&quot;modularity:&quot;, modularity)
+print(&quot;random expected edges:&quot;, comb(6, 2) * F(1, 5))
+print(&quot;random expected isolates:&quot;, float(6 * F(4, 5) ** 5))</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>A degree 2 clustering 1
+C degree 3 clustering 1/3
+D degree 3 clustering 1/3
+F degree 2 clustering 1
+modularity: 5/14
+random expected edges: 3
+random expected isolates: 1.96608</code></pre>
+<p>매개중심성을 일반 그래프에서 구할 때는 최단 경로가 여럿일 경우의 비율과 방향·가중치 여부도 확인합니다. 모듈성의 값은 하나의 제안된 분할을 평가한 값이며 모든 가능한 분할을 찾아 최적임을 증명하지 않았습니다.</p><div class="check" data-q="q7"></div><div class="check" data-q="q8"></div>
+
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table><thead><tr><th scope="col">개념</th><th scope="col">확인할 것</th></tr></thead><tbody>
+<tr><th scope="row"><b class="key">차수와 매개</b></th><td>직접 이웃과 경로 중간의 역할을 구분한다.</td></tr>
+<tr><th scope="row"><b class="key">군집과 공동체</b></th><td>이웃 결합과 묶음 내부 연결을 다른 단위로 본다.</td></tr>
+<tr><th scope="row"><b class="key">랜덤 모형</b></th><td>실제 그래프와 비교할 간선 생성 기준을 정한다.</td></tr>
+</tbody></table></div><div class="box sum"><p class="box-k">다음 장으로</p><p><a href="sp05-2.html">다음 장</a>에서는 이 간선 위로 움직이는 값을 추적합니다.</p></div>
+
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://www.cs.cornell.edu/home/kleinber/networks-book/">Easley·Kleinberg · Networks, Crowds, and Markets 저자 교재</a></li>
+<li><a href="https://doi.org/10.1073/pnas.0601602103">Newman(2006) · 모듈성과 공동체 구조</a></li>
+<li><a href="https://www.stat.cmu.edu/~brian/780/bibliography/09%20Other%20Models/Gilbert%20-%201959%20-%20Random%20graphs.pdf">Gilbert(1959) · 독립 간선 랜덤 그래프</a></li>
+</ul>
+<h2>확인 문제</h2>
+<p>직접 계산하거나 설명을 먼저 적고 답을 확인해 보세요.</p>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

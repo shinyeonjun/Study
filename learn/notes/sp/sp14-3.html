@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>사람이 화면을 쓰는 과제를 설계하고 사용성을 확인하기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e8c'/%3E%3Cpath d='M8 22V10m8 12V14m8 8V6' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="SP14-3">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+
+<header class="chapter">
+<p class="chap-sub">전문 경로 · SP14 그래픽스·사람과 컴퓨터</p>
+<p class="chap-num">SP14·3</p>
+<h1>사람이 화면을 쓰는 과제를 설계하고 사용성을 확인하기</h1>
+<p class="lead">화면을 볼 수 있는지, 키보드로 쓸 수 있는지, 목적을 달성할 수 있는지를 각각 평가합니다. 소규모 짝 실험의 성공률과 시간을 직접 계산합니다.</p>
+</header>
+
+<div class="goal">
+<h2>이 장을 읽고 나면</h2>
+<ul>
+<li>화면의 상태·조작·피드백을 과제 흐름 안에서 확인한다.</li>
+<li>명도 대비를 계산하고 접근성 검사의 범위를 설명한다.</li>
+<li>조건 순서와 실패를 기록해 사용성 실험 결과를 해석한다.</li>
+</ul>
+</div>
+<h2>사용자가 화면에서 무엇을 하려는지부터 적는다</h2>
+<p><b class="key">HCI</b>(인간과 컴퓨터의 상호작용)는 사람들이 어떤 환경에서 시스템을 쓰고 과제를 어떻게 수행하는지 설계하고 관찰하는 분야입니다. 예로 연구 기록 사이트에서 ‘실험 하나의 결과를 내려받아 저장한다’를 과제로 둡니다. 버튼 이름만이 아니라 상태가 바뀌었는지, 작업 중인지, 실패했다면 어떻게 다시 시도하는지에 대한 <b>피드백</b>이 필요합니다.</p>
+<p>키보드로 도달하고 활성화할 수 있는지, 포커스 순서가 화면의 과제 순서와 맞는지, 보조 기술이 버튼의 이름과 상태를 읽는지 확인합니다. 실패와 성공을 구분할 때 색상 외에 글이나 기호로도 뜻을 줍니다. 예를 들어 버튼은 ‘내려받기’처럼 목적이 드러나는 이름과 적합한 기본 HTML 요소를 사용할 수 있습니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 211" role="img" aria-label="흰 배경에서 119회색인 #777777은 대비 약 4.4781, 118회색인 #767676은 약 4.5422다.">
+<text class="f-cap" x="380" y="33" text-anchor="middle">흰 배경에서 일반 크기 본문 대비</text>
+<text class="f-t" x="180" y="82" text-anchor="end">비교</text>
+<rect class="f-box" x="206" y="58" width="246" height="38" rx="3"/>
+<text class="f-t" x="329" y="83" text-anchor="middle">#777777</text>
+<rect class="f-box" x="458" y="58" width="246" height="38" rx="3"/>
+<text class="f-t" x="581" y="83" text-anchor="middle">#767676</text>
+<text class="f-t" x="180" y="128" text-anchor="end">명도 대비</text>
+<rect class="f-box" x="206" y="104" width="246" height="38" rx="3"/>
+<text class="f-t" x="329" y="129" text-anchor="middle">4.4781 : 1</text>
+<rect class="f-box" x="458" y="104" width="246" height="38" rx="3"/>
+<text class="f-t" x="581" y="129" text-anchor="middle">4.5422 : 1</text>
+<text class="f-t" x="180" y="174" text-anchor="end">기준 4.5 : 1</text>
+<rect class="f-box" x="206" y="150" width="246" height="38" rx="3"/>
+<text class="f-t" x="329" y="175" text-anchor="middle">미달</text>
+<rect class="f-soft" x="458" y="150" width="246" height="38" rx="3"/>
+<text class="f-t" x="581" y="175" text-anchor="middle">충족</text>
+</svg>
+<figcaption>표는 한 색 대비 기준만 검사합니다. 조작이나 이름·상태 읽기는 별도로 확인합니다.</figcaption>
+</figure>
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+
+<h2>색은 숫자로 읽을 수 있지만 그 숫자로 사용성 전체를 알 수 없다</h2>
+<p>WCAG 2.2의 AA 대비 기준에서 일반 크기 텍스트의 대비는 4.5:1 이상입니다. 밝은 상대 휘도 L₁과 어두운 L₂를 써 (L₁+0.05)/(L₂+0.05)로 계산합니다. 이 예에서는 흰색 휘도 1과 회색을 비교합니다. 표준 sRGB의 각 성분을 선형값으로 바꿔 R,G,B에 0.2126,0.7152,0.0722를 곱해 더합니다. 회색은 세 성분이 같아 합이 선형 성분 하나와 같습니다. 4.4781은 반올림해서 표시한 값이며 기준 판정에서 4.5로 올려 계산하지 않습니다.</p>
+<p><b class="key">사용성</b>을 비교한다면 대상 사용자가 정한 과제를 성공하는지, 얼마나 시간이 들고 얼마나 만족하는지 따로 정의합니다. 성공률, 오류, 소요시간을 같은 조건으로 재고 과제 완료 도중 무엇이 혼란이었는지 기록합니다. 대비 검사에 통과했다고 과제 성공을 가정할 필요는 없습니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 303" role="img" aria-label="A는 네 명 중 세 명이 성공, B는 네 명 모두 성공한다. 두 화면을 모두 성공한 세 명의 시간 차는 12,7,5초로 중앙값 7초다.">
+<text class="f-cap" x="380" y="33" text-anchor="middle">참가자 네 명에게 두 화면을 모두 제공한 합성 기록</text>
+<text class="f-t" x="180" y="82" text-anchor="end">참가자</text>
+<rect class="f-box" x="206" y="58" width="120" height="38" rx="3"/>
+<text class="f-t" x="266" y="83" text-anchor="middle">1</text>
+<rect class="f-box" x="332" y="58" width="120" height="38" rx="3"/>
+<text class="f-t" x="392" y="83" text-anchor="middle">2</text>
+<rect class="f-box" x="458" y="58" width="120" height="38" rx="3"/>
+<text class="f-t" x="518" y="83" text-anchor="middle">3</text>
+<rect class="f-box" x="584" y="58" width="120" height="38" rx="3"/>
+<text class="f-t" x="644" y="83" text-anchor="middle">4</text>
+<text class="f-t" x="180" y="128" text-anchor="end">제공 순서</text>
+<rect class="f-box" x="206" y="104" width="120" height="38" rx="3"/>
+<text class="f-t" x="266" y="129" text-anchor="middle">A→B</text>
+<rect class="f-box" x="332" y="104" width="120" height="38" rx="3"/>
+<text class="f-t" x="392" y="129" text-anchor="middle">A→B</text>
+<rect class="f-box" x="458" y="104" width="120" height="38" rx="3"/>
+<text class="f-t" x="518" y="129" text-anchor="middle">B→A</text>
+<rect class="f-box" x="584" y="104" width="120" height="38" rx="3"/>
+<text class="f-t" x="644" y="129" text-anchor="middle">B→A</text>
+<text class="f-t" x="180" y="174" text-anchor="end">A 소요 초</text>
+<rect class="f-box" x="206" y="150" width="120" height="38" rx="3"/>
+<text class="f-t" x="266" y="175" text-anchor="middle">30</text>
+<rect class="f-box" x="332" y="150" width="120" height="38" rx="3"/>
+<text class="f-t" x="392" y="175" text-anchor="middle">36</text>
+<rect class="f-box" x="458" y="150" width="120" height="38" rx="3"/>
+<text class="f-t" x="518" y="175" text-anchor="middle">24</text>
+<rect class="f-box" x="584" y="150" width="120" height="38" rx="3"/>
+<text class="f-t" x="644" y="175" text-anchor="middle">실패</text>
+<text class="f-t" x="180" y="220" text-anchor="end">B 소요 초</text>
+<rect class="f-box" x="206" y="196" width="120" height="38" rx="3"/>
+<text class="f-t" x="266" y="221" text-anchor="middle">18</text>
+<rect class="f-box" x="332" y="196" width="120" height="38" rx="3"/>
+<text class="f-t" x="392" y="221" text-anchor="middle">29</text>
+<rect class="f-box" x="458" y="196" width="120" height="38" rx="3"/>
+<text class="f-t" x="518" y="221" text-anchor="middle">19</text>
+<rect class="f-box" x="584" y="196" width="120" height="38" rx="3"/>
+<text class="f-t" x="644" y="221" text-anchor="middle">26</text>
+<text class="f-t" x="180" y="266" text-anchor="end">성공한 짝 A−B</text>
+<rect class="f-box" x="206" y="242" width="120" height="38" rx="3"/>
+<text class="f-t" x="266" y="267" text-anchor="middle">12</text>
+<rect class="f-soft" x="332" y="242" width="120" height="38" rx="3"/>
+<text class="f-t" x="392" y="267" text-anchor="middle">7</text>
+<rect class="f-box" x="458" y="242" width="120" height="38" rx="3"/>
+<text class="f-t" x="518" y="267" text-anchor="middle">5</text>
+<rect class="f-box" x="584" y="242" width="120" height="38" rx="3"/>
+<text class="f-t" x="644" y="267" text-anchor="middle">비교 제외</text>
+</svg>
+<figcaption>실패한 참가자도 성공률의 분모에 포함합니다. 시간 차는 두 화면 모두 완료한 세 쌍에서만 계산했습니다.</figcaption>
+</figure>
+<div class="check" data-q="q3"></div>
+<div class="check" data-q="q4"></div>
+
+<h2>순서를 배정하고 실패한 기록도 집계한다</h2>
+<p>같은 사람이 A와 B를 수행하는 경우 두 번째 화면에 익숙해져 더 빨라질 수 있습니다. 비교 시작 전에 AB와 BA 순서를 나누어 배정하고, 과제와 제한시간, 힌트와 기기를 맞춥니다. 예제의 A 성공률은 3/4, B는 4/4입니다. 두 화면에서 모두 성공한 세 사람끼리 A−B 시간 차의 중앙값을 내면 7초입니다. 실패를 성공 0초로 처리하면 결과가 왜곡됩니다. 시간 제한과 실패 정의를 미리 정하고 성공률과 성공한 짝의 시간 통계를 함께 명시합니다.</p>
+<div class="check" data-q="q5"></div>
+<div class="check" data-q="q6"></div>
+<pre data-example="python"><code>from statistics import median
+
+def gray_luminance(c):
+    s = c/255
+    return s/12.92 if s &lt;= 0.04045 else ((s+0.055)/1.055)**2.4
+
+for channel in (119, 118):
+    ratio = 1.05/(gray_luminance(channel)+0.05)
+    print(&quot;#&quot;+f&quot;{channel:02x}&quot;*3, f&quot;{ratio:.4f}&quot;, &quot;pass:&quot;, ratio &gt;= 4.5)
+
+a = [30, 36, 24, None]
+b = [18, 29, 19, 26]
+successes = lambda rows: sum(v is not None for v in rows)
+paired = [x-y for x,y in zip(a,b) if x is not None and y is not None]
+print(&quot;success A/B:&quot;, successes(a), successes(b), &quot;out of&quot;, len(a))
+print(&quot;paired seconds:&quot;, paired, &quot;median:&quot;, median(paired))</code></pre>
+<pre data-output><code>#777777 4.4781 pass: False
+#767676 4.5422 pass: True
+success A/B: 3 4 out of 4
+paired seconds: [12, 7, 5] median: 7</code></pre>
+<p>이 숫자는 네 명으로 만든 계산 예입니다. 실제 평가에서는 사용자와 장소의 범위, 과제와 표본 수, 입력 방식과 접근성 지원, 실패 사례, 동의받은 기록만 보고합니다. 순서를 나눠 배정했어도 이전 화면을 기억하는 효과가 남을 수 있으므로 보고할 때 보존된 비교 조건과 제한을 적습니다.</p>
+
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://www.w3.org/TR/WCAG22/#contrast-minimum">W3C WCAG 2.2 · 일반 텍스트 대비 기준 및 상대 휘도</a></li>
+<li><a href="https://www.w3.org/WAI/ARIA/apg/patterns/button/">W3C APG · 버튼의 이름과 키보드 동작</a></li>
+<li><a href="https://www.iso.org/standard/63500.html">ISO 9241-11 · 사용성의 개념</a></li>
+<li><a href="../st/st08-1.html">ST08 · 비교 실험의 배정</a></li>
+</ul>
+
+<h2>확인 문제</h2>
+<p>아직 풀지 않은 문제입니다. 먼저 식이나 근거를 적어 보고 해설을 확인합니다.</p>
+<div id="quiz"></div>
+
+<section class="work" id="tools"></section>
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

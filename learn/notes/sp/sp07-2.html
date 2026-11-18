@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>칼만 필터로 센서값과 상태 예측을 합치기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e8c'/%3E%3Cpath d='M8 22V10m8 12V14m8 8V6' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="SP07-2">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+
+<header class="chapter">
+<p class="chap-sub">전문 연구 경로 · SP07 제어·로봇·동적 시스템</p>
+<p class="chap-num">SP07·2</p>
+<h1>칼만 필터로 센서값과 상태 예측을 합치기</h1>
+<p class="lead">현재 위치가 직접 보이지 않습니다. 모형이 예측한 위치와 잡음이 섞인 센서값을 불확실성에 맞춰 합칩니다.</p>
+</header>
+
+<div class="goal">
+<h2>이 장을 읽고 나면</h2>
+<ul>
+<li>상태가 어떻게 변하는지와 센서가 무엇을 보는지 따로 적는다.</li>
+<li>한 단계의 스칼라 칼만 예측과 갱신을 계산한다.</li>
+<li>과정 잡음과 관측 잡음이 신뢰에 미치는 효과를 설명한다.</li>
+</ul>
+</div>
+
+<h2>상태를 하나로 단정하지 않고 평균과 분산으로 기록합니다</h2>
+<p>가상 표시의 상태 xₜ를 센서 yₜ로 추정합니다. 모형은 xₜ₊₁=xₜ+uₜ+wₜ, 센서는 yₜ₊₁=xₜ₊₁+vₜ₊₁입니다. x, u, y는 같은 위치 단위입니다. w는 상태 변화 중 예상하지 못한 양이고 v는 센서의 오차입니다. 여기서는 두 잡음이 시간에 걸쳐 서로 및 초기 상태와 독립인 평균 0 가우스 잡음이고, 분산 Q=1, R=4라고 둡니다. 초기 상태의 추정 분포도 가우스라고 가정합니다. 분산 단위는 위치 단위의 제곱입니다.</p>
+<p>이전 관측까지 반영한 상태 평균 m=2, 분산 P=1입니다. 입력 u=1을 적용합니다. 다음 상태의 예측 평균 m⁻은 2+1=3, 예측 분산 P⁻는 1+Q=2입니다. 독립 잡음이 더해지므로 불확실성도 더해집니다. 아직 새 센서값은 사용하지 않았습니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 144" role="img" aria-label="이전 평균 2 분산 1에서 예측 평균 3 분산 2">
+<rect class="f-box" x="42" y="35" width="282" height="64" rx="3"/>
+<rect class="f-box" x="435" y="35" width="282" height="64" rx="3"/>
+<text class="f-t" x="183" y="61" text-anchor="middle">이전 상태 추정</text>
+<text class="f-s" x="183" y="84" text-anchor="middle">m=2 · P=1</text>
+<text class="f-t" x="576" y="61" text-anchor="middle">다음 상태 예측</text>
+<text class="f-s" x="576" y="84" text-anchor="middle">m⁻=3 · P⁻=2</text>
+<line class="f-ink" x1="324" y1="68" x2="431" y2="68" marker-end="url(#f-arrow)"/>
+<text class="f-s" x="380" y="27" text-anchor="middle">입력 u=1 · 과정 분산 Q=1</text>
+</svg>
+<figcaption>확정된 입력은 평균을 옮기고, 평균 0인 독립 과정 잡음은 이 식에서 분산을 늘립니다.</figcaption>
+</figure>
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+<div class="check" data-q="q3"></div>
+<h2>센서가 말한 값과 예측의 차이만큼 보정합니다</h2>
+<p>새 센서값 y=6이 왔습니다. 예측된 센서값은 이 모형에서 m⁻=3입니다. 실제와 예측의 차이 3을 <b class="key">혁신</b>(innovation) 또는 관측 잔차라고 부릅니다. <b class="key">칼만 이득</b> K=P⁻/(P⁻+R)=2/(2+4)=1/3만큼 그 차이를 반영합니다. 새 평균은 3+(1/3)(6−3)=4, 새 분산은 (1−K)P⁻=(2/3)·2=4/3입니다. 여기서는 센서의 관측 행렬 C=1이라 이 단순한 식을 쓸 수 있습니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 157" role="img" aria-label="위치 눈금 위에 3 예측, 4 갱신, 6 관측을 표시">
+<line class="f-ink" x1="84" y1="89" x2="672" y2="89"/>
+<line class="f-ink" x1="86" y1="83" x2="86" y2="96"/>
+<text class="f-s" x="86" y="122" text-anchor="middle">0</text>
+<line class="f-ink" x1="169" y1="83" x2="169" y2="96"/>
+<text class="f-s" x="169" y="122" text-anchor="middle">1</text>
+<line class="f-ink" x1="252" y1="83" x2="252" y2="96"/>
+<text class="f-s" x="252" y="122" text-anchor="middle">2</text>
+<line class="f-ink" x1="335" y1="83" x2="335" y2="96"/>
+<text class="f-s" x="335" y="122" text-anchor="middle">3</text>
+<line class="f-ink" x1="418" y1="83" x2="418" y2="96"/>
+<text class="f-s" x="418" y="122" text-anchor="middle">4</text>
+<line class="f-ink" x1="501" y1="83" x2="501" y2="96"/>
+<text class="f-s" x="501" y="122" text-anchor="middle">5</text>
+<line class="f-ink" x1="584" y1="83" x2="584" y2="96"/>
+<text class="f-s" x="584" y="122" text-anchor="middle">6</text>
+<line class="f-ink" x1="667" y1="83" x2="667" y2="96"/>
+<text class="f-s" x="667" y="122" text-anchor="middle">7</text>
+<text class="f-s" x="355" y="29" text-anchor="middle">예측 3</text>
+<text class="f-s" x="425" y="54" text-anchor="middle">갱신 4</text>
+<text class="f-s" x="584" y="29" text-anchor="middle">센서값 6</text>
+<line class="f-dash" x1="335" y1="35" x2="335" y2="77"/>
+<line class="f-line" x1="418" y1="59" x2="418" y2="77"/>
+<line class="f-dash" x1="584" y1="35" x2="584" y2="77"/>
+</svg>
+<figcaption>눈금의 한 칸은 위치 1입니다. 예측 3에서 센서값 6까지 차이 3의 1/3만 반영해 평균이 4가 됩니다.</figcaption>
+</figure>
+<p>양수인 예측 분산 P⁻를 고정하고 센서 잡음 분산 R을 늘리면 K가 작아져 센서에 덜 반응합니다. 다음 상태의 예측이 불확실해 P⁻가 더 커지면 양수인 R이 고정됐을 때 K가 커집니다. 실제 확률 구조가 다르거나 센서가 지속적으로 한쪽으로 치우치면 위 갱신을 그대로 써도 실제 오차가 작다는 보장은 없습니다. 이 선형 가우스 전제에서는 평균과 분산으로 사후분포를 정확히 나타낼 수 있습니다. 일반 벡터 모형에서는 공분산 P와 관측 행렬 C가 보정 방향도 정합니다.</p>
+<div class="check" data-q="q4"></div>
+<div class="check" data-q="q5"></div>
+<div class="check" data-q="q6"></div>
+<h2>예측하고 갱신하는 값을 분수로 출력합니다</h2>
+<pre data-example="python"><code>from fractions import Fraction as F
+
+mean, variance = F(2), F(1)
+command, q, r, sensor = 1, 1, 4, 6
+pred_mean, pred_var = mean + command, variance + q
+gain = pred_var / (pred_var + r)
+innovation = sensor - pred_mean
+mean = pred_mean + gain * innovation
+variance = (1 - gain) * pred_var
+print(&quot;prediction:&quot;, pred_mean, pred_var)
+print(&quot;gain and innovation:&quot;, gain, innovation)
+print(&quot;correction:&quot;, mean, variance)
+print(&quot;gain with noisier sensor:&quot;, pred_var / (pred_var + 8))</code></pre>
+<pre data-output><code>prediction: 3 2
+gain and innovation: 1/3 3
+correction: 4 4/3
+gain with noisier sensor: 1/5</code></pre>
+<p>필터는 상태를 추정하는 단계입니다. 이 평균을 제어기에 넘기면 그다음 단계에서 보내는 입력을 고를 수 있습니다. 관측 직후 추정하는 칼만 갱신은 <a href="../ai/ai05-2.html">이산 상태 필터링</a>과 같은 예측·갱신 구성을 가집니다.</p>
+
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table>
+<thead><tr><th scope="col">핵심어</th><th scope="col">기억할 기준</th></tr></thead>
+<tbody>
+<tr><td><b class="key">과정 잡음 Q</b></td><td>상태가 전이할 때 추가되는 불확실성</td></tr>
+<tr><td><b class="key">관측 잡음 R</b></td><td>상태를 센서로 읽을 때의 불확실성</td></tr>
+<tr><td><b class="key">칼만 이득</b></td><td>예측 분산과 관측 잡음을 반영해 잔차를 적용하는 비율</td></tr>
+<tr><td><b class="key">필터링</b></td><td>현재까지 관측으로 현재 상태의 분포를 추정</td></tr>
+</tbody></table></div>
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>전이로 평균과 분산을 예측하고, 센서의 잔차를 칼만 이득만큼 반영합니다.</p></div>
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://press.princeton.edu/books/hardcover/9780691193984/feedback-systems">Åström·Murray · Feedback Systems</a></li>
+<li><a href="https://cs-www.cs.yale.edu/homes/yry/readings/general/Kalman1960.pdf">Kalman · 선형 필터와 예측</a></li>
+</ul>
+
+<h2>확인 문제</h2>
+<p>아직 풀지 않은 문제입니다. 먼저 식이나 근거를 적어 보고 해설을 확인합니다.</p>
+<div id="quiz"></div>
+
+<section class="work" id="tools"></section>
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>변화점을 찾고 시간순 예측을 검증하기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="SP03-3">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">전문 연구 경로 · SP03 시계열 예측</p>
+<p class="chap-num">SP03·3</p>
+<h1>변화점을 찾고 시간순 예측을 검증하기</h1>
+<p class="lead">측정값이 10 부근에서 16 부근으로 옮겨 갑니다. 구간을 나눴을 때 오차가 얼마나 줄어드는지 계산하고, 과거 예측을 평가할 때 미래를 사용하지 않도록 합니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul>
+<li>계단처럼 바뀌는 수준과 계절성·일시적 이상값을 구분한다.</li>
+<li>구간의 잔차 제곱합과 분할 벌점으로 변화점 후보를 비교한다.</li>
+<li>실시간 검출, 이동 원점 검증, 예측구간 포괄률의 범위를 설명한다.</li>
+</ul></div>
+
+<h2>관측을 어떤 기준으로 나누는가?</h2>
+<p>변화점은 평균·분산 같은 자료 생성의 특성이 달라지는 시점을 나타냅니다. 합성 자료 <code>[10,11,9,16,17,15]</code>에서는 구간마다 다른 평균을 쓸 수 있는지를 봅니다. 분할 없이 전체 평균 13을 쓰면 잔차를 제곱하여 더한 값이 58입니다. 3번째 뒤에서 나누면 평균 10과 16이며 잔차 제곱합은 각각 2, 합계 4입니다.</p><figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 248" role="img" aria-label="관측 10,11,9,16,17,15를 세 번째와 네 번째 사이에서 나누면 전반 평균 10, 후반 평균 16으로 나타난다.">
+<text class="f-cap" x="380" y="30" text-anchor="middle">한 번만 나누는 수준 변화점 후보</text>
+<line class="f-ink" x1="123" y1="191" x2="624" y2="191"/>
+<line class="f-ink" x1="123" y1="191" x2="123" y2="61"/>
+<line class="f-ink" x1="117" y1="191" x2="123" y2="191"/>
+<text class="f-s" x="108" y="195" text-anchor="end">8</text>
+<line class="f-ink" x1="117" y1="165" x2="123" y2="165"/>
+<text class="f-s" x="108" y="169" text-anchor="end">10</text>
+<line class="f-ink" x1="117" y1="139" x2="123" y2="139"/>
+<text class="f-s" x="108" y="143" text-anchor="end">12</text>
+<line class="f-ink" x1="117" y1="113" x2="123" y2="113"/>
+<text class="f-s" x="108" y="117" text-anchor="end">14</text>
+<line class="f-ink" x1="117" y1="87" x2="123" y2="87"/>
+<text class="f-s" x="108" y="91" text-anchor="end">16</text>
+<line class="f-ink" x1="117" y1="61" x2="123" y2="61"/>
+<text class="f-s" x="108" y="65" text-anchor="end">18</text>
+<line class="f-dash" x1="371.5" y1="61" x2="371.5" y2="191"/>
+<line class="f-line" x1="139" y1="165" x2="325" y2="165"/>
+<line class="f-line" x1="418" y1="87" x2="604" y2="87"/>
+<circle class="f-fill" cx="139" cy="165" r="5"/>
+<text class="f-s" x="139" y="216" text-anchor="middle">1</text>
+<circle class="f-fill" cx="232" cy="152" r="5"/>
+<text class="f-s" x="232" y="216" text-anchor="middle">2</text>
+<circle class="f-fill" cx="325" cy="178" r="5"/>
+<text class="f-s" x="325" y="216" text-anchor="middle">3</text>
+<circle class="f-fill" cx="418" cy="87" r="5"/>
+<text class="f-s" x="418" y="216" text-anchor="middle">4</text>
+<circle class="f-fill" cx="511" cy="74" r="5"/>
+<text class="f-s" x="511" y="216" text-anchor="middle">5</text>
+<circle class="f-fill" cx="604" cy="100" r="5"/>
+<text class="f-s" x="604" y="216" text-anchor="middle">6</text>
+</svg>
+<figcaption>점선 뒤 자료까지 사용해 계산한 사후 분할입니다. 실시간에는 이후 점들을 기다려야 합니다.</figcaption>
+</figure>
+<p>관측 여섯 점에서 수준을 비교한 작은 모형입니다. 값 한 개가 튀는 이상값과 이어지는 수준의 변화, 일정 주기로 돌아오는 계절 변화는 다른 문제일 수 있습니다.</p><div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
+
+<h2>더 많이 나누면 오차는 줄기 쉽다</h2>
+<p>관측마다 평균 하나를 주면 제곱합은 0이 되지만 새 관측에서 그 평균이 계속 유지될 이유는 없습니다. 최소 두 점이 한 구간에 있도록 제한하고, 경계를 하나 만들면 벌점 10을 더합니다. 같은 비용 기준에서 3번째 뒤의 분할이 선택됩니다. 벌점 60이면 같은 후보에서 분할 없는 비용 58이 더 낮습니다.</p><figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 246" role="img" aria-label="전체 평균의 잔차 제곱합 58. 세 번째에서 분할하면 4이며 벌점을 더해 14가 가장 작다.">
+<text class="f-cap" x="380" y="29" text-anchor="middle">각 후보의 잔차 제곱합과 벌점</text>
+<rect class="f-soft" x="56.5" y="43" width="181" height="37"/>
+<text class="f-s" x="147" y="66.5" text-anchor="middle">경계 위치</text>
+<rect class="f-soft" x="237.5" y="43" width="205" height="37"/>
+<text class="f-s" x="340" y="66.5" text-anchor="middle">잔차 제곱합</text>
+<rect class="f-soft" x="442.5" y="43" width="261" height="37"/>
+<text class="f-s" x="573" y="66.5" text-anchor="middle">분할 벌점 10 포함</text>
+<rect class="f-box" x="56.5" y="80" width="181" height="37"/>
+<text class="f-t" x="147" y="103.5" text-anchor="middle">분할 없음</text>
+<rect class="f-box" x="237.5" y="80" width="205" height="37"/>
+<text class="f-t" x="340" y="103.5" text-anchor="middle">58</text>
+<rect class="f-box" x="442.5" y="80" width="261" height="37"/>
+<text class="f-t" x="573" y="103.5" text-anchor="middle">58</text>
+<rect class="f-box" x="56.5" y="117" width="181" height="37"/>
+<text class="f-t" x="147" y="140.5" text-anchor="middle">2 뒤</text>
+<rect class="f-box" x="237.5" y="117" width="205" height="37"/>
+<text class="f-t" x="340" y="140.5" text-anchor="middle">39.25</text>
+<rect class="f-box" x="442.5" y="117" width="261" height="37"/>
+<text class="f-t" x="573" y="140.5" text-anchor="middle">49.25</text>
+<rect class="f-box" x="56.5" y="154" width="181" height="37"/>
+<text class="f-t" x="147" y="177.5" text-anchor="middle">3 뒤</text>
+<rect class="f-box" x="237.5" y="154" width="205" height="37"/>
+<text class="f-t" x="340" y="177.5" text-anchor="middle">4</text>
+<rect class="f-box" x="442.5" y="154" width="261" height="37"/>
+<text class="f-t" x="573" y="177.5" text-anchor="middle">14</text>
+<rect class="f-box" x="56.5" y="191" width="181" height="37"/>
+<text class="f-t" x="147" y="214.5" text-anchor="middle">4 뒤</text>
+<rect class="f-box" x="237.5" y="191" width="205" height="37"/>
+<text class="f-t" x="340" y="214.5" text-anchor="middle">31</text>
+<rect class="f-box" x="442.5" y="191" width="261" height="37"/>
+<text class="f-t" x="573" y="214.5" text-anchor="middle">41</text>
+</svg>
+<figcaption>각 구간에 관측이 두 개 이상 있어야 한다고 정한 예입니다.</figcaption>
+</figure>
+<p>변화점이 여러 곳일 수 있을 때는 가능한 경계 조합과 벌점을 함께 평가합니다. 아래 예제는 한 경계 후보를 전부 열거하는 소형 예입니다.</p><div class="check" data-q="q3"></div><div class="check" data-q="q4"></div>
+
+<h2>과거 검증에서 미래를 쓰지 않는다</h2>
+<p>사후 분할은 전체에서 경계를 찾습니다. 실시간 검출에서는 시점마다 당시까지 본 자료로만 경보를 결정합니다. 전체 자료에서 찾은 시점을 과거에도 알고 있었다고 두면 미래 정보가 새어 들어갑니다. 경보를 비교할 때는 변화로부터 몇 시점 뒤에 알았는지와 잘못 경보한 횟수를 같이 봅니다.</p>
+<p>같은 목표 시점과 지평을 둔 이동 원점 평가에서는 과거만으로 규칙을 고르고 이후 관측으로 점오차와 구간의 포함 여부를 기록합니다. 포함 횟수를 전체 예측 수로 나눈 값은 경험적 포괄률입니다. 폭과 포괄률을 함께 봅니다.</p><div class="check" data-q="q5"></div><div class="check" data-q="q6"></div>
+
+<h2>분할과 경험적 포괄률을 직접 계산하기</h2>
+<p class="small">실행 예제</p>
+<pre data-example="python"><code>from fractions import Fraction as F
+
+sample = [10, 11, 9, 16, 17, 15]
+
+def sse(y):
+    center = F(sum(y), len(y))
+    return sum((v - center) ** 2 for v in y)
+
+scores = {t: sse(sample[:t]) + sse(sample[t:]) for t in range(2, 5)}
+print(&quot;no split:&quot;, sse(sample))
+print(&quot;boundary / SSE:&quot;, [(t, str(v)) for t, v in scores.items()])
+for penalty in (10, 60):
+    choices = {&quot;none&quot;: sse(sample)}
+    choices.update({str(t): loss + penalty for t, loss in scores.items()})
+    best = min(choices, key=choices.get)
+    print(&quot;penalty:&quot;, penalty, &quot;| boundary:&quot;, best, &quot;| score:&quot;, choices[best])
+
+observed = [11, 12, 17, 18, 16]
+intervals = [(9, 13), (10, 14), (13, 16), (16, 18), (14, 17)]
+covered = sum(lo &lt;= obs &lt;= hi for obs, (lo, hi) in zip(observed, intervals, strict=True))
+print(&quot;coverage:&quot;, covered, &quot;/&quot;, len(observed))</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>no split: 58
+boundary / SSE: [(2, '157/4'), (3, '4'), (4, '31')]
+penalty: 10 | boundary: 3 | score: 14
+penalty: 60 | boundary: none | score: 58
+coverage: 4 / 5</code></pre>
+<p>마지막의 구간 다섯 개는 분할로 만든 결과가 아니라 포함 비율을 세는 별도 모의 입력입니다. 다섯 시점에서 네 번 포함했다는 결과만으로 명목 수준과 일치하는지 정밀하게 판단하기 어렵습니다.</p><div class="check" data-q="q7"></div><div class="check" data-q="q8"></div>
+
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table><thead><tr><th scope="col">개념</th><th scope="col">확인할 것</th></tr></thead><tbody>
+<tr><th scope="row"><b class="key">변화점</b></th><td>구간을 나눌 가치가 벌점을 넘어서는지 비교한다.</td></tr>
+<tr><th scope="row"><b class="key">시점</b></th><td>사후 분석과 실제 시점의 검출을 구분한다.</td></tr>
+<tr><th scope="row"><b class="key">구간 검증</b></th><td>허용 이력으로 만든 구간의 포함 비율과 폭을 기록한다.</td></tr>
+</tbody></table></div><div class="box sum"><p class="box-k">다음 장으로</p><p><a href="../../unit.html?u=SP04">다음 장</a>에서는 결과의 변화와 개입 효과를 구분합니다.</p></div>
+
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://arxiv.org/abs/1101.1438">Killick·Fearnhead·Eckley · 변화점의 비용과 벌점</a></li>
+<li><a href="https://otexts.com/fpp3/tscv.html">Hyndman·Athanasopoulos · 예측 교재의 시계열 검증</a></li>
+<li><a href="https://otexts.com/fpp3/prediction-intervals.html">Hyndman·Athanasopoulos · 예측구간과 예측 분포</a></li>
+</ul>
+<h2>확인 문제</h2>
+<p>직접 계산하거나 설명을 먼저 적고 답을 확인해 보세요.</p>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>피드백이 상태의 오차를 줄이는 조건 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e8c'/%3E%3Cpath d='M8 22V10m8 12V14m8 8V6' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="SP07-1">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+
+<header class="chapter">
+<p class="chap-sub">전문 연구 경로 · SP07 제어·로봇·동적 시스템</p>
+<p class="chap-num">SP07·1</p>
+<h1>피드백이 상태의 오차를 줄이는 조건</h1>
+<p class="lead">가상의 위치 표시를 목표에 맞춥니다. 표시의 현재 오차를 돌아보고 입력을 정하면 그 오차를 작게 만들 수 있습니다.</p>
+</header>
+
+<div class="goal">
+<h2>이 장을 읽고 나면</h2>
+<ul>
+<li>상태, 제어 입력, 관측, 기준값을 구분한다.</li>
+<li>닫힌 고리에서 오차가 다음 단계에 얼마나 남는지 계산한다.</li>
+<li>오차가 감소하는 조건과 부호가 번갈아 바뀌는 경우를 구분한다.</li>
+</ul>
+</div>
+
+<h2>현재 오차로 다음 입력을 정합니다</h2>
+<p>매 초 한 번 갱신하는 합성 위치 표시를 생각합니다. 현재 좌표와 목표 0의 차이를 오차 eₜ라 두고, 입력 uₜ는 같은 좌표 단위로 작용한다고 가정합니다. 아무 입력이 없으면 오차가 다음에 1.2배가 됩니다. 시스템 식은 eₜ₊₁=1.2eₜ+uₜ입니다. 이 작은 모형에서는 센서로 eₜ를 정확히 잰다고 가정합니다.</p>
+<p>현재 오차를 사용해 uₜ=−k eₜ를 정하는 것을 <b class="key">상태 피드백</b>이라고 합니다. 출력이 다음 행동의 결정에 다시 들어가기 때문에 닫힌 고리라고도 부릅니다. k=0.7을 대입하면 오차는 eₜ₊₁=(1.2−0.7)eₜ=0.5eₜ입니다. 시작 오차가 4라면 첫 입력은 −2.8, 다음 오차는 2입니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 148" role="img" aria-label="오차 4를 읽고 입력 −2.8을 선택하면 다음 오차 2">
+<rect class="f-box" x="18" y="28" width="201" height="63" rx="3"/>
+<text class="f-t" x="119" y="54" text-anchor="middle">오차 읽기</text>
+<text class="f-s" x="119" y="75" text-anchor="middle">e₀ = 4</text>
+<rect class="f-box" x="280" y="28" width="201" height="63" rx="3"/>
+<text class="f-t" x="381" y="54" text-anchor="middle">입력 결정</text>
+<text class="f-s" x="381" y="75" text-anchor="middle">u₀ = −0.7×4 = −2.8</text>
+<rect class="f-box" x="540" y="28" width="201" height="63" rx="3"/>
+<text class="f-t" x="641" y="54" text-anchor="middle">상태 갱신</text>
+<text class="f-s" x="641" y="75" text-anchor="middle">e₁ = 1.2×4−2.8 = 2</text>
+<line class="f-ink" x1="219" y1="62" x2="275" y2="62" marker-end="url(#f-arrow)"/>
+<line class="f-ink" x1="481" y1="62" x2="535" y2="62" marker-end="url(#f-arrow)"/>
+<text class="f-s" x="380" y="123" text-anchor="middle">다음 갱신에서 e₁을 읽고 u₁을 다시 결정</text>
+</svg>
+<figcaption>제어 입력은 모형의 다음 위치를 바꾸며 바뀐 상태가 다음 선택에 쓰입니다.</figcaption>
+</figure>
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+<div class="check" data-q="q3"></div>
+<h2>다음 값에 곱하는 배율이 안정성을 정합니다</h2>
+<p>외란이 없는 모형은 eₜ=(1.2−k)ᵗe₀입니다. |1.2−k|가 1보다 작으면 모든 초기 오차가 0으로 수렴하므로 이 모형의 평형점은 <b class="key">점근 안정</b>입니다. 이 k의 범위는 0.2&lt;k&lt;2.2입니다. 배율이 −0.5인 k=1.7에서는 오차 부호가 번갈아 바뀌면서도 크기가 절반씩 감소합니다. k=2.4의 배율은 −1.2이며 부호가 바뀔 때마다 절댓값은 커집니다. 배율이 ±1이면 초기 오차가 0이 아닌 경우 크기가 유지됩니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 253" role="img" aria-label="배율 1.2, 0.5, −0.5에 따른 4단계 오차">
+<line class="f-ink" x1="66" y1="151" x2="675" y2="151"/>
+<line class="f-ink" x1="85" y1="39" x2="85" y2="216"/>
+<text class="f-s" x="85" y="237" text-anchor="middle">0</text>
+<text class="f-s" x="224" y="237" text-anchor="middle">1</text>
+<text class="f-s" x="363" y="237" text-anchor="middle">2</text>
+<text class="f-s" x="502" y="237" text-anchor="middle">3</text>
+<text class="f-s" x="641" y="237" text-anchor="middle">4</text>
+<line class="f-ink" x1="80" y1="203" x2="89" y2="203"/>
+<text class="f-s" x="71" y="207" text-anchor="end">-4</text>
+<line class="f-ink" x1="80" y1="151" x2="89" y2="151"/>
+<text class="f-s" x="71" y="155" text-anchor="end">0</text>
+<line class="f-ink" x1="80" y1="99" x2="89" y2="99"/>
+<text class="f-s" x="71" y="103" text-anchor="end">4</text>
+<line class="f-ink" x1="80" y1="47" x2="89" y2="47"/>
+<text class="f-s" x="71" y="51" text-anchor="end">8</text>
+<polyline class="f-dash" points="85,99.000 224,88.600 363,76.120 502,61.144 641,43.173"/>
+<polyline class="f-line" points="85,99.000 224,125.000 363,138.000 502,144.500 641,147.750"/>
+<polyline class="f-ink" points="85,99.000 224,177.000 363,138.000 502,157.500 641,147.750"/>
+<text class="f-s" x="270" y="28" text-anchor="middle">점선: 1.2</text>
+<text class="f-s" x="400" y="28" text-anchor="middle">파랑: 0.5</text>
+<text class="f-s" x="540" y="28" text-anchor="middle">회색: −0.5</text>
+<text class="f-s" x="724" y="237" text-anchor="middle">단계 t</text>
+</svg>
+<figcaption>가로 간격 139가 한 단계, 세로 간격 13이 오차 1입니다. 세 경우 모두 시작 오차는 4입니다.</figcaption>
+</figure>
+<p>매 단계에 같은 외란 1이 더해지면 배율 0.5인 식은 eₜ₊₁=0.5eₜ+1로 바뀝니다. 값이 그대로 유지되는 평형은 e=0.5e+1에서 e=2입니다. 원래 목표 0과 새 평형은 다르므로, 오차 감소와 외란 속 목표 달성을 나누어 확인해야 합니다. 실제 설계에서는 입력의 허용 범위와 센서 오차, 지연도 모형에 반영합니다.</p>
+<div class="check" data-q="q4"></div>
+<div class="check" data-q="q5"></div>
+<div class="check" data-q="q6"></div>
+<h2>상태공간에서는 필요한 변수를 벡터로 모읍니다</h2>
+<p>상태를 x로 쓰면 선형 상태공간 모형은 xₜ₊₁=A xₜ+B uₜ, 관측은 yₜ=C xₜ처럼 적을 수 있습니다. 상태에는 다음 변화를 예측하는 데 필요한 위치나 속도 등이 들어가며 관측식은 그중 센서가 보는 조합을 정합니다. 예에서는 x=e, A=1.2, B=C=1입니다. 상태 벡터에 직접 선형 피드백 u=−K x를 적용하면 닫힌 고리 행렬은 A−BK입니다. 유한 차원 선형 이산시간 모형에서 이 행렬의 모든 고유값 절댓값이 1보다 작으면 원점으로 수렴합니다.</p>
+<pre data-example="python"><code>from fractions import Fraction as F
+
+for gain in (F(0), F(7, 10), F(17, 10), F(24, 10)):
+    multiplier = F(6, 5) - gain
+    trace = [round(float(4 * multiplier**t), 4) for t in range(5)]
+    print(&quot;gain:&quot;, gain, &quot;trace:&quot;, trace)
+
+e = F(4)
+for _ in range(4):
+    e = e / 2 + 1
+print(&quot;with disturbance:&quot;, e, &quot;equilibrium:&quot;, F(1) / (1 - F(1, 2)))</code></pre>
+<pre data-output><code>gain: 0 trace: [4.0, 4.8, 5.76, 6.912, 8.2944]
+gain: 7/10 trace: [4.0, 2.0, 1.0, 0.5, 0.25]
+gain: 17/10 trace: [4.0, -2.0, 1.0, -0.5, 0.25]
+gain: 12/5 trace: [4.0, -4.8, 5.76, -6.912, 8.2944]
+with disturbance: 17/8 equilibrium: 2</code></pre>
+<p>이 코드는 수식으로 정한 가상 환경만 반복합니다. 다음 장에서는 상태를 정확히 관측한다는 가정을 풀고, 센서와 모형의 불확실성을 같이 씁니다.</p>
+
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table>
+<thead><tr><th scope="col">핵심어</th><th scope="col">기억할 기준</th></tr></thead>
+<tbody>
+<tr><td><b class="key">상태·입력·관측</b></td><td>다음 변화에 필요한 값, 바꿀 수 있는 힘, 측정값</td></tr>
+<tr><td><b class="key">피드백</b></td><td>새 상태나 관측을 읽고 다음 입력을 바꿈</td></tr>
+<tr><td><b class="key">점근 안정</b></td><td>평형에서 벗어난 값이 시간이 지나며 평형으로 돌아감</td></tr>
+<tr><td><b class="key">선형 상태공간</b></td><td>상태 갱신과 관측 식을 따로 표시</td></tr>
+</tbody></table></div>
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>오차에 작용하는 닫힌 고리의 배율을 식에 대입하고, 절댓값이 1보다 작은지 확인합니다.</p></div>
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://press.princeton.edu/books/hardcover/9780691193984/feedback-systems">Åström·Murray · Feedback Systems</a></li>
+</ul>
+
+<h2>확인 문제</h2>
+<p>아직 풀지 않은 문제입니다. 먼저 식이나 근거를 적어 보고 해설을 확인합니다.</p>
+<div id="quiz"></div>
+
+<section class="work" id="tools"></section>
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

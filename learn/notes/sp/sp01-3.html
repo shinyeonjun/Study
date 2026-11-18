@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>근거 문서를 함께 쓰는 답변과 RAG 평가 기록 남기기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e8c'/%3E%3Cpath d='M8 22V10m8 12V14m8 8V6' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="SP01-3">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+
+<header class="chapter">
+<p class="chap-sub">전문 경로 · SP01 언어모델·검색·추천</p>
+<p class="chap-num">SP01·3</p>
+<h1>근거 문서를 함께 쓰는 답변과 RAG 평가 기록 남기기</h1>
+<p class="lead">모의 도서관 안내에서 관련 문서를 가져온 뒤, 답의 주장마다 실제 근거가 있는지 확인합니다. 검색 실패와 답변 실패를 따로 기록합니다.</p>
+</header>
+
+<div class="goal">
+<h2>이 장을 읽고 나면</h2>
+<ul>
+<li>검색·문서 선택·답변 단계의 입력과 출력을 구분한다.</li>
+<li>최신 근거의 검색 여부와 주장별 근거성을 계산한다.</li>
+<li>근거 부족과 상충 시의 응답 규칙을 평가한다.</li>
+</ul>
+</div>
+<h2>질문과 관련된 문서부터 가져온다</h2>
+<p><b class="key">RAG</b>(검색 증강 생성)는 검색한 문서의 내용에 근거해 답을 만들 수 있도록 언어모델에 그 내용을 함께 주는 방식입니다. 모의 질문 ‘도서관 주말 반납 마감은?’에 답하려면 먼저 검색의 범위를 큐레이션합니다. 안내 D1은 현재 주말 반납 마감 18시, D2는 이전판의 16시, D3은 평일 대출, D4는 주말 행사입니다. 이 자료에서 문서 버전을 관리하는 규칙은 이전판을 최신 안내와 함께 사용하지 않는 것입니다.</p>
+<p>예제 검색은 질문의 키워드 세 개와 문서에서 겹치는 수를 셉니다. D1과 이전판 D2는 모두 3점, 주말 행사 D4는 2점, D3은 1점입니다. D2는 현재 문서가 아니므로 제외하고 상위 두 개 D1,D4를 사용합니다. 검색 점수가 높다는 사실은 질문과 어휘가 겹쳤음을 보여 주며, 시간 안내에 관한 실제 근거인지는 문서 내용과 적용 조건을 따로 읽어야 합니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 257" role="img" aria-label="원문 네 개의 키워드 점수는 D1=3,D2=3,D3=1,D4=2이고 사용 가능한 현재 문서 상위 둘은 D1,D4다.">
+<text class="f-cap" x="380" y="33" text-anchor="middle">질문의 세 단어와 모의 안내 네 건</text>
+<text class="f-t" x="180" y="82" text-anchor="end">문서</text>
+<rect class="f-box" x="206" y="58" width="120" height="38" rx="3"/>
+<text class="f-t" x="266" y="83" text-anchor="middle">D1</text>
+<rect class="f-box" x="332" y="58" width="120" height="38" rx="3"/>
+<text class="f-t" x="392" y="83" text-anchor="middle">D2</text>
+<rect class="f-box" x="458" y="58" width="120" height="38" rx="3"/>
+<text class="f-t" x="518" y="83" text-anchor="middle">D3</text>
+<rect class="f-box" x="584" y="58" width="120" height="38" rx="3"/>
+<text class="f-t" x="644" y="83" text-anchor="middle">D4</text>
+<text class="f-t" x="180" y="128" text-anchor="end">겹친 수</text>
+<rect class="f-box" x="206" y="104" width="120" height="38" rx="3"/>
+<text class="f-t" x="266" y="129" text-anchor="middle">3</text>
+<rect class="f-box" x="332" y="104" width="120" height="38" rx="3"/>
+<text class="f-t" x="392" y="129" text-anchor="middle">3</text>
+<rect class="f-box" x="458" y="104" width="120" height="38" rx="3"/>
+<text class="f-t" x="518" y="129" text-anchor="middle">1</text>
+<rect class="f-box" x="584" y="104" width="120" height="38" rx="3"/>
+<text class="f-t" x="644" y="129" text-anchor="middle">2</text>
+<text class="f-t" x="180" y="174" text-anchor="end">현재판인가?</text>
+<rect class="f-box" x="206" y="150" width="120" height="38" rx="3"/>
+<text class="f-t" x="266" y="175" text-anchor="middle">예</text>
+<rect class="f-box" x="332" y="150" width="120" height="38" rx="3"/>
+<text class="f-t" x="392" y="175" text-anchor="middle">아니오</text>
+<rect class="f-box" x="458" y="150" width="120" height="38" rx="3"/>
+<text class="f-t" x="518" y="175" text-anchor="middle">예</text>
+<rect class="f-box" x="584" y="150" width="120" height="38" rx="3"/>
+<text class="f-t" x="644" y="175" text-anchor="middle">예</text>
+<text class="f-t" x="180" y="220" text-anchor="end">상위 2</text>
+<rect class="f-soft" x="206" y="196" width="120" height="38" rx="3"/>
+<text class="f-t" x="266" y="221" text-anchor="middle">D1 · 3점</text>
+<rect class="f-box" x="332" y="196" width="120" height="38" rx="3"/>
+<text class="f-t" x="392" y="221" text-anchor="middle">D4 · 2점</text>
+</svg>
+<figcaption>D2의 단어 점수는 높지만 이전판입니다. 최신 기준을 먼저 정하고 순위를 매깁니다.</figcaption>
+</figure>
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+
+<h2>검색의 근거 회수와 답변의 주장 검증을 나눈다</h2>
+<p>이 질문에 필요한 기준 근거가 D1 하나라면 검색 결과의 근거 재현율은 1/1입니다. 이제 답에 ‘18시 마감’과 ‘휴일도 동일’이라는 두 주장이 있다고 합시다. 첫 주장은 D1과 일치하지만, 주말만 언급하는 D1로는 모든 휴일에 관한 두 번째 주장을 확인할 수 없습니다. 이 장의 주장별 근거율은 1/2입니다.</p>
+<p><b>근거성</b>은 답의 문장이 제공된 출처에서 확인되는지 묻습니다. 기준 정답과 실제로 일치하는지, 질문의 범위에 답했는지, 인용한 위치가 주장과 연결되는지도 따로 봅니다. 필요한 근거를 찾은 시스템이 과장된 답을 낼 수 있고, 근거를 못 찾은 시스템이 우연히 맞는 항목을 말할 수 있습니다. 정답과 출처를 함께 보면 두 경우를 구별합니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 257" role="img" aria-label="D1에서 18시는 확인되나 휴일도 같다는 주장은 없다. 인용이 둘 다 D1이어도 두 주장 중 하나만 지지된다.">
+<text class="f-cap" x="380" y="33" text-anchor="middle">답 전체를 문장보다 작은 주장으로 나눈다</text>
+<text class="f-t" x="180" y="82" text-anchor="end">주장</text>
+<rect class="f-box" x="206" y="58" width="246" height="38" rx="3"/>
+<text class="f-t" x="329" y="83" text-anchor="middle">18시 마감</text>
+<rect class="f-box" x="458" y="58" width="246" height="38" rx="3"/>
+<text class="f-t" x="581" y="83" text-anchor="middle">휴일도 동일</text>
+<text class="f-t" x="180" y="128" text-anchor="end">인용한 문서</text>
+<rect class="f-box" x="206" y="104" width="246" height="38" rx="3"/>
+<text class="f-t" x="329" y="129" text-anchor="middle">D1</text>
+<rect class="f-box" x="458" y="104" width="246" height="38" rx="3"/>
+<text class="f-t" x="581" y="129" text-anchor="middle">D1</text>
+<text class="f-t" x="180" y="174" text-anchor="end">문서가 뒷받침</text>
+<rect class="f-soft" x="206" y="150" width="246" height="38" rx="3"/>
+<text class="f-t" x="329" y="175" text-anchor="middle">예</text>
+<rect class="f-box" x="458" y="150" width="246" height="38" rx="3"/>
+<text class="f-t" x="581" y="175" text-anchor="middle">확인 불가</text>
+<text class="f-t" x="180" y="220" text-anchor="end">근거율</text>
+<rect class="f-soft" x="206" y="196" width="246" height="38" rx="3"/>
+<text class="f-t" x="329" y="221" text-anchor="middle">지지된 주장 1건</text>
+<rect class="f-box" x="458" y="196" width="246" height="38" rx="3"/>
+<text class="f-t" x="581" y="221" text-anchor="middle">전체 주장 2건</text>
+</svg>
+<figcaption>문서 번호를 붙이는 것과 번호의 내용이 실제 주장을 뒷받침하는 것은 구분합니다.</figcaption>
+</figure>
+<div class="check" data-q="q3"></div>
+<div class="check" data-q="q4"></div>
+
+<h2>실행마다 무엇이 변했는지 다시 따라갈 수 있게 적는다</h2>
+<p>질문, 사용한 문서 집합·색인 버전, 후보의 ID·순위·점수, 모델과 생성 설정, 실제로 사용한 인용 구절을 함께 남깁니다. 예제의 ‘생성’은 평가할 문자열을 사람이 정해 놓은 모의 출력입니다. 지지 여부도 알려진 두 주장만 검사합니다. 이런 명시적 기준표로 먼저 계산을 확인한 다음, 새로운 자료에는 사람 검토와 합의 기준을 정합니다.</p>
+<div class="check" data-q="q5"></div>
+<div class="check" data-q="q6"></div>
+<pre data-example="python"><code>records = {
+    &quot;D1&quot;: (True,  &quot;도서관 주말 반납 18시 마감&quot;),
+    &quot;D2&quot;: (False, &quot;도서관 주말 반납 16시 마감&quot;),
+    &quot;D3&quot;: (True,  &quot;도서관 평일 대출 20시 마감&quot;),
+    &quot;D4&quot;: (True,  &quot;도서관 주말 행사 11시 시작&quot;),
+}
+keywords = set(&quot;도서관 주말 반납&quot;.split())
+scored = [(ident, len(keywords &amp; set(text.split())))
+          for ident, (current, text) in records.items() if current]
+chosen = sorted(scored, key=lambda row: (-row[1], row[0]))[:2]
+selected = {ident for ident, _ in chosen}
+gold_evidence = {&quot;D1&quot;}
+claims = [(&quot;18시 마감&quot;, &quot;D1&quot;), (&quot;휴일도 동일&quot;, &quot;D1&quot;)]
+supported = [source in selected and text in records[source][1]
+             for text, source in claims]
+print(&quot;index:&quot;, &quot;guide-v3&quot;, &quot;hits:&quot;, chosen)
+print(&quot;source recall:&quot;, len(selected &amp; gold_evidence) / len(gold_evidence))
+print(&quot;supported flags:&quot;, supported, &quot;fraction:&quot;, sum(supported) / len(supported))</code></pre>
+<pre data-output><code>index: guide-v3 hits: [('D1', 3), ('D4', 2)]
+source recall: 1.0
+supported flags: [True, False] fraction: 0.5</code></pre>
+<p>문자열 겹침은 이 합성 예에서만 맞춘 대조 규칙입니다. 실제 근거에는 다른 표현의 문장, 부정, 조건, 적용 시점이 있어 의미와 범위를 확인합니다. 시스템의 <b>정렬</b>을 평가할 때에는 ‘근거대로 답하기’, ‘근거가 없으면 확인되지 않았다고 말하기’처럼 원하는 행동을 정의하고, 정상 질문과 이전판·상충 문서·근거 부족 사례를 각각 시험합니다. 필요 이상의 개인 정보는 평가 기록에 넣지 않습니다.</p>
+
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://arxiv.org/abs/2005.11401">Lewis 외 · Retrieval-Augmented Generation</a></li>
+<li><a href="https://arxiv.org/abs/2305.14251">Min 외 · FActScore의 원자적 사실 검사</a></li>
+<li><a href="sp01-2.html">SP01 · 근거 순위와 재현율</a></li>
+</ul>
+
+<h2>확인 문제</h2>
+<p>아직 풀지 않은 문제입니다. 먼저 식이나 근거를 적어 보고 해설을 확인합니다.</p>
+<div id="quiz"></div>
+
+<section class="work" id="tools"></section>
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

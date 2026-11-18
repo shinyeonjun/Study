@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>확률의 랜덤 워크와 링크 예측 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="SP05-2">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">전문 연구 경로 · SP05 그래프·네트워크 과학</p>
+<p class="chap-num">SP05·2</p>
+<h1>확률의 랜덤 워크와 링크 예측</h1>
+<p class="lead">노드 C에서 시작해 이웃을 무작위로 골라 이동합니다. 같은 그래프 구조에서 공통 이웃이 앞으로 생길 수 있는 연결을 어떻게 점수화하는지도 봅니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul>
+<li>랜덤 워크의 전이확률과 둘째 걸음 분포를 계산한다.</li>
+<li>링크 예측의 공통 이웃 점수를 계산한다.</li>
+<li>숨길 연결과 시점·미관측 비연결의 조건을 기록한다.</li>
+</ul></div>
+
+<h2>확률을 간선을 따라 이동시키기</h2>
+<p>그래프 위의 한 입자가 다음 걸음마다 현재 노드의 이웃을 균등하게 선택한다고 둡니다. C의 이웃은 A,B,D로 셋입니다. C에서 시작하면 한 걸음 뒤 그 이웃에 각각 <var>1/3</var>의 확률이 있습니다. <strong>랜덤 워크</strong>의 경로를 직접 만들 수도 있고, 모든 가능한 이동의 확률을 계산해 분포를 갱신할 수도 있습니다.</p><figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 232" role="img" aria-label="C의 세 이웃 A,B,D에 각각 1/3 확률이 이동한다.">
+<text class="f-cap" x="380" y="26" text-anchor="middle">C에서 균등하게 한 걸음</text>
+<line class="f-ink" x1="140" y1="93" x2="140" y2="153"/>
+<line class="f-ink" x1="154.41" y1="82.18" x2="280.59" y2="118.82"/>
+<line class="f-ink" x1="154.41" y1="163.82" x2="280.59" y2="127.18"/>
+<line class="f-line" x1="310" y1="123" x2="450" y2="123"/>
+<line class="f-ink" x1="479.41" y1="118.82" x2="605.59" y2="82.18"/>
+<line class="f-ink" x1="479.41" y1="127.18" x2="605.59" y2="163.82"/>
+<line class="f-ink" x1="620" y1="93" x2="620" y2="153"/>
+<circle class="f-soft" cx="140" cy="78" r="15"/>
+<text class="f-t" x="140" y="82" text-anchor="middle">A</text>
+<text class="f-s" x="140" y="115" text-anchor="middle">1/3</text>
+<circle class="f-soft" cx="140" cy="168" r="15"/>
+<text class="f-t" x="140" y="172" text-anchor="middle">B</text>
+<text class="f-s" x="140" y="205" text-anchor="middle">1/3</text>
+<circle class="f-box" cx="295" cy="123" r="15"/>
+<text class="f-t" x="295" y="127" text-anchor="middle">C</text>
+<text class="f-s" x="295" y="160" text-anchor="middle">0</text>
+<circle class="f-soft" cx="465" cy="123" r="15"/>
+<text class="f-t" x="465" y="127" text-anchor="middle">D</text>
+<text class="f-s" x="465" y="160" text-anchor="middle">1/3</text>
+<circle class="f-box" cx="620" cy="78" r="15"/>
+<text class="f-t" x="620" y="82" text-anchor="middle">E</text>
+<text class="f-s" x="620" y="115" text-anchor="middle">0</text>
+<circle class="f-box" cx="620" cy="168" r="15"/>
+<text class="f-t" x="620" y="172" text-anchor="middle">F</text>
+<text class="f-s" x="620" y="205" text-anchor="middle">0</text>
+</svg>
+<figcaption>걸음을 옮긴 뒤 전체 확률의 합은 1입니다.</figcaption>
+</figure>
+<p>둘째 걸음에 C로 돌아오는 확률에는 A와 B에서 각각 <var>(1/3)(1/2)=1/6</var>, D에서 <var>(1/3)(1/3)=1/9</var>가 들어갑니다. 합은 <var>4/9</var>입니다. 여러 가능한 경로에서 도착 노드가 같으면 각 확률을 합합니다.</p><div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
+
+<h2>분포 변화와 연결의 점수</h2>
+<p>여러 위치의 확률 질량이 이동해 퍼지는 과정은 그래프 위 <b class="key">확산</b>을 표현하는 한 모형입니다. 이동 자체에서 새 질량이 생기지 않습니다. 어떤 연결이 없거나 방향이 있으면 규칙을 바꿉니다. 고립에서 머무는지 별도로 정하고, 주기나 연결 성분에 따라 장기 거동도 달라집니다.</p>
+<p><b class="key">링크 예측</b>은 아직 알려지지 않았거나 미래에 생길 연결에 점수를 줍니다. 두 노드의 이웃 집합의 교집합 크기가 <strong>공통 이웃 점수</strong>입니다. 아래에는 기존 그래프의 B–C를 평가용으로 숨긴 예가 있습니다. 숨긴 연결은 학습 특징이나 이웃 수 계산에 넣지 않습니다.</p><figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 209" role="img" aria-label="학습 그래프에서 B-C를 빼고 공통 이웃 수를 세면 BC 1, AD 1, AE 0이다.">
+<text class="f-cap" x="380" y="29" text-anchor="middle">BC를 숨긴 학습 그래프에서 후보 비교</text>
+<rect class="f-soft" x="72" y="43" width="183" height="37"/>
+<text class="f-s" x="163.5" y="66.5" text-anchor="middle">후보</text>
+<rect class="f-soft" x="255" y="43" width="245" height="37"/>
+<text class="f-s" x="377.5" y="66.5" text-anchor="middle">공통 이웃</text>
+<rect class="f-soft" x="500" y="43" width="188" height="37"/>
+<text class="f-s" x="594" y="66.5" text-anchor="middle">점수</text>
+<rect class="f-box" x="72" y="80" width="183" height="37"/>
+<text class="f-t" x="163.5" y="103.5" text-anchor="middle">B–C</text>
+<rect class="f-box" x="255" y="80" width="245" height="37"/>
+<text class="f-t" x="377.5" y="103.5" text-anchor="middle">A</text>
+<rect class="f-box" x="500" y="80" width="188" height="37"/>
+<text class="f-t" x="594" y="103.5" text-anchor="middle">1</text>
+<rect class="f-box" x="72" y="117" width="183" height="37"/>
+<text class="f-t" x="163.5" y="140.5" text-anchor="middle">A–D</text>
+<rect class="f-box" x="255" y="117" width="245" height="37"/>
+<text class="f-t" x="377.5" y="140.5" text-anchor="middle">C</text>
+<rect class="f-box" x="500" y="117" width="188" height="37"/>
+<text class="f-t" x="594" y="140.5" text-anchor="middle">1</text>
+<rect class="f-box" x="72" y="154" width="183" height="37"/>
+<text class="f-t" x="163.5" y="177.5" text-anchor="middle">A–E</text>
+<rect class="f-box" x="255" y="154" width="245" height="37"/>
+<text class="f-t" x="377.5" y="177.5" text-anchor="middle">없음</text>
+<rect class="f-box" x="500" y="154" width="188" height="37"/>
+<text class="f-t" x="594" y="177.5" text-anchor="middle">0</text>
+</svg>
+<figcaption>평가 때만 정답을 열어 봅니다. 공통 이웃 규칙은 숨긴 간선과 다른 후보에 같은 수를 줄 수 있습니다.</figcaption>
+</figure><div class="check" data-q="q3"></div><div class="check" data-q="q4"></div>
+
+<h2>작은 확산과 연결 점수를 실행</h2>
+<p class="small">실행 예제</p>
+<pre data-example="python"><code>from fractions import Fraction as F
+
+vertices = &quot;ABCDEF&quot;
+edges = {&quot;AB&quot;, &quot;AC&quot;, &quot;BC&quot;, &quot;CD&quot;, &quot;DE&quot;, &quot;DF&quot;, &quot;EF&quot;}
+
+def graph(links):
+    return {n: {v for v in vertices if &quot;&quot;.join(sorted(v+n)) in links}
+            for n in vertices}
+
+neighbors = graph(edges)
+mass = {n: F(n == &quot;C&quot;) for n in vertices}
+for step in (1, 2):
+    mass = {n: sum(mass[v] / len(neighbors[v]) for v in neighbors[n])
+            for n in vertices}
+    print(f&quot;step {step}:&quot;, &quot; &quot;.join(f&quot;{n}={mass[n]}&quot; for n in vertices))
+    assert sum(mass.values()) == 1
+
+train = graph(edges - {&quot;BC&quot;})
+for a, b in (&quot;BC&quot;, &quot;AD&quot;, &quot;AE&quot;):
+    print(a+b, &quot;score&quot;, len(train[a] &amp; train[b]))</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>step 1: A=1/3 B=1/3 C=0 D=1/3 E=0 F=0
+step 2: A=1/6 B=1/6 C=4/9 D=0 E=1/9 F=1/9
+BC score 1
+AD score 1
+AE score 0</code></pre>
+<p>이 식에서는 모든 노드가 이웃을 가집니다. 결과의 0은 해당 걸음 수에 그 노드에 도착하지 못한다는 뜻입니다. 어떤 노드에 영구히 못 간다는 뜻은 아닙니다.</p><div class="check" data-q="q5"></div><div class="check" data-q="q6"></div>
+
+<h2>실제 연결의 시간과 부정 예를 확인</h2>
+<p>미래 연결을 예측할 때는 기준 시점까지의 노드·간선만 써야 합니다. 후보에서 연결이 아직 관측되지 않았어도 나중에 나타나거나 관측이 누락될 수 있습니다. 정해진 기간 안에 새로 기록된 연결을 양성으로 하고, 비교할 후보 모집단과 음성 표본 추출 규칙을 적습니다. 연결 가능성이 희박하면 정확도만으로 성능을 판단하기 어렵습니다.</p><div class="check" data-q="q7"></div><div class="check" data-q="q8"></div>
+
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table><thead><tr><th scope="col">개념</th><th scope="col">확인할 것</th></tr></thead><tbody>
+<tr><th scope="row"><b class="key">랜덤 워크</b></th><td>현재 이웃에 전이확률을 나누고 도착별로 합한다.</td></tr>
+<tr><th scope="row"><b class="key">공통 이웃</b></th><td>평가 연결을 숨긴 그래프에서 점수를 계산한다.</td></tr>
+<tr><th scope="row"><b class="key">검증</b></th><td>시점, 후보 집합과 미관측 연결의 뜻을 기록한다.</td></tr>
+</tbody></table></div><div class="box sum"><p class="box-k">다음 장으로</p><p><a href="sp05-3.html">다음 장</a>에서는 이웃의 특성을 모아 노드 표현을 계산합니다.</p></div>
+
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://www.cs.cornell.edu/home/kleinber/networks-book/">Easley·Kleinberg · Networks, Crowds, and Markets 저자 교재</a></li>
+<li><a href="https://www.cs.cornell.edu/home/kleinber/link-pred.pdf">Liben-Nowell·Kleinberg · 링크 예측 원 논문</a></li>
+</ul>
+<h2>확인 문제</h2>
+<p>직접 계산하거나 설명을 먼저 적고 답을 확인해 보세요.</p>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

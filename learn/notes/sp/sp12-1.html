@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>공부 기록의 자산과 권한 경계를 그리기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="SP12-1">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">보안·암호</p>
+<p class="chap-num">SP12·1</p>
+<h1>공부 기록의 자산과 권한 경계를 그리기</h1>
+<p class="lead">가상의 공부 서비스에서 내 기록은 수정할 수 있고 공개 교재는 누구나 읽을 수 있습니다. 이 규칙이 매 요청에 적용되는지 작은 권한 표와 테스트로 확인합니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>자산, 진입점, 신뢰 경계를 가상의 서비스에서 구별할 수 있다.</li><li>인증과 인가가 확인하는 질문을 설명할 수 있다.</li><li>최소 권한과 기본 거부를 권한 테스트에 반영할 수 있다.</li></ul></div>
+
+<h2>보호하려는 내용을 먼저 적기</h2>
+<p>가상의 공부 서비스에는 누구나 읽을 수 있는 교재, 로그인한 학생만 접근하는 개인 기록, 편집자가 고치는 공개 교재 원고가 있습니다. 세 항목은 각각 보호할 자산입니다. 개인 기록은 다른 학생에게 보이지 않아야 하고, 개인 기록과 원고의 내용은 권한이 있는 사람이 바꿀 때만 바뀌어야 합니다. 공개 교재라는 자산에서는 원치 않은 중단이나 훼손도 줄여야 합니다. 이런 요구를 기밀성, 무결성, 가용성으로 나누어 볼 수 있습니다.</p>
+<p>위협 모델을 만들 때는 자료가 어디서 어디로 흐르고 어느 지점에서 믿을 수 있는 정보의 종류가 바뀌는지 그립니다. 브라우저에서 서버로 넘어가는 요청은 신뢰 경계를 넘습니다. 요청의 학생 이름이나 화면에 그려진 버튼 유무는 서버의 권한 증거로 쓰기 어렵습니다. 서버가 검증한 세션에서 사용자 식별자를 가져오고, 저장소가 알고 있는 기록 소유자와 비교합니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 160" role="img" aria-label="브라우저에서 서버로 넘어온 요청을 세션과 대상 기록으로 검사">
+<rect class="f-box" x="42" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="135" y="61" text-anchor="middle">사용자 화면</text><text class="f-s" x="135" y="89" text-anchor="middle">장 보기·기록 수정 요청</text><text class="f-s" x="135" y="110" text-anchor="middle">신뢰 경계를 넘음</text><line class="f-line" x1="235" y1="84" x2="278" y2="84" marker-end="url(#f-arrow)"/><rect class="f-soft" x="287" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="380" y="61" text-anchor="middle">서버</text><text class="f-s" x="380" y="89" text-anchor="middle">세션에서 사용자 확인</text><text class="f-s" x="380" y="110" text-anchor="middle">동작과 대상에 권한 검사</text><line class="f-line" x1="480" y1="84" x2="523" y2="84" marker-end="url(#f-arrow)"/><rect class="f-box" x="532" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="625" y="61" text-anchor="middle">저장소</text><text class="f-s" x="625" y="89" text-anchor="middle">대상 기록의 소유자</text><text class="f-s" x="625" y="110" text-anchor="middle">바꿀 자산을 정확히 선택</text>
+</svg><figcaption>서버는 소유자 정보를 먼저 조회해 권한을 검사한 뒤 승인된 읽기나 쓰기만 수행합니다.</figcaption></figure>
+<div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
+<h2>로그인과 기록 수정 권한을 따로 검사한다</h2>
+<p><b class="key">인증</b>은 요청하는 사람이 누구인지 확인하는 과정입니다. <b class="key">인가</b>, 또는 권한 검사는 확인한 사람이 이 자료에 이 동작을 해도 되는지 판단합니다. 로그인한 학생에게 자신의 기록 수정만 필요하다면 다른 학생의 기록이나 공개 원고를 수정할 권한까지 주지 않습니다. 이 설계 원칙을 최소 권한이라고 부릅니다.</p>
+<div class="table-wrap"><table><thead><tr><th scope="col">대상과 동작</th><th scope="col">허용 조건</th><th scope="col">금지의 예</th></tr></thead><tbody><tr><td>공개 교재 읽기</td><td>누구나</td><td>동작이 교재 수정으로 바뀌면 별도 검사</td></tr><tr><td>공개 교재 수정</td><td>검증된 편집자 역할</td><td>일반 학생의 원고 수정</td></tr><tr><td>개인 기록 읽기·수정</td><td>기록 소유자로 확인된 로그인 사용자</td><td>다른 학생의 기록 접근</td></tr><tr><td>정의하지 않은 동작</td><td>기본 거부</td><td>개인 기록 내보내기 정책이 아직 없음</td></tr></tbody></table></div>
+<p>같은 사용자라도 대상이나 동작이 바뀌면 결론이 달라집니다. 그래서 매 요청에서 실제 대상과 동작을 검사합니다. 표에 없는 요청은 거부한 뒤, 새로운 기능이 생기면 표와 검사를 함께 업데이트합니다. 로그인하지 않은 사람에게도 교재 읽기처럼 명시적으로 허용된 동작이 있습니다.</p>
+<div class="check" data-q="q3"></div><div class="check" data-q="q4"></div>
+<h2>정책을 작은 입력 표로 실행하기</h2>
+<p>아래 예제는 역할과 소유자를 서버에서 이미 결정한 값으로 간주하는 순수 함수입니다. 외부 시스템에 접속하지 않고 여섯 가지 기대 결과를 확인합니다. 실제 서비스라면 세션 검증, 대상 조회, 권한 검사와 저장을 일관되게 연결해야 합니다.</p>
+<pre data-example="python"><code>def allowed(actor, role, action, resource, owner=None):
+    if resource == &quot;chapter&quot;:
+        return action == &quot;read&quot; or (
+            action == &quot;edit&quot; and actor is not None and role == &quot;editor&quot;
+        )
+    if resource == &quot;record&quot;:
+        return action in {&quot;read&quot;, &quot;edit&quot;} and actor is not None and actor == owner
+    return False
+
+cases = [
+    (&quot;공개 열람&quot;, (None, None, &quot;read&quot;, &quot;chapter&quot;), True),
+    (&quot;본인 기록&quot;, (&quot;a&quot;, &quot;student&quot;, &quot;edit&quot;, &quot;record&quot;, &quot;a&quot;), True),
+    (&quot;다른 사람 기록&quot;, (&quot;a&quot;, &quot;student&quot;, &quot;edit&quot;, &quot;record&quot;, &quot;b&quot;), False),
+    (&quot;편집자의 교재 수정&quot;, (&quot;e&quot;, &quot;editor&quot;, &quot;edit&quot;, &quot;chapter&quot;), True),
+    (&quot;학생의 교재 수정&quot;, (&quot;a&quot;, &quot;student&quot;, &quot;edit&quot;, &quot;chapter&quot;), False),
+    (&quot;미정의 동작&quot;, (&quot;a&quot;, &quot;student&quot;, &quot;export&quot;, &quot;record&quot;, &quot;a&quot;), False),
+]
+for label, args, expected in cases:
+    actual = allowed(*args)
+    assert actual == expected
+    print(f&quot;{label}: {'허용' if actual else '거부'}&quot;)</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>공개 열람: 허용
+본인 기록: 허용
+다른 사람 기록: 거부
+편집자의 교재 수정: 허용
+학생의 교재 수정: 거부
+미정의 동작: 거부</code></pre>
+<div class="check" data-q="q5"></div><div class="check" data-q="q6"></div>
+<h2>규칙이 커질 때 다시 살펴볼 것</h2>
+<p>공동 학습의 기록을 추가한다면 개인 기록과 달리 어떤 구성원이 열람하고 편집할지를 결정해야 합니다. 기존의 소유자 검사와 새 공동 기록의 참여자 검사를 구분합니다. 기록 소유자가 없는 경우나 로그인 정보가 만료된 경우도 기대 결과를 명시해 두면, 정책을 바꿀 때 이전 자산의 권한을 함께 확인할 수 있습니다.</p>
+
+<h2>참고 자료</h2>
+<ul><li><a href="https://cheatsheetseries.owasp.org/cheatsheets/Threat_Modeling_Cheat_Sheet.html">OWASP · Threat Modeling</a></li><li><a href="https://cheatsheetseries.owasp.org/cheatsheets/Authorization_Cheat_Sheet.html">OWASP · Authorization</a></li></ul>
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>내부 활성을 바꾸고 삭제와 복원을 대조하기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e8c'/%3E%3Cpath d='M8 22V10m8 12V14m8 8V6' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="SP09-2">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+
+<header class="chapter">
+<p class="chap-sub">전문 경로 · SP09 모델 내부·해석 가능성</p>
+<p class="chap-num">SP09·2</p>
+<h1>내부 활성을 바꾸고 삭제와 복원을 대조하기</h1>
+<p class="lead">같은 모형에서 두 입력의 값을 기록하고, 한 내부 성분만 바꿔 점수가 어떻게 움직이는지 봅니다. 정상 입력에서의 제거와 손상 입력에서의 복원을 구분합니다.</p>
+</header>
+
+<div class="goal">
+<h2>이 장을 읽고 나면</h2>
+<ul>
+<li>개입할 위치·기준 상태·측정값을 명시한다.</li>
+<li>ablation과 activation patching을 작은 계산으로 구분한다.</li>
+<li>복원율의 분모와 일반화의 한계를 확인한다.</li>
+</ul>
+</div>
+<h2>기준 입력과 비교 입력의 점수를 먼저 기록한다</h2>
+<p>합성 모형의 내부 활성은 두 숫자 (u,v)이고 측정할 최종 점수는 s=2u+v입니다. 정상 조건에서 (3,1)을 관측해 점수 7, 관련 단서를 바꾼 비교 조건에서 (−1,1)을 관측해 점수 −1을 얻었습니다. 비교 입력을 ‘손상’이라고 부르는 것은 분석에서 어떤 단서를 바꿨다는 뜻입니다. 각 상태의 나머지 값과 모델은 동일하게 둡니다.</p>
+<p><b class="key">Ablation</b>은 어떤 요소를 제거하거나 기준값으로 바꾸었을 때의 결과를 보는 실험입니다. 정상 조건의 u를 0으로 바꾸면 s=1이라 원래보다 6만큼 떨어집니다. v만 0으로 바꾸면 s=6이라 원래보다 1 떨어집니다. 0이 아주 드문 값이라면 결과가 달라진 이유가 그 요소의 의미만인지 판단하기 어려울 수 있습니다. 연구에서는 평균처럼 다른 대체값도 같이 비교할 수 있습니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 257" role="img" aria-label="u를 0으로 바꾼 정상 실행은 7에서 1로, v만 0으로 바꾸면 7에서 6으로 바뀐다.">
+<text class="f-cap" x="380" y="33" text-anchor="middle">기준 실행과 두 제거 제어군</text>
+<text class="f-t" x="180" y="82" text-anchor="end">정상 (u,v)</text>
+<rect class="f-box" x="206" y="58" width="162" height="38" rx="3"/>
+<text class="f-t" x="287" y="83" text-anchor="middle">3</text>
+<rect class="f-box" x="374" y="58" width="162" height="38" rx="3"/>
+<text class="f-t" x="455" y="83" text-anchor="middle">1</text>
+<rect class="f-box" x="542" y="58" width="162" height="38" rx="3"/>
+<text class="f-t" x="623" y="83" text-anchor="middle">점수 7</text>
+<text class="f-t" x="180" y="128" text-anchor="end">비교 (u,v)</text>
+<rect class="f-box" x="206" y="104" width="162" height="38" rx="3"/>
+<text class="f-t" x="287" y="129" text-anchor="middle">−1</text>
+<rect class="f-box" x="374" y="104" width="162" height="38" rx="3"/>
+<text class="f-t" x="455" y="129" text-anchor="middle">1</text>
+<rect class="f-box" x="542" y="104" width="162" height="38" rx="3"/>
+<text class="f-t" x="623" y="129" text-anchor="middle">점수 −1</text>
+<text class="f-t" x="180" y="174" text-anchor="end">정상에서 u 제거</text>
+<rect class="f-box" x="206" y="150" width="162" height="38" rx="3"/>
+<text class="f-t" x="287" y="175" text-anchor="middle">0</text>
+<rect class="f-box" x="374" y="150" width="162" height="38" rx="3"/>
+<text class="f-t" x="455" y="175" text-anchor="middle">1</text>
+<rect class="f-soft" x="542" y="150" width="162" height="38" rx="3"/>
+<text class="f-t" x="623" y="175" text-anchor="middle">점수 1</text>
+<text class="f-t" x="180" y="220" text-anchor="end">정상에서 v 제거</text>
+<rect class="f-box" x="206" y="196" width="162" height="38" rx="3"/>
+<text class="f-t" x="287" y="221" text-anchor="middle">3</text>
+<rect class="f-box" x="374" y="196" width="162" height="38" rx="3"/>
+<text class="f-t" x="455" y="221" text-anchor="middle">0</text>
+<rect class="f-soft" x="542" y="196" width="162" height="38" rx="3"/>
+<text class="f-t" x="623" y="221" text-anchor="middle">점수 6</text>
+</svg>
+<figcaption>두 개입 모두 같은 정상 실행의 점수 7을 기준으로 비교합니다.</figcaption>
+</figure>
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+
+<h2>다른 실행에서 얻은 활성 하나를 복사해 다시 계산한다</h2>
+<p><b class="key">Activation patching</b>은 한 실행에서 기록한 활성의 일부를 다른 실행의 같은 위치에 넣은 뒤 이후 계산을 보는 방법입니다. 비교 상태 (−1,1)에서 u만 정상값 3으로 바꾸면 s=7이 됩니다. 반대로 v만 정상값으로 바꾸면 그 값이 이미 1이라 s=−1입니다.</p>
+<p>이 장에서는 복원율을 (개입 점수−비교 점수)/(정상 점수−비교 점수)로 정합니다. 점수 차가 8이라 u의 경우 (7+1)/8=1, v는 0입니다. 정상·비교 점수가 같아 분모가 0이면 계산하지 않습니다. 개입 점수가 정상보다 높거나 비교보다 낮을 때 값은 0~1 밖에도 나올 수 있습니다. 이 수치는 성공 확률이 아니라 점수 차를 비율로 표현한 것입니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 257" role="img" aria-label="비교 점수 -1에서 u만 정상값으로 교체하면 7, v만 교체하면 -1이라 복원율은 각각 1과 0이다.">
+<text class="f-cap" x="380" y="33" text-anchor="middle">비교 상태에서 한 성분을 정상값으로 교체</text>
+<text class="f-t" x="180" y="82" text-anchor="end">비교 상태</text>
+<rect class="f-box" x="206" y="58" width="162" height="38" rx="3"/>
+<text class="f-t" x="287" y="83" text-anchor="middle">u=−1</text>
+<rect class="f-box" x="374" y="58" width="162" height="38" rx="3"/>
+<text class="f-t" x="455" y="83" text-anchor="middle">v=1</text>
+<rect class="f-box" x="542" y="58" width="162" height="38" rx="3"/>
+<text class="f-t" x="623" y="83" text-anchor="middle">s=−1</text>
+<text class="f-t" x="180" y="128" text-anchor="end">u만 교체</text>
+<rect class="f-soft" x="206" y="104" width="162" height="38" rx="3"/>
+<text class="f-t" x="287" y="129" text-anchor="middle">u=3</text>
+<rect class="f-box" x="374" y="104" width="162" height="38" rx="3"/>
+<text class="f-t" x="455" y="129" text-anchor="middle">v=1</text>
+<rect class="f-box" x="542" y="104" width="162" height="38" rx="3"/>
+<text class="f-t" x="623" y="129" text-anchor="middle">s=7</text>
+<text class="f-t" x="180" y="174" text-anchor="end">v만 교체</text>
+<rect class="f-box" x="206" y="150" width="162" height="38" rx="3"/>
+<text class="f-t" x="287" y="175" text-anchor="middle">u=−1</text>
+<rect class="f-soft" x="374" y="150" width="162" height="38" rx="3"/>
+<text class="f-t" x="455" y="175" text-anchor="middle">v=1</text>
+<rect class="f-box" x="542" y="150" width="162" height="38" rx="3"/>
+<text class="f-t" x="623" y="175" text-anchor="middle">s=−1</text>
+<text class="f-t" x="180" y="220" text-anchor="end">비율 비교</text>
+<rect class="f-box" x="206" y="196" width="162" height="38" rx="3"/>
+<text class="f-t" x="287" y="221" text-anchor="middle">u 복원율 1</text>
+<rect class="f-box" x="374" y="196" width="162" height="38" rx="3"/>
+<text class="f-t" x="455" y="221" text-anchor="middle">v 복원율 0</text>
+</svg>
+<figcaption>방향은 정상 실행에서 비교 실행으로 값을 복사하는 경우입니다. 제거 결과와 분모가 다릅니다.</figcaption>
+</figure>
+<div class="check" data-q="q3"></div>
+<div class="check" data-q="q4"></div>
+
+<h2>같은 위치와 조건에서 바꾼 것이 무엇인지 적는다</h2>
+<p>실제 텐서라면 모델, 입력 쌍의 차이, 층과 토큰 위치, 교체한 성분과 방향, 출력 지표를 적습니다. 서로 다른 위치의 숫자를 바꾸면 같은 정보의 복원이 아닐 수 있습니다. 다른 입력이나 대체값, 무관한 위치에서도 같은 결론이 나오는지 대조합니다. 여기에서는 후속 계산을 함수 한 줄로 적고, 실제로 교체한 두 성분을 인쇄합니다.</p>
+<div class="check" data-q="q5"></div>
+<div class="check" data-q="q6"></div>
+<pre data-example="python"><code>def score(state):
+    u, v = state
+    return 2*u + v
+
+clean = (3, 1)
+changed = (-1, 1)
+baseline = score(changed)
+gap = score(clean) - baseline
+print(&quot;clean/changed:&quot;, score(clean), baseline)
+for i in range(2):
+    removed = list(clean)
+    removed[i] = 0
+    patched = list(changed)
+    patched[i] = clean[i]
+    recovery = (score(patched) - baseline) / gap if gap else None
+    print(&quot;axis:&quot;, i, &quot;ablation:&quot;, score(removed),
+          &quot;patched:&quot;, score(patched), &quot;recovery:&quot;, recovery)</code></pre>
+<pre data-output><code>clean/changed: 7 -1
+axis: 0 ablation: 1 patched: 7 recovery: 1.0
+axis: 1 ablation: 6 patched: -1 recovery: 0.0</code></pre>
+<p>이 예의 v 교체는 정상과 비교에서 값이 같아 아무 변화도 만들지 않았습니다. 따라서 v가 전혀 쓰이지 않는다고 결론내릴 수 없습니다. 실제로 정상 실행에서 v를 0으로 바꾸면 점수가 1 줄어듭니다. 다른 조건과 측정값에서 결과가 다시 나오는지 보기 전에는 이 입력 쌍과 개입에서 관찰한 효과로 주장 범위를 정합니다.</p>
+
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://arxiv.org/abs/2309.16042">Zhang·Nanda · Activation patching의 방법과 지표 비교</a></li>
+<li><a href="../st/st08-2.html">ST08 · 개입과 인과 추론</a></li>
+<li><a href="sp09-1.html">SP09 · 판독과 실제 출력</a></li>
+</ul>
+
+<h2>확인 문제</h2>
+<p>아직 풀지 않은 문제입니다. 먼저 식이나 근거를 적어 보고 해설을 확인합니다.</p>
+<div id="quiz"></div>
+
+<section class="work" id="tools"></section>
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

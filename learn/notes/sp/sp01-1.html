@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>토큰의 조건부 확률에서 생성 규칙과 퍼플렉서티 읽기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e8c'/%3E%3Cpath d='M8 22V10m8 12V14m8 8V6' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="SP01-1">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+
+<header class="chapter">
+<p class="chap-sub">전문 경로 · SP01 언어모델·검색·추천</p>
+<p class="chap-num">SP01·1</p>
+<h1>토큰의 조건부 확률에서 생성 규칙과 퍼플렉서티 읽기</h1>
+<p class="lead">문장을 토큰으로 나누고 다음 토큰의 확률을 해석합니다. 같은 모델 분포에서 무엇을 고를지와, 정답열을 어떻게 채점할지를 구분합니다.</p>
+</header>
+
+<div class="goal">
+<h2>이 장을 읽고 나면</h2>
+<ul>
+<li>토큰화가 토큰 수와 로그손실을 어떻게 바꾸는지 설명한다.</li>
+<li>greedy, top-k, top-p, 온도의 역할을 구분한다.</li>
+<li>고정된 정답열의 퍼플렉서티를 계산한다.</li>
+</ul>
+</div>
+<h2>문자열을 어떤 단위로 바꿨는지 적는다</h2>
+<p>같은 문자열 ‘비가 온다’를 간단한 규칙은 [비가, 온다] 두 토큰으로, 다른 규칙은 [비, 가, 온다] 세 토큰으로 만들 수 있습니다. 실제 토크나이저는 어휘와 분할 규칙이 더 복잡하고 공백 앞뒤를 다르게 표현할 수 있습니다. <b class="key">토큰화</b>의 결과가 모델의 입력과 평가에서 세는 단위입니다. 같은 제목을 비교해도 토크나이저와 시작·끝 기호 포함 여부가 다르면 표본당 토큰 수가 달라집니다.</p>
+<p>다음 토큰 언어모델은 지금까지 제공한 토큰을 조건으로 다음 토큰 분포를 줍니다. 정답 토큰이 세 개이고 각 정답의 조건부 확률이 1/2, 1/4, 1/2라면 앞 문맥을 조건으로 세 토큰을 모두 내는 확률은 곱 1/16입니다. 토큰당 음의 자연로그 확률의 평균은 ln(16)/3≈0.924196입니다. 그 값의 지수가 <b class="key">퍼플렉서티</b>로 약 2.519842입니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 257" role="img" aria-label="세 조건부 확률의 곱은 1/16이며 토큰당 로그손실의 지수는 16의 세제곱근 2.519842이다.">
+<text class="f-cap" x="380" y="33" text-anchor="middle">정답 토큰을 차례대로 채점</text>
+<text class="f-t" x="180" y="82" text-anchor="end">정답 위치</text>
+<rect class="f-box" x="206" y="58" width="162" height="38" rx="3"/>
+<text class="f-t" x="287" y="83" text-anchor="middle">첫째</text>
+<rect class="f-box" x="374" y="58" width="162" height="38" rx="3"/>
+<text class="f-t" x="455" y="83" text-anchor="middle">둘째</text>
+<rect class="f-box" x="542" y="58" width="162" height="38" rx="3"/>
+<text class="f-t" x="623" y="83" text-anchor="middle">셋째</text>
+<text class="f-t" x="180" y="128" text-anchor="end">정답에 준 확률</text>
+<rect class="f-box" x="206" y="104" width="162" height="38" rx="3"/>
+<text class="f-t" x="287" y="129" text-anchor="middle">1/2</text>
+<rect class="f-box" x="374" y="104" width="162" height="38" rx="3"/>
+<text class="f-t" x="455" y="129" text-anchor="middle">1/4</text>
+<rect class="f-box" x="542" y="104" width="162" height="38" rx="3"/>
+<text class="f-t" x="623" y="129" text-anchor="middle">1/2</text>
+<text class="f-t" x="180" y="174" text-anchor="end">곱과 평균</text>
+<rect class="f-box" x="206" y="150" width="162" height="38" rx="3"/>
+<text class="f-t" x="287" y="175" text-anchor="middle">곱 = 1/16</text>
+<rect class="f-soft" x="374" y="150" width="162" height="38" rx="3"/>
+<text class="f-t" x="455" y="175" text-anchor="middle">평균 손실 ln(16)/3</text>
+<text class="f-t" x="180" y="220" text-anchor="end">퍼플렉서티</text>
+<rect class="f-box" x="206" y="196" width="162" height="38" rx="3"/>
+<text class="f-t" x="287" y="221" text-anchor="middle">16의 세제곱근</text>
+<rect class="f-soft" x="374" y="196" width="162" height="38" rx="3"/>
+<text class="f-t" x="455" y="221" text-anchor="middle">약 2.519842</text>
+</svg>
+<figcaption>로그를 먼저 계산해 평균 내면 긴 토큰열의 작은 확률을 계속 곱하는 일을 피합니다.</figcaption>
+</figure>
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+
+<h2>확률을 만들고 고르는 규칙은 따로 둘 수 있다</h2>
+<p>토큰 A,B,C,D의 다음 확률을 [0.5,0.3,0.15,0.05]로 둡니다. <b>탐욕 디코딩</b>은 이번 단계에서 최대인 A를 고릅니다. A를 택하면 다음 단계의 문맥이 바뀌므로, 이번 최댓값이 완성된 문장 전체의 최고 점수를 보장하는 것은 아닙니다.</p>
+<p><b>top-k</b>는 높은 순으로 k개, <b>top-p</b>는 높은 쪽부터 누적확률이 p 이상이 되는 최소 접두를 남깁니다. 여기서는 k=2와 p=0.75가 각각 A,B를 남깁니다. 누적이 처음으로 0.75 이상이 되는 곳은 0.5+0.3=0.8이기 때문입니다. 남긴 값을 합 0.8로 나누면 [0.625,0.375]에서 다시 추출할 수 있습니다. 실제 구현의 동점 정리나 최소 유지 항목 수는 해당 규칙을 확인합니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 257" role="img" aria-label="top-p 0.75에 필요한 최소 접두가 A와 B이고 확률을 다시 맞추면 0.625와 0.375이다.">
+<text class="f-cap" x="380" y="33" text-anchor="middle">다음 토큰 후보를 남기는 과정</text>
+<text class="f-t" x="180" y="82" text-anchor="end">높은 순서</text>
+<rect class="f-box" x="206" y="58" width="120" height="38" rx="3"/>
+<text class="f-t" x="266" y="83" text-anchor="middle">A</text>
+<rect class="f-box" x="332" y="58" width="120" height="38" rx="3"/>
+<text class="f-t" x="392" y="83" text-anchor="middle">B</text>
+<rect class="f-box" x="458" y="58" width="120" height="38" rx="3"/>
+<text class="f-t" x="518" y="83" text-anchor="middle">C</text>
+<rect class="f-box" x="584" y="58" width="120" height="38" rx="3"/>
+<text class="f-t" x="644" y="83" text-anchor="middle">D</text>
+<text class="f-t" x="180" y="128" text-anchor="end">확률</text>
+<rect class="f-box" x="206" y="104" width="120" height="38" rx="3"/>
+<text class="f-t" x="266" y="129" text-anchor="middle">0.50</text>
+<rect class="f-box" x="332" y="104" width="120" height="38" rx="3"/>
+<text class="f-t" x="392" y="129" text-anchor="middle">0.30</text>
+<rect class="f-box" x="458" y="104" width="120" height="38" rx="3"/>
+<text class="f-t" x="518" y="129" text-anchor="middle">0.15</text>
+<rect class="f-box" x="584" y="104" width="120" height="38" rx="3"/>
+<text class="f-t" x="644" y="129" text-anchor="middle">0.05</text>
+<text class="f-t" x="180" y="174" text-anchor="end">누적합</text>
+<rect class="f-box" x="206" y="150" width="120" height="38" rx="3"/>
+<text class="f-t" x="266" y="175" text-anchor="middle">0.50</text>
+<rect class="f-soft" x="332" y="150" width="120" height="38" rx="3"/>
+<text class="f-t" x="392" y="175" text-anchor="middle">0.80</text>
+<rect class="f-box" x="458" y="150" width="120" height="38" rx="3"/>
+<text class="f-t" x="518" y="175" text-anchor="middle">0.95</text>
+<rect class="f-box" x="584" y="150" width="120" height="38" rx="3"/>
+<text class="f-t" x="644" y="175" text-anchor="middle">1.00</text>
+<text class="f-t" x="180" y="220" text-anchor="end">top-p=0.75</text>
+<rect class="f-soft" x="206" y="196" width="120" height="38" rx="3"/>
+<text class="f-t" x="266" y="221" text-anchor="middle">A: 0.625</text>
+<rect class="f-soft" x="332" y="196" width="120" height="38" rx="3"/>
+<text class="f-t" x="392" y="221" text-anchor="middle">B: 0.375</text>
+</svg>
+<figcaption>두 번째까지 더해야 합이 0.75에 도달합니다.</figcaption>
+</figure>
+<div class="check" data-q="q3"></div>
+<div class="check" data-q="q4"></div>
+
+<h2>온도와 평가 조건을 기록한다</h2>
+<p>양의 온도 T를 쓰면 softmax에 넣는 로짓을 T로 나눕니다. 낮을수록 기존 순위에서 높은 로짓이 상대적으로 더 큰 비중을 받습니다. 이 예의 확률을 <code>p^(1/T)</code>에 비례하게 바꾸면 T=0.5에서 [0.25,0.09,0.0225,0.0025]를 합으로 나눈 분포입니다. 서로 다른 생성 규칙은 같은 언어모델의 평가용 정답열 확률과 구별합니다.</p>
+<div class="check" data-q="q5"></div>
+<div class="check" data-q="q6"></div>
+<pre data-example="python"><code>from math import exp, log
+from random import Random
+
+choices = [&quot;A&quot;, &quot;B&quot;, &quot;C&quot;, &quot;D&quot;]
+p = [0.5, 0.3, 0.15, 0.05]
+size = 1
+while sum(p[:size]) &lt; 0.75:
+    size += 1
+remaining = [value / sum(p[:size]) for value in p[:size]]
+tempered = [value**2 for value in p]
+draw = Random(23).choices(choices[:size], weights=remaining, k=1)[0]
+mean_loss = -sum(log(x) for x in (0.5, 0.25, 0.5)) / 3
+print(&quot;greedy:&quot;, choices[0], &quot;top-p:&quot;, choices[:size], remaining)
+print(&quot;seed 23 draw:&quot;, draw)
+print(&quot;T=0.5 probability A:&quot;, f&quot;{tempered[0] / sum(tempered):.6f}&quot;)
+print(&quot;mean nll:&quot;, f&quot;{mean_loss:.6f}&quot;, &quot;perplexity:&quot;, f&quot;{exp(mean_loss):.6f}&quot;)</code></pre>
+<pre data-output><code>greedy: A top-p: ['A', 'B'] [0.625, 0.37499999999999994]
+seed 23 draw: B
+T=0.5 probability A: 0.684932
+mean nll: 0.924196 perplexity: 2.519842</code></pre>
+<p>출력의 0.37499999999999994는 이진 실수의 반올림을 보입니다. 퍼플렉서티 비교에서는 같은 원문뿐 아니라 토큰화, 시퀀스 자르는 방법, 초기 문맥, 실제 채점 토큰을 맞춥니다. 낮은 퍼플렉서티는 채점된 다음 토큰의 확률을 설명하는 값이므로 사실성이나 사용자 선호는 별도 기준으로 평가합니다.</p>
+
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://arxiv.org/abs/1904.09751">Holtzman 외 · Nucleus Sampling</a></li>
+<li><a href="https://huggingface.co/docs/transformers/perplexity">Hugging Face · 토큰화와 퍼플렉서티</a></li>
+<li><a href="../dl/dl08-2.html">DL08 · 다음 토큰의 조건부 확률</a></li>
+</ul>
+
+<h2>확인 문제</h2>
+<p>아직 풀지 않은 문제입니다. 먼저 식이나 근거를 적어 보고 해설을 확인합니다.</p>
+<div id="quiz"></div>
+
+<section class="work" id="tools"></section>
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>삼각형을 화면 샘플로 바꾸고 가까운 표면 남기기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e8c'/%3E%3Cpath d='M8 22V10m8 12V14m8 8V6' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="SP14-2">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+
+<header class="chapter">
+<p class="chap-sub">전문 경로 · SP14 그래픽스·사람과 컴퓨터</p>
+<p class="chap-num">SP14·2</p>
+<h1>삼각형을 화면 샘플로 바꾸고 가까운 표면 남기기</h1>
+<p class="lead">정점 세 개가 정하는 영역을 화면의 샘플로 바꿉니다. 같은 위치에 여러 표면이 있을 때 무엇을 남길지 깊이와 색으로 계산합니다.</p>
+</header>
+
+<div class="goal">
+<h2>이 장을 읽고 나면</h2>
+<ul>
+<li>화면 삼각형의 안팎을 샘플 하나에서 판단한다.</li>
+<li>보간과 깊이 비교의 결과를 구한다.</li>
+<li>빛의 방향과 표면 방향의 관계를 내적으로 계산한다.</li>
+</ul>
+</div>
+<h2>투영한 정점으로 화면의 넓이를 찾는다</h2>
+<p>삼각형으로 만든 표면을 화면으로 보내면 A=(0,0), B=(4,0), C=(0,4) 같은 정점이 생깁니다. <b class="key">래스터화</b>는 이 기하 도형이 화면의 어느 샘플을 덮는지 판단해 그릴 조각을 만드는 과정입니다. 이번 화면 좌표의 원점과 y 방향은 그림에 표시했습니다. 간단히 (1,1), (3,2)의 샘플 두 곳을 평가합니다. 실제 API에서는 픽셀 내부 샘플 배치와 경계 포함 규칙을 정해 둡니다.</p>
+<p>점 P=(1,1)을 A,B,C의 계수로 쓰면 (0.5,0.25,0.25)입니다. 0.5A+0.25B+0.25C=(1,1)이고 합이 1입니다. 이런 값을 <b>무게중심 좌표</b>라고 합니다. 둘째 점 Q=(3,2)는 (−0.25,0.75,0.5)로 첫 계수가 음수라 밖입니다. 만약 A,B,C의 속성이 각각 빨강, 초록, 파랑의 RGB 단위벡터이면, 간단한 화면 선형 보간으로 P의 RGB는 (0.5,0.25,0.25)입니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 308" role="img" aria-label="삼각형 A(0,0), B(4,0), C(0,4)에서 (1,1)은 내부, (3,2)는 x+y가 5라 외부다.">
+<text class="f-cap" x="380" y="33" text-anchor="middle">화면의 삼각형을 샘플 위치에서 판단</text>
+<line class="f-line" x1="170" y1="244" x2="508" y2="244" marker-end="url(#f-arrow)"/>
+<line class="f-line" x1="170" y1="244" x2="170" y2="54" marker-end="url(#f-arrow)"/>
+<polygon class="f-soft" points="170,244 386,244 170,64"/>
+<text class="f-s" x="136" y="263" text-anchor="middle">A(0,0)</text>
+<text class="f-s" x="411" y="266" text-anchor="middle">B(4,0)</text>
+<text class="f-s" x="121" y="67" text-anchor="middle">C(0,4)</text>
+<circle class="f-fill" cx="224" cy="199" r="6"/>
+<text class="f-t" x="256" y="188" text-anchor="middle">P(1,1)</text>
+<circle class="f-fill" cx="332" cy="154" r="6"/>
+<text class="f-t" x="375" y="142" text-anchor="middle">Q(3,2)</text>
+<text class="f-cap" x="521" y="263" text-anchor="middle">x</text>
+<text class="f-cap" x="170" y="45" text-anchor="middle">y</text>
+</svg>
+<figcaption>이 좌표계에서 빗변은 x+y=4입니다. P는 합이 2, Q는 합이 5입니다.</figcaption>
+</figure>
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+
+<h2>겹치는 두 표면에서는 깊이도 비교한다</h2>
+<p>같은 샘플 위치에 삼각형 두 개가 겹칠 수 있습니다. 여기서는 불투명하며 카메라 앞의 깊이가 일정한 두 표면을 가정합니다. 첫 표면의 깊이 4가 기록된 뒤 깊이 2인 조각이 오면, 2가 더 가까워 화면 색과 깊이를 새 값으로 저장합니다. 가까운 값이 이미 있으면 이후에 먼 값이 들어와도 덮이지 않습니다.</p>
+<p>그림의 깊이는 간단히 크면 멀다고 정했습니다. 실제 깊이 버퍼 값은 투영 뒤의 규약에 따르고, 설정에 따라 비교 방향을 다르게 할 수도 있습니다. 화면 좌표로 색을 선형 보간한 이 예와 달리, 원근 투영 뒤 3차원 속성을 맞추려면 보통 원근 보정이 필요합니다. 반투명 표면이 여러 개라면 한 깊이만 고르는 것 외에 혼합 규칙도 사용합니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 257" role="img" aria-label="먼 면 깊이 4와 가까운 면 깊이 2가 같은 샘플을 덮으면 깊이 2의 색을 보존한다.">
+<text class="f-cap" x="380" y="33" text-anchor="middle">샘플 P를 덮는 불투명 조각 둘</text>
+<text class="f-t" x="180" y="82" text-anchor="end">비교 대상</text>
+<rect class="f-box" x="206" y="58" width="246" height="38" rx="3"/>
+<text class="f-t" x="329" y="83" text-anchor="middle">먼 표면</text>
+<rect class="f-box" x="458" y="58" width="246" height="38" rx="3"/>
+<text class="f-t" x="581" y="83" text-anchor="middle">가까운 표면</text>
+<text class="f-t" x="180" y="128" text-anchor="end">깊이</text>
+<rect class="f-box" x="206" y="104" width="246" height="38" rx="3"/>
+<text class="f-t" x="329" y="129" text-anchor="middle">4</text>
+<rect class="f-soft" x="458" y="104" width="246" height="38" rx="3"/>
+<text class="f-t" x="581" y="129" text-anchor="middle">2</text>
+<text class="f-t" x="180" y="174" text-anchor="end">색 예</text>
+<rect class="f-box" x="206" y="150" width="246" height="38" rx="3"/>
+<text class="f-t" x="329" y="175" text-anchor="middle">회색</text>
+<rect class="f-box" x="458" y="150" width="246" height="38" rx="3"/>
+<text class="f-t" x="581" y="175" text-anchor="middle">(0.5,0.25,0.25)</text>
+<text class="f-t" x="180" y="220" text-anchor="end">최종 기록</text>
+<rect class="f-soft" x="206" y="196" width="246" height="38" rx="3"/>
+<text class="f-t" x="329" y="221" text-anchor="middle">깊이 2</text>
+<rect class="f-soft" x="458" y="196" width="246" height="38" rx="3"/>
+<text class="f-t" x="581" y="221" text-anchor="middle">가까운 표면 색</text>
+</svg>
+<figcaption>같은 샘플에 더 가까운 조각이 남으므로 불투명 물체가 뒤를 가립니다.</figcaption>
+</figure>
+<div class="check" data-q="q3"></div>
+<div class="check" data-q="q4"></div>
+
+<h2>표면이 어떤 방향으로 빛을 받는지 본다</h2>
+<p>단위벡터 N을 표면의 법선, L을 표면에서 광원을 향하는 방향으로 둡니다. 단순 확산 조도의 방향 항은 max(0,N·L)입니다. 법선과 빛 방향이 같으면 1, 각도가 60도면 0.5, 정반대면 0입니다. 실제 렌더링은 재질·빛의 거리와 세기, 가려짐, 출력 색의 표현도 계산합니다.</p>
+<div class="check" data-q="q5"></div>
+<div class="check" data-q="q6"></div>
+<pre data-example="python"><code>from math import sqrt
+
+def barycentric(x, y):
+    b, c = x/4, y/4
+    return 1-b-c, b, c
+
+for name, point in [(&quot;P&quot;, (1,1)), (&quot;Q&quot;, (3,2))]:
+    weights = barycentric(*point)
+    print(name, weights, &quot;inside:&quot;, all(w &gt;= 0 for w in weights))
+candidates = [(&quot;far&quot;, 4, (0.3, 0.3, 0.3)), (&quot;near&quot;, 2, barycentric(1,1))]
+print(&quot;closest:&quot;, min(candidates, key=lambda item: item[1]))
+n = (0, 0, 1)
+lights = [(0,0,1), (0,sqrt(3)/2,0.5), (0,0,-1)]
+print(&quot;diffuse factors:&quot;, [max(0, sum(a*b for a,b in zip(n,l))) for l in lights])</code></pre>
+<pre data-output><code>P (0.5, 0.25, 0.25) inside: True
+Q (-0.25, 0.75, 0.5) inside: False
+closest: ('near', 2, (0.5, 0.25, 0.25))
+diffuse factors: [1, 0.5, 0]</code></pre>
+<p>가까운 면의 색을 결정하는 데는 삼각형의 범위, 깊이, 속성과 조명처럼 다른 계산들이 함께 들어갑니다. 한 픽셀만 계산해 확인하면 어느 단계에서 색이나 위치가 어긋났는지 찾기 쉽습니다.</p>
+
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://registry.khronos.org/OpenGL/specs/gl/glspec46.core.pdf">Khronos · 래스터화와 깊이 시험 규약</a></li>
+<li><a href="https://pbr-book.org/4ed/Reflection_Models/Diffuse_Reflection">Pharr·Jakob·Humphreys · 확산 반사</a></li>
+<li><a href="sp14-1.html">SP14 · 좌표와 투영</a></li>
+</ul>
+
+<h2>확인 문제</h2>
+<p>아직 풀지 않은 문제입니다. 먼저 식이나 근거를 적어 보고 해설을 확인합니다.</p>
+<div id="quiz"></div>
+
+<section class="work" id="tools"></section>
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

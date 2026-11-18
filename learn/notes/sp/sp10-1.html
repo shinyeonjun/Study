@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>수렴의 조건을 쓰고 점의 확률을 길이로 읽기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="SP10-1">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">연구 수학·학습이론</p>
+<p class="chap-num">SP10·1</p>
+<h1>수렴의 조건을 쓰고 점의 확률을 길이로 읽기</h1>
+<p class="lead">계산값이 가까워진다고 했을 때 어디에서, 얼마나 가까워지는지 명시합니다. 그다음 구간의 길이를 재는 규칙을 연속 확률의 사건과 기댓값에 연결합니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>ε–N 정의에서 N이 무엇에 의존하는지 설명할 수 있다.</li><li>점별 수렴과 균등 수렴을 xⁿ의 예로 구분할 수 있다.</li><li>구간의 르베그 측도와 확률 측도에서 지시함수 적분을 해석할 수 있다.</li></ul></div>
+
+<h2>가까워진다는 말을 부등식으로 쓰기</h2>
+<p>수열 aₙ이 L로 수렴한다는 말은 임의의 허용 오차 ε&gt;0에 대해, 어느 자연수 N을 고르면 모든 n≥N에서 |aₙ−L|&lt;ε가 된다는 뜻입니다. 상대가 오차를 먼저 정하고, 우리는 그 오차에 맞춰 N을 고릅니다. <a href="../ca/ca01-1.html">극한의 첫 단원</a>에서 다룬 가까워짐을 이번에는 이 순서까지 드러내어 씁니다.</p>
+<p>aₙ=1/n이면 L=0입니다. ε=0.02라면 n&gt;50이어야 하므로 51부터 충분합니다. 일반적인 ε에 대해서는 N=⌊1/ε⌋+1을 고를 수 있습니다. ⌊a⌋는 a 이하의 가장 큰 정수입니다. n≥N이면 n&gt;1/ε이므로 1/n&lt;ε입니다. 이 방식은 아무리 작은 양수 ε를 받더라도 통합니다.</p>
+<div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
+<h2>함수라면 어느 지점에서 오차를 재는가</h2>
+<p><b class="key">점별 수렴</b>에서는 x를 먼저 고정하고 오차 ε에 맞는 N을 고릅니다. <b class="key">균등 수렴</b>에서는 오차 ε 하나에 대해 정의역의 모든 x에 함께 적용되는 N이 있어야 합니다. 같은 함수열이 어느 구간을 택하는지에 따라 두 조건을 모두 만족하거나 점별 조건만 만족할 수 있습니다.</p>
+<div class="table-wrap"><table><thead><tr><th scope="col">정의역</th><th scope="col">점별 극한 f(x)</th><th scope="col">모든 x를 모아 본 오차</th></tr></thead><tbody><tr><td>[0, 1]</td><td>x&lt;1이면 0, x=1이면 1</td><td>오차의 상한 가운데 가장 작은 값은 언제나 1</td></tr><tr><td>[0, 0.9]</td><td>모든 x에서 0</td><td>최대 오차는 0.9ⁿ</td></tr></tbody></table></div>
+<p>0≤x&lt;1이면 x를 고정할 때 xⁿ은 0에 가까워집니다. x=1에서는 모든 항이 1입니다. 그런데 임의의 n에서 x=(1/2)<sup>1/n</sup>을 고르면 x&lt;1인데 xⁿ=1/2이므로 그 지점의 오차는 1/2입니다. 따라서 ε=1/2를 만족하는 공통 N이 없습니다. x가 1에 왼쪽에서 다가가면 오차는 1에 한없이 가깝지만, x=1의 오차는 0입니다. 오차의 최소 상한(supremum) 1은 실제로 달성되지 않습니다.</p>
+<p>[0, 0.9]에서는 순서가 달라집니다. xⁿ ≤ 0.9ⁿ이라는 단일 상계가 모든 x에서 성립합니다. ε=0.05에 대해 이 상계가 처음으로 0.05보다 작아지는 n을 찾읍시다.</p>
+<pre data-example="python"><code>epsilon = 0.05
+n = 1
+while 0.9**n &gt;= epsilon:
+    n += 1
+print(f&quot;처음 통과한 n: {n}&quot;)
+print(f&quot;직전 최대 오차: {0.9 ** (n - 1):.4f}&quot;)
+print(f&quot;그때 최대 오차: {0.9 ** n:.4f}&quot;)
+point = 0.5 ** (1 / n)
+print(f&quot;[0, 1]의 반례 오차: {point**n:.4f}&quot;)</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>처음 통과한 n: 29
+직전 최대 오차: 0.0523
+그때 최대 오차: 0.0471
+[0, 1]의 반례 오차: 0.5000</code></pre>
+<div class="check" data-q="q3"></div><div class="check" data-q="q4"></div>
+<h2>구간의 길이와 지시함수의 적분</h2>
+<p>측도는 집합의 크기를 0 이상의 수 또는 +∞로 재는 규칙입니다. 빈 집합의 크기는 0이고, 서로 겹치지 않는 가산 개의 측정 가능한 집합을 합치면 각각의 크기를 더합니다. 실수의 르베그 측도는 구간 [a,b]의 크기를 b−a로 둡니다. [a,a]는 점 하나여서 크기 0입니다. 확률 측도는 전체 표본공간의 크기가 1이라는 조건을 더하며, 연속 균등분포 U(0,1)는 이 구간의 길이를 사건의 확률로 씁니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 160" role="img" aria-label="0과 1 사이의 균등분포에서 길이 0.5인 사건의 지시함수 적분">
+<rect class="f-box" x="42" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="135" y="61" text-anchor="middle">사건 A</text><text class="f-s" x="135" y="89" text-anchor="middle">0.25 ≤ X ≤ 0.75</text><text class="f-s" x="135" y="110" text-anchor="middle">X는 [0, 1] 균등</text><line class="f-line" x1="235" y1="84" x2="278" y2="84" marker-end="url(#f-arrow)"/><rect class="f-soft" x="287" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="380" y="61" text-anchor="middle">지시함수 1ₐ</text><text class="f-s" x="380" y="89" text-anchor="middle">A에서 1</text><text class="f-s" x="380" y="110" text-anchor="middle">나머지에서 0</text><line class="f-line" x1="480" y1="84" x2="523" y2="84" marker-end="url(#f-arrow)"/><rect class="f-box" x="532" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="625" y="61" text-anchor="middle">기댓값</text><text class="f-s" x="625" y="89" text-anchor="middle">A인 곳만 적분</text><text class="f-s" x="625" y="110" text-anchor="middle">E[1ₐ] = P(A) = 0.5</text>
+</svg><figcaption>확률로 가중한 지시함수의 평균은 1인 경우의 확률입니다.</figcaption></figure>
+<p>확률변수 X는 표본 결과에 실수를 대응시킵니다. X가 측정 가능하다는 것은 모든 실수 t에 대해 {X≤t}가 확률을 부여할 수 있는 사건이라는 뜻입니다. 보통 1<sub>A</sub>로 쓰는 지시함수도 이 조건을 만족합니다. X가 [0,1] 균등이면 X가 정확히 0.5인 사건은 확률이 0입니다. 같은 숫자라도 이산 모형에서 따로 질량을 주면 확률이 0보다 클 수 있습니다.</p>
+<div class="check" data-q="q5"></div><div class="check" data-q="q6"></div>
+<h2>연구에서 다음에 확인할 것</h2>
+<p>적분과 극한의 순서를 바꾸는 계산을 만나면 저자가 어떤 수렴과 상계를 확보했는지 확인합니다. 점별 수렴을 보았다고 해서 교환이 언제나 가능한 것은 아닙니다. 예를 들어 유한 측도 공간에서 적분 가능한 함수열이 균등 수렴하면, 적분값은 극한 함수의 적분에 수렴합니다. 지배수렴정리는 점별 수렴에 절댓값을 지배하는 적분 가능한 공통 함수 등의 조건을 더해 교환을 정당화합니다.</p>
+
+<h2>참고 자료</h2>
+<ul><li><a href="https://ocw.mit.edu/courses/18-100b-real-analysis-spring-2025/mit18_100b_s25_lec_full.pdf">MIT 18.100B · 실해석 강의 노트</a></li><li><a href="https://arxiv.org/abs/2604.01685">Probability with Measure · 측도 확률 강의 노트</a></li></ul>
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

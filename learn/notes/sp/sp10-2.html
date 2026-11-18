@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>표본 오차를 제한하고 필요한 관측 수를 계산하기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="SP10-2">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">연구 수학·학습이론</p>
+<p class="chap-num">SP10·2</p>
+<h1>표본 오차를 제한하고 필요한 관측 수를 계산하기</h1>
+<p class="lead">모형 여덟 개의 학습 오차 중 가장 작은 값을 골랐습니다. 이 값이 모집단에서도 비슷할지 말하려면, 한 모형의 오차와 여러 후보를 함께 골랐을 때의 오차를 나누어 계산합니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>독립 0–1 손실에 Hoeffding 부등식을 적용할 수 있다.</li><li>합집합 상계로 유한 후보 집합의 필요 표본 수를 구할 수 있다.</li><li>PAC 보장의 두 매개변수와 일방향 임계값의 VC 차원을 설명할 수 있다.</li></ul></div>
+
+<h2>고정된 후보의 평균 오차는 얼마나 흔들리는가</h2>
+<p>고정된 분류기 h가 독립이며 같은 분포에서 나온 n개 표본을 맞히면 손실 0, 틀리면 1을 적습니다. 이 학습 데이터로 얻은 평균을 경험 위험 R̂(h), 같은 분포에서 새 표본 하나를 뽑을 때의 평균 손실을 모집단 위험 R(h)이라고 합니다. 고정된 h의 R̂(h)는 표본을 새로 뽑을 때마다 변합니다.</p>
+<p><b class="key">Hoeffding 부등식</b>은 평균의 차이가 ε 이상일 사건에 P(|R̂(h)−R(h)|≥ε) ≤ 2 exp(−2nε²)라는 상계를 줍니다. exp는 자연상수 e의 거듭제곱입니다. 여기서는 각 손실이 [0,1]에 들고 표본이 독립이라는 조건을 씁니다. 예를 들어 ε=0.1을 주면, 절대 오차 10%p 이상이 나타나는 사건의 확률에 대한 최악의 상계를 계산합니다.</p>
+<div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
+<h2>고르기 전에 여덟 후보 모두를 고려한다</h2>
+<p>고정된 후보 목록의 크기를 M이라고 합시다. 단 한 후보라도 크게 어긋날 사건은 각 후보가 크게 어긋날 사건의 합집합입니다. 합집합의 확률은 각 확률의 합 이하이므로 그 상계는 2M exp(−2nε²)입니다. 후보들이 같은 표본을 보고 있어서 후보별 오차가 서로 의존하더라도 합집합 상계는 유효합니다. 후보 목록 자체가 이 데이터로부터 정해졌다면 단순히 사후의 목록 길이를 M에 넣을 수 없습니다.</p>
+<p>상계를 δ 이하로 만들려면 n ≥ ln(2M/δ)/(2ε²)면 충분합니다. ln은 자연로그입니다. 표본 수는 정수이므로 올림합니다. 상계로 얻은 수는 필요한 실제 최소 표본 수보다 클 수 있습니다.</p>
+<div class="table-wrap"><table><thead><tr><th scope="col">후보 수 M</th><th scope="col">허용 격차 ε</th><th scope="col">실패 확률 상계 δ</th><th scope="col">공식이 주는 표본 수</th></tr></thead><tbody><tr><td>1</td><td>0.1</td><td>0.05</td><td>185</td></tr><tr><td>8</td><td>0.1</td><td>0.05</td><td>289</td></tr></tbody></table></div>
+<pre data-example="python"><code>from math import ceil, exp, log
+
+epsilon = 0.10
+delta = 0.05
+for candidates in (1, 8):
+    n = ceil(log(2 * candidates / delta) / (2 * epsilon**2))
+    bound = 2 * candidates * exp(-2 * n * epsilon**2)
+    previous = 2 * candidates * exp(-2 * (n - 1) * epsilon**2)
+    assert bound &lt;= delta &lt; previous
+    print(f&quot;후보 {candidates}개: n={n}, 상계={bound:.4f}&quot;)</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>후보 1개: n=185, 상계=0.0494
+후보 8개: n=289, 상계=0.0494</code></pre>
+<div class="check" data-q="q3"></div><div class="check" data-q="q4"></div>
+<h2>선택한 후보에 보장을 옮기기</h2>
+<p>ĥ는 경험 위험이 최소인 후보, h*는 모집단 위험이 최소인 후보입니다. 모든 후보의 격차가 ε 미만인 사건에서는 아래처럼 ĥ의 모집단 위험을 h*의 모집단 위험과 비교할 수 있습니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 160" role="img" aria-label="경험 위험 최소 후보의 모집단 초과 위험이 최대 두 번의 격차로 제한">
+<rect class="f-box" x="42" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="135" y="61" text-anchor="middle">모집단에서 표본으로</text><text class="f-s" x="135" y="89" text-anchor="middle">R(ĥ) ≤ R̂(ĥ)+ε</text><text class="f-s" x="135" y="110" text-anchor="middle">한 번 격차를 허용</text><line class="f-line" x1="235" y1="84" x2="278" y2="84" marker-end="url(#f-arrow)"/><rect class="f-soft" x="287" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="380" y="61" text-anchor="middle">경험 위험을 최소화</text><text class="f-s" x="380" y="89" text-anchor="middle">R̂(ĥ) ≤ R̂(h*)</text><text class="f-s" x="380" y="110" text-anchor="middle">같은 표본에서 비교</text><line class="f-line" x1="480" y1="84" x2="523" y2="84" marker-end="url(#f-arrow)"/><rect class="f-box" x="532" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="625" y="61" text-anchor="middle">다시 모집단으로</text><text class="f-s" x="625" y="89" text-anchor="middle">R̂(h*) ≤ R(h*)+ε</text><text class="f-s" x="625" y="110" text-anchor="middle">합계는 R(h*)+2ε</text>
+</svg><figcaption>적어도 1−δ의 확률로 모집단 위험의 차이는 2ε 이하입니다. 후보 집합 안의 최선과 비교한 값입니다.</figcaption></figure>
+<p>PAC는 높은 확률로 충분히 가까운 답을 구한다는 형태의 학습 보장입니다. 여기서는 유한 클래스에서 근사 정확도를 초과 위험 2ε로, 신뢰 수준을 1−δ로 표현했습니다. 최선의 후보도 실제로 자주 틀리면 선택한 후보의 절대 오류율은 클 수 있습니다. 예를 들어 최선의 모집단 오차가 0.30이면 ε=0.10일 때 상계는 0.50입니다.</p>
+<div class="check" data-q="q5"></div><div class="check" data-q="q6"></div>
+<h2>후보가 무한할 때는 붙일 수 있는 라벨을 센다</h2>
+<p>실수 선에서 g<sub>t</sub>(x)=1[x≥t]로 정의한 일방향 임계값 분류기는 t의 가능한 값이 무한합니다. 서로 다른 m개 점에 붙일 수 있는 0과 1의 모든 조합을 실현할 수 있을 때, 그 점들을 완전히 분류한다(shatter)고 합니다. 가능한 가장 큰 m이 <b class="key">VC 차원</b>입니다.</p>
+<p>점 하나에서는 t를 양쪽으로 옮겨 두 라벨을 모두 만들 수 있습니다. 정렬된 두 점에서는 (0,0), (0,1), (1,1)이 가능하고 (1,0)이 불가능합니다. 따라서 이 클래스의 VC 차원은 1입니다. 무한 클래스의 일반화 정리에서는 이런 복잡도 측정이 사용됩니다. 앞의 유한 M 공식에 VC 차원 1을 M 대신 넣는 계산은 이 정리에서 나온 결과가 아닙니다.</p>
+
+<h2>참고 자료</h2>
+<ul><li><a href="https://doi.org/10.1080/01621459.1963.10500830">Wassily Hoeffding · Probability Inequalities for Sums of Bounded Random Variables</a></li><li><a href="https://courses.grainger.illinois.edu/ece544na/fa2014/valiant84.pdf">Leslie Valiant · A Theory of the Learnable</a></li><li><a href="../ml/ml10-1.html">기존 모형의 평가와 일반화</a></li></ul>
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

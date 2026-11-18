@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>픽셀 분할을 채점하고 증강에서 정답도 같이 옮기기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e8c'/%3E%3Cpath d='M8 22V10m8 12V14m8 8V6' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="SP02-2">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+
+<header class="chapter">
+<p class="chap-sub">전문 경로 · SP02 비전·멀티모달</p>
+<p class="chap-num">SP02·2</p>
+<h1>픽셀 분할을 채점하고 증강에서 정답도 같이 옮기기</h1>
+<p class="lead">정답 영역과 예측 영역을 픽셀 단위로 비교합니다. 사진을 변환할 때 마스크를 어떻게 옮기며, 어느 단위에서 데이터 분할을 나눌지 정합니다.</p>
+</header>
+
+<div class="goal">
+<h2>이 장을 읽고 나면</h2>
+<ul>
+<li>픽셀 정확도·IoU·Dice의 분모를 구분한다.</li>
+<li>영상의 공간 증강을 마스크에 같이 적용한다.</li>
+<li>관련 프레임이 평가로 새지 않게 원본 단위로 분할한다.</li>
+</ul>
+</div>
+<h2>물체의 모양을 각 칸의 종류로 표현한다</h2>
+<p><b class="key">의미 분할</b>은 이미지의 각 픽셀을 배경, 부품 등 한 클래스로 배정합니다. 같은 종류의 개별 물체도 따로 구분하고 싶다면 <em>인스턴스 분할</em>이라는 별도 결과가 필요합니다. 이 장은 부품 1과 배경 0의 두 값만 포함합니다.</p>
+<p>정답에서 부품 픽셀은 5, 예측에선 4, 겹치는 것은 3입니다. 따라서 부품 IoU는 3/(5+4−3)=0.5이고, <b>Dice</b>는 2×3/(5+4)=2/3입니다. 배경으로 맞힌 픽셀도 3이라 전체 픽셀 정확도는 (3+3)/9=2/3입니다. 다수의 배경을 잘 맞히는 점수와 부품 영역을 맞히는 점수를 함께 봅니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 260" role="img" aria-label="정답 1이 5개, 예측 1이 4개, 공통 1이 3개라서 부품 IoU는 0.5, Dice는 2/3이다.">
+<text class="f-cap" x="380" y="30" text-anchor="middle">값 1은 부품, 0은 배경</text>
+<text class="f-cap" x="200" y="69" text-anchor="middle">정답 마스크</text>
+<rect class="f-soft" x="118.5" y="85" width="51" height="51" rx="3"/>
+<text class="f-t" x="144" y="116" text-anchor="middle">1</text>
+<rect class="f-soft" x="174.5" y="85" width="51" height="51" rx="3"/>
+<text class="f-t" x="200" y="116" text-anchor="middle">1</text>
+<rect class="f-box" x="230.5" y="85" width="51" height="51" rx="3"/>
+<text class="f-t" x="256" y="116" text-anchor="middle">1</text>
+<rect class="f-soft" x="118.5" y="141" width="51" height="51" rx="3"/>
+<text class="f-t" x="144" y="172" text-anchor="middle">1</text>
+<rect class="f-box" x="174.5" y="141" width="51" height="51" rx="3"/>
+<text class="f-t" x="200" y="172" text-anchor="middle">0</text>
+<rect class="f-box" x="230.5" y="141" width="51" height="51" rx="3"/>
+<text class="f-t" x="256" y="172" text-anchor="middle">0</text>
+<rect class="f-box" x="118.5" y="197" width="51" height="51" rx="3"/>
+<text class="f-t" x="144" y="228" text-anchor="middle">1</text>
+<rect class="f-box" x="174.5" y="197" width="51" height="51" rx="3"/>
+<text class="f-t" x="200" y="228" text-anchor="middle">0</text>
+<rect class="f-box" x="230.5" y="197" width="51" height="51" rx="3"/>
+<text class="f-t" x="256" y="228" text-anchor="middle">0</text>
+<text class="f-cap" x="560" y="69" text-anchor="middle">예측 마스크</text>
+<rect class="f-soft" x="478.5" y="85" width="51" height="51" rx="3"/>
+<text class="f-t" x="504" y="116" text-anchor="middle">1</text>
+<rect class="f-soft" x="534.5" y="85" width="51" height="51" rx="3"/>
+<text class="f-t" x="560" y="116" text-anchor="middle">1</text>
+<rect class="f-box" x="590.5" y="85" width="51" height="51" rx="3"/>
+<text class="f-t" x="616" y="116" text-anchor="middle">0</text>
+<rect class="f-soft" x="478.5" y="141" width="51" height="51" rx="3"/>
+<text class="f-t" x="504" y="172" text-anchor="middle">1</text>
+<rect class="f-box" x="534.5" y="141" width="51" height="51" rx="3"/>
+<text class="f-t" x="560" y="172" text-anchor="middle">1</text>
+<rect class="f-box" x="590.5" y="141" width="51" height="51" rx="3"/>
+<text class="f-t" x="616" y="172" text-anchor="middle">0</text>
+<rect class="f-box" x="478.5" y="197" width="51" height="51" rx="3"/>
+<text class="f-t" x="504" y="228" text-anchor="middle">0</text>
+<rect class="f-box" x="534.5" y="197" width="51" height="51" rx="3"/>
+<text class="f-t" x="560" y="228" text-anchor="middle">0</text>
+<rect class="f-box" x="590.5" y="197" width="51" height="51" rx="3"/>
+<text class="f-t" x="616" y="228" text-anchor="middle">0</text>
+</svg>
+<figcaption>파란 칸은 양쪽이 모두 부품으로 표시한 픽셀입니다.</figcaption>
+</figure>
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+
+<h2>클래스 평균 기준과 증강 규칙을 함께 정한다</h2>
+<p>각 클래스의 IoU를 따로 구하고 평균을 내면 <b>mIoU</b>입니다. 이 예의 배경 픽셀은 정답 4, 예측 5, 공통 3이라 배경 IoU도 0.5입니다. 양쪽에 전혀 등장하지 않아 합집합이 0인 클래스는 점수가 정의되지 않습니다. 실험에서는 해당 항목을 평균에서 빼는지, 이미지들을 합쳐 클래스별로 세는지 등 집계 단위를 명시합니다.</p>
+<p><b class="key">증강</b>은 입력에 변화를 주면서 작업에 필요한 관계를 보존하는 방법입니다. 예를 들어 영상을 좌우 반전하면 마스크도 같은 방향으로 반전해 물체 위치가 계속 맞아야 합니다. 축을 바꾸지 않는 밝기 증강은 마스크 값을 바꿀 이유가 없습니다. 클래스 ID의 격자는 보통 최근접 방식으로 크기를 바꿉니다. 예를 들어 두 클래스 ID 0과 1을 평균해 0.5라는 새 정답을 만들지 않습니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 257" role="img" aria-label="좌우 반전에서 물체가 왼쪽에서 오른쪽으로 이동할 때 마스크의 1도 오른쪽으로 이동한다.">
+<text class="f-cap" x="380" y="33" text-anchor="middle">왼쪽에 있던 물체를 오른쪽으로 뒤집는 예</text>
+<text class="f-t" x="180" y="82" text-anchor="end">입력의 한 줄</text>
+<rect class="f-soft" x="206" y="58" width="162" height="38" rx="3"/>
+<text class="f-t" x="287" y="83" text-anchor="middle">물체</text>
+<rect class="f-box" x="374" y="58" width="162" height="38" rx="3"/>
+<text class="f-t" x="455" y="83" text-anchor="middle">배경</text>
+<rect class="f-box" x="542" y="58" width="162" height="38" rx="3"/>
+<text class="f-t" x="623" y="83" text-anchor="middle">배경</text>
+<text class="f-t" x="180" y="128" text-anchor="end">정답 한 줄</text>
+<rect class="f-soft" x="206" y="104" width="162" height="38" rx="3"/>
+<text class="f-t" x="287" y="129" text-anchor="middle">1</text>
+<rect class="f-box" x="374" y="104" width="162" height="38" rx="3"/>
+<text class="f-t" x="455" y="129" text-anchor="middle">0</text>
+<rect class="f-box" x="542" y="104" width="162" height="38" rx="3"/>
+<text class="f-t" x="623" y="129" text-anchor="middle">0</text>
+<text class="f-t" x="180" y="174" text-anchor="end">뒤집은 입력</text>
+<rect class="f-box" x="206" y="150" width="162" height="38" rx="3"/>
+<text class="f-t" x="287" y="175" text-anchor="middle">배경</text>
+<rect class="f-box" x="374" y="150" width="162" height="38" rx="3"/>
+<text class="f-t" x="455" y="175" text-anchor="middle">배경</text>
+<rect class="f-soft" x="542" y="150" width="162" height="38" rx="3"/>
+<text class="f-t" x="623" y="175" text-anchor="middle">물체</text>
+<text class="f-t" x="180" y="220" text-anchor="end">뒤집은 정답</text>
+<rect class="f-box" x="206" y="196" width="162" height="38" rx="3"/>
+<text class="f-t" x="287" y="221" text-anchor="middle">0</text>
+<rect class="f-box" x="374" y="196" width="162" height="38" rx="3"/>
+<text class="f-t" x="455" y="221" text-anchor="middle">0</text>
+<rect class="f-soft" x="542" y="196" width="162" height="38" rx="3"/>
+<text class="f-t" x="623" y="221" text-anchor="middle">1</text>
+</svg>
+<figcaption>물체를 가리키는 정답 번호가 영상의 기하 변환을 따라가야 합니다.</figcaption>
+</figure>
+<div class="check" data-q="q3"></div>
+<div class="check" data-q="q4"></div>
+
+<h2>같은 촬영을 한쪽 분할에 모은다</h2>
+<p>한 연속 촬영에서 나온 프레임이나 한 원본의 여러 자르기를 훈련과 시험에 섞으면 서로 매우 비슷한 모습을 보게 됩니다. 새 촬영에서 잘 되는지 평가하려면 원본 영상 또는 촬영 세션 단위로 분할한 뒤 훈련 부분에 증강을 적용합니다. 좌우가 뜻 자체를 바꾸는 작업에서는 반전이 유효한 증강인지도 따로 살핍니다.</p>
+<div class="check" data-q="q5"></div>
+<div class="check" data-q="q6"></div>
+<pre data-example="python"><code>truth = [[1, 1, 1], [1, 0, 0], [1, 0, 0]]
+pred = [[1, 1, 0], [1, 1, 0], [0, 0, 0]]
+pairs = [(a, b) for x, y in zip(truth, pred) for a, b in zip(x, y)]
+
+def class_iou(label):
+    union = sum(a == label or b == label for a, b in pairs)
+    return sum(a == b == label for a, b in pairs) / union
+
+foreground_dice = 2 * sum(a == b == 1 for a, b in pairs)
+foreground_dice /= sum((a == 1) + (b == 1) for a, b in pairs)
+flipped = [row[::-1] for row in truth]
+ious = [class_iou(c) for c in (0, 1)]
+print(&quot;IoU by class and mean:&quot;, ious, sum(ious)/len(ious))
+print(&quot;pixel accuracy and foreground dice:&quot;,
+      f&quot;{sum(a == b for a, b in pairs)/len(pairs):.6f}&quot;, f&quot;{foreground_dice:.6f}&quot;)
+print(&quot;flipped mask:&quot;, flipped)</code></pre>
+<pre data-output><code>IoU by class and mean: [0.5, 0.5] 0.5
+pixel accuracy and foreground dice: 0.666667 0.666667
+flipped mask: [[1, 1, 1], [0, 0, 1], [0, 0, 1]]</code></pre>
+<p>예제는 두 클래스 모두 합집합이 있는 한 장의 배열입니다. 실험 보고서에서는 원본 그룹을 어떻게 분리했는지와 제외한 픽셀·클래스를 함께 적습니다.</p>
+
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://www.cityscapes-dataset.com/benchmarks/">Cityscapes · 의미 분할 평가 방식</a></li>
+<li><a href="https://docs.pytorch.org/vision/stable/auto_examples/transforms/plot_transforms_getting_started.html">Torchvision · 입력 영상과 마스크 변환</a></li>
+<li><a href="sp02-1.html">SP02 · 상자의 IoU</a></li>
+</ul>
+
+<h2>확인 문제</h2>
+<p>아직 풀지 않은 문제입니다. 먼저 식이나 근거를 적어 보고 해설을 확인합니다.</p>
+<div id="quiz"></div>
+
+<section class="work" id="tools"></section>
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

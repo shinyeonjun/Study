@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>프로브로 읽을 수 있는 정보와 모형이 쓰는 정보 구분하기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e8c'/%3E%3Cpath d='M8 22V10m8 12V14m8 8V6' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="SP09-1">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+
+<header class="chapter">
+<p class="chap-sub">전문 경로 · SP09 모델 내부·해석 가능성</p>
+<p class="chap-num">SP09·1</p>
+<h1>프로브로 읽을 수 있는 정보와 모형이 쓰는 정보 구분하기</h1>
+<p class="lead">내부 표현에서 라벨을 읽는 작은 판독기를 만듭니다. 자료 조건을 바꾸고 원래 모형의 출력도 확인해 관측과 인과의 차이를 살핍니다.</p>
+</header>
+
+<div class="goal">
+<h2>이 장을 읽고 나면</h2>
+<ul>
+<li>내부 표현과 프로브의 학습 목표를 구분한다.</li>
+<li>상관된 지름길 특징을 바꾼 평가 자료를 설계한다.</li>
+<li>높은 판독 성능이 원래 출력에 대한 증거의 어디까지인지 설명한다.</li>
+</ul>
+</div>
+<h2>원래 모형의 표현을 그대로 두고 다른 질문을 묻는다</h2>
+<p>두 내부 숫자 (h₀,h₁)를 읽을 수 있는 합성 모형이 있습니다. 자료에는 ‘대상 있음’을 1, ‘없음’을 0으로 표시한 라벨이 있습니다. 원래 모형이 사용하는 일과 별개로, 이 표현을 받아 라벨을 맞히는 작은 지도 모델을 <b class="key">프로브</b>라고 부릅니다. 이 예에서는 “한 축의 숫자가 0보다 크면 1”이라는 간단한 판독기를 씁니다.</p>
+<p>옆자리 h₁이 우연히 목표와 같은 부호를 가질 수 있습니다. 첫 자료에서는 h₀와 h₁ 모두 라벨과 같은 부호 관계를 보입니다. 어느 축을 읽든 4개 모두 맞지만, 바뀐 자료에서도 그런지 확인하지 않으면 두 설명을 구분할 수 없습니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 257" role="img" aria-label="훈련 예에서는 두 축의 부호가 같은데 새 평가 예에서는 h0의 관계만 유지하고 h1의 부호를 뒤집는다.">
+<text class="f-cap" x="380" y="33" text-anchor="middle">표현 하나를 고정하고 다른 판독기를 쓰는 예</text>
+<text class="f-t" x="180" y="82" text-anchor="end">라벨</text>
+<rect class="f-box" x="206" y="58" width="120" height="38" rx="3"/>
+<text class="f-t" x="266" y="83" text-anchor="middle">0</text>
+<rect class="f-box" x="332" y="58" width="120" height="38" rx="3"/>
+<text class="f-t" x="392" y="83" text-anchor="middle">0</text>
+<rect class="f-box" x="458" y="58" width="120" height="38" rx="3"/>
+<text class="f-t" x="518" y="83" text-anchor="middle">1</text>
+<rect class="f-box" x="584" y="58" width="120" height="38" rx="3"/>
+<text class="f-t" x="644" y="83" text-anchor="middle">1</text>
+<text class="f-t" x="180" y="128" text-anchor="end">훈련 예의 h₀</text>
+<rect class="f-box" x="206" y="104" width="120" height="38" rx="3"/>
+<text class="f-t" x="266" y="129" text-anchor="middle">−2</text>
+<rect class="f-box" x="332" y="104" width="120" height="38" rx="3"/>
+<text class="f-t" x="392" y="129" text-anchor="middle">−1</text>
+<rect class="f-box" x="458" y="104" width="120" height="38" rx="3"/>
+<text class="f-t" x="518" y="129" text-anchor="middle">1</text>
+<rect class="f-box" x="584" y="104" width="120" height="38" rx="3"/>
+<text class="f-t" x="644" y="129" text-anchor="middle">2</text>
+<text class="f-t" x="180" y="174" text-anchor="end">훈련 예의 h₁</text>
+<rect class="f-box" x="206" y="150" width="120" height="38" rx="3"/>
+<text class="f-t" x="266" y="175" text-anchor="middle">−2</text>
+<rect class="f-box" x="332" y="150" width="120" height="38" rx="3"/>
+<text class="f-t" x="392" y="175" text-anchor="middle">−1</text>
+<rect class="f-box" x="458" y="150" width="120" height="38" rx="3"/>
+<text class="f-t" x="518" y="175" text-anchor="middle">1</text>
+<rect class="f-box" x="584" y="150" width="120" height="38" rx="3"/>
+<text class="f-t" x="644" y="175" text-anchor="middle">2</text>
+<text class="f-t" x="180" y="220" text-anchor="end">평가 예의 h₁</text>
+<rect class="f-soft" x="206" y="196" width="120" height="38" rx="3"/>
+<text class="f-t" x="266" y="221" text-anchor="middle">2</text>
+<rect class="f-soft" x="332" y="196" width="120" height="38" rx="3"/>
+<text class="f-t" x="392" y="221" text-anchor="middle">1</text>
+<rect class="f-soft" x="458" y="196" width="120" height="38" rx="3"/>
+<text class="f-t" x="518" y="221" text-anchor="middle">−1</text>
+<rect class="f-soft" x="584" y="196" width="120" height="38" rx="3"/>
+<text class="f-t" x="644" y="221" text-anchor="middle">−2</text>
+</svg>
+<figcaption>두 자료에 있는 h₀ 값은 같고 h₁과 라벨 사이의 관계만 다릅니다.</figcaption>
+</figure>
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+
+<h2>판독할 수 있다는 결과를 쓰임의 증거와 구분한다</h2>
+<p>새 평가에서도 h₀를 읽으면 4/4, h₁을 읽으면 0/4입니다. 균형 있는 네 예에서 언제나 0으로 고르는 기준선은 2/4입니다. 이 결과는 여기서 h₀로 개념을 읽을 수 있다는 증거입니다.</p>
+<p>이 모의 모형의 실제 출력 점수는 h₁입니다. h₁=1로 고정하고 h₀을 −2에서 2로 바꾸면 프로브의 라벨은 0에서 1로 바뀌지만, 실제 점수는 1 그대로입니다. 표현에 들어 있는 정보와 원래 모형이 그 정보를 출력에서 사용한다는 주장을 이 예처럼 따로 검사할 수 있습니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 257" role="img" aria-label="h1=1을 고정하고 h0을 -2에서 2로 바꾸면 프로브 분류만 0에서 1이 되고 모형 점수는 그대로다.">
+<text class="f-cap" x="380" y="33" text-anchor="middle">내부 숫자 하나만 바꿔 비교</text>
+<text class="f-t" x="180" y="82" text-anchor="end">원래 표현</text>
+<rect class="f-box" x="206" y="58" width="246" height="38" rx="3"/>
+<text class="f-t" x="329" y="83" text-anchor="middle">h₀=−2</text>
+<rect class="f-box" x="458" y="58" width="246" height="38" rx="3"/>
+<text class="f-t" x="581" y="83" text-anchor="middle">h₁=1</text>
+<text class="f-t" x="180" y="128" text-anchor="end">개입한 표현</text>
+<rect class="f-soft" x="206" y="104" width="246" height="38" rx="3"/>
+<text class="f-t" x="329" y="129" text-anchor="middle">h₀=2</text>
+<rect class="f-box" x="458" y="104" width="246" height="38" rx="3"/>
+<text class="f-t" x="581" y="129" text-anchor="middle">h₁=1</text>
+<text class="f-t" x="180" y="174" text-anchor="end">h₀ 판독</text>
+<rect class="f-box" x="206" y="150" width="246" height="38" rx="3"/>
+<text class="f-t" x="329" y="175" text-anchor="middle">0</text>
+<rect class="f-box" x="458" y="150" width="246" height="38" rx="3"/>
+<text class="f-t" x="581" y="175" text-anchor="middle">1</text>
+<text class="f-t" x="180" y="220" text-anchor="end">모형 점수 h₁</text>
+<rect class="f-box" x="206" y="196" width="246" height="38" rx="3"/>
+<text class="f-t" x="329" y="221" text-anchor="middle">1</text>
+<rect class="f-box" x="458" y="196" width="246" height="38" rx="3"/>
+<text class="f-t" x="581" y="221" text-anchor="middle">1</text>
+</svg>
+<figcaption>이 개입 결론은 실제 출력식을 h₁로 정해 둔 이 모의 모형에 한정됩니다.</figcaption>
+</figure>
+<div class="check" data-q="q3"></div>
+<div class="check" data-q="q4"></div>
+
+<h2>강한 판독기가 자료를 외우는 경우도 시험한다</h2>
+<p>실제 연구에서는 판독기를 맞출 때 원래 모형의 가중치를 고정합니다. 판독기의 크기, 라벨 균형, 훈련과 평가에서 겹치는 자료, 입력에서 쉽게 얻을 수 있는 특징을 기록합니다. 예를 들어 무작위로 붙인 대조 라벨도 잘 맞히는 복잡한 판독기는 표현의 정보뿐 아니라 자료를 외울 수 있습니다. 아래 코드는 학습을 돌리는 대신 정한 두 판독 규칙을 같은 자료에 적용합니다.</p>
+<div class="check" data-q="q5"></div>
+<div class="check" data-q="q6"></div>
+<pre data-example="python"><code>fit = [(-2, -2, 0), (-1, -1, 0), (1, 1, 1), (2, 2, 1)]
+held = [(-2, 2, 0), (-1, 1, 0), (1, -1, 1), (2, -2, 1)]
+
+def probe(h, column):
+    return int(h[column] &gt; 0)
+
+def accuracy(rows, column):
+    return sum(probe(row, column) == row[2] for row in rows) / len(rows)
+
+for column in (0, 1):
+    print(&quot;axis&quot;, column, &quot;fit&quot;, accuracy(fit, column), &quot;held&quot;, accuracy(held, column))
+print(&quot;constant baseline:&quot;, sum(y == 0 for _, _, y in held) / len(held))
+pair = [(-2, 1), (2, 1)]
+print(&quot;probe:&quot;, [probe(h, 0) for h in pair], &quot;model:&quot;, [h[1] for h in pair])</code></pre>
+<pre data-output><code>axis 0 fit 1.0 held 1.0
+axis 1 fit 1.0 held 0.0
+constant baseline: 0.5
+probe: [0, 1] model: [1, 1]</code></pre>
+<p>이 예의 네 행은 반례를 보여 주는 점검 자료입니다. 실제 데이터에서의 독립 시험과 대조, 표본 수, 다른 판독기에서 다시 나오는지까지 보고 해석의 범위를 정합니다.</p>
+
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://arxiv.org/abs/1610.01644">Alain·Bengio · Linear Classifier Probes</a></li>
+<li><a href="https://aclanthology.org/D19-1275/">Hewitt·Liang · 프로브의 대조 과제</a></li>
+<li><a href="../st/st08-1.html">ST08 · 비교 설계와 배정</a></li>
+</ul>
+
+<h2>확인 문제</h2>
+<p>아직 풀지 않은 문제입니다. 먼저 식이나 근거를 적어 보고 해설을 확인합니다.</p>
+<div id="quiz"></div>
+
+<section class="work" id="tools"></section>
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>모형으로 연습하는 Dyna와 보이지 않는 상태 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e8c'/%3E%3Cpath d='M8 22V10m8 12V14m8 8V6' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="SP06-2">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+
+<header class="chapter">
+<p class="chap-sub">전문 연구 경로 · SP06 강화학습 심화</p>
+<p class="chap-num">SP06·2</p>
+<h1>모형으로 연습하는 Dyna와 보이지 않는 상태</h1>
+<p class="lead">환경 모형 안에서 가상 전이를 만들 수 있습니다. 상태가 직접 보이지 않을 때는 가능한 상태들을 확률로 추적합니다.</p>
+</header>
+
+<div class="goal">
+<h2>이 장을 읽고 나면</h2>
+<ul>
+<li>관측 전이와 모형 전이의 업데이트를 손계산한다.</li>
+<li>세계 모형에서 여러 단계의 예측 오차가 어떻게 쌓이는지 이해한다.</li>
+<li>행동과 관측을 차례로 적용해 부분 관측 상태의 믿음을 갱신한다.</li>
+</ul>
+</div>
+
+<h2>모형은 행동 뒤에 무엇이 생기는지 예측합니다</h2>
+<p>환경 모형은 상태와 행동으로부터 다음 상태와 보상의 값이나 분포를 제공합니다. 주어진 모형에서 후보 행동의 미래 가치를 비교하면 <b class="key">계획</b>입니다. 실제 전이로 가치 함수를 직접 업데이트하는 것과 모형이 만들어 낸 전이로 업데이트하는 것은 같은 계산식을 쓸 수 있어도 자료의 출처가 다릅니다.</p>
+<p><b class="key">Dyna</b>의 작은 표 형태를 보겠습니다. S에서 A를 눌러 보상 2를 받고 종료한 실제 표본을 관측합니다. 기존 Q(S,A)=0이고 학습률 α는 1/2입니다. 종료라 다음 가치 항이 없으므로 표적은 2입니다. Q ← Q+α(표적−Q)를 적용하면 Q는 1입니다. 이번 전이를 가장 최근의 결정적 모형에 적습니다. 나중에 이 모형을 질의해서 S,A→종료, 보상 2를 생성하고 같은 규칙을 적용하면 Q가 1.5가 됩니다. 업데이트는 두 번이고 환경에서 관측한 전이는 한 번입니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 124" role="img" aria-label="실제와 가상 전이를 한 번씩 쓴 Dyna">
+<rect class="f-box" x="20" y="29" width="211" height="60" rx="3"/>
+<text class="f-t" x="125" y="55" text-anchor="middle">실제 전이</text>
+<text class="f-s" x="125" y="76" text-anchor="middle">Q: 0 → 1</text>
+<rect class="f-box" x="271" y="29" width="211" height="60" rx="3"/>
+<text class="f-t" x="376" y="55" text-anchor="middle">전이를 모형에 기록</text>
+<text class="f-s" x="376" y="76" text-anchor="middle">종료 · 보상 2</text>
+<rect class="f-box" x="522" y="29" width="211" height="60" rx="3"/>
+<text class="f-t" x="627" y="55" text-anchor="middle">가상 전이</text>
+<text class="f-s" x="627" y="76" text-anchor="middle">Q: 1 → 1.5</text>
+<line class="f-ink" x1="231" y1="58" x2="268" y2="58" marker-end="url(#f-arrow)"/>
+<line class="f-ink" x1="482" y1="58" x2="519" y2="58" marker-end="url(#f-arrow)"/>
+</svg>
+<figcaption>모형 업데이트에 쓰인 전이는 실제 관측과 별도로 집계합니다.</figcaption>
+</figure>
+<p>모형이 틀리면 가상 표본을 늘려도 오차가 사라지지 않습니다. 실제 상태가 한 단계에 1씩 늘지만 모형이 1.1씩 는다고 예측하면, 0에서 다섯 번 뒤 예상값은 5.5이고 실제는 5입니다. 예측한 상태를 다시 입력으로 쓰면 여러 단계의 오차가 쌓일 수 있습니다. <b class="key">세계 모형</b>(world model)은 복잡한 관측을 압축한 잠재 상태 및 그 변화와 필요시 보상을 학습해 내부 모의 실행에 쓰는 접근입니다. 예측 성능과 함께, 그 모형이 잘못 예측한 전이를 이용해 고른 정책의 성과도 기준 환경에서 별도로 확인합니다.</p>
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+<div class="check" data-q="q3"></div>
+<h2>숨은 상태는 전이로 예측한 뒤 관측으로 갱신합니다</h2>
+<p>작은 합성 전시 모형의 상태는 밝음 B 또는 어두움 D이고 센서는 완벽하지 않습니다. 부분 관측 마르코프 결정 과정(<b class="key">POMDP</b>)에는 상태·행동·전이·보상에 관측과 관측 확률이 추가됩니다. 지금까지의 행동과 관측을 토대로 상태별 확률을 낸 것이 <b class="key">믿음 상태</b>입니다.</p>
+<p>현재 밝을 믿음이 4/5이고 같은 상태에 남을 확률이 3/4인 ‘기다리기’ 행동을 했습니다. 전이 뒤 밝을 예측 확률은 (4/5)(3/4)+(1/5)(1/4)=13/20입니다. 그다음 센서가 밝다고 보고했습니다. 이 신호는 실제 밝을 때 4/5, 어두울 때 1/5의 확률로 나옵니다. 예측 확률에 각각 곱한 값은 52/100, 7/100입니다. 합으로 나누면 밝음의 갱신 확률은 52/59입니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 124" role="img" aria-label="전이 전후와 관측 뒤의 밝음 확률">
+<rect class="f-box" x="20" y="29" width="211" height="60" rx="3"/>
+<text class="f-t" x="125" y="55" text-anchor="middle">현재 믿음</text>
+<text class="f-s" x="125" y="76" text-anchor="middle">4/5</text>
+<rect class="f-box" x="271" y="29" width="211" height="60" rx="3"/>
+<text class="f-t" x="376" y="55" text-anchor="middle">기다린 뒤 예측</text>
+<text class="f-s" x="376" y="76" text-anchor="middle">13/20</text>
+<rect class="f-box" x="522" y="29" width="211" height="60" rx="3"/>
+<text class="f-t" x="627" y="55" text-anchor="middle">밝은 신호 뒤 갱신</text>
+<text class="f-s" x="627" y="76" text-anchor="middle">52/59</text>
+<line class="f-ink" x1="231" y1="58" x2="268" y2="58" marker-end="url(#f-arrow)"/>
+<line class="f-ink" x1="482" y1="58" x2="519" y2="58" marker-end="url(#f-arrow)"/>
+</svg>
+<figcaption>전이에서 상태가 바뀔 수 있으므로 센서 신호를 반영하기 전에 예측을 계산합니다.</figcaption>
+</figure>
+<p><a href="../ai/ai05-2.html">HMM</a>의 필터링과 같은 순서로 계산하며, 여기서는 고른 행동이 전이와 관측에 영향을 줄 수 있습니다. 믿음 상태에서 정책을 만들면 현재 보상이 작더라도 다음 결정을 개선할 관측 행동을 고려할 수 있습니다. 숨은 상태가 유한해도 믿음은 연속적으로 변하는 확률 분포라 계획 계산량이 커질 수 있습니다. <a href="../ai/ai06-2.html">유료 관측 안내</a>는 상태 전이가 없는 작은 예입니다.</p>
+<div class="check" data-q="q4"></div>
+<div class="check" data-q="q5"></div>
+<div class="check" data-q="q6"></div>
+<h2>두 업데이트를 분수로 검산합니다</h2>
+<pre data-example="python"><code>from fractions import Fraction as F
+
+q = F(0)
+for source, reward in [(&quot;experience&quot;, 2), (&quot;model&quot;, 2)]:
+    q += F(1, 2) * (reward - q)
+    print(source, q)
+
+bright = F(4, 5)
+predicted = bright * F(3, 4) + (1 - bright) * F(1, 4)
+w = (predicted * F(4, 5), (1 - predicted) * F(1, 5))
+print(&quot;predicted:&quot;, predicted)
+print(&quot;weighted:&quot;, *w)
+print(&quot;posterior:&quot;, w[0] / sum(w))</code></pre>
+<pre data-output><code>experience 1
+model 3/2
+predicted: 13/20
+weighted: 13/25 7/100
+posterior: 52/59</code></pre>
+<p>동일한 모형의 보상 2를 반복 사용하면 Q는 2에 가까워집니다. 그 과정에서 실제 보상을 재관측했다는 기록이 생기지는 않습니다.</p>
+
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table>
+<thead><tr><th scope="col">핵심어</th><th scope="col">기억할 기준</th></tr></thead>
+<tbody>
+<tr><td><b class="key">모델 기반 계획</b></td><td>모형이 생성한 전이로 후보의 가치를 비교</td></tr>
+<tr><td><b class="key">Dyna</b></td><td>실제 경험으로 모형·값을 배우고 가상 경험으로 값을 더 갱신</td></tr>
+<tr><td><b class="key">세계 모형</b></td><td>학습한 내부 상태의 변화를 모의 실행에 사용</td></tr>
+<tr><td><b class="key">POMDP</b></td><td>부분 관측에 대응해 행동이 바꾼 분포와 관측 우도를 추적</td></tr>
+</tbody></table></div>
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>가상 전이와 실제 관측을 구별하고, 부분 관측에서는 전이 예측을 한 뒤 새 증거를 반영합니다.</p></div>
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://mitpress.mit.edu/9780262039246/reinforcement-learning/">Sutton·Barto, Reinforcement Learning 2판 · 8장 Dyna와 계획</a></li>
+<li><a href="https://arxiv.org/abs/1803.10122">Ha·Schmidhuber · World Models</a></li>
+<li><a href="https://www.sciencedirect.com/science/article/pii/S000437029800023X">Kaelbling 외 · 부분 관측의 계획과 행동</a></li>
+</ul>
+
+<h2>확인 문제</h2>
+<p>아직 풀지 않은 문제입니다. 먼저 식이나 근거를 적어 보고 해설을 확인합니다.</p>
+<div id="quiz"></div>
+
+<section class="work" id="tools"></section>
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

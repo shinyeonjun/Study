@@ -757,6 +757,82 @@ window.BDA_CHAPTERS = {
   BD05: [
     {"id": "BD05-1", "title": "실측 CSV에서 조건에 맞는 값을 계산해 제출하기", "href": "notes/bd/bd05-1.html"},
     {"id": "BD05-2", "title": "시험 행 순서를 보존하며 예측 CSV 만들기", "href": "notes/bd/bd05-2.html"}
+  ],
+  SP01: [
+    {"id": "SP01-1", "title": "토큰의 조건부 확률에서 생성 규칙과 퍼플렉서티 읽기", "href": "notes/sp/sp01-1.html"},
+    {"id": "SP01-2", "title": "검색과 추천의 목록을 순위별로 평가하기", "href": "notes/sp/sp01-2.html"},
+    {"id": "SP01-3", "title": "근거 문서를 함께 쓰는 답변과 RAG 평가 기록 남기기", "href": "notes/sp/sp01-3.html"}
+  ],
+  SP02: [
+    {"id": "SP02-1", "title": "이미지 분류와 상자 검출의 성공 조건 읽기", "href": "notes/sp/sp02-1.html"},
+    {"id": "SP02-2", "title": "픽셀 분할을 채점하고 증강에서 정답도 같이 옮기기", "href": "notes/sp/sp02-2.html"},
+    {"id": "SP02-3", "title": "영상·문자·소리를 같은 사건의 표현으로 비교하기", "href": "notes/sp/sp02-3.html"}
+  ],
+  SP03: [
+    {"id": "SP03-1", "title": "AR과 계절 시차로 다음 값을 예측하기", "href": "notes/sp/sp03-1.html"},
+    {"id": "SP03-2", "title": "숨은 수준을 추정하고 예측구간 만들기", "href": "notes/sp/sp03-2.html"},
+    {"id": "SP03-3", "title": "변화점을 찾고 시간순 예측을 검증하기", "href": "notes/sp/sp03-3.html"}
+  ],
+  SP04: [
+    {"id": "SP04-1", "title": "인과 DAG의 교란 경로와 충돌변수 읽기", "href": "notes/sp/sp04-1.html"},
+    {"id": "SP04-2", "title": "반사실 효과의 식별과 층별 조정", "href": "notes/sp/sp04-2.html"},
+    {"id": "SP04-3", "title": "미측정 교란에서 결론의 민감도 보기", "href": "notes/sp/sp04-3.html"}
+  ],
+  SP05: [
+    {"id": "SP05-1", "title": "중심성·연결·군집과 랜덤 그래프", "href": "notes/sp/sp05-1.html"},
+    {"id": "SP05-2", "title": "확률의 랜덤 워크와 링크 예측", "href": "notes/sp/sp05-2.html"},
+    {"id": "SP05-3", "title": "GNN 층이 이웃 메시지를 모으는 방법", "href": "notes/sp/sp05-3.html"}
+  ],
+  SP06: [
+    {"id": "SP06-1", "title": "고정된 기록에서 배우는 offline RL·모방·역강화학습", "href": "notes/sp/sp06-1.html"},
+    {"id": "SP06-2", "title": "모형으로 연습하는 Dyna와 보이지 않는 상태", "href": "notes/sp/sp06-2.html"},
+    {"id": "SP06-3", "title": "여러 시간에 걸친 옵션과 여러 에이전트의 공동 행동", "href": "notes/sp/sp06-3.html"}
+  ],
+  SP07: [
+    {"id": "SP07-1", "title": "피드백이 상태의 오차를 줄이는 조건", "href": "notes/sp/sp07-1.html"},
+    {"id": "SP07-2", "title": "칼만 필터로 센서값과 상태 예측을 합치기", "href": "notes/sp/sp07-2.html"},
+    {"id": "SP07-3", "title": "유한 시간의 비용을 비교해 제어 입력 고르기", "href": "notes/sp/sp07-3.html"}
+  ],
+  SP08: [
+    {"id": "SP08-1", "title": "시간 표를 이산 푸리에 변환으로 읽기", "href": "notes/sp/sp08-1.html"},
+    {"id": "SP08-2", "title": "합성곱으로 신호를 걸러 내고 FFT로 대조하기", "href": "notes/sp/sp08-2.html"},
+    {"id": "SP08-3", "title": "표본화에서 서로 다른 주파수가 같은 값이 되는 이유", "href": "notes/sp/sp08-3.html"},
+    {"id": "SP08-4", "title": "압축과 오류 정정이 비트를 다루는 방식", "href": "notes/sp/sp08-4.html"}
+  ],
+  SP09: [
+    {"id": "SP09-1", "title": "프로브로 읽을 수 있는 정보와 모형이 쓰는 정보 구분하기", "href": "notes/sp/sp09-1.html"},
+    {"id": "SP09-2", "title": "내부 활성을 바꾸고 삭제와 복원을 대조하기", "href": "notes/sp/sp09-2.html"},
+    {"id": "SP09-3", "title": "섞인 뉴런에서 희소 특징을 읽고 회로 가설 검증하기", "href": "notes/sp/sp09-3.html"}
+  ],
+  SP10: [
+    {"id": "SP10-1", "title": "수렴의 조건을 쓰고 점의 확률을 길이로 읽기", "href": "notes/sp/sp10-1.html"},
+    {"id": "SP10-2", "title": "표본 오차를 제한하고 필요한 관측 수를 계산하기", "href": "notes/sp/sp10-2.html"},
+    {"id": "SP10-3", "title": "가우시안 평균의 불확실성과 다음 두 관측의 관계", "href": "notes/sp/sp10-3.html"},
+    {"id": "SP10-4", "title": "도착과 처리의 확률과정에서 평균 대기 구하기", "href": "notes/sp/sp10-4.html"}
+  ],
+  SP11: [
+    {"id": "SP11-1", "title": "물리 시계 없이 메시지의 선후관계 읽기", "href": "notes/sp/sp11-1.html"},
+    {"id": "SP11-2", "title": "Raft 로그가 확정되는 순간과 복구의 기준", "href": "notes/sp/sp11-2.html"},
+    {"id": "SP11-3", "title": "작업을 나누고 다시 모을 때의 계산과 꼬리 지연", "href": "notes/sp/sp11-3.html"}
+  ],
+  SP12: [
+    {"id": "SP12-1", "title": "공부 기록의 자산과 권한 경계를 그리기", "href": "notes/sp/sp12-1.html"},
+    {"id": "SP12-2", "title": "입력값을 검증하고 데이터가 해석되는 위치를 구분하기", "href": "notes/sp/sp12-2.html"},
+    {"id": "SP12-3", "title": "암호화, 메시지 인증과 재처리 방지의 역할", "href": "notes/sp/sp12-3.html"}
+  ],
+  SP13: [
+    {"id": "SP13-1", "title": "문자를 토큰과 구문 트리로 바꾸고 타입을 검사하기", "href": "notes/sp/sp13-1.html"},
+    {"id": "SP13-2", "title": "유한 자동자에서 정지 문제까지", "href": "notes/sp/sp13-2.html"},
+    {"id": "SP13-3", "title": "실행 전의 근사 분석과 모든 반복에 대한 검증", "href": "notes/sp/sp13-3.html"}
+  ],
+  SP14: [
+    {"id": "SP14-1", "title": "물체 좌표에서 카메라 좌표와 화면 좌표로", "href": "notes/sp/sp14-1.html"},
+    {"id": "SP14-2", "title": "삼각형을 화면 샘플로 바꾸고 가까운 표면 남기기", "href": "notes/sp/sp14-2.html"},
+    {"id": "SP14-3", "title": "사람이 화면을 쓰는 과제를 설계하고 사용성을 확인하기", "href": "notes/sp/sp14-3.html"}
+  ],
+  SP15: [
+    {"id": "SP15-1", "title": "물리 모형의 단위와 수치해의 오차를 확인하기", "href": "notes/sp/sp15-1.html"},
+    {"id": "SP15-2", "title": "분야의 관측 단위가 연구 질문을 바꾸는 이유", "href": "notes/sp/sp15-2.html"}
   ]
 };
 

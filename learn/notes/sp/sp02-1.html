@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>이미지 분류와 상자 검출의 성공 조건 읽기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e8c'/%3E%3Cpath d='M8 22V10m8 12V14m8 8V6' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="SP02-1">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+
+<header class="chapter">
+<p class="chap-sub">전문 경로 · SP02 비전·멀티모달</p>
+<p class="chap-num">SP02·1</p>
+<h1>이미지 분류와 상자 검출의 성공 조건 읽기</h1>
+<p class="lead">한 장에 붙은 이름을 맞히는 일과 물체의 위치까지 찾는 일을 구별합니다. 상자의 겹치는 넓이와 자신도 점수 순서로 검출을 평가합니다.</p>
+</header>
+
+<div class="goal">
+<h2>이 장을 읽고 나면</h2>
+<ul>
+<li>이미지 분류와 물체 검출의 결과 형태를 구분한다.</li>
+<li>상자의 교집합과 합집합으로 IoU를 계산한다.</li>
+<li>중복 검출을 FP로 세어 AP를 계산한다.</li>
+</ul>
+</div>
+<h2>분류로는 이미지의 이름을, 검출로는 이름과 위치를 얻는다</h2>
+<p>사진 전체에 ‘부품 있음’이라는 하나의 결과를 내는 것은 이진 <b class="key">분류</b>입니다. 정답 [1,0,1,1], 예측 [1,1,1,0]이면 정답과 예측이 맞는 사진은 2/4입니다. 실제 부품 사진 세 장 중 두 장을 맞혀 재현율은 2/3이고, 있다고 한 세 장 중 두 장이 맞아 정밀도 역시 2/3입니다.</p>
+<p>한 사진에서도 부품 여러 개가 있고 어떤 위치에 있는지 필요하다면 <b>검출</b>을 쓸 수 있습니다. 검출 결과 하나는 분류 이름, 위치 상자, 점수를 가집니다. 상자가 얼마나 일치하는지를 보려면 겹친 면적을 전체 합집합으로 나눈 <b>IoU</b>를 계산합니다. 높이 4가 같은 정답 [0,4)×[0,4)와 예측 [1,5)×[0,4)는 교집합 12, 합집합 16+16−12=20이라 IoU=0.6입니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 235" role="img" aria-label="가로 구간 [0,4)의 정답 상자와 [1,5)의 예측 상자는 높이 4로 같아 교집합 12, 합집합 20이다.">
+<text class="f-cap" x="380" y="30" text-anchor="middle">같은 높이 4, 가로 범위만 다름</text>
+<line class="f-ink" x1="170" y1="69" x2="530" y2="69"/>
+<text class="f-t" x="113" y="73" text-anchor="middle">정답</text>
+<line class="f-ink" x1="260" y1="106" x2="620" y2="106"/>
+<text class="f-t" x="113" y="110" text-anchor="middle">예측</text>
+<rect class="f-box" x="170" y="126" width="90" height="44" rx="3"/>
+<rect class="f-soft" x="260" y="126" width="270" height="44" rx="3"/>
+<rect class="f-box" x="530" y="126" width="90" height="44" rx="3"/>
+<text class="f-t" x="215" y="154" text-anchor="middle">4</text>
+<text class="f-cap" x="395" y="154" text-anchor="middle">겹친 넓이 12</text>
+<text class="f-t" x="575" y="154" text-anchor="middle">4</text>
+<text class="f-s" x="170" y="195" text-anchor="middle">0</text>
+<text class="f-s" x="260" y="195" text-anchor="middle">1</text>
+<text class="f-s" x="530" y="195" text-anchor="middle">4</text>
+<text class="f-s" x="620" y="195" text-anchor="middle">5</text>
+</svg>
+<figcaption>세 칸의 면적을 합하면 20입니다. 그중 양쪽에 공통인 넓이 12를 분자로 씁니다.</figcaption>
+</figure>
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+
+<h2>같은 물체 두 개를 찾았다고 중복 계산하지 않는다</h2>
+<p>한 사진, 한 부품 클래스의 정답 상자가 T1=[0,4)×[0,4), T2=[6,10)×[0,4)라고 가정합니다. 예측을 점수 0.9, 0.8, 0.7 순으로 확인합니다. 첫 예측은 앞에서 본 조금 밀린 상자, 두 번째는 T1과 정확히 같은 상자, 세 번째는 T2와 정확히 같은 상자입니다. 같은 사진과 클래스 안에서 아직 짝지어지지 않은 정답 중 IoU가 가장 큰 것과 짝짓고, IoU≥0.5만 인정하겠습니다.</p>
+<p>이 규칙에서 첫 예측은 T1의 TP입니다. T1의 정확한 두 번째 상자도 이미 짝이 찼기 때문에 FP입니다. 세 번째는 T2의 TP입니다. 3위까지의 정밀도는 2/3, 재현율은 1입니다. 이런 식으로 보통 점수 순위를 따라 여러 정밀도·재현율을 읽습니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 257" role="img" aria-label="점수 순서 1,2,3에서 TP,FP,TP다. 첫 정답은 1위 검출에 이미 사용되어 두 번째 검출에 다시 들어가지 않는다.">
+<text class="f-cap" x="380" y="33" text-anchor="middle">점수순으로 남은 정답과만 짝짓는다</text>
+<text class="f-t" x="180" y="82" text-anchor="end">검출 순위</text>
+<rect class="f-box" x="206" y="58" width="162" height="38" rx="3"/>
+<text class="f-t" x="287" y="83" text-anchor="middle">1위 · 0.9</text>
+<rect class="f-box" x="374" y="58" width="162" height="38" rx="3"/>
+<text class="f-t" x="455" y="83" text-anchor="middle">2위 · 0.8</text>
+<rect class="f-box" x="542" y="58" width="162" height="38" rx="3"/>
+<text class="f-t" x="623" y="83" text-anchor="middle">3위 · 0.7</text>
+<text class="f-t" x="180" y="128" text-anchor="end">대응 가능</text>
+<rect class="f-box" x="206" y="104" width="162" height="38" rx="3"/>
+<text class="f-t" x="287" y="129" text-anchor="middle">T1, IoU 0.6</text>
+<rect class="f-soft" x="374" y="104" width="162" height="38" rx="3"/>
+<text class="f-t" x="455" y="129" text-anchor="middle">T1, 이미 사용</text>
+<rect class="f-box" x="542" y="104" width="162" height="38" rx="3"/>
+<text class="f-t" x="623" y="129" text-anchor="middle">T2, IoU 1</text>
+<text class="f-t" x="180" y="174" text-anchor="end">판정</text>
+<rect class="f-box" x="206" y="150" width="162" height="38" rx="3"/>
+<text class="f-t" x="287" y="175" text-anchor="middle">TP</text>
+<rect class="f-box" x="374" y="150" width="162" height="38" rx="3"/>
+<text class="f-t" x="455" y="175" text-anchor="middle">FP</text>
+<rect class="f-box" x="542" y="150" width="162" height="38" rx="3"/>
+<text class="f-t" x="623" y="175" text-anchor="middle">TP</text>
+<text class="f-t" x="180" y="220" text-anchor="end">재현율</text>
+<rect class="f-box" x="206" y="196" width="162" height="38" rx="3"/>
+<text class="f-t" x="287" y="221" text-anchor="middle">0.5</text>
+<rect class="f-box" x="374" y="196" width="162" height="38" rx="3"/>
+<text class="f-t" x="455" y="221" text-anchor="middle">0.5</text>
+<rect class="f-box" x="542" y="196" width="162" height="38" rx="3"/>
+<text class="f-t" x="623" y="221" text-anchor="middle">1.0</text>
+</svg>
+<figcaption>높은 위치 겹침과 중복 판정은 별개입니다.</figcaption>
+</figure>
+<div class="check" data-q="q3"></div>
+<div class="check" data-q="q4"></div>
+
+<h2>정확히 어떤 AP인지를 먼저 쓴다</h2>
+<p>이 장의 작은 AP는 보간을 하지 않고 재현율이 늘어난 순위의 정밀도에 재현율 증가분을 곱해 더합니다. 재현율은 TP마다 0.5씩 증가하므로 (1×0.5)+(2/3×0.5)=5/6≈0.833333입니다. IoU의 하한을 0.75로 높이면 첫 상자가 실패하고 2,3위가 TP라 AP는 (1/2+2/3)/2≈0.583333입니다.</p>
+<p>COCO의 대표 AP는 0.50,0.55,…,0.95의 여러 IoU 기준을 사용하며 정밀도를 101개 재현율 지점에서 보간하는 공식 평가 규칙을 따릅니다. 이 장의 작은 AP와 동일한 숫자라고 보고하지 않습니다. 클래스·정답 매칭 규칙, 평가 범위, IoU 기준과 보간법을 기록합니다.</p>
+<div class="check" data-q="q5"></div>
+<div class="check" data-q="q6"></div>
+<pre data-example="python"><code>def iou(a, b):
+    overlap = max(0, min(a[2], b[2]) - max(a[0], b[0]))
+    overlap *= max(0, min(a[3], b[3]) - max(a[1], b[1]))
+    area = lambda x: (x[2] - x[0]) * (x[3] - x[1])
+    return overlap / (area(a) + area(b) - overlap)
+
+truth = [(0, 0, 4, 4), (6, 0, 10, 4)]
+predictions = [(0.9, (1, 0, 5, 4)), (0.8, truth[0]), (0.7, truth[1])]
+print(&quot;first IoU:&quot;, iou(predictions[0][1], truth[0]))
+for threshold in (0.5, 0.75):
+    remaining = set(range(len(truth)))
+    hits = []
+    for _, box in sorted(predictions, reverse=True):
+        best = max(remaining, key=lambda i: iou(box, truth[i]), default=None)
+        success = best is not None and iou(box, truth[best]) &gt;= threshold
+        hits.append(int(success))
+        if success:
+            remaining.remove(best)
+    ap = sum(sum(hits[:j]) / j for j, value in enumerate(hits, 1) if value) / len(truth)
+    print(&quot;threshold&quot;, threshold, &quot;flags&quot;, hits, &quot;AP&quot;, f&quot;{ap:.6f}&quot;)</code></pre>
+<pre data-output><code>first IoU: 0.6
+threshold 0.5 flags [1, 0, 1] AP 0.833333
+threshold 0.75 flags [0, 1, 1] AP 0.583333</code></pre>
+<p>예제는 면적이 양수인 상자, 하나 이상 있는 정답, 서로 다른 점수와 고정된 클래스 하나만 가정합니다. 실제 평가에서는 동점·가려진 물체·작은 물체 등의 처리도 평가 규약의 일부입니다.</p>
+
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://cocodataset.org/#detection-eval">COCO · 검출 평가</a></li>
+<li><a href="https://github.com/cocodataset/cocoapi/blob/master/PythonAPI/pycocotools/cocoeval.py">COCO API · 실제 AP 계산</a></li>
+<li><a href="../ml/ml03-3.html">ML03 · 정밀도·재현율 곡선과 AP</a></li>
+</ul>
+
+<h2>확인 문제</h2>
+<p>아직 풀지 않은 문제입니다. 먼저 식이나 근거를 적어 보고 해설을 확인합니다.</p>
+<div id="quiz"></div>
+
+<section class="work" id="tools"></section>
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

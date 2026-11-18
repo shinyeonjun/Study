@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>검색과 추천의 목록을 순위별로 평가하기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e8c'/%3E%3Cpath d='M8 22V10m8 12V14m8 8V6' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="SP01-2">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+
+<header class="chapter">
+<p class="chap-sub">전문 경로 · SP01 언어모델·검색·추천</p>
+<p class="chap-num">SP01·2</p>
+<h1>검색과 추천의 목록을 순위별로 평가하기</h1>
+<p class="lead">목록에서 몇 개가 맞는지, 첫 정답이 얼마나 빨리 나오는지, 관련성이 높은 결과가 앞에 왔는지를 각각 계산합니다.</p>
+</header>
+
+<div class="goal">
+<h2>이 장을 읽고 나면</h2>
+<ul>
+<li>P@k, RR, MRR이 각각 세는 것을 구분한다.</li>
+<li>등급과 순위 할인을 적용해 nDCG를 계산한다.</li>
+<li>추천·검색 실험의 후보 범위와 판단 기준을 기록한다.</li>
+</ul>
+</div>
+<h2>하나의 질문에서도 관련성을 매기는 기준부터 정한다</h2>
+<p>문서 검색은 질문에 맞는 내용을, 추천은 사용자에게 놓을 항목을 정렬합니다. 이 장에서는 각 결과에 관련도 0~3을 붙인 작은 기준표를 사용합니다. 0은 관련 없음이고, 정밀도와 첫 정답 계산에서는 1 이상을 관련 있다고 간주하겠습니다. 예를 들어 출력 네 항목의 관련도 순서가 [0,3,1,2]입니다.</p>
+<p><b class="key">P@3</b>는 앞 세 자리 중 관련 있는 두 자리를 세어 2/3입니다. 첫 관련 문서는 2위이므로 <b>역순위(RR)</b>는 1/2입니다. 여러 질문의 RR을 평균한 값이 MRR입니다. 두 번째 질문에선 첫 관련 결과가 4위라면, 3위까지만 평가하는 RR@3은 0이고 두 질문의 MRR@3은 0.25입니다. 기준표의 관련 문서 전체 중 몇 개를 돌려줬는지 묻는 재현율은 분모가 관련 문서의 총수입니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 257" role="img" aria-label="A는 2위가 첫 관련 결과라 RR@3=0.5이다. B는 4위여서 RR@3=0이며 평균은 0.25다.">
+<text class="f-cap" x="380" y="33" text-anchor="middle">순위 3까지만 함께 읽는다</text>
+<text class="f-t" x="180" y="82" text-anchor="end">순위</text>
+<rect class="f-box" x="206" y="58" width="120" height="38" rx="3"/>
+<text class="f-t" x="266" y="83" text-anchor="middle">1</text>
+<rect class="f-box" x="332" y="58" width="120" height="38" rx="3"/>
+<text class="f-t" x="392" y="83" text-anchor="middle">2</text>
+<rect class="f-box" x="458" y="58" width="120" height="38" rx="3"/>
+<text class="f-t" x="518" y="83" text-anchor="middle">3</text>
+<rect class="f-box" x="584" y="58" width="120" height="38" rx="3"/>
+<text class="f-t" x="644" y="83" text-anchor="middle">4</text>
+<text class="f-t" x="180" y="128" text-anchor="end">질문 A 관련도</text>
+<rect class="f-box" x="206" y="104" width="120" height="38" rx="3"/>
+<text class="f-t" x="266" y="129" text-anchor="middle">0</text>
+<rect class="f-soft" x="332" y="104" width="120" height="38" rx="3"/>
+<text class="f-t" x="392" y="129" text-anchor="middle">3</text>
+<rect class="f-soft" x="458" y="104" width="120" height="38" rx="3"/>
+<text class="f-t" x="518" y="129" text-anchor="middle">1</text>
+<rect class="f-box" x="584" y="104" width="120" height="38" rx="3"/>
+<text class="f-t" x="644" y="129" text-anchor="middle">2</text>
+<text class="f-t" x="180" y="174" text-anchor="end">질문 B 관련도</text>
+<rect class="f-box" x="206" y="150" width="120" height="38" rx="3"/>
+<text class="f-t" x="266" y="175" text-anchor="middle">0</text>
+<rect class="f-box" x="332" y="150" width="120" height="38" rx="3"/>
+<text class="f-t" x="392" y="175" text-anchor="middle">0</text>
+<rect class="f-box" x="458" y="150" width="120" height="38" rx="3"/>
+<text class="f-t" x="518" y="175" text-anchor="middle">0</text>
+<rect class="f-soft" x="584" y="150" width="120" height="38" rx="3"/>
+<text class="f-t" x="644" y="175" text-anchor="middle">2</text>
+<text class="f-t" x="180" y="220" text-anchor="end">RR@3</text>
+<rect class="f-box" x="206" y="196" width="120" height="38" rx="3"/>
+<text class="f-t" x="266" y="221" text-anchor="middle">A: 0.5</text>
+<rect class="f-box" x="332" y="196" width="120" height="38" rx="3"/>
+<text class="f-t" x="392" y="221" text-anchor="middle">B: 0</text>
+<rect class="f-soft" x="458" y="196" width="120" height="38" rx="3"/>
+<text class="f-t" x="518" y="221" text-anchor="middle">평균: 0.25</text>
+</svg>
+<figcaption>P@3는 1~3위의 관련 수를 셉니다. RR@3은 그 구간의 첫 관련 위치만 사용합니다.</figcaption>
+</figure>
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+
+<h2>같은 관련 수라도 높은 등급을 앞으로 놓으면 점수가 바뀐다</h2>
+<p><b class="key">DCG@k</b>에는 등급별 이득과 위치별 할인이 들어갑니다. 이 장은 순위 i(1부터), 등급 r에서 (2ʳ−1)/log₂(i+1)을 사용합니다. 결과 A의 앞 세 자리 [0,3,1]은 0/1+7/log₂3+1/log₂4≈4.916508입니다. 같은 질문의 평가 대상 전체를 가장 잘 정렬한 [3,2,1,0]의 앞 세 자리는 7+3/log₂3+1/log₂4≈9.392789입니다.</p>
+<p>이 이상적인 값 IDCG로 DCG를 나눈 <b>nDCG</b>는 약 0.523434입니다. IDCG에는 실제 결과의 앞 세 항목만 재정렬하는 것이 아니라, 약속한 평가 집합에서 가장 높은 관련도를 사용할 수 있습니다. 이득이나 할인 정의는 구현마다 선택할 수 있습니다. IDCG가 0인 질문은 나눌 수 없으므로 평가 정책에 따라 따로 세거나 규칙을 명시합니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 257" role="img" aria-label="실제 등급 0,3,1의 DCG는 4.916508, 평가지 전체 이상 등급 3,2,1의 IDCG는 9.392789, nDCG는 0.523434다.">
+<text class="f-cap" x="380" y="33" text-anchor="middle">앞 세 자리의 실제 점수와 이상 점수</text>
+<text class="f-t" x="180" y="82" text-anchor="end">순위</text>
+<rect class="f-box" x="206" y="58" width="162" height="38" rx="3"/>
+<text class="f-t" x="287" y="83" text-anchor="middle">1</text>
+<rect class="f-box" x="374" y="58" width="162" height="38" rx="3"/>
+<text class="f-t" x="455" y="83" text-anchor="middle">2</text>
+<rect class="f-box" x="542" y="58" width="162" height="38" rx="3"/>
+<text class="f-t" x="623" y="83" text-anchor="middle">3</text>
+<text class="f-t" x="180" y="128" text-anchor="end">실제 등급</text>
+<rect class="f-box" x="206" y="104" width="162" height="38" rx="3"/>
+<text class="f-t" x="287" y="129" text-anchor="middle">0</text>
+<rect class="f-soft" x="374" y="104" width="162" height="38" rx="3"/>
+<text class="f-t" x="455" y="129" text-anchor="middle">3</text>
+<rect class="f-box" x="542" y="104" width="162" height="38" rx="3"/>
+<text class="f-t" x="623" y="129" text-anchor="middle">1</text>
+<text class="f-t" x="180" y="174" text-anchor="end">이상적 등급</text>
+<rect class="f-soft" x="206" y="150" width="162" height="38" rx="3"/>
+<text class="f-t" x="287" y="175" text-anchor="middle">3</text>
+<rect class="f-box" x="374" y="150" width="162" height="38" rx="3"/>
+<text class="f-t" x="455" y="175" text-anchor="middle">2</text>
+<rect class="f-box" x="542" y="150" width="162" height="38" rx="3"/>
+<text class="f-t" x="623" y="175" text-anchor="middle">1</text>
+<text class="f-t" x="180" y="220" text-anchor="end">합의 비교</text>
+<rect class="f-box" x="206" y="196" width="162" height="38" rx="3"/>
+<text class="f-t" x="287" y="221" text-anchor="middle">DCG 4.916508</text>
+<rect class="f-box" x="374" y="196" width="162" height="38" rx="3"/>
+<text class="f-t" x="455" y="221" text-anchor="middle">IDCG 9.392789</text>
+<rect class="f-soft" x="542" y="196" width="162" height="38" rx="3"/>
+<text class="f-t" x="623" y="221" text-anchor="middle">nDCG 0.523434</text>
+</svg>
+<figcaption>관련 항목을 앞에 둔 정렬과의 차이를 보려면 순위까지 포함한 지표가 필요합니다.</figcaption>
+</figure>
+<div class="check" data-q="q3"></div>
+<div class="check" data-q="q4"></div>
+
+<h2>평가에 쓰는 후보와 관측 시점을 고정한다</h2>
+<p>추천에서는 아직 누르지 않은 항목이 곧 싫은 항목이라는 뜻은 아닙니다. 사용자에게 보여 주지 않았을 수 있고 위치에 따라 클릭 가능성도 달라집니다. 어떤 항목을 후보로 두고 무엇을 관련 근거로 삼았는지, 검색에서는 어떤 문서를 판단했는지 남깁니다. 시간 이후의 행동을 예측하려면 그 시점 뒤의 기록을 후보 생성이나 학습에 섞지 않는지 확인합니다.</p>
+<div class="check" data-q="q5"></div>
+<div class="check" data-q="q6"></div>
+<pre data-example="python"><code>from math import log2
+from statistics import mean
+
+rankings = [[0, 3, 1, 2], [0, 0, 0, 2]]
+k = 3
+
+def rr_at_k(grades, k):
+    return next((1 / i for i, r in enumerate(grades[:k], 1) if r &gt; 0), 0.0)
+
+def dcg(grades, k):
+    return sum((2**r-1) / log2(i+1) for i, r in enumerate(grades[:k], 1))
+
+a = rankings[0]
+score = dcg(a, k)
+ideal = dcg(sorted(a, reverse=True), k)
+print(&quot;precision at 3:&quot;, f&quot;{sum(r &gt; 0 for r in a[:k]) / k:.6f}&quot;)
+print(&quot;reciprocal ranks:&quot;, [rr_at_k(r, k) for r in rankings])
+print(&quot;mrr at 3:&quot;, mean(rr_at_k(r, k) for r in rankings))
+print(&quot;dcg, ideal, ndcg:&quot;, *(f&quot;{x:.6f}&quot; for x in (score, ideal, score / ideal)))</code></pre>
+<pre data-output><code>precision at 3: 0.666667
+reciprocal ranks: [0.5, 0.0]
+mrr at 3: 0.25
+dcg, ideal, ndcg: 4.916508 9.392789 0.523434</code></pre>
+<p>예제는 네 항목에 관련도 판단이 모두 있고, k개보다 적게 반환하지 않는 조건입니다. 실제 실험에서 후보 누락이나 관련도 미판정이 있다면 처리 규칙에 따라 값이 바뀝니다. 신뢰도는 평균 점수와 함께 질문 단위의 변동, 질문 수, 비교 조건을 보고 판단합니다.</p>
+
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://doi.org/10.1145/582415.582418">Järvelin·Kekäläinen · 등급을 사용하는 누적 이득 평가</a></li>
+<li><a href="https://trec.nist.gov/">NIST TREC · 정보검색 평가 과제와 자료</a></li>
+<li><a href="../ml/ml03-2.html">ML03 · 정밀도와 재현율</a></li>
+</ul>
+
+<h2>확인 문제</h2>
+<p>아직 풀지 않은 문제입니다. 먼저 식이나 근거를 적어 보고 해설을 확인합니다.</p>
+<div id="quiz"></div>
+
+<section class="work" id="tools"></section>
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

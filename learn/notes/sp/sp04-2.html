@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>반사실 효과의 식별과 층별 조정 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="SP04-2">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">전문 연구 경로 · SP04 인과추론</p>
+<p class="chap-num">SP04·2</p>
+<h1>반사실 효과의 식별과 층별 조정</h1>
+<p class="lead">같은 사람에게 교육을 했을 때와 하지 않았을 때의 결과를 모두 볼 수는 없습니다. 어떤 가정을 두면 관측 자료를 공통 준비도 분포로 조정해 평균 효과를 계산할 수 있는지 봅니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul>
+<li>교육 제공과 비제공의 잠재 결과, 개입과 관측을 구분한다.</li>
+<li>조건부 교환가능성, 양의 확률, 일관성을 명시한다.</li>
+<li>같은 대상 구성을 쓴 표준화로 위험차를 계산한다.</li>
+</ul></div>
+
+<h2>보지 못한 결과까지 포함하는 질문</h2>
+<p>사람 하나의 성공을 0 또는 1로 기록합니다. 교육이 제공된 때의 잠재 결과를 <var>Y(1)</var>, 제공되지 않은 때를 <var>Y(0)</var>라고 씁니다. 실제로 선택한 조건의 결과만 봅니다. 적용하지 않은 조건의 결과가 <b class="key">반사실</b>입니다. 목표 모집단의 평균 처리효과 <var>E[Y(1)−Y(0)]</var>는 모두에게 제공했을 경우와 모두에게 제공하지 않았을 경우의 평균 성공률 차이입니다.</p>
+<p><var>P(Y=1|T=1)</var>은 실제로 교육을 받은 사람 중 성공한 비율입니다. <var>P(Y=1|do(T=1))</var>은 대상을 유지한 채 교육 제공을 정한 개입에서의 성공확률입니다. 실제 교육 선택이 준비도에 의존하면 두 값은 달라질 수 있습니다.</p><div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
+
+<h2>관측량만으로 계산할 수 있는 조건</h2>
+<p><b class="key">식별</b>은 효과를 어떤 관측 자료의 함수로 나타낼 수 있는지 판단하는 단계입니다. 이 예에서 준비도 <var>W</var>를 같게 하면 비교하는 사람들이 잠재 결과 측면에서 어느 쪽을 선택해도 비교 가능하다고 가정합니다. 이것이 <strong>조건부 교환가능성</strong>입니다. 준비도마다 두 교육 조건에 속할 가능성이 양수여야 한다는 <strong>양의 확률</strong>도 필요합니다.</p>
+<p>또 관측 결과가 실제 받은 교육의 잠재 결과와 맞아야 하는 <strong>일관성</strong>이 필요합니다. 교육의 버전을 명확히 하고 한 사람의 교육이 다른 사람의 성공에 영향을 주지 않는 모형을 이 예에서 사용합니다. 가정이 맞으면 준비도별로 조건부 성공률을 구해 목표 모집단의 준비도 비율로 가중할 수 있습니다.</p><figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 172" role="img" aria-label="준비 높음에서 교육 제공 64/80, 없음 14/20. 낮음에서 교육 제공 8/20, 없음 24/80.">
+<text class="f-cap" x="380" y="29" text-anchor="middle">합성 작업 교육 자료의 성공 사례</text>
+<rect class="f-soft" x="60" y="43" width="144" height="37"/>
+<text class="f-s" x="132" y="66.5" text-anchor="middle">준비도</text>
+<rect class="f-soft" x="204" y="43" width="248" height="37"/>
+<text class="f-s" x="328" y="66.5" text-anchor="middle">교육 제공 성공/전체</text>
+<rect class="f-soft" x="452" y="43" width="248" height="37"/>
+<text class="f-s" x="576" y="66.5" text-anchor="middle">교육 없음 성공/전체</text>
+<rect class="f-box" x="60" y="80" width="144" height="37"/>
+<text class="f-t" x="132" y="103.5" text-anchor="middle">높음</text>
+<rect class="f-box" x="204" y="80" width="248" height="37"/>
+<text class="f-t" x="328" y="103.5" text-anchor="middle">64/80 = .80</text>
+<rect class="f-box" x="452" y="80" width="248" height="37"/>
+<text class="f-t" x="576" y="103.5" text-anchor="middle">14/20 = .70</text>
+<rect class="f-box" x="60" y="117" width="144" height="37"/>
+<text class="f-t" x="132" y="140.5" text-anchor="middle">낮음</text>
+<rect class="f-box" x="204" y="117" width="248" height="37"/>
+<text class="f-t" x="328" y="140.5" text-anchor="middle">8/20 = .40</text>
+<rect class="f-box" x="452" y="117" width="248" height="37"/>
+<text class="f-t" x="576" y="140.5" text-anchor="middle">24/80 = .30</text>
+</svg>
+<figcaption>두 집단의 준비도 구성이 다릅니다. 이해를 위한 인공 기록입니다.</figcaption>
+</figure><div class="check" data-q="q3"></div><div class="check" data-q="q4"></div>
+
+<h2>같은 가중치로 각 조건을 평균</h2>
+<p>목표에서 높은 준비도와 낮은 준비도가 각각 절반이라고 둡니다. 교육 제공은 <var>(.80+.40)/2=.60</var>, 제공 안 함은 <var>(.70+.30)/2=.50</var>입니다. 차이는 +.10, 즉 10퍼센트포인트입니다. 기존 자료로 직접 구한 +.34에는 집단 구성 차이도 반영됐습니다.</p><figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 172" role="img" aria-label="자료를 그대로 합치면 차이 .34, 두 처리를 준비도 반반으로 표준화하면 .10이다.">
+<text class="f-cap" x="380" y="29" text-anchor="middle">단순 관측과 같은 준비도 구성의 비교</text>
+<rect class="f-soft" x="51" y="43" width="212" height="37"/>
+<text class="f-s" x="157" y="66.5" text-anchor="middle">비교 방식</text>
+<rect class="f-soft" x="263" y="43" width="156" height="37"/>
+<text class="f-s" x="341" y="66.5" text-anchor="middle">교육 제공</text>
+<rect class="f-soft" x="419" y="43" width="156" height="37"/>
+<text class="f-s" x="497" y="66.5" text-anchor="middle">교육 없음</text>
+<rect class="f-soft" x="575" y="43" width="134" height="37"/>
+<text class="f-s" x="642" y="66.5" text-anchor="middle">위험차</text>
+<rect class="f-box" x="51" y="80" width="212" height="37"/>
+<text class="f-t" x="157" y="103.5" text-anchor="middle">있는 자료를 그대로 합침</text>
+<rect class="f-box" x="263" y="80" width="156" height="37"/>
+<text class="f-t" x="341" y="103.5" text-anchor="middle">72/100 = .72</text>
+<rect class="f-box" x="419" y="80" width="156" height="37"/>
+<text class="f-t" x="497" y="103.5" text-anchor="middle">38/100 = .38</text>
+<rect class="f-box" x="575" y="80" width="134" height="37"/>
+<text class="f-t" x="642" y="103.5" text-anchor="middle">+.34</text>
+<rect class="f-box" x="51" y="117" width="212" height="37"/>
+<text class="f-t" x="157" y="140.5" text-anchor="middle">준비도를 반반으로 조정</text>
+<rect class="f-box" x="263" y="117" width="156" height="37"/>
+<text class="f-t" x="341" y="140.5" text-anchor="middle">.60</text>
+<rect class="f-box" x="419" y="117" width="156" height="37"/>
+<text class="f-t" x="497" y="140.5" text-anchor="middle">.50</text>
+<rect class="f-box" x="575" y="117" width="134" height="37"/>
+<text class="f-t" x="642" y="140.5" text-anchor="middle">+.10</text>
+</svg>
+<figcaption>조정값을 인과효과로 읽으려면 본문에 적은 식별 가정이 필요합니다.</figcaption>
+</figure>
+<p class="small">실행 예제</p>
+<pre data-example="python"><code>from fractions import Fraction as F
+
+# preparation: ((trained successes, total), (untrained successes, total))
+table = [((64, 80), (14, 20)), ((8, 20), (24, 80))]
+for label, group in ((&quot;trained&quot;, 0), (&quot;untrained&quot;, 1)):
+    counts = [row[group] for row in table]
+    observed = F(sum(yes for yes, _ in counts), sum(n for _, n in counts))
+    standardized = sum(F(1, 2) * F(yes, n) for yes, n in counts)
+    print(f&quot;{label}: crude={float(observed):.2f}, adjusted={float(standardized):.2f}&quot;)</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>trained: crude=0.72, adjusted=0.60
+untrained: crude=0.38, adjusted=0.50</code></pre>
+<p>코드는 관측값으로부터 수치를 계산하는 <strong>추정</strong> 예입니다. 준비도 외에 중요한 공통 원인이 남았다면 조정한 계산도 효과를 정확히 식별하지 못할 수 있습니다.</p><div class="check" data-q="q5"></div><div class="check" data-q="q6"></div><div class="check" data-q="q7"></div><div class="check" data-q="q8"></div>
+
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table><thead><tr><th scope="col">개념</th><th scope="col">확인할 것</th></tr></thead><tbody>
+<tr><th scope="row"><b class="key">반사실</b></th><td>조건을 바꾸었을 때의 결과를 정의한다.</td></tr>
+<tr><th scope="row"><b class="key">식별</b></th><td>관측량으로 나타낼 가정과 대상 효과를 정한다.</td></tr>
+<tr><th scope="row"><b class="key">조정</b></th><td>같은 대상 구성에서 각 조건의 결과를 비교한다.</td></tr>
+</tbody></table></div><div class="box sum"><p class="box-k">다음 장으로</p><p><a href="sp04-3.html">다음 장</a>에서는 측정하지 않은 교란이 남았을 때 결론이 얼마나 바뀌는지 계산합니다.</p></div>
+
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://miguelhernan.org/whatifbook">Hernán·Robins · Causal Inference: What If 저자 교재</a></li>
+<li><a href="https://doi.org/10.1093/biomet/82.4.669">Pearl(1995) · Causal diagrams for empirical research</a></li>
+</ul>
+<h2>확인 문제</h2>
+<p>직접 계산하거나 설명을 먼저 적고 답을 확인해 보세요.</p>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

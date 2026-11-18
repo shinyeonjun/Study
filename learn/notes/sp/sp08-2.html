@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>합성곱으로 신호를 걸러 내고 FFT로 대조하기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="SP08-2">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">신호·통신 이론</p>
+<p class="chap-num">SP08·2</p>
+<h1>합성곱으로 신호를 걸러 내고 FFT로 대조하기</h1>
+<p class="lead">현재 샘플에서 직전 샘플을 빼는 간단한 필터를 적용합니다. 변환 영역에서 곱하면 왜 같은 결과가 나오는지와 길이 때문에 달라지는 부분을 봅니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>필터 계수로 이산 합성곱을 계산한다.</li><li>선형 합성곱과 원형 합성곱의 차이를 설명한다.</li><li>0 채움의 길이를 정해 FFT 결과를 직접 계산과 대조한다.</li></ul></div>
+
+<h2>현재와 직전 값을 결합한다</h2>
+<p>입력 x=[1,2,3]을 번호 0,1,2에서 읽고 그 밖에서는 0으로 둡니다. 필터 h=[1,−1]의 이산 합성곱은 y[n]=Σₖ h[k]x[n−k]입니다. 이 예에는 k=0,1만 있어서 y[n]=x[n]−x[n−1]입니다. 값이 그대로인 구간에서는 0에 가까운 출력, 값이 변하면 그 차이를 얻습니다.</p>
+<div class="table-wrap"><table><thead><tr><th scope="col">출력 n</th><th scope="col">x[n]</th><th scope="col">x[n−1]</th><th scope="col">y[n]</th></tr></thead><tbody><tr><td>0</td><td>1</td><td>0</td><td>1</td></tr><tr><td>1</td><td>2</td><td>1</td><td>1</td></tr><tr><td>2</td><td>3</td><td>2</td><td>1</td></tr><tr><td>3</td><td>0</td><td>3</td><td>−3</td></tr></tbody></table></div>
+<p>마지막 −3은 주어진 유한 신호 뒤에 0을 붙인 경계에서도 변화가 있기 때문입니다. 관측이 실제로 0으로 바뀌었음을 표시하는 데이터가 아니라, 계산에서 채운 경계의 결과입니다.</p>
+<div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
+<h2>변환에서의 곱은 길이가 정한 원형 계산이다</h2>
+<p>같은 길이로 DFT한 두 배열의 계수를 성분별로 곱한 뒤 역변환하면 <b class="key">원형 합성곱</b>입니다. 길이 3이면 n=0에서 직전 n=−1이 마지막 번호 2로 이어집니다. 따라서 첫 값이 1−3=−2입니다. 반대로 길이 4로 차원 끝에 0을 넣으면 원래 선형 결과 [1,1,1,−3]의 네 값을 보전합니다. 유한 길이 N과 M의 선형 합성곱에 필요한 길이는 N+M−1 이상입니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 160" role="img" aria-label="선형 합성곱을 얻기 위해 충분히 0을 채운 뒤 FFT 계수를 곱함">
+<rect class="f-box" x="42" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="135" y="61" text-anchor="middle">실제 표본 길이</text><text class="f-s" x="135" y="89" text-anchor="middle">x: 3 · h: 2</text><text class="f-s" x="135" y="110" text-anchor="middle">선형 출력은 4칸</text><line class="f-line" x1="235" y1="84" x2="278" y2="84" marker-end="url(#f-arrow)"/><rect class="f-soft" x="287" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="380" y="61" text-anchor="middle">0을 채운 뒤 FFT</text><text class="f-s" x="380" y="89" text-anchor="middle">길이 4의 변환 둘</text><text class="f-s" x="380" y="110" text-anchor="middle">계수별로 곱하기</text><line class="f-line" x1="480" y1="84" x2="523" y2="84" marker-end="url(#f-arrow)"/><rect class="f-box" x="532" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="625" y="61" text-anchor="middle">역변환</text><text class="f-s" x="625" y="89" text-anchor="middle">4칸에서 복원</text><text class="f-s" x="625" y="110" text-anchor="middle">[1, 1, 1, −3]</text>
+</svg><figcaption>짧게 길이 3으로 변환하면 네 번째 값이 첫 번째에 더해져 원형 합성곱이 됩니다.</figcaption></figure>
+<div class="check" data-q="q3"></div><div class="check" data-q="q4"></div>
+<pre data-example="python"><code>import numpy as np
+
+signal = np.array([1, 2, 3])
+kernel = np.array([1, -1])
+linear = np.convolve(signal, kernel)
+
+def via_fft(length):
+    fft_result = np.fft.fft(signal, length) * np.fft.fft(kernel, length)
+    return np.fft.ifft(fft_result)
+
+long_result = via_fft(4)
+short_result = via_fft(3)
+assert np.allclose(long_result, linear)
+print(&quot;직접 선형:&quot;, linear.tolist())
+print(&quot;4칸 FFT:&quot;, [round(v.real) for v in long_result])
+print(&quot;3칸 FFT:&quot;, [round(v.real) for v in short_result])</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>직접 선형: [1, 1, 1, -3]
+4칸 FFT: [1, 1, 1, -3]
+3칸 FFT: [-2, 1, 1]</code></pre>
+<div class="check" data-q="q5"></div>
+<h2>같은 ‘합성곱’ 이름을 쓰는 구현도 인덱스를 확인한다</h2>
+<p>수학의 합성곱에는 x[n−k]와 같은 뒤집힘이 들어갑니다. 흔히 CNN의 층이 구현하는 교차상관에서는 입력의 이동한 창과 필터를 같은 방향으로 곱하는 약속을 쓰기도 합니다. 같은 이름이 붙어도 주어진 커널 하나의 답을 검산할 때는 식, 커널 방향과 패딩을 확인합니다.</p>
+<div class="check" data-q="q6"></div>
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>어떤 값을 바깥에서 0으로 보는지, 끝과 처음을 연결하는지를 정한 뒤 직접 계산과 변환 계산을 비교합니다.</p></div>
+
+<h2>참고 자료</h2>
+<ul><li><a href="https://numpy.org/doc/stable/reference/generated/numpy.convolve.html">NumPy · convolve</a></li><li><a href="https://ocw.mit.edu/courses/res-6-007-signals-and-systems-spring-2011/pages/lecture-notes/">MIT · Signals and Systems 강의 노트</a></li><li><a href="../dl/dl05-1.html">공부 교재 · 영상과 합성곱</a></li></ul>
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>문자를 토큰과 구문 트리로 바꾸고 타입을 검사하기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e8c'/%3E%3Cpath d='M8 22V10m8 12V14m8 8V6' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="SP13-1">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+
+<header class="chapter">
+<p class="chap-sub">전문 연구 경로 · SP13 언어·컴파일러·계산이론</p>
+<p class="chap-num">SP13·1</p>
+<h1>문자를 토큰과 구문 트리로 바꾸고 타입을 검사하기</h1>
+<p class="lead">같은 ‘2 + 3 * 4’도 문자 목록, 구문 트리, 정수 결과로 각각 다르게 나타납니다. 처리 단계마다 무엇이 달라지는지 확인합니다.</p>
+</header>
+
+<div class="goal">
+<h2>이 장을 읽고 나면</h2>
+<ul>
+<li>어휘 분석, 구문 분석, 타입 검사, 평가를 구분한다.</li>
+<li>곱셈이 덧셈보다 우선하는 구문 트리를 읽는다.</li>
+<li>구문이 맞는 식에 타입 오류가 날 수 있음을 작은 언어로 보인다.</li>
+</ul>
+</div>
+
+<h2>글자를 분류하고 중첩된 구조를 만듭니다</h2>
+<p>소스 <code>2 + 3 * 4</code>에는 공백도 있지만 핵심 순서는 숫자 2, 연산자 +, 숫자 3, 연산자 *, 숫자 4입니다. 문자들을 의미 있는 단위로 묶는 <b class="key">어휘 분석</b>이 이 토큰 열을 만듭니다. 여러 글자의 숫자 23도 숫자 토큰 한 개가 될 수 있습니다. 토큰의 분류와 원래 위치를 알고 있으면 오류가 어디서 생겼는지 표시할 수 있습니다.</p>
+<p><b class="key">구문 분석</b>은 토큰들이 언어의 문법에 어떻게 들어가는지 결정합니다. 이 식은 곱셈을 먼저 묶어 <code>2 + (3 * 4)</code>로 읽습니다. <b class="key">추상 구문 트리</b>(AST)에는 평가에 필요한 구조가 남습니다. 꼭대기는 <code>+</code>, 왼쪽은 2, 오른쪽은 <code>*</code>이고 그 두 입력은 3과 4입니다. 괄호를 바꾼 <code>(2 + 3) * 4</code>의 트리 꼭대기는 <code>*</code>입니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 180" role="img" aria-label="2+3*4의 AST, 더하기가 루트이고 오른쪽 자식은 곱하기">
+<rect class="f-box" x="328" y="14" width="104" height="31" rx="3"/>
+<text class="f-t" x="380" y="35" text-anchor="middle">+</text>
+<rect class="f-box" x="180" y="74" width="104" height="31" rx="3"/>
+<text class="f-t" x="232" y="94" text-anchor="middle">2</text>
+<rect class="f-box" x="476" y="74" width="104" height="31" rx="3"/>
+<text class="f-t" x="528" y="94" text-anchor="middle">*</text>
+<line class="f-ink" x1="358" y1="45" x2="232" y2="71" marker-end="url(#f-arrow)"/>
+<line class="f-ink" x1="402" y1="45" x2="528" y2="71" marker-end="url(#f-arrow)"/>
+<rect class="f-box" x="396" y="131" width="104" height="31" rx="3"/>
+<text class="f-t" x="448" y="151" text-anchor="middle">3</text>
+<rect class="f-box" x="556" y="131" width="104" height="31" rx="3"/>
+<text class="f-t" x="608" y="151" text-anchor="middle">4</text>
+<line class="f-ink" x1="506" y1="104" x2="448" y2="128" marker-end="url(#f-arrow)"/>
+<line class="f-ink" x1="550" y1="104" x2="608" y2="128" marker-end="url(#f-arrow)"/>
+</svg>
+<figcaption>곱하기 노드의 결과 12와 왼쪽 정수 2를 더해 14를 얻습니다.</figcaption>
+</figure>
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+<div class="check" data-q="q3"></div>
+<h2>형식이 맞아도 타입 규칙을 위반할 수 있습니다</h2>
+<p>언어는 어떤 종류의 값에 어떤 연산을 적용할 수 있는지 규칙을 둡니다. 여기서는 <code>int</code>와 <code>bool</code>을 구별하며 +와 *는 두 피연산자가 정수일 때만 허용하는 학습용 언어를 사용합니다. <code>2 + True</code>는 덧셈이라는 구문을 만들 수 있지만 이 규칙으로는 타입 검사에서 거절됩니다. Python의 실제 <code>bool</code> 연산 규약과 다르므로 학습용 검사에서 <code>type(value) is int</code>로 정확히 구분합니다.</p>
+<p><b class="key">구문</b>은 어떤 구조의 문장이 될 수 있는지, <b class="key">의미</b>는 그 문장이 어떤 값 또는 실행을 나타내는지 정합니다. 여기서 의미 규칙은 자식을 먼저 평가하고 해당 연산을 수행하는 것입니다. 정적 타입 검사는 AST에서 연산의 입력 종류를 실행 전에 확인합니다. 반환 정수의 값까지 정해주는 단계는 평가입니다. 컴파일러를 만들 때는 타입이 맞는 트리를 중간 표현이나 대상 코드로 바꿀 수 있고, 작은 인터프리터는 트리를 직접 평가할 수도 있습니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 153" role="img" aria-label="정상 식과 타입 오류 식을 구문 처리 이후에 구별">
+<text class="f-s" x="165" y="28" text-anchor="middle">소스</text>
+<text class="f-s" x="381" y="28" text-anchor="middle">구문</text>
+<text class="f-s" x="613" y="28" text-anchor="middle">학습용 언어 결과</text>
+<rect class="f-box" x="28" y="46" width="704" height="37" rx="3"/>
+<text class="f-t" x="165" y="70" text-anchor="middle">2 + 3 * 4</text>
+<text class="f-t" x="381" y="70" text-anchor="middle">덧셈 트리</text>
+<text class="f-t" x="613" y="70" text-anchor="middle">정수 14</text>
+<rect class="f-box" x="28" y="92" width="704" height="37" rx="3"/>
+<text class="f-t" x="165" y="116" text-anchor="middle">2 + True</text>
+<text class="f-t" x="381" y="116" text-anchor="middle">덧셈 트리</text>
+<text class="f-t" x="613" y="116" text-anchor="middle">정수 피연산자 오류</text>
+</svg>
+<figcaption>구문 분석기가 식의 모양을 만들었다고 그 식의 모든 연산이 허용되는 것은 아닙니다.</figcaption>
+</figure>
+<div class="check" data-q="q4"></div>
+<div class="check" data-q="q5"></div>
+<div class="check" data-q="q6"></div>
+<h2>파이썬으로 고정된 세 식을 안전하게 읽습니다</h2>
+<p>Python 표준 라이브러리로 세 합성 문자열의 토큰과 AST를 얻고, 이 장이 지원하는 정수·불리언 상수와 두 연산을 검사합니다. AST 검사와 값 계산을 각각 함수로 나눕니다.</p>
+<pre data-example="python"><code>import ast
+import io
+import token
+import tokenize
+
+source = &quot;2 + 3 * 4&quot;
+lexed = tokenize.generate_tokens(io.StringIO(source).readline)
+print(&quot;tokens:&quot;, [(token.tok_name[t.type], t.string) for t in lexed
+                  if t.type in (token.NUMBER, token.OP)])
+
+def type_of(node):
+    if isinstance(node, ast.Constant) and type(node.value) in (bool, int):
+        return type(node.value)
+    if isinstance(node, ast.BinOp) and type(node.op) in (ast.Add, ast.Mult):
+        if type_of(node.left) is int and type_of(node.right) is int:
+            return int
+    raise TypeError(&quot;integer operands required&quot;)
+
+def value_of(node):
+    if isinstance(node, ast.Constant):
+        return node.value
+    a, b = value_of(node.left), value_of(node.right)
+    return a + b if isinstance(node.op, ast.Add) else a * b
+
+for example in [source, &quot;(2 + 3) * 4&quot;, &quot;2 + True&quot;]:
+    tree = ast.parse(example, mode=&quot;eval&quot;).body
+    try:
+        result_type = type_of(tree)
+        operation = type(tree.op).__name__ if isinstance(tree, ast.BinOp) else &quot;Constant&quot;
+        print(example, operation, result_type.__name__, value_of(tree))
+    except TypeError as problem:
+        print(example, problem)</code></pre>
+<pre data-output><code>tokens: [('NUMBER', '2'), ('OP', '+'), ('NUMBER', '3'), ('OP', '*'), ('NUMBER', '4')]
+2 + 3 * 4 Add int 14
+(2 + 3) * 4 Mult int 20
+2 + True integer operands required</code></pre>
+<p>식의 결과 14가 예상과 다르다면 소스의 모양이 잘못되었는지, 타입 규칙이 달랐는지, 평가 순서가 달랐는지 순서대로 확인합니다. <a href="../sy/sy03-1.html">소스와 실행</a>에서는 언어가 실행되기 전 다른 표현으로 바뀌는 흐름을 다룹니다.</p>
+
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table>
+<thead><tr><th scope="col">핵심어</th><th scope="col">기억할 기준</th></tr></thead>
+<tbody>
+<tr><td><b class="key">토큰</b></td><td>문자를 언어의 단위로 모은 결과</td></tr>
+<tr><td><b class="key">구문 트리</b></td><td>괄호와 우선순위를 반영한 연산 구조</td></tr>
+<tr><td><b class="key">타입 검사</b></td><td>허용되는 값과 연산의 조합인지 검사</td></tr>
+<tr><td><b class="key">평가</b></td><td>정한 의미 규칙에 따라 식의 값을 계산</td></tr>
+</tbody></table></div>
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>문자, 토큰, 구조, 값이 서로 다른 표현임을 구별한 뒤 어느 규칙에서 오류가 생겼는지 확인합니다.</p></div>
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://docs.python.org/3/reference/lexical_analysis.html">Python 언어 명세 · 어휘 분석</a></li>
+<li><a href="https://docs.python.org/3/library/ast.html">Python 표준 라이브러리 · AST</a></li>
+<li><a href="https://mitpress.mit.edu/9780262162098/types-and-programming-languages/">Pierce · Types and Programming Languages</a></li>
+</ul>
+
+<h2>확인 문제</h2>
+<p>아직 풀지 않은 문제입니다. 먼저 식이나 근거를 적어 보고 해설을 확인합니다.</p>
+<div id="quiz"></div>
+
+<section class="work" id="tools"></section>
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

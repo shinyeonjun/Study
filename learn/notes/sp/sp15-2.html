@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>분야의 관측 단위가 연구 질문을 바꾸는 이유 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="SP15-2">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">전문 연구 경로 · SP15 다른 학문과의 연구</p>
+<p class="chap-num">SP15·2</p>
+<h1>분야의 관측 단위가 연구 질문을 바꾸는 이유</h1>
+<p class="lead">마우나로아의 연평균 CO₂를 읽고, 같은 평균 계산을 대기 관측과 합성 신경 신호에서 어떻게 다르게 해석하는지 살펴봅니다. 생물·경제·복잡계 질문에도 단위와 가정을 붙입니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul>
+<li>분야별 질문에서 관측 단위, 결과 단위, 시간 범위를 적는다.</li>
+<li>NOAA 연평균의 절대 차이와 기준 대비 상대차를 구분한다.</li>
+<li>집계의 분모와 도메인 가정을 확인하고 후속 연구를 정한다.</li>
+</ul></div>
+
+<h2>분야 이름 대신 세 가지를 적는다</h2>
+<p>연구를 시작할 때 분야 이름만 붙이기보다 무엇을 관찰해 어떤 조건의 대상을 비교할지 정합니다. 과학계산에서 풀 수 있는 식이나 통계 모형이 있어도 그 값의 의미와 해석은 자료의 생성 방식에 달려 있습니다.</p><figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 283" role="img" aria-label="대기, 식물, 신경 신호, 거래 관측, 네트워크의 관측과 가정 예.">
+<text class="f-cap" x="380" y="29" text-anchor="middle">질문·한 행·가정이 분야마다 달라진다</text>
+<rect class="f-soft" x="52" y="43" width="158" height="37"/>
+<text class="f-s" x="131" y="66.5" text-anchor="middle">분야</text>
+<rect class="f-soft" x="210" y="43" width="250" height="37"/>
+<text class="f-s" x="335" y="66.5" text-anchor="middle">비교 단위의 예</text>
+<rect class="f-soft" x="460" y="43" width="248" height="37"/>
+<text class="f-s" x="584" y="66.5" text-anchor="middle">확인할 가정</text>
+<rect class="f-box" x="52" y="80" width="158" height="37"/>
+<text class="f-t" x="131" y="103.5" text-anchor="middle">대기 관측</text>
+<rect class="f-box" x="210" y="80" width="250" height="37"/>
+<text class="f-t" x="335" y="103.5" text-anchor="middle">한 관측소의 한 해</text>
+<rect class="f-box" x="460" y="80" width="248" height="37"/>
+<text class="f-t" x="584" y="103.5" text-anchor="middle">측정 위치와 집계 기간</text>
+<rect class="f-box" x="52" y="117" width="158" height="37"/>
+<text class="f-t" x="131" y="140.5" text-anchor="middle">형태 생물학</text>
+<rect class="f-box" x="210" y="117" width="250" height="37"/>
+<text class="f-t" x="335" y="140.5" text-anchor="middle">한 식물의 한 번 측정</text>
+<rect class="f-box" x="460" y="117" width="248" height="37"/>
+<text class="f-t" x="584" y="140.5" text-anchor="middle">같은 식물 반복은 서로 관련</text>
+<rect class="f-box" x="52" y="154" width="158" height="37"/>
+<text class="f-t" x="131" y="177.5" text-anchor="middle">신경과학</text>
+<rect class="f-box" x="210" y="154" width="250" height="37"/>
+<text class="f-t" x="335" y="177.5" text-anchor="middle">합성 기록의 한 구간</text>
+<rect class="f-box" x="460" y="154" width="248" height="37"/>
+<text class="f-t" x="584" y="177.5" text-anchor="middle">시간당 사건 수와 총사건 수</text>
+<rect class="f-box" x="52" y="191" width="158" height="37"/>
+<text class="f-t" x="131" y="214.5" text-anchor="middle">경제</text>
+<rect class="f-box" x="210" y="191" width="250" height="37"/>
+<text class="f-t" x="335" y="214.5" text-anchor="middle">상품의 한 시장·한 기간</text>
+<rect class="f-box" x="460" y="191" width="248" height="37"/>
+<text class="f-t" x="584" y="214.5" text-anchor="middle">가격과 판매량을 결정한 요인</text>
+<rect class="f-box" x="52" y="228" width="158" height="37"/>
+<text class="f-t" x="131" y="251.5" text-anchor="middle">복잡계</text>
+<rect class="f-box" x="210" y="228" width="250" height="37"/>
+<text class="f-t" x="335" y="251.5" text-anchor="middle">시간별 그래프의 노드·간선</text>
+<rect class="f-box" x="460" y="228" width="248" height="37"/>
+<text class="f-t" x="584" y="251.5" text-anchor="middle">연결의 범위·시간과 상호작용</text>
+</svg>
+<figcaption>계산이 같아도 무슨 단위를 세는지에 따라 추론이 달라집니다.</figcaption>
+</figure>
+<p>예를 들어 한 식물의 같은 잎을 여러 날 측정하면 행 수는 늘지만 독립 식물 수는 유지됩니다. 자료에 속한 대상의 변화를 묻는지, 다른 식물에도 일반화할지 설계를 확인합니다. 과제의 범위는 관찰과 형태 비교입니다.</p><div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
+
+<h2>관측 값에 근거해 말할 수 있는 범위</h2>
+<p>NOAA GML·Scripps가 공개한 마우나로아 연평균 CO₂는 건조 공기에서의 몰분율입니다. <var>1 ppm</var>은 건조 공기 1몰당 <var>1 μmol</var>에 해당합니다. 보관 CSV에서 시작과 끝을 빼면 57.20 ppm이며, 1990년 값을 분모로 놓은 상대차는 약 16.14%입니다.</p><figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 246" role="img" aria-label="마우나로아 연평균 354.45, 411.65ppm의 차이는 57.20ppm이고 시작값 대비 약 16.14퍼센트.">
+<text class="f-cap" x="380" y="29" text-anchor="middle">마우나로아 연평균을 기준과 단위로 나누기</text>
+<rect class="f-soft" x="57" y="43" width="173" height="37"/>
+<text class="f-s" x="143.5" y="66.5" text-anchor="middle">양</text>
+<rect class="f-soft" x="230" y="43" width="204" height="37"/>
+<text class="f-s" x="332" y="66.5" text-anchor="middle">값</text>
+<rect class="f-soft" x="434" y="43" width="269" height="37"/>
+<text class="f-s" x="568.5" y="66.5" text-anchor="middle">뜻</text>
+<rect class="f-box" x="57" y="80" width="173" height="37"/>
+<text class="f-t" x="143.5" y="103.5" text-anchor="middle">1990년</text>
+<rect class="f-box" x="230" y="80" width="204" height="37"/>
+<text class="f-t" x="332" y="103.5" text-anchor="middle">354.45 ppm</text>
+<rect class="f-box" x="434" y="80" width="269" height="37"/>
+<text class="f-t" x="568.5" y="103.5" text-anchor="middle">시작 연평균</text>
+<rect class="f-box" x="57" y="117" width="173" height="37"/>
+<text class="f-t" x="143.5" y="140.5" text-anchor="middle">2019년</text>
+<rect class="f-box" x="230" y="117" width="204" height="37"/>
+<text class="f-t" x="332" y="140.5" text-anchor="middle">411.65 ppm</text>
+<rect class="f-box" x="434" y="117" width="269" height="37"/>
+<text class="f-t" x="568.5" y="140.5" text-anchor="middle">종료 연평균</text>
+<rect class="f-box" x="57" y="154" width="173" height="37"/>
+<text class="f-t" x="143.5" y="177.5" text-anchor="middle">끝−시작</text>
+<rect class="f-box" x="230" y="154" width="204" height="37"/>
+<text class="f-t" x="332" y="177.5" text-anchor="middle">+57.20 ppm</text>
+<rect class="f-box" x="434" y="154" width="269" height="37"/>
+<text class="f-t" x="568.5" y="177.5" text-anchor="middle">몰분율의 절대 차이</text>
+<rect class="f-box" x="57" y="191" width="173" height="37"/>
+<text class="f-t" x="143.5" y="214.5" text-anchor="middle">초기값 대비</text>
+<rect class="f-box" x="230" y="191" width="204" height="37"/>
+<text class="f-t" x="332" y="214.5" text-anchor="middle">+16.14%</text>
+<rect class="f-box" x="434" y="191" width="269" height="37"/>
+<text class="f-t" x="568.5" y="214.5" text-anchor="middle">57.20 / 354.45 × 100</text>
+</svg>
+<figcaption>대기 전체에 더해진 CO₂의 질량이나 다른 지점의 변화량을 계산한 값과는 다릅니다.</figcaption>
+</figure>
+<p>이 수치로 대기 전체의 CO₂ 질량 증가나 원인을 직접 구할 수 없습니다. 관측소를 넘어서는 비교에는 관측 위치, 대기 순환과 공간 대표성, 같은 집계 기간을 검토해야 합니다. <a href="../rs/rs07-1.html">공개 값 계산을 재현한 장</a>에서 자료의 판본을 연결합니다.</p><div class="check" data-q="q3"></div><div class="check" data-q="q4"></div>
+
+<h2>어떤 분모를 써야 질문에 답할까?</h2>
+<p>합성 신경 신호에서 어떤 구간의 사건 수를 12개와 14개로 셌습니다. 관측 길이가 각각 .5초와 2초라면 초당 사건은 24와 7입니다. 구간을 각각 하나의 관측으로 보고 같게 평균하면 15.5/초입니다. 전체 시간에서 세면 26÷2.5=10.4/초입니다. 생물학적 해석을 하기 전에 사건 정의와 측정 시간, 관심 단위를 결정합니다.</p>
+<p>경제 자료에서도 가격과 판매량은 수요·공급과 함께 바뀔 수 있습니다. 가격을 낮추면 판매량이 얼마나 변하는가라는 개입 질문은 관측된 상관 외에 설계와 가정이 필요합니다. 복잡계에서는 노드가 무엇이고 어떤 시간 동안 어떤 활동을 연결로 기록했는지가 비교의 일부입니다.</p><div class="check" data-q="q5"></div><div class="check" data-q="q6"></div>
+
+<h2>공개 값과 합성 구간의 단위 검산</h2>
+<p>예제는 저장소의 최상위 폴더에서 실행합니다. 실습에 사용하는 <a href="../../labs/mauna-loa/annual_co2.csv">30개 연도의 CSV</a>와 <a href="../../labs/mauna-loa/SOURCE.md">출처와 변환 기록</a>을 함께 확인할 수 있습니다.</p><p class="small">실행 예제</p>
+<pre data-example="python"><code>import csv
+from decimal import Decimal
+from pathlib import Path
+
+source = Path(&quot;learn/labs/mauna-loa/annual_co2.csv&quot;)
+with source.open(encoding=&quot;utf-8&quot;, newline=&quot;&quot;) as stream:
+    records = list(csv.DictReader(stream))
+series = {int(row[&quot;year&quot;]): Decimal(row[&quot;mean_ppm&quot;]) for row in records}
+assert len(records) == len(series) == 30 and sorted(series) == list(range(1990, 2020))
+
+first, last = series[1990], series[2019]
+change = last - first
+print(f&quot;change={change:.2f} ppm, relative={100 * change / first:.2f}%&quot;)
+
+counts = [12, 14]
+seconds = [0.5, 2.0]
+rates = [n / t for n, t in zip(counts, seconds, strict=True)]
+print(f&quot;rates: {rates[0]:.1f}, {rates[1]:.1f} per second&quot;)
+print(f&quot;equal segments: {sum(rates)/len(rates):.1f} per second&quot;)
+print(f&quot;pooled time: {sum(counts)/sum(seconds):.1f} per second&quot;)</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>change=57.20 ppm, relative=16.14%
+rates: 24.0, 7.0 per second
+equal segments: 15.5 per second
+pooled time: 10.4 per second</code></pre>
+<p>다음 연구 질문은 자료와 가정을 붙여 결정합니다. 관측소 비교에서는 같은 기간과 집계법부터 맞춥니다. 시간당 신호 비교에서는 구간의 길이와 사건 판정 규칙을 확인합니다. 공개 보고에는 원자료의 이용 범위와 관측 단위를 함께 밝힙니다.</p><div class="check" data-q="q7"></div><div class="check" data-q="q8"></div>
+
+<h2>이어 읽기</h2>
+<p>결과의 해석은 <a href="../rs/rs09-2.html">연구 보고서의 한계와 다음 실험</a>으로, 관측된 관계와 개입을 구분하는 방법은 <a href="../sp/sp04-2.html">인과 효과의 식별</a>로 연결합니다.</p>
+
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://gml.noaa.gov/ccgg/trends/data.html">NOAA GML · Mauna Loa 연평균 CO₂ 자료</a></li>
+<li><a href="https://gml.noaa.gov/webdata/ccgg/trends/co2/co2_annmean_mlo.txt">NOAA GML/Scripps · Mauna Loa 연평균 원자료와 주석</a></li>
+<li><a href="https://neuronaldynamics.epfl.ch/online/">Gerstner 외 · Neuronal Dynamics 저자 교재</a></li>
+<li><a href="https://openstax.org/books/principles-economics-3e/pages/3-introduction-to-demand-and-supply">OpenStax · 수요와 공급</a></li>
+<li><a href="https://www.cs.cornell.edu/home/kleinber/networks-book/">Easley·Kleinberg · Networks, Crowds, and Markets 저자 교재</a></li>
+</ul>
+<h2>확인 문제</h2>
+<p>직접 계산하거나 설명을 먼저 적고 답을 확인해 보세요.</p>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>
