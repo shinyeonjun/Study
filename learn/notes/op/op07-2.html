@@ -81,7 +81,8 @@ q(B)=0 with p(B)&gt;0: inf</code></pre>
 <div class="check" data-q="q3"></div><div class="check" data-q="q4"></div><div class="check" data-q="q5"></div>
 
 <h2>정답 한 건의 교차엔트로피를 계산한다</h2>
-<p>정답이 A라면 그 한 건의 정답 분포를 <code>(1,0)</code>으로 놓습니다. 교차엔트로피는 A에 예측한 확률이 q일 때 <code>−log₂(q)</code> 하나만 남습니다. 여러 사례의 값을 평균하면 모형의 확률 예측을 비교하는 <b class="key">로그 손실</b>이 됩니다.</p>
+<p>정답이 A라면 그 한 건의 정답 분포를 <code>(1,0)</code>으로 놓습니다. 교차엔트로피는 A에 예측한 확률이 q일 때 <code>−log₂(q)</code> 하나만 남습니다. 여러 사례의 값을 평균하면 모형의 확률 예측을 비교하는 <b class="key">로그 손실</b>이 됩니다. 실제 확률 P를 고정하면 <code>H(P,Q)=H(P)+D(P‖Q)</code>이므로, 교차엔트로피를 Q에 대해 최소화하는 것은 KL을 최소화하는 것과 같고, 관측 자료의 평균 로그 손실을 최소화하는 것은 최대우도 추정과 같습니다.</p>
+<p>머신러닝 라이브러리는 보통 자연로그(단위 nat)를 씁니다. 예를 들어 scikit-learn의 <code>log_loss</code>와 PyTorch의 <code>CrossEntropyLoss</code>가 그렇습니다. 비트 값에 ln 2≈0.693을 곱하면 nat 값이 되며, 로그의 밑은 값의 크기만 바꾸고 모형의 순서는 바꾸지 않습니다. 예로 정답에 0.9를 준 손실은 0.152비트, 0.105nat입니다.</p>
 <figure class="fig">
 <svg class="fig-svg" viewBox="0 0 760 224" role="img" aria-label="실제 결과 A에 0.9를 준 모델의 손실은 약 0.152비트, 0.1을 준 모델의 손실은 약 3.322비트다.">
 <rect class="f-box" x="80" y="31" width="181" height="40"/>

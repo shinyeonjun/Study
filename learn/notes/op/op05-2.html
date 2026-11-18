@@ -28,15 +28,28 @@
 <div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>활성 제약과 느슨한 제약을 구분한다.</li><li>간단한 부등식에서 라그랑주 승수와 KKT 조건을 계산한다.</li><li>제약의 부호와 승수의 조건을 연결한다.</li></ul></div>
 
 <h2>제약을 벗어난 최적값을 확인한다</h2>
-<p>목적함수 f(w)=(w−3)²를 작게 하고 싶습니다. 허용 범위가 w≤2라면 제한 없는 최솟값 w=3은 사용할 수 없습니다. w≤2에서 3에 가장 가까운 값인 w=2가 답입니다. 여기서 제약 g(w)=w−2≤0은 w=2에서 g=0이 되므로 <strong>활성</strong>입니다. 범위가 w≤4라면 w=3이 답이고, 그때 g(w)=w−4=−1이므로 제약에 여유가 있습니다.</p>
+<p>목적함수 f(w)=(w−3)²를 작게 하고 싶습니다. 허용 범위가 w≤2라면 제한 없는 최솟값 w=3은 사용할 수 없습니다. w≤2에서 3에 가장 가까운 값인 w=2가 답입니다. 여기서 제약 g(w)=w−2≤0은 w=2에서 g=0이 되므로 <b class="key">활성 제약</b>입니다(등호로 걸려 있음). 범위가 w≤4라면 w=3이 답이고, 그때 g(w)=w−4=−1이므로 제약에 여유가 있습니다. 이런 제약을 <b class="key">느슨한 제약</b>(비활성)이라 하며, 답 근처에서는 없는 것과 같습니다.</p>
 <div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
-<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 160" role="img" aria-label="제약에 걸린 이차 목적함수에서 경계가 최적이 되는 과정">
-<rect class="f-box" x="42" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="135" y="61" text-anchor="middle">목적함수</text><text class="f-s" x="135" y="89" text-anchor="middle">(w − 3)²</text><text class="f-s" x="135" y="110" text-anchor="middle">w=3에서 가장 낮음</text><line class="f-line" x1="235" y1="84" x2="278" y2="84" marker-end="url(#f-arrow)"/><rect class="f-soft" x="287" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="380" y="61" text-anchor="middle">허용 제약</text><text class="f-s" x="380" y="89" text-anchor="middle">w ≤ 2</text><text class="f-s" x="380" y="110" text-anchor="middle">w=3은 불가능</text><line class="f-line" x1="480" y1="84" x2="523" y2="84" marker-end="url(#f-arrow)"/><rect class="f-box" x="532" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="625" y="61" text-anchor="middle">경계에서 비교</text><text class="f-s" x="625" y="89" text-anchor="middle">w=2에서 최소</text><text class="f-s" x="625" y="110" text-anchor="middle">제약이 활성</text>
-</svg><figcaption>경계에서 멈췄다는 사실과 목적함수 도함수가 0이라는 사실은 서로 다릅니다.</figcaption></figure>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 290" role="img" aria-label="f(w)=(w−3)² 그래프. w가 2 이하인 허용 영역을 칠했다. 허용 경계 w=2에서 f=1이 최적이고, 제약 없는 최소 w=3, f=0은 허용 영역 밖이다. w=2에서 f가 줄어드는 방향은 w가 커지는 쪽, 곧 허용 영역 밖이다.">
+<rect class="f-soft" x="100" y="46" width="240" height="184"/>
+<line class="f-line" x1="90" y1="230" x2="660" y2="230"/><line class="f-line" x1="100" y1="240" x2="100" y2="40"/>
+<line class="f-dash" x1="340" y1="46" x2="340" y2="230"/>
+<polyline class="f-ink" fill="none" points="100.0,50.0 112.0,61.8 124.0,73.2 136.0,84.2 148.0,94.8 160.0,105.0 172.0,114.8 184.0,124.2 196.0,133.2 208.0,141.8 220.0,150.0 232.0,157.8 244.0,165.2 256.0,172.2 268.0,178.8 280.0,185.0 292.0,190.8 304.0,196.2 316.0,201.2 328.0,205.8 340.0,210.0 352.0,213.8 364.0,217.2 376.0,220.2 388.0,222.8 400.0,225.0 412.0,226.8 424.0,228.2 436.0,229.2 448.0,229.8 460.0,230.0 472.0,229.8 484.0,229.2 496.0,228.2 508.0,226.8 520.0,225.0 532.0,222.8 544.0,220.2 556.0,217.2 568.0,213.8 580.0,210.0 592.0,205.8 604.0,201.2 616.0,196.2 628.0,190.8 640.0,185.0"/>
+<circle class="f-fill" cx="340" cy="210" r="5"/>
+<circle class="f-box" cx="460" cy="230" r="5"/>
+<text class="f-t" x="220" y="70" text-anchor="middle">허용 영역 w ≤ 2</text>
+<line class="f-ink" x1="345" y1="206" x2="470" y2="128"/><text class="f-s" x="476" y="126">최적: w=2, f=1 (제약 활성)</text>
+<line class="f-ink" x1="463" y1="225" x2="500" y2="166"/><text class="f-s" x="506" y="164">제약 없는 최소 w=3 (허용 밖)</text>
+<text class="f-s" x="100" y="250" text-anchor="middle">0</text><text class="f-s" x="220" y="250" text-anchor="middle">1</text><text class="f-s" x="340" y="250" text-anchor="middle">2</text><text class="f-s" x="460" y="250" text-anchor="middle">3</text><text class="f-s" x="580" y="250" text-anchor="middle">4</text><text class="f-s" x="676" y="234">w</text>
+<text class="f-s" x="90" y="214" text-anchor="end">1</text><text class="f-s" x="90" y="54" text-anchor="end">9</text><text class="f-s" x="108" y="36">f(w)</text>
+<line class="f-line" x1="340" y1="272" x2="410" y2="272" marker-end="url(#f-arrow)"/><text class="f-s" x="420" y="276">f가 줄어드는 방향 (허용 영역 밖)</text>
+</svg><figcaption>세로축은 0~9를 같은 간격으로 그렸습니다. 경계에서는 더 내려갈 방향이 모두 허용 영역 밖이라 멈춥니다.</figcaption></figure>
 <h2>기울기와 경계의 영향을 한 식에 넣는다</h2>
-<p>g≤0인 부등식에 대해 라그랑주 함수 L(w,λ)=f(w)+λg(w)를 만듭니다. 여기서는 λ≥0으로 둡니다. 이 형태의 <strong>KKT 조건</strong>은 다음과 같습니다.</p>
-<div class="table-wrap"><table><thead><tr><th scope="col">조건</th><th scope="col">이 예의 식</th><th scope="col">쓰임</th></tr></thead><tbody><tr><td>원래 제약</td><td>w−2≤0</td><td>w가 허용 범위에 있음</td></tr><tr><td>승수의 부호</td><td>λ≥0</td><td>부등식에 맞는 방향</td></tr><tr><td>정지 조건</td><td>2(w−3)+λ=0</td><td>합친 함수의 w 기울기가 0</td></tr><tr><td>상보성</td><td>λ(w−2)=0</td><td>제약에 여유가 있으면 λ=0</td></tr></tbody></table></div>
+<p>g≤0인 부등식에 대해 라그랑주 함수 L(w,λ)=f(w)+λg(w)를 만듭니다. 여기서는 λ≥0으로 둡니다. λ를 <b class="key">라그랑주 승수</b>라고 합니다. 이 형태의 <b class="key">KKT 조건</b>(Karush–Kuhn–Tucker)은 다음과 같습니다.</p>
+<div class="table-wrap"><table><thead><tr><th scope="col">조건</th><th scope="col">이 예의 식</th><th scope="col">쓰임</th></tr></thead><tbody><tr><td>원래 제약</td><td>w−2≤0</td><td>w가 허용 범위에 있음</td></tr><tr><td>승수의 부호</td><td>λ≥0</td><td>부등식에 맞는 방향</td></tr><tr><td>정지 조건</td><td>2(w−3)+λ=0</td><td>합친 함수의 w 기울기가 0</td></tr><tr><td><b class="key">상보성</b>(상보 여유)</td><td>λ(w−2)=0</td><td>제약에 여유가 있으면 λ=0</td></tr></tbody></table></div>
 <p>w=2에서는 f의 기울기가 −2이고 g의 기울기는 1입니다. 정지 조건을 만족하려면 λ=2입니다. w=2는 허용되고 λ가 양수이며 λ·0=0입니다. 가능 범위 안쪽에 답이 있다고 가정하면 g&lt;0이므로 λ=0이고 정지 조건에서 w=3을 얻습니다. 3은 허용 범위를 벗어나므로 이 경우는 성립하지 않습니다.</p>
+<p>정지 조건을 −f′(w)=λg′(w)로 옮겨 쓰면 뜻이 보입니다. 경계에서 f가 줄어드는 방향(−f′(2)=+2, w가 커지는 쪽)이 제약 함수 g가 커지는 방향, 곧 허용 영역 밖을 가리키고, 그 세기가 λ배라는 뜻입니다. 줄어드는 방향이 영역 안쪽을 가리켰다면 λ가 음수가 되어야 하고, 그것은 경계에서 더 들어가 손실을 줄일 수 있다는 뜻이므로 최소가 아닙니다. λ≥0은 이 방향 관계를 적은 조건입니다.</p>
+<p>λ 값에는 쓸모 있는 해석도 있습니다. 상한을 b로 두면 b≤3에서 최적 손실은 (b−3)²이고, b에 대한 변화율은 b=2에서 2(2−3)=−2입니다. 즉 제약을 조금 풀면(b를 2에서 2.1로) 최적 손실이 약 λ=2의 비율로 줄어듭니다(실제로 1에서 0.81). 승수는 그 제약이 최적값을 얼마나 붙잡고 있는지 나타내는 <b class="key">민감도</b>입니다. 느슨한 제약은 풀어도 답이 바뀌지 않으므로 λ=0입니다.</p>
 <div class="check" data-q="q3"></div><div class="check" data-q="q4"></div>
 <pre data-example="python"><code>for bound in (2, 4):
     w = min(3, bound)
@@ -51,8 +64,19 @@
 <pre data-output><code>상한: 2 w: 2 λ: 2 손실: 1
 상한: 4 w: 3 λ: 0 손실: 0</code></pre>
 <h2>조건의 범위를 함께 적는다</h2>
-<p>이 문제는 볼록한 목적함수와 선형 부등식으로 이루어져 있고 제약을 엄격하게 만족하는 w=1도 있습니다. 여기서는 KKT를 만족하는 점이 전역 최적입니다. 모든 비볼록 문제에서 정지 조건을 확인하는 것만으로 전역 최적이라고 말할 수는 없습니다. 등식 제약 h(w)=0을 라그랑주 함수에 더할 때는 h를 양·음 방향에서 함께 제약하므로 승수의 부호를 부등식처럼 λ≥0으로 제한하지 않습니다.</p>
+<p>변수와 제약이 여럿인 일반형은 다음과 같습니다. f(x)를 최소화하되 g<sub>i</sub>(x)≤0 (i=1,…,m), h<sub>j</sub>(x)=0 (j=1,…,p)을 지키는 문제에서 라그랑주 함수는 L(x,λ,ν)=f(x)+Σλ<sub>i</sub>g<sub>i</sub>(x)+Σν<sub>j</sub>h<sub>j</sub>(x)이고, KKT 조건은 ① 원래 제약 g<sub>i</sub>(x)≤0, h<sub>j</sub>(x)=0 ② λ<sub>i</sub>≥0 ③ 모든 i에서 λ<sub>i</sub>g<sub>i</sub>(x)=0 ④ ∇f(x)+Σλ<sub>i</sub>∇g<sub>i</sub>(x)+Σν<sub>j</sub>∇h<sub>j</sub>(x)=0 입니다. 부등식을 g≤0 꼴로, 라그랑주 함수를 f+λg 꼴로 쓰는 것이 이 부호 규칙의 전제입니다. 교재에 따라 g≥0이나 f−λg로 쓰면 부호가 함께 바뀝니다.</p>
+<p>등식 제약 h(x)=0은 양쪽 방향 위반을 모두 막으므로 승수 ν의 부호를 제한하지 않습니다. 예로 x²+y²을 x+y=2에서 최소화하면 L=x²+y²+ν(x+y−2), 정지 조건 2x+ν=0, 2y+ν=0에서 x=y=−ν/2이고, 제약에 넣으면 ν=−2, x=y=1입니다(최솟값 2). 승수가 음수여도 문제없습니다. 이 점에서 ∇f=(2,2)와 ∇h=(1,1)이 평행한데, 등식 제약의 최소점에서 목적함수의 기울기가 제약 기울기의 상수배가 된다는 것이 라그랑주 승수법의 핵심입니다.</p>
+<p>KKT가 언제 답을 보장하는지도 구분합니다. 볼록 문제(f와 g<sub>i</sub>가 볼록, h<sub>j</sub>가 일차식)에서는 KKT를 만족하는 점이 곧 전역 최적입니다(충분조건). 또 제약을 엄격히 만족하는 점이 있다는 <b class="key">슬레이터 조건</b>까지 있으면 최적점은 반드시 KKT를 만족하는 승수를 가집니다(필요조건). 이 예는 볼록한 목적함수와 선형 부등식이고 w=1이 g(1)=−1&lt;0으로 슬레이터 조건을 만족합니다. 비볼록 문제에서는 KKT가 (제약 자격 조건 아래) 국소 최소의 필요조건일 뿐이어서, KKT를 만족한다고 전역 최적이라고 말할 수 없습니다.</p>
 <div class="check" data-q="q5"></div><div class="check" data-q="q6"></div>
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table><thead><tr><th scope="col">개념</th><th scope="col">확인할 것</th></tr></thead><tbody>
+<tr><th scope="row"><b class="key">활성 제약</b></th><td>답에서 g=0. 승수가 양수일 수 있음</td></tr>
+<tr><th scope="row"><b class="key">느슨한 제약</b></th><td>답에서 g&lt;0. 상보성 때문에 λ=0</td></tr>
+<tr><th scope="row"><b class="key">KKT 조건</b></th><td>원래 제약, λ≥0, λg=0, ∇f+Σλ∇g+Σν∇h=0</td></tr>
+<tr><th scope="row">승수의 부호</th><td>g≤0, L=f+λg이면 λ≥0. 등식 승수 ν는 부호 자유</td></tr>
+<tr><th scope="row">승수의 뜻</th><td>제약을 조금 풀 때 최적값이 줄어드는 비율(<b class="key">민감도</b>)</td></tr>
+<tr><th scope="row">보장 범위</th><td>볼록이면 KKT ⇒ 전역 최적, 볼록+<b class="key">슬레이터 조건</b>이면 최적 ⇒ KKT</td></tr>
+</tbody></table></div>
 <div class="box sum"><p class="box-k">한 줄 정리</p><p>제약 가능성, 승수 부호, 정지 조건, 상보성을 함께 확인해 경계에서의 답을 찾습니다.</p></div>
 
 <h2>참고 자료</h2>

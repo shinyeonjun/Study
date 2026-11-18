@@ -31,7 +31,7 @@
 <p>평균 θ를 중심으로 분산 1인 정규분포에서 두 독립 관측 y=2,4를 얻었다고 둡니다. θ에 따라 바뀌는 음의 로그우도는 [(2−θ)²+(4−θ)²]/2입니다. 상수 항을 빼도 최소 위치는 같으므로, θ의 최대우도 추정치는 두 값을 평균한 3입니다.</p>
 <div class="check" data-q="q1"></div>
 <h2>사후밀도에 로그를 적용하고 부호를 바꾼다</h2>
-<p>이제 θ의 사전도 평균 0, 분산 1인 정규분포로 둡니다. 관측을 본 뒤의 사후밀도는 우도와 사전밀도의 곱에 비례합니다. 로그에서는 곱이 합이 되고, 음의 로그를 최소화하는 것은 사후밀도를 최대화하는 일과 같습니다. 이 점 추정치를 <strong>MAP</strong>라고 합니다.</p>
+<p>이제 θ의 사전도 평균 0, 분산 1인 정규분포로 둡니다. 관측을 본 뒤의 사후밀도는 우도와 사전밀도의 곱에 비례합니다. 로그에서는 곱이 합이 되고, 음의 로그를 최소화하는 것은 사후밀도를 최대화하는 일과 같습니다. 이 점 추정치를 <b class="key">MAP</b>(최대 사후 추정, maximum a posteriori)라고 합니다. 식으로는 θ̂<sub>MAP</sub>=argmax p(θ|y)=argmin[−log p(y|θ)−log p(θ)]이고, 증거 p(y)는 θ와 무관해 빠집니다.</p>
 <figure class="fig"><svg class="fig-svg" viewBox="0 0 760 160" role="img" aria-label="가우스 우도와 가우스 사전의 음의 로그를 더해 MAP 추정">
 <rect class="f-box" x="42" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="135" y="61" text-anchor="middle">우도</text><text class="f-s" x="135" y="89" text-anchor="middle">관측 2, 4의 오차</text><text class="f-s" x="135" y="110" text-anchor="middle">제곱오차 합</text><line class="f-line" x1="235" y1="84" x2="278" y2="84" marker-end="url(#f-arrow)"/><rect class="f-soft" x="287" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="380" y="61" text-anchor="middle">사전</text><text class="f-s" x="380" y="89" text-anchor="middle">θ에 대한 분포</text><text class="f-s" x="380" y="110" text-anchor="middle">정규는 θ² 벌점</text><line class="f-line" x1="480" y1="84" x2="523" y2="84" marker-end="url(#f-arrow)"/><rect class="f-box" x="532" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="625" y="61" text-anchor="middle">사후 최대</text><text class="f-s" x="625" y="89" text-anchor="middle">우도 × 사전</text><text class="f-s" x="625" y="110" text-anchor="middle">음의 로그 합의 최소</text>
 </svg><figcaption>이 문제에 필요한 로그우도와 사전 이외의 상수는 최소 위치를 바꾸지 않습니다.</figcaption></figure>
@@ -64,8 +64,15 @@ for name, point, extra in ((&quot;MLE&quot;, mle, lambda x: 0),
 <pre data-output><code>MLE 3
 정규 MAP 2
 라플라스 MAP 5/2</code></pre>
-<p>어떤 벌점이 어떤 사전과 연결되는지는 우도 규모와 사전 척도에 영향을 받습니다. 우도 대신 표본별 손실의 평균을 쓰면 사전 항도 같은 비율로 조정해야 같은 해를 얻습니다. 높은 사후밀도의 위치는 일반적으로 사후평균과 다를 수 있고, 연속 사후에서 점 하나 자체의 확률을 최대화한다는 뜻도 아닙니다.</p>
+<p>벌점의 세기 λ는 오차 분산과 사전 척도의 비로 정해집니다. 관측 오차의 분산을 σ², 정규 사전의 분산을 τ²로 일반화하면 음의 로그사후는 (1/(2σ²))Σ(yᵢ−θ)²+θ²/(2τ²)+상수입니다. 전체에 σ²를 곱해도 최소 위치는 같으므로 ½Σ(yᵢ−θ)²+(λ/2)θ², <b class="key">λ=σ²/τ²</b>인 L2 벌점 문제가 됩니다. 사전 분산 τ²가 작을수록(0 근처를 강하게 믿을수록) λ가 커집니다. 위 예는 σ²=τ²=1이라 λ=1이었습니다. 라플라스 사전이면 같은 방법으로 λ=σ²/b인 L1 벌점이 됩니다. 우도 대신 표본별 손실의 평균을 쓰면(전체를 n으로 나누면) 사전 항도 같은 비율로 조정해야 같은 해를 얻습니다. 높은 사후밀도의 위치는 일반적으로 사후평균과 다를 수 있고, 연속 사후에서 점 하나 자체의 확률을 최대화한다는 뜻도 아닙니다. 예를 들어 라플라스 사전의 MAP는 라쏘처럼 정확한 0이 될 수 있지만, 같은 사후분포의 평균은 0을 사이에 둔 양쪽 질량을 모두 평균하므로 보통 0이 아닙니다. '라쏘 = 라플라스 사전'은 MAP 점 추정에 한한 대응입니다.</p>
 <div class="check" data-q="q6"></div>
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table><thead><tr><th scope="col">사전분포</th><th scope="col">음의 로그사전</th><th scope="col">대응하는 벌점</th><th scope="col">예 (관측 2, 4)</th></tr></thead><tbody>
+<tr><td>없음(최대우도)</td><td>—</td><td>없음</td><td>θ=3</td></tr>
+<tr><td>정규 N(0, τ²)</td><td>θ²/(2τ²)</td><td>L2, λ=σ²/τ²</td><td>τ²=1: θ=2</td></tr>
+<tr><td>라플라스(척도 b)</td><td>|θ|/b</td><td>L1, λ=σ²/b</td><td>b=1: θ=2.5</td></tr>
+</tbody></table></div>
+<p><b class="key">MAP</b>는 사후밀도가 가장 높은 점이고, <b class="key">사후평균</b>과는 사후분포가 정규처럼 좌우 대칭이고 봉우리가 하나일 때 일치하며, 비대칭이면 보통 다릅니다. 점 추정 하나는 사후분포의 퍼짐(<b class="key">사후분산</b>)을 담지 않습니다.</p>
 <div class="box sum"><p class="box-k">한 줄 정리</p><p>MAP에서 제곱·절대값 벌점은 사전밀도에 음의 로그를 취하면서 나타납니다.</p></div>
 
 <h2>참고 자료</h2>
