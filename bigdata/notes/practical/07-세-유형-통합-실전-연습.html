@@ -106,7 +106,7 @@ print(&quot;type 3:&quot;, f&quot;{outcome.statistic:.3f}&quot;, f&quot;{outcome
 <pre data-output><code>type 1: 4 12.5
 type 2: ['pred'] [12, 15, 9]
 type 3: 3.956 0.047</code></pre>
-<p>위 출력은 검산용입니다. 연습용 임시 경로는 실제로 파일을 만들어 다시 읽되 작업이 끝나면 정리합니다. 실제 제2유형 제출에서는 지시한 파일명으로 예측 파일을 생성하도록 <code>export(submission)</code>처럼 명시해야 합니다. 제1·3유형에서는 계산기에 나온 말이나 목록 전체를 붙이지 않고 각 소문항 값만 적습니다.</p>
+<p>위 출력은 검산용입니다. 연습용 임시 경로는 실제로 파일을 만들어 다시 읽되 작업이 끝나면 정리합니다. <code>chi2_contingency</code>의 결과에서 <code>.statistic</code>, <code>.pvalue</code>, <code>.expected_freq</code> 이름으로 꺼내는 방식은 SciPy 1.10부터 됩니다. 시험 환경의 SciPy가 더 오래되었다면 <code>chi2, p, dof, expected = chi2_contingency(counts, correction=False)</code>처럼 순서대로 받으면 어느 버전에서나 동작합니다. 실제 제2유형 제출에서는 지시한 파일명으로 예측 파일을 생성하도록 <code>export(submission)</code>처럼 명시해야 합니다. 제1·3유형에서는 계산기에 나온 말이나 목록 전체를 붙이지 않고 각 소문항 값만 적습니다.</p>
 
 <h2>한눈에 정리</h2>
 <div class="table-wrap"><table>
