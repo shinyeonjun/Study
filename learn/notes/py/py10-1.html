@@ -152,7 +152,7 @@ print(a.T)</code></pre>
 [[0 3]
  [1 4]
  [2 5]]</code></pre>
-<p>기본 순서에서는 앞의 3개가 첫 행, 뒤의 3개가 둘째 행에 들어갑니다. 값을 복제하거나 새로 계산하는 단계가 없으므로 원하는 축 길이를 곱한 값은 원래 원소 수와 같아야 합니다. 원소가 6개인데 <code>reshape(4, 2)</code>를 요청하면 8개 자리가 필요해 <code>ValueError</code>가 납니다. 모양을 바꿔도 행이 어떤 관측을 나타내는지는 사람이 보존해야 합니다. 예를 들어 날과 상품의 축을 바꾸려면 값의 위치를 옮기는 전치 <code>a.T</code>를 씁니다. <code>reshape(3, 2)</code>는 전치가 아닙니다.</p>
+<p>기본 순서에서는 앞의 3개가 첫 행, 뒤의 3개가 둘째 행에 들어갑니다. 값을 복제하거나 새로 계산하는 단계가 없으므로 원하는 축 길이를 곱한 값은 원래 원소 수와 같아야 합니다. 원소가 6개인데 <code>reshape(4, 2)</code>를 요청하면 8개 자리가 필요해 <code>ValueError: cannot reshape array of size 6 into shape (4,2)</code>가 납니다. 한 축에 <code>-1</code>을 쓰면(<code>reshape(3, -1)</code>) 원소 수에 맞는 길이를 NumPy가 계산합니다. 모양을 바꿔도 행이 어떤 관측을 나타내는지는 사람이 보존해야 합니다. 예를 들어 날과 상품의 축을 바꾸려면 값의 위치를 옮기는 전치 <code>a.T</code>를 씁니다. <code>reshape(3, 2)</code>는 전치가 아닙니다.</p>
 <div class="check" data-q="q7"></div>
 <div class="check" data-q="q8"></div>
 
