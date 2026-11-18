@@ -79,8 +79,8 @@
 <div class="box"><p class="box-k">분모가 0일 때</p><ul>
 <li><code>TP+FP=0</code>이면 경보를 한 번도 내지 않았으므로 정밀도를 분수로 계산할 수 없습니다.</li>
 <li><code>TP+FN=0</code>이면 실제 지연 사례가 없으므로 재현율을 계산할 수 없습니다.</li>
-<li><code>2TP+FP+FN=0</code>이면 F1도 건수 식으로 정의되지 않습니다. 건수 식의 분모가 양수이고 TP가 0이면 F1을 0으로 보고할 수 있습니다.</li>
-</ul><p>라이브러리가 정의 불가인 결과를 경고와 함께 0으로 내기도 합니다. 보고서에는 사용한 규칙, 혼동행렬, 실제 지연 건수와 경보 건수를 함께 적습니다.</p></div>
+<li><code>2TP+FP+FN=0</code>이면 F1도 건수 식으로 정의되지 않습니다. 건수 식의 분모가 양수이고 TP가 0이면 건수 식으로 F1=0입니다(이때 조화평균 식은 정밀도나 재현율이 정의되지 않거나 0이라 쓸 수 없습니다).</li>
+</ul><p>라이브러리가 정의 불가인 결과를 경고와 함께 0으로 내기도 합니다. 예를 들어 scikit-learn 1.9.1의 <code>precision_score</code>는 기본값 <code>zero_division="warn"</code>이라, 양성 예측이 하나도 없으면 경고를 띄우고 0.0을 돌려줍니다. 보고서에는 사용한 규칙, 혼동행렬, 실제 지연 건수와 경보 건수를 함께 적습니다.</p></div>
 <div class="check" data-q="q3"></div>
 <div class="check" data-q="q4"></div>
 <div class="check" data-q="q5"></div>
