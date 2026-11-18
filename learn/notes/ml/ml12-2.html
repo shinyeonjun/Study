@@ -56,15 +56,17 @@
 <text class="f-s" x="127" y="245" text-anchor="start">빈 점: −1</text>
 <text class="f-s" x="508" y="245" text-anchor="start">채운 점: +1</text>
 </svg>
-<figcaption>가로축은 특성 x₁이다. 두 마진 선 사이 너비는 2다.</figcaption>
+<figcaption>가로축은 특성 x₁, 세로 위치는 x₂(위가 +1)다. 두 마진 선 사이 너비는 2다. 세로 1칸(48px)을 가로 1칸(109px)보다 짧게 그렸다.</figcaption>
 </figure>
-<p>그림의 여섯 점은 −1 클래스 <code>(−2,−1),(−1,0),(−2,1)</code>과 +1 클래스 <code>(2,−1),(1,0),(2,1)</code>입니다. <code>w=(1,0), b=0</code>이면 마진 너비가 2이고 가장 가까운 두 점이 그 선에 있습니다. 이 두 점 사이의 길이가 2이므로 다른 방향으로 더 넓은 선을 놓아 둘을 가를 수 없습니다. 경계 학습에서 중요한 점들을 <b class="key">서포트 벡터</b>라고 합니다.</p>
+<p>그림의 여섯 점은 −1 클래스 <code>(−2,−1),(−1,0),(−2,1)</code>과 +1 클래스 <code>(2,−1),(1,0),(2,1)</code>입니다. <code>w=(1,0), b=0</code>이면 마진 너비가 2이고 가장 가까운 두 점이 그 선에 있습니다. 이 두 점 사이의 길이가 2이므로 다른 방향으로 더 넓은 선을 놓아 둘을 가를 수 없습니다. 경계 학습에서 중요한 점들을 <b class="key">서포트 벡터</b>라고 합니다. 정확히는 마진 선 위에 있거나(이 예의 <code>(−1,0)</code>, <code>(1,0)</code>) 마진을 침범한 훈련점입니다. 나머지 네 점은 조금 움직이거나 지워도 해가 그대로입니다.</p>
+<p>왜 너비가 <code>2/‖w‖</code>인지는 점과 평면 사이 거리로 확인합니다. 점 x에서 경계 <code>wᵀx+b=0</code>까지 거리는 <code>|wᵀx+b|/‖w‖</code>이므로, <code>f=±1</code>인 마진 선은 경계에서 각각 <code>1/‖w‖</code> 떨어져 있습니다. 그래서 여백을 넓히는 일은 조건 <code>yᵢ(wᵀxᵢ+b)≥1</code> 아래에서 <code>½‖w‖²</code>을 최소화하는 일과 같습니다(제곱과 ½은 미분을 편하게 하려고 붙입니다).</p>
 <div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
 
 <h2>마진을 위반할 때 내는 비용을 넣는다</h2>
 <p>관측 오류나 겹치는 클래스가 있으면 모든 점에 <code>y f(x)≥1</code>을 요구하기 어렵습니다. <b class="key">슬랙</b> <code>ξᵢ≥0</code>으로 <code>yᵢf(xᵢ)≥1−ξᵢ</code>가 되게 완화합니다. 최소로 필요한 슬랙은 <code>max(0,1−yf(x))</code>입니다.</p>
-<p>위 경계에서 새 양성점의 x₁=0.5라면 분류 방향은 맞지만 마진 안에 있어 슬랙 0.5입니다. 양성점 x₁=−0.25는 점수가 음수라 분류도 틀리고, 슬랙은 1.25입니다. 목적 <code>½‖w‖²+CΣξᵢ</code>에서 C를 키우면 위반에 더 큰 비용을 부과합니다. 여백과 위반을 어느 정도로 맞출지 검증에서 비교합니다.</p>
-<div class="check" data-q="q3"></div><div class="check" data-q="q4"></div><div class="check" data-q="q5"></div>
+<p>위 경계에서 새 양성점의 x₁=0.5라면 분류 방향은 맞지만 마진 안에 있어 슬랙 0.5입니다. 양성점 x₁=−0.25는 점수가 음수라 분류도 틀리고, 슬랙은 1.25입니다. 목적 <code>½‖w‖²+CΣξᵢ</code>에서 C를 키우면 위반에 더 큰 비용을 부과해 훈련점을 더 맞추려 하므로 마진이 좁아지고 과대적합 쪽으로, C를 줄이면 위반을 더 허용해 마진이 넓어지고 과소적합 쪽으로 기웁니다. 여백과 위반을 어느 정도로 맞출지 검증에서 비교합니다.</p>
+<p>최소 슬랙 <code>max(0,1−yf(x))</code>를 목적에 그대로 넣으면 <code>½‖w‖²+C Σ max(0, 1−yᵢf(xᵢ))</code>가 됩니다. 이 <code>max(0,1−yf)</code>를 <b class="key">힌지 손실</b>이라고 합니다. 로지스틱 회귀의 로그 손실과 달리, <code>yf≥1</code>로 충분히 맞힌 점에서는 손실이 정확히 0이라 그 점들이 해에 영향을 주지 않습니다. 이것이 서포트 벡터만 해를 정하는 이유입니다.</p>
+<div class="check" data-q="q3"></div><div class="check" data-q="q4"></div><div class="check" data-q="q5"></div><div class="check" data-q="q10"></div>
 
 <h2>내적만 계산해서 새 특성에서의 비교를 한다</h2>
 <p>네 모서리 <code>(±1,±1)</code>에서 두 좌표의 부호가 같으면 +1, 다르면 −1인 문제는 원래 평면에서 선 하나로 가를 수 없습니다. 두 클래스의 점이 각자 잇는 대각선이 교차하기 때문입니다. <code>x₁x₂</code>를 만든 공간에서는 0을 경계로 나뉩니다.</p>
@@ -113,7 +115,14 @@
 </svg>
 <figcaption>원래 특성의 곱을 쓰면 이 네 점을 새 축의 0에서 나눌 수 있다.</figcaption>
 </figure>
-<p><b class="key">커널</b> <code>K(u,v)</code>는 어떤 특성 변환 <code>φ</code> 뒤의 내적 <code>φ(u)ᵀφ(v)</code>를 계산하는 함수입니다. 예를 들어 <code>K(u,v)=(uᵀv)²</code>는 <code>φ(u)=(u₁², √2u₁u₂,u₂²)</code>의 내적과 같습니다. 곱 특성이 그 공간에 포함됩니다. SVM의 예측은 훈련 서포트 벡터와 새 입력 간 커널 값의 가중합으로 계산할 수 있습니다. RBF 커널은 거리 제곱에 따라 비슷함이 줄어들며 γ가 그 변화를 조절합니다.</p>
+<p><b class="key">커널</b> <code>K(u,v)</code>는 어떤 특성 변환 <code>φ</code> 뒤의 내적 <code>φ(u)ᵀφ(v)</code>를 계산하는 함수입니다. 예를 들어 <code>K(u,v)=(uᵀv)²</code>는 <code>φ(u)=(u₁², √2u₁u₂,u₂²)</code>의 내적과 같습니다. 곱 특성이 그 공간에 포함됩니다.</p>
+<p>SVM 최적화를 라그랑주 쌍대 문제로 바꾸면 해가 <code>w=Σ αᵢyᵢxᵢ</code>(αᵢ≥0, 서포트 벡터에서만 αᵢ&gt;0) 꼴이 되고, 예측은 <code>f(x)=Σ αᵢyᵢ xᵢᵀx + b</code>입니다. 입력이 내적으로만 들어가므로 <code>xᵢᵀx</code>를 <code>K(xᵢ,x)</code>로 바꾸면 φ를 직접 계산하지 않고도 새 특성 공간에서 선형 SVM을 푼 것과 같아집니다. 이를 <b class="key">커널 트릭</b>이라고 합니다. 앞의 여섯 점에서는 <code>α=0.5</code>인 두 서포트 벡터만 남아 <code>w=0.5×(+1)×(1,0)+0.5×(−1)×(−1,0)=(1,0)</code>입니다.</p>
+<div class="table-wrap"><table><thead><tr><th scope="col">커널</th><th scope="col">K(u,v)</th></tr></thead><tbody>
+<tr><th scope="row">선형</th><td><code>uᵀv</code></td></tr>
+<tr><th scope="row">다항</th><td><code>(γuᵀv+r)ᵈ</code>. 본문의 <code>(uᵀv)²</code>는 γ=1, r=0, d=2</td></tr>
+<tr><th scope="row"><b class="key">RBF</b>(가우시안)</th><td><code>exp(−γ‖u−v‖²)</code>. u=v이면 1, 멀수록 0에 가까움</td></tr>
+</tbody></table></div>
+<p>RBF에서 <code>u=(1,2)</code>, <code>v=(3,4)</code>이면 <code>‖u−v‖²=8</code>이고 γ=0.5일 때 <code>exp(−4)≈0.0183</code>입니다. γ가 크면 아주 가까운 점끼리만 비슷하다고 보아 경계가 구불구불해지고(과대적합 쪽), 작으면 경계가 완만해집니다. scikit-learn 1.9의 <code>SVC</code> 기본값은 <code>C=1.0</code>, <code>kernel='rbf'</code>, <code>gamma='scale'</code>(=1/(특성 수×입력 분산))입니다.</p>
 <p class="small">실행 예제</p>
 <pre data-example="python"><code>import numpy as np
 
@@ -133,7 +142,7 @@ print(f&quot;kernel={(u @ v)**2}, explicit dot={phi(u) @ phi(v):.1f}&quot;)</cod
 positive x1=0.5: slack=0.50
 positive x1=-0.25: slack=1.25
 kernel=121, explicit dot=121.0</code></pre>
-<div class="why"><p class="box-k">왜 그럴까?</p><p>SVM의 점수가 +2이면 양성 확률도 2라는 뜻일까요?</p><details><summary>모범 답 보기</summary><p>점수는 경계로부터의 방향과 분리 정도를 나타냅니다. 확률이 필요하면 보정 등 별도의 단계가 필요합니다.</p></details></div>
+<div class="why"><p class="box-k">왜 그럴까?</p><p>SVM의 점수가 +2이면 양성 확률도 2라는 뜻일까요?</p><details><summary>모범 답 보기</summary><p>점수는 경계로부터의 방향과 분리 정도를 나타냅니다. 확률이 필요하면 보정 등 별도의 단계가 필요합니다. scikit-learn 1.9에서는 <code>SVC(probability=True)</code>가 폐지 예정이고, 문서는 <code>CalibratedClassifierCV(SVC(), ensemble=False)</code>로 보정하라고 안내합니다.</p></details></div>
 <p>거리나 내적은 특성의 척도에 영향을 받습니다. 표준화 여부와 C·커널 설정을 훈련과 검증에서 비교한 뒤 같은 변환으로 최종 평가합니다.</p>
 <div class="check" data-q="q6"></div><div class="check" data-q="q7"></div>
 
@@ -141,7 +150,8 @@ kernel=121, explicit dot=121.0</code></pre>
 <div class="table-wrap"><table><thead><tr><th scope="col">개념</th><th scope="col">확인할 것</th></tr></thead><tbody>
 <tr><th scope="row"><b class="key">SVM</b></th><td>여백을 넓게 두며 두 클래스를 가르는 규칙</td></tr>
 <tr><th scope="row"><b class="key">슬랙과 C</b></th><td>마진 위반의 크기와 벌점</td></tr>
-<tr><th scope="row"><b class="key">커널</b></th><td>변환된 공간에서 두 입력의 내적을 계산</td></tr>
+<tr><th scope="row"><b class="key">힌지 손실</b></th><td>max(0, 1−yf). 충분히 맞힌 점은 손실 0</td></tr>
+<tr><th scope="row"><b class="key">커널</b></th><td>변환된 공간에서 두 입력의 내적을 계산. RBF는 exp(−γ‖u−v‖²)</td></tr>
 </tbody></table></div><div class="box sum"><p class="box-k">다음 장으로</p><p><a href="ml12-3.html">다음 장</a>에서는 여러 분포의 가중합으로 자료의 모양을 표현합니다.</p></div>
 
 <h2>참고 자료</h2>

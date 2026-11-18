@@ -23,7 +23,7 @@
 <p class="chap-sub">머신러닝 · ML10 일반화와 모델 선택</p>
 <p class="chap-num">ML10·2</p>
 <h1>튜닝을 분리하고 학습곡선으로 다음 실험 읽기</h1>
-<p class="lead">어떤 모델이 지금의 검증에서 가장 점수가 낮았다고 해서 그 점수를 최종 성능으로 쓰면 선택 과정의 영향을 놓칩니다. 평가를 남겨 둔 뒤, 훈련 데이터를 어느 정도 모으면 격차가 줄어들지 그래프로 봅니다.</p>
+<p class="lead">어떤 모델이 지금의 검증에서 오차가 가장 낮았다고 해서 그 점수를 최종 성능으로 쓰면 선택 과정의 영향을 놓칩니다. 평가를 남겨 둔 뒤, 훈련 데이터를 어느 정도 모으면 격차가 줄어들지 그래프로 봅니다.</p>
 </header>
 <div class="goal"><h2>이 장을 읽고 나면</h2><ul>
 <li>교차검증에서 하이퍼파라미터를 고르고 최종 평가를 분리한다.</li>
@@ -32,9 +32,31 @@
 </ul></div>
 
 <h2>같은 분할과 같은 지표로 후보를 비교한다</h2>
-<p>나무의 최대 깊이, 정규화 강도, 이웃 수처럼 학습 방식의 설정을 <b class="key">하이퍼파라미터</b>라고 합니다. 개발 자료를 가른 뒤 같은 기준으로 각 후보를 여러 번 검증해 선택합니다. 합성 예에서 세 회차의 검증 오차가 A는 <code>[2,5,4]</code>, B는 <code>[3,3,3]</code>입니다. 오차를 낮추는 목표와 세 회차 동등 가중을 먼저 정하면 평균 3인 B를 고릅니다.</p>
+<p>나무의 최대 깊이, 정규화 강도, 이웃 수처럼 학습 방식의 설정을 <b class="key">하이퍼파라미터</b>라고 합니다. 개발 자료를 가른 뒤 같은 기준으로 각 후보를 여러 번 검증해 선택합니다.</p>
+<div class="box"><p class="box-k">정의 · k-겹 교차검증</p><p>개발 자료(테스트를 뺀 나머지)를 크기가 비슷한 k개의 <b>겹(fold)</b>으로 나눕니다. 회차 i에서는 i번째 겹을 검증에, 나머지 k−1개 겹을 훈련에 씁니다. k번 반복하면 모든 행이 정확히 한 번씩 검증에 쓰이고, k개 검증 점수의 평균(과 흩어짐)을 그 설정의 <b class="key">교차검증</b> 점수로 봅니다. k=n이면 한 행씩 빼는 LOOCV입니다. 분류에서는 각 겹의 클래스 비율을 전체와 맞추는 층화(stratified) k-겹을 흔히 씁니다.</p></div>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 210" role="img" aria-label="개발 자료를 세 겹으로 나눈 3-겹 교차검증. 회차 1은 겹 1, 회차 2는 겹 2, 회차 3은 겹 3을 검증에 쓰고 나머지 두 겹으로 훈련한다.">
+<text class="f-s" x="140" y="62" text-anchor="end">회차 1</text>
+<rect class="f-soft" x="160" y="40" width="160" height="34"/><text class="f-s" x="240" y="62" text-anchor="middle">검증 (겹 1)</text>
+<rect class="f-box" x="320" y="40" width="160" height="34"/><text class="f-s" x="400" y="62" text-anchor="middle">훈련 (겹 2)</text>
+<rect class="f-box" x="480" y="40" width="160" height="34"/><text class="f-s" x="560" y="62" text-anchor="middle">훈련 (겹 3)</text>
+<text class="f-s" x="140" y="108" text-anchor="end">회차 2</text>
+<rect class="f-box" x="160" y="86" width="160" height="34"/><text class="f-s" x="240" y="108" text-anchor="middle">훈련 (겹 1)</text>
+<rect class="f-soft" x="320" y="86" width="160" height="34"/><text class="f-s" x="400" y="108" text-anchor="middle">검증 (겹 2)</text>
+<rect class="f-box" x="480" y="86" width="160" height="34"/><text class="f-s" x="560" y="108" text-anchor="middle">훈련 (겹 3)</text>
+<text class="f-s" x="140" y="154" text-anchor="end">회차 3</text>
+<rect class="f-box" x="160" y="132" width="160" height="34"/><text class="f-s" x="240" y="154" text-anchor="middle">훈련 (겹 1)</text>
+<rect class="f-box" x="320" y="132" width="160" height="34"/><text class="f-s" x="400" y="154" text-anchor="middle">훈련 (겹 2)</text>
+<rect class="f-soft" x="480" y="132" width="160" height="34"/><text class="f-s" x="560" y="154" text-anchor="middle">검증 (겹 3)</text>
+<text class="f-cap" x="400" y="26" text-anchor="middle">개발 자료 (테스트는 따로 둔다)</text>
+<text class="f-s" x="400" y="194" text-anchor="middle">세 검증 점수의 평균이 이 설정의 교차검증 점수</text>
+</svg>
+<figcaption>시간 순서가 있는 자료는 과거로 훈련하고 미래로 검증하도록 겹을 시간 순으로 나눈다.</figcaption>
+</figure>
+<p>scikit-learn 1.9에서 <code>cross_val_score</code>와 <code>GridSearchCV</code>의 <code>cv</code> 기본값은 5-겹이고, 분류기이면서 정답이 이진·다중 클래스이면 층화 k-겹을, 그 밖에는 섞지 않은(<code>shuffle=False</code>) k-겹을 씁니다. <code>GridSearchCV</code>는 후보 조합마다 교차검증 평균을 구해 가장 좋은 설정을 고르고, 기본값 <code>refit=True</code>로 그 설정을 개발 자료 전체에 다시 학습합니다. 조합이 많을 때는 일부만 무작위로 뽑아 보는 <code>RandomizedSearchCV</code>를 씁니다.</p>
+<p>합성 예에서 세 회차의 검증 오차가 A는 <code>[2,5,4]</code>, B는 <code>[3,3,3]</code>입니다. 오차를 낮추는 목표와 세 회차 동등 가중을 먼저 정하면 평균 3인 B를 고릅니다.</p>
 <p>현재 회차의 변환과 모형은 현재 훈련 부분에서만 배웁니다. 새 거점과 시간 순서를 구분하는 등 실제 목적에 맞는 분할을 사용합니다. 후보가 많을수록 검증의 우연한 특징에 맞는 후보를 골랐을 가능성도 커집니다. 선택이 끝난 다음 따로 남긴 테스트에서 한 번 점검합니다.</p>
-<div class="check" data-q="q1"></div><div class="check" data-q="q2"></div><div class="check" data-q="q3"></div>
+<div class="check" data-q="q9"></div><div class="check" data-q="q10"></div><div class="check" data-q="q1"></div><div class="check" data-q="q2"></div><div class="check" data-q="q3"></div>
 
 <h2>안쪽 검증을 써도 바깥 평가는 손대지 않는다</h2>
 <p><b class="key">중첩 교차검증</b>에서는 바깥 분할의 훈련 자료 안에서만 다시 안쪽 훈련과 검증을 나눕니다. 안쪽에서 설정을 고르고, 그 절차에 참가하지 않은 바깥 쪽 자료에서 시험합니다. 여러 바깥 구간에 대해 반복하면 현재 자료와 분할에서 <em>설정을 골라 재학습하는 절차</em>의 성능을 평가할 수 있습니다.</p>
@@ -127,7 +149,8 @@ size=80: validation-training=0.5</code></pre>
 
 <h2>한눈에 정리</h2>
 <div class="table-wrap"><table><thead><tr><th scope="col">개념</th><th scope="col">확인할 것</th></tr></thead><tbody>
-<tr><th scope="row"><b class="key">튜닝</b></th><td>훈련과 검증을 반복해 설정을 고름</td></tr>
+<tr><th scope="row"><b class="key">k-겹 교차검증</b></th><td>k개 겹이 돌아가며 한 번씩 검증, 점수 평균</td></tr>
+<tr><th scope="row"><b class="key">튜닝</b></th><td>훈련과 검증을 반복해 설정을 고름 (그리드·무작위 탐색)</td></tr>
 <tr><th scope="row"><b class="key">중첩 교차검증</b></th><td>안쪽에서 선택, 바깥에서 선택 절차 평가</td></tr>
 <tr><th scope="row"><b class="key">학습곡선</b></th><td>훈련 행 수에 따른 오차 변화</td></tr>
 <tr><th scope="row"><b class="key">검증곡선</b></th><td>설정값에 따른 오차 변화</td></tr>

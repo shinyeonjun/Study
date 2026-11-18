@@ -33,6 +33,7 @@
 
 <h2>가까운 중심에 배정한 뒤 평균 위치를 구한다</h2>
 <p>합성 특성 값이 <code>0,2,8,10</code>이고 <code>k=2</code>개의 묶음을 원합니다. <b class="key">k-means</b>는 각 점과 그 점이 속한 중심의 거리 제곱합을 줄입니다. 중심을 고정하면 가까운 중심에 배정하는 것이 유리하고, 한 묶음이 고정되면 제곱합을 줄이는 중심은 그 묶음의 평균입니다. 그래서 두 작업을 번갈아 합니다.</p>
+<div class="box"><p class="box-k">정의 · k-means의 목적함수</p><p>관측 <code>x₁,…,xₙ</code>을 k개 묶음 <code>C₁,…,Cₖ</code>로 나누고 각 묶음에 중심 <code>μⱼ</code>를 둘 때, 줄이려는 값은 <b class="key">군집 내 제곱합</b> <code>SSE = Σⱼ Σ_{x∈Cⱼ} ‖x−μⱼ‖²</code>입니다(scikit-learn에서는 <code>inertia_</code>). 반복은 두 단계입니다.</p><ul><li><b>배정 단계</b>: 중심을 고정하고 각 점을 유클리드 거리가 가장 가까운 중심의 묶음에 넣는다.</li><li><b>갱신 단계</b>: 묶음을 고정하고 각 중심을 그 묶음 점들의 평균으로 바꾼다.</li></ul><p>두 단계 모두 SSE를 늘리지 않고, 가능한 분할의 수가 유한하므로 배정이 더 바뀌지 않는 지점에서 멈춥니다.</p></div>
 <p>첫 중심을 0, 2로 잡으면 <code>[0]</code>과 <code>[2,8,10]</code>이 됩니다. 평균을 구한 다음 중심은 0과 <code>20/3</code>입니다. 다시 배정하면 값 2는 중심 0에 더 가까워 왼쪽으로 옮깁니다. 두 묶음의 새로운 중심은 <code>(0+2)/2=1</code>, <code>(8+10)/2=9</code>입니다. 이 중심들에는 배정이 더 바뀌지 않습니다.</p>
 <figure class="fig">
 <svg class="fig-svg" viewBox="0 0 760 296" role="img" aria-label="점을 0,2,8,10에 둔다. 초기 중심 0,2가 첫 배정 뒤 0,6.667로 이동하고, 다음 배정 뒤 1,9로 이동한다.">
@@ -74,12 +75,13 @@
 </svg>
 <figcaption>중심과 관측의 위치를 같은 척도로 그렸다. 위쪽 두 중심에 배정한 뒤 각 묶음의 평균을 다시 구한다.</figcaption>
 </figure>
-<p>마지막 거리 제곱합은 <code>1²+1²+1²+1²=4</code>입니다. k, 어떤 열을 어떤 단위로 쓸지, 처음 중심을 어떻게 정할지에 따라 결과가 다를 수 있습니다. 각 번갈아 하는 단계는 목적을 나쁘게 하지 않더라도 전체적으로 가장 좋은 상태를 보장하지는 않습니다. 여러 시작점을 비교하기도 합니다.</p>
+<p>마지막 거리 제곱합은 <code>1²+1²+1²+1²=4</code>입니다. k, 어떤 열을 어떤 단위로 쓸지, 처음 중심을 어떻게 정할지에 따라 결과가 다를 수 있습니다. 각 단계가 목적을 나쁘게 하지 않더라도 도달한 곳은 <b>국소 최적</b>일 수 있고, 전체에서 가장 작은 SSE는 보장하지 않습니다. 그래서 여러 시작점에서 돌려 SSE가 가장 작은 결과를 고릅니다. 시작 중심을 서로 멀리 떨어지게 확률적으로 뽑는 <b class="key">k-means++</b> 초기화가 널리 쓰입니다. scikit-learn 1.9의 <code>KMeans</code> 기본값은 <code>init='k-means++'</code>, <code>n_init='auto'</code>(k-means++일 때 1회, 무작위 초기화일 때 10회 실행)이고, <code>n_clusters</code>의 기본값 8은 자료와 무관한 값이므로 직접 정합니다.</p>
 <div class="check" data-q="q1"></div><div class="check" data-q="q2"></div><div class="check" data-q="q3"></div>
 
 <h2>가까운 두 묶음을 합치는 규칙을 정한다</h2>
 <p><b class="key">응집형 계층 군집화</b>는 각 점을 혼자 있는 묶음으로 시작해, 가장 가까운 두 묶음을 차례로 합칩니다. 묶음끼리의 거리를 계산하는 규칙을 연결 방법(linkage)이라고 합니다. <b>단일 연결</b>은 두 묶음의 가장 가까운 점 쌍, <b>완전 연결</b>은 가장 먼 점 쌍의 거리를 씁니다.</p>
-<p>작은 예에서는 거리 2에 (0,2)와 (8,10)의 첫 병합이 두 번 생깁니다. 그 뒤 <code>{0,2}</code>와 <code>{8,10}</code> 사이의 단일 연결 거리는 2와 8 사이인 6, 완전 연결 거리는 0과 10 사이인 10입니다.</p>
+<p>작은 예에서는 거리 2에서 (0,2)와 (8,10)이 각각 먼저 합쳐집니다. 그 뒤 <code>{0,2}</code>와 <code>{8,10}</code> 사이의 단일 연결 거리는 2와 8 사이인 6, 완전 연결 거리는 0과 10 사이인 10입니다.</p>
+<p>자주 쓰는 연결 방법은 두 가지가 더 있습니다. <b>평균 연결</b>은 두 묶음 사이 모든 점 쌍 거리의 평균으로, 이 예에서 <code>(8+10+6+8)/4=8</code>입니다. <b>Ward 연결</b>은 두 묶음을 합쳤을 때 군집 내 제곱합(SSE)이 가장 적게 늘어나는 쌍을 합칩니다. <code>{0,2}</code>와 <code>{8,10}</code>을 합치면 SSE가 4에서 68로 64만큼 늘어납니다. Ward는 k-means와 같은 목적을 단계적으로 줄이는 셈이며, scikit-learn <code>AgglomerativeClustering</code>의 기본 연결 방법입니다(<code>linkage='ward'</code>). 덴드로그램의 세로 높이 값은 구현이 쓰는 거리 정의에 따라 다르므로 라이브러리 문서로 확인합니다.</p>
 <figure class="fig">
 <svg class="fig-svg" viewBox="0 0 760 284" role="img" aria-label="단일 연결법과 완전 연결법에서 0·2와 8·10은 높이 2에서 합쳐진다. 두 묶음 전체는 단일 연결에서 6, 완전 연결에서 10에서 합쳐진다. 기준 높이 7에서 각각 1개, 2개의 군집이다.">
 <text class="f-cap" x="249" y="33" text-anchor="middle">단일 연결</text>
@@ -141,6 +143,39 @@
 <p>나무 형태를 <b>덴드로그램</b>이라 합니다. 높이 7까지 허용하면 단일 연결은 마지막 병합까지 포함해 한 군집이 되고, 완전 연결은 마지막 병합을 보류해 두 군집입니다. 단일 연결에서는 짧은 연결이 연달아 이어져 서로 멀리 떨어진 끝점까지 한 묶음이 되는 사슬 효과가 생길 수 있습니다.</p>
 <div class="check" data-q="q4"></div><div class="check" data-q="q5"></div><div class="check" data-q="q6"></div>
 
+<h2>묶음 수 k를 고르는 두 가지 지표</h2>
+<p>k-means는 k를 스스로 정하지 않습니다. k를 늘리면 SSE는 줄어들기만 하고, k=n이면 0이 됩니다. 그래서 SSE가 가장 작은 k를 고르는 것은 의미가 없고, 다음 두 지표를 함께 봅니다.</p>
+<p><b class="key">엘보 방법</b>: k마다 가장 좋은 SSE를 그려, 줄어드는 폭이 갑자기 작아지는 꺾이는 점(팔꿈치)을 찾습니다. 값 <code>0,2,8,10</code>에서 k=1이면 중심 5에서 <code>25+9+9+25=68</code>, k=2이면 4, k=3이면 2(예: <code>{0,2},{8},{10}</code>), k=4이면 0입니다. 68에서 4로 크게 줄고 그 뒤는 거의 줄지 않으므로 k=2가 팔꿈치입니다. 실제 자료에서는 꺾임이 뚜렷하지 않은 경우가 많습니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 270" role="img" aria-label="k가 1,2,3,4일 때 SSE는 68,4,2,0이다. k=2에서 감소 폭이 갑자기 작아지는 꺾임이 있다.">
+<line class="f-ink" x1="110" y1="220" x2="660" y2="220"/>
+<line class="f-ink" x1="110" y1="220" x2="110" y2="30"/>
+<line class="f-ink" x1="104" y1="220" x2="110" y2="220"/>
+<text class="f-s" x="98" y="224" text-anchor="end">0</text>
+<line class="f-ink" x1="104" y1="40" x2="110" y2="40"/>
+<text class="f-s" x="98" y="44" text-anchor="end">68</text>
+<polyline class="f-line" points="160,40 310,209.41 460,214.71 610,220"/>
+<circle class="f-fill" cx="160" cy="40" r="5"/>
+<circle class="f-fill" cx="310" cy="209.41" r="5"/>
+<circle class="f-fill" cx="460" cy="214.71" r="5"/>
+<circle class="f-fill" cx="610" cy="220" r="5"/>
+<text class="f-s" x="178" y="44" text-anchor="start">68</text>
+<text class="f-s" x="296" y="213" text-anchor="end">4</text>
+<text class="f-s" x="460" y="201" text-anchor="middle">2</text>
+<text class="f-s" x="610" y="207" text-anchor="middle">0</text>
+<line class="f-ink" x1="340" y1="150" x2="316" y2="200" marker-end="url(#f-arrow)"/>
+<text class="f-s" x="346" y="146" text-anchor="start">꺾이는 점 (k=2)</text>
+<text class="f-s" x="160" y="242" text-anchor="middle">k=1</text>
+<text class="f-s" x="310" y="242" text-anchor="middle">k=2</text>
+<text class="f-s" x="460" y="242" text-anchor="middle">k=3</text>
+<text class="f-s" x="610" y="242" text-anchor="middle">k=4</text>
+<text class="f-cap" x="112" y="22" text-anchor="start">SSE</text>
+</svg>
+<figcaption>세로축은 0부터 68까지 같은 간격이다. k=4는 점마다 묶음 하나라서 SSE가 0이다.</figcaption>
+</figure>
+<p><b class="key">실루엣 계수</b>: 점 i에 대해 <code>a</code>=같은 묶음의 다른 점들까지 평균 거리, <code>b</code>=가장 가까운 다른 묶음의 점들까지 평균 거리로 두고 <code>s=(b−a)/max(a,b)</code>를 계산합니다. −1~1 사이이고, 1에 가까우면 제 묶음에 잘 붙어 있고 0 근처면 경계에, 음수면 다른 묶음에 더 가깝다는 뜻입니다. k=2 분할 <code>{0,2},{8,10}</code>에서 점 0은 <code>a=2</code>, <code>b=(8+10)/2=9</code>라 <code>s=7/9≈0.778</code>, 점 2는 <code>a=2</code>, <code>b=(6+8)/2=7</code>이라 <code>s=5/7≈0.714</code>입니다. 대칭이므로 네 점 평균은 약 0.746입니다. 여러 k의 평균 실루엣을 비교해 큰 쪽을 후보로 둡니다(k=1에서는 정의되지 않습니다).</p>
+<div class="check" data-q="q9"></div><div class="check" data-q="q10"></div>
+
 <h2>계산 결과를 군집의 근거와 함께 적는다</h2>
 <p class="small">실행 예제</p>
 <pre data-example="python"><code>from statistics import mean
@@ -170,7 +205,8 @@ single: 6 complete: 10</code></pre>
 <h2>한눈에 정리</h2>
 <div class="table-wrap"><table><thead><tr><th scope="col">개념</th><th scope="col">확인할 것</th></tr></thead><tbody>
 <tr><th scope="row"><b class="key">k-means</b></th><td>가까운 중심 배정과 군집 내 평균 계산을 반복</td></tr>
-<tr><th scope="row"><b class="key">계층 군집</b></th><td>묶음 간 거리를 정하고 가장 가까운 두 묶음을 병합</td></tr>
+<tr><th scope="row"><b class="key">계층 군집</b></th><td>묶음 간 거리(단일·완전·평균·Ward)를 정하고 가장 가까운 두 묶음을 병합</td></tr>
+<tr><th scope="row">k 고르기</th><td><b class="key">엘보 방법</b>(SSE의 꺾임)과 <b class="key">실루엣 계수</b>(b−a)/max(a,b)</td></tr>
 <tr><th scope="row">해석</th><td>입력과 거리, 설정에 따른 결과를 확인</td></tr>
 </tbody></table></div><div class="box sum"><p class="box-k">다음 장으로</p><p><a href="ml09-2.html">다음 장</a>에서는 주어진 반경 안에 점이 얼마나 모였는지로 군집을 만듭니다.</p></div>
 

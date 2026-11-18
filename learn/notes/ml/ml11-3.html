@@ -71,8 +71,15 @@
 <figcaption>양성·음성의 실제 건수 비율이 다르면 같은 TPR·FPR에서도 경보의 구성은 달라질 수 있다.</figcaption>
 </figure>
 <p>정밀도의 분모는 실제 혼잡 수가 아니라 <em>경보 전체</em>입니다. A에서 <code>30/(30+6)=0.833…</code>, B에서 <code>15/(15+8)=0.652…</code>입니다. 두 집단의 실제 혼잡 비율이 달라 경보의 구성도 다릅니다. 지표를 하나 골라 같게 만든다고 다른 기준까지 같아지지는 않습니다.</p>
+<p>집단 공정성을 숫자로 정의하는 대표 기준은 세 가지이며, 이 예에 대어 보면 서로 다른 답이 나옵니다.</p>
+<div class="table-wrap"><table><thead><tr><th scope="col">기준</th><th scope="col">집단 사이에 같게 하려는 것</th><th scope="col">이 예 (A / B)</th></tr></thead><tbody>
+<tr><th scope="row"><b class="key">인구 통계 동등성</b> (demographic parity)</th><td>양성 예측(경보) 비율 P(ŷ=1)</td><td>36/100=0.36 / 23/100=0.23 → 다름</td></tr>
+<tr><th scope="row"><b class="key">균등화 오즈</b> (equalized odds)</th><td>TPR과 FPR 둘 다</td><td>0.75, 0.10 / 0.75, 0.10 → 같음</td></tr>
+<tr><th scope="row"><b class="key">예측 동등성</b> (predictive parity)</th><td>정밀도 P(y=1 | ŷ=1)</td><td>0.833 / 0.652 → 다름</td></tr>
+</tbody></table></div>
+<p>두 집단의 실제 양성 비율(기저율)이 다르고 예측이 완벽하지 않으면, 균등화 오즈와 예측 동등성을 동시에 만족시킬 수 없다는 것이 알려져 있습니다(Chouldechova 2017, Kleinberg 외 2016). 그래서 어느 기준을 쓸지는 기술이 아니라 어떤 오류의 부담을 누구에게 지울지에 대한 결정입니다.</p>
 <p><b class="key">공정성</b>을 살필 때는 경보를 놓쳤을 때의 불이익과 헛경보를 확인하는 부담이 누구에게 돌아가는지 먼저 적습니다. 라벨을 붙이는 조건, 집단별 평가 건수, 수집 누락과 적용 목적도 확인합니다. 작은 집단은 분모가 작아 수치가 크게 흔들리거나 실제 양성이 없어 재현율이 정의되지 않을 수 있습니다. 공개할 때에는 개인이 드러나는지에도 주의합니다. <a href="../../unit.html?u=RS10">연구 윤리와 데이터</a>에서 집단 지표와 권리를 다시 볼 수 있습니다.</p>
-<div class="check" data-q="q1"></div><div class="check" data-q="q2"></div><div class="check" data-q="q3"></div>
+<div class="check" data-q="q1"></div><div class="check" data-q="q2"></div><div class="check" data-q="q3"></div><div class="check" data-q="q9"></div><div class="check" data-q="q10"></div>
 
 <h2>모델을 고정하고 한 특성만 다른 행에 돌려본다</h2>
 <p><b class="key">순열 중요도</b>는 고정한 모형에서 평가용 특성 하나의 값만 행 사이에 섞은 다음 점수가 얼마나 나빠졌는지 보는 방법입니다. 정답과 다른 열을 유지합니다. 같은 종류의 관측과 같은 지표로 원래 점수를 먼저 계산합니다. 점수가 높을수록 좋은 정확도라면 <code>원래 정확도−섞은 뒤 정확도</code>가 한 번의 중요도 계산입니다.</p>
@@ -158,7 +165,8 @@ for key in features:
 B: TPR=0.750, FPR=0.100, precision=0.652
 x: accuracy drop=0.50
 z: accuracy drop=0.00</code></pre>
-<p>예제는 순열 한 개를 고정했습니다. 실제로는 섞기를 여러 번 반복해 평균과 변동을 볼 수 있습니다. 점수가 낮을수록 좋은 오차에서는 나빠졌다는 뜻이 되도록 차이의 방향을 바꿉니다.</p>
+<p>예제는 순열 한 개를 고정했습니다. 실제로는 섞기를 여러 번 반복해 평균과 변동을 봅니다. scikit-learn 1.9의 <code>sklearn.inspection.permutation_importance</code>는 기본으로 특성마다 5번 섞고(<code>n_repeats=5</code>) 평균 <code>importances_mean</code>과 표준편차 <code>importances_std</code>를 줍니다. 점수가 낮을수록 좋은 오차에서는 나빠졌다는 뜻이 되도록 차이의 방향을 바꿉니다. 중요도는 훈련 자료가 아니라 따로 남긴 검증 자료에서 계산해야, 모형이 외워 버린 특성이 과장되지 않습니다.</p>
+<p>결정나무·랜덤 포레스트가 주는 <code>feature_importances_</code>는 순열 중요도와 다른 <b>불순도 감소 기반 중요도</b>(MDI)입니다. 훈련 자료에서 각 특성이 분할로 줄인 불순도를 합한 값이라 계산은 빠르지만, 값의 종류가 많은 특성(연속형, ID처럼 고유값이 많은 열)을 과대평가하는 경향이 있고 검증 성능과 직접 연결되지 않습니다. 두 중요도가 다르게 나오면 그 차이 자체가 점검할 단서입니다.</p>
 <div class="check" data-q="q4"></div><div class="check" data-q="q5"></div><div class="check" data-q="q6"></div>
 
 <h2>어떤 모델이 무엇에 의존했는지로 해석한다</h2>
@@ -170,6 +178,7 @@ z: accuracy drop=0.00</code></pre>
 <h2>한눈에 정리</h2>
 <div class="table-wrap"><table><thead><tr><th scope="col">개념</th><th scope="col">확인할 것</th></tr></thead><tbody>
 <tr><th scope="row"><b class="key">집단별 점검</b></th><td>지표의 분모와 업무상 영향을 함께 봄</td></tr>
+<tr><th scope="row">공정성 기준</th><td>인구 통계 동등성(경보율)·<b class="key">균등화 오즈</b>(TPR·FPR)·예측 동등성(정밀도). 기저율이 다르면 동시에 다 맞출 수 없음</td></tr>
 <tr><th scope="row"><b class="key">순열 중요도</b></th><td>모형을 바꾸지 않고 한 열의 행 대응을 섞어 점수 차이를 잼</td></tr>
 <tr><th scope="row">해석</th><td>상관과 모형 의존성, 실제 인과 효과를 구별</td></tr>
 </tbody></table></div><div class="box sum"><p class="box-k">다음 장으로</p><p><a href="../../unit.html?u=ML12">다음 장</a>에서는 다른 모형 계열을 문제에 맞춰 비교합니다.</p></div>

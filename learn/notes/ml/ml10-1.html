@@ -63,13 +63,21 @@
 <figcaption>가로 방향은 새 관측의 변동, 세로 방향은 다시 훈련할 때의 예측 변동이다.</figcaption>
 </figure>
 <p>고정한 x에서 관측 잡음의 평균이 0이며 훈련과 새 잡음이 독립이면 <code>E[(Y−F)²] = (E[F]−f(x))² + Var(F) + Var(Y|x)</code>입니다. 각 양이 유한한 제곱오차의 분해입니다. 예측 평균 <code>10</code>이 실제 조건 평균 12보다 2 낮아 편향 제곱은 4입니다. 새로 학습할 때 8 또는 12로 바뀌는 분산은 4입니다. 새 정답은 ±1을 더한 값이므로 잡음 분산은 1입니다. 합은 9입니다.</p>
+<p>세 항 가운데 잡음 분산 <code>Var(Y|x)</code>는 어떤 모형으로도 줄일 수 없는 <b>줄일 수 없는 오차</b>입니다. 모형이 바꿀 수 있는 것은 편향과 분산이며, 둘은 보통 모형의 복잡도(유연성)에 따라 반대로 움직입니다. 이를 <b class="key">편향–분산 트레이드오프</b>라고 합니다.</p>
+<div class="table-wrap"><table><thead><tr><th scope="col">모형 복잡도</th><th scope="col">편향</th><th scope="col">분산</th><th scope="col">흔한 모습</th></tr></thead><tbody>
+<tr><th scope="row">낮음 (직선, 얕은 나무, 강한 정규화)</th><td>큼</td><td>작음</td><td>훈련·검증 오차가 모두 높음 → 과소적합</td></tr>
+<tr><th scope="row">높음 (고차 다항식, 깊은 나무, 약한 정규화)</th><td>작음</td><td>큼</td><td>훈련 오차는 낮고 검증 오차는 높음 → 과대적합</td></tr>
+</tbody></table></div>
+<p>그래서 복잡도를 가로축에 두면 훈련 오차는 대개 계속 내려가고, 검증 오차는 내려가다가 다시 올라가는 U자 모양이 자주 보입니다. 검증 오차가 가장 낮은 근처가 두 항의 합이 작은 지점입니다. 다만 이것은 경향이며, 모든 모형·자료에서 정확히 U자가 나온다는 법칙은 아닙니다.</p>
 <p>이 분해는 훈련자료와 새 정답을 반복해서 상상한 기대값입니다. 한 번의 훈련 오차만 보고 세 항을 알아낼 수는 없습니다. 입력이 달라지면 조건 평균과 잡음, 예측 분산도 달라질 수 있습니다.</p>
 <div class="why"><p class="box-k">왜 그럴까?</p><p>훈련을 다시 해도 예측을 항상 10으로 고정하면 어느 항이 줄까요?</p><details><summary>모범 답 보기</summary><p>훈련에 따른 변동이 없어져 분산이 0이 됩니다. 예측 평균은 10이어서 12와의 차이 제곱 4는 남고, 새 측정 잡음 1도 남습니다.</p></details></div>
-<div class="check" data-q="q3"></div><div class="check" data-q="q4"></div>
+<div class="check" data-q="q3"></div><div class="check" data-q="q4"></div><div class="check" data-q="q10"></div>
 
 <h2>일부 예측 규칙을 제한해 새 자료의 성능을 비교한다</h2>
 <p><b class="key">정규화</b>는 계수나 모형 복잡도에 제약 또는 벌점을 주는 방법입니다. 입력 <code>x=[−1,1]</code>, 정답 <code>y=[−2,2]</code>에서 절편 없는 모형 <code>ŷ=wx</code>를 적합합니다. 예에서는 훈련 목적을 <code>SSE+λw²=2(2−w)²+λw²</code>로 정의합니다. L2 벌점으로 계수 제곱을 더하는 리지(Ridge)의 예입니다.</p>
-<p>미분해 0을 놓으면 <code>2(2+λ)w−8=0</code>이므로 <code>w=4/(2+λ)</code>입니다. λ가 0, 2, 6이면 w는 각각 2, 1, 0.5입니다. L1 벌점 <code>λ|w|</code>을 쓰는 라쏘(Lasso)는 어떤 계수가 0이 되는 해를 만들기도 합니다. 라이브러리의 손실 평균·벌점 배율은 구현마다 확인합니다.</p>
+<p>미분해 0을 놓으면 <code>2(2+λ)w−8=0</code>이므로 <code>w=4/(2+λ)</code>입니다. λ가 0, 2, 6이면 w는 각각 2, 1, 0.5입니다. 리지는 λ를 아무리 키워도 w를 0에 가깝게 줄일 뿐 정확히 0으로 만들지는 않습니다.</p>
+<p>L1 벌점 <code>λ|w|</code>을 쓰는 <b class="key">라쏘(Lasso)</b>는 계수를 정확히 0으로 만들 수 있습니다. 같은 자료에서 목적 <code>2(2−w)²+λ|w|</code>을 w&gt;0 쪽에서 미분하면 <code>−4(2−w)+λ=0</code>, 곧 <code>w=2−λ/4</code>입니다. λ=4이면 w=1이고, λ≥8이면 이 식이 0 이하가 되므로 해는 <code>w=0</code>에 멈춥니다(|w|는 0에서 꺾여 있어 0에 머무르는 해가 생깁니다). 같은 λ=8에서 리지는 <code>4/10=0.4</code>입니다. 그래서 라쏘는 쓸모 적은 특성의 계수를 0으로 만들어 <b>특성 선택</b> 효과를 냅니다. 두 벌점을 섞은 것이 엘라스틱넷(Elastic Net)입니다.</p>
+<p>라이브러리의 손실 배율은 구현마다 다릅니다. scikit-learn 1.9의 <code>Ridge</code>는 <code>‖y−Xw‖²+alpha‖w‖²</code>을 최소화하므로 이 예의 λ가 곧 <code>alpha</code>입니다(<code>fit_intercept=False</code>, <code>alpha=2</code>이면 w=1). <code>Lasso</code>는 <code>(1/(2n))‖y−Xw‖²+alpha‖w‖₁</code>을 쓰므로 n=2인 이 예에서는 <code>λ=4×alpha</code>이고, <code>Lasso(alpha=1)</code>이 w=1, <code>alpha≥2</code>가 w=0입니다. 둘 다 기본값은 <code>alpha=1.0</code>입니다.</p>
 <figure class="fig">
 <svg class="fig-svg" viewBox="0 0 760 267" role="img" aria-label="같은 훈련 두 점 (−1,−2)와 (1,2)에서 절편 없는 회귀의 기울기는 λ=0일 때 2, λ=2일 때 1, λ=6일 때 0.5이다.">
 <line class="f-ink" x1="140" y1="129" x2="590" y2="129"/>
@@ -92,7 +100,7 @@
 <text class="f-s" x="376" y="39" text-anchor="start">y</text>
 <text class="f-s" x="370" y="244" text-anchor="middle">훈련 점을 고정하고 계수 벌점의 강도를 바꾼다.</text>
 </svg>
-<figcaption>λ가 커지면 기울기가 작아진다. 큰 계수에 드는 비용이 예측 오차와 함께 계산되기 때문이다.</figcaption>
+<figcaption>λ가 커지면 기울기가 작아진다. 큰 계수에 드는 비용이 예측 오차와 함께 계산되기 때문이다. 가로 1칸(150px)과 세로 1칸(36px)의 길이가 달라 기울기가 실제보다 완만하게 보인다.</figcaption>
 </figure>
 <p class="small">실행 예제</p>
 <pre data-example="python"><code>from itertools import product
@@ -112,14 +120,15 @@ lambda=0: w=2.0, training SSE=0.0
 lambda=2: w=1.0, training SSE=2.0
 lambda=6: w=0.5, training SSE=4.5</code></pre>
 <p>정규화를 세게 하면 우연한 변동에 덜 맞출 수 있지만 실제 신호도 줄일 수 있습니다. 전처리 척도가 다르면 같은 λ가 계수에 미치는 영향도 달라집니다. 이 작은 학습 자료에서는 어떤 λ가 새 주문에 제일 좋은지 알 수 없으므로 검증에서 고릅니다.</p>
-<div class="check" data-q="q5"></div><div class="check" data-q="q6"></div><div class="check" data-q="q7"></div>
+<div class="check" data-q="q5"></div><div class="check" data-q="q9"></div><div class="check" data-q="q6"></div><div class="check" data-q="q7"></div>
 
 <h2>한눈에 정리</h2>
 <div class="table-wrap"><table><thead><tr><th scope="col">개념</th><th scope="col">확인할 것</th></tr></thead><tbody>
 <tr><th scope="row"><b class="key">과소적합</b></th><td>중요한 규칙을 못 배워 훈련·검증 오차가 높을 수 있음</td></tr>
 <tr><th scope="row"><b class="key">과대적합</b></th><td>훈련에 세밀하게 맞췄지만 새 자료에서는 오차가 큼</td></tr>
-<tr><th scope="row">편향·분산</th><td>평균적 오차 방향과 반복 훈련에 따른 예측 변동</td></tr>
-<tr><th scope="row"><b class="key">정규화</b></th><td>복잡도에 제약 또는 벌점을 주어 검증으로 비교</td></tr>
+<tr><th scope="row">편향·분산</th><td>평균적 오차 방향과 반복 훈련에 따른 예측 변동. 기대 MSE = 편향² + 분산 + 잡음</td></tr>
+<tr><th scope="row"><b class="key">편향–분산 트레이드오프</b></th><td>복잡도↑ → 편향↓·분산↑. 검증 오차가 가장 낮은 복잡도를 고름</td></tr>
+<tr><th scope="row"><b class="key">정규화</b></th><td>복잡도에 제약 또는 벌점을 주어 검증으로 비교. 리지(L2)는 0에 가깝게, 라쏘(L1)는 정확히 0까지</td></tr>
 </tbody></table></div><div class="box sum"><p class="box-k">다음 장으로</p><p><a href="ml10-2.html">다음 장</a>에서는 평가 자료를 지키면서 모델을 고르고 학습곡선을 읽습니다.</p></div>
 
 <h2>참고 자료</h2>

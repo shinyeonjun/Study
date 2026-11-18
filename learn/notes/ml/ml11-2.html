@@ -34,11 +34,12 @@
 <h2>자료의 어느 분포가 달라졌는지 적는다</h2>
 <p>개발 때 보던 자료와 새 입력의 분포 또는 예측과 정답의 관계가 달라지는 일을 <b class="key">분포 변화</b>라고 합니다. 원인을 나누면 어떤 정보를 더 수집할지 계획할 수 있습니다.</p>
 <div class="table-wrap"><table><thead><tr><th scope="col">변화</th><th scope="col">무엇이 달라졌나</th></tr></thead><tbody>
-<tr><th scope="row">입력 분포 변화</th><td>가령 젖은 노면을 나타내는 X의 비율이 달라진다. 순수 공변량 이동은 P(X)가 변하고 P(Y|X)가 같다고 둔다.</td></tr>
+<tr><th scope="row">입력 분포 변화 (공변량 이동)</th><td>가령 젖은 노면을 나타내는 X의 비율이 달라진다. 순수 공변량 이동은 P(X)가 변하고 P(Y|X)가 같다고 둔다.</td></tr>
 <tr><th scope="row">라벨 이동</th><td>P(Y)가 변하고 라벨 안의 입력 분포 P(X|Y)는 유지된다고 두는 경우다.</td></tr>
 <tr><th scope="row">개념 변화</th><td>같은 입력 조건에서도 목표의 분포 P(Y|X)가 달라진다. 예를 들어 동일 입력에서 운영 규칙 변경으로 지연 확률이 달라진다.</td></tr>
 </tbody></table></div>
 <p>실제 변화는 섞여 나타날 수 있습니다. 양성 비율이 달라졌다는 사실만으로 라벨 이동의 조건까지 맞는 것은 아닙니다. 입력만 빨리 수집되는 환경에서는 실제 라벨을 얻어 조건부 성능도 점검합니다.</p>
+<p>라벨이 늦게 오는 동안 확인할 수 있는 것은 입력 분포 P(X)와 예측 분포의 변화입니다. 특성마다 개발 시기와 최근 시기의 히스토그램·요약 통계(평균, 분위수, 결측률)를 나란히 비교하고, 필요하면 두 표본 콜모고로프–스미르노프 검정 같은 분포 비교 검정을 씁니다. 다만 표본이 크면 업무에 무의미한 작은 차이도 유의하게 나오므로, 차이의 크기와 성능에 미치는 영향을 함께 봅니다. 입력 분포가 그대로여도 개념 변화(P(Y|X) 변화)는 라벨이 들어와야만 드러납니다.</p>
 <div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
 
 <h2>조건별 성능이 그대로여도 전체는 변할 수 있다</h2>
@@ -123,6 +124,7 @@ offset=4: [0, 1, 1, 1], accuracy=0.75</code></pre>
 <h2>한눈에 정리</h2>
 <div class="table-wrap"><table><thead><tr><th scope="col">개념</th><th scope="col">확인할 것</th></tr></thead><tbody>
 <tr><th scope="row"><b class="key">분포 변화</b></th><td>어느 부분이 바뀌었는지 가정을 구체적으로 기록</td></tr>
+<tr><th scope="row">세 가지 변화</th><td><b class="key">공변량 이동</b> P(X)↔, <b class="key">라벨 이동</b> P(Y)↔, <b class="key">개념 변화</b> P(Y|X)↔</td></tr>
 <tr><th scope="row">구성 비율</th><td>조건별 성능을 고정해도 전체 지표를 바꿀 수 있음</td></tr>
 <tr><th scope="row"><b class="key">강건성</b></th><td>지정한 변동 조건과 결과를 따로 시험</td></tr>
 </tbody></table></div><div class="box sum"><p class="box-k">다음 장으로</p><p><a href="ml11-3.html">다음 장</a>에서는 누구에게 오류가 모이는지와 모델이 사용하는 특성을 확인합니다.</p></div>

@@ -32,7 +32,8 @@
 </ul></div>
 
 <h2>클래스를 주고 입력을 설명하는 모형을 만든다</h2>
-<p><a href="../../unit.html?u=ML05">로지스틱 회귀</a>는 입력 x를 주고 <code>P(Y|X=x)</code>를 직접 표현하는 <b class="key">판별 모형</b>입니다. 생성 방식의 분류는 클래스의 확률 <code>P(Y)</code>과 그 클래스가 주어질 때 입력이 나올 가능성 <code>P(X|Y)</code>를 각각 학습합니다. 이 두 항의 곱이 결합확률이며, 베이즈 규칙으로 반대 조건인 <code>P(Y|X)</code>를 구할 수 있습니다.</p>
+<p><a href="../../unit.html?u=ML05">로지스틱 회귀</a>는 입력 x를 주고 <code>P(Y|X=x)</code>를 직접 표현하는 <b class="key">판별 모형</b>입니다. 생성 방식의 분류는 클래스의 확률 <code>P(Y)</code>과 그 클래스가 주어질 때 입력이 나올 가능성 <code>P(X|Y)</code>를 각각 학습합니다. 이 두 항의 곱이 결합확률이며, 베이즈 규칙 <code>P(Y=c|X=x)=P(Y=c)P(X=x|Y=c)/Σₖ P(Y=k)P(X=x|Y=k)</code>로 반대 조건인 <code>P(Y|X)</code>를 구할 수 있습니다. 분모는 모든 클래스에 공통이므로 어느 클래스가 가장 큰지만 알면 될 때는 분자만 비교합니다.</p>
+<p>생성 모형은 입력의 분포까지 모형화하므로 새 입력을 만들어 내거나 일부 특성이 빠진 입력을 다루기 쉽고, 가정이 맞으면 적은 자료로도 빨리 안정됩니다. 판별 모형은 경계에 필요한 것만 배우므로 입력 분포에 대한 가정이 틀렸을 때 덜 흔들리고, 자료가 많으면 보통 분류 오차가 더 낮습니다. 이 경향은 나이브 베이즈와 로지스틱 회귀를 비교한 연구(Ng·Jordan 2002)로 잘 알려져 있으나, 모든 자료에서 성립하는 법칙은 아닙니다.</p>
 <p>합성 메일에서 지연 3건, 정상 3건이 있어 사전확률은 각각 0.5입니다. 특성은 ‘대기’가 있는지와 ‘문자’가 있는지입니다. <b class="key">나이브 베이즈</b>는 같은 클래스 안에서 특성들이 서로 조건부 독립이라고 가정해 <code>P(X|Y)</code>를 특성별 조건부 확률의 곱으로 계산합니다. 여기서는 각 특성이 0 또는 1인 베르누이 사례입니다.</p>
 <div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
 
@@ -40,48 +41,54 @@
 <p>훈련에서 ‘대기’가 들어간 정상 문의는 한 건도 없었습니다. 이 확률을 원시 빈도 0으로 쓰면 다른 특성이 어떻든 새 글이 정상일 점수가 곱에서 0이 됩니다. 단순한 <b class="key">add-one 평활화</b>는 각 특성에서 0과 1의 빈도에 각각 1을 더합니다. 정상에서 ‘대기’ 있음의 확률은 <code>(0+1)/(3+2)=1/5</code>이고 없음의 확률은 4/5입니다.</p>
 <figure class="fig">
 <svg class="fig-svg" viewBox="0 0 760 265" role="img" aria-label="훈련 메일은 지연 3건, 정상 3건이다. 지연에는 ‘대기’가 3건, ‘문자’가 2건이다. 정상에는 각각 0건, 1건이다. add-one 평활화 확률은 지연 4/5와 3/5, 정상 1/5와 2/5다.">
-<rect class="f-box" x="64" y="33" width="126" height="40"/>
-<text class="f-s" x="127" y="58" text-anchor="middle">유형</text>
-<rect class="f-box" x="190" y="33" width="96" height="40"/>
-<text class="f-s" x="238" y="58" text-anchor="middle">행 수</text>
-<rect class="f-box" x="286" y="33" width="100" height="40"/>
-<text class="f-s" x="336" y="58" text-anchor="middle">대기 있음</text>
-<rect class="f-box" x="386" y="33" width="96" height="40"/>
-<text class="f-s" x="434" y="58" text-anchor="middle">문자 있음</text>
-<rect class="f-box" x="482" y="33" width="133" height="40"/>
-<text class="f-s" x="548.5" y="58" text-anchor="middle">P(대기=1|유형)</text>
-<rect class="f-box" x="615" y="33" width="96" height="40"/>
-<text class="f-s" x="663" y="58" text-anchor="middle">P(문자=1|유형)</text>
-<rect class="f-soft" x="64" y="73" width="126" height="40"/>
-<text class="f-s" x="127" y="98" text-anchor="middle">지연</text>
-<rect class="f-soft" x="190" y="73" width="96" height="40"/>
-<text class="f-s" x="238" y="98" text-anchor="middle">3</text>
-<rect class="f-soft" x="286" y="73" width="100" height="40"/>
-<text class="f-s" x="336" y="98" text-anchor="middle">3</text>
-<rect class="f-soft" x="386" y="73" width="96" height="40"/>
-<text class="f-s" x="434" y="98" text-anchor="middle">2</text>
-<rect class="f-soft" x="482" y="73" width="133" height="40"/>
-<text class="f-s" x="548.5" y="98" text-anchor="middle">4/5</text>
-<rect class="f-soft" x="615" y="73" width="96" height="40"/>
-<text class="f-s" x="663" y="98" text-anchor="middle">3/5</text>
-<rect class="f-box" x="64" y="113" width="126" height="40"/>
-<text class="f-s" x="127" y="138" text-anchor="middle">정상</text>
-<rect class="f-box" x="190" y="113" width="96" height="40"/>
-<text class="f-s" x="238" y="138" text-anchor="middle">3</text>
-<rect class="f-box" x="286" y="113" width="100" height="40"/>
-<text class="f-s" x="336" y="138" text-anchor="middle">0</text>
-<rect class="f-box" x="386" y="113" width="96" height="40"/>
-<text class="f-s" x="434" y="138" text-anchor="middle">1</text>
-<rect class="f-box" x="482" y="113" width="133" height="40"/>
-<text class="f-s" x="548.5" y="138" text-anchor="middle">1/5</text>
-<rect class="f-box" x="615" y="113" width="96" height="40"/>
-<text class="f-s" x="663" y="138" text-anchor="middle">2/5</text>
+<rect class="f-box" x="54" y="33" width="96" height="40"/>
+<text class="f-s" x="102" y="58" text-anchor="middle">유형</text>
+<rect class="f-box" x="150" y="33" width="80" height="40"/>
+<text class="f-s" x="190" y="58" text-anchor="middle">행 수</text>
+<rect class="f-box" x="230" y="33" width="100" height="40"/>
+<text class="f-s" x="280" y="58" text-anchor="middle">대기 있음</text>
+<rect class="f-box" x="330" y="33" width="100" height="40"/>
+<text class="f-s" x="380" y="58" text-anchor="middle">문자 있음</text>
+<rect class="f-box" x="430" y="33" width="140" height="40"/>
+<text class="f-s" x="500" y="58" text-anchor="middle">P(대기=1|유형)</text>
+<rect class="f-box" x="570" y="33" width="140" height="40"/>
+<text class="f-s" x="640" y="58" text-anchor="middle">P(문자=1|유형)</text>
+<rect class="f-soft" x="54" y="73" width="96" height="40"/>
+<text class="f-s" x="102" y="98" text-anchor="middle">지연</text>
+<rect class="f-soft" x="150" y="73" width="80" height="40"/>
+<text class="f-s" x="190" y="98" text-anchor="middle">3</text>
+<rect class="f-soft" x="230" y="73" width="100" height="40"/>
+<text class="f-s" x="280" y="98" text-anchor="middle">3</text>
+<rect class="f-soft" x="330" y="73" width="100" height="40"/>
+<text class="f-s" x="380" y="98" text-anchor="middle">2</text>
+<rect class="f-soft" x="430" y="73" width="140" height="40"/>
+<text class="f-s" x="500" y="98" text-anchor="middle">4/5</text>
+<rect class="f-soft" x="570" y="73" width="140" height="40"/>
+<text class="f-s" x="640" y="98" text-anchor="middle">3/5</text>
+<rect class="f-box" x="54" y="113" width="96" height="40"/>
+<text class="f-s" x="102" y="138" text-anchor="middle">정상</text>
+<rect class="f-box" x="150" y="113" width="80" height="40"/>
+<text class="f-s" x="190" y="138" text-anchor="middle">3</text>
+<rect class="f-box" x="230" y="113" width="100" height="40"/>
+<text class="f-s" x="280" y="138" text-anchor="middle">0</text>
+<rect class="f-box" x="330" y="113" width="100" height="40"/>
+<text class="f-s" x="380" y="138" text-anchor="middle">1</text>
+<rect class="f-box" x="430" y="113" width="140" height="40"/>
+<text class="f-s" x="500" y="138" text-anchor="middle">1/5</text>
+<rect class="f-box" x="570" y="113" width="140" height="40"/>
+<text class="f-s" x="640" y="138" text-anchor="middle">2/5</text>
 <text class="f-cap" x="380" y="197" text-anchor="middle">있음과 없음에 각각 가상의 1건을 더함</text>
 <text class="f-s" x="380" y="227" text-anchor="middle">대기=1인 정상의 평활 확률은 (0+1)/(3+2)=1/5</text>
 </svg>
 <figcaption>두 특성의 값은 모두 0 또는 1이다. 빈도 0이 곧 불가능을 뜻하지 않도록 작은 양의 값을 준다.</figcaption>
 </figure>
-<p>새 글의 ‘대기’는 있고 ‘문자’는 없다는 입력이 옵니다. 지연의 ‘문자 없음’ 확률은 <code>1−3/5=2/5</code>입니다. 정상의 ‘문자 없음’은 <code>1−2/5=3/5</code>입니다. 다항 나이브 베이즈처럼 단어의 횟수를 쓸 때는 단어 빈도에 어휘 종류 수에 맞춰 평활하는 별도의 모형을 씁니다.</p>
+<p>새 글의 ‘대기’는 있고 ‘문자’는 없다는 입력이 옵니다. 지연의 ‘문자 없음’ 확률은 <code>1−3/5=2/5</code>입니다. 정상의 ‘문자 없음’은 <code>1−2/5=3/5</code>입니다. 특성의 종류에 따라 <code>P(xⱼ|Y)</code>의 모양을 다르게 둡니다.</p>
+<div class="table-wrap"><table><thead><tr><th scope="col">종류 (scikit-learn)</th><th scope="col">특성</th><th scope="col">P(xⱼ|Y)</th></tr></thead><tbody>
+<tr><th scope="row">베르누이 (<code>BernoulliNB</code>)</th><td>단어가 있음/없음 같은 0·1</td><td>클래스별 있음 확률 p, 없음 1−p. 이 장의 예</td></tr>
+<tr><th scope="row">다항 (<code>MultinomialNB</code>)</th><td>단어 등장 횟수</td><td>클래스별 단어 비율 <code>(그 단어 횟수+α)/(전체 단어 수+α×어휘 수)</code></td></tr>
+<tr><th scope="row">가우시안 (<code>GaussianNB</code>)</th><td>연속값</td><td>클래스별 평균·분산을 갖는 정규밀도</td></tr>
+</tbody></table></div>
+<p>scikit-learn의 <code>BernoulliNB</code>와 <code>MultinomialNB</code>는 평활 강도 <code>alpha</code>의 기본값이 1.0이라 add-one(라플라스) 평활과 같습니다. 이 장의 여섯 건에 <code>BernoulliNB()</code>를 그대로 적용하면 아래 계산과 같은 지연 확률 8/11≈0.7273이 나옵니다.</p>
 <figure class="fig">
 <svg class="fig-svg" viewBox="0 0 760 229" role="img" aria-label="대기 있음, 문자 없음인 글의 지연 점수는 0.5×0.8×0.4=0.16이다. 정상 점수는 0.5×0.2×0.6=0.06이다. 점수 합 0.22로 나눈 지연 확률은 8/11이다.">
 <rect class="f-box" x="75" y="36" width="127" height="40"/>
@@ -118,7 +125,7 @@
 </svg>
 <figcaption>클래스 후보끼리 비교할 때는 마지막 열의 곱만 비교해도 순서가 같다.</figcaption>
 </figure>
-<div class="check" data-q="q3"></div><div class="check" data-q="q4"></div><div class="check" data-q="q5"></div>
+<div class="check" data-q="q3"></div><div class="check" data-q="q4"></div><div class="check" data-q="q5"></div><div class="check" data-q="q9"></div>
 
 <h2>작은 확률을 많이 곱하는 대신 로그를 더한다</h2>
 <p>여러 작은 확률을 직접 곱하면 컴퓨터가 0으로 반올림할 수 있습니다. 로그는 곱을 합으로 바꾸고 순서를 보존합니다. 먼저 로그 점수를 비교하고, 확률이 필요하면 공통 최댓값을 빼고 지수를 적용해 합으로 나눕니다.</p>
@@ -158,6 +165,8 @@ prediction: late</code></pre>
 <tr><th scope="row"><b class="key">생성 방식</b></th><td>P(Y)와 P(X|Y)를 학습해 베이즈 규칙으로 조건을 뒤집음</td></tr>
 <tr><th scope="row"><b class="key">나이브 베이즈</b></th><td>클래스 안에서 특성 확률을 곱함</td></tr>
 <tr><th scope="row"><b class="key">평활화</b></th><td>훈련에서 못 본 결과에 0이 아닌 확률을 줄 수 있음</td></tr>
+<tr><th scope="row"><b class="key">판별 방식</b></th><td>P(Y|X)나 경계를 직접 학습 (로지스틱 회귀, SVM)</td></tr>
+<tr><th scope="row">종류</th><td>베르누이(0·1)·다항(횟수)·가우시안(연속)</td></tr>
 </tbody></table></div><div class="box sum"><p class="box-k">다음 장으로</p><p><a href="ml12-2.html">다음 장</a>에서는 확률 대신 클래스 사이의 여백에 주목합니다.</p></div>
 
 <h2>참고 자료</h2>

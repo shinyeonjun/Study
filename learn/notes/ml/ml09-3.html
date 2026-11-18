@@ -78,6 +78,7 @@
 <h2>특잇값의 제곱이 방향별 분산으로 이어진다</h2>
 <p>중심화 행렬을 <code>Xc</code>라 놓습니다. 행이 관측, 열이 특성입니다. <a href="../../unit.html?u=LA08">특잇값 분해</a>를 쓰면 <code>Xc=UΣVᵀ</code>입니다. <code>Vᵀ</code>의 행은 특성 공간의 주성분 방향이고, <code>Xc @ V</code>가 주성분 좌표입니다. 실제 출력의 부호는 구현에 따라 뒤집힐 수 있습니다. 축과 점수의 부호를 같이 뒤집으면 복원 결과는 같습니다.</p>
 <p><code>XcᵀXc/(n−1)</code>는 표본 공분산행렬입니다. 그 행렬에서 각 주성분 방향으로의 분산은 <b class="key">설명분산</b>이며, 특잇값 <code>σⱼ</code>로 <code>σⱼ²/(n−1)</code>입니다. 이 자료의 특잇값이 4와 2이므로 각각 <code>16/3,4/3</code>입니다. 각 분산을 전체 분산 <code>20/3</code>으로 나눈 <b class="key">설명분산비</b>는 <code>0.8,0.2</code>입니다.</p>
+<p>같은 결과를 공분산행렬의 고유분해로도 얻습니다. 이 자료에서 <code>XcᵀXc=[[10,6],[6,10]]</code>이고, 고윳값은 16과 4, 고유벡터는 <code>(1,1)/√2</code>와 <code>(1,−1)/√2</code>입니다. 즉 <code>V</code>의 열은 공분산행렬의 고유벡터이고, 공분산행렬의 고윳값 <code>λⱼ=σⱼ²/(n−1)</code>이 설명분산입니다. 주성분 점수는 <code>XcV=UΣ</code>로도 쓸 수 있습니다. 총분산(각 열 분산의 합 <code>10/3+10/3=20/3</code>)은 축을 돌려도 바뀌지 않으므로, 설명분산을 모두 더하면 총분산이 됩니다. scikit-learn <code>PCA</code>에서는 <code>components_</code>(행이 방향), <code>explained_variance_</code>(<code>[5.333…, 1.333…]</code>), <code>explained_variance_ratio_</code>(<code>[0.8, 0.2]</code>), <code>singular_values_</code>(<code>[4, 2]</code>)로 이 값들을 봅니다.</p>
 <figure class="fig">
 <svg class="fig-svg" viewBox="0 0 760 229" role="img" aria-label="특잇값이 4와 2이므로 제곱은 16과 4이다. 전체 제곱합 20으로 나눈 설명분산비는 0.8과 0.2이다.">
 <text class="f-cap" x="198" y="35" text-anchor="middle">방향과 특잇값</text>
@@ -120,6 +121,10 @@ variance ratio: [0.8, 0.2]
 one component reconstruction SSE: 4.0</code></pre>
 <div class="check" data-q="q4"></div><div class="check" data-q="q5"></div><div class="check" data-q="q6"></div>
 
+<h2>남길 주성분 수를 정한다</h2>
+<p>특성이 p개면 주성분도 최대 p개(관측 수 n이 작으면 최대 n−1개)입니다. 몇 개를 남길지는 보통 <b class="key">누적 설명분산비</b>로 정합니다. 앞에서부터 설명분산비를 더해 미리 정한 기준(예: 0.9)을 처음 넘는 개수를 고르거나, 설명분산을 순서대로 그린 <b>스크리 그림</b>에서 감소가 완만해지는 지점을 봅니다. 예를 들어 비율이 <code>0.6, 0.25, 0.1, 0.05</code>이면 누적은 <code>0.6, 0.85, 0.95, 1.0</code>이라 기준 0.9에서는 3개를 남깁니다. scikit-learn에서는 <code>PCA(n_components=0.9)</code>처럼 0과 1 사이 실수를 주면 그 누적 비율을 넘는 최소 개수를 고릅니다. 기준값 자체는 관례이며, 예측에 쓸 때는 개수를 검증 성능으로 고르는 편이 직접적입니다.</p>
+<div class="check" data-q="q9"></div>
+
 <h2>퍼짐을 많이 남긴다는 말의 한계를 본다</h2>
 <p>설명분산비 80%는 이 자료에서 첫 방향에 원래 총분산의 80%가 놓였다는 말입니다. 군집이 몇 개인지나 분류 성능이 얼마인지는 이 비율과 별도의 질문입니다. 작은 분산의 축에만 드문 이상치나 중요한 정답 신호가 들어 있을 수도 있습니다.</p>
 <p>PCA는 평균을 빼지만, 다른 단위의 열을 자동으로 같은 표준편차로 만들지는 않습니다. 척도가 큰 센서가 전체 방향에 큰 영향을 줄 수 있으므로 문제에 맞춰 표준화 여부를 정합니다. 예측용 전처리라면 중심과 축을 훈련에서 구하고 검증과 새 입력에 그대로 적용합니다. 모든 값이 같아 전체 분산이 0이면 분산비를 정의할 수 없습니다.</p>
@@ -130,7 +135,8 @@ one component reconstruction SSE: 4.0</code></pre>
 <div class="table-wrap"><table><thead><tr><th scope="col">개념</th><th scope="col">확인할 것</th></tr></thead><tbody>
 <tr><th scope="row"><b class="key">PCA</b></th><td>중심화한 점의 분산이 큰 직교 방향부터 찾음</td></tr>
 <tr><th scope="row"><b class="key">설명분산</b></th><td>특잇값 제곱을 n−1로 나눈 값</td></tr>
-<tr><th scope="row">설명분산비</th><td>축의 분산이 전체 분산에서 차지하는 비율</td></tr>
+<tr><th scope="row"><b class="key">설명분산비</b></th><td>축의 분산이 전체 분산에서 차지하는 비율</td></tr>
+<tr><th scope="row"><b class="key">누적 설명분산비</b></th><td>앞 주성분부터 더해 기준을 넘는 개수를 남김</td></tr>
 </tbody></table></div><div class="box sum"><p class="box-k">다음 장으로</p><p><a href="../../unit.html?u=ML10">다음 장</a>에서는 학습한 모형이 새 자료에서도 얼마나 잘 맞는지 살펴봅니다.</p></div>
 
 <h2>참고 자료</h2>

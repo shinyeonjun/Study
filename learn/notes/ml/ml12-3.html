@@ -108,7 +108,8 @@
 </svg>
 <figcaption>한 점이 두 성분에 서로 다른 가중치로 기여한다. 같은 점의 책임도 합은 1이다.</figcaption>
 </figure>
-<p>이 예에서는 가중치와 분산을 고정하고 평균만 다시 구합니다. 일반적인 1차원 EM에서는 각 성분의 가중치를 책임도 합을 n으로 나눈 값으로, 분산을 새 평균에서의 편차 제곱을 책임도로 가중한 평균으로 갱신할 수 있습니다.</p>
+<p>이 예에서는 가중치와 분산을 고정하고 평균만 다시 구합니다. 일반적인 1차원 EM에서는 각 성분의 가중치를 책임도 합을 n으로 나눈 값으로, 분산을 새 평균에서의 편차 제곱을 책임도로 가중한 평균으로 갱신할 수 있습니다. 식으로 쓰면 <code>Nₖ=Σᵢ rᵢₖ</code>일 때 <code>πₖ=Nₖ/n</code>, <code>μₖ=Σᵢ rᵢₖxᵢ/Nₖ</code>, <code>σₖ²=Σᵢ rᵢₖ(xᵢ−μₖ)²/Nₖ</code>입니다.</p>
+<p>k-means(<a href="ml09-1.html">ML09·1</a>)와 비교하면 구조가 같습니다. k-means의 배정 단계는 각 점을 한 중심에 0 또는 1로 넣는 <b>딱딱한 배정</b>이고, EM의 E 단계는 0과 1 사이 책임도로 나누어 넣는 <b>부드러운 배정</b>입니다. 모든 성분의 분산을 같게 두고 0으로 줄여 가면 책임도가 가장 가까운 평균 쪽으로 0·1이 되어 k-means와 같아집니다. GMM은 성분마다 퍼짐과 비중이 달라도 되므로 크기와 모양이 다른 군집을 표현할 수 있습니다.</p>
 <div class="check" data-q="q3"></div><div class="check" data-q="q4"></div><div class="check" data-q="q5"></div>
 
 <h2>좋아진 훈련 우도가 말해 주는 범위를 확인한다</h2>
@@ -135,14 +136,17 @@ print(f&quot;log-likelihood: {before:.4f} -&gt; {after:.4f}&quot;)</code></pre>
 updated means: [0.9845, 3.0155]
 log-likelihood: -6.4687 -&gt; -5.9755</code></pre>
 <p>정확한 E 단계와 M 단계는 같은 모형 아래 관측 자료의 우도를 낮추지 않습니다. 여기서는 관측을 독립으로 두고 밀도의 로그를 합합니다. 예의 로그우도는 약 −6.4687에서 −5.9755가 됐습니다. 여러 시작점이 서로 다른 결과로 이어질 수 있으므로 전역 최적이라는 보장은 없습니다. 분산도 제한 없이 추정하면 한 성분이 점 하나로 수축하며 밀도가 지나치게 높아질 수 있습니다. 분산 하한이나 정규화 등 적합 조건을 기록합니다.</p>
+<p>성분 수를 늘리면 훈련 로그우도는 거의 항상 올라가므로, 로그우도만으로 성분 수를 고를 수 없습니다. 모수 개수에 벌점을 주는 <b class="key">BIC</b> <code>= −2·로그우도 + (모수 개수)·ln n</code>이나 AIC <code>= −2·로그우도 + 2·(모수 개수)</code>를 성분 수마다 계산해 가장 작은 값을 고르거나, 검증 자료의 로그우도로 비교합니다. scikit-learn 1.9의 <code>GaussianMixture</code>는 기본값이 <code>n_components=1</code>, <code>covariance_type='full'</code>, <code>n_init=1</code>, <code>init_params='kmeans'</code>(k-means 결과로 시작), 공분산 대각에 더하는 하한 <code>reg_covar=1e-6</code>이고, <code>bic(X)</code>, <code>aic(X)</code>, 책임도를 주는 <code>predict_proba(X)</code>를 제공합니다.</p>
 <div class="why"><p class="box-k">왜 그럴까?</p><p>책임도 0.88이 나오면 실제로 어떤 과정에서 나왔는지 확정할 수 있을까요?</p><details><summary>모범 답 보기</summary><p>현재 정규 혼합 모형이 주는 조건부 확률입니다. 성분의 수, 분포 형태, 초기값이 바뀌면 답도 달라질 수 있고 실제 과정 이름이 자동으로 확인되는 것은 아닙니다.</p></details></div>
-<div class="check" data-q="q6"></div><div class="check" data-q="q7"></div>
+<div class="check" data-q="q6"></div><div class="check" data-q="q7"></div><div class="check" data-q="q9"></div>
 
 <h2>한눈에 정리</h2>
 <div class="table-wrap"><table><thead><tr><th scope="col">개념</th><th scope="col">확인할 것</th></tr></thead><tbody>
 <tr><th scope="row"><b class="key">혼합 밀도</b></th><td>각 성분의 밀도를 혼합 가중치로 가중해 더함</td></tr>
 <tr><th scope="row"><b class="key">E 단계</b></th><td>현재 모형에서 성분별 책임도를 구함</td></tr>
 <tr><th scope="row"><b class="key">M 단계</b></th><td>책임도로 모수를 다시 맞춤</td></tr>
+<tr><th scope="row">k-means와 관계</th><td>딱딱한 배정(k-means) ↔ 부드러운 배정(책임도)</td></tr>
+<tr><th scope="row">성분 수</th><td><b class="key">BIC</b>·AIC 최소 또는 검증 로그우도로 고름</td></tr>
 </tbody></table></div><div class="box sum"><p class="box-k">다음 장으로</p><p><a href="ml12-4.html">다음 장</a>에서는 성분 수를 정하지 않고 관측마다 작은 밀도 모양을 더해 봅니다.</p></div>
 
 <h2>참고 자료</h2>
