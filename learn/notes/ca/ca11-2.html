@@ -71,7 +71,7 @@
 <text class="f-s" x="413" y="222" text-anchor="middle">v=−2q</text>
 <text class="f-s" x="412" y="170" text-anchor="middle">v=−q</text>
 </svg>
-<figcaption>시간은 축으로 그리지 않았습니다. 벡터 하나 (q,v)가 현재 상태이며, 같은 해의 상태들을 시간 순서대로 이었습니다.</figcaption>
+<figcaption>가로(q)와 세로(v)의 축척은 다릅니다. 시간은 축으로 그리지 않았습니다. 벡터 하나 (q,v)가 현재 상태이며, 같은 해의 상태들을 시간 순서대로 이었습니다.</figcaption>
 </figure>
 <p>두 고유값이 모두 음수이면 초기값에서 어느 모드가 섞여도 두 모드가 감소해 원점으로 수렴합니다. 고유방향에서는 각 궤적이 직선 위에 머무릅니다. 두 고유값의 부호가 다르면 한 방향은 원점으로 접근하고 다른 방향은 시간에 따라 원점에서 멀어지는 <strong>안장점</strong>입니다. 두 경우를 구분하려면 봐야 할 값은 고유값의 부호입니다.</p>
 <div class="check" data-q="q3"></div>
@@ -82,7 +82,7 @@
 <p>복소근 <var>α±iω</var>에서 실수 계수의 식에 <var>e<sup>(α+iω)t</sup></var>를 넣은 뒤 실수부와 허수부를 각각 떼면 두 실수 해를 얻습니다. Euler 공식에서 <var>q(t)=e<sup>αt</sup>(C cos(ωt)+D sin(ωt))</var>입니다. 예로 <var>q″+2q′+5q=0</var>은 근 <var>-1±2i</var>여서 진동하면서 감쇠합니다. <var>q(0)=1,q′(0)=0</var>이면 <var>C=1</var>, <var>-C+2D=0</var>이라 <var>D=1/2</var>입니다.</p>
 <p>겹근 <var>λ</var>에서는 독립 고유벡터가 둘인지 확인합니다. 위 이차식의 동반행렬 A에서 첫 행의 둘째 성분은 1이어서 <var>A=λI</var>가 아닙니다. 따라서 고유방향이 하나이고, <a href="../la/la10-2.html">LA10-2 조르당 사슬</a>에서 본 대로 <var>N=A-λI</var>는 <var>N²=0</var>입니다. 다음 식을 미분해 볼 수 있습니다.</p>
 <div class="calc"><var>X(t)=e<sup>λt</sup>(I+tN)X(0).</var></div>
-<p>미분해서 <var>λe<sup>λt</sup>(I+tN)+e<sup>λt</sup>N</var>을 얻습니다. <var>(λI+N)(I+tN)=λ(I+tN)+N</var>라 이것은 <var>AX(t)</var>의 행렬계수와 같습니다. 위치 성분은 <var>(C+Dt)e<sup>λt</sup></var>가 됩니다. <var>q″+2q′+q=0,q(0)=1,q′(0)=0</var>에서는 <var>q(t)=(1+t)e<sup>−t</sup></var>입니다. 속도는 <var>-te<sup>−t</sup></var>입니다.</p>
+<p>미분해서 <var>λe<sup>λt</sup>(I+tN)+e<sup>λt</sup>N</var>을 얻습니다. <var>(λI+N)(I+tN)=λ(I+tN)+N+tN²</var>이고 <var>N²=0</var>이므로 마지막 항이 사라져 이것은 <var>AX(t)</var>의 행렬계수와 같습니다. 위치 성분은 <var>(C+Dt)e<sup>λt</sup></var>가 됩니다. <var>q″+2q′+q=0,q(0)=1,q′(0)=0</var>에서는 <var>q(t)=(1+t)e<sup>−t</sup></var>입니다. 속도는 <var>-te<sup>−t</sup></var>입니다.</p>
 <figure class="fig">
 <svg class="fig-svg" viewBox="0 0 760 257" role="img" aria-label="두 고유값 쌍에 따라 안정 마디 안장점 안정 나선 및 멱영 항을 포함한 겹근을 구분">
 <text class="f-cap" x="380" y="33" text-anchor="middle">두 상태의 선형계에서는 고유값이 운동의 모양을 가른다</text>
