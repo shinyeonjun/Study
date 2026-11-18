@@ -151,7 +151,7 @@
   function drawPlan(view) {
     var cur = currentPhase(), phases = G.plan(), mainTotal = 0;
     var prs = phases.map(function (p) { var pr = G.phaseProgress(p, S); if (p.main && p.id !== "adv") mainTotal += pr.total; return pr; });
-    view.appendChild(head("공부 순서", "1~7단계 약 " + mainTotal + "장 · 하루 1장이면 약 " + weeks(mainTotal) + "주"));
+    view.appendChild(head("공부 순서", "1~7단계 " + mainTotal + "장 · 약 " + weeks(mainTotal) + "주"));
 
     // 한눈에: 단계 · 기간 · 진도
     var over = el("ol", "plan-over");
@@ -265,8 +265,6 @@
     if (done) meta.appendChild(el("span", "tr-done", done + "장 풂"));
     a.appendChild(meta);
     li.appendChild(a);
-    var parts = catParts(c); // 과목 조각이 둘 이상일 때만 무엇이 들어 있는지 한 줄로
-    if (parts.length > 1) li.appendChild(el("p", "tr-sub", parts.map(function (p) { return partName(c, p.code); }).join(" · ")));
     return li;
   }
 

@@ -18,7 +18,6 @@
     cell.appendChild(el("p", "label", "이어서 읽기"));
     if (pick) {
       cell.appendChild(link("cell-main", pick.title, pick.href));
-      cell.appendChild(el("p", "cell-sub", pick.subject.name));
     } else cell.appendChild(el("p", "cell-main dim", "쓴 장을 모두 풀었습니다"));
     box.appendChild(cell);
 
@@ -36,14 +35,12 @@
     cell.appendChild(el("p", "label", "오늘 복습"));
     if (due) cell.appendChild(link("cell-main", due + "문제 풀기", "review.html"));
     else cell.appendChild(el("p", "cell-main dim", "없음"));
-    cell.appendChild(el("p", "cell-sub", due ? "책 말고 문제부터" : nextDay ? "다음 " + B.dayText(nextDay) : "푼 문제가 생기면 잡힘"));
     box.appendChild(cell);
 
     cell = el("div", "cell");
     cell.appendChild(el("p", "label", "오답"));
     if (wrong) cell.appendChild(link("cell-main", wrong + "문제 다시", "review.html?wrong=1"));
     else cell.appendChild(el("p", "cell-main dim", "없음"));
-    cell.appendChild(el("p", "cell-sub", wrong ? "틀린 문제만 섞어서" : "틀리면 여기에 모임"));
     box.appendChild(cell);
 
     cell = el("div", "cell");

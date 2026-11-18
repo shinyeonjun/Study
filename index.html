@@ -38,32 +38,20 @@
 <body>
 <main>
 <h1>공부 책꽂이</h1>
-<nav aria-label="공부 교재 분야"><ul class="subjects" id="subjects"></ul></nav>
 <div class="shelf">
   <a class="cover navy" href="learn/index.html">
     <span><small>수학 · 코딩 · 데이터 · AI · 네트워크</small><b>나의 공부 교재</b></span>
-    <span><p>분야별 교재와 선수 단원, 공부 기록을 한곳에서 봅니다.</p><span class="state">분야별 목차</span></span>
+    <span><span class="state">공부 중</span></span>
   </a>
   <a class="cover green" href="bigdata/index.html">
     <span><small>빅데이터분석기사 · 필기와 실기</small><b>빅분기 노트</b></span>
-    <span><p>필기 네 과목과 실기 작업형. 공통 기초는 공부 교재와 연결.</p><span class="state">필기·실기 42장</span></span>
+    <span><span class="state">필기·실기 42장</span></span>
   </a>
   <a class="cover wine" href="jcg/index.html">
     <span><small>정보처리기사 · 실기</small><b>정처기 코드 노트</b></span>
-    <span><p>C · Java · Python · SQL을 한 줄씩 따라가기. 연습 문제와 모의고사.</p><span class="state">다 본 책</span></span>
+    <span><span class="state">다 본 책</span></span>
   </a>
 </div>
-<p class="note">공부 기록은 이 기기의 브라우저에만 저장됩니다.</p>
 </main>
-<script src="learn/notes.js"></script>
-<script>
-  if (window.BDA_MAP) window.BDA_MAP.groups.forEach(function (group) {
-    var item = document.createElement("li"), link = document.createElement("a");
-    link.href = "learn/#group-" + group.id;
-    link.textContent = group.name;
-    item.appendChild(link);
-    document.getElementById("subjects").appendChild(item);
-  });
-</script>
 </body>
 </html>

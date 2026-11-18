@@ -1,4 +1,4 @@
-/* 단원 안내(unit.html?u=AR04): 다루는 개념, 장 목록, 먼저 볼 단원, 이어지는 단원, 들어 있는 경로 */
+/* 단원 안내(unit.html?u=AR04): 다루는 개념, 장 목록, 먼저 볼 단원, 이어지는 단원 */
 (function () {
   var B = window.BDA, el = B.el;
 
@@ -73,11 +73,6 @@
       rows("먼저 볼 단원", u.pre.filter(function (x) { return !G.skipped(x); }), "없음. 바로 시작할 수 있습니다.");
       rows("이어지는 단원", G.next(id), "이 단원을 직접 앞내용으로 쓰는 단원은 없습니다.");
 
-      page.appendChild(el("h2", "", "들어 있는 경로"));
-      var ps = G.pathsOf(id), pp = el("p", "path-chips");
-      if (!ps.length) pp.appendChild(el("span", "muted", "없음"));
-      ps.forEach(function (p) { var a = el("a", "chip", p.name); a.href = "index.html#path-" + p.id; pp.appendChild(a); });
-      page.appendChild(pp);
 
       var nav = el("nav", "pager"), back = el("a", "", "← 목차");
       back.href = "index.html#area-" + u.area;
