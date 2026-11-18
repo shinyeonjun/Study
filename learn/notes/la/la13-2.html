@@ -89,6 +89,8 @@ print(&quot;반사의 내적 오차 &lt; 1e-12:&quot;, bool(loss(thin) &lt; 1e-1
 반사의 내적 오차 &lt; 1e-12: True</code></pre>
 <div class="check" data-q="q6"></div>
 <p>Householder 구현은 행 수가 열 수보다 크거나 같은 실수 행렬을 받습니다. 비교용 고전 방법은 열이 독립이며 입력을 부동소수 배열로 준다는 조건도 사용합니다. 두 판정의 임계값은 이 예를 비교하기 위한 것입니다. 실제 자료에서는 ‖QR−A‖/‖A‖와 ‖QᵀQ−I‖에 맞는 노름과 허용 오차를 함께 적습니다. 첫 번째만 작으면 A를 잘 재구성했음을, 두 번째까지 작으면 새 좌표축이 거의 정규직교함을 확인합니다.</p>
+<h3>연산량과 반올림 오차 비교</h3>
+<p>곱셈과 덧셈을 하나씩 센 부동소수점 연산(flop) 수의 주요 항으로 비교하면, n×n 행렬의 부분 피벗 LU는 약 (2/3)n³, m×n 행렬의 Householder QR은 약 2mn²−(2/3)n³입니다. 정사각 행렬이면 QR이 약 (4/3)n³으로 LU의 두 배 정도입니다. 최소제곱에서 정규방정식은 AᵀA를 만드는 데 약 mn², Cholesky에 약 n³/3이 들어 QR보다 싸지만, 앞 장에서 본 것처럼 조건수가 제곱됩니다. 오차 쪽에서는 Householder QR이 직교 변환만 쓰므로 후방 안정(계산 결과가 A를 아주 조금 바꾼 문제의 정확한 답)이고, 계산된 Q의 ‖QᵀQ−I‖가 단위 반올림 정도로 작습니다. 고전 Gram–Schmidt는 위 실험처럼 직교성을 크게 잃을 수 있고, 수정 Gram–Schmidt도 잃는 정도가 대략 κ(A)에 비례합니다. 정확한 상수와 증명은 Trefethen–Bau, Golub–Van Loan의 해당 장을 봅니다.</p>
 <h2>한눈에 정리</h2>
 <div class="table-wrap"><table><thead><tr><th scope="col">확인 대상</th><th scope="col">계산과 이유</th></tr></thead><tbody><tr><td>한 번의 반사</td><td>H=I−2P이고 P²=P이므로 HᵀH=I.</td></tr><tr><td>축으로 보내기</td><td>v=a−αe₁와 α²=‖a‖²이면 Ha=αe₁.</td></tr><tr><td>전체 분해</td><td>영역을 줄여 가며 반사를 적용하고 Q를 곱해 되돌린다.</td></tr><tr><td>수치 검산</td><td>재구성과 기저의 정규직교성을 따로 검사한다.</td></tr></tbody></table></div>
 
