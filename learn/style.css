@@ -124,6 +124,20 @@ main { max-width: 700px; margin: 0 auto; padding: 28px 16px 96px; }
 .plan-phase.now-on { border-top-color: var(--accent); }
 .now-tag { font-size: 0.72rem; font-weight: 800; color: var(--bg, #fff); background: var(--accent); border-radius: 4px; padding: 1px 6px; }
 .plan-note { margin: 4px 0 0; }
+.plan-over { list-style: none; margin: 14px 0 0; padding: 0; border-top: 2px solid var(--text); }
+.plan-over li { border-bottom: 1px solid var(--line); }
+.plan-over a { display: grid; grid-template-columns: 4.2em minmax(0, 1fr) auto; gap: 10px; align-items: baseline; padding: 7px 4px; color: var(--text); text-decoration: none; }
+.plan-over a:hover .po-t { color: var(--accent); text-decoration: underline; text-underline-offset: .2em; }
+.plan-over li.on a { background: var(--surface); }
+.plan-over li.on .po-n { color: var(--accent); font-weight: 800; }
+.po-n { font-size: 0.8rem; color: var(--muted); }
+.po-t { font-weight: 600; }
+.po-m { font-size: 0.78rem; color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.plan-how { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 28px; margin-top: 22px; padding: 12px 16px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; }
+.plan-how h2 { margin: 0 0 4px; font-size: 0.9rem; color: var(--accent); }
+.plan-how ol { margin: 0; padding-left: 1.3em; font-size: 0.9rem; line-height: 1.6; }
+.plan-how li { margin: 2px 0; }
+@media (max-width: 700px) { .plan-how { grid-template-columns: 1fr; } .plan-over a { grid-template-columns: 3.6em minmax(0, 1fr); } .po-m { grid-column: 2; } }
 .nav-paths { margin-top: 16px; }
 .nav-paths summary { padding: 4px 8px; color: var(--muted); cursor: pointer; }
 .side-extra .strip { margin: 0 8px 4px; }

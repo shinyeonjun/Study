@@ -77,26 +77,26 @@ GROUPS = [dict(ax, cats=[{"id": c["id"], "name": c["name"], "units": c["units"],
 # 건너뛰는 단원은 notes.js의 window.BDA_SKIP 한 곳에서만 관리한다
 SKIP = json.loads(re.search(r"window\.BDA_SKIP = (\[.*?\]);", io.open(NOTES, encoding="utf-8").read()).group(1))
 PLAN = [
-    {"id": "warm", "name": "몸풀기", "main": True, "note": "아는 장은 확인 문제만 풀고 넘어가도 됩니다.",
+    {"id": "warm", "name": "몸풀기", "main": True, "note": "이후 모든 식에 로그와 Σ가, 모든 실습에 Python이 나옵니다. 아는 장은 확인 문제만 풀고 넘어가도 됩니다.",
      "units": ["RS01"] + rng("PY", 6, 8) + rng("AL", 7, 9)},
-    {"id": "data", "name": "데이터와 확률 기초", "main": True, "note": "numpy·pandas로 자료를 직접 만지며 이산 확률까지 갑니다.",
+    {"id": "data", "name": "데이터와 확률 기초", "main": True, "note": "확률은 통계·ML 전체의 언어입니다. numpy·pandas로 자료를 직접 만지며 이산 확률까지 갑니다.",
      "units": rng("DA", 1, 8) + rng("PY", 9, 11) + rng("PR", 1, 5)},
-    {"id": "base", "name": "선형대수·미적분 기초", "main": True, "note": "연속 확률과 회귀에 필요한 만큼만 먼저 합니다.",
+    {"id": "base", "name": "선형대수·미적분 기초", "main": True, "note": "연속 확률(적분)과 회귀(행렬) 바로 앞에서 필요한 만큼만 먼저 합니다. 깊은 부분은 5단계에서 다시 만납니다.",
      "units": rng("LA", 1, 5) + rng("CA", 1, 5)},
-    {"id": "stat", "name": "확률·통계", "main": True, "note": "통계 단원을 하나 끝낼 때마다 빅분기 노트 2과목의 같은 내용을 읽습니다.",
+    {"id": "stat", "name": "확률·통계", "main": True, "note": "빅분기 2과목의 중심입니다. 통계 단원을 하나 끝낼 때마다 빅분기 노트 2과목의 같은 내용을 읽습니다.",
      "units": rng("PR", 6, 10) + rng("ST", 1, 10) + ["BD01", "BD02"]},
-    {"id": "math", "name": "선형대수·미적분 마무리", "main": True, "note": "고유값과 SVD는 모델 내부를 볼 때 그대로 쓰입니다.",
+    {"id": "math", "name": "선형대수·미적분 마무리", "main": True, "note": "고유값·SVD·근사는 머신러닝과 모델 내부 분석에 그대로 쓰입니다.",
      "units": rng("LA", 6, 8) + rng("CA", 6, 8)},
-    {"id": "ml", "name": "머신러닝", "main": True, "note": "빅분기 노트 3·4과목과 실기를 나란히 읽습니다.",
+    {"id": "ml", "name": "머신러닝", "main": True, "note": "앞의 수학이 한꺼번에 쓰이는 단계입니다. 빅분기 노트 3·4과목과 실기를 나란히 읽습니다.",
      "units": rng("OP", 1, 4) + rng("ML", 1, 12) + rng("BD", 3, 5)},
-    {"id": "dl", "name": "딥러닝과 연구", "main": True, "note": "마지막의 모델 내부·해석 가능성(SP09)이 연구로 이어집니다.",
+    {"id": "dl", "name": "딥러닝과 연구", "main": True, "note": "연구로 넘어가는 다리입니다. 마지막의 모델 내부·해석 가능성(SP09)이 연구 주제로 이어집니다.",
      "units": rng("DL", 1, 10) + rng("OP", 5, 8) + rng("RS", 2, 10) + ["SP09"]},
-    {"id": "adv", "name": "대학 심화", "main": True, "note": "필요한 과목부터 골라 읽어도 됩니다.",
+    {"id": "adv", "name": "대학 심화", "main": True, "note": "1~7단계를 마친 뒤, 연구에 필요한 과목부터 골라 읽습니다.",
      "units": rng("LA", 9, 14) + rng("CA", 9, 12) + track("RA") + rng("PR", 11, 14) + rng("ST", 11, 15)
               + rng("OP", 9, 11) + rng("ML", 13, 16) + rng("DL", 11, 14) + track("AI", "RL")},
 ]
 _planned = [i for p in PLAN for i in p["units"]]
-PLAN.append({"id": "side", "name": "곁가지", "main": False, "note": "머리를 덜 쓰고 싶은 날 한 장씩 읽습니다.",
+PLAN.append({"id": "side", "name": "곁가지", "main": False, "note": "가벼운 날 새 장 대신 한 장씩 읽습니다.",
              "units": [u["id"] for u in units if u["id"] not in _planned and u["id"] not in SKIP]})
 
 # ---- 검사 ----

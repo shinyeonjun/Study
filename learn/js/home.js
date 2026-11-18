@@ -180,16 +180,54 @@
     }
   }
 
-  // #plan: 공부 순서 전체. 단계마다 진도, 한 줄 안내, 단원 줄(앞 단계에서 끌려온 선수는 '앞내용')
+  // #plan: 공부 순서 전체. 맨 위에 단계 한눈에(기간 포함)와 공부하는 법, 그 아래 단계마다 이유와 단원 줄
+  function weeks(n) { return Math.max(1, Math.ceil(n / 5)); } // 하루 1장, 주 5일
+
   function drawPlan(view) {
-    var cur = currentPhase();
-    view.appendChild(head("공부 순서", "단계 " + G.plan().length + "개"));
-    G.plan().forEach(function (p) {
-      var pr = G.phaseProgress(p, S), sec = el("section", "plan-phase" + (cur && cur.phase.id === p.id ? " now-on" : ""));
+    var cur = currentPhase(), phases = G.plan(), mainTotal = 0;
+    var prs = phases.map(function (p) { var pr = G.phaseProgress(p, S); if (p.main && p.id !== "adv") mainTotal += pr.total; return pr; });
+    view.appendChild(head("공부 순서", "1~7단계 약 " + mainTotal + "장 · 하루 1장이면 약 " + weeks(mainTotal) + "주"));
+
+    // 한눈에: 단계 · 기간 · 진도
+    var over = el("ol", "plan-over");
+    phases.forEach(function (p, i) {
+      var li = el("li", cur && cur.phase.id === p.id ? "on" : ""), a = link("", "", "#plan-" + p.id);
+      a.appendChild(el("span", "po-n", p.no + "단계"));
+      a.appendChild(el("span", "po-t", p.name));
+      a.appendChild(el("span", "po-m", prs[i].done + " / " + prs[i].total + "장 · 약 " + weeks(prs[i].total) + "주"));
+      li.appendChild(a);
+      over.appendChild(li);
+    });
+    view.appendChild(over);
+
+    // 공부하는 법: 하루 순서와 한 장 읽는 순서
+    var how = el("section", "plan-how");
+    var day = el("div"), one = el("div");
+    day.appendChild(el("h2", "", "하루"));
+    var dl = el("ol");
+    ["위쪽 '오늘 복습'과 '오답'부터 풉니다. 복습이 언제나 새 장보다 먼저입니다.",
+     "새 장은 왼쪽 '지금 할 공부' 맨 위 하나만 합니다. 하루 1장이 기본입니다.",
+     "피곤한 날은 복습만 하거나 '가벼운 날' 한 장을 읽습니다.",
+     "일주일에 한 번 '기록 내보내기'로 기록을 파일로 받아 둡니다."].forEach(function (t) { dl.appendChild(el("li", "", t)); });
+    day.appendChild(dl);
+    one.appendChild(el("h2", "", "한 장"));
+    var ol = el("ol");
+    ["장 끝 확인 문제를 먼저 3분 훑어봅니다. 못 풀어도 됩니다.",
+     "절 끝의 문제는 그 자리에서 풉니다. 틀리면 그 절만 다시 읽습니다.",
+     "증명은 덮고, 어떤 가정을 어디서 썼는지 내 공책에 한 줄로 적습니다.",
+     "코드는 숫자 하나를 바꿔 돌려 보고, 결과가 왜 바뀌는지 한 문장으로 적습니다.",
+     "장 끝 문제까지 풀면 그 장을 마친 것입니다. 막힌 곳은 '?'로 표시하고 넘어갑니다."].forEach(function (t) { ol.appendChild(el("li", "", t)); });
+    one.appendChild(ol);
+    how.appendChild(day);
+    how.appendChild(one);
+    view.appendChild(how);
+
+    phases.forEach(function (p, i) {
+      var pr = prs[i], sec = el("section", "plan-phase" + (cur && cur.phase.id === p.id ? " now-on" : ""));
       sec.id = "plan-" + p.id;
       var h = el("h2", "", p.no + "단계 · " + p.name);
       if (cur && cur.phase.id === p.id) h.appendChild(el("span", "now-tag", "지금"));
-      h.appendChild(el("span", "sec-meta", pr.done + " / " + pr.total + "장"));
+      h.appendChild(el("span", "sec-meta", pr.done + " / " + pr.total + "장 · 약 " + weeks(pr.total) + "주"));
       sec.appendChild(h);
       if (p.note) sec.appendChild(el("p", "plan-note small muted", p.note));
       var blk = el("div", "area-block");
