@@ -580,7 +580,9 @@ window.BDA_CHAPTERS = {
     {"id": "RA04-3", "title": "단조수렴·Fatou·지배수렴으로 적분의 극한 바꾸기", "href": "notes/ra/ra04-3.html"}
   ],
   PR01: [
-    {"id": "PR01-1", "title": "가능한 결과와 그중에 묻는 사건", "href": "notes/pr/pr01-1.html"}
+    {"id": "PR01-1", "title": "표본공간과 사건", "href": "notes/pr/pr01-1.html"},
+    {"id": "PR01-2", "title": "공리에서 성질을 끌어내기", "href": "notes/pr/pr01-2.html"},
+    {"id": "PR01-3", "title": "확률을 정하는 방법과 해석", "href": "notes/pr/pr01-3.html"}
   ],
   PR02: [
     {"id": "PR02-1", "title": "조건이 주어지면 분모가 달라진다", "href": "notes/pr/pr02-1.html"},
@@ -1153,12 +1155,12 @@ window.BDA_CHAPTERS = {
 
 /* 건너뛰는 단원: 사용자가 이미 아는 기초라서 쓰지 않는다(2026-11-18 결정: 기초 산술과 중학교 대수 제외. 사용자는 고등학교 수학까지 대략 아는 대학생).
    목차에는 '건너뜀'으로 흐리게 남고, 경로의 앞내용에는 나오지 않는다. */
-window.BDA_SKIP = ["AR01", "AR02", "AR03", "AR04", "AR05", "AR08", "AR09", "AL01", "AL02", "AL03"];
+window.BDA_SKIP = ["U01", "U02", "U03", "U04", "U05", "U06", "AR01", "AR02", "AR03", "AR04", "AR05", "AR06", "AR07", "AR08", "AR09", "AR10", "AL01", "AL02", "AL03", "AL04", "AL05", "AL06", "PY01", "PY02", "PY03", "PY04", "PY05"];
 
 // ---- 지도 시작 (tools/build_map.py가 만든다. 직접 고치지 않는다)
 window.BDA_MAP = {
   source: "LEARNING_MAP.md",
-  groups: [{"id": "math", "name": "수학", "areas": ["AR", "AL", "LA", "CA", "PR", "DM", "OP", "RA"]}, {"id": "data", "name": "데이터와 통계", "areas": ["DA", "ST", "BD"]}, {"id": "ai", "name": "AI와 학습", "areas": ["AI", "ML", "DL", "RL"]}, {"id": "computing", "name": "컴퓨터와 프로그래밍", "areas": ["PY", "CS", "SY", "NW", "DB"]}, {"id": "research", "name": "공부와 연구", "areas": ["U", "RS", "SP"]}],
+  groups: [{"id": "theory", "name": "이론·지식", "cats": [{"id": "math", "name": "수학", "units": ["AL07", "AL08", "AL09", "DM01", "DM02", "DM03", "DM04", "DM05", "DM06", "DM07", "DM08", "DM09", "LA01", "LA02", "LA03", "LA04", "LA05", "LA06", "LA07", "LA08", "LA09", "LA10", "LA11", "LA12", "LA13", "LA14", "CA01", "CA02", "CA03", "CA04", "CA05", "CA06", "CA07", "CA08", "CA09", "CA10", "CA11", "CA12", "RA01", "RA02", "RA03", "RA04", "PR01", "PR02", "PR03", "PR04", "PR05", "PR06", "PR07", "PR08", "PR09", "PR10", "PR11", "PR12", "PR13", "PR14", "OP01", "OP02", "OP03", "OP04", "OP05", "OP06", "OP07", "OP08", "OP09", "OP10", "OP11"], "labels": {}}, {"id": "stat", "name": "통계", "units": ["DA02", "DA03", "DA04", "DA05", "DA08", "ST01", "ST02", "ST03", "ST04", "ST05", "ST06", "ST07", "ST08", "ST09", "ST10", "ST11", "ST12", "ST13", "ST14", "ST15"], "labels": {"DA": "자료의 분포와 표본"}}, {"id": "ai", "name": "AI·머신러닝 이론", "units": ["AI01", "AI02", "AI03", "AI04", "AI05", "AI06", "AI07", "AI08", "AI09", "ML01", "ML02", "ML03", "ML04", "ML05", "ML06", "ML07", "ML08", "ML09", "ML10", "ML11", "ML12", "ML13", "ML14", "ML15", "ML16", "DL01", "DL02", "DL03", "DL04", "DL05", "DL06", "DL07", "DL08", "DL09", "DL10", "DL11", "DL12", "DL13", "DL14", "RL01", "RL02", "RL03", "RL04", "RL05", "RL06", "RL07", "RL08", "RL09", "RL10", "RL11", "RL12", "RL13", "RL14", "RL15", "RL16"], "labels": {}}, {"id": "cs", "name": "컴퓨터 과학 이론", "units": ["CS01", "CS02", "CS03", "CS04", "CS05", "CS06", "CS07", "CS08", "CS09", "CS10", "CS11", "CS12", "CS13", "SY01", "SY02", "SY03", "SY04", "SY05", "SY08", "SY09", "SY10", "SY12", "SY13", "NW01", "NW02", "NW03", "NW04", "NW05", "NW06", "NW07", "NW08", "NW09", "NW10", "NW11", "NW12", "NW13", "NW14", "NW15", "NW16", "NW17", "DB01", "DB04", "DB05", "DB08", "DB09", "DB10", "DB11"], "labels": {"SY": "컴퓨터 구조·운영체제", "DB": "데이터베이스 원리와 내부"}}]}, {"id": "method", "name": "방법·도구", "cats": [{"id": "tools", "name": "프로그래밍 도구", "units": ["PY06", "PY07", "PY08", "PY09", "PY10", "PY11", "PY12", "PY13", "PY14", "SY06", "SY07", "SY11"], "labels": {"PY": "Python 실전·numpy·pandas", "SY": "터미널·Git·성능 측정"}}, {"id": "practice", "name": "데이터 분석 실무", "units": ["DA01", "DA06", "DA07", "DA09", "DA10", "DB02", "DB03", "DB06", "DB07"], "labels": {"DA": "분석 설계·품질·보고", "DB": "SQL과 데이터 파이프라인"}}, {"id": "research", "name": "연구 방법", "units": ["RS01", "RS02", "RS03", "RS04", "RS05", "RS06", "RS07", "RS08", "RS09", "RS10", "RS11", "RS12", "RS13", "RS14", "RS15"], "labels": {}}]}, {"id": "purpose", "name": "목적·응용", "cats": [{"id": "exam", "name": "빅분기 시험", "units": ["BD01", "BD02", "BD03", "BD04", "BD05"], "labels": {}}, {"id": "topics", "name": "연구 주제 확장", "units": ["SP01", "SP02", "SP03", "SP04", "SP05", "SP06", "SP07", "SP08", "SP09", "SP10", "SP11", "SP12", "SP13", "SP14", "SP15"], "labels": {}}]}],
   areas: [
     {"code": "U", "name": "공부·컴퓨터 사용의 출발점", "depth": "입문"},
     {"code": "AR", "name": "산술과 수 감각", "depth": "입문"},
@@ -1471,7 +1473,7 @@ window.BDA_MAP = {
     {"id": "research", "name": "연구 과제", "targets": ["RS01", "RS02", "RS03", "RS04", "RS05", "RS06", "RS07", "RS08", "RS09", "RS10", "RS11", "RS12", "RS13", "RS14", "RS15"]}
   ],
   plan: [
-    {"id": "warm", "name": "몸풀기", "main": true, "note": "아는 장은 확인 문제만 풀고 넘어가도 됩니다.", "units": ["U01", "U02", "U03", "U04", "U05", "U06", "RS01", "PY01", "PY02", "PY03", "PY04", "PY05", "PY06", "PY07", "PY08", "AR06", "AR07", "AR10", "AL04", "AL05", "AL06", "AL07", "AL08", "AL09"]},
+    {"id": "warm", "name": "몸풀기", "main": true, "note": "아는 장은 확인 문제만 풀고 넘어가도 됩니다.", "units": ["RS01", "PY06", "PY07", "PY08", "AL07", "AL08", "AL09"]},
     {"id": "data", "name": "데이터와 확률 기초", "main": true, "note": "numpy·pandas로 자료를 직접 만지며 이산 확률까지 갑니다.", "units": ["DA01", "DA02", "DA03", "DA04", "DA05", "DA06", "DA07", "DA08", "PY09", "PY10", "PY11", "PR01", "PR02", "PR03", "PR04", "PR05"]},
     {"id": "base", "name": "선형대수·미적분 기초", "main": true, "note": "연속 확률과 회귀에 필요한 만큼만 먼저 합니다.", "units": ["LA01", "LA02", "LA03", "LA04", "LA05", "CA01", "CA02", "CA03", "CA04", "CA05"]},
     {"id": "stat", "name": "확률·통계", "main": true, "note": "통계 단원을 하나 끝낼 때마다 빅분기 노트 2과목의 같은 내용을 읽습니다.", "units": ["PR06", "PR07", "PR08", "PR09", "PR10", "ST01", "ST02", "ST03", "ST04", "ST05", "ST06", "ST07", "ST08", "ST09", "ST10", "BD01", "BD02"]},

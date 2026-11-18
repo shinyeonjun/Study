@@ -87,8 +87,8 @@ for book in ("learn", "bigdata"):
             for d in re.findall(r'class="check" data-q="([^"]+)"', html):
                 if d not in ids: add("본문 check가 문제에 없음", "%s %s" % (tag, d))
         sizes.append((t.n, nfig, nq, tag))
-        # 건너뛰는 단원 언급
-        for s in skip:
+        # 건너뛰는 단원 언급 (건너뛰는 단원의 장끼리 서로 가리키는 것은 세지 않는다)
+        for s in ([] if c["unit"] in skip else skip):
             if re.search(r"(?<![A-Z0-9])%s(?![0-9])" % s, re.sub(r"<script.*?</script>", "", html, flags=re.S)):
                 add("건너뛴 단원 언급", "%s → %s" % (tag, s))
         # 내부 링크

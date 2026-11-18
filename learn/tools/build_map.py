@@ -47,22 +47,38 @@ PATHS = [
     {"id": "math", "name": "수학 심화", "targets": track("AR", "AL", "DM", "LA", "CA", "RA", "PR", "OP") + ["SP10"]},
     {"id": "research", "name": "연구 과제", "targets": track("RS")},
 ]
-GROUPS = [
-    # 홈 목차의 묶음. 과목 하나뿐인 묶음은 만들지 않는다. 묶음 안 순서 = 대체로 공부하는 순서
-    {"id": "math", "name": "수학", "areas": ["AR", "AL", "LA", "CA", "PR", "DM", "OP", "RA"]},
-    {"id": "data", "name": "데이터와 통계", "areas": ["DA", "ST", "BD"]},
-    {"id": "ai", "name": "AI와 학습", "areas": ["AI", "ML", "DL", "RL"]},
-    {"id": "computing", "name": "컴퓨터와 프로그래밍", "areas": ["PY", "CS", "SY", "NW", "DB"]},
-    {"id": "research", "name": "공부와 연구", "areas": ["U", "RS", "SP"]},
+# 홈 목차: 성격별 3축 9범주 (2026-11-19 사용자 결정). 범주는 과목(분야)이 아니라 단원 단위로 나눈다.
+# 한 과목 안에 이론과 도구가 섞여 있으면 단원마다 맞는 범주로 보낸다. 건너뛰는 단원은 넣지 않는다.
+CATS = [
+    {"id": "math", "axis": "theory", "name": "수학",
+     "units": rng("AL", 7, 9) + track("LA", "CA", "RA", "PR", "DM", "OP")},
+    {"id": "stat", "axis": "theory", "name": "통계",
+     "units": ["DA02", "DA03", "DA04", "DA05", "DA08"] + track("ST"), "labels": {"DA": "자료의 분포와 표본"}},
+    {"id": "ai", "axis": "theory", "name": "AI·머신러닝 이론", "units": track("AI", "ML", "DL", "RL")},
+    {"id": "cs", "axis": "theory", "name": "컴퓨터 과학 이론",
+     "units": track("CS") + ["SY01", "SY02", "SY03", "SY04", "SY05", "SY08", "SY09", "SY10", "SY12", "SY13"]
+              + track("NW") + ["DB01", "DB04", "DB05", "DB08", "DB09", "DB10", "DB11"],
+     "labels": {"SY": "컴퓨터 구조·운영체제", "DB": "데이터베이스 원리와 내부"}},
+    {"id": "tools", "axis": "method", "name": "프로그래밍 도구", "units": rng("PY", 6, 14) + ["SY06", "SY07", "SY11"],
+     "labels": {"PY": "Python 실전·numpy·pandas", "SY": "터미널·Git·성능 측정"}},
+    {"id": "practice", "axis": "method", "name": "데이터 분석 실무",
+     "units": ["DA01", "DA06", "DA07", "DA09", "DA10", "DB02", "DB03", "DB06", "DB07"],
+     "labels": {"DA": "분석 설계·품질·보고", "DB": "SQL과 데이터 파이프라인"}},
+    {"id": "research", "axis": "method", "name": "연구 방법", "units": track("RS")},
+    {"id": "exam", "axis": "purpose", "name": "빅분기 시험", "units": track("BD")},
+    {"id": "topics", "axis": "purpose", "name": "연구 주제 확장", "units": track("SP")},
 ]
+AXES = [{"id": "theory", "name": "이론·지식"}, {"id": "method", "name": "방법·도구"}, {"id": "purpose", "name": "목적·응용"}]
+GROUPS = [dict(ax, cats=[{"id": c["id"], "name": c["name"], "units": c["units"], "labels": c.get("labels", {})} for c in CATS if c["axis"] == ax["id"]]) for ax in AXES]
 
 # 공부 순서(홈 왼쪽 '지금 할 공부'와 #plan 화면). 사용자: 고교 수학을 아는 컴퓨터 계열 대학생,
 # 빅분기 준비와 모델 내부 연구가 목표 (2026-11-19). 단계 안 순서는 화면에서 선수관계로 정하고,
 # 다른 단계에 있는 선수 단원은 그 단계보다 먼저 '앞내용'으로 끌려 나온다. main=False 단계는 차례를 기다리지 않는다.
-SKIP = ["AR01", "AR02", "AR03", "AR04", "AR05", "AR08", "AR09", "AL01", "AL02", "AL03"]
+# 건너뛰는 단원은 notes.js의 window.BDA_SKIP 한 곳에서만 관리한다
+SKIP = json.loads(re.search(r"window\.BDA_SKIP = (\[.*?\]);", io.open(NOTES, encoding="utf-8").read()).group(1))
 PLAN = [
     {"id": "warm", "name": "몸풀기", "main": True, "note": "아는 장은 확인 문제만 풀고 넘어가도 됩니다.",
-     "units": rng("U", 1, 6) + ["RS01"] + rng("PY", 1, 8) + ["AR06", "AR07", "AR10"] + rng("AL", 4, 9)},
+     "units": ["RS01"] + rng("PY", 6, 8) + rng("AL", 7, 9)},
     {"id": "data", "name": "데이터와 확률 기초", "main": True, "note": "numpy·pandas로 자료를 직접 만지며 이산 확률까지 갑니다.",
      "units": rng("DA", 1, 8) + rng("PY", 9, 11) + rng("PR", 1, 5)},
     {"id": "base", "name": "선형대수·미적분 기초", "main": True, "note": "연속 확률과 회귀에 필요한 만큼만 먼저 합니다.",
@@ -115,8 +131,14 @@ def closure(i, seen=None):
 for i in rng("RL", 1, 8):
     bad = sorted(x for x in closure(i) if x.startswith("CA") or x.startswith("DL"))
     if bad: errors.append("%s 앞내용에 %s" % (i, bad))
-gset = sum((g["areas"] for g in GROUPS), [])
-if sorted(gset) != sorted(a["code"] for a in areas): errors.append("묶음(GROUPS)에 빠지거나 남는 분야")
+_cat = [i for c in CATS for i in c["units"]]
+for i in _cat:
+    if i not in byid: errors.append("범주의 %s가 없음" % i)
+    if i in SKIP: errors.append("범주에 건너뛰는 단원 %s" % i)
+_cd = sorted(set(i for i in _cat if _cat.count(i) > 1))
+if _cd: errors.append("두 범주에 들어간 단원: %s" % _cd)
+_cm = sorted(set(ids) - set(_cat) - set(SKIP))
+if _cm: errors.append("범주에 빠진 단원: %s" % _cm)
 for p in PATHS:
     for t in p["targets"]:
         if t not in byid: errors.append("경로 %s의 %s가 없음" % (p["id"], t))
