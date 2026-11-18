@@ -223,7 +223,7 @@
       input.readOnly = true;
       go.remove();
       if (q.type === "num") {
-        box.appendChild(el("p", "q-model", "정답: " + Number(q.answer).toLocaleString("ko-KR") + (q.a ? " · " + q.a : "")));
+        box.appendChild(el("p", "q-model", "정답: " + Number(q.answer).toLocaleString("ko-KR", { maximumFractionDigits: 10 }) + (q.a ? " · " + q.a : "")));
         finish(numOk(input.value, q.answer), input.value.trim());
       } else {
         box.appendChild(el("p", "q-model", "모범 답: " + q.a));
