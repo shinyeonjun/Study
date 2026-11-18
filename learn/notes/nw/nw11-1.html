@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>확인이 사라져도 한 번만 전달하는 번갈이 비트 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e8c'/%3E%3Cpath d='M8 22V10m8 12V14m8 8V6' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="NW11-1">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+
+<header class="chapter">
+<p class="chap-sub">네트워크 · NW11 신뢰 전송의 상태 기계</p>
+<p class="chap-num">NW11·1</p>
+<h1>확인이 사라져도 한 번만 전달하는 번갈이 비트</h1>
+<p class="lead">송신자는 확인을 못 받으면 다시 보냅니다. 수신자는 같은 자료가 다시 도착했는지 상태로 판단하고, 이미 전달한 자료의 확인을 다시 보냅니다.</p>
+</header>
+
+<div class="goal">
+<h2>이 장을 읽고 나면</h2>
+<ul>
+<li>정지 후 대기 방식의 송신 상태와 수신 상태를 분리한다.</li>
+<li>데이터 손실과 확인 응답 손실을 각각 추적한다.</li>
+<li>전달의 안전성과 결국 진행하는 조건을 구분한다.</li>
+</ul>
+</div>
+
+<h2>두 장치가 같은 사실을 알고 있는지 구분합니다</h2>
+<p>연결 위에서 A와 B라는 기록 두 개를 순서대로 넘기는 합성 프로토콜을 만듭니다. <b class="key">정지 후 대기</b>(stop-and-wait)는 기록 하나를 보내고 그 기록의 확인이 올 때까지 새 기록을 보내지 않습니다. 첫 기록을 보낸 뒤 아무 응답이 없으면 두 상황이 가능합니다. 기록 자체가 사라졌거나, 기록은 전달됐지만 확인만 사라졌을 수 있습니다. 송신 타이머가 끝났다는 사실만으로 어느 상황인지 판정할 수 없습니다.</p>
+<p>각 기록에 <b class="key">순번 비트</b> 0 또는 1을 붙이고, 아직 확인을 못 받은 기록을 다시 보낼 때는 같은 비트를 붙입니다. 이 장의 ACK(b)는 ‘비트 b의 기록을 수락했다’는 확인입니다. <a href="nw06-1.html">TCP의 누적 ACK</a>는 다음에 기대하는 번호이므로 뜻이 다릅니다. 송신자는 기다리는 비트와 맞는 확인을 받은 뒤 다음 기록의 비트를 바꿉니다. 수신자는 기대한 비트가 오면 앱에 기록을 전달하고 기대 비트를 바꿉니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 150" role="img" aria-label="송신자는 비트 0에서 확인을 기다리고 수신자는 0 수락 후 1을 기대한다">
+<rect class="f-box" x="28" y="35" width="303" height="73" rx="3"/>
+<text class="f-t" x="179" y="62" text-anchor="middle">송신 · A(0) 확인 대기</text>
+<text class="f-s" x="179" y="88" text-anchor="middle">같은 비트 ACK(0)에서만 진행</text>
+<rect class="f-box" x="429" y="35" width="303" height="73" rx="3"/>
+<text class="f-t" x="581" y="62" text-anchor="middle">수신 · 다음 비트 0 기대</text>
+<text class="f-s" x="581" y="88" text-anchor="middle">A(0) 전달 뒤 기대 비트 1</text>
+<line class="f-line" x1="331" y1="58" x2="425" y2="58" marker-end="url(#f-arrow)"/>
+<line class="f-ink" x1="429" y1="91" x2="335" y2="91" marker-end="url(#f-arrow)"/>
+<text class="f-s" x="380" y="30" text-anchor="middle">A(0)</text>
+<text class="f-s" x="380" y="121" text-anchor="middle">ACK(0)</text>
+</svg>
+<figcaption>수신자가 기록을 이미 전달했어도 송신자는 확인을 받기 전까지 그대로 기다립니다.</figcaption>
+</figure>
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+<div class="check" data-q="q3"></div>
+<h2>중복은 전달을 건너뛰고 확인만 되풀이합니다</h2>
+<p>A(0)가 도착하고 ACK(0)만 사라졌다고 합시다. 수신자는 이미 A를 전달하여 1을 기대하고 있습니다. 송신자는 아직 A(0)를 기다리므로 타이머 만료에 같은 A(0)를 보냅니다. 수신자의 기대와 맞지 않아서 앱에 다시 전달하지 않고, ACK(0)만 다시 보냅니다. 이 ACK가 도착하면 송신자는 B(1)로 넘어갑니다. 이번에는 B(1) 자체가 사라지므로 수신 상태가 변하지 않습니다. 같은 비트로 재전송했을 때 수신자가 처음으로 B를 전달합니다.</p>
+<div class="table-wrap"><table>
+<thead><tr><th scope="col">사건</th><th scope="col">송신자의 대기 비트</th><th scope="col">수신자의 다음 기대</th><th scope="col">앱에 누적 전달</th></tr></thead>
+<tbody>
+<tr><td>A(0) 도착 · 첫 ACK 손실</td><td>0</td><td>1</td><td>A</td></tr>
+<tr><td>A(0) 재도착 · ACK(0) 전달</td><td>1로 진행</td><td>1</td><td>A</td></tr>
+<tr><td>B(1) 첫 전송 손실</td><td>1</td><td>1</td><td>A</td></tr>
+<tr><td>B(1) 재도착 · ACK(1) 전달</td><td>0으로 진행</td><td>0</td><td>A, B</td></tr>
+</tbody></table></div>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 157" role="img" aria-label="A 확인만 사라지고 B는 데이터가 사라지는 각각의 반복">
+<text class="f-s" x="112" y="28" text-anchor="middle">첫 시도</text>
+<text class="f-s" x="373" y="28" text-anchor="middle">타이머 후 재전송</text>
+<text class="f-s" x="613" y="28" text-anchor="middle">최종 앱 기록</text>
+<rect class="f-box" x="12" y="50" width="200" height="33" rx="3"/>
+<rect class="f-box" x="263" y="50" width="220" height="33" rx="3"/>
+<rect class="f-soft" x="531" y="50" width="164" height="33" rx="3"/>
+<text class="f-t" x="112" y="72" text-anchor="middle">A(0) 도착 · ACK 손실</text>
+<text class="f-t" x="373" y="72" text-anchor="middle">A(0) 중복 · 확인만</text>
+<text class="f-t" x="613" y="72" text-anchor="middle">A</text>
+<line class="f-ink" x1="212" y1="65" x2="259" y2="65" marker-end="url(#f-arrow)"/>
+<line class="f-ink" x1="483" y1="65" x2="527" y2="65" marker-end="url(#f-arrow)"/>
+<rect class="f-box" x="12" y="97" width="200" height="33" rx="3"/>
+<rect class="f-box" x="263" y="97" width="220" height="33" rx="3"/>
+<rect class="f-soft" x="531" y="97" width="164" height="33" rx="3"/>
+<text class="f-t" x="112" y="119" text-anchor="middle">B(1) 자료 손실</text>
+<text class="f-t" x="373" y="119" text-anchor="middle">B(1) 첫 수락</text>
+<text class="f-t" x="613" y="119" text-anchor="middle">A, B</text>
+<line class="f-ink" x1="212" y1="112" x2="259" y2="112" marker-end="url(#f-arrow)"/>
+<line class="f-ink" x1="483" y1="112" x2="527" y2="112" marker-end="url(#f-arrow)"/>
+</svg>
+<figcaption>어느 쪽이 사라졌을 때도 송신자는 재전송합니다. 수신 상태가 두 경우의 전달 여부를 구별합니다.</figcaption>
+</figure>
+<p>안전성을 살필 때는 <b class="key">불변식</b>을 씁니다. 앱에 전달한 기록은 항상 원래 기록열의 접두부입니다. 한 세대에서 기대 비트와 맞는 자료를 처음 수락하면 접두부가 한 칸 늘고 기대 비트가 뒤집힙니다. 이 세대의 재전송은 그 뒤에 수락되지 않습니다. 송신자는 현재 기록이 수락됐다는 확인을 받아야 다음 기록을 내므로 전달 순서도 유지됩니다. 이 논증은 같은 비트를 다시 쓸 때 예전 세대의 데이터나 ACK가 뒤늦게 넘어오지 않는 채널을 전제합니다. 한 바퀴 전의 패킷이 임의로 오래 남을 수 있으면 비트 하나만으로 세대를 구분할 수 없습니다.</p>
+<div class="check" data-q="q4"></div>
+<div class="check" data-q="q5"></div>
+<div class="check" data-q="q6"></div>
+<h2>정해진 네 시도만 실행해 확인합니다</h2>
+<p>이 모형의 진행성은 기다리는 동안 재전송 기회가 계속 오고, 어느 시도에서는 기록과 맞는 ACK가 결국 도착하는 조건에 의존합니다. 채널이 계속 사라지는 메시지만 만들면 안전하게 멈춘 상태일 수 있습니다. 예제는 실제 시간을 기다리거나 통신을 열지 않고 네 사건을 순서대로 적용합니다.</p>
+<pre data-example="python"><code>expected = 0
+waiting = 0
+delivered = []
+events = [
+    (&quot;A&quot;, 0, True, False),
+    (&quot;A&quot;, 0, True, True),
+    (&quot;B&quot;, 1, False, False),
+    (&quot;B&quot;, 1, True, True),
+]
+for name, bit, data_arrives, ack_arrives in events:
+    assert bit == waiting
+    if not data_arrives:
+        result = &quot;data lost&quot;
+    elif bit == expected:
+        delivered.append(name)
+        expected ^= 1
+        result = &quot;accepted&quot;
+    else:
+        result = &quot;duplicate&quot;
+    if data_arrives and ack_arrives:
+        waiting ^= 1
+    print(name, bit, result, &quot;|&quot;, waiting, expected, &quot;&quot;.join(delivered))
+assert delivered == [&quot;A&quot;, &quot;B&quot;]</code></pre>
+<pre data-output><code>A 0 accepted | 0 1 A
+A 0 duplicate | 1 1 A
+B 1 data lost | 1 1 A
+B 1 accepted | 0 0 AB</code></pre>
+<p><code>waiting</code>과 <code>expected</code>의 숫자가 첫 시도 뒤 서로 다릅니다. 데이터 수락과 확인 도착이 다른 사건이라 두 상태를 하나로 합치면 이 상황을 표현할 수 없습니다.</p>
+
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table>
+<thead><tr><th scope="col">핵심어</th><th scope="col">기억할 기준</th></tr></thead>
+<tbody>
+<tr><td><b class="key">송신 상태</b></td><td>현재 기록과 그 확인을 기다리는 비트</td></tr>
+<tr><td><b class="key">수신 상태</b></td><td>다음으로 처음 수락할 기록의 비트</td></tr>
+<tr><td><b class="key">타이머 만료</b></td><td>같은 기록을 같은 비트로 재시도</td></tr>
+<tr><td><b class="key">접두부 불변식</b></td><td>전달한 기록열이 원래 순서를 벗어나지 않음</td></tr>
+</tbody></table></div>
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>송신 측의 미확인 상태와 수신 측의 이미 전달한 상태가 동시에 성립할 수 있습니다.</p></div>
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://www.scs.stanford.edu/09au-cs144/notes/">Stanford CS144 · 네트워크 강의 노트</a></li>
+<li><a href="https://www.scs.stanford.edu/08sp-cs144/labs/reliable.html">Stanford CS144 · 신뢰 전송과 슬라이딩 윈도 실습</a></li>
+</ul>
+
+<h2>확인 문제</h2>
+<p>아직 풀지 않은 문제입니다. 먼저 식이나 근거를 적어 보고 해설을 확인합니다.</p>
+<div id="quiz"></div>
+
+<section class="work" id="tools"></section>
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

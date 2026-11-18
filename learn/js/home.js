@@ -1,5 +1,4 @@
-/* 홈(목차): 왼쪽에 검색·경로·분야, 오른쪽에 오늘 상태 한 줄과 목차.
-   보기는 주소의 # 로 정한다:  #all(전체 목차) · #path-ml(경로) · #area-AR(분야로 이동) */
+/* 홈 목차: #all → #group-math → #area-LA. 추천 경로는 #path-ml 같은 주소를 쓴다. */
 (function () {
   var B = window.BDA, el = B.el, G, M = window.BDA_MAP, S;
 
@@ -8,35 +7,18 @@
   // ---- 왼쪽: 검색, 경로, 분야, 공부한 날, 백업 ----
   function drawNav() {
     var paths = document.getElementById("nav-paths"), areas = document.getElementById("nav-areas");
-    paths.textContent = "";
-    var all = link("nv", "", "#all");
-    all.setAttribute("data-view", "all");
-    all.appendChild(el("span", "", "전체 목차"));
-    all.appendChild(el("span", "cnt", M.units.length + ""));
-    paths.appendChild(all);
+    var all = link("nv", "분야별 목차", "#all");
+    areas.appendChild(all);
+    M.groups.forEach(function (group) {
+      areas.appendChild(link("nv", group.name, "#group-" + group.id));
+    });
     M.paths.forEach(function (p) {
       var ids = G.expand(p.targets), ready = ids.filter(function (id) { return G.chapters(id).length; }).length;
       var a = link("nv", "", "#path-" + p.id);
-      a.setAttribute("data-view", "path-" + p.id);
       a.appendChild(el("span", "", p.name));
       a.appendChild(el("span", "cnt", ready + " / " + ids.length));
       a.title = "본문 있는 단원 / 앞내용까지 포함한 단원";
       paths.appendChild(a);
-    });
-    areas.textContent = "";
-    M.groups.forEach(function (g) {
-      areas.appendChild(el("p", "nv-group", g.name));
-      g.areas.forEach(function (code) {
-        var ar = G.area(code), a = link("nv", "", "#area-" + code);
-        a.setAttribute("data-view", "area-" + code);
-        var name = el("span");
-        name.appendChild(el("b", "nv-code", code));
-        name.appendChild(document.createTextNode(ar.name));
-        a.appendChild(name);
-        var n = M.units.filter(function (u) { return u.area === code && !G.skipped(u.id); }), ready = n.filter(function (u) { return G.chapters(u.id).length; }).length;
-        a.appendChild(el("span", "cnt", ready ? ready + " / " + n.length : n.length + ""));
-        areas.appendChild(a);
-      });
     });
   }
 
@@ -170,42 +152,101 @@
   // ---- 목차 ----
   function head(title, meta) {
     var h = el("div", "view-head");
-    h.appendChild(el("h2", "", title));
+    var titleNode = el("h1", "", title);
+    titleNode.tabIndex = -1;
+    h.appendChild(titleNode);
     if (meta) h.appendChild(el("span", "muted small", meta));
     return h;
   }
 
   function drawAll(view) {
-    var ready = M.units.filter(function (u) { return G.chapters(u.id).length; }).length;
-    var skipN = M.units.filter(function (u) { return G.skipped(u.id); }).length;
-    view.appendChild(head("전체 목차", "분야 22 · 단원 " + (M.units.length - skipN) + " · 본문 있는 단원 " + ready + (skipN ? " · 건너뜀 " + skipN : "")));
-    M.groups.forEach(function (g) {
-      view.appendChild(el("p", "grp", g.name));
-      g.areas.forEach(function (code) {
-        var ar = G.area(code), blk = el("section", "area-block");
-        blk.id = "area-" + code;
-        var h = el("div", "area-head");
-        h.appendChild(el("span", "acode", code));
-        h.appendChild(el("h3", "", ar.name));
-        h.appendChild(el("span", "adepth", ar.depth));
-        blk.appendChild(h);
-        M.units.forEach(function (u) { if (u.area === code) blk.appendChild(G.row(u.id, S)); });
-        view.appendChild(blk);
-      });
+    view.appendChild(head("분야별 목차"));
+    var sections = el("div", "subject-index");
+    M.groups.forEach(function (group) {
+      var section = el("section", "subject-section"), title = el("h2");
+      title.appendChild(link("", group.name, "#group-" + group.id));
+      section.appendChild(title);
+      section.appendChild(areaLinks(group.areas));
+      sections.appendChild(section);
     });
+    view.appendChild(sections);
+  }
+
+  function areaUnits(code) {
+    return M.units.filter(function (u) { return u.area === code && !G.skipped(u.id); })
+      .map(function (u) { return u.id; });
+  }
+
+  function unitCount(ids) {
+    var ready = ids.filter(function (id) { return G.chapters(id).length; }).length;
+    return ready === ids.length ? ready + "개 단원" : "본문 " + ready + " / " + ids.length + "개 단원";
+  }
+
+  function areaLinks(codes, showCounts) {
+    var list = el("ul", showCounts ? "subject-links counted" : "subject-links");
+    codes.forEach(function (code) {
+      var item = el("li"), a = link("", G.area(code).name, "#area-" + code);
+      item.appendChild(a);
+      if (showCounts) item.appendChild(el("span", "muted small", unitCount(areaUnits(code))));
+      list.appendChild(item);
+    });
+    return list;
+  }
+
+  function drawGroup(view, group) {
+    if (group.areas.length === 1) return drawArea(view, group.areas[0], group);
+    view.appendChild(link("view-back small", "분야별 목차", "#all"));
+    view.appendChild(head(group.name));
+    view.appendChild(areaLinks(group.areas, true));
+  }
+
+  function drawArea(view, code, group) {
+    if (!group) return drawAll(view);
+    var ids = areaUnits(code);
+    view.appendChild(group.areas.length > 1
+      ? link("view-back small", group.name, "#group-" + group.id)
+      : link("view-back small", "분야별 목차", "#all"));
+    view.appendChild(head(G.area(code).name, unitCount(ids)));
+    drawLayers(view, ids);
+  }
+
+  function drawLayers(view, ids, goals) {
+    var layers = G.layers(ids);
+    var legend = el("div", "study-legend");
+    legend.appendChild(el("p", "small muted", "맨 아래 층부터 위로 읽으세요. 다른 과목의 선수 단원은 각 단원 안내에서 확인할 수 있습니다."));
+    var jump = el("button", "tool", "기초 층 보기");
+    jump.type = "button";
+    legend.appendChild(jump);
+    view.appendChild(legend);
+    var stack = el("ol", "study-stack");
+    stack.reversed = true;
+    var floor = null;
+    for (var i = layers.length - 1; i >= 0; i--) {
+      var section = el("li", "study-floor");
+      floor = el("h2", "", i === 0 ? "1층 · 이 과목의 출발" : (i + 1) + "층");
+      floor.tabIndex = -1;
+      section.appendChild(floor);
+      layers[i].forEach(function (id) {
+        section.appendChild(G.row(id, S, { tag: goals && !goals.has(id) ? "앞내용" : "" }));
+      });
+      stack.appendChild(section);
+    }
+    if (floor) {
+      jump.onclick = function () {
+        floor.scrollIntoView({ block: "start" });
+        floor.focus({ preventScroll: true });
+      };
+      view.appendChild(stack);
+    }
   }
 
   function drawPath(view, pid) {
     var p = G.path(pid);
     if (!p) return drawAll(view);
-    var ids = G.expand(p.targets), tset = {};
-    p.targets.forEach(function (t) { tset[t] = true; });
-    var ready = ids.filter(function (id) { return G.chapters(id).length; }).length;
-    view.appendChild(head(p.name + " 경로", "목표 " + p.targets.length + " · 앞내용 포함 " + ids.length + " · 본문 있는 단원 " + ready));
-    view.appendChild(el("p", "path-note muted small", "배울 순서대로 늘어놓았습니다. ‘앞내용’은 목표 단원을 이해하는 데 필요한 단원입니다. 순서는 추천일 뿐, 어느 단원이든 바로 열 수 있습니다."));
-    var blk = el("section", "area-block");
-    ids.forEach(function (id) { blk.appendChild(G.row(id, S, { tag: tset[id] ? "" : "앞내용" })); });
-    view.appendChild(blk);
+    var ids = G.expand(p.targets);
+    view.appendChild(link("view-back small", "분야별 목차", "#all"));
+    view.appendChild(head(p.name + " 경로", unitCount(ids)));
+    drawLayers(view, ids, new Set(p.targets));
   }
 
   function drawSearch(view, q) {
@@ -219,25 +260,35 @@
 
   function render() {
     var view = document.getElementById("view"), h = location.hash.slice(1) || "all", q = document.getElementById("q").value.trim();
+    var key = h;
     view.textContent = "";
     if (q) drawSearch(view, q);
     else if (h.indexOf("path-") === 0) drawPath(view, h.slice(5));
-    else drawAll(view);
-    var key = q ? "" : (h.indexOf("area-") === 0 ? h : h || "all");
-    document.querySelectorAll(".nv").forEach(function (a) { a.classList.toggle("on", a.getAttribute("data-view") === key); });
-    if (!q && h.indexOf("area-") === 0) {
-      var t = document.getElementById(h);
-      if (t) t.scrollIntoView({ block: "start" });
-    } else if (!q) window.scrollTo(0, 0);
+    else if (h.indexOf("area-") === 0) {
+      var code = h.slice(5), areaGroup = M.groups.find(function (g) { return g.areas.includes(code); });
+      drawArea(view, code, areaGroup);
+      key = areaGroup ? "group-" + areaGroup.id : "all";
+    } else {
+      var group = M.groups.find(function (g) { return "group-" + g.id === h; });
+      if (group) drawGroup(view, group);
+      else { drawAll(view); key = "all"; }
+    }
+    document.querySelectorAll(".nv").forEach(function (a) {
+      var active = !q && a.hash === "#" + key;
+      a.classList.toggle("on", active);
+      if (active) a.setAttribute("aria-current", "location");
+      else a.removeAttribute("aria-current");
+    });
   }
 
   document.addEventListener("DOMContentLoaded", function () {
     if (!document.getElementById("view")) return;
     G = B.G;
-    var notes = B.allNotes();
-    B.loadQuiz(notes.map(function (n) { return n.id; }), function () {
-      S = B.load();
-      drawNav();
+    S = B.load();
+    drawNav();
+    var recorded = new Set(Object.keys(S.q).map(function (key) { return key.split("#", 1)[0]; }));
+    var ids = B.allNotes().map(function (n) { return n.id; }).filter(function (id) { return recorded.has(id); });
+    B.loadQuiz(ids, function () {
       drawStatus();
       drawDays();
       drawBackup();
@@ -245,7 +296,12 @@
       var q = document.getElementById("q");
       q.addEventListener("input", render);
       q.addEventListener("keydown", function (e) { if (e.key === "Escape") { q.value = ""; render(); } });
-      window.addEventListener("hashchange", function () { q.value = ""; render(); });
+      window.addEventListener("hashchange", function () {
+        q.value = "";
+        render();
+        window.scrollTo(0, 0);
+        document.querySelector("#view h1").focus({ preventScroll: true });
+      });
     });
   });
 })();

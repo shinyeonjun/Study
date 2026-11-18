@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>거리 벡터의 갱신식과 무한대까지 세는 문제 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e8c'/%3E%3Cpath d='M8 22V10m8 12V14m8 8V6' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="NW12-2">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+
+<header class="chapter">
+<p class="chap-sub">네트워크 · NW12 라우팅 알고리즘과 정책</p>
+<p class="chap-num">NW12·2</p>
+<h1>거리 벡터의 갱신식과 무한대까지 세는 문제</h1>
+<p class="lead">라우터가 전체 지도를 받지 않고 이웃이 발표한 값만 받아도 짧은 길을 찾을 수 있습니다. 링크가 끊기면 이전 값이 서로를 가리키는 동안 비용을 잘못 믿을 수 있습니다.</p>
+</header>
+
+<div class="goal">
+<h2>이 장을 읽고 나면</h2>
+<ul>
+<li>이웃의 거리에서 내 후보 거리를 Bellman–Ford 식으로 갱신한다.</li>
+<li>동기 라운드에서 k번 이하 간선을 갖는 최단 경로라는 불변식을 설명한다.</li>
+<li>링크 단절 후 낡은 발표가 만드는 전달 루프와 대응을 구분한다.</li>
+</ul>
+</div>
+
+<h2>이웃까지의 비용과 이웃이 아는 나머지 비용을 더합니다</h2>
+<p>목적지 D에 대해 라우터 i가 가진 견적을 dᵢ라고 합시다. i가 이웃 j로 가는 비용은 c(i,j)입니다. 직접 가는 경우까지 포함하도록 목적지 D 자신은 거리 0을 알립니다. 다른 라우터는 이웃별 후보 c(i,j)+dⱼ 가운데 가장 작은 값을 자기 거리로 택합니다. 이때 어떤 j가 그 값의 근거인지 저장하면 다음 홉을 얻습니다. 전체 링크 상태를 받는 방식과 달리 <b class="key">거리 벡터</b>의 발표에는 여러 목적지까지의 견적이 담깁니다.</p>
+<p>먼저 링크 비용과 연결이 바뀌지 않고 모든 라우터가 바로 전 라운드 값만 쓴다고 가정합니다. 0번째에 d_D=0, 나머지는 ∞로 둡니다. <b class="key">불변식</b>은 k번째 뒤의 값이 ‘최대 k개 링크로 D까지 가는 경로의 최소 비용’이라는 것입니다. k=0일 때 제자리 D만 0입니다. k+1개의 링크를 허용하는 경로는 첫 링크와, 그 뒤 최대 k개의 링크로 가는 경로로 나뉩니다. 첫 링크 후보 전부를 비교하면 다음 라운드 식이 됩니다. 비용이 모두 양수이면 최단 경로에서 순환을 제거할 수 있으므로 N개의 정점에서 도달 가능한 최단 경로는 최대 N−1개의 링크에 들어갑니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 160" role="img" aria-label="세 라우터 A–B와 A–D의 비용이 모두 1">
+<rect class="f-box" x="93" y="38" width="116" height="43" rx="3"/>
+<text class="f-t" x="151" y="65" text-anchor="middle">B · D까지 2</text>
+<rect class="f-box" x="322" y="38" width="116" height="43" rx="3"/>
+<text class="f-t" x="380" y="65" text-anchor="middle">A · D까지 1</text>
+<rect class="f-box" x="551" y="38" width="116" height="43" rx="3"/>
+<text class="f-t" x="609" y="65" text-anchor="middle">D · 거리 0</text>
+<line class="f-ink" x1="209" y1="59" x2="322" y2="59"/>
+<line class="f-dash" x1="438" y1="59" x2="551" y2="59"/>
+<text class="f-s" x="265" y="48" text-anchor="middle">비용 1</text>
+<text class="f-s" x="494" y="48" text-anchor="middle">비용 1</text>
+<text class="f-s" x="380" y="115" text-anchor="middle">점선 A–D가 끊기면 D로 가는 길은 사라집니다.</text>
+</svg>
+<figcaption>단절 전에 B는 A를 통해 D에 갑니다. A와 B 모두 D에 대한 거리 정보를 가지고 있습니다.</figcaption>
+</figure>
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+<div class="check" data-q="q3"></div>
+<h2>끊겼다는 사실과 예전 도달 정보가 함께 남을 수 있습니다</h2>
+<p>A–D만 끊긴 뒤에도 A는 B가 전에 발표한 2를 바로 볼 수 있습니다. B가 도달할 길이 있는 줄 알고 A는 1+2=3으로 갱신합니다. B는 같은 라운드에서 A의 이전 값 1을 받아 아직 2로 둡니다. 다음에는 B가 새 A의 값 3을 보아 4가 됩니다. 두 라우터가 번갈아 받은 값을 서로 올려 주면 실제 경로가 없어도 A→B→A로 루프가 생기고 값이 계속 증가합니다. 이 현상을 <b class="key">무한대까지 세기</b>(count to infinity)라고 합니다.</p>
+<p>이 예는 설명을 위해 값 6 이상을 도달 불가로 취급합니다. 0은 단절 직전 값이고 1부터는 단절 후 라운드이며 직전 값으로 동시에 갱신합니다. 첫 다섯 번의 상태는 (3,2), (3,4), (5,4), (5,6), (6,6)입니다. 실제 RIP에서 16이 도달 불가이고 15가 최대로 표현할 수 있는 도달 거리입니다. 이 예의 6과 구분합니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 210" role="img" aria-label="라운드 0부터 5의 A와 B 거리 추정, 6은 도달 불가">
+<line class="f-ink" x1="93" y1="42" x2="93" y2="166"/>
+<line class="f-ink" x1="93" y1="166" x2="664" y2="166"/>
+<line class="f-ink" x1="86" y1="165" x2="93" y2="165"/>
+<text class="f-s" x="77" y="169" text-anchor="end">0</text>
+<line class="f-ink" x1="86" y1="145" x2="93" y2="145"/>
+<text class="f-s" x="77" y="149" text-anchor="end">1</text>
+<line class="f-ink" x1="86" y1="125" x2="93" y2="125"/>
+<text class="f-s" x="77" y="129" text-anchor="end">2</text>
+<line class="f-ink" x1="86" y1="105" x2="93" y2="105"/>
+<text class="f-s" x="77" y="109" text-anchor="end">3</text>
+<line class="f-ink" x1="86" y1="85" x2="93" y2="85"/>
+<text class="f-s" x="77" y="89" text-anchor="end">4</text>
+<line class="f-ink" x1="86" y1="65" x2="93" y2="65"/>
+<text class="f-s" x="77" y="69" text-anchor="end">5</text>
+<line class="f-ink" x1="86" y1="45" x2="93" y2="45"/>
+<text class="f-s" x="77" y="49" text-anchor="end">6</text>
+<text class="f-s" x="93" y="189" text-anchor="middle">0</text>
+<text class="f-s" x="203" y="189" text-anchor="middle">1</text>
+<text class="f-s" x="313" y="189" text-anchor="middle">2</text>
+<text class="f-s" x="423" y="189" text-anchor="middle">3</text>
+<text class="f-s" x="533" y="189" text-anchor="middle">4</text>
+<text class="f-s" x="643" y="189" text-anchor="middle">5</text>
+<polyline class="f-line" points="93,145 203,105 313,105 423,65 533,65 643,45"/>
+<polyline class="f-dash" points="93,125 203,125 313,85 423,85 533,45 643,45"/>
+<text class="f-s" x="233" y="24" text-anchor="middle">실선 A</text>
+<text class="f-s" x="332" y="24" text-anchor="middle">점선 B</text>
+<text class="f-s" x="464" y="24" text-anchor="middle">거리 6 = 도달 불가</text>
+<text class="f-s" x="700" y="189" text-anchor="middle">라운드</text>
+</svg>
+<figcaption>같은 눈금 거리 1에 세로 20 단위를 씁니다. 반복 증가는 실제 새 길을 총 5번 발견했다는 의미가 아닙니다.</figcaption>
+</figure>
+<div class="check" data-q="q4"></div>
+<div class="check" data-q="q5"></div>
+<div class="check" data-q="q6"></div>
+<h2>어느 이웃을 통해 배웠는지 광고 정책에 반영합니다</h2>
+<p>B는 D로 가는 길을 A에게 배웠으므로, B가 A에게 그 경로를 다시 알리지 않는 방식이 분할 지평선(split horizon)입니다. <b class="key">독성 역전</b>(poisoned reverse)은 그 이웃에게 바로 도달 불가라고 광고합니다. 이 둘은 A와 B만 되받는 예를 막는 데 쓰입니다. 셋 이상이 도는 루프까지 모두 없애지는 못합니다. 거리 변경을 정기 주기까지 기다리지 않고 알리는 triggered update도 복구를 앞당길 수 있지만, 전파 순간의 차이와 다른 오래된 정보까지 지우지는 못합니다.</p>
+<pre data-example="python"><code>maximum = 6
+a, b = 1, 2
+print(&quot;round 0:&quot;, a, b)
+for t in range(1, 6):
+    # The direct A--D link is gone. Exchange only the previous round's estimates.
+    a, b = min(maximum, 1 + b), min(maximum, 1 + a)
+    print(&quot;round&quot;, t, &quot;:&quot;, a, b)</code></pre>
+<pre data-output><code>round 0: 1 2
+round 1 : 3 2
+round 2 : 3 4
+round 3 : 5 4
+round 4 : 5 6
+round 5 : 6 6</code></pre>
+<p>코드는 상한만 둔 교재 모형입니다. <a href="nw12-1.html">링크 상태 예</a>는 각 라우터가 단절을 알려 전체 입력 그래프를 고칩니다. 두 계열 모두 실제로 정보가 언제 도착한 상태인지 적어야, 수렴 전 계산과 수렴 후 거리를 구분할 수 있습니다.</p>
+
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table>
+<thead><tr><th scope="col">핵심어</th><th scope="col">기억할 기준</th></tr></thead>
+<tbody>
+<tr><td><b class="key">거리 벡터</b></td><td>이웃이 알린 목적지 거리와 자기 링크 비용을 합쳐 견적을 갱신</td></tr>
+<tr><td><b class="key">동기 라운드 불변식</b></td><td>바뀌지 않은 그래프에서 최대 k개 링크까지의 최소 비용</td></tr>
+<tr><td><b class="key">무한대까지 세기</b></td><td>낡은 경로를 서로 믿어 불가능한 목적지의 비용이 점차 증가</td></tr>
+<tr><td><b class="key">독성 역전</b></td><td>경로를 배운 바로 그 이웃에게 도달 불가라고 광고</td></tr>
+</tbody></table></div>
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>먼저 어떤 라운드의 견적을 읽는지 정하고, 견적이 실제로 어떤 다음 홉을 가리키는지 확인합니다.</p></div>
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://www.rfc-editor.org/rfc/rfc2453.html">IETF RFC 2453 · RIP와 거리 벡터</a></li>
+<li><a href="https://www.scs.stanford.edu/09au-cs144/notes/">Stanford CS144 · 네트워크 강의 노트</a></li>
+</ul>
+
+<h2>확인 문제</h2>
+<p>아직 풀지 않은 문제입니다. 먼저 식이나 근거를 적어 보고 해설을 확인합니다.</p>
+<div id="quiz"></div>
+
+<section class="work" id="tools"></section>
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

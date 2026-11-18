@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>왕복 시간으로 재전송 만료 시점을 계산하기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f4e8c'/%3E%3Cpath d='M8 22V10m8 12V14m8 8V6' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="NW11-3">
+<header class="top"><div class="top-in wide">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+
+<header class="chapter">
+<p class="chap-sub">네트워크 · NW11 신뢰 전송의 상태 기계</p>
+<p class="chap-num">NW11·3</p>
+<h1>왕복 시간으로 재전송 만료 시점을 계산하기</h1>
+<p class="lead">어느 기록의 확인이 늦는지 보려면 최근 왕복 시간의 평균과 흔들림을 함께 추정해야 합니다. 재전송한 구간의 확인이 왜 새 표본이 되기 어려운지도 계산합니다.</p>
+</header>
+
+<div class="goal">
+<h2>이 장을 읽고 나면</h2>
+<ul>
+<li>SRTT와 RTTVAR를 RFC 6298의 갱신 순서로 계산한다.</li>
+<li>RTO를 실제 시간축의 만료·재전송 사건으로 옮긴다.</li>
+<li>재전송 뒤 ACK의 시각이 모호할 때 RTT 표본을 분리한다.</li>
+</ul>
+</div>
+
+<h2>RTO는 마지막 RTT 하나로 결정하지 않습니다</h2>
+<p>RTT는 송신과 그에 대한 확인까지 걸린 왕복 시간입니다. <b class="key">RTO</b>는 아직 확인되지 않은 데이터의 재전송 타이머에서 쓸 시간 한도입니다. 너무 짧으면 늦기만 한 데이터를 불필요하게 다시 보내고, 너무 길면 손실 뒤의 복구가 늦습니다. RFC 6298은 RTT의 평활 추정 <b class="key">SRTT</b>와 변동 추정 <b class="key">RTTVAR</b>를 사용합니다. RTTVAR는 왕복 시간과 평활값 차이의 절댓값을 평활한 추정이며 제곱 단위를 갖는 통계학의 분산과 다릅니다. 모두 시간 단위입니다.</p>
+<p>예제의 시간 단위는 ms, 시계 해상도 G는 10 ms입니다. 첫 유효 RTT 표본 R=400이면 SRTT←R=400, RTTVAR←R/2=200입니다. RTO의 계산 기본값은 SRTT+max(G,4·RTTVAR)이므로 400+800=1,200 ms입니다. RFC는 RTT 표본을 얻기 전의 초기 RTO를 1초로 둘 것을 권고하고, 계산된 RTO가 1초보다 작으면 1초로 올리는 방법도 권고합니다. 이 예의 수치에는 하한이 적용되지 않습니다.</p>
+<p>다음 유효 RTT 표본 R=800을 적용합니다. 이번 표본과 이전 SRTT의 차이는 |800−400|=400입니다. RTTVAR를 (3/4)·200+(1/4)·400=250으로 먼저 바꾸고, SRTT를 (7/8)·400+(1/8)·800=450으로 바꿉니다. 두 새 값을 넣으면 RTO=450+max(10,1000)=1,450 ms입니다. 순서를 바꿔 새 SRTT로 차이를 내면 변동의 기준값이 달라집니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 162" role="img" aria-label="RTT 400과 800에서 SRTT, RTTVAR, RTO 계산">
+<text class="f-s" x="155" y="28" text-anchor="middle">표본 (ms)</text>
+<text class="f-s" x="340" y="28" text-anchor="middle">SRTT (ms)</text>
+<text class="f-s" x="510" y="28" text-anchor="middle">RTTVAR (ms)</text>
+<text class="f-s" x="654" y="28" text-anchor="middle">RTO (ms)</text>
+<rect class="f-box" x="41" y="44" width="678" height="36" rx="3"/>
+<text class="f-t" x="155" y="68" text-anchor="middle">400</text>
+<text class="f-t" x="340" y="68" text-anchor="middle">400</text>
+<text class="f-t" x="510" y="68" text-anchor="middle">200</text>
+<text class="f-t" x="654" y="68" text-anchor="middle">1200</text>
+<rect class="f-soft" x="41" y="92" width="678" height="36" rx="3"/>
+<text class="f-t" x="155" y="116" text-anchor="middle">800</text>
+<text class="f-t" x="340" y="116" text-anchor="middle">450</text>
+<text class="f-t" x="510" y="116" text-anchor="middle">250</text>
+<text class="f-t" x="654" y="116" text-anchor="middle">1450</text>
+</svg>
+<figcaption>두 번째 행의 RTTVAR는 변화 전의 SRTT 400을 써서 계산합니다.</figcaption>
+</figure>
+<div class="check" data-q="q1"></div>
+<div class="check" data-q="q2"></div>
+<div class="check" data-q="q3"></div>
+<h2>만료되면 미확인 앞 구간을 다시 보냅니다</h2>
+<p>위 추정값을 만든 뒤 새 구간을 t=0에 보내고, 기다리는 동안 ACK가 없다고 합시다. 첫 만료는 1,450 ms입니다. RFC 6298의 만료 절차에서는 아직 확인되지 않은 가장 앞 세그먼트를 재전송하고, RTO를 두 배로 키운 뒤 타이머를 다시 시작합니다. 새 RTO는 2,900 ms입니다. 추가 ACK가 없으면 다음 만료의 절대 시각은 1,450+2,900=4,350 ms입니다. RTO는 시간 간격이고 만료 시각은 시작점이 있는 시간입니다.</p>
+<figure class="fig">
+<svg class="fig-svg" viewBox="0 0 760 172" role="img" aria-label="첫 송신 0, 첫 만료 1450, 뒤의 만료 4350 ms">
+<line class="f-ink" x1="80" y1="91" x2="695" y2="91" marker-end="url(#f-arrow)"/>
+<circle class="f-fill" cx="80" cy="91" r="4"/>
+<circle class="f-fill" cx="268.5" cy="91" r="4"/>
+<circle class="f-fill" cx="645.5" cy="91" r="4"/>
+<text class="f-s" x="80" y="65" text-anchor="middle">송신</text>
+<text class="f-s" x="268.5" y="65" text-anchor="middle">재전송</text>
+<text class="f-s" x="645.5" y="65" text-anchor="middle">다음 만료</text>
+<text class="f-s" x="80" y="120" text-anchor="middle">0 ms</text>
+<text class="f-s" x="268.5" y="120" text-anchor="middle">1,450 ms</text>
+<text class="f-s" x="645.5" y="120" text-anchor="middle">4,350 ms</text>
+<text class="f-s" x="174.25" y="151" text-anchor="middle">간격 1,450</text>
+<text class="f-s" x="457" y="151" text-anchor="middle">간격 2,900</text>
+</svg>
+<figcaption>1,450 ms 간격에 비해 다음 간격의 길이는 두 배입니다. 이 그림의 동안에는 ACK가 없습니다.</figcaption>
+</figure>
+<div class="check" data-q="q4"></div>
+<div class="check" data-q="q5"></div>
+<div class="check" data-q="q6"></div>
+<h2>ACK가 어느 복사본에서 비롯됐는지 살핍니다</h2>
+<p>같은 구간을 t=0과 t=1,450에서 보냈고 ACK가 t=1,700에서 보였다고 합시다. 초기 전송에서 비롯된 ACK라면 관측 차는 1,700 ms입니다. 재전송에서 비롯됐다면 250 ms입니다. 번호가 같은 ACK만으로는 이 둘을 구분하기 어렵습니다. RFC 6298의 <b class="key">Karn 규칙</b>에 따라 재전송된 세그먼트에서는 이렇게 모호한 RTT 표본을 채택하지 않습니다. TCP 타임스탬프로 어느 전송의 확인인지 모호성이 없으면 예외가 적용됩니다.</p>
+<p>다음 코드는 유효하게 얻은 두 표본과 ACK가 늦는 별도 가상 구간을 계산합니다. 실제 연결에서의 타이머 시작·중지는 새 ACK로 데이터가 확인되었는지, 미확인이 남았는지에 따라 달라집니다. <a href="nw11-2.html">우선 확인 번호가 무엇을 바꾸는지</a>를 계산한 뒤, 여기서는 그 확인이 도착하지 않은 사건을 별도로 다룹니다.</p>
+<pre data-example="python"><code>from fractions import Fraction as F
+
+samples = [F(400), F(800)]
+granularity = 10
+srtt = samples[0]
+rttvar = srtt / 2
+print(&quot;first:&quot;, srtt, rttvar, srtt + max(granularity, 4*rttvar))
+
+sample = samples[1]
+rttvar = F(3, 4)*rttvar + F(1, 4)*abs(srtt-sample)
+srtt = F(7, 8)*srtt + F(1, 8)*sample
+rto = max(1000, srtt + max(granularity, 4*rttvar))
+print(&quot;second:&quot;, srtt, rttvar, rto)
+print(&quot;first expiry, new RTO, next expiry:&quot;, rto, 2*rto, 3*rto)
+print(&quot;ambiguous delays:&quot;, 1700, 1700-rto)</code></pre>
+<pre data-output><code>first: 400 200 1200
+second: 450 250 1450
+first expiry, new RTO, next expiry: 1450 2900 4350
+ambiguous delays: 1700 250</code></pre>
+<p>새 추정값과 타이머의 배가를 같은 동작으로 합치지 않습니다. 새 RTT 관측이 없어도 만료에 따라 기다릴 시간을 늘릴 수 있습니다. ACK 정보를 활용하는 빠른 재전송은 <a href="nw06-2.html">NW06</a>에서 다른 신호를 사용하는 사례입니다.</p>
+
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table>
+<thead><tr><th scope="col">핵심어</th><th scope="col">기억할 기준</th></tr></thead>
+<tbody>
+<tr><td><b class="key">SRTT</b></td><td>과거 RTT와 새 RTT의 가중 평활값</td></tr>
+<tr><td><b class="key">RTTVAR</b></td><td>이전 SRTT와 새 RTT의 절댓값 차이로 갱신</td></tr>
+<tr><td><b class="key">RTO와 만료 시각</b></td><td>재시도 간격과 시간축 위의 만료점을 구분</td></tr>
+<tr><td><b class="key">Karn 규칙</b></td><td>어느 송신을 확인했는지 모호한 RTT 표본을 제외</td></tr>
+</tbody></table></div>
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>직전 SRTT로 새 변동을 구한 뒤 새 SRTT를 적용하고, 표본을 얻은 경로와 타이머 상태를 구분합니다.</p></div>
+<h2>참고 자료</h2>
+<ul>
+<li><a href="https://www.rfc-editor.org/rfc/rfc6298.html">IETF RFC 6298 · TCP 재전송 타이머</a></li>
+<li><a href="https://www.rfc-editor.org/rfc/rfc9293.html">IETF RFC 9293 · TCP 순서 공간과 수신 처리</a></li>
+<li><a href="https://www.scs.stanford.edu/09au-cs144/notes/">Stanford CS144 · 네트워크 강의 노트</a></li>
+</ul>
+
+<h2>확인 문제</h2>
+<p>아직 풀지 않은 문제입니다. 먼저 식이나 근거를 적어 보고 해설을 확인합니다.</p>
+<div id="quiz"></div>
+
+<section class="work" id="tools"></section>
+<nav class="pager"><a href="../../index.html">← 목차</a></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

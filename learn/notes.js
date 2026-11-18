@@ -296,6 +296,16 @@ window.BDA_CHAPTERS = {
     {"id": "NW10-2", "title": "왕복 시간과 응답 누락을 함께 보고하기", "href": "notes/nw/nw10-2.html"},
     {"id": "NW10-3", "title": "한 연결의 패킷 시각과 웹 요청 시각 맞춰 읽기", "href": "notes/nw/nw10-3.html"}
   ],
+  NW11: [
+    {"id": "NW11-1", "title": "확인이 사라져도 한 번만 전달하는 번갈이 비트", "href": "notes/nw/nw11-1.html"},
+    {"id": "NW11-2", "title": "슬라이딩 윈도와 누적 ACK를 바이트 구간으로 읽기", "href": "notes/nw/nw11-2.html"},
+    {"id": "NW11-3", "title": "왕복 시간으로 재전송 만료 시점을 계산하기", "href": "notes/nw/nw11-3.html"}
+  ],
+  NW12: [
+    {"id": "NW12-1", "title": "링크 상태에서 최단 경로 트리와 다음 홉 만들기", "href": "notes/nw/nw12-1.html"},
+    {"id": "NW12-2", "title": "거리 벡터의 갱신식과 무한대까지 세는 문제", "href": "notes/nw/nw12-2.html"},
+    {"id": "NW12-3", "title": "BGP가 도달 경로의 길이보다 조직의 정책을 먼저 보는 경우", "href": "notes/nw/nw12-3.html"}
+  ],
   DB01: [
     {"id": "DB01-1", "title": "표, 스키마, 한 행의 의미", "href": "notes/db/db01-1.html"},
     {"id": "DB01-2", "title": "기본 키, 외래 키와 복합 키", "href": "notes/db/db01-2.html"}
@@ -842,8 +852,8 @@ window.BDA_SKIP = ["AR01", "AR02", "AR03", "AR04", "AR05", "AR08", "AR09", "AL01
 
 // ---- 지도 시작 (tools/build_map.py가 만든다. 직접 고치지 않는다)
 window.BDA_MAP = {
-  source: "LEARNING_MAP.md (2026-11-18)",
-  groups: [{"name": "출발과 연구", "areas": ["U", "RS"]}, {"name": "수학", "areas": ["AR", "AL", "DM", "LA", "CA", "PR", "ST", "OP"]}, {"name": "코딩과 컴퓨터", "areas": ["PY", "CS", "SY", "NW", "DB"]}, {"name": "데이터와 AI", "areas": ["DA", "AI", "ML", "DL", "RL"]}, {"name": "시험과 확장", "areas": ["BD", "SP"]}],
+  source: "LEARNING_MAP.md",
+  groups: [{"id": "math", "name": "수학", "areas": ["LA", "CA", "PR", "DM", "OP", "AL", "AR"]}, {"id": "data", "name": "데이터와 통계", "areas": ["DA", "ST", "DB"]}, {"id": "ai", "name": "AI와 학습", "areas": ["AI", "ML", "DL", "RL"]}, {"id": "computing", "name": "프로그래밍과 컴퓨터", "areas": ["PY", "CS", "SY"]}, {"id": "network", "name": "네트워크", "areas": ["NW"]}, {"id": "research", "name": "연구 방법", "areas": ["RS", "U"]}, {"id": "applications", "name": "응용과 심화", "areas": ["SP"]}, {"id": "exam", "name": "빅데이터분석기사", "areas": ["BD"]}],
   areas: [
     {"code": "U", "name": "공부·컴퓨터 사용의 출발점", "depth": "입문"},
     {"code": "AR", "name": "산술과 수 감각", "depth": "입문"},
@@ -946,6 +956,11 @@ window.BDA_MAP = {
     {"id": "NW08", "area": "NW", "title": "안전한 웹 연결", "concepts": "HTTPS·TLS·인증서, 암호화·해시·서명·인증·인가의 역할 구분", "pre": ["NW02", "NW06"]},
     {"id": "NW09", "area": "NW", "title": "소켓 프로그래밍", "concepts": "주소와 포트로 연결, 송수신·부분 읽기·시간초과·종료, 로컬 echo 실습; OS 내부는 SY04와 연결", "pre": ["PY07", "PY08", "NW06"]},
     {"id": "NW10", "area": "NW", "title": "관찰과 문제 해결", "concepts": "DNS 조회·브라우저 관찰·HTTP 실패 구분, ping/traceroute·패킷 관찰·지연/손실; 소켓 로그·큐는 NW09 뒤 확장", "pre": ["NW04", "NW06", "DA04"]},
+    {"id": "NW11", "area": "NW", "title": "신뢰적 전송의 설계", "concepts": "상태 기계·순서 번호·확인 응답, stop-and-wait·슬라이딩 윈도, 손실·중복·재전송, 전송률 상계", "pre": ["NW03", "NW05", "NW06"]},
+    {"id": "NW12", "area": "NW", "title": "라우팅 알고리즘과 경로 정책", "concepts": "링크 상태·Dijkstra, 거리 벡터·Bellman–Ford와 수렴, 자율 시스템·경로 벡터와 정책, 작은 망 모의 실습", "pre": ["NW04", "NW05", "NW11", "CS07"]},
+    {"id": "NW13", "area": "NW", "title": "혼잡 제어와 큐 성능", "concepts": "이산 큐의 보존식과 Little의 법칙, RTT와 대역폭-지연 곱, AIMD의 수렴과 한계, 병목 실험", "pre": ["NW11", "NW12", "PR04"]},
+    {"id": "NW14", "area": "NW", "title": "TCP 스트림으로 안전한 메시지 읽기", "concepts": "길이 제한 프레이밍·부분 읽기·버퍼 상태, EOF·반쪽 닫기·시간초과, 로컬 상태 기계 검증", "pre": ["NW08", "NW09", "NW11"]},
+    {"id": "NW15", "area": "NW", "title": "스위칭과 인터넷 계층의 경계", "concepts": "스패닝 트리·VLAN, 최장 접두부 조회, IPv6 이웃 발견, 프레임과 라우팅의 통합 추적", "pre": ["NW04", "NW07", "NW12"]},
     {"id": "DB01", "area": "DB", "title": "관계형 데이터", "concepts": "표·행·열·스키마·키, 식별자, 관계의 의미", "pre": ["DA02"]},
     {"id": "DB02", "area": "DB", "title": "SQL 기초", "concepts": "SELECT·WHERE·ORDER BY·GROUP BY·집계, 행과 그룹 구분; 앱에서 쓸 때 매개변수 바인딩", "pre": ["DB01", "DA04"]},
     {"id": "DB03", "area": "DB", "title": "여러 표 연결", "concepts": "JOIN·일대다·다대다, 행 수 변화, NULL, 서브쿼리·윈도 함수 입문", "pre": ["DB02", "DM01"]},
@@ -962,6 +977,10 @@ window.BDA_MAP = {
     {"id": "LA06", "area": "LA", "title": "공간과 기저", "concepts": "선형결합·생성공간·독립·기저·차원·영공간, 직교기저·QR·최소제곱", "pre": ["LA05", "LA02"]},
     {"id": "LA07", "area": "LA", "title": "변환의 고유한 방향", "concepts": "행렬식의 의미, 고유값·고유벡터·대각화, 대칭·양의 준정부호", "pre": ["LA06"]},
     {"id": "LA08", "area": "LA", "title": "행렬분해와 근사", "concepts": "SVD·유사역행렬·저랭크 근사, 정보 압축, PCA는 공분산을 배운 뒤 연결", "pre": ["LA07"]},
+    {"id": "LA09", "area": "LA", "title": "선형사상과 기저변환", "concepts": "추상 벡터공간, 핵·상·차원 정리의 증명, 다른 정의역·공역의 기저, 닮음변환, 다항식 공간 계산", "pre": ["LA03", "LA04", "LA05", "LA06", "DM02"]},
+    {"id": "LA10", "area": "LA", "title": "복소 고유값과 조르당 표준형", "concepts": "대수적·기하적 중복도, 일반화 고유벡터 사슬, 복소 고유쌍의 실수 표현, 조르당 블록의 거듭제곱", "pre": ["LA07", "LA09", "AL08"]},
+    {"id": "LA11", "area": "LA", "title": "스펙트럼 정리와 이차형식", "concepts": "직교 대각화의 증명, Rayleigh 몫, 양의 정부호와 준정부호, Cholesky 분해와 기하", "pre": ["LA07", "LA09", "DM02"]},
+    {"id": "LA12", "area": "LA", "title": "최소제곱의 수치 선형대수", "concepts": "정규방정식과 QR의 유도 및 비교, 특이값·조건수, 절단 SVD, 순방향 오차와 잔차, 교란 실습", "pre": ["LA08", "LA11", "OP02", "PY10"]},
     {"id": "CA01", "area": "CA", "title": "극한과 연속", "concepts": "수열의 접근, 평균변화율, 극한의 직관, 연속과 불연속", "pre": ["AL04", "AL05", "AL09"]},
     {"id": "CA02", "area": "CA", "title": "미분의 뜻", "concepts": "차분몫·미분계수·도함수·접선, 변화율의 단위, 증가·감소·극값", "pre": ["CA01", "AL06"]},
     {"id": "CA03", "area": "CA", "title": "미분 계산과 연쇄법칙", "concepts": "다항·지수·로그의 미분, 합·곱·몫·합성함수, 작은 계산그래프", "pre": ["CA02", "AL07"]},
@@ -1077,8 +1096,8 @@ window.BDA_MAP = {
     {"id": "ml", "name": "머신러닝", "targets": ["ML01", "ML02", "ML03", "ML04", "ML05", "ML06", "ML07", "ML08", "ML09", "ML10", "ML11", "ML12"]},
     {"id": "dl", "name": "AI·딥러닝", "targets": ["AI01", "DL01", "DL02", "DL03", "DL04", "DL05", "DL06", "DL07", "DL08", "DL09", "DL10", "SP01", "SP02", "SP09"]},
     {"id": "rl", "name": "강화학습", "targets": ["RL01", "RL02", "RL03", "RL04", "RL05", "RL06", "RL07", "RL08", "RL09", "RL10", "RL11", "RL12", "SP06"]},
-    {"id": "nw", "name": "네트워크", "targets": ["NW01", "NW02", "NW03", "NW04", "NW05", "NW06", "NW07", "NW08", "NW09", "NW10", "DB08", "SP11"]},
-    {"id": "math", "name": "수학 심화", "targets": ["AR01", "AR02", "AR03", "AR04", "AR05", "AR06", "AR07", "AR08", "AR09", "AR10", "AL01", "AL02", "AL03", "AL04", "AL05", "AL06", "AL07", "AL08", "AL09", "DM01", "DM02", "DM03", "DM04", "DM05", "DM06", "LA01", "LA02", "LA03", "LA04", "LA05", "LA06", "LA07", "LA08", "CA01", "CA02", "CA03", "CA04", "CA05", "CA06", "CA07", "CA08", "PR01", "PR02", "PR03", "PR04", "PR05", "PR06", "PR07", "PR08", "PR09", "PR10", "OP01", "OP02", "OP03", "OP04", "OP05", "OP06", "OP07", "OP08", "SP10"]}
+    {"id": "nw", "name": "네트워크", "targets": ["NW01", "NW02", "NW03", "NW04", "NW05", "NW06", "NW07", "NW08", "NW09", "NW10", "NW11", "NW12", "NW13", "NW14", "NW15", "DB08", "SP11"]},
+    {"id": "math", "name": "수학 심화", "targets": ["AR01", "AR02", "AR03", "AR04", "AR05", "AR06", "AR07", "AR08", "AR09", "AR10", "AL01", "AL02", "AL03", "AL04", "AL05", "AL06", "AL07", "AL08", "AL09", "DM01", "DM02", "DM03", "DM04", "DM05", "DM06", "LA01", "LA02", "LA03", "LA04", "LA05", "LA06", "LA07", "LA08", "LA09", "LA10", "LA11", "LA12", "CA01", "CA02", "CA03", "CA04", "CA05", "CA06", "CA07", "CA08", "PR01", "PR02", "PR03", "PR04", "PR05", "PR06", "PR07", "PR08", "PR09", "PR10", "OP01", "OP02", "OP03", "OP04", "OP05", "OP06", "OP07", "OP08", "SP10"]}
   ]
 };
 // ---- 지도 끝

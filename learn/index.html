@@ -18,10 +18,11 @@
 <div class="lib">
 <aside class="side-nav" aria-label="목차 탐색">
 <input id="q" class="search" type="search" placeholder="개념 찾기 (예: 분수, 회귀, TCP)" aria-label="개념 찾기" autocomplete="off">
-<p class="nv-h">경로</p>
-<nav id="nav-paths"></nav>
-<p class="nv-h">분야</p>
-<nav id="nav-areas"></nav>
+<nav id="nav-areas" aria-label="분야"></nav>
+<details class="nav-paths">
+<summary>추천 학습 경로</summary>
+<nav id="nav-paths" aria-label="추천 학습 경로"></nav>
+</details>
 <div class="side-extra">
 <p class="nv-h">공부한 날</p>
 <div class="days"></div>

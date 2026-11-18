@@ -9,6 +9,7 @@
 """
 import io, os, re, json, subprocess, sys
 from html.parser import HTMLParser
+from urllib.parse import unquote, urlsplit
 
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 sys.stdout.reconfigure(encoding="utf-8")
@@ -36,11 +37,14 @@ def quiz(book, cid):
 class Text(HTMLParser):
     def __init__(self):
         super().__init__(); self.skip = 0; self.n = 0; self.stack = []; self.bad = 0
+        self.links = []
     VOID = {"meta", "link", "br", "img", "input", "hr", "source", "path", "line", "rect", "circle", "polygon", "polyline", "ellipse", "use", "stop", "tspan_"}
     def handle_starttag(self, t, a):
         if t in ("script", "style", "svg"): self.skip += 1
         if t not in self.VOID: self.stack.append(t)
-    def handle_startendtag(self, t, a): pass
+        self.handle_startendtag(t, a)
+    def handle_startendtag(self, t, a):
+        self.links.extend(value for name, value in a if name in ("href", "src") and value)
     def handle_endtag(self, t):
         if t in ("script", "style", "svg"): self.skip -= 1
         if t in self.VOID: return
@@ -88,8 +92,11 @@ for book in ("learn", "bigdata"):
             if re.search(r"(?<![A-Z0-9])%s(?![0-9])" % s, re.sub(r"<script.*?</script>", "", html, flags=re.S)):
                 add("건너뛴 단원 언급", "%s → %s" % (tag, s))
         # 내부 링크
-        for h in re.findall(r'(?:href|src)="([^"#:?]+\.(?:html|js|css))', html):
-            target = os.path.normpath(os.path.join(os.path.dirname(path), h))
+        for h in t.links:
+            url = urlsplit(h)
+            href = unquote(url.path)
+            if url.scheme or url.netloc or not href.endswith((".html", ".js", ".css")): continue
+            target = os.path.normpath(os.path.join(os.path.dirname(path), href))
             if not os.path.exists(target): add("깨진 링크", "%s → %s" % (tag, h))
     # 등록 안 된 장 파일
     for d, _, fs in os.walk(os.path.join(ROOT, book, "notes")):

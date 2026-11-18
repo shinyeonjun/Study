@@ -36,6 +36,21 @@
   var order = G.expand(G.path("start").targets.concat(M.units.map(function (u) { return u.id; })));
   G.readingOrder = function () { return order; };
 
+  // 다른 과목이 사이에 있어도 같은 화면에 표시된 선수는 아래 층에 둔다.
+  G.layers = function (targets) {
+    var included = new Set(targets), depth = {}, layers = [];
+    order.forEach(function (id) {
+      var previous = byId[id].pre.reduce(function (max, pre) { return Math.max(max, depth[pre] || 0); }, 0);
+      depth[id] = previous;
+      if (included.has(id)) {
+        if (!layers[previous]) layers[previous] = [];
+        layers[previous].push(id);
+        depth[id]++;
+      }
+    });
+    return layers;
+  };
+
   // 단원 하나의 상태: 장이 없으면 none. 있으면 장들의 문제 기록을 모아 본다
   G.unitStatus = function (id, s) {
     var chs = G.chapters(id), r = { chapters: chs.length, total: 0, tried: 0, due: 0, open: 0, state: SKIP[id] ? "skip" : "none" };
