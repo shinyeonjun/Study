@@ -141,6 +141,22 @@
   // 누르는 횟수를 줄인다: 객관식은 보기를 누르면 바로 정답과 보기별 해설이 나온다.
   // 숫자·서술 문제는 적고 나서 '답 확인'을 누른다. 서술 문제만 스스로 맞음/틀림을 고른다.
   // opt.onDone(correct): 채점이 끝났을 때
+  // 숫자 답 채점: "1/6" 같은 분수와 −(유니코드 빼기)를 받는다. 정수 답은 정확히 같아야 하고,
+  // 소수 답은 반올림 차이(마지막 자리의 반, 또는 답의 0.2%)까지 맞게 본다.
+  function numOk(raw, answer) {
+    var s = String(raw).replace(/[−–]/g, "-").replace(/[,\s]/g, "");
+    var m = s.match(/^(-?[0-9.]+)\/(-?[0-9.]+)$/), v;
+    if (m) v = Number(m[1]) / Number(m[2]);
+    else v = Number(s.replace(/[^0-9.\-eE]/g, ""));
+    if (s === "" || !isFinite(v)) return false;
+    var ans = Number(answer);
+    if (Number.isInteger(ans)) return Math.abs(v - ans) < 1e-9;
+    var dec = (String(answer).split(".")[1] || "").length;
+    var tol = Math.max(0.5 * Math.pow(10, -dec), Math.abs(ans) * 0.002) + 1e-12;
+    return Math.abs(v - ans) <= tol;
+  }
+  B.numOk = numOk;
+
   B.renderQ = function (box, noteId, q, opt) {
     opt = opt || {};
     var el = B.el, key = noteId + "#" + q.id, locked = false;
@@ -207,9 +223,8 @@
       input.readOnly = true;
       go.remove();
       if (q.type === "num") {
-        var mine = input.value.replace(/[−–]/g, "-").replace(/[^0-9.\-]/g, ""); // 유니코드 빼기 기호(−)도 음수로 받는다
         box.appendChild(el("p", "q-model", "정답: " + Number(q.answer).toLocaleString("ko-KR") + (q.a ? " · " + q.a : "")));
-        finish(mine !== "" && Number(mine) === Number(q.answer), input.value.trim());
+        finish(numOk(input.value, q.answer), input.value.trim());
       } else {
         box.appendChild(el("p", "q-model", "모범 답: " + q.a));
         var self = el("div", "conf");
