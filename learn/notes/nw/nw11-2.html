@@ -34,6 +34,7 @@
 <li>반열린 순번 구간으로 송신 한도와 미확인 바이트 수를 계산한다.</li>
 <li>순서가 바뀐 수신과 재전송으로 누적 ACK가 어떻게 이동하는지 추적한다.</li>
 <li>선택적 확인과 누적 확인이 알리는 정보의 차이를 설명한다.</li>
+<li>정지 후 대기와 윈도 방식의 전송률 상계를 계산한다.</li>
 </ul>
 </div>
 
@@ -102,6 +103,18 @@
 <div class="check" data-q="q4"></div>
 <div class="check" data-q="q5"></div>
 <div class="check" data-q="q6"></div>
+<h2>윈도 크기가 전송률의 상계를 정합니다</h2>
+<p>미확인 바이트에 한도가 있으면 확인이 돌아오는 속도가 송신 속도의 천장이 됩니다. 링크 전송률을 R(B/s), 세그먼트 길이를 L(B), 데이터의 전송 시간 L/R을 뺀 왕복 시간을 RTT라 합시다. 첫 바이트를 내보내기 시작한 시각부터 그 세그먼트의 ACK가 돌아올 때까지 걸리는 한 주기는 T=L/R+RTT입니다(ACK의 전송 시간과 처리 시간은 무시합니다). <b class="key">정지 후 대기</b>는 한 주기에 L바이트만 보내므로 처리량은 L/T 이하이고, 링크를 실제로 쓰는 시간의 비율인 <b class="key">이용률</b>은 U=(L/R)/T입니다.</p>
+<p>R=1,000,000 B/s, L=1,000 B, RTT=9 ms로 두면 L/R=1 ms, T=10 ms입니다. 정지 후 대기는 1,000 B/0.01 s=100,000 B/s로 링크의 10%만 씁니다(U=0.1). 미확인 바이트를 W까지 허용하는 윈도 방식은 한 주기 동안 최대 W바이트를 내보낼 수 있으므로 처리량 ≤ min(R, W/T)입니다. W=4,000 B면 400,000 B/s(U=0.4)이고, 링크를 쉬지 않게 하려면 W≥R·T=10,000 B, 즉 세그먼트 10개가 필요합니다. 이 값은 손실·재전송이 없을 때의 상계입니다. 손실이 있으면 재전송과 타이머 대기 때문에 실제 처리량은 더 낮고, 수신 윈도나 혼잡 윈도가 W를 더 작게 제한할 수도 있습니다. R·RTT 꼴의 양은 <a href="nw13-2.html">NW13의 대역폭–지연 곱</a>에서 다시 씁니다.</p>
+<div class="table-wrap"><table>
+<thead><tr><th scope="col">방식</th><th scope="col">한 주기 T=10 ms에 보내는 양</th><th scope="col">처리량 상계</th><th scope="col">이용률</th></tr></thead>
+<tbody>
+<tr><td>정지 후 대기</td><td>1,000 B</td><td>100,000 B/s</td><td>0.1</td></tr>
+<tr><td>윈도 W=4,000 B</td><td>4,000 B</td><td>400,000 B/s</td><td>0.4</td></tr>
+<tr><td>윈도 W=10,000 B 이상</td><td>10,000 B</td><td>1,000,000 B/s (=R)</td><td>1</td></tr>
+</tbody></table></div>
+<div class="check" data-q="q9"></div>
+<div class="check" data-q="q10"></div>
 <h2>경계를 보존하는 조건을 코드로 확인합니다</h2>
 <p>정상적으로 수신한 확인 번호 a가 <code>una&lt;a≤nxt</code>일 때만 이 장의 송신 창 왼쪽이 이동합니다. 같은 번호 또는 더 오래된 확인은 이동시키지 않습니다. <code>nxt</code>를 넘는 번호는 이 모형에서 새 데이터 확인으로 인정할 수 없습니다. 재전송은 이미 배정한 순번이므로 <code>nxt</code>를 더하지 않습니다. 이 규칙을 위 단계에 반복 적용하면 <code>una≤nxt≤una+W</code>가 유지됩니다. 실제 TCP의 순번은 32비트 순환 공간이며, 연결 제어 플래그의 순번과 송수신 허용 범위도 함께 처리합니다.</p>
 <pre data-example="python"><code>una = nxt = rcv_nxt = 100
@@ -157,6 +170,7 @@ retry una/nxt: 116 116 ack: 116 buffered: 0 room: 12</code></pre>
 <tr><td><b class="key">누적 ACK</b></td><td>수신한 연속 범위 바로 뒤 첫 번호</td></tr>
 <tr><td><b class="key">SACK</b></td><td>누적 ACK 뒤에 보관한 특정 연속 수신 구간의 정보</td></tr>
 <tr><td><b class="key">재전송</b></td><td>기존 순번을 쓰며 새 데이터 범위를 늘리지 않음</td></tr>
+<tr><td><b class="key">전송률 상계</b></td><td>처리량 ≤ min(R, W/T), 정지 후 대기의 이용률 (L/R)/T</td></tr>
 </tbody></table></div>
 <div class="box sum"><p class="box-k">한 줄 정리</p><p>ACK가 뜻하는 연속 범위와 수신 버퍼에 따로 도착한 범위를 각각 표시합니다.</p></div>
 <h2>참고 자료</h2>
