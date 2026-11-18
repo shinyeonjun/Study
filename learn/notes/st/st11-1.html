@@ -67,7 +67,7 @@
 <div class="check" data-q="q3"></div>
 <h2>왜 성공 수만 남겨도 모수 정보가 보존될까</h2>
 <p>통계량 T가 <b class="key">충분</b>하다는 것은, T를 알고 난 후 자료 X의 조건부분포에 모수가 남지 않는다는 뜻입니다. 위 모형에서 <var>0&lt;p&lt;1</var>라면 성공이 s번이라는 조건 아래 가능한 순서 각각의 조건부확률은 <var>1/C(n,s)</var>입니다. 따라서 순서를 버려도 p를 구별할 정보는 더 잃지 않습니다. 시점마다 p가 바뀌거나 실패 후 성공 가능성이 달라지는 모형을 쓰면 순서가 다른 정보를 줄 수 있습니다.</p>
-<p><b class="key">Neyman–Fisher 인수분해</b>는 공통 기준인 계수측도 또는 길이측도에 대해 자료의 확률질량이나 밀도를 <var>f<sub>θ</sub>(x)=g<sub>θ</sub>(T(x))h(x)</var> 꼴로 쓸 수 있으면 T가 충분하다는 기준을 줍니다. h는 모수와 무관하고, 모수에 의존하는 부분은 T를 통해서만 자료를 읽습니다. 예를 들어 이산 모형에서 <var>T=t</var>인 자료만 모아 분모의 확률을 계산하면 <var>g<sub>θ</sub>(t)Σ h(x)</var>입니다. 이 사건의 확률이 양수라면 분자와 분모의 <var>g<sub>θ</sub>(t)</var>가 상쇄됩니다. 연속 자료에서도 대응하는 밀도와 조건부분포를 사용합니다. 모든 자료에 대해 같은 두 함수 꼴이 성립하는지 확인해야 합니다.</p>
+<p><b class="key">Neyman–Fisher 인수분해</b>는 공통 기준인 계수측도 또는 길이측도에 대해 자료의 확률질량이나 밀도를 <var>f<sub>θ</sub>(x)=g<sub>θ</sub>(T(x))h(x)</var> 꼴로 쓸 수 있으면 T가 충분하다는 기준을 줍니다. h는 모수와 무관하고, 모수에 의존하는 부분은 T를 통해서만 자료를 읽습니다. 예를 들어 이산 모형에서 <var>T=t</var>인 자료만 모아 분모의 확률을 계산하면 <var>g<sub>θ</sub>(t)Σ h(x)</var>입니다. 이 사건의 확률이 양수라면 분자와 분모의 <var>g<sub>θ</sub>(t)</var>가 상쇄됩니다. 연속 자료에서도 대응하는 밀도와 조건부분포를 사용합니다. 모든 자료에 대해 같은 두 함수 꼴이 성립하는지 확인해야 합니다. 역방향도 성립합니다. T가 충분하면 이런 분해가 반드시 존재하므로, 인수분해는 충분성의 <b>필요충분조건</b>입니다.</p>
 <div class="check" data-q="q4"></div>
 <h2>정규 우도에서는 중심과 제곱합이 남는다</h2>
 <p>기기가 일정한 길이를 반복 측정한다고 합시다. 관측 단위는 한 번의 측정이며, 모형은 독립 <var>N(μ,σ²)</var>, <var>σ²&gt;0</var>입니다. 한 관측의 밀도 <var>(2πσ²)<sup>−1/2</sup> exp(−(x−μ)²/(2σ²))</var>를 n번 곱하고 로그를 취합니다. 연속 자료는 밀도를 곱한 우도를 쓰며 관측한 점 자체의 확률은 0입니다.</p>
@@ -139,6 +139,17 @@ Normal: 4 2 2/3
 same mean, ratio: 1 0.049787
 same mean, ratio: 3 0.367879</code></pre>
 <p>A와 B의 비가 분산 1에서 약 .049787, 분산 3에서 약 .367879로 달라집니다. 실행값에서 우도를 옮겨 비교할 때는 같은 자료와 같은 모형의 모수를 비교합니다. 이 예의 자료는 요약의 차이를 드러내기 위해 만든 값입니다.</p>
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>개념</th><th>요점</th></tr></thead>
+<tbody>
+<tr><td><b class="key">우도</b> L(θ;x)</td><td>관측 x를 고정한 θ의 함수. θ에 대한 확률분포가 아니다</td></tr>
+<tr><td>Bernoulli 로그우도</td><td>s log p+(n−s)log(1−p), 내부 최댓점 p̂=s/n</td></tr>
+<tr><td><b class="key">충분통계량</b></td><td>T를 알면 자료의 조건부분포에 θ가 남지 않는다</td></tr>
+<tr><td><b class="key">인수분해 정리</b></td><td>f<sub>θ</sub>(x)=g<sub>θ</sub>(T(x))h(x) ⇔ T가 충분</td></tr>
+<tr><td>정규 (μ,σ² 미지)</td><td>(Σx<sub>i</sub>, Σx<sub>i</sub>²) 또는 (x̄, Q)가 충분, 분산 MLE=Q/n</td></tr>
+</tbody></table></div>
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>우도는 자료가 모수에 주는 비교 정보이고, 충분통계량은 그 정보를 잃지 않는 요약이다.</p></div>
 <h2>참고 자료</h2>
 <ul>
 <li><a href="https://ocw.mit.edu/courses/18-655-mathematical-statistics-spring-2016/bbbca14a2009e47add8c7ea2a49daa41_MIT18_655S16_LecNote6.pdf">MIT 18.655 · Sufficiency 강의 노트</a></li>

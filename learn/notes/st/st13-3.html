@@ -146,6 +146,17 @@ independent columns 110/27 SE=2.018434
 cluster and row variances: 32/9 16/9
 site and row means: 4 24/7</code></pre>
 <p>첫 두 줄은 각 경우 가능한 표를 전부 열거해 얻은 조건부 분산입니다. 장소 평균도 분수로 보존해 끝까지 계산합니다. 세 번째 줄을 비교할 때는 모든 장소의 센서 수가 같아서, 장소 평균과 행 평균이 같은 목표량을 계산한다는 조건을 사용했습니다.</p>
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>개념</th><th>요점</th></tr></thead>
+<tbody>
+<tr><td>짝 부트스트랩</td><td>장치(쌍) 단위로 다시 뽑아 공분산을 보존</td></tr>
+<tr><td>Var(B−A)</td><td>Var(A)+Var(B)−2Cov(A,B)</td></tr>
+<tr><td><b class="key">군집 부트스트랩</b></td><td>독립 표집 단위인 군집 ID를 복원 추출</td></tr>
+<tr><td>행 재표집의 오류</td><td>군집 내 양의 상관을 버려 SE를 작게 잡는다</td></tr>
+<tr><td>크기가 다른 군집</td><td>장소 평균의 평균과 행 평균은 다른 목표</td></tr>
+</tbody></table></div>
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>재표집 단위는 자료가 실제로 독립적으로 들어온 단위와 같아야 한다.</p></div>
 <h2>참고 자료</h2>
 <ul>
 <li><a href="https://cameron.econ.ucdavis.edu/research/Cameron_Miller_JHR_2015.pdf">Cameron·Miller · A Practitioner’s Guide to Cluster-Robust Inference</a></li>

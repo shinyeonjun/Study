@@ -129,6 +129,17 @@ uniform maximum: 1 3/4 mean: 2
 uniform maximum: 4 81/256 mean: 16/5
 observed MLE and correction: 7/2 35/8</code></pre>
 <p>마지막 출력에서 관측값 3.5보다 보정값 4.375가 큽니다. 불편성은 같은 표본에서 참값에 더 가깝다는 보장이 아닙니다. 한 모형의 반복 평균에 대한 성질입니다.</p>
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>개념</th><th>요점</th></tr></thead>
+<tbody>
+<tr><td><b class="key">편향</b></td><td>E[T]−θ, 불편이면 모든 θ에서 0</td></tr>
+<tr><td><b class="key">일치성</b></td><td>모든 ε&gt;0에서 P(|T<sub>n</sub>−θ|&gt;ε)→0</td></tr>
+<tr><td><b class="key">MSE</b></td><td>Var(T)+Bias(T)², 모수값에 따라 추정량 순서가 바뀔 수 있다</td></tr>
+<tr><td>경계 MLE</td><td>모수 공간이 열려 있으면 최댓값이 없을 수 있다</td></tr>
+<tr><td>Uniform(0,θ)</td><td>MLE=M은 아래로 편향, (n+1)M/n은 불편, 지지가 움직여 정칙 공식 실패</td></tr>
+</tbody></table></div>
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>불편성과 일치성은 다른 질문이고, 정칙 조건이 깨지면 점수·정보 공식도 깨진다.</p></div>
 <h2>참고 자료</h2>
 <ul>
 <li><a href="https://www.mit.edu/~18.655/syllabus.html">MIT 18.655 · Estimation and Asymptotics 강의계획</a></li>

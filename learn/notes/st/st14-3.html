@@ -141,6 +141,18 @@ classical Rhat: 2.598076
 ESS finite, long-run approximation: 5.813937, 5.263158
 mean MCSE when marginal SD=1: 0.414729</code></pre>
 <p>한 모형이 타당한지 살피려면 관측을 어떻게 만들었는지와 복제 자료가 무엇을 보여 주는지 읽습니다. 체인 진단은 그 가정에서 정한 사후를 얼마나 잘 계산했는지의 일부를 보여 줍니다.</p>
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>개념</th><th>요점</th></tr></thead>
+<tbody>
+<tr><td><b class="key">몬테카를로 오차</b></td><td>유한 개 MCMC 표본으로 사후 요약을 근사한 오차</td></tr>
+<tr><td>W, B</td><td>체인 내 분산의 평균, n×(체인 평균들의 분산)</td></tr>
+<tr><td><b class="key">R̂</b></td><td>√(v⁺/W), 1보다 뚜렷이 크면 체인들이 아직 같은 분포를 탐색하지 못했다는 신호</td></tr>
+<tr><td><b class="key">유효 표본 수</b></td><td>n/[1+2Σρ<sub>k</sub>], 양의 자기상관이 크면 줄어든다</td></tr>
+<tr><td>MCSE</td><td>사후 SD/√ESS</td></tr>
+<tr><td>한계</td><td>진단이 좋아도 모형·사전·코드의 타당성은 따로 점검</td></tr>
+</tbody></table></div>
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>R̂는 체인끼리의 일치를, ESS는 체인 안의 의존을 보며, 둘 다 모형이 옳은지는 말해 주지 않는다.</p></div>
 <h2>참고 자료</h2>
 <ul>
 <li><a href="https://arxiv.org/abs/1903.08008">Vehtari 외 · Rank-normalization, folding, and localization</a></li>

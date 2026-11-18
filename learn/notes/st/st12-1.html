@@ -138,6 +138,17 @@ Poisson: mean=2.000000 variance=2.000000
 Normal: mean=2.000000 variance=3.000000
 linear mean outside support: -0.6</code></pre>
 <p>같은 <var>η=log 2</var>에서 Bernoulli 평균은 2/3, Poisson 평균은 2입니다. 정규 행은 알려진 v=3인 정규모형에 <var>η=2</var>를 넣은 별도 예입니다. 다음 장은 이 평균 함수를 사용해 관측된 두 조건의 계수를 계산합니다.</p>
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>개념</th><th>요점</th></tr></thead>
+<tbody>
+<tr><td><b class="key">GLM</b></td><td>응답 분포 + 선형예측자 η=x<sup>⊤</sup>β + 연결함수 g(μ)=η</td></tr>
+<tr><td><b class="key">지수족</b></td><td>exp([yθ−b(θ)]/a(φ)+c(y,φ))</td></tr>
+<tr><td>평균·분산</td><td>E[Y]=b′(θ), Var(Y)=a(φ)b″(θ)</td></tr>
+<tr><td><b class="key">정준 연결</b></td><td>η=θ: Bernoulli 로짓, Poisson 로그, 정규 항등</td></tr>
+<tr><td>역연결</td><td>μ=g<sup>−1</sup>(η)로 응답 단위의 예측을 되찾는다</td></tr>
+</tbody></table></div>
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>GLM은 직선을 평균 자체가 아니라 연결함수로 바꾼 평균에 둔다.</p></div>
 <h2>참고 자료</h2>
 <ul>
 <li><a href="https://web.stanford.edu/class/stats305b/slides/Generalized-linear-models.html">Stanford STATS 305B · Generalized Linear Models</a></li>

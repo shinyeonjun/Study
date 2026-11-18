@@ -29,7 +29,8 @@
 <ul>
 <li>점수, 관측 정보, Fisher 정보를 구별한다.</li>
 <li>Bernoulli와 알려진 분산의 정규모형에서 정보를 유도한다.</li>
-<li>정규 조건 아래 Cramér–Rao 하한을 증명하고 달성 조건을 찾는다.</li>
+<li>정칙 조건 아래 Cramér–Rao 하한을 증명하고 달성 조건을 찾는다.</li>
+<li>MLE의 점근 정규성과 정보로 구한 표준오차를 설명한다.</li>
 </ul></div>
 <h2>기울기 하나를 관측값으로 본다</h2>
 <p>새로 자료를 받기 전에 <var>S<sub>θ</sub>(X)=∂ℓ(θ;X)/∂θ</var>를 확률변수로 생각합시다. 이를 <b class="key">점수(score)</b>라고 합니다. Bernoulli 한 번에서 점수는 <var>X/p−(1−X)/(1−p)=(X−p)/[p(1−p)]</var>입니다. p가 1/4일 때 성공하면 4, 실패하면 −4/3입니다. 기울기의 부호는 그 관측이 모형의 모수를 어느 방향으로 밀어주는지 나타냅니다.</p>
@@ -81,7 +82,7 @@
 <h2>점을 잘 맞힐 수 있는 정도에 하한을 둔다</h2>
 <p>모수 하나를 추정하며 통계량 <var>T(X)</var>가 모든 θ에서 <var>E<sub>θ</sub>[T]=θ</var>라고 합시다. T는 모수를 모르는 채 자료로만 계산합니다. <var>∂E[T]=E[TS]</var>가 성립하도록 T를 곱한 적분도 미분과 교환할 수 있고, 분산과 정보가 유한하며 정보가 양수라고 가정합니다. 그러면 <var>1=E[TS]=Cov(T,S)</var>입니다. 첫 등식은 불편성의 양변을 θ로 미분했고, 둘째는 점수 평균이 0이라 맞습니다.</p>
 <div class="eq"><var>1 = Cov(T,S)² ≤ Var(T)·Var(S)=Var(T)·I<sub>n</sub>(θ), 따라서 Var(T) ≥ 1/I<sub>n</sub>(θ).</var></div>
-<p>이것이 <b class="key">Cramér–Rao 분산 하한</b>입니다. Cauchy–Schwarz 부등식에서 등호가 되려면 중심을 뺀 <var>T−θ</var>가 점수의 상수배여야 합니다. Bernoulli 표본의 합 점수는 <var>n(p̂−p)/[p(1−p)]</var>라, 표본 비율의 분산 <var>p(1−p)/n</var>이 하한을 달성합니다. 알려진 분산의 정규 평균도 <var>x̄−μ</var>가 점수의 상수배여서 하한 <var>v/n</var>입니다. 이 하한은 각 모형에서 가정을 만족하는 불편 추정량의 분산에 해당합니다. 편향이 있는 추정량의 MSE를 이 값과 곧바로 비교해 우열을 판정할 수 없습니다.</p>
+<p>이것이 <b class="key">Cramér–Rao 분산 하한</b>입니다. Cauchy–Schwarz 부등식에서 등호가 되려면 중심을 뺀 <var>T−θ</var>가 점수의 상수배여야 합니다. 이 상수는 자료와 무관하지만 θ에 따라 달라도 됩니다. 즉 <var>T−θ=c(θ)S<sub>θ</sub></var> 꼴입니다. Bernoulli 표본의 합 점수는 <var>n(p̂−p)/[p(1−p)]</var>라, 표본 비율의 분산 <var>p(1−p)/n</var>이 하한을 달성합니다. 알려진 분산의 정규 평균도 <var>x̄−μ</var>가 점수의 상수배여서 하한 <var>v/n</var>입니다. 이 하한은 각 모형에서 가정을 만족하는 불편 추정량의 분산에 해당합니다. 편향이 있는 추정량의 MSE를 이 값과 곧바로 비교해 우열을 판정할 수 없습니다. T가 θ가 아니라 <var>ψ(θ)</var>를 불편하게 추정하면 같은 논증에서 <var>Cov(T,S)=ψ′(θ)</var>이므로 하한은 <var>ψ′(θ)²/I<sub>n</sub>(θ)</var>가 됩니다.</p>
 <figure class="fig"><svg class="fig-svg" viewBox="0 0 760 215" role="img" aria-label="p=1/4에서 표본 크기 1,2,4에 대한 정보 16/3,32/3,64/3과 분산 하한 3/16,3/32,3/64.">
 <text class="f-cap" x="380" y="30" text-anchor="middle">독립 표본을 두 배로 모으면</text>
 <rect class="f-soft" x="66" y="49" width="164" height="38"/>
@@ -111,6 +112,11 @@
 </svg><figcaption>표본 비율의 SD는 하한의 제곱근이라 관측 수를 두 배로 해도 절반이 되지는 않는다.</figcaption></figure>
 <div class="check" data-q="q5"></div>
 <div class="check" data-q="q6"></div>
+<h3>최대우도 추정량의 큰 표본 분포</h3>
+<p>Fisher 정보는 최대우도 추정량(MLE)의 큰 표본 행동에도 나옵니다. 독립 동일분포 표본, 참값 θ가 모수 공간의 내부, 지지가 θ에 따라 바뀌지 않음, 위의 미분 교환과 <var>0&lt;I<sub>1</sub>(θ)&lt;∞</var> 같은 정칙 조건 아래에서 일치하는 MLE <var>θ̂<sub>n</sub></var>은</p>
+<div class="eq"><var>√n(θ̂<sub>n</sub>−θ) → N(0, 1/I<sub>1</sub>(θ)) (분포수렴)</var></div>
+<p>를 만족합니다. 핵심은 점수의 1차 테일러 전개입니다. <var>0=S(θ̂)≈S(θ)+ℓ″(θ)(θ̂−θ)</var>에서 <var>√n(θ̂−θ)≈[S(θ)/√n]/[−ℓ″(θ)/n]</var>이고, 분자는 중심극한정리로 <var>N(0,I<sub>1</sub>)</var>, 분모는 큰수의 법칙으로 <var>I<sub>1</sub></var>에 갑니다. 그래서 MLE의 근사 분산은 Cramér–Rao 하한 <var>1/(nI<sub>1</sub>)</var>과 같고(<b class="key">점근 효율</b>), 실제로는 θ 자리에 θ̂을 넣은 <var>1/√I<sub>n</sub>(θ̂)</var>를 표준오차로 씁니다. 예를 들어 Bernoulli 100번에서 <var>p̂=.3</var>이면 표준오차는 <var>√(.3·.7/100)≈.0458</var>입니다. 이것은 극한 결과라 유한 표본의 정확한 분포는 아니며, 다음 장의 경계·이동 지지 사례처럼 조건이 깨지면 성립하지 않습니다.</p>
+<div class="check" data-q="q10"></div>
 <h2>이어 풀기와 증명</h2>
 <p>곱이 되는 부분은 독립으로, 부등식을 만드는 부분은 분산과 공분산으로 설명합니다. 마지막 문제에서는 표본 크기를 바꿔 같은 계산을 다시 검산합니다.</p>
 <div class="check" data-q="q7"></div>
@@ -142,6 +148,17 @@ print(&quot;bound and variance:&quot;, 1 / information, estimator_variance)</cod
 sample information: 64/3
 bound and variance: 3/64 3/64</code></pre>
 <p>실행은 가능한 성공 수 0~4를 모두 더합니다. 성공 수의 확률에는 그 수를 만드는 순서 개수 <var>C(n,s)</var>가 들어가야 합니다. 점수나 추정값에는 순서가 필요 없으므로 이 합은 16개 기록을 열거하는 계산과 같습니다.</p>
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>개념</th><th>요점</th></tr></thead>
+<tbody>
+<tr><td><b class="key">점수</b> S<sub>θ</sub></td><td>로그우도의 θ 미분. 정칙 조건에서 평균 0</td></tr>
+<tr><td><b class="key">Fisher 정보</b> I<sub>1</sub></td><td>E[S²]=E[−ℓ″], 독립 표본에서 I<sub>n</sub>=nI<sub>1</sub></td></tr>
+<tr><td>관측 정보</td><td>받은 자료의 곡률 −ℓ″(θ;x)</td></tr>
+<tr><td><b class="key">Cramér–Rao 하한</b></td><td>불편 T에서 Var(T)≥1/I<sub>n</sub>(θ), 등호는 T−θ=c(θ)S</td></tr>
+<tr><td>MLE 점근 정규성</td><td>√n(θ̂−θ)→N(0,1/I<sub>1</sub>), SE≈1/√I<sub>n</sub>(θ̂)</td></tr>
+</tbody></table></div>
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>Fisher 정보는 점수의 변동이며, 불편 추정의 분산 하한과 MLE의 큰 표본 분산을 함께 정한다.</p></div>
 <h2>참고 자료</h2>
 <ul>
 <li><a href="https://ocw.mit.edu/courses/18-655-mathematical-statistics-spring-2016/resources/lecture-notes/">MIT 18.655 · Mathematical Statistics 강의 노트</a></li>

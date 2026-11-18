@@ -131,6 +131,18 @@ bootstrap variance, SE: 2/3 0.816497
 percentile: 1 4
 basic: 0 3</code></pre>
 <p><code>product</code>는 값이 중복된 경우에도 각 입력 위치를 선택지로 둡니다. 따라서 세 행을 복원으로 선택하는 전부를 셉니다. 큰 n에서는 이 열거 대신 난수로 행 인덱스를 뽑습니다. 쌍과 군집에서는 한 행씩 뽑는 규칙부터 바꿉니다.</p>
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>개념</th><th>요점</th></tr></thead>
+<tbody>
+<tr><td><b class="key">비모수 부트스트랩</b></td><td>각 행에 1/n을 준 경험분포에서 크기 n을 복원 추출</td></tr>
+<tr><td>n과 B</td><td>n은 원자료 크기, B는 재표집 반복 수(수치 오차만 줄인다)</td></tr>
+<tr><td>부트스트랩 SE</td><td>Var*(T*)의 제곱근, 평균이면 Var*=Σ(x<sub>i</sub>−x̄)²/n²</td></tr>
+<tr><td><b class="key">백분위수 구간</b></td><td>[Q(α/2), Q(1−α/2)]</td></tr>
+<tr><td><b class="key">기본 구간</b></td><td>[2T−Q(1−α/2), 2T−Q(α/2)]</td></tr>
+<tr><td>실패 예</td><td>Uniform 끝점의 최대값: M*≤M&lt;θ라 포괄률 0</td></tr>
+</tbody></table></div>
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>부트스트랩은 받은 표를 모집단 대용으로 쓰므로, 표에 없는 정보는 만들어 내지 못한다.</p></div>
 <h2>참고 자료</h2>
 <ul>
 <li><a href="https://doi.org/10.1214/aos/1176344552">Bradley Efron · Bootstrap Methods: Another Look at the Jackknife</a></li>

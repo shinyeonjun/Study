@@ -139,6 +139,17 @@ A mean variance, A future variance: 28/19 104/19
 A prior sensitivity: 1 1/5 54/5
 A prior sensitivity: 9 9/13 166/13</code></pre>
 <p>정규 사후와 정규 사후예측을 사용할 수 있는 작은 예라 모든 수를 닫힌 식으로 계산했습니다. <var>τ²</var>나 여러 산포도 동시에 배울 때는 적분이 더 복잡해집니다. 다음 장에서는 MCMC 출력에서 확인할 수 있는 성질을 배웁니다.</p>
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>개념</th><th>요점</th></tr></thead>
+<tbody>
+<tr><td><b class="key">사후예측 분포</b></td><td>모수 사후로 새 관측 분포를 평균. 분산=모수 사후분산+관측 분산</td></tr>
+<tr><td>새 집단 예측</td><td>N(m, τ²+σ²): 집단 평균의 불확실성도 더한다</td></tr>
+<tr><td>결합 사후</td><td>공통 m을 적분하면 θ<sub>A</sub>, θ<sub>B</sub>에 양의 공분산</td></tr>
+<tr><td><b class="key">사후예측 점검</b></td><td>같은 디자인으로 y<sup>rep</sup>를 만들어 T(y)와 비교</td></tr>
+<tr><td><b class="key">사전 민감도</b></td><td>자료·우도를 고정하고 사전만 바꿔 결과 변화를 본다</td></tr>
+</tbody></table></div>
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>공통 모수의 불확실성은 집단들을 묶고, 사후예측 점검은 모형이 놓친 자료 특징을 찾는 진단이다.</p></div>
 <h2>참고 자료</h2>
 <ul>
 <li><a href="https://mc-stan.org/docs/stan-users-guide/posterior-predictive-checks.html">Stan · Posterior and Prior Predictive Checks</a></li>

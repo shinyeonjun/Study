@@ -30,6 +30,7 @@
 <li>조건부 평균의 미분에서 점수와 정보행렬을 얻는다.</li>
 <li>Fisher scoring 한 번이 IRLS 한 번과 같은 이유를 증명한다.</li>
 <li>Poisson 회귀의 적합과 잔차를 계산하고 추론이 실패할 조건을 판단한다.</li>
+<li>이탈도 차로 우도비 검정을, 계수와 표준오차로 Wald 검정을 계산한다.</li>
 </ul></div>
 <h2>같은 단위를 먼저 맞춘 뒤 한 걸음을 고른다</h2>
 <p>각 행의 선형예측자를 <var>η<sub>i</sub>=x<sub>i</sub><sup>⊤</sup>β+o<sub>i</sub></var>로 둡니다. <var>o<sub>i</sub></var>는 알려진 오프셋으로, 없으면 0입니다. <var>μ<sub>i</sub>=g<sup>−1</sup>(η<sub>i</sub>)</var>, <var>d<sub>i</sub>=dμ<sub>i</sub>/dη<sub>i</sub></var>, <var>V<sub>i</sub>=Var(Y<sub>i</sub>|x<sub>i</sub>)</var>라고 두겠습니다. 반복 한 걸음 동안 이 기호들은 모두 현재 β에서 평가합니다. 내부의 정칙 모형에서 응답은 조건부 독립이며 적합점에서 <var>V<sub>i</sub>&gt;0</var>, <var>d<sub>i</sub>≠0</var>이라 합시다.</p>
@@ -118,6 +119,8 @@
 </svg><figcaption>실선은 세 x에서의 적합값을 이은 선, 점선은 각 x의 관측 두 건을 평균한 값이다. 진단 통계량은 평균 세 개가 아닌 여섯 관측을 사용한다.</figcaption></figure>
 <p>Poisson에서 <b class="key">Pearson 잔차</b>는 <var>(y−μ̂)/√μ̂</var>입니다. 여섯 잔차 제곱합을 잔차 자유도 <var>6−2=4</var>로 나누면 약 .908542입니다. 포아송의 분산 가정이 맞는지 검토할 때 이 비가 크게 올라갈 때뿐 아니라 조건별 잔차 패턴, 구간의 반복 의존, 누락 변수, 노출 단위, 몇 개의 영향 큰 점을 함께 봅니다. 값이 1에 가깝다는 사실만으로 가정이 입증되지는 않습니다.</p>
 <p><b class="key">이탈도(deviance)</b>는 각 행의 평균을 따로 적합하는 포화모형과 현재 모형의 로그우도 차에 2를 곱한 값입니다. Poisson에서는 <var>2Σ[y log(y/μ̂)−(y−μ̂)]</var>이며 y=0의 <var>y log(y/μ̂)</var>는 극한값 0을 씁니다. 이 예는 약 4.547909입니다. Pearson 통계량과 다른 양입니다. 같은 자료에 맞춘 두 중첩 모형 등에서 이탈도 차를 추론에 쓰려면 내포 관계와 정칙·표본 조건을 함께 확인합니다.</p>
+<p>포화모형 항이 상쇄되므로 중첩 모형의 이탈도 차는 <var>2[ℓ(큰 모형)−ℓ(작은 모형)]</var>, 곧 <b class="key">우도비 검정</b> 통계량입니다. 정칙 조건과 충분한 표본에서 귀무가설(작은 모형이 참) 아래 근사적으로 자유도가 두 모형의 모수 수 차인 <var>χ²</var> 분포를 따릅니다. 이 예에서 절편만 있는 모형의 이탈도는 약 6.591674라 기울기를 넣은 모형과의 차는 약 2.043765, <var>χ²<sub>1</sub></var> 근사 p값은 약 .153입니다. 같은 가설을 계수 하나로 보는 <b class="key">Wald 검정</b>은 <var>z=β̂₁/SE(β̂₁)≈.522442/.377769≈1.383</var>이고 정규근사 p값은 약 .167입니다. 두 방법은 큰 표본에서 같은 결론으로 모이지만 유한 표본에서는 값이 다를 수 있고, 관측 여섯 개에서는 어느 근사도 정확하다고 보장하지 않습니다.</p>
+<div class="check" data-q="q10"></div>
 <p>반복값이 크기만 커지는 경우에는 유한 MLE가 있는지 다시 봅니다. 예를 들어 x=0에서 응답이 모두 0이고 x=1에서 모두 1인 이진 로지스틱 자료에서는 절편을 <var>−t</var>, 기울기를 <var>2t</var>로 보내면 두 조건을 점점 완전히 분리합니다. 로그우도는 상한에 가까워지지만 유한한 계수는 그 상한에 닿지 않습니다. 작은 점수나 한 번의 종료만으로 적합이 끝났다고 판단하기 어려운 이유입니다.</p>
 <div class="check" data-q="q6"></div>
 <h2>이어 풀기와 증명</h2>
@@ -176,6 +179,18 @@ fitted means: [1.085146, 1.829708, 3.085146]
 rate ratio: 1.686141, slope SE: 0.377769
 Pearson/df: 0.908542, deviance: 4.547909</code></pre>
 <p>이 예제의 업데이트는 로그우도가 낮아지지 않는지와 최종 점수의 크기를 따로 검사합니다. 다른 자료에서는 한 번에 큰 폭으로 갱신할 때 로그우도가 감소할 수 있습니다. 그때는 단계 크기를 줄이거나 적합 방식과 모형의 조건을 다시 봅니다.</p>
+<h2>한눈에 정리</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>개념</th><th>요점</th></tr></thead>
+<tbody>
+<tr><td><b class="key">Fisher scoring</b></td><td>정보행렬 X<sup>⊤</sup>WX로 IΔ=S를 풀어 갱신</td></tr>
+<tr><td><b class="key">IRLS</b></td><td>작업 반응 z, 가중치 w=d²/V로 가중 최소제곱 반복</td></tr>
+<tr><td>표준오차</td><td>정보행렬 역의 대각 제곱근(큰 표본 근사)</td></tr>
+<tr><td><b class="key">이탈도</b></td><td>2[ℓ(포화)−ℓ(현재)], 중첩 모형의 차가 우도비 통계량</td></tr>
+<tr><td>Pearson 잔차</td><td>(y−μ̂)/√V(μ̂), 제곱합/자유도로 과산포를 살핀다</td></tr>
+<tr><td>완전 분리</td><td>유한 MLE가 없어 계수가 발산</td></tr>
+</tbody></table></div>
+<div class="box sum"><p class="box-k">한 줄 정리</p><p>GLM 적합은 매번 가중치를 바꾸는 최소제곱이며, 추론과 진단은 그 근사의 조건을 확인한 뒤에 쓴다.</p></div>
 <h2>참고 자료</h2>
 <ul>
 <li><a href="https://web.stanford.edu/class/stats305b/slides/Generalized-linear-models.html">Stanford STATS 305B · Fisher Scoring, IRLS and Deviance</a></li>
