@@ -412,6 +412,10 @@ window.BDA_CHAPTERS = {
     {"id": "DB08-2", "title": "메시지 큐와 재전달을 견디는 처리", "href": "notes/db/db08-2.html"},
     {"id": "DB08-3", "title": "CAP 정리에서 일관성과 가용성이 충돌하는 조건", "href": "notes/db/db08-3.html"}
   ],
+  DB09: [
+    {"id": "DB09-1", "title": "슬롯 페이지의 레코드 주소와 B+트리의 페이지 분할", "href": "notes/db/db09-1.html"},
+    {"id": "DB09-2", "title": "버퍼 고정, 교체, 수정 페이지 쓰기를 추적하기", "href": "notes/db/db09-2.html"}
+  ],
   LA01: [
     {"id": "LA01-1", "title": "벡터와 성분: 한 관측을 숫자 여러 개로 나타내기", "href": "notes/la/la01-1.html"},
     {"id": "LA01-2", "title": "벡터 덧셈과 스칼라곱: 방향과 성분으로 계산하기", "href": "notes/la/la01-2.html"}
@@ -700,6 +704,10 @@ window.BDA_CHAPTERS = {
     {"id": "OP10-2", "title": "강볼록성에서 기울기를 최적값 오차로 바꾸기", "href": "notes/op/op10-2.html"},
     {"id": "OP10-3", "title": "모멘텀의 두 단계 반복에서 감쇠와 진동을 구분하기", "href": "notes/op/op10-3.html"}
   ],
+  OP11: [
+    {"id": "OP11-1", "title": "몬테카를로 표준오차와 중요도 표본의 조건", "href": "notes/op/op11-1.html"},
+    {"id": "OP11-2", "title": "기댓값을 아는 변수를 빼서 표준오차 줄이기", "href": "notes/op/op11-2.html"}
+  ],
   AI01: [
     {"id": "AI01-1", "title": "인공지능이 푸는 문제와 출력 읽기", "href": "notes/ai/ai01-1.html"},
     {"id": "AI01-2", "title": "규칙과 학습을 구분하고 AI 계열 연결하기", "href": "notes/ai/ai01-2.html"}
@@ -735,6 +743,10 @@ window.BDA_CHAPTERS = {
     {"id": "AI08-2", "title": "Viterbi로 전체 상태열의 최빈값 찾기", "href": "notes/ai/ai08-2.html"},
     {"id": "AI08-3", "title": "정규분포를 완전제곱해 칼만 이득 구하기", "href": "notes/ai/ai08-3.html"},
     {"id": "AI08-4", "title": "입자 필터의 가중치와 재표집을 계산하기", "href": "notes/ai/ai08-4.html"}
+  ],
+  AI09: [
+    {"id": "AI09-1", "title": "행동의 전제와 효과에서 계획을 탐색하고 검증하기", "href": "notes/ai/ai09-1.html"},
+    {"id": "AI09-2", "title": "불확실한 결정에서 정보를 얻는 가치를 계산하기", "href": "notes/ai/ai09-2.html"}
   ],
   ML01: [
     {"id": "ML01-1", "title": "한 행의 뜻과 예측할 값부터 정하기", "href": "notes/ml/ml01-1.html"},
@@ -800,6 +812,10 @@ window.BDA_CHAPTERS = {
     {"id": "ML14-1", "title": "보이지 않는 집단의 소속을 확률표로 계산하기", "href": "notes/ml/ml14-1.html"},
     {"id": "ML14-2", "title": "Jensen 부등식으로 EM이 우도를 낮추지 않음을 보이기", "href": "notes/ml/ml14-2.html"},
     {"id": "ML14-3", "title": "가우시안 혼합에서 분산이 붕괴하는 이유와 계산을 막는 조건", "href": "notes/ml/ml14-3.html"}
+  ],
+  ML15: [
+    {"id": "ML15-1", "title": "확률 보정과 확률 예측의 채점 규칙", "href": "notes/ml/ml15-1.html"},
+    {"id": "ML15-2", "title": "교환가능한 보정 자료로 분할 적합 예측구간 만들기", "href": "notes/ml/ml15-2.html"}
   ],
   DL01: [
     {"id": "DL01-1", "title": "텐서의 모양과 배치 축 읽기", "href": "notes/dl/dl01-1.html"},
@@ -898,6 +914,14 @@ window.BDA_CHAPTERS = {
   RL12: [
     {"id": "RL12-1", "title": "학습과 평가를 분리하고 상호작용을 센다", "href": "notes/rl/rl12-1.html"},
     {"id": "RL12-2", "title": "독립 반복의 불확실성과 보상 실패를 함께 본다", "href": "notes/rl/rl12-2.html"}
+  ],
+  RL13: [
+    {"id": "RL13-1", "title": "벨만 연산의 수축으로 가치반복의 오차를 증명하기", "href": "notes/rl/rl13-1.html"},
+    {"id": "RL13-2", "title": "함수근사와 오프폴리시 TD가 발산하는 두 상태 반례", "href": "notes/rl/rl13-2.html"}
+  ],
+  RL14: [
+    {"id": "RL14-1", "title": "궤적 확률을 미분해 정책 경사와 기준값을 얻기", "href": "notes/rl/rl14-1.html"},
+    {"id": "RL14-2", "title": "종료와 잘림을 구별해 GAE를 계산하고 PPO 목적을 읽기", "href": "notes/rl/rl14-2.html"}
   ],
   RS01: [
     {"id": "RS01-1", "title": "질문에서 가설로: 조작적 정의와 측정", "href": "notes/rs/rs01-1.html"},

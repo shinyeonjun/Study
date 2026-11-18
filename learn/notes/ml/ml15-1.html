@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>확률 보정과 확률 예측의 채점 규칙 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="ML15-1">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">머신러닝 · ML15 예측 불확실성과 강건한 평가</p>
+<p class="chap-num">ML15·1</p>
+<h1>확률 보정과 확률 예측의 채점 규칙</h1>
+<p class="lead">네 사례에 모두 75%를 예측했고 실제로 세 건이 발생했습니다. 전체 표에서는 숫자가 맞아도 어떤 그룹에서는 지나치게 낮고 다른 그룹에서는 높을 수 있습니다. 확률의 뜻을 작은 표와 제곱 오차로 검산합니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>보정과 순위 구별 능력이 다른 속성임을 설명한다.</li><li>Brier 점수의 기대분해로 정직한 확률의 최적성을 보인다.</li><li>그룹, 표본 수, 분포 변화에 따른 오차를 함께 기록한다.</li></ul></div>
+
+<h2>같은 확률을 받은 관측끼리 결과를 센다</h2>
+<p>어떤 사건의 실제 여부를 Y∈{0,1}, 모형의 확률을 P̂라고 씁니다. 예측 확률 p인 사례들이 충분히 있을 때 관측 비율이 p와 맞는 성질을 <b class="key">확률 보정(calibration)</b>이라고 합니다. 수식으로는 E[Y | P̂]=P̂라고 씁니다. 0.75만 내고 실제 사건도 약 0.75 비율이라면 보정될 수 있지만, 그런 예측은 두 대상을 위험순으로 구별할 수 없습니다. 보정과 순위 성능을 따로 확인하는 이유입니다.</p>
+<p>연속 확률에서는 한 값의 표본만으로 안정적인 빈도를 얻기 어려워 구간을 묶기도 합니다. 한 구간의 평균 예측 확률과 사건 비율을 비교하며 표본 수를 적습니다. 구간 경계를 어떻게 정했는지에 따라 표가 달라질 수 있습니다. 작은 표에서 비율이 정확히 맞는다고 모집단의 보정을 증명할 수 없습니다.</p>
+<div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
+<h2>제곱 점수를 기대값으로 분해한다</h2>
+<p>이진 사건에서 Brier 손실을 (p−Y)²로 씁니다. 값을 낮출수록 좋습니다. 어떤 입력에서 실제 사건 확률을 q라고 하면 기대값은 q(1−p)²+(1−q)p²입니다. 항을 풀고 q²을 더했다 빼면 다음처럼 정리됩니다.</p>
+<p class="calc">E[(p−Y)²] = (p−q)² + q(1−q)</p>
+<p>두 번째 항은 실제 분포의 변동이고, 첫 번째 항만 p에 따라 바뀝니다. 따라서 p=q가 유일한 최소입니다. 실제 확률을 그대로 보고할 때 기대 손실이 작아지는 규칙을 <b class="key">적정 채점 규칙(proper scoring rule)</b>이라고 합니다. 최소점이 실제 분포에서 유일할 때는 엄밀한 적정 채점 규칙(strictly proper)이라고 부르며, 이 장의 두 점수가 이에 속합니다. 로그 손실 −Y log p−(1−Y)log(1−p)에서도 0&lt;q&lt;1이면 기대 손실을 p로 미분해 (p−q)/[p(1−p)]를 얻습니다. p=q 양쪽에서 부호가 바뀌므로 역시 q에서 최소입니다. 실제로 일어난 결과에 확률 0을 주면 로그 손실은 무한대입니다.</p>
+<div class="check" data-q="q3"></div><div class="check" data-q="q4"></div><div class="check" data-q="q5"></div>
+<h2>전체 평균과 그룹별 실패를 함께 적는다</h2>
+<div class="table-wrap"><table><thead><tr><th scope="col">구분</th><th scope="col">Y 기록</th><th scope="col">예측 p</th><th scope="col">실제 비율</th><th scope="col">실제−예측</th></tr></thead><tbody><tr><td>A</td><td>1, 1</td><td>.75</td><td>1</td><td>.25</td></tr><tr><td>B</td><td>1, 0</td><td>.75</td><td>.5</td><td>−.25</td></tr><tr><td>전체</td><td>1, 1, 1, 0</td><td>.75</td><td>.75</td><td>0</td></tr></tbody></table></div>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 242" role="img" aria-label="예측값은 전체와 두 집단 모두 .75다. 실제 비율은 A가 1, 전체가 .75, B가 .5이며 같은 기준선에서 위아래에 나타난다.">
+<line class="f-grid" x1="144" y1="108" x2="605" y2="108"/><line class="f-grid" x1="144" y1="54" x2="605" y2="54"/><line class="f-grid" x1="144" y1="162" x2="605" y2="162"/><line class="f-ink" x1="193" y1="181" x2="193" y2="35"/><line class="f-ink" x1="193" y1="181" x2="574" y2="181"/><text class="f-cap" x="192" y="24" text-anchor="middle">실제 비율</text><text class="f-s" x="157" y="59" text-anchor="middle">1.00</text><text class="f-s" x="157" y="113" text-anchor="middle">0.75</text><text class="f-s" x="157" y="167" text-anchor="middle">0.50</text><line class="f-dash" x1="199" y1="162" x2="561" y2="54"/><line class="f-line" x1="380" y1="54" x2="380" y2="183"/><circle class="f-fill" cx="380" cy="54" r="5"/><circle class="f-fill" cx="380" cy="108" r="5"/><circle class="f-fill" cx="380" cy="162" r="5"/><text class="f-t" x="399" y="48" text-anchor="start">A</text><text class="f-t" x="399" y="103" text-anchor="start">전체</text><text class="f-t" x="399" y="155" text-anchor="start">B</text><text class="f-s" x="199" y="205" text-anchor="middle">0.50</text><text class="f-s" x="380" y="205" text-anchor="middle">0.75</text><text class="f-s" x="561" y="205" text-anchor="middle">1.00</text><text class="f-cap" x="565" y="227" text-anchor="middle">예측 확률</text>
+</svg><figcaption>점선의 위아래로 엇갈리는 두 군의 차이가 전체 평균에서 상쇄된다.</figcaption></figure>
+<p>전체로는 차이가 0입니다. A와 B를 따로 보면 차이가 서로 반대입니다. 그룹별 추정값 옆에 각 표본 수 2를 적어야 결과의 흔들림을 판단할 수 있습니다. 실제 자료에서는 관측 기준이 바뀌었는지, 그룹의 구성이나 발생률이 시간에 따라 달라졌는지도 따집니다.</p>
+<p>예를 들어 예전 q=1/4에서 보정된 상수 예측 1/4가 다음 시기의 q=3/4에서 유지되면 Brier의 기대 손실은 7/16입니다. 정확한 새 q를 알고 3/4로 바꿨다면 3/16입니다. 이는 발생률만 바꾼 설명용 사례입니다. 새 보정값을 학습하려면 별도 자료를 쓰고 최종 평가 자료는 남겨야 합니다.</p>
+<div class="check" data-q="q6"></div><div class="check" data-q="q7"></div>
+<h2>그룹과 전체를 분수로 검산한다</h2>
+<pre data-example="python"><code>from fractions import Fraction as F
+
+groups = {&quot;A&quot;:[1,1], &quot;B&quot;:[1,0]}
+p = F(3,4)
+def mean(xs):
+    return sum(xs)/len(xs)
+
+for name, ys in groups.items():
+    print(name, len(ys), mean([F(y)-p for y in ys]))
+all_y = groups[&quot;A&quot;] + groups[&quot;B&quot;]
+print(&quot;all&quot;, len(all_y), mean([F(y)-p for y in all_y]))
+print(mean([(p-y)**2 for y in all_y]),
+      mean([(F(1,2)-y)**2 for y in all_y]))
+q = F(3,4)
+print((F(1,4)-q)**2 + q*(1-q))</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>A 2 1/4
+B 2 -1/4
+all 4 0
+3/16 1/4
+7/16</code></pre>
+<div class="check" data-q="q8"></div>
+
+<h2>참고 자료</h2>
+<ul><li><a href="https://doi.org/10.1198/016214506000001437">Gneiting과 Raftery · Strictly Proper Scoring Rules, Prediction, and Estimation</a></li></ul>
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

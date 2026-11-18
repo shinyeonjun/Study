@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>함수근사와 오프폴리시 TD가 발산하는 두 상태 반례 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="RL13-2">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">강화학습 · RL13 벨만 연산자와 오프폴리시 불안정</p>
+<p class="chap-num">RL13·2</p>
+<h1>함수근사와 오프폴리시 TD가 발산하는 두 상태 반례</h1>
+<p class="lead">벨만 연산이 수축해도 구현한 매개변수 갱신이 반드시 줄어드는 것은 아닙니다. 실제 가치가 두 상태 모두 0인 모형에서, 하나의 매개변수를 공유하는 TD가 왜 커지는지 분수로 계산합니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>부트스트랩·함수근사·오프폴리시의 역할을 구분한다.</li><li>상태 분포와 행동 중요도 비율을 각각 계산한다.</li><li>표 가치반복과 선형 근사 기대 갱신의 결과를 대조한다.</li></ul></div>
+
+<h2>두 상태가 하나의 매개변수를 공유한다</h2>
+<p>상태 A와 B가 있고 어느 상태에서든 행동 t는 B, 행동 b는 A로 보냅니다. 모든 보상은 0이고 γ=9/10입니다. 평가하려는 <b class="key">목표 정책</b> π는 t만 고릅니다. 데이터를 만드는 <b class="key">행동 정책</b> μ는 어느 상태에서나 t를 1/10, b를 9/10으로 고릅니다. 그래서 μ로 한 번 이동한 뒤에는 이전 분포와 관계없이 A가 9/10, B가 1/10입니다.</p>
+<p>가치 함수를 <var>vθ(s)=θφ(s)</var>로 둡니다. 특징값은 φ(A)=1, φ(B)=2입니다. 참 가치 0은 θ=0으로 정확히 나타낼 수 있습니다. 서로 다른 두 가치를 한 매개변수로 묶었으므로 A를 맞추려고 θ를 바꾸면 B의 예측도 바뀝니다.</p>
+<div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
+<h2>행동 비율을 보정해도 시작 상태 분포는 남는다</h2>
+<p>행동마다 단일 단계 중요도 비율 <var>ρ=π(a|s)/μ(a|s)</var>를 계산합니다. 이 예에서는 t에서 10, b에서 0입니다. θ를 바꾸는 부분은 TD 오차 δ=r+γvθ(s′)−vθ(s)에 현재 예측의 미분 φ(s)와 ρ를 곱합니다. 새 상태 예측을 목표값으로 쓰되 이 목표값을 미분하는 항은 넣지 않습니다. 이런 갱신을 <b class="key">준경사 TD</b>라고 합니다.</p>
+<p class="calc">θ′ = θ + α E[s∼dμ,a∼μ(·|s)] [ ρ φ(s) (γφ(s′)−φ(s)) ] θ</p>
+<p>이 식에서는 보상이 0이므로 θ를 괄호 밖으로 꺼냈습니다. 현재 θ에 대해 상태와 행동의 모든 경우를 직접 합하는 <em>결정적 기대 갱신</em>입니다. 한 궤적의 각 시점마다 이전에 추정된 θ와 현재 상태가 독립이라고 가정한 결과가 아닙니다. ρ를 곱해도 상태 가중치 dμ는 행동 정책의 것입니다.</p>
+<div class="table-wrap"><table><thead><tr><th scope="col">현재 상태</th><th scope="col">dμ</th><th scope="col">t가 일어나면 φ(s)[γφ(B)−φ(s)]</th><th scope="col">확률을 곱한 항</th></tr></thead><tbody><tr><td>A</td><td>9/10</td><td>4/5</td><td>18/25</td></tr><tr><td>B</td><td>1/10</td><td>−2/5</td><td>−1/25</td></tr></tbody></table></div>
+<p>t의 행동 확률 1/10이 비율 10과 상쇄됩니다. 두 항을 합하면 17/25입니다. α=1/2라면 θ′=(1+17/50)θ=(67/50)θ입니다. θ₀가 0이 아니면 반복할수록 |θ|가 커집니다.</p>
+<div class="check" data-q="q3"></div><div class="check" data-q="q4"></div><div class="check" data-q="q5"></div>
+<h2>갱신에 어떤 조건을 바꾸면 달라지는가</h2>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 160" role="img" aria-label="하나의 매개변수로 가치 함수를 만들고 다른 정책에서 나온 상태 분포 위에서 부트스트랩 목표를 쓰면 이 모형에서는 업데이트 계수가 양수가 된다.">
+<rect class="f-box" x="42" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="135" y="61" text-anchor="middle">함수근사</text><text class="f-s" x="135" y="89" text-anchor="middle">A와 B의 값을</text><text class="f-s" x="135" y="110" text-anchor="middle">θ 하나로 묶음</text><line class="f-line" x1="235" y1="84" x2="278" y2="84" marker-end="url(#f-arrow)"/><rect class="f-soft" x="287" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="380" y="61" text-anchor="middle">부트스트랩</text><text class="f-s" x="380" y="89" text-anchor="middle">현재 B의 값을</text><text class="f-s" x="380" y="110" text-anchor="middle">목표에 다시 사용</text><line class="f-line" x1="480" y1="84" x2="523" y2="84" marker-end="url(#f-arrow)"/><rect class="f-box" x="532" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="625" y="61" text-anchor="middle">오프폴리시</text><text class="f-s" x="625" y="89" text-anchor="middle">A가 9/10인 분포</text><text class="f-s" x="625" y="110" text-anchor="middle">그 분포에서 갱신</text>
+</svg><figcaption>세 조건이 결합할 때 불안정할 수 있다는 반례다. 개별 학습 알고리즘과 설정마다 수렴 조건을 확인한다.</figcaption></figure>
+<p>정책 π 자신의 정상 분포에서 학습하면 B만 방문합니다. 계수는 −2/5이고, 같은 학습률에서 배율은 4/5입니다. 모든 보상이 0인 이 예의 실제 반환값을 목표로 사용하면 TD의 γvθ(s′) 대신 0을 넣습니다. μ의 상태 분포에서 배율은 7/20입니다. 상태별 가치를 자유롭게 갖는 표에서 정확 벨만 연산은 (γv(B),γv(B))이고 최대노름 수축률은 γ입니다.</p>
+<p>상태 분포가 주는 가중치, 부트스트랩, 표현을 함께 바꿨을 때 어떤 갱신을 하는지 적어야 합니다. 이 반례는 세 조건의 결합이 항상 발산한다는 결론을 주지 않습니다. 할인 벨만 연산의 수축이 근사한 준경사 갱신에 그대로 이전되는지도 별도로 증명해야 합니다.</p>
+<div class="check" data-q="q6"></div><div class="check" data-q="q7"></div>
+<h2>가능한 상태와 행동을 정확한 분수로 합한다</h2>
+<pre data-example="python"><code>from fractions import Fraction as F
+
+phi = (1, 2)
+gamma = F(9,10)
+alpha = F(1,2)
+mu = (F(9,10), F(1,10))  # actions b,t
+pi = (F(0), F(1))
+dmu = (F(9,10), F(1,10))
+dpi = (F(0), F(1))
+def coefficient(d, bootstrap):
+    total = F(0)
+    for s in range(2):
+        for a in range(2):
+            rho = pi[a]/mu[a]
+            successor = a  # b moves to A, t moves to B
+            total += d[s]*mu[a]*rho*phi[s]*(bootstrap*phi[successor]-phi[s])
+    return total
+
+c = coefficient(dmu,gamma)
+factor = 1+alpha*c
+print(c, factor, factor**3)
+print(1+alpha*coefficient(dpi,gamma), 1+alpha*coefficient(dmu,0))
+assert factor &gt; 1</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>17/25 67/50 300763/125000
+4/5 7/20</code></pre>
+<p>두 번째 줄 첫 결과는 시작 상태 분포를 π의 것으로 바꿔 계산했습니다. 항의 행동 가중치를 코드에서 μ와 ρ로 유지했지만 두 항의 곱은 π와 같으므로, 정확한 기대값은 π에서 행동을 직접 뽑는 계산과 같습니다.</p>
+<div class="check" data-q="q8"></div>
+
+<h2>참고 자료</h2>
+<ul><li><a href="http://incompleteideas.net/book/the-book-2nd.html">Sutton·Barto · Reinforcement Learning, 11장 함수근사와 오프폴리시</a></li></ul>
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

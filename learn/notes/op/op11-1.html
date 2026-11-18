@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>몬테카를로 표준오차와 중요도 표본의 조건 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="OP11-1">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">최적화와 수치계산 · OP11 추정량의 분산을 줄이는 표본계산</p>
+<p class="chap-num">OP11·1</p>
+<h1>몬테카를로 표준오차와 중요도 표본의 조건</h1>
+<p class="lead">드문 사건은 그대로 뽑으면 관측이 거의 없습니다. 그 사건을 더 자주 뽑되 확률이 바뀐 만큼 값을 보정해 평균을 구합니다. 뽑힐 수 없는 경우와 자기정규화가 만들어 내는 편향도 계산합니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>독립 표본평균의 분산에서 표준오차를 유도한다.</li><li>중요도 비율의 지지집합 조건과 분산을 구한다.</li><li>자기정규화의 유한 표본 편향과 가중치 ESS를 예로 구분한다.</li></ul></div>
+
+<h2>평균의 분산은 왜 표본 수로 나뉘나</h2>
+<p>같은 분포에서 독립적으로 뽑은 Y₁,…,Yₙ의 평균은 μ, 분산은 유한한 σ²라고 합시다. 평균 <var>Ȳ=∑Yᵢ/n</var>의 기대값은 μ입니다. 분산에서 각 항의 계수를 제곱하고 독립 때문에 교차 공분산이 0임을 쓰면 <var>Var(Ȳ)=nσ²/n²=σ²/n</var>입니다. 이 값의 제곱근 σ/√n이 평균 추정량의 <b class="key">몬테카를로 표준오차</b>입니다. σ를 모르면 여러 독립값의 표본 표준편차 s로 바꾸어 추정할 수 있습니다.</p>
+<p>표준오차는 반복해서 같은 방법으로 표본을 뽑을 때 추정량이 흔들리는 예상 크기입니다. 표본 자체의 산포와 구분합니다. 오차를 절반 수준으로 낮추려면 같은 분산과 독립 표집 아래 n을 네 배로 늘립니다. 이 식은 동시간대의 강하게 의존하는 자료에 독립으로 적용할 수 없습니다.</p>
+<div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
+<h2>표집 규칙을 바꿀 때 사라지면 안 되는 값</h2>
+<p>목표 분포 P에서 <var>μ=Eₚ[g(X)]</var>를 알고 싶지만 제안 분포 Q에서 뽑는다고 합시다. 두 분포가 같은 유한 상태에 놓여 있고, <var>p(x)g(x)≠0</var>인 모든 x에는 q(x)&gt;0이 필요합니다. 그때 q가 양수인 곳에서 <var>w(x)=p(x)/q(x)</var>라 하여 q에 대해 합을 쓰면 다음이 됩니다.</p>
+<p class="calc">E<sub>Q</sub>[w(X)g(X)] = ∑<sub>x:q(x)&gt;0</sub> q(x)[p(x)/q(x)]g(x) = E<sub>P</sub>[g(X)]</p>
+<p>위 식의 첫 기대값은 Q 아래의 기대값입니다. 보정이 실패하는 가장 작은 예는 목표에서 확률이 양수인 사건에 Q가 확률 0을 주는 경우입니다. 사건 표시함수 g의 목표 기댓값은 양수인데, 그 사건의 표본이 한 번도 나오지 않아 평균은 0이 됩니다. 연속형으로 옮길 때는 공통 기준 측도에 대한 밀도와 거의 모든 지점에서의 조건을 확인합니다.</p>
+<div class="check" data-q="q3"></div><div class="check" data-q="q4"></div>
+<h2>드문 사건을 자주 내면 이 예에서 분산이 감소한다</h2>
+<p>g(X)는 X=1이면 1, 아니면 0입니다. 목표 P(X=1)=1/10, 제안 Q(X=1)=1/2입니다. 목표 분포에서 직접 뽑은 표시값의 분산은 (1/10)(9/10)=9/100입니다. 제안 분포에서는 값이 0과 1/5이므로 평균은 1/10, 분산은 1/100입니다. 이번 Q에서 분산이 9분의 1로 줄었습니다. q가 충분히 작아 가중치의 제곱이 커지는 제안을 쓰면 반대로 분산이 커질 수 있습니다.</p>
+<div class="table-wrap"><table><thead><tr><th scope="col">방법</th><th scope="col">가능한 표본 값</th><th scope="col">평균</th><th scope="col">분산</th></tr></thead><tbody><tr><td>목표 P에서 직접</td><td>0, 1</td><td>1/10</td><td>9/100</td></tr><tr><td>제안 Q에서 w·g</td><td>0, 1/5</td><td>1/10</td><td>1/100</td></tr></tbody></table></div>
+<div class="check" data-q="q5"></div><div class="check" data-q="q6"></div>
+<h2>가중치의 합으로 나누는 방법은 다른 추정량이다</h2>
+<p>원래 중요도 표본 평균은 가중 결과의 합을 <var>n</var>으로 나눕니다. <b class="key">자기정규화</b>는 가중 결과의 합을 가중치의 합으로 나눕니다. 이 비율은 한 번의 표본에서는 가중치가 양수라면 그대로 g(X)가 됩니다. 위의 Q에서 그 평균은 1/2입니다. 목표가 1/10인 상황의 유한표본 편향을 바로 확인할 수 있습니다. 표본의 가중치 합이 0이면 이 비율은 정의되지 않습니다. Q의 독립 동일분포 표본을 쓰고, P의 질량이 모두 Q의 지지집합에 있으며 E<sub>P</sub>|g(X)|가 유한하면 분자의 표본평균은 μ로, 분모의 표본평균은 E<sub>Q</sub>[w]=1로 수렴합니다. 그때 자기정규화 추정량은 큰 표본에서 μ로 수렴합니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 160" role="img" aria-label="가중치 네 개를 정규화하고 제곱합의 역수를 구하면 유효 표본 크기 100/41이 나온다.">
+<rect class="f-box" x="42" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="135" y="61" text-anchor="middle">가중치 원본</text><text class="f-s" x="135" y="89" text-anchor="middle">9/5, 9/5</text><text class="f-s" x="135" y="110" text-anchor="middle">1/5, 1/5</text><line class="f-line" x1="235" y1="84" x2="278" y2="84" marker-end="url(#f-arrow)"/><rect class="f-soft" x="287" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="380" y="61" text-anchor="middle">정규화한 무게</text><text class="f-s" x="380" y="89" text-anchor="middle">9/20, 9/20</text><text class="f-s" x="380" y="110" text-anchor="middle">1/20, 1/20</text><line class="f-line" x1="480" y1="84" x2="523" y2="84" marker-end="url(#f-arrow)"/><rect class="f-box" x="532" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="625" y="61" text-anchor="middle">쏠림 지표</text><text class="f-s" x="625" y="89" text-anchor="middle">1 / 제곱합</text><text class="f-s" x="625" y="110" text-anchor="middle">100/41</text>
+</svg><figcaption>ESS는 가중치 쏠림을 보여 주며 함수 g와 표집 의존성에 관한 모든 오차를 재는 값은 아니다.</figcaption></figure>
+<div class="check" data-q="q7"></div>
+<pre data-example="python"><code>from fractions import Fraction as F
+
+p = [F(9,10), F(1,10)]
+q = [F(1,2), F(1,2)]
+w = [p[x]/q[x] for x in (0,1)]
+g = [0,1]
+obs = [w[x]*g[x] for x in (0,1)]
+mu = sum(q[x]*obs[x] for x in (0,1))
+var_is = sum(q[x]*(obs[x]-mu)**2 for x in (0,1))
+var_direct = p[0]*p[1]
+sample = [w[x] for x in (0,0,1,1)]
+ess = sum(sample)**2/sum(x*x for x in sample)
+print(mu, var_direct, var_is)
+print(q[1], ess)
+assert mu == p[1]</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>1/10 9/100 1/100
+1/2 100/41</code></pre>
+<div class="check" data-q="q8"></div>
+
+<h2>참고 자료</h2>
+<ul><li><a href="https://doi.org/10.1080/01621459.2000.10473909">Owen와 Zhou · Safe and Effective Importance Sampling</a></li></ul>
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

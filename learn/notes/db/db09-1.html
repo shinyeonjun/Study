@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>슬롯 페이지의 레코드 주소와 B+트리의 페이지 분할 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="DB09-1">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">데이터베이스와 SQL · DB09 저장 페이지와 버퍼 관리자</p>
+<p class="chap-num">DB09·1</p>
+<h1>슬롯 페이지의 레코드 주소와 B+트리의 페이지 분할</h1>
+<p class="lead">좁은 서랍에서 종이를 앞으로 당겨 빈 공간을 모아도, 서류 번호는 유지해야 합니다. 한 페이지의 슬롯과 키를 찾는 B+트리의 리프를 따로 만들어 이 관계를 확인합니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>페이지 번호와 슬롯 번호가 레코드를 가리키는 방식을 설명한다.</li><li>가변 길이 레코드에서 연속 빈 공간을 손으로 계산한다.</li><li>B+트리 리프를 나눈 뒤 경계 키를 통해 올바른 리프로 들어간다.</li></ul></div>
+
+<h2>슬롯 번호를 두고 바이트 위치를 연결한다</h2>
+<p>페이지는 저장소와 메모리 사이에서 옮기는 고정 길이 블록입니다. 한 페이지에 가변 길이 레코드를 여러 개 넣는다고 합시다. 앞쪽에는 헤더와 <b class="key">슬롯 배열</b>을, 뒤쪽에는 레코드 바이트를 배치합니다. 슬롯에는 레코드의 시작 위치와 길이를 적습니다. 레코드 ID를 (페이지 번호, 슬롯 번호)로 잡으면 레코드 바이트의 위치를 바꿀 때 페이지의 슬롯 내용만 갱신하면 됩니다.</p>
+<p>단순한 64바이트 페이지를 사용합니다. 헤더는 16바이트, 슬롯은 각 4바이트입니다. 10, 12, 14바이트 레코드를 뒤에서 차례로 배치하면 시작 위치는 54, 42, 28입니다. 앞쪽 메타데이터 끝은 16+3·4=28이고 마지막 레코드가 28에서 시작합니다. 새 레코드를 넣을 연속 빈 공간이 없습니다.</p>
+<div class="table-wrap"><table><thead><tr><th scope="col">작업</th><th scope="col">활성 슬롯의 시작 위치</th><th scope="col">슬롯 영역 끝</th><th scope="col">연속 빈 공간</th></tr></thead><tbody><tr><td>A, B, C를 삽입</td><td>A=54, B=42, C=28</td><td>28</td><td>0</td></tr><tr><td>B 슬롯을 삭제 표시</td><td>A=54, C=28</td><td>28</td><td>0</td></tr><tr><td>남은 레코드를 압축</td><td>A=54, C=40</td><td>28</td><td>12</td></tr><tr><td>8바이트 D, 새 슬롯</td><td>A=54, C=40, D=32</td><td>32</td><td>0</td></tr></tbody></table></div>
+<p>B를 지워도 42~53 바이트에 빈 구멍만 생깁니다. 압축하면 C의 시작이 40으로 옮겨지고, C의 슬롯 번호는 2 그대로입니다. 유효 레코드 바이트 길이 24에 메타데이터 28을 빼면 64−24−28=12가 나옵니다. 이 공간을 이용해 D에 새 슬롯 4바이트와 데이터 8바이트를 할당할 수 있습니다. 삭제한 슬롯은 사용하지 않는다고 정한 예입니다. 실제 시스템이 슬롯을 재사용한다면 이전 레코드를 가리키던 주소와 새 레코드 주소를 잘못 혼동하지 않도록 관리합니다.</p>
+<div class="check" data-q="q1"></div><div class="check" data-q="q2"></div><div class="check" data-q="q3"></div><div class="check" data-q="q4"></div>
+<h2>인덱스 키의 범위를 페이지마다 나눈다</h2>
+<p>레코드 주소를 찾아가는 인덱스를 별도로 둡니다. <b class="key">B+트리</b>에서는 검색에 쓰는 경계 키를 내부 노드에 두고, 키에 대응하는 레코드 주소를 리프에 둡니다. 리프를 키 순서대로 연결해 두면 범위 질의에서 처음 리프까지 트리를 내려간 뒤 옆으로 읽을 수 있습니다. 여기서는 각 키가 하나의 주소만 가리킵니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 160" role="img" aria-label="25를 넣어 리프가 넘쳤을 때 리프를 정렬 상태로 나누고 오른쪽 페이지의 첫 키 25를 부모의 경계에 둔다.">
+<rect class="f-box" x="42" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="135" y="61" text-anchor="middle">기존 리프</text><text class="f-s" x="135" y="89" text-anchor="middle">10, 20, 30</text><text class="f-s" x="135" y="110" text-anchor="middle">최대 키 3개</text><line class="f-line" x1="235" y1="84" x2="278" y2="84" marker-end="url(#f-arrow)"/><rect class="f-soft" x="287" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="380" y="61" text-anchor="middle">25를 삽입</text><text class="f-s" x="380" y="89" text-anchor="middle">10, 20 | 25, 30</text><text class="f-s" x="380" y="110" text-anchor="middle">왼쪽·오른쪽 분할</text><line class="f-line" x1="480" y1="84" x2="523" y2="84" marker-end="url(#f-arrow)"/><rect class="f-box" x="532" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="625" y="61" text-anchor="middle">부모 경계</text><text class="f-s" x="625" y="89" text-anchor="middle">25 미만은 왼쪽</text><text class="f-s" x="625" y="110" text-anchor="middle">25 이상은 오른쪽</text>
+</svg><figcaption>경계 키 25는 검색 경로를 안내하며 데이터는 오른쪽 리프에 남는다.</figcaption></figure>
+<p>새 키 25 때문에 정렬된 리프가 4칸을 요구합니다. 왼쪽에 10,20, 오른쪽에 25,30을 두고 부모에 25를 복사하면 25 미만은 왼쪽으로, 이상은 오른쪽으로 갑니다. 부모 노드도 가득 차면 해당 구현의 내부 노드 분할 규칙에 따라 위로 경계를 보냅니다. 루트가 분할되면 새 루트를 만들어 모든 리프 깊이가 함께 한 단계 증가합니다. 이 예는 리프 분할 때 오른쪽 최소 키를 부모로 복사하는 규칙을 씁니다.</p>
+<div class="check" data-q="q5"></div><div class="check" data-q="q6"></div><div class="check" data-q="q7"></div>
+<h2>슬롯과 리프를 메모리에서 확인한다</h2>
+<pre data-example="python"><code>size, header, slot_bytes = 64, 16, 4
+records = [10, 12, 14]
+
+def pack(lengths):
+    cursor = size
+    slots = []
+    for length in lengths:
+        if length:
+            cursor -= length
+            slots.append(cursor)
+        else:
+            slots.append(None)
+    free = cursor - header - slot_bytes*len(slots)
+    if free &lt; 0:
+        raise ValueError(&quot;page full&quot;)
+    return slots, free
+
+print(*pack(records))
+print(*pack([10, 0, 14]))
+print(*pack([10, 0, 14, 8]))
+
+overflow = sorted([10,20,30] + [25])
+left, right = overflow[:2], overflow[2:]
+border = right[0]
+print(border, left, right)
+for key in overflow:
+    page = left if key &lt; border else right
+    assert key in page</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>[54, 42, 28] 0
+[54, None, 40] 12
+[54, None, 40, 32] 0
+25 [10, 20] [25, 30]</code></pre>
+<p>예제의 <code>0</code>은 실제 길이 0인 레코드가 들어왔다는 뜻 대신 삭제 슬롯을 나타냅니다. 쓰는 자료가 0바이트 레코드도 허용한다면 별도의 사용 여부 필드가 필요합니다. 슬롯 번호는 목록 인덱스로 추적하고, 리프의 순서와 키 경계를 따로 검증합니다.</p>
+<div class="check" data-q="q8"></div>
+
+<h2>참고 자료</h2>
+<ul><li><a href="https://www.postgresql.org/docs/current/storage-page-layout.html">PostgreSQL · 데이터베이스 페이지 레이아웃과 항목 식별자</a></li><li><a href="https://15445.courses.cs.cmu.edu/fall2025/">CMU 15-445 · 인덱스 스캔과 B+트리</a></li></ul>
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

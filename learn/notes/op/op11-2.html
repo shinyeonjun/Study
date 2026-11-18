@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>기댓값을 아는 변수를 빼서 표준오차 줄이기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="OP11-2">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">최적화와 수치계산 · OP11 추정량의 분산을 줄이는 표본계산</p>
+<p class="chap-num">OP11·2</p>
+<h1>기댓값을 아는 변수를 빼서 표준오차 줄이기</h1>
+<p class="lead">복잡한 수치가 올라갔다 내려갈 때 같이 움직이는 간단한 수치가 있다고 합시다. 그 간단한 수치의 평균을 이미 알면, 평균은 그대로 두면서 무작위 흔들림 일부를 빼낼 수 있습니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>평균이 알려진 변수를 사용해 무편향 추정량을 만든다.</li><li>공분산을 이용해 분산을 최소로 만드는 계수를 유도한다.</li><li>별도 표본을 이용한 계수 추정과 비교의 조건을 설명한다.</li></ul></div>
+
+<h2>평균은 0인 교정항을 만든다</h2>
+<p>같은 표본 X에서 두 값 G=g(X), H=h(X)를 구합니다. E[G]를 모르고 E[H]=m은 정확히 안다고 합시다. <b class="key">제어 변수(control variate)</b>는 G와 함께 변하는 H를 이용합니다. <var>Z=G−c(H−m)</var>로 놓으면, 고정한 c에 대해 E[Z]=E[G]입니다. H−m의 평균이 0이기 때문입니다. G와 H가 같은 X에서 나와 서로 의존해도 이 기대값 계산은 유지됩니다.</p>
+<div class="check" data-q="q1"></div><div class="check" data-q="q2"></div>
+<h2>교차항까지 쓰면 최적 계수가 보인다</h2>
+<p>두 변수의 분산은 유한하다고 두고, Var(H)&gt;0이라 가정합니다. 분산에는 상수 m이 영향을 주지 않습니다.</p>
+<p class="calc">Var(Z)=Var(G)−2c Cov(G,H)+c² Var(H)</p>
+<p>c에 대한 양의 이차식이므로 미분을 0으로 만드는 <var>c*=Cov(G,H)/Var(H)</var>에서 최소입니다. 이를 대입하면 <var>Var(Z*)=Var(G)−Cov(G,H)²/Var(H)</var>입니다. G의 분산도 양수라면 상관계수 ρ를 사용해 Var(G)(1−ρ²)라고 쓸 수 있습니다. 상관이 0이면 이 형태의 선형 교정이 얻는 이득은 0입니다. H가 상수라면 H−m이 0이라 c를 정할 필요가 없습니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 160" role="img" aria-label="같은 표본에서 고른 H를 알려진 평균으로 중심화한 뒤 G에서 빼면 기댓값은 보존되고 분산을 줄일 수 있다.">
+<rect class="f-box" x="42" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="135" y="61" text-anchor="middle">함께 흔들리는 값</text><text class="f-s" x="135" y="89" text-anchor="middle">같은 X에서</text><text class="f-s" x="135" y="110" text-anchor="middle">G와 H를 구함</text><line class="f-line" x1="235" y1="84" x2="278" y2="84" marker-end="url(#f-arrow)"/><rect class="f-soft" x="287" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="380" y="61" text-anchor="middle">평균을 0으로</text><text class="f-s" x="380" y="89" text-anchor="middle">H−E[H]</text><text class="f-s" x="380" y="110" text-anchor="middle">c배 해서 뺌</text><line class="f-line" x1="480" y1="84" x2="523" y2="84" marker-end="url(#f-arrow)"/><rect class="f-box" x="532" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="625" y="61" text-anchor="middle">표본평균</text><text class="f-s" x="625" y="89" text-anchor="middle">같은 목표 평균</text><text class="f-s" x="625" y="110" text-anchor="middle">다른 분산</text>
+</svg><figcaption>공분산 부호에 맞추어 계수를 정한다. 맞지 않는 계수는 분산을 오히려 늘릴 수 있다.</figcaption></figure>
+<div class="check" data-q="q3"></div><div class="check" data-q="q4"></div><div class="check" data-q="q5"></div>
+<h2>세 가지 상태에서 손으로 뺄 값을 계산한다</h2>
+<p>X가 0,1,2에 균등하고 G=X², H=X입니다. E[H]=1, Var(H)=2/3입니다. E[X³]=(0+1+8)/3=3이고 E[X²]=5/3이라 Cov(G,H)=3−5/3=4/3입니다. 따라서 계수는 2입니다.</p>
+<div class="table-wrap"><table><thead><tr><th scope="col">X</th><th scope="col">G=X²</th><th scope="col">H−1</th><th scope="col">Z=G−2(H−1)</th></tr></thead><tbody><tr><td>0</td><td>0</td><td>−1</td><td>2</td></tr><tr><td>1</td><td>1</td><td>0</td><td>1</td></tr><tr><td>2</td><td>4</td><td>1</td><td>2</td></tr></tbody></table></div>
+<p>두 평균은 모두 5/3입니다. G의 분산은 26/9이고 Z의 분산은 2/9입니다. 같은 수의 독립 표본을 평균했을 때 분산은 13분의 1, 표준오차는 1/√13배가 됩니다. c의 부호를 뒤집으면 큰 G가 나오는 날 H−m이 큰 방향이라 흔들림이 커집니다.</p>
+<div class="check" data-q="q6"></div><div class="check" data-q="q7"></div>
+<h2>실험으로 확인하기</h2>
+<pre data-example="python"><code>from fractions import Fraction as F
+
+def avg(x):
+    return sum(x)/len(x)
+
+def variance(x):
+    m = avg(x)
+    return avg([(v-m)**2 for v in x])
+
+h = [F(x) for x in (0,1,2)]
+g = [x*x for x in h]
+m = avg(h)
+cov = avg([(a-avg(g))*(b-m) for a,b in zip(g,h)])
+c = cov/variance(h)
+z = [a-c*(b-m) for a,b in zip(g,h)]
+print(c, *z)
+print(avg(g), avg(z))
+print(variance(g), variance(z), variance(g)/variance(z))
+assert variance(z) == variance(g)-cov**2/variance(h)</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>2 2 1 2
+5/3 5/3
+26/9 2/9 13</code></pre>
+<p>실제로 공분산을 모르면 작은 예비 표본으로 c를 추정한 뒤 새 독립 표본에서 고정해 적용할 수 있습니다. 계수가 유한한 범위에 들도록 제한하고, 예비 자료에서 H의 분산이 0이면 c=0으로 두는 규칙을 사용할 수 있습니다. 예비 자료를 조건으로 두면 c는 상수이고, 독립인 본 표본의 교정항의 기대값은 여전히 0입니다. 최종 추정량의 절댓값 기대가 유한하므로 예비 자료에 대해 다시 평균할 수 있습니다. 같은 자료에서 c까지 추정하면 이 독립성 논증을 그대로 쓸 수 없습니다. 실제 분산이 감소했는지 확인하려면 독립 반복에서 평균 추정량의 산포를 비교합니다.</p>
+<div class="check" data-q="q8"></div>
+
+<h2>참고 자료</h2>
+<ul><li><a href="https://web.stanford.edu/~glynn/papers/2002/GSzechtman02.pdf">Glynn과 Szechtman · 제어 변수의 분산 감소와 계수 추정</a></li></ul>
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

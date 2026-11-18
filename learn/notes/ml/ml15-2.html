@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>교환가능한 보정 자료로 분할 적합 예측구간 만들기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="ML15-2">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">머신러닝 · ML15 예측 불확실성과 강건한 평가</p>
+<p class="chap-num">ML15·2</p>
+<h1>교환가능한 보정 자료로 분할 적합 예측구간 만들기</h1>
+<p class="lead">예측값이 10이라는 숫자만으로는 새 관측값이 얼마나 틀릴지 알기 어렵습니다. 연습에서 얻은 오차 크기를 줄 세워, 새 관측을 일정 비율 이상 포함하는 구간을 계산합니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>모형을 맞춘 표본과 오차를 보정할 표본을 분리한다.</li><li>절대오차의 순위로 유한표본 포괄률을 증명한다.</li><li>표본이 작아 경계가 무한해지는 경우와 분포 이동의 한계를 설명한다.</li></ul></div>
+
+<h2>모형을 고정한 뒤 오차를 한 줄로 세운다</h2>
+<p>모형 f는 별도 훈련 자료에 맞춘 뒤 고정합니다. 그때 쓰지 않은 n개의 보정 관측 (Xᵢ,Yᵢ)에서 점수 Sᵢ=|Yᵢ−f(Xᵢ)|를 구합니다. 점수는 예측이 실제 값에서 떨어진 거리입니다. 새 입력 x에 대해 작은 오차와 큰 오차 중 어디까지 허용할지 이 보정 점수에서 정합니다. 이 방식은 표본을 나누는 <b class="key">분할 적합 예측(split conformal prediction)</b>의 한 예입니다.</p>
+<p>오류 목표를 0&lt;α&lt;1로 두고, 순위 k=⌈(n+1)(1−α)⌉를 계산합니다. 보정 점수 중 작은 쪽에서 k번째 값 q를 사용해 새 예측 구간을 [f(x)−q, f(x)+q]로 정합니다. k=n+1이면 보정 점수에 그런 순위가 없어 q=+∞로 둡니다. 표본 수가 너무 작으면 정해 둔 포괄률을 보장할 유한 너비를 이 규칙으로 고를 수 없다는 뜻입니다.</p>
+<div class="check" data-q="q1"></div><div class="check" data-q="q2"></div><div class="check" data-q="q3"></div>
+<h2>교환가능성이 있으면 새 관측의 순위가 균등하다</h2>
+<p>훈련 결과를 고정한 조건에서 보정 n개와 새 관측 하나가 <b class="key">교환가능</b>하다고 가정합니다. 즉 순서를 섞어도 그 결합분포가 같습니다. 각 사례에 같은 함수로 점수를 매기면 점수열에서도 조건이 유지됩니다. 서로 같은 점수가 있을 때 각 점수와 독립인 같은 연속분포의 난수를 점수마다 독립적으로 붙여 동점을 가르면 n+1개의 순위 중 어느 자리에도 새 점수가 놓일 확률이 같습니다.</p>
+<p>새 점수의 순위가 k 이하면 관측 Y가 구간에 들어갑니다. k≤n일 때, 새 점수가 보정의 k번째 수보다 크다면 그보다 작은 보정 점수가 적어도 k개라서 새 점수의 순위가 k 이내일 수 없습니다. 따라서 일반적인 ≤ 비교로 구간을 닫으면 동점이 있는 경우에도, 전체 점수의 앞의 무작위 동점 처리에서 순위가 k 이내일 확률 k/(n+1) 만큼은 포괄합니다. k=n+1에서는 구간이 전체 실수선이라 포괄 확률이 1입니다.</p>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 160" role="img" aria-label="훈련한 함수를 고정하고 별도 관측에서 절대오차 순위를 구한 뒤, 그 오차 폭을 새로운 예측 구간에 적용한다.">
+<rect class="f-box" x="42" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="135" y="61" text-anchor="middle">정해 둔 모형</text><text class="f-s" x="135" y="89" text-anchor="middle">훈련 자료에만 적합</text><text class="f-s" x="135" y="110" text-anchor="middle">f를 고정</text><line class="f-line" x1="235" y1="84" x2="278" y2="84" marker-end="url(#f-arrow)"/><rect class="f-soft" x="287" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="380" y="61" text-anchor="middle">보정 점수</text><text class="f-s" x="380" y="89" text-anchor="middle">|y−f(x)|</text><text class="f-s" x="380" y="110" text-anchor="middle">k번째 오차 q</text><line class="f-line" x1="480" y1="84" x2="523" y2="84" marker-end="url(#f-arrow)"/><rect class="f-box" x="532" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="625" y="61" text-anchor="middle">새 관측</text><text class="f-s" x="625" y="89" text-anchor="middle">[f(x)−q, f(x)+q]</text><text class="f-s" x="625" y="110" text-anchor="middle">목표 포괄률 이상</text>
+</svg><figcaption>보장은 새 관측과 보정 자료를 함께 반복할 때의 전체 포괄률이다.</figcaption></figure>
+<div class="check" data-q="q4"></div><div class="check" data-q="q5"></div>
+<h2>네 개의 점수에서 목표를 바꾼다</h2>
+<div class="table-wrap"><table><thead><tr><th scope="col">보정 점수</th><th scope="col">목표 포괄률</th><th scope="col">k</th><th scope="col">q</th><th scope="col">예측값 10의 구간</th></tr></thead><tbody><tr><td>1, 2, 2, 4</td><td>80%</td><td>4</td><td>4</td><td>[6,14]</td></tr><tr><td>1, 2, 2, 4</td><td>90%</td><td>5</td><td>+∞</td><td>실수 전체</td></tr></tbody></table></div>
+<p>여기서 일반적인 분위수 함수가 보간한 값이나 표본 최대값을 임의로 쓰면 유한표본 순위 계산이 바뀝니다. 보장이 유효하면 기대하는 것은 보정 표본과 새 표본을 반복할 때 전체 포괄률입니다. 관측 시기, 집단, 입력값마다 같은 포괄률을 약속하는 것은 아닙니다. 새 시점의 관측 과정이 크게 바뀌면 교환가능성을 주장할 근거가 약해집니다. 결과를 보고할 때 집단별 포괄과 구간 너비를 함께 살펴봅니다.</p>
+<div class="check" data-q="q6"></div><div class="check" data-q="q7"></div>
+<h2>가능한 마지막 순위를 직접 대조한다</h2>
+<pre data-example="python"><code>from fractions import Fraction as F
+from math import ceil, inf
+
+def cutoff(scores, alpha):
+    k = ceil((len(scores)+1)*(1-alpha))
+    return k, sorted(scores)[k-1] if k&lt;=len(scores) else inf
+
+for error in (F(1,5), F(1,10)):
+    k, q = cutoff([1,2,2,4], error)
+    print(k, q, (10-q,10+q))
+
+# 서로 다른 점수 다섯 개에서 하나씩 새 관측 역할을 맡긴다.
+scores = [1,2,3,4,5]
+covered = 0
+for i, new in enumerate(scores):
+    cal = scores[:i]+scores[i+1:]
+    covered += new &lt;= cutoff(cal,F(1,5))[1]
+print(covered, len(scores))
+assert covered == 4</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>4 4 (6, 14)
+5 inf (-inf, inf)
+4 5</code></pre>
+<div class="check" data-q="q8"></div>
+
+<h2>참고 자료</h2>
+<ul><li><a href="https://arxiv.org/abs/2107.07511">Angelopoulos와 Bates · A Gentle Introduction to Conformal Prediction</a></li><li><a href="https://www.stat.berkeley.edu/~ryantibs/papers/conformal-jasa.pdf">Lei 외 · Distribution-Free Predictive Inference for Regression, §2.2</a></li></ul>
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>

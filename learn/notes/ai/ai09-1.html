@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>행동의 전제와 효과에서 계획을 탐색하고 검증하기 · 공부 교재</title>
+<script>try{var t=localStorage.getItem("bda-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body data-note="AI09-1">
+<header class="top"><div class="top-in">
+<a class="brand" href="../../index.html">공부 교재</a>
+<span class="crumb"></span>
+<button class="tool hide-btn" type="button" aria-pressed="false">핵심어 가리기</button>
+<button class="tool theme-btn" type="button">어둡게</button>
+</div></header>
+<div class="read-bar"><i></i></div>
+<div class="book">
+<aside class="toc" id="toc"></aside>
+<main class="page">
+<svg class="fig-defs" width="0" height="0" aria-hidden="true"><defs><marker id="f-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="f-fill" d="M0 0L10 5L0 10z"/></marker></defs></svg>
+<header class="chapter">
+<p class="chap-sub">인공지능의 기본 문제 · AI09 계획 문제의 표현과 평가</p>
+<p class="chap-num">AI09·1</p>
+<h1>행동의 전제와 효과에서 계획을 탐색하고 검증하기</h1>
+<p class="lead">작은 창고에서 물건 한 개를 A에서 B로 옮깁니다. 말로는 간단해도 빈손이어야 물건을 들 수 있고, 장소를 바꾸면 이전 장소는 지워야 합니다. 계획의 각 행동이 실제로 가능하다는 사실을 상태 전이로 확인합니다.</p>
+</header>
+<div class="goal"><h2>이 장을 읽고 나면</h2><ul><li>명제를 사용해 상태와 목표를 적는다.</li><li>행동의 전제, 추가, 삭제를 구별한다.</li><li>그래프 탐색과 길이 제한 검사를 비교하고 완전성 조건을 증명한다.</li></ul></div>
+
+<h2>참인 명제의 집합으로 창고를 기록한다</h2>
+<p>로봇이 구역 A에 있고 물건도 A에 있으며 손이 비었다고 합시다. <var>s₀={atA, itemA, empty}</var>로 적습니다. 상태에서 이름을 빠뜨린 사실은 거짓으로 읽습니다. <var>carrying</var>은 그때 참이 아닙니다. 목표는 <var>{itemB}</var>가 상태에 포함되는 것입니다. 로봇이 그 뒤에 어디 있어야 하는지는 목표에 쓰지 않았습니다.</p>
+<p>행동을 <var>(pre,add,del)</var>로 기록합니다. <var>pre</var>가 현재 상태의 부분집합이어야 적용할 수 있습니다. 성공하면 <var>s′=(s∖del)∪add</var>를 얻습니다. 삭제하거나 추가하지 않은 명제는 그대로 남습니다. 이 작은 예에서는 전제가 양의 명제이고 행동의 효과는 결정적입니다.</p>
+<div class="table-wrap"><table><thead><tr><th scope="col">행동</th><th scope="col">전제</th><th scope="col">추가</th><th scope="col">삭제</th></tr></thead><tbody><tr><td>A에서 들기</td><td>atA, itemA, empty</td><td>carrying</td><td>itemA, empty</td></tr><tr><td>A에서 B로</td><td>atA</td><td>atB</td><td>atA</td></tr><tr><td>B에서 A로</td><td>atB</td><td>atA</td><td>atB</td></tr><tr><td>B에서 내려놓기</td><td>atB, carrying</td><td>itemB, empty</td><td>carrying</td></tr></tbody></table></div>
+<p>이동 행동에서 <code>atA</code>를 지우지 않으면 수식은 금지하지 않은 두 위치의 동시 참을 허용합니다. 초기 상태와 올바른 네 행동을 사용하면 ‘atA와 atB 가운데 정확히 하나가 참’이라는 성질은 매번 유지됩니다. 행동이 어떤 불변식을 지키는지 확인하면 현실과 표현이 어긋나는 오류를 잡을 수 있습니다.</p>
+<div class="check" data-q="q1"></div><div class="check" data-q="q2"></div><div class="check" data-q="q3"></div>
+<h2>단계가 같은 간선이라면 BFS로 최소 행동 수를 찾는다</h2>
+<figure class="fig"><svg class="fig-svg" viewBox="0 0 760 160" role="img" aria-label="A에서 물건을 들고, 든 채 B로 이동하고, B에서 내려놓으면 처음 상태부터 목표까지의 계획이 된다.">
+<rect class="f-box" x="42" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="135" y="61" text-anchor="middle">들기 전</text><text class="f-s" x="135" y="89" text-anchor="middle">atA, itemA, empty</text><text class="f-s" x="135" y="110" text-anchor="middle">처음 상태</text><line class="f-line" x1="235" y1="84" x2="278" y2="84" marker-end="url(#f-arrow)"/><rect class="f-soft" x="287" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="380" y="61" text-anchor="middle">든 뒤 이동</text><text class="f-s" x="380" y="89" text-anchor="middle">atB, carrying</text><text class="f-s" x="380" y="110" text-anchor="middle">이동이 atA를 지움</text><line class="f-line" x1="480" y1="84" x2="523" y2="84" marker-end="url(#f-arrow)"/><rect class="f-box" x="532" y="37" width="186" height="95" rx="3"/><text class="f-t f-b" x="625" y="61" text-anchor="middle">B에 내려놓음</text><text class="f-s" x="625" y="89" text-anchor="middle">atB, itemB, empty</text><text class="f-s" x="625" y="110" text-anchor="middle">목표 itemB 달성</text>
+</svg><figcaption>골라낸 행동의 전제를 앞 단계에서 유도한 상태에 하나씩 대조한다.</figcaption></figure>
+<p>상태를 정점, 적용 가능한 행동을 간선으로 둡니다. 너비 우선 탐색(BFS)은 행동 수 0, 1, 2 순으로 상태를 꺼냅니다. 발견한 상태를 다시 큐에 넣지 않아도 이후의 적용 가능성과 결과는 같으므로, 같은 상태로 더 길게 돌아오는 경로는 더 짧은 답을 만들 수 없습니다. 동시에 미래 의사결정에 필요한 자원을 누락해 두 상태를 잘못 동일시하면 이 주장을 적용할 수 없습니다.</p>
+<p><b class="key">건전성</b>은 반환한 계획의 행동이 전제에 맞고 마지막에 목적을 달성한다는 뜻입니다. 큐에 넣는 간선을 전제가 맞을 때만 만들므로 시작 상태부터 귀납적으로 이 성질이 성립합니다. <b class="key">완전성</b>은 가능한 계획이 있다면 하나를 찾는다는 뜻입니다. 상태와 적용할 행동이 유한하고 큐를 모두 처리한다고 합시다. 해를 구성하는 상태들을 처음부터 따라가면 각 상태는 이미 방문했거나 전 단계에서 추가됩니다. 따라서 목표에 도달할 경로가 있으면 목표가 결국 발견됩니다. 비용이 모두 1이면 처음 꺼낸 목표가 최소 행동 수입니다.</p>
+<div class="check" data-q="q4"></div><div class="check" data-q="q5"></div>
+<h2>일정한 길이를 가정하면 제약 문제로도 풀 수 있다</h2>
+<p>길이 h를 정해 슬롯 A₀,…,Aₕ₋₁에 각각 행동을 넣습니다. S₀는 초기 상태, 각 Sₜ에서 Aₜ의 전제가 성립하고 다음 Sₜ₊₁이 효과 식에 맞아야 하며, Sₕ는 목표를 만족해야 합니다. 가능한 값이 하나라도 있으면 정확히 h단계 계획이 있다는 뜻입니다. 길이를 늘려 제약을 풀거나, 작은 예처럼 행동열을 전수 대조할 수 있습니다. 한 단계 비용이 행동마다 다르면 BFS의 최소 비용 보장은 없어집니다.</p>
+<p>이 작은 문제에서 A*로 바꾼다면 목표 완료에 남은 필수 행동을 세어 하한을 만들 수 있습니다. 물건이 A에 놓여 있으면 들기·이동·내려놓기 세 번이, 든 채 A에 있으면 이동·내려놓기 두 번이, 든 채 B에 있으면 내려놓기 한 번이 필요합니다. 물건이 놓여 있는데 로봇이 B에 있으면 이 하한 밖에 되돌아가기 한 번이 추가됩니다. 한 행동으로 이 하한을 1보다 크게 줄일 수 없으므로, 비용이 1인 각 간선에서 h(s)≤1+h(s′)도 성립합니다. 이런 하한을 일관적인 휴리스틱이라고 부르며, 정의와 탐색에서의 쓰임은 <a href="../../unit.html?u=AI03">탐색 단원</a>에서 다룹니다.</p>
+<div class="check" data-q="q6"></div><div class="check" data-q="q7"></div>
+<h2>최소 계획을 두 계산으로 검산한다</h2>
+<pre data-example="python"><code>from collections import deque
+from itertools import product
+
+initial = frozenset((&quot;atA&quot;, &quot;itemA&quot;, &quot;empty&quot;))
+goal = {&quot;itemB&quot;}
+actions = {
+    &quot;pick&quot;: ({&quot;atA&quot;,&quot;itemA&quot;,&quot;empty&quot;},{&quot;carrying&quot;},{&quot;itemA&quot;,&quot;empty&quot;}),
+    &quot;move_ab&quot;: ({&quot;atA&quot;},{&quot;atB&quot;},{&quot;atA&quot;}),
+    &quot;move_ba&quot;: ({&quot;atB&quot;},{&quot;atA&quot;},{&quot;atB&quot;}),
+    &quot;drop&quot;: ({&quot;atB&quot;,&quot;carrying&quot;},{&quot;itemB&quot;,&quot;empty&quot;},{&quot;carrying&quot;}),
+}
+
+def advance(s, action):
+    pre, add, delete = actions[action]
+    return (s - delete) | add if pre &lt;= s else None
+
+queue = deque([(initial, ())])
+seen = {initial}
+while queue:
+    state, plan = queue.popleft()
+    if goal &lt;= state:
+        break
+    for action in actions:
+        nxt = advance(state, action)
+        if nxt is not None and nxt not in seen:
+            seen.add(nxt)
+            queue.append((nxt, plan + (action,)))
+else:
+    raise ValueError(&quot;달성할 수 없는 목표&quot;)
+
+def valid_plan(sequence):
+    s = initial
+    for action in sequence:
+        s = advance(s, action)
+        if s is None:
+            return False
+    return goal &lt;= s
+
+print(plan)
+print([sum(valid_plan(seq) for seq in product(actions, repeat=h))
+       for h in range(4)])
+assert all(len(s &amp; {&quot;atA&quot;,&quot;atB&quot;}) == 1 for s in seen)</code></pre>
+<p class="small">실행 결과</p>
+<pre data-output><code>('pick', 'move_ab', 'drop')
+[0, 0, 0, 1]</code></pre>
+<div class="check" data-q="q8"></div>
+
+<h2>참고 자료</h2>
+<ul><li><a href="https://lavalle.pl/planning/">LaValle · Planning Algorithms, discrete planning</a></li></ul>
+<h2>확인 문제</h2>
+<div id="quiz"></div>
+<section class="work" id="tools"></section>
+<nav class="pager" aria-label="이전 장과 다음 장"></nav>
+</main>
+</div>
+<script src="../../notes.js"></script>
+<script src="../../js/core.js"></script>
+<script src="../../js/map.js"></script>
+<script src="../../js/note.js"></script>
+</body>
+</html>
