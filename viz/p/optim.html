@@ -1,0 +1,262 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>경사하강과 옵티마이저 · 움직이는 AI</title>
+<link rel="stylesheet" href="../style.css">
+</head>
+<body data-page="optim">
+<main class="stage">
+<h1>옵티마이저 = 기울기로 걸음을 정하는 법</h1>
+<p class="sub">같은 자리, 같은 학습률 η에서 네 공이 손실 지형의 바닥으로 굴러간다. 등고선 한 칸 = 손실이 같은 높이.</p>
+<div class="ctrl" id="pick"></div>
+<div class="row" style="margin-top:12px">
+  <div class="viz" id="map"></div>
+  <div class="viz" id="curve"></div>
+</div>
+<div class="ctrl" id="ctl"></div>
+<p class="say" id="say"></p>
+<p class="more">이어 보기 · <a href="../../lab/decks/s06.html">덱 6 경사하강</a> · <a href="../../lab/decks/s18.html">덱 18 역전파·미니배치</a> · <a href="../../lab/decks/s19.html">덱 19 학습 안정화</a></p>
+</main>
+<script src="../js/pages.js"></script>
+<script src="../js/viz.js"></script>
+<script>
+(function () {
+  // ---- 손실 지형 (실제 식과 기울기) ----
+  var SURF = {
+    valley: {
+      label: "길쭉한 골짜기",
+      f: function (x, y) { return 0.5 * (0.4 * x * x + 8 * y * y); },
+      g: function (x, y) { return [0.4 * x, 8 * y]; },
+      x0: -5, x1: 5, y0: -3.75, y1: 3.75, start: [-4.5, 1.5], lr: 0.18, min: [[0, 0]], fmin: 0,
+      formula: "L = ½(0.4x² + 8y²)",
+      say: "<b>세로(y)는 가파르고 가로(x)는 완만하다.</b> 곡률이 8인 y쪽에서 SGD는 η > 1/8이면 지그재그, η > 2/8 = 0.25이면 튕겨 나간다. 곡률 0.4인 x쪽으로는 기어간다. RMSprop은 걸음이 η만큼 남아 바닥에서 떨린다."
+    },
+    rosen: {
+      label: "휘어진 골짜기",
+      f: function (x, y) { var d = y - x * x; return (1 - x) * (1 - x) + 10 * d * d; },
+      g: function (x, y) { var d = y - x * x; return [-2 * (1 - x) - 40 * x * d, 20 * d]; },
+      x0: -2.2, x1: 2.2, y0: -0.8, y1: 2.5, start: [-1.6, 2.2], lr: 0.01, min: [[1, 1]], fmin: 0,
+      formula: "L = (1 − x)² + 10(y − x²)²",
+      say: "<b>바닥이 바나나처럼 휜 골짜기(Rosenbrock).</b> 벽은 가파르고 골짜기 바닥은 거의 평평하다. 벽 쪽 곡률이 커서 η를 조금만 키워도 SGD·Momentum이 먼저 튕겨 나간다."
+    },
+    saddle: {
+      label: "안장점",
+      f: function (x, y) { return 0.5 * x * x + 0.25 * y * y * y * y - 0.5 * y * y; },
+      g: function (x, y) { return [x, y * y * y - y]; },
+      x0: -2.5, x1: 2.5, y0: -1.875, y1: 1.875, start: [-2.2, 0.02], lr: 0.1, min: [[0, 1], [0, -1]], fmin: -0.25,
+      formula: "L = ½x² + ¼y⁴ − ½y²",
+      say: "<b>가운데(0, 0)는 기울기가 0인데 바닥이 아니다(안장점).</b> x로는 오목, y로는 볼록. 기울기가 아주 작은 곳에서 SGD는 오래 머물고, 기울기 크기로 나누는 RMSprop·Adam은 빨리 빠져나간다."
+    }
+  };
+  // ---- 옵티마이저 (PyTorch와 같은 식) ----
+  var OPT = [
+    { id: "sgd", name: "SGD", color: "var(--k)", rule: "p ← p − η·g" },
+    { id: "mom", name: "Momentum", color: "var(--q)", rule: "m ← 0.9·m + g,  p ← p − η·m" },
+    { id: "rms", name: "RMSprop", color: "var(--v)", rule: "s ← 0.9·s + 0.1·g²,  p ← p − η·g/√s" },
+    { id: "adam", name: "Adam", color: "var(--accent)", rule: "m, s 둘 다 평균 + 처음 보정,  p ← p − η·m̂/√ŝ" }
+  ];
+  var EPS = 1e-8, MAXSTEP = 1000;
+  function step(o, S) {
+    var g = S.g(o.p[0], o.p[1]);
+    o.t += 1;
+    for (var i = 0; i < 2; i++) {
+      if (o.id === "sgd") o.p[i] -= lr * g[i];
+      else if (o.id === "mom") { o.m[i] = 0.9 * o.m[i] + g[i]; o.p[i] -= lr * o.m[i]; }
+      else if (o.id === "rms") { o.s[i] = 0.9 * o.s[i] + 0.1 * g[i] * g[i]; o.p[i] -= lr * g[i] / (Math.sqrt(o.s[i]) + EPS); }
+      else {
+        o.m[i] = 0.9 * o.m[i] + 0.1 * g[i]; o.s[i] = 0.999 * o.s[i] + 0.001 * g[i] * g[i];
+        var mh = o.m[i] / (1 - Math.pow(0.9, o.t)), sh = o.s[i] / (1 - Math.pow(0.999, o.t));
+        o.p[i] -= lr * mh / (Math.sqrt(sh) + EPS);
+      }
+    }
+    var L = S.f(o.p[0], o.p[1]);
+    if (!isFinite(L) || Math.abs(o.p[0]) > 60 || Math.abs(o.p[1]) > 60) { o.dead = true; return; }
+    o.hist.push(L - S.fmin);
+    o.path.push([o.p[0], o.p[1]]);
+  }
+
+  var sname = "valley", S = SURF.valley, lr = S.lr, start = S.start.slice(), running = false, speed = 2, hot = null;
+  var balls = [];
+  function reset() {
+    balls = OPT.map(function (d) {
+      return { id: d.id, d: d, p: start.slice(), m: [0, 0], s: [0, 0], t: 0, dead: false,
+               hist: [S.f(start[0], start[1]) - S.fmin], path: [start.slice()], off: balls.length ? false : false };
+    });
+    OPT.forEach(function (d, i) { balls[i].off = hidden[d.id]; });
+    drawAll();
+  }
+  var hidden = {};
+
+  // ---- 1. 지형 지도 ----
+  var W = 560, H = 420, PADL = 8, PADT = 8, MW = W - 16, MH = H - 16;
+  function mx(x) { return PADL + (x - S.x0) / (S.x1 - S.x0) * MW; }
+  function my(y) { return PADT + (S.y1 - y) / (S.y1 - S.y0) * MH; }
+  var mv = V.svg(document.getElementById("map"), W, H, "손실 지형 등고선 위에서 SGD, Momentum, RMSprop, Adam 네 공이 같은 출발점에서 바닥으로 굴러가며 지나간 길을 남긴다");
+  mv.style.cursor = "crosshair";
+  var img = V.s("image", { x: PADL, y: PADT, width: MW, height: MH, preserveAspectRatio: "none" }, mv);
+  V.s("rect", { x: PADL, y: PADT, width: MW, height: MH, fill: "none", stroke: "var(--line)" }, mv);
+  var gAx = V.s("g", null, mv), gTr = V.s("g", null, mv), gB = V.s("g", null, mv), gLab = V.s("g", null, mv);
+  var trails = OPT.map(function (d) { return V.s("polyline", { fill: "none", stroke: d.color, "stroke-width": 2, "stroke-linejoin": "round", opacity: 0.9 }, gTr); });
+  var dots = OPT.map(function (d) { return V.s("circle", { r: 7, fill: d.color, stroke: "var(--bg)", "stroke-width": 2.5 }, gB); });
+  var deadLab = OPT.map(function (d) { return V.s("text", { class: "ts", "font-weight": 700, fill: d.color, display: "none" }, gLab); });
+  var startMark = V.s("circle", { r: 4, fill: "none", stroke: "var(--text)", "stroke-width": 1.5 }, gAx);
+  var startLab = V.s("text", { class: "ts", text: "출발" }, gAx);
+  var formLab = V.s("text", { class: "t mono", x: W - 16, y: 30, "text-anchor": "end" }, gLab);
+  V.s("text", { class: "ts", x: W - 16, y: H - 16, "text-anchor": "end", text: "누른 곳에서 다시 출발" }, gLab);
+  var cnv = document.createElement("canvas"), RW = 320, RH = 240;
+  cnv.width = RW; cnv.height = RH;
+  function rgbOf(s) { var m = s.match(/\d+/g); return [+m[0], +m[1], +m[2]]; }
+  function paint() {
+    // 손실 높이를 로그로 눌러 12칸 띠로 나누고, 띠 경계는 진하게 = 등고선
+    var ctx = cnv.getContext("2d"), im = ctx.createImageData(RW, RH), N = 12, top = 0;
+    var vals = new Float32Array(RW * RH);
+    for (var j = 0; j < RH; j++) for (var i = 0; i < RW; i++) {
+      var x = S.x0 + (i + 0.5) / RW * (S.x1 - S.x0), y = S.y1 - (j + 0.5) / RH * (S.y1 - S.y0);
+      var v = Math.log(1 + 20 * (S.f(x, y) - S.fmin)); vals[j * RW + i] = v; if (v > top) top = v;
+    }
+    var pal = [], edge = [];
+    for (var k = 0; k <= N; k++) { pal.push(rgbOf(V.ramp(0.04 + 0.4 * k / N))); edge.push(rgbOf(V.ramp(0.2 + 0.45 * k / N))); }
+    function band(n) { return Math.min(N, Math.floor(vals[n] / top * N)); }
+    for (j = 0; j < RH; j++) for (i = 0; i < RW; i++) {
+      var n = j * RW + i, b = band(n);
+      var e = (i + 1 < RW && band(n + 1) !== b) || (j + 1 < RH && band(n + RW) !== b);
+      var c = e ? edge[b] : pal[b];
+      im.data[n * 4] = c[0]; im.data[n * 4 + 1] = c[1]; im.data[n * 4 + 2] = c[2]; im.data[n * 4 + 3] = 255;
+    }
+    ctx.putImageData(im, 0, 0);
+    img.setAttribute("href", cnv.toDataURL());
+    V.clear(gAx);
+    S.min.forEach(function (m) {
+      V.s("path", { d: "M" + (mx(m[0]) - 6) + " " + (my(m[1]) - 6) + "l12 12m0 -12l-12 12", stroke: "var(--text)", "stroke-width": 2 }, gAx);
+      V.s("text", { class: "ts", x: mx(m[0]) + 8, y: my(m[1]) + 20, text: "바닥" }, gAx);
+    });
+    if (sname === "saddle") V.s("text", { class: "ts", x: mx(0) + 8, y: my(0) - 8, text: "안장점 (0, 0)" }, gAx), V.s("circle", { cx: mx(0), cy: my(0), r: 3, fill: "var(--text)" }, gAx);
+    gAx.appendChild(startMark); gAx.appendChild(startLab);
+    formLab.textContent = S.formula;
+  }
+  function clampX(x) { return V.clamp(x, PADL, PADL + MW); }
+  function clampY(y) { return V.clamp(y, PADT, PADT + MH); }
+  function drawMap() {
+    startMark.setAttribute("cx", mx(start[0])); startMark.setAttribute("cy", my(start[1]));
+    startLab.setAttribute("x", mx(start[0]) - 10); startLab.setAttribute("y", my(start[1]) - 10); startLab.setAttribute("text-anchor", "end");
+    balls.forEach(function (b, k) {
+      var pts = "", P = b.path, stepN = Math.max(1, Math.floor(P.length / 600));
+      for (var i = 0; i < P.length; i += stepN) pts += clampX(mx(P[i][0])).toFixed(1) + "," + clampY(my(P[i][1])).toFixed(1) + " ";
+      var last = P[P.length - 1];
+      pts += clampX(mx(last[0])).toFixed(1) + "," + clampY(my(last[1])).toFixed(1);
+      trails[k].setAttribute("points", pts);
+      var dim = b.off ? 0 : (hot && hot !== b.id ? 0.15 : 1);
+      trails[k].setAttribute("opacity", dim * 0.9); dots[k].setAttribute("opacity", dim);
+      var cx = clampX(mx(last[0])), cy = clampY(my(last[1]));
+      dots[k].setAttribute("cx", cx); dots[k].setAttribute("cy", cy);
+      var dl = deadLab[k];
+      if (b.dead && !b.off) {
+        dl.setAttribute("display", "inline"); dl.textContent = b.d.name + " 튕겨 나감";
+        var nd = balls.filter(function (o, i) { return i < k && o.dead && !o.off; }).length;
+        dl.setAttribute("x", PADL + 10); dl.setAttribute("y", H - 18 - nd * 18);
+      } else dl.setAttribute("display", "none");
+    });
+  }
+  mv.addEventListener("click", function (e) {
+    var r = mv.getBoundingClientRect();
+    var sx = (e.clientX - r.left) * W / r.width, sy = (e.clientY - r.top) * H / r.height;
+    start = [S.x0 + (sx - PADL) / MW * (S.x1 - S.x0), S.y1 - (sy - PADT) / MH * (S.y1 - S.y0)];
+    start = [+V.clamp(start[0], S.x0, S.x1).toFixed(2), +V.clamp(start[1], S.y0, S.y1).toFixed(2)];
+    reset(); setRun(true);
+  });
+
+  // ---- 2. 손실 곡선 (로그 눈금) ----
+  var CW = 560, CH = 420, CX0 = 58, CX1 = 540, CY0 = 150, CY1 = 360;
+  var cv = V.svg(document.getElementById("curve"), CW, CH, "걸음 수에 따라 네 옵티마이저의 손실이 줄어드는 곡선(세로는 로그 눈금)과 각자의 갱신 식");
+  var gLeg = V.s("g", null, cv), gCg = V.s("g", null, cv), gCl = V.s("g", null, cv);
+  var legRows = OPT.map(function (d, k) {
+    var y = 22 + k * 28, g = V.s("g", { style: "cursor:pointer" }, gLeg);
+    V.s("rect", { x: 8, y: y - 16, width: CW - 16, height: 26, rx: 6, fill: "transparent" }, g);
+    var sw = V.s("circle", { cx: 22, cy: y - 3, r: 7, fill: d.color }, g);
+    V.s("text", { class: "t", x: 38, y: y + 2, "font-weight": 700, text: d.name }, g);
+    V.s("text", { class: "ts mono", x: 140, y: y + 2, text: d.rule }, g);
+    var val = V.s("text", { class: "t mono", x: CW - 14, y: y + 2, "text-anchor": "end" }, g);
+    g.addEventListener("mouseenter", function () { hot = d.id; drawAll(); });
+    g.addEventListener("mouseleave", function () { hot = null; drawAll(); });
+    g.addEventListener("click", function () { hidden[d.id] = !hidden[d.id]; balls[k].off = hidden[d.id]; drawAll(); });
+    return { g: g, val: val, sw: sw };
+  });
+  V.s("text", { class: "ts", x: CW - 14, y: 136, "text-anchor": "end", text: "손실 − 바닥값 (누르면 숨기기)" }, gLeg);
+  var lines = OPT.map(function (d) { return V.s("polyline", { fill: "none", stroke: d.color, "stroke-width": 2.2, "stroke-linejoin": "round" }, gCl); });
+  var LMIN = -6, LMAX = 2;
+  function cyOf(v) { var l = Math.log10(Math.max(v, 1e-6)); return CY1 - (V.clamp(l, LMIN, LMAX) - LMIN) / (LMAX - LMIN) * (CY1 - CY0); }
+  var span = 100;
+  function drawGrid() {
+    V.clear(gCg);
+    for (var e = LMIN; e <= LMAX; e += 2) {
+      V.s("line", { class: "ln-g", x1: CX0, x2: CX1, y1: cyOf(Math.pow(10, e)), y2: cyOf(Math.pow(10, e)) }, gCg);
+      V.s("text", { class: "ts mono", x: CX0 - 6, y: cyOf(Math.pow(10, e)) + 4, "text-anchor": "end", text: e === 0 ? "1" : "10" + sup(e) }, gCg);
+    }
+    for (var k = 0; k <= 5; k++) {
+      var s = span * k / 5, x = CX0 + (CX1 - CX0) * k / 5;
+      V.s("line", { class: "ln-g", x1: x, x2: x, y1: CY0, y2: CY1 }, gCg);
+      V.s("text", { class: "ts mono", x: x, y: CY1 + 18, "text-anchor": "middle", text: String(Math.round(s)) }, gCg);
+    }
+    V.s("line", { class: "ln", x1: CX0, x2: CX1, y1: CY1, y2: CY1 }, gCg);
+    V.s("text", { class: "ts", x: (CX0 + CX1) / 2, y: CY1 + 38, "text-anchor": "middle", text: "걸음 수" }, gCg);
+  }
+  function sup(e) { var m = { "-": "⁻", "0": "⁰", "1": "¹", "2": "²", "3": "³", "4": "⁴", "5": "⁵", "6": "⁶" }; return String(e).split("").map(function (c) { return m[c]; }).join(""); }
+  function drawCurve() {
+    var mxT = 0; balls.forEach(function (b) { mxT = Math.max(mxT, b.hist.length - 1); });
+    var ns = mxT <= 100 ? 100 : mxT <= 250 ? 250 : mxT <= 500 ? 500 : 1000;
+    if (ns !== span) { span = ns; drawGrid(); }
+    balls.forEach(function (b, k) {
+      var h = b.hist, pts = "", st = Math.max(1, Math.floor(h.length / 400));
+      for (var i = 0; i < h.length; i += st) pts += (CX0 + (CX1 - CX0) * i / span).toFixed(1) + "," + cyOf(h[i]).toFixed(1) + " ";
+      var i2 = h.length - 1;
+      pts += (CX0 + (CX1 - CX0) * i2 / span).toFixed(1) + "," + cyOf(h[i2]).toFixed(1);
+      if (b.dead) pts += " " + (CX0 + (CX1 - CX0) * (i2 + 1) / span).toFixed(1) + "," + CY0;
+      lines[k].setAttribute("points", pts);
+      var dim = b.off ? 0 : (hot && hot !== b.id ? 0.15 : 1);
+      lines[k].setAttribute("opacity", dim);
+      legRows[k].g.setAttribute("opacity", b.off ? 0.35 : (hot && hot !== b.id ? 0.45 : 1));
+      legRows[k].val.textContent = b.dead ? "튕겨 나감" : fmtL(h[i2]);
+    });
+  }
+  function fmtL(v) { return v < 0.001 ? v.toExponential(1).replace("-", "−") : V.fmt(v, 3); }
+  function drawAll() { drawMap(); drawCurve(); say(); }
+
+  // ---- 손잡이 ----
+  var surfSeg = V.seg(document.getElementById("pick"), Object.keys(SURF).map(function (k) { return { id: k, label: SURF[k].label }; }), sname, function (k) {
+    sname = k; S = SURF[k]; start = S.start.slice(); lr = S.lr; lrSl.set(Math.log10(lr)); paint(); reset(); setRun(true);
+  });
+  var ctl = document.getElementById("ctl");
+  var lrSl = V.slider(ctl, { label: "학습률 η", min: -3, max: 0, step: 0.05, value: Math.log10(lr),
+    fmt: function (v) { var x = Math.pow(10, v); return x < 0.01 ? x.toFixed(4) : x < 0.1 ? x.toFixed(3) : x.toFixed(2); },
+    onInput: function (v) { lr = +Math.pow(10, v).toPrecision(2); reset(); setRun(true); } });
+  var playBtn = V.button(ctl, "⏸ 멈춤", function () { setRun(!running); });
+  V.button(ctl, "⏭ 한 걸음", function () { setRun(false); advance(1); });
+  V.button(ctl, "↺ 처음으로", function () { reset(); setRun(false); });
+  V.seg(ctl, [{ id: "1", label: "느리게" }, { id: "2", label: "보통" }, { id: "6", label: "빠르게" }], "2", function (v) { speed = +v; });
+  function setRun(on) { running = on; playBtn.textContent = on ? "⏸ 멈춤" : "▶ 재생"; playBtn.classList.toggle("primary", !on); }
+  function advance(n) {
+    for (var r = 0; r < n; r++) balls.forEach(function (b) { if (!b.dead && b.t < MAXSTEP) step(b, S); });
+    drawAll();
+  }
+  var acc = 0;
+  V.loop(function (dt) {
+    if (!running) return;
+    acc += dt * 30 * speed;
+    var n = Math.floor(acc); acc -= n;
+    if (n > 0) advance(n);
+    if (balls.every(function (b) { return b.dead || b.t >= MAXSTEP; })) setRun(false);
+  });
+  function say() {
+    var dead = balls.filter(function (b) { return b.dead && !b.off; }).map(function (b) { return b.d.name; });
+    var t = 0; balls.forEach(function (b) { t = Math.max(t, b.t); });
+    var tail = dead.length ? " <b>η = " + lr + "에서 " + dead.join("·") + " 튕겨 나감.</b>" : "";
+    document.getElementById("say").innerHTML = S.say + tail + " <span class='mono' style='color:var(--muted)'>· " + t + "걸음</span>";
+  }
+  V.onTheme.push(function () { paint(); drawAll(); });
+  drawGrid(); paint(); reset(); setRun(true);
+})();
+</script>
+</body>
+</html>

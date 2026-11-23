@@ -1,0 +1,291 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>뉴런 하나 · 움직이는 AI</title>
+<link rel="stylesheet" href="../style.css">
+</head>
+<body data-page="neuron">
+<main class="stage">
+<h1>뉴런 하나 = 곱해서 더하고 꺾기</h1>
+<p class="sub">z = w₁x₁ + w₂x₂ + b, 출력 = f(z). z = 0인 곳이 평면 위의 직선 하나가 되어 점들을 둘로 가른다.</p>
+<div class="row">
+  <div class="viz" id="net"></div>
+  <div class="viz" id="plane"></div>
+</div>
+<div class="ctrl" id="ctl"></div>
+<div class="ctrl" id="ctl2"></div>
+<p class="say" id="say"></p>
+<p class="more">이어 보기 · <a href="../../lab/decks/s01.html">덱 1 곱해서 더한다</a> · <a href="../../lab/decks/s15.html">덱 15 확률로 분류하다</a></p>
+</main>
+<script src="../js/pages.js"></script>
+<script src="../js/viz.js"></script>
+<script>
+(function () {
+  function sig(z) { return 1 / (1 + Math.exp(-z)); }
+  var W0 = [0.6, -0.4, 0.5];
+  var w1 = W0[0], w2 = W0[1], b = W0[2], act = "Sigmoid";
+  function f(z) { return act === "Sigmoid" ? sig(z) : (z > 0 ? 1 : 0); }
+
+  // ---- 점 16개 (시드 3): 정답 1은 (1.1, 0.9) 근처, 정답 0은 (−0.9, −0.8) 근처 ----
+  var r = V.rng(3), P = [];
+  for (var i = 0; i < 16; i++) {
+    var y = i % 2 === 0 ? 1 : 0;
+    var cx = y ? 1.1 : -0.9, cy = y ? 0.9 : -0.8;
+    P.push({ x1: Math.round((cx + V.randn(r) * 0.85) * 10) / 10, x2: Math.round((cy + V.randn(r) * 0.85) * 10) / 10, y: y });
+  }
+  var X = { x1: P[0].x1, x2: P[0].x2 };   // 지금 뉴런에 넣는 입력
+
+  // ================= 1. 뉴런: 신호 알갱이가 선을 따라 =================
+  var NW = 560, NH = 390;
+  var nv = V.svg(document.getElementById("net"), NW, NH,
+    "입력 x1, x2와 상수 1이 굵기가 가중치인 선을 따라 합 노드로 흘러가 z가 되고, 활성함수를 지나 출력이 된다");
+  var IN = [{ x: 70, y: 90 }, { x: 70, y: 190 }, { x: 70, y: 290 }], SUM = { x: 290, y: 190 }, AB = { x: 360, y: 155, w: 86, h: 70 }, OUT = { x: 510, y: 190 };
+  var gE = V.s("g", null, nv), gP = V.s("g", null, nv), gN = V.s("g", null, nv);
+  var edges = IN.map(function (p, k) {
+    var ln = V.s("line", { x1: p.x + 26, y1: p.y, x2: SUM.x - 34, y2: SUM.y + (k - 1) * 14, "stroke-linecap": "round" }, gE);
+    var mx = V.lerp(p.x + 26, SUM.x - 34, 0.45), my = V.lerp(p.y, SUM.y + (k - 1) * 14, 0.45);
+    var lab = V.s("text", { class: "t mono", style: "paint-order:stroke;stroke:var(--panel);stroke-width:5px;stroke-linejoin:round", x: mx + (k === 1 ? 0 : -26), y: my + (k === 0 ? -12 : k === 2 ? 22 : -12), "text-anchor": "middle", "font-size": 13 }, gN);
+    return { ln: ln, lab: lab };
+  });
+  var e2 = V.s("line", { class: "ln", x1: SUM.x + 34, y1: SUM.y, x2: AB.x, y2: SUM.y, "stroke-width": 2 }, gE);
+  var e3 = V.s("line", { class: "ln", x1: AB.x + AB.w, y1: SUM.y, x2: OUT.x - 26, y2: OUT.y, "stroke-width": 2 }, gE);
+  var inNode = IN.map(function (p, k) {
+    var c = V.s("circle", { cx: p.x, cy: p.y, r: 26, class: "box", "stroke-width": 2 }, gN);
+    var t = V.s("text", { class: "tb mono", x: p.x, y: p.y + 5, "text-anchor": "middle", "font-size": 14 }, gN);
+    V.s("text", { class: "ts", x: p.x, y: p.y - 34, "text-anchor": "middle", text: ["입력 x₁", "입력 x₂", "상수 1 (편향)"][k] }, gN);
+    if (k === 2) t.textContent = "1";
+    return { c: c, t: t };
+  });
+  var sumC = V.s("circle", { cx: SUM.x, cy: SUM.y, r: 34, "stroke-width": 2, stroke: "var(--accent)" }, gN);
+  V.s("text", { class: "ts", x: SUM.x, y: SUM.y - 44, "text-anchor": "middle", text: "곱해서 더하기" }, gN);
+  var sumT = V.s("text", { class: "tb mono", x: SUM.x, y: SUM.y + 6, "text-anchor": "middle", "font-size": 15 }, gN);
+  V.s("text", { class: "ts", x: SUM.x, y: SUM.y + 54, "text-anchor": "middle", text: "z" }, gN);
+  V.s("rect", { x: AB.x, y: AB.y, width: AB.w, height: AB.h, rx: 10, class: "box", "stroke-width": 2 }, gN);
+  var actName = V.s("text", { class: "ts", x: AB.x + AB.w / 2, y: AB.y - 10, "text-anchor": "middle" }, gN);
+  var actPath = V.s("path", { class: "ln-a", "stroke-width": 2.5 }, gN);
+  var actDot = V.s("circle", { r: 4.5, fill: "var(--k)" }, gN);
+  var outC = V.s("circle", { cx: OUT.x, cy: OUT.y, r: 26, "stroke-width": 2, stroke: "var(--line)" }, gN);
+  var outT = V.s("text", { class: "tb mono", x: OUT.x, y: OUT.y + 5, "text-anchor": "middle", "font-size": 14 }, gN);
+  V.s("text", { class: "ts", x: OUT.x, y: OUT.y - 34, "text-anchor": "middle", text: "출력" }, gN);
+  var outL = V.s("text", { class: "t", x: OUT.x, y: OUT.y + 48, "text-anchor": "middle", "font-weight": 700 }, gN);
+  var f1 = V.s("text", { class: "t mono", x: 14, y: NH - 40, "font-size": 13 }, gN);
+  var f2 = V.s("text", { class: "t mono", x: 14, y: NH - 16, "font-size": 13 }, gN);
+  function ax(z) { return AB.x + 8 + (V.clamp(z, -5, 5) + 5) / 10 * (AB.w - 16); }
+  function ay(a) { return AB.y + AB.h - 10 - a * (AB.h - 20); }
+
+  // 알갱이
+  var parts = [], acc = 0;
+  function spawn() {
+    var xs = [X.x1, X.x2, 1], ws = [w1, w2, b];
+    for (var k = 0; k < 3; k++) parts.push({ k: k, t: 0, v: xs[k] * ws[k], el: V.s("circle", { r: 3 + 2.2 * Math.min(2, Math.abs(xs[k])) }, gP) });
+  }
+  V.loop(function (dt) {
+    acc += dt;
+    if (acc > 0.45) { acc = 0; spawn(); }
+    var z = w1 * X.x1 + w2 * X.x2 + b, a = f(z);
+    for (var i = parts.length - 1; i >= 0; i--) {
+      var p = parts[i]; p.t += dt * 0.55;
+      var x, y, fill;
+      if (p.t < 1) {          // 입력 → 합: 곱한 값 w·x의 색
+        var L = edges[p.k].ln;
+        x = V.lerp(+L.getAttribute("x1"), +L.getAttribute("x2"), p.t); y = V.lerp(+L.getAttribute("y1"), +L.getAttribute("y2"), p.t);
+        fill = V.signed(p.v, 2);
+      } else if (p.t < 1.6) { // 합 → 활성함수: z의 색 (세 알갱이 중 하나만 계속)
+        if (p.k !== 0) { p.el.remove(); parts.splice(i, 1); continue; }
+        var u = (p.t - 1) / 0.6; x = V.lerp(SUM.x + 34, AB.x + AB.w, u); y = SUM.y; fill = V.signed(z, 2);
+        p.el.setAttribute("r", 6);
+      } else if (p.t < 2.1) {
+        var u2 = (p.t - 1.6) / 0.5; x = V.lerp(AB.x + AB.w, OUT.x - 26, u2); y = OUT.y; fill = V.signed(2 * a - 1, 1);
+      } else { p.el.remove(); parts.splice(i, 1); continue; }
+      p.el.setAttribute("cx", x); p.el.setAttribute("cy", y); p.el.setAttribute("fill", fill);
+      p.el.setAttribute("stroke", "var(--bg)"); p.el.setAttribute("stroke-width", 1);
+    }
+    if (training) for (var s = 0; s < 2; s++) gdStep();
+  });
+
+  function drawNet() {
+    var ws = [w1, w2, b], xs = [X.x1, X.x2, 1];
+    edges.forEach(function (e, k) {
+      e.ln.setAttribute("stroke", V.signed(ws[k], 2));
+      e.ln.setAttribute("stroke-width", 1 + 3.2 * Math.min(3, Math.abs(ws[k])));
+      e.lab.textContent = ["w₁", "w₂", "b"][k] + " = " + V.fmt(ws[k], 2);
+    });
+    inNode[0].t.textContent = V.fmt(X.x1, 1); inNode[1].t.textContent = V.fmt(X.x2, 1);
+    inNode.forEach(function (n, k) { n.c.setAttribute("fill", k < 2 ? V.signed(xs[k], 2.5) : "var(--bg)"); });
+    var z = w1 * X.x1 + w2 * X.x2 + b, a = f(z);
+    sumC.setAttribute("fill", V.signed(z, 3)); sumT.textContent = V.fmt(z, 2);
+    sumT.setAttribute("fill", Math.abs(z) > 2 ? "#fff" : "var(--text)");
+    var d = "";
+    for (var i = 0; i <= 60; i++) { var zz = -5 + i / 6; d += (i ? "L" : "M") + ax(zz).toFixed(1) + " " + ay(f(zz)).toFixed(1); }
+    actPath.setAttribute("d", d); actName.textContent = act === "Sigmoid" ? "f = Sigmoid" : "f = 계단";
+    actDot.setAttribute("cx", ax(z)); actDot.setAttribute("cy", ay(a));
+    outC.setAttribute("fill", V.signed(2 * a - 1, 1)); outT.textContent = V.fmt(a, 2);
+    outT.setAttribute("fill", Math.abs(2 * a - 1) > 0.6 ? "#fff" : "var(--text)");
+    outL.textContent = a > 0.5 ? "→ 1로 판정" : "→ 0으로 판정";
+    outL.setAttribute("fill", a > 0.5 ? "var(--accent)" : "var(--neg)");
+    f1.textContent = "z = " + V.fmt(w1) + "×" + V.fmt(X.x1, 1) + " + " + par(w2) + "×" + V.fmt(X.x2, 1) + " + " + V.fmt(b) + " = " + V.fmt(z);
+    f2.textContent = "f(z) = " + (act === "Sigmoid" ? "1 ÷ (1 + e^(−z))" : "(z > 0이면 1, 아니면 0)") + " = " + V.fmt(a, 3);
+  }
+  function par(v) { return v < 0 ? "(" + V.fmt(v) + ")" : V.fmt(v); }
+
+  // ================= 2. 입력 평면: 경계선과 색 =================
+  var QW = 560, QH = 390, L0 = 44, T0 = 30, SZ = 330, LIM = 3, NC = 30;
+  function qx(v) { return L0 + (v + LIM) / (2 * LIM) * SZ; }
+  function qy(v) { return T0 + (LIM - v) / (2 * LIM) * SZ; }
+  var qv = V.svg(document.getElementById("plane"), QW, QH,
+    "x1, x2 평면. 칸 색은 그 자리 입력에 대한 뉴런 출력, 직선은 z = 0인 경계, 화살표는 가중치 방향. 점 16개가 맞게 분류되었는지 표시된다");
+  var gH = V.s("g", null, qv), gA = V.s("g", null, qv), gL = V.s("g", null, qv), gD = V.s("g", null, qv), gS = V.s("g", null, qv);
+  var cs = SZ / NC, cells = [];
+  for (var a = 0; a < NC; a++) for (var c = 0; c < NC; c++)
+    cells.push(V.s("rect", { x: L0 + c * cs, y: T0 + a * cs, width: cs + 0.4, height: cs + 0.4 }, gH));
+  V.s("rect", { x: L0, y: T0, width: SZ, height: SZ, fill: "none", stroke: "var(--line)" }, gA);
+  [-3, -2, -1, 0, 1, 2, 3].forEach(function (v) {
+    V.s("text", { class: "ts", x: qx(v), y: T0 + SZ + 16, "text-anchor": "middle", text: V.fmt(v, 0) }, gA);
+    V.s("text", { class: "ts", x: L0 - 8, y: qy(v) + 4, "text-anchor": "end", text: V.fmt(v, 0) }, gA);
+  });
+  V.s("line", { class: "ln", x1: qx(0), y1: T0, x2: qx(0), y2: T0 + SZ, opacity: 0.4 }, gA);
+  V.s("line", { class: "ln", x1: L0, y1: qy(0), x2: L0 + SZ, y2: qy(0), opacity: 0.4 }, gA);
+  V.s("text", { class: "ts", x: L0 + SZ + 14, y: T0 + SZ + 16, text: "x₁ →" }, gA);
+  V.s("text", { class: "ts", x: L0 - 6, y: T0 - 12, text: "↑ x₂" }, gA);
+  var bLine = V.s("line", { stroke: "var(--text)", "stroke-width": 2.5 }, gL);
+  var bLab = V.s("text", { class: "tb", "font-size": 13 }, gL);
+  var mk = V.arrowDef(qv, "warr", "var(--text)");
+  var wArr = V.s("line", { stroke: "var(--text)", "stroke-width": 2, "marker-end": mk }, gL);
+  var wLab = V.s("text", { class: "t", "font-size": 13, "font-weight": 700 }, gL);
+  var dots = P.map(function (p, k) {
+    var g = V.s("g", { style: "cursor:pointer" }, gD);
+    var sh = p.y ? V.s("circle", { r: 7 }, g) : V.s("path", null, g);
+    var ring = V.s("circle", { r: 12, fill: "none", stroke: "var(--no)", "stroke-width": 2, "stroke-dasharray": "3 2" }, g);
+    return { g: g, sh: sh, ring: ring };
+  });
+  var sel = V.s("circle", { r: 11, fill: "none", stroke: "var(--k)", "stroke-width": 3 }, gS);
+  var selC = V.s("circle", { r: 3, fill: "var(--k)" }, gS);
+  // 오른쪽 이름표
+  var RX = 392;
+  V.s("text", { class: "tb", x: RX, y: 44, text: "평면 위의 점" }, gA);
+  V.s("circle", { cx: RX + 7, cy: 68, r: 7, fill: "var(--bg)", stroke: "var(--text)", "stroke-width": 1.8 }, gA);
+  V.s("text", { class: "t", x: RX + 20, y: 73, text: "정답 1" }, gA);
+  V.s("path", { d: tri(RX + 7, 94, 8), fill: "var(--bg)", stroke: "var(--text)", "stroke-width": 1.8 }, gA);
+  V.s("text", { class: "t", x: RX + 20, y: 99, text: "정답 0" }, gA);
+  V.s("circle", { cx: RX + 7, cy: 120, r: 9, fill: "none", stroke: "var(--no)", "stroke-width": 2, "stroke-dasharray": "3 2" }, gA);
+  V.s("text", { class: "t", x: RX + 20, y: 125, text: "틀린 점" }, gA);
+  V.s("circle", { cx: RX + 7, cy: 146, r: 8, fill: "none", stroke: "var(--k)", "stroke-width": 3 }, gA);
+  V.s("text", { class: "t", x: RX + 20, y: 151, text: "지금 넣는 입력" }, gA);
+  V.s("text", { class: "ts", x: RX, y: 186, text: "칸 색 = 출력 f(z)" }, gA);
+  var lg = V.s("g", null, gA);
+  var accT = V.s("text", { class: "tb", x: RX, y: 262, "font-size": 16 }, gA);
+  var lossT = V.s("text", { class: "t mono", x: RX, y: 288, "font-size": 13 }, gA);
+  var stepT = V.s("text", { class: "ts mono", x: RX, y: 308 }, gA);
+  function tri(x, y, s) { return "M" + x + " " + (y - s) + "L" + (x + s) + " " + (y + s * 0.8) + "L" + (x - s) + " " + (y + s * 0.8) + "Z"; }
+  function drawLegend() {
+    V.clear(lg);
+    for (var i = 0; i < 10; i++) V.s("rect", { x: RX + i * 14, y: 196, width: 14, height: 12, fill: V.signed(2 * (i + 0.5) / 10 - 1, 1) }, lg);
+    V.s("text", { class: "ts mono", x: RX, y: 224, text: "0" }, lg);
+    V.s("text", { class: "ts mono", x: RX + 70, y: 224, "text-anchor": "middle", text: "0.5" }, lg);
+    V.s("text", { class: "ts mono", x: RX + 140, y: 224, "text-anchor": "end", text: "1" }, lg);
+  }
+
+  function clipLine() {   // w1 x1 + w2 x2 + b = 0 을 [−3,3]² 안으로 자르기
+    var pts = [];
+    if (Math.abs(w2) > 1e-9) [-LIM, LIM].forEach(function (x) { var y = -(w1 * x + b) / w2; if (y >= -LIM && y <= LIM) pts.push([x, y]); });
+    if (Math.abs(w1) > 1e-9) [-LIM, LIM].forEach(function (y) { var x = -(w2 * y + b) / w1; if (x >= -LIM && x <= LIM) pts.push([x, y]); });
+    return pts.length >= 2 ? [pts[0], pts[pts.length - 1]] : null;
+  }
+  function loss() {
+    var s = 0, ok = 0;
+    P.forEach(function (p) {
+      var z = w1 * p.x1 + w2 * p.x2 + b, q = V.clamp(sig(z), 1e-12, 1 - 1e-12);
+      s += -(p.y * Math.log(q) + (1 - p.y) * Math.log(1 - q));
+      if ((z > 0 ? 1 : 0) === p.y) ok++;
+    });
+    return { L: s / P.length, ok: ok };
+  }
+  function drawPlane() {
+    for (var a = 0; a < NC; a++) for (var c = 0; c < NC; c++) {
+      var x1 = -LIM + (c + 0.5) * cs / SZ * 2 * LIM, x2 = LIM - (a + 0.5) * cs / SZ * 2 * LIM;
+      cells[a * NC + c].setAttribute("fill", V.signed(2 * f(w1 * x1 + w2 * x2 + b) - 1, 1.15));
+    }
+    var seg = clipLine();
+    bLine.setAttribute("opacity", seg ? 1 : 0); bLab.setAttribute("opacity", seg ? 1 : 0);
+    if (seg) {
+      bLine.setAttribute("x1", qx(seg[0][0])); bLine.setAttribute("y1", qy(seg[0][1]));
+      bLine.setAttribute("x2", qx(seg[1][0])); bLine.setAttribute("y2", qy(seg[1][1]));
+      var top = seg[0][1] > seg[1][1] ? seg[0] : seg[1];
+      bLab.setAttribute("x", V.clamp(qx(top[0]) + 6, L0 + 4, L0 + SZ - 50)); bLab.setAttribute("y", V.clamp(qy(top[1]) + 16, T0 + 16, T0 + SZ - 6));
+      bLab.textContent = "z = 0";
+    }
+    var n2 = w1 * w1 + w2 * w2;
+    if (n2 > 1e-6) {
+      var px = -b * w1 / n2, py = -b * w2 / n2, nn = Math.sqrt(n2), L = 0.9;
+      var okIn = Math.abs(px) < LIM - 0.2 && Math.abs(py) < LIM - 0.2;
+      var ex = V.clamp(px + w1 / nn * L, -LIM, LIM), ey = V.clamp(py + w2 / nn * L, -LIM, LIM);
+      wArr.setAttribute("opacity", okIn ? 1 : 0); wLab.setAttribute("opacity", okIn ? 1 : 0);
+      wArr.setAttribute("x1", qx(px)); wArr.setAttribute("y1", qy(py)); wArr.setAttribute("x2", qx(ex)); wArr.setAttribute("y2", qy(ey));
+      wLab.setAttribute("x", V.clamp(qx(ex) + (w1 >= 0 ? 6 : -22), L0 + 4, L0 + SZ - 20)); wLab.setAttribute("y", V.clamp(qy(ey) + (w2 >= 0 ? -6 : 16), T0 + 14, T0 + SZ - 4));
+      wLab.textContent = "w";
+    } else { wArr.setAttribute("opacity", 0); wLab.setAttribute("opacity", 0); }
+    P.forEach(function (p, k) {
+      var d = dots[k], z = w1 * p.x1 + w2 * p.x2 + b, pred = z > 0 ? 1 : 0;
+      var X0 = qx(p.x1), Y0 = qy(p.x2);
+      if (p.y) { d.sh.setAttribute("cx", X0); d.sh.setAttribute("cy", Y0); } else d.sh.setAttribute("d", tri(X0, Y0, 8));
+      d.sh.setAttribute("fill", "var(--bg)");
+      d.sh.setAttribute("stroke", "var(--text)"); d.sh.setAttribute("stroke-width", 1.8);
+      d.ring.setAttribute("cx", X0); d.ring.setAttribute("cy", Y0); d.ring.setAttribute("opacity", pred === p.y ? 0 : 1);
+    });
+    sel.setAttribute("cx", qx(X.x1)); sel.setAttribute("cy", qy(X.x2)); selC.setAttribute("cx", qx(X.x1)); selC.setAttribute("cy", qy(X.x2));
+    var lo = loss();
+    accT.textContent = "맞힌 점 " + lo.ok + " / " + P.length;
+    lossT.textContent = "손실 " + V.fmt(lo.L, 3);
+    stepT.textContent = "교차 엔트로피" + (steps ? " · " + steps + "걸음" : "");
+    return lo;
+  }
+  // 평면을 누르거나 끌면 입력이 그 자리로
+  var qdrag = false;
+  function toXY(ev) {
+    var bb = qv.getBoundingClientRect(), sx = (ev.clientX - bb.left) * QW / bb.width, sy = (ev.clientY - bb.top) * QH / bb.height;
+    return { x1: Math.round(V.clamp((sx - L0) / SZ * 2 * LIM - LIM, -LIM, LIM) * 10) / 10, x2: Math.round(V.clamp(LIM - (sy - T0) / SZ * 2 * LIM, -LIM, LIM) * 10) / 10, sx: sx };
+  }
+  qv.addEventListener("pointerdown", function (e) { var q = toXY(e); if (q.sx > L0 + SZ + 6) return; qdrag = true; qv.setPointerCapture(e.pointerId); X = q; update(); });
+  qv.addEventListener("pointermove", function (e) { if (qdrag) { X = toXY(e); update(); } });
+  qv.addEventListener("pointerup", function () { qdrag = false; });
+  qv.style.touchAction = "none";
+
+  // ================= 손잡이 =================
+  var ctl = document.getElementById("ctl"), ctl2 = document.getElementById("ctl2");
+  var s1 = V.slider(ctl, { label: "w₁", min: -3, max: 3, step: 0.01, value: w1, onInput: function (v) { w1 = v; stopTrain(); update(); } });
+  var s2 = V.slider(ctl, { label: "w₂", min: -3, max: 3, step: 0.01, value: w2, onInput: function (v) { w2 = v; stopTrain(); update(); } });
+  var s3 = V.slider(ctl, { label: "b", min: -3, max: 3, step: 0.01, value: b, onInput: function (v) { b = v; stopTrain(); update(); } });
+  V.seg(ctl2, ["Sigmoid", "계단"], act, function (n) { act = n; update(); });
+  var training = false, steps = 0, LR = 0.5;
+  var bT = V.button(ctl2, "▶ 경사하강으로 맞추기", function () { training = !training; bT.textContent = training ? "❚❚ 멈춤" : "▶ 이어서"; });
+  V.button(ctl2, "⏭ 한 걸음", function () { stopTrain(); gdStep(); });
+  V.button(ctl2, "↺ 처음으로", function () { stopTrain(); w1 = W0[0]; w2 = W0[1]; b = W0[2]; steps = 0; syncSl(); update(); bT.textContent = "▶ 경사하강으로 맞추기"; });
+  function stopTrain() { if (training) { training = false; bT.textContent = "▶ 이어서"; } }
+  function syncSl() { s1.set(Math.round(w1 * 100) / 100); s2.set(Math.round(w2 * 100) / 100); s3.set(Math.round(b * 100) / 100); }
+  // 교차 엔트로피의 기울기: ∂L/∂w = 평균((σ(z) − y)·x)
+  function gdStep() {
+    var g1 = 0, g2 = 0, gb = 0;
+    P.forEach(function (p) { var e = sig(w1 * p.x1 + w2 * p.x2 + b) - p.y; g1 += e * p.x1; g2 += e * p.x2; gb += e; });
+    var n = P.length;
+    w1 -= LR * g1 / n; w2 -= LR * g2 / n; b -= LR * gb / n;
+    w1 = V.clamp(w1, -3, 3); w2 = V.clamp(w2, -3, 3); b = V.clamp(b, -3, 3);
+    steps++; syncSl(); update();
+    if (steps >= 300) { training = false; bT.textContent = "▶ 이어서"; }
+  }
+
+  function update() {
+    drawNet(); var lo = drawPlane();
+    var z = w1 * X.x1 + w2 * X.x2 + b;
+    document.getElementById("say").innerHTML = (z > 0
+      ? "<b>지금 입력은 z = " + V.fmt(z) + " > 0, 경계선의 w 쪽.</b> "
+      : "<b>지금 입력은 z = " + V.fmt(z) + " ≤ 0, 경계선의 반대쪽.</b> ") +
+      "w₁·w₂를 바꾸면 선이 돌고, b를 바꾸면 선이 평행하게 밀린다. 맞힌 점 " + lo.ok + "/" + P.length + ".";
+  }
+  V.onTheme.push(function () { drawLegend(); update(); });
+  drawLegend(); update();
+})();
+</script>
+</body>
+</html>

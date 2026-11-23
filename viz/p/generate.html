@@ -1,0 +1,418 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>한 토큰씩 생성 · 움직이는 AI</title>
+<link rel="stylesheet" href="../style.css">
+</head>
+<body data-page="generate">
+<main class="stage">
+<h1>생성 = 하나 뽑아 붙이고, 다시</h1>
+<p class="sub">앞 2토큰을 보고 다음 토큰 확률을 낸다 → 하나 뽑는다 → 붙인다 → 보는 창이 한 칸 민다. 확률은 아래 글 13줄에서 직접 센 횟수로 만든 작은 언어 모형이다.</p>
+<div class="ctrl" id="top"></div>
+<div class="viz scroll" id="tape" style="margin-top:12px"></div>
+<div class="row" style="margin-top:14px">
+  <div class="viz" id="bars"></div>
+  <div class="viz" id="pick"></div>
+</div>
+<div class="ctrl" id="knobs"></div>
+<div class="viz scroll" id="corpus" style="margin-top:14px"></div>
+<div class="viz scroll" id="cmp" style="margin-top:14px"></div>
+<p class="say" id="say"></p>
+<p class="more">이어 보기 · <a href="../../lab/decks/s21.html">덱 21 Transformer와 생성</a> · <a href="../../lab/decks/s20.html">덱 20 softmax와 attention</a></p>
+</main>
+<script src="../js/pages.js"></script>
+<script src="../js/viz.js"></script>
+<script>
+(function () {
+  // ================= 1. 모형: 글에서 센 3토큰 횟수 =================
+  var LINES = [
+    "나 는 고양이 를 좋아 한다 .", "나 는 강아지 를 좋아 한다 .", "나 는 밥 을 먹 는다 .",
+    "나 는 오늘 밥 을 먹 는다 .", "고양이 는 생선 을 좋아 한다 .", "고양이 는 생선 을 먹 는다 .",
+    "고양이 는 잠 을 잔다 .", "강아지 는 공 을 좋아 한다 .", "강아지 는 밥 을 먹 는다 .",
+    "강아지 가 공 을 좋아 한다 .", "오늘 은 비 가 온다 .", "오늘 은 고양이 가 잠 을 잔다 .",
+    "나 는 고양이 를 좋아 한다 ."
+  ];
+  var S = [], LINE_OF = [];             // 글 전체를 한 줄로 이은 토큰 열
+  LINES.forEach(function (l, li) { l.split(" ").forEach(function (w) { S.push(w); LINE_OF.push(li); }); });
+  var VOC = [];
+  S.forEach(function (w) { if (VOC.indexOf(w) < 0) VOC.push(w); });
+  var NV = VOC.length, NS = S.length;
+  var c1 = {}, c2 = {}, c3 = {};
+  function inc(o, k) { o[k] = (o[k] || 0) + 1; }
+  for (var i = 0; i < NS; i++) {
+    inc(c1, S[i]);
+    if (i + 1 < NS) inc(c2, S[i] + "|" + S[i + 1]);
+    if (i + 2 < NS) inc(c3, S[i] + "|" + S[i + 1] + "|" + S[i + 2]);
+  }
+  var L3 = 0.75, L2 = 0.20, L1 = 0.05;
+  // p(w | a b) = 0.75·n(a b w)/n(a b ·) + 0.20·n(b w)/n(b ·) + 0.05·n(w)/전체
+  function model(a, b) {
+    var nab = 0, nb = 0;
+    VOC.forEach(function (w) { nab += c3[a + "|" + b + "|" + w] || 0; nb += c2[b + "|" + w] || 0; });
+    var l3 = nab ? L3 : 0, l2 = nab ? L2 : L3 + L2;
+    return VOC.map(function (w, j) {
+      var n3 = c3[a + "|" + b + "|" + w] || 0, n2 = c2[b + "|" + w] || 0;
+      var p = (nab ? l3 * n3 / nab : 0) + (nb ? l2 * n2 / nb : 0) + L1 * c1[w] / NS;
+      return { j: j, w: w, n3: n3, n2: n2, p: p };
+    });
+  }
+  // 온도 → top-k → top-p 순서로 고친다
+  function adjust(rows, T, K, P) {
+    var z = rows.map(function (r) { return Math.log(r.p); });
+    var q = V.softmax(z, T);
+    var order = rows.map(function (r) { return r.j; }).sort(function (x, y) { return rows[y].p - rows[x].p || x - y; });
+    var keep = {}, cum = 0;
+    for (var o = 0; o < order.length; o++) {
+      if (o >= K) break;
+      keep[order[o]] = true; cum += q[order[o]];
+      if (cum >= P - 1e-12) break;
+    }
+    var s = 0; for (var k in keep) s += q[k];
+    return { order: order, q: q, f: q.map(function (x, j) { return keep[j] ? x / s : 0; }), nKeep: Object.keys(keep).length };
+  }
+  function pickBy(d, u) {         // 누적 확률 띠에서 u가 떨어진 칸
+    var cum = 0, last = -1;
+    for (var o = 0; o < d.order.length; o++) {
+      var j = d.order[o]; if (!d.f[j]) continue;
+      last = j;
+      if (u < cum + d.f[j]) return { j: j, lo: cum, hi: cum + d.f[j] };
+      cum += d.f[j];
+    }
+    return { j: last, lo: cum - d.f[last], hi: 1 };
+  }
+  function greedyOf(d) { return d.order[0]; }   // 조정 후에도 1등은 그대로(온도·자르기는 순서를 안 바꾼다)
+  function run(start, n, T, K, P, rng) {
+    var seq = start.slice(), ps = [];
+    for (var t = 0; t < n; t++) {
+      var d = adjust(model(seq[seq.length - 2], seq[seq.length - 1]), T, K, P);
+      var j = rng ? pickBy(d, rng()).j : greedyOf(d);
+      seq.push(VOC[j]); ps.push(d.f[j]);
+    }
+    return { seq: seq, ps: ps };
+  }
+
+  // ================= 상태 =================
+  var STARTS = { "나 는": ["나", "는"], "고양이 는": ["고양이", "는"], "오늘 은": ["오늘", "은"] };
+  var startKey = "나 는", mode = "sample", T = 1, K = NV, P = 1;
+  var seq, rng, dist, rows, lastPick = null, busy = false, playing = false, hoverJ = -1;
+  function ctx() { return [seq[seq.length - 2], seq[seq.length - 1]]; }
+  function recompute() { var c = ctx(); rows = model(c[0], c[1]); dist = adjust(rows, T, K, P); }
+
+  // ================= 손잡이 =================
+  var top = document.getElementById("top");
+  V.seg(top, Object.keys(STARTS), startKey, function (k) { startKey = k; reset(); });
+  V.seg(top, [{ id: "sample", label: "샘플링" }, { id: "greedy", label: "greedy(늘 1등)" }], mode, function (m) { mode = m; lastPick = null; drawPick(); say(); });
+  var bPlay = V.button(top, "▶ 재생", function () { playing = !playing; bPlay.textContent = playing ? "❚❚ 멈춤" : "▶ 재생"; bPlay.classList.toggle("on", playing); if (playing) play(); });
+  V.button(top, "⏭ 한 토큰", function () { if (!busy) step(); });
+  V.button(top, "↺ 처음으로", function () { reset(); });
+  var knobs = document.getElementById("knobs");
+  V.slider(knobs, { label: "온도 T", min: 0.1, max: 3, step: 0.05, value: T, onInput: function (v) { T = v; knobChanged(); } });
+  V.slider(knobs, { label: "top-k", min: 1, max: NV, step: 1, value: K, fmt: function (v) { return v >= NV ? "전부" : V.fmt(v, 0); }, onInput: function (v) { K = v; knobChanged(); } });
+  V.slider(knobs, { label: "top-p", min: 0.05, max: 1, step: 0.05, value: P, fmt: function (v) { return v >= 1 ? "전부" : V.fmt(v, 2); }, onInput: function (v) { P = v; knobChanged(); } });
+  function knobChanged() { recompute(); lastPick = null; drawBars(false); drawPick(); drawCmp(); say(); }
+
+  // ================= 2. 테이프: 지금까지 만든 글과 보는 창 =================
+  var TW = 1140, TH = 112;
+  var tv = V.svg(document.getElementById("tape"), TW, TH, "지금까지 만든 토큰이 한 줄로 놓이고, 마지막 두 토큰에 '모형이 보는 앞 2토큰' 창이 씌워져 있으며 끝에 다음 토큰 자리 물음표가 있다");
+  var tClip = V.s("clipPath", { id: "tclip" }, V.s("defs", null, tv));
+  V.s("rect", { x: 10, y: 0, width: TW - 20, height: TH }, tClip);
+  var tg = V.s("g", { "clip-path": "url(#tclip)" }, tv);
+  V.s("text", { class: "ts", x: 14, y: 20, text: "만든 글" }, tv);
+  var tCount = V.s("text", { class: "ts", x: TW - 14, y: 20, "text-anchor": "end" }, tv);
+  var tOff = 0;
+  var meas = V.s("text", { class: "t", x: 0, y: 20, opacity: 0 }, tv);
+  function wOf(w) { meas.textContent = w; var l = 0; try { l = meas.getComputedTextLength(); } catch (e) {} return Math.max(18, (l || w.length * 14) + 18); }
+  var CY = 70, CH = 32;
+  function layoutTape() {
+    var xs = [], x = 0;
+    seq.forEach(function (w) { xs.push(x); x += wOf(w) + 6; });
+    return { xs: xs, end: x };
+  }
+  function drawTape(fresh) {
+    var L = layoutTape(), wq = 44;
+    var need = L.end + wq + 110, off = Math.max(0, need - (TW - 40));
+    var from = tOff; tOff = off;
+    tCount.textContent = (seq.length - STARTS[startKey].length) + "토큰 생성";
+    if (fresh && from !== off) V.tween(400, function (e) { paintTape(L, V.lerp(from, off, e), e); });
+    else paintTape(L, off, fresh ? 0 : 1);
+    if (fresh && from === off) V.tween(350, function (e) { paintTape(L, off, e); });
+  }
+  function paintTape(L, off, fadeNew) {
+    V.clear(tg);
+    var n = seq.length, wq = 44, X = function (x) { return 20 + x - off; };
+    seq.forEach(function (w, i) {
+      var x = X(L.xs[i]), wd = wOf(w);
+      if (x < 12) return;                  // 왼쪽으로 밀려난 앞부분은 숨긴다
+      var inWin = i >= n - 2, isStart = i < STARTS[startKey].length;
+      var op = i === n - 1 ? fadeNew : 1;
+      V.s("rect", { x: x, y: CY - CH / 2, width: wd, height: CH, rx: 7, opacity: op, fill: inWin ? "var(--accent-soft)" : "var(--bg)", stroke: inWin ? "var(--accent)" : "var(--line)", "stroke-width": inWin ? 1.6 : 1 }, tg);
+      V.s("text", { class: isStart ? "ts" : "t", x: x + wd / 2, y: CY + 5, opacity: op, "text-anchor": "middle", "font-size": 14, text: w }, tg);
+    });
+    var qx = X(L.end);
+    V.s("rect", { x: qx, y: CY - CH / 2, width: wq, height: CH, rx: 7, fill: "none", stroke: "var(--accent)", "stroke-dasharray": "4 3" }, tg);
+    V.s("text", { class: "ta", x: qx + wq / 2, y: CY + 5, "text-anchor": "middle", "font-weight": 700, text: "?" }, tg);
+    var wx1 = X(L.xs[n - 2]) - 4, wx2 = X(L.xs[n - 1]) + wOf(seq[n - 1]) + 4;
+    V.s("path", { class: "ln-a", d: "M" + wx1 + " " + (CY - CH / 2 - 4) + "V" + (CY - CH / 2 - 12) + "H" + wx2 + "V" + (CY - CH / 2 - 4) }, tg);
+    V.s("text", { class: "ta", x: Math.max(84, (wx1 + wx2) / 2), y: CY - CH / 2 - 18, "text-anchor": "middle", "font-size": 12, text: "모형이 보는 앞 2토큰" }, tg);
+    V.s("text", { class: "ts", x: qx + wq + 8, y: CY + 5, text: "← 다음 하나" }, tg);
+  }
+
+  // ================= 3. 막대: 다음 토큰 확률 =================
+  var BW = 560, BH = 500, RY0 = 88, RH = 18.2, BX0 = 160, BX1 = 470;
+  var bv = V.svg(document.getElementById("bars"), BW, BH, "어휘 21개의 다음 토큰 확률 막대. 빈 테두리는 원래 확률, 채운 막대는 온도·top-k·top-p로 고친 뒤의 확률이고, 왼쪽에 글에서 센 횟수가 있다");
+  var bHead = V.s("text", { class: "tb", x: 12, y: 22 }, bv);
+  V.s("text", { class: "ts", x: 12, y: 40, text: "p = 0.75·(앞2 뒤 횟수 비율) + 0.20·(앞1 뒤 비율) + 0.05·(전체 빈도)" }, bv);
+  var hA = V.s("text", { class: "ts", x: 106, y: 78, "text-anchor": "middle" }, bv);
+  var hB = V.s("text", { class: "ts", x: 140, y: 78, "text-anchor": "middle" }, bv);
+  V.s("text", { class: "ts", x: 123, y: 58, "text-anchor": "middle", text: "센 횟수" }, bv);
+  V.s("text", { class: "ts", x: BX0, y: 78, text: "0" }, bv);
+  V.s("text", { class: "ts", x: BX0 + (BX1 - BX0) / 2, y: 78, "text-anchor": "middle", text: "0.5" }, bv);
+  V.s("line", { class: "ln-g", x1: BX0 + (BX1 - BX0) / 2, y1: 84, x2: BX0 + (BX1 - BX0) / 2, y2: RY0 + NV * RH }, bv);
+  V.s("text", { class: "ts", x: BW - 10, y: 78, "text-anchor": "end", text: "고친 뒤" }, bv);
+  V.s("rect", { x: 160, y: BH - 18, width: 14, height: 10, fill: "none", stroke: "var(--muted)" }, bv);
+  V.s("text", { class: "ts", x: 180, y: BH - 9, text: "원래 확률(T=1, 자르기 전)" }, bv);
+  V.s("rect", { x: 350, y: BH - 18, width: 14, height: 10, fill: "var(--accent)" }, bv);
+  V.s("text", { class: "ts", x: 370, y: BH - 9, text: "고친 뒤 확률" }, bv);
+  var R = VOC.map(function (w, j) {
+    var g = V.s("g", { style: "cursor:pointer" }, bv);
+    var bg = V.s("rect", { x: 4, height: RH, rx: 4, fill: "transparent" }, g);
+    var tw = V.s("text", { class: "t", x: 84, "text-anchor": "end", "font-size": 13, text: w }, g);
+    var n3 = V.s("text", { class: "ts mono", x: 106, "text-anchor": "middle" }, g);
+    var n2 = V.s("text", { class: "ts mono", x: 140, "text-anchor": "middle" }, g);
+    var bar = V.s("rect", { x: BX0, height: RH - 6, rx: 2, fill: "var(--accent)" }, g);
+    var gh = V.s("rect", { x: BX0, height: RH - 6, rx: 2, fill: "none", stroke: "var(--muted)", "stroke-width": 1 }, g);
+    var pc = V.s("text", { class: "t mono", x: BW - 10, "text-anchor": "end", "font-size": 12 }, g);
+    bg.setAttribute("width", BW - 8);
+    g.addEventListener("pointerenter", function () { hoverJ = j; hoverAll(); });
+    g.addEventListener("pointerleave", function () { hoverJ = -1; hoverAll(); });
+    return { g: g, bg: bg, tw: tw, n3: n3, n2: n2, bar: bar, gh: gh, pc: pc, y: 0, f: 0, p: 0 };
+  });
+  function placeRow(r, y) {   // 글자 위치는 transform 없이 절대 좌표로(겹침 검사가 그대로 읽게)
+    r.bg.setAttribute("y", (y - RH / 2).toFixed(1));
+    r.bar.setAttribute("y", (y - RH / 2 + 3).toFixed(1)); r.gh.setAttribute("y", (y - RH / 2 + 3).toFixed(1));
+    var ty = (y + 4.5).toFixed(1);
+    r.tw.setAttribute("y", ty); r.n3.setAttribute("y", ty); r.n2.setAttribute("y", ty); r.pc.setAttribute("y", ty);
+  }
+  function drawBars(anim) {
+    var c = ctx();
+    bHead.textContent = "다음 토큰 확률 · 앞: 「" + c[0] + " " + c[1] + "」";
+    hA.textContent = "앞2"; hB.textContent = "앞1";
+    var from = R.map(function (r) { return { y: r.y, f: r.f, p: r.p }; });
+    var to = VOC.map(function (_, j) {
+      return { y: RY0 + RH / 2 + dist.order.indexOf(j) * RH, f: dist.f[j], p: rows[j].p };
+    });
+    R.forEach(function (r, j) {
+      r.n3.textContent = rows[j].n3 || "·"; r.n2.textContent = rows[j].n2 || "·";
+      var kept = dist.f[j] > 0;
+      r.tw.setAttribute("opacity", kept ? 1 : 0.35);
+      r.pc.textContent = kept ? V.fmt(dist.f[j] * 100, 1) + "%" : "잘림";
+      r.pc.setAttribute("class", kept ? "t mono" : "ts");
+    });
+    function set(e) {
+      R.forEach(function (r, j) {
+        var a = from[j], b = to[j];
+        r.y = anim ? V.lerp(a.y || b.y, b.y, e) : b.y;
+        r.f = anim ? V.lerp(a.f, b.f, e) : b.f;
+        r.p = anim ? V.lerp(a.p, b.p, e) : b.p;
+        placeRow(r, r.y);
+        r.bar.setAttribute("width", Math.max(0, r.f * (BX1 - BX0)).toFixed(1));
+        r.gh.setAttribute("width", Math.max(0.5, r.p * (BX1 - BX0)).toFixed(1));
+      });
+    }
+    if (anim) return V.tween(420, set); set(1); return Promise.resolve();
+  }
+
+  // ================= 4. 뽑기: 누적 확률 띠와 바늘 =================
+  var PW = 560, PH = 490, SX = 170, SW = 56, SY0 = 56, SY1 = 456;
+  var pv = V.svg(document.getElementById("pick"), PW, PH, "고친 확률을 위에서 아래로 쌓은 0에서 1까지의 띠. 바늘이 무작위 수 u 자리로 내려가 떨어진 칸의 토큰을 고른다");
+  var pHead = V.s("text", { class: "tb", x: 12, y: 22 }, pv);
+  V.s("text", { class: "ts", x: SX + SW / 2, y: SY0 - 8, "text-anchor": "middle", text: "0" }, pv);
+  V.s("text", { class: "ts", x: SX + SW / 2, y: SY1 + 18, "text-anchor": "middle", text: "1" }, pv);
+  var segG = V.s("g", null, pv);
+  var needle = V.s("g", null, pv);
+  V.s("path", { d: "M-16 -8L0 0L-16 8z", fill: "var(--k)" }, needle);
+  V.s("line", { x1: 0, y1: 0, x2: SW + 4, y2: 0, stroke: "var(--k)", "stroke-width": 2.5 }, needle);
+  var uLab = V.s("text", { class: "t mono", x: SX - 22, "text-anchor": "end", "font-size": 13 }, pv);
+  var RX = 455, RY = 150;
+  V.s("text", { class: "ts", x: RX, y: RY - 50, "text-anchor": "middle", text: "뽑은 토큰" }, pv);
+  V.s("rect", { x: RX - 70, y: RY - 34, width: 140, height: 56, rx: 10, fill: "var(--bg)", stroke: "var(--accent)", "stroke-width": 2 }, pv);
+  var rTok = V.s("text", { x: RX, y: RY + 4, "text-anchor": "middle", "font-size": 24, "font-weight": 800, fill: "var(--accent)" }, pv);
+  var rL1 = V.s("text", { class: "ts", x: RX, y: RY + 50, "text-anchor": "middle" }, pv);
+  var rL2 = V.s("text", { class: "ts", x: RX, y: RY + 70, "text-anchor": "middle" }, pv);
+  var stat1 = V.s("text", { class: "t", x: 455, y: 330, "text-anchor": "middle" }, pv);
+  var stat2 = V.s("text", { class: "ts", x: 455, y: 352, "text-anchor": "middle" }, pv);
+  var stat3 = V.s("text", { class: "ts", x: 455, y: 372, "text-anchor": "middle" }, pv);
+  var segEls = {};
+  function sy(c) { return SY0 + c * (SY1 - SY0); }
+  function drawPick() {
+    V.clear(segG); segEls = {};
+    var cum = 0, k = 0;
+    dist.order.forEach(function (j) {
+      var f = dist.f[j]; if (!f) return;
+      var y0 = sy(cum), y1 = sy(cum + f);
+      var r = V.s("rect", { x: SX, y: y0, width: SW, height: Math.max(0.5, y1 - y0), fill: V.ramp(0.15 + 0.85 * Math.sqrt(f)), stroke: "var(--panel)", "stroke-width": 1 }, segG);
+      var lab = null;
+      if (y1 - y0 >= 15) lab = V.s("text", { class: "t", x: SX + SW + 10, y: (y0 + y1) / 2 + 5, "font-size": 13, text: VOC[j] + "  " + V.fmt(f * 100, 1) + "%" }, segG);
+      segEls[j] = { r: r, lab: lab, y0: y0, y1: y1 };
+      cum += f; k++;
+    });
+    pHead.textContent = mode === "greedy" ? "greedy: 늘 가장 큰 칸" : "뽑기: 0~1 무작위 수 u가 떨어진 칸";
+    stat1.textContent = "후보 " + dist.nKeep + "개 / " + NV + "개";
+    stat2.textContent = "1등 확률 " + V.fmt(dist.f[dist.order[0]] * 100, 1) + "% (원래 " + V.fmt(rows[dist.order[0]].p * 100, 1) + "%)";
+    var H = 0; dist.f.forEach(function (x) { if (x > 0) H -= x * Math.log2(x); });
+    stat3.textContent = "퍼진 정도(엔트로피) " + V.fmt(H, 2) + "비트";
+    if (lastPick) {
+      rTok.textContent = VOC[lastPick.j];
+      rL1.textContent = lastPick.u != null ? "u = " + V.fmt(lastPick.u, 3) + " → " + V.fmt(lastPick.lo, 3) + "~" + V.fmt(lastPick.hi, 3) + " 칸" : "가장 큰 칸";
+      rL2.textContent = "그때 확률 " + V.fmt(lastPick.f * 100, 1) + "%";
+    } else { rTok.textContent = "?"; rL1.textContent = ""; rL2.textContent = ""; }
+    needle.setAttribute("opacity", mode === "greedy" ? 0 : 1);
+    hoverAll();
+  }
+  function setNeedle(u) {
+    needle.setAttribute("transform", "translate(" + SX + "," + sy(u).toFixed(1) + ")");
+    uLab.textContent = "u = " + V.fmt(u, 3); uLab.setAttribute("y", (sy(u) + 5).toFixed(1));
+    uLab.setAttribute("opacity", mode === "greedy" ? 0 : 1);
+  }
+  setNeedle(0);
+
+  function hoverAll() {
+    var hj = hoverJ >= 0 ? hoverJ : (lastPick && lastPick.fresh ? lastPick.j : -1);
+    R.forEach(function (r, j) { r.bg.setAttribute("fill", j === hj ? "var(--accent-soft)" : "transparent"); });
+    for (var j in segEls) {
+      var s = segEls[j];
+      s.r.setAttribute("stroke", +j === hj ? "var(--text)" : "var(--panel)");
+      s.r.setAttribute("stroke-width", +j === hj ? 2.5 : 1);
+      s.r.setAttribute("opacity", hj < 0 || +j === hj ? 1 : 0.45);
+    }
+    drawCorpus(hoverJ);
+  }
+
+  // ================= 5. 글: 횟수가 어디서 왔나 =================
+  var KW = 1140, KH = 196, COLS = 3, PER = Math.ceil(LINES.length / COLS);
+  var kv = V.svg(document.getElementById("corpus"), KW, KH, "모형이 배운 글 13줄. 지금 보는 앞 2토큰이 나온 자리와 그 뒤에 온 토큰이 칠해져 있다");
+  var kHead = V.s("text", { class: "tb", x: 12, y: 22 }, kv);
+  var kSum = V.s("text", { class: "ts", x: KW - 12, y: 22, "text-anchor": "end" }, kv);
+  var kHi = V.s("g", null, kv), kTx = V.s("g", null, kv);
+  var TOKPOS = [];
+  (function layout() {
+    var idx = 0;
+    LINES.forEach(function (l, li) {
+      var col = Math.floor(li / PER), row = li % PER, x = 14 + col * (KW / COLS), y = 52 + row * 28;
+      V.s("text", { class: "ts mono", x: x, y: y + 5, text: (li + 1 < 10 ? " " : "") + (li + 1) }, kTx);
+      x += 26;
+      l.split(" ").forEach(function (w) {
+        var t = V.s("text", { class: "t", x: x, y: y + 5, "font-size": 14, text: w }, kTx);
+        var wd = wOf(w) - 18;
+        TOKPOS[idx++] = { x: x, y: y, w: wd, t: t };
+        x += wd + 9;
+      });
+    });
+  })();
+  function drawCorpus(hj) {
+    V.clear(kHi);
+    var c = ctx(), n = 0, follow = {};
+    for (var i = 0; i + 2 < NS; i++) {
+      if (S[i] !== c[0] || S[i + 1] !== c[1]) continue;
+      n++; inc(follow, S[i + 2]);
+      var on = hj < 0 || VOC.indexOf(S[i + 2]) === hj;
+      [i, i + 1].forEach(function (k) {
+        var p = TOKPOS[k];
+        V.s("rect", { x: p.x - 3, y: p.y - 11, width: p.w + 6, height: 22, rx: 4, fill: "var(--accent-soft)", opacity: on ? 1 : 0.4 }, kHi);
+      });
+      var q = TOKPOS[i + 2];
+      V.s("rect", { x: q.x - 3, y: q.y - 11, width: q.w + 6, height: 22, rx: 4, fill: "none", stroke: "var(--accent)", "stroke-width": on ? 2 : 1, opacity: on ? 1 : 0.4 }, kHi);
+    }
+    kHead.textContent = "배운 글 · 「" + c[0] + " " + c[1] + "」이 나온 자리 " + n + "곳";
+    var parts = Object.keys(follow).sort(function (a, b) { return follow[b] - follow[a]; }).map(function (w) { return w + " " + follow[w]; });
+    kSum.textContent = n ? "그 뒤에 온 것: " + parts.join(" · ") : "앞2가 글에 없음 → 앞1 횟수와 전체 빈도만 씀";
+  }
+
+  // ================= 6. 비교: greedy와 샘플링 =================
+  var MW = 1140, MH = 236, NGEN = 24;
+  var mv = V.svg(document.getElementById("cmp"), MW, MH, "같은 시작에서 greedy와 시드가 다른 샘플링 세 번으로 24토큰씩 만든 결과. 칸 색이 진할수록 고를 때 확률이 높았다");
+  var mg = V.s("g", null, mv);
+  var cmpRes = [];
+  function drawCmp() {
+    V.clear(mg);
+    V.s("text", { class: "tb", x: 12, y: 22, text: "같은 시작, 같은 모형 · 고르는 법만 다르게 (" + NGEN + "토큰)" }, mg);
+    V.s("text", { class: "ts", x: MW - 12, y: 22, "text-anchor": "end", text: "칸 색 = 고를 때 그 토큰 확률" }, mg);
+    var st = STARTS[startKey], runs = [
+      { lab: "greedy", r: null }, { lab: "샘플링 · 시드 1", r: V.rng(1) },
+      { lab: "샘플링 · 시드 2", r: V.rng(2) }, { lab: "샘플링 · 시드 3", r: V.rng(3) }
+    ];
+    cmpRes = [];
+    runs.forEach(function (ru, ri) {
+      var res = run(st, NGEN, T, K, P, ru.r), y = 58 + ri * 46;
+      cmpRes.push(res);
+      V.s("text", { class: ri ? "t" : "tb", x: 12, y: y + 5, "font-size": 13, text: ru.lab }, mg);
+      var x = 130, avg = 0;
+      res.seq.forEach(function (w, i) {
+        var gen = i >= st.length, wd = wOf(w) - 8;
+        if (x + wd > MW - 100) return;
+        var pp = gen ? res.ps[i - st.length] : 0;
+        V.s("rect", { x: x, y: y - 13, width: wd, height: 26, rx: 5, fill: gen ? V.ramp(pp) : "var(--bg)", stroke: "var(--line)" }, mg);
+        V.s("text", { x: x + wd / 2, y: y + 5, "text-anchor": "middle", "font-size": 13, fill: gen && pp > 0.55 ? "var(--bg)" : "var(--text)", text: w }, mg);
+        x += wd + 3;
+      });
+      res.ps.forEach(function (p) { avg += p; });
+      V.s("text", { class: "ts mono", x: MW - 12, y: y + 5, "text-anchor": "end", text: "평균 " + V.fmt(avg / res.ps.length, 2) }, mg);
+    });
+  }
+
+  // ================= 7. 한 걸음 =================
+  var epoch = 0;
+  async function step() {
+    busy = true; var ep = epoch;
+    var u = null, pk;
+    if (mode === "sample") {
+      u = rng();
+      pk = pickBy(dist, u);
+      var u0 = 0;
+      await V.tween(650, function (e) { setNeedle(V.lerp(u0, u, e)); });
+    } else {
+      var j0 = greedyOf(dist); pk = { j: j0, lo: 0, hi: dist.f[j0] };
+    }
+    if (ep !== epoch) { busy = false; return; }
+    lastPick = { j: pk.j, u: u, lo: pk.lo, hi: pk.hi, f: dist.f[pk.j], fresh: true };
+    drawPick();
+    await V.sleep(450);
+    if (ep !== epoch) { busy = false; return; }
+    seq.push(VOC[pk.j]);
+    lastPick.fresh = false;
+    recompute();
+    drawTape(true);
+    await drawBars(true);
+    drawPick(); say();
+    busy = false;
+  }
+  async function play() {
+    while (playing) {
+      if (!busy) await step();
+      await V.sleep(350);
+    }
+  }
+  function reset() {
+    epoch++;
+    seq = STARTS[startKey].slice(); rng = V.rng(42); lastPick = null; tOff = 0; R.forEach(function (r) { r.y = 0; });
+    recompute(); drawTape(false); drawBars(false); setNeedle(0); drawPick(); drawCmp(); say();
+  }
+  function say() {
+    var top1 = dist.order[0], f1 = dist.f[top1];
+    var t = T < 0.95 ? "<b>온도 " + V.fmt(T, 2) + " &lt; 1:</b> 로짓 log p를 " + V.fmt(T, 2) + "로 나눠 차이를 키운다 → 1등이 더 뾰족해진다(1등 " + V.fmt(f1 * 100, 0) + "%)."
+          : T > 1.05 ? "<b>온도 " + V.fmt(T, 2) + " &gt; 1:</b> 로짓 차이를 줄인다 → 막대가 평평해지고 글에 드문 토큰도 뽑힌다."
+          : "<b>온도 1:</b> 센 횟수 그대로의 확률.";
+    var cut = dist.nKeep < NV ? " 자르기로 " + dist.nKeep + "개만 남기고 합이 1이 되게 다시 나눴다." : "";
+    var g = mode === "greedy" ? " greedy는 늘 1등만 고른다 → 같은 앞이 오면 같은 글이 되풀이된다." : "";
+    document.getElementById("say").innerHTML = t + cut + g;
+  }
+  V.onTheme.push(function () { drawPick(); drawCmp(); });
+  reset();
+  window.__gen = { VOC: VOC, model: model, adjust: adjust, run: run, rng: V.rng, cmp: function () { return cmpRes; },
+                   state: function () { return { seq: seq.slice(), T: T, K: K, P: P, f: dist.f.slice() }; } };
+})();
+</script>
+</body>
+</html>

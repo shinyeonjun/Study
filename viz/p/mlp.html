@@ -1,0 +1,404 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>신경망이 배우는 모습 · 움직이는 AI</title>
+<link rel="stylesheet" href="../style.css">
+</head>
+<body data-page="mlp">
+<main class="stage">
+<h1>신경망 학습 = 뉴런마다 평면을 가르고, 층이 그 조각을 합쳐 경계를 휜다</h1>
+<p class="sub">브라우저가 지금 실제로 미니배치 경사하강(배치 10, 손실 = 교차 엔트로피)을 돌린다. 선 굵기·색 = 가중치, 작은 네모 = 그 뉴런이 평면 어디에서 켜지는지.</p>
+<div class="ctrl" id="pick"></div>
+<div class="row" style="margin-top:12px">
+  <div class="viz" id="net" style="flex:1.45 1 420px"></div>
+  <div class="viz" id="big" style="flex:1 1 320px"></div>
+</div>
+<div class="viz scroll" id="loss" style="margin-top:14px"></div>
+<div class="ctrl" id="ctl"></div>
+<p class="say" id="say"></p>
+<p class="more">이어 보기 · <a href="../../lab/decks/s17.html">덱 17 작은 신경망</a> · <a href="../../lab/decks/s18.html">덱 18 역전파</a> · <a href="../../lab/decks/s19.html">덱 19 학습 안정화</a></p>
+</main>
+<script src="../js/pages.js"></script>
+<script src="../js/viz.js"></script>
+<script>
+(function () {
+  // ==core== 자료 · 망 · 순전파 · 역전파 (손으로 쓴 것)
+  function makeData(kind, n, r) {
+    var X = [], Y = [];
+    function u(a, b) { return a + (b - a) * r(); }
+    for (var i = 0; i < n; i++) {
+      var c = i % 2, x, y, t, rad;
+      if (kind === "xor") {
+        x = u(-1, 1); y = u(-1, 1);
+        x = 0.9 * (x + 0.08 * Math.sign(x)); y = 0.9 * (y + 0.08 * Math.sign(y));
+        c = x * y > 0 ? 1 : 0;
+      } else if (kind === "circle") {
+        rad = c ? u(0, 0.42) : u(0.62, 0.92); t = u(0, 2 * Math.PI);
+        x = rad * Math.cos(t); y = rad * Math.sin(t);
+      } else if (kind === "spiral") {
+        var s = r(); rad = 0.08 + 0.85 * s; t = 2.24 * Math.PI * s + c * Math.PI;
+        x = rad * Math.sin(t) + 0.03 * V.randn(r); y = rad * Math.cos(t) + 0.03 * V.randn(r);
+      } else {
+        x = (c ? 0.4 : -0.4) + 0.22 * V.randn(r); y = (c ? 0.35 : -0.35) + 0.22 * V.randn(r);
+      }
+      X.push([x, y]); Y.push(c);
+    }
+    return { X: X, Y: Y };
+  }
+  var ACT = {
+    ReLU: { f: function (z) { return z > 0 ? z : 0; }, d: function (z, a) { return z > 0 ? 1 : 0; }, k: 2 },
+    Tanh: { f: Math.tanh, d: function (z, a) { return 1 - a * a; }, k: 1 },
+    Sigmoid: { f: function (z) { return 1 / (1 + Math.exp(-z)); }, d: function (z, a) { return a * (1 - a); }, k: 1 }
+  };
+  function sigm(z) { return 1 / (1 + Math.exp(-z)); }
+  // 가중치 W[l][j][i] = 층 l의 i번 입력 → j번 뉴런. 처음값 ~ 정규분포 × √(k / 들어오는 수), 편향 0
+  function makeNet(sizes, act, r) {
+    var W = [], b = [];
+    for (var l = 0; l < sizes.length - 1; l++) {
+      var s = Math.sqrt(ACT[act].k / sizes[l]);
+      W.push([]); b.push([]);
+      for (var j = 0; j < sizes[l + 1]; j++) {
+        var row = [];
+        for (var i = 0; i < sizes[l]; i++) row.push(V.randn(r) * s);
+        W[l].push(row); b[l].push(0);
+      }
+    }
+    return { sizes: sizes, act: act, W: W, b: b };
+  }
+  // 순전파: A[0] = 입력, A[l] = 층 l의 출력. 마지막 층은 Sigmoid → 1일 확률 p
+  function fwd(net, x) {
+    var A = [x], Z = [], f = ACT[net.act].f, L = net.W.length;
+    for (var l = 0; l < L; l++) {
+      var z = [], a = [], Wl = net.W[l], bl = net.b[l], prev = A[l];
+      for (var j = 0; j < Wl.length; j++) {
+        var s = bl[j], row = Wl[j];
+        for (var i = 0; i < row.length; i++) s += row[i] * prev[i];
+        z.push(s); a.push(l === L - 1 ? sigm(s) : f(s));
+      }
+      Z.push(z); A.push(a);
+    }
+    return { A: A, Z: Z };
+  }
+  function bce(p, y) { p = Math.min(1 - 1e-7, Math.max(1e-7, p)); return -(y * Math.log(p) + (1 - y) * Math.log(1 - p)); }
+  // 역전파: 미니배치 평균 기울기. 출력에서 ∂손실/∂z = p − y, 뒤로 가며 W를 곱하고 활성함수 기울기를 곱한다
+  function grad(net, X, Y, idx) {
+    var L = net.W.length, d = ACT[net.act].d;
+    var gW = net.W.map(function (Wl) { return Wl.map(function (row) { return row.map(function () { return 0; }); }); });
+    var gb = net.b.map(function (bl) { return bl.map(function () { return 0; }); });
+    var loss = 0, n = idx.length;
+    for (var k = 0; k < n; k++) {
+      var x = X[idx[k]], y = Y[idx[k]], F = fwd(net, x), p = F.A[L][0];
+      loss += bce(p, y);
+      var delta = [(p - y) / n];
+      for (var l = L - 1; l >= 0; l--) {
+        var prev = F.A[l], nd = l > 0 ? new Array(prev.length).fill(0) : null;
+        for (var j = 0; j < delta.length; j++) {
+          gb[l][j] += delta[j];
+          for (var i = 0; i < prev.length; i++) {
+            gW[l][j][i] += delta[j] * prev[i];
+            if (nd) nd[i] += delta[j] * net.W[l][j][i];
+          }
+        }
+        if (nd) for (i = 0; i < nd.length; i++) nd[i] *= d(F.Z[l - 1][i], F.A[l][i]);
+        delta = nd;
+      }
+    }
+    return { gW: gW, gb: gb, loss: loss / n };
+  }
+  function apply(net, g, lr) {
+    for (var l = 0; l < net.W.length; l++)
+      for (var j = 0; j < net.W[l].length; j++) {
+        net.b[l][j] -= lr * g.gb[l][j];
+        for (var i = 0; i < net.W[l][j].length; i++) net.W[l][j][i] -= lr * g.gW[l][j][i];
+      }
+  }
+  function evalSet(net, X, Y) {
+    var L = net.W.length, s = 0, ok = 0;
+    for (var k = 0; k < X.length; k++) { var p = fwd(net, X[k]).A[L][0]; s += bce(p, Y[k]); if ((p > 0.5) === (Y[k] === 1)) ok++; }
+    return { loss: s / X.length, acc: ok / X.length };
+  }
+  // ==/core==
+
+  // ---- 상태 ----
+  var cfg = { data: "xor", act: "Tanh", layers: 2, units: 4, lr: 0.1, seed: 1 }, BATCH = 10, NTR = 200, NTE = 100;
+  var tr, te, net, order = [], pos = 0, stepN = 0, hist = [], lastBatch = [], running = false, speed = 100, hot = null;
+  function shuffle(r) { order = []; for (var i = 0; i < NTR; i++) order.push(i); for (i = NTR - 1; i > 0; i--) { var j = Math.floor(r() * (i + 1)), t = order[i]; order[i] = order[j]; order[j] = t; } pos = 0; }
+  var shufR;
+  function rebuild() {
+    var dr = V.rng(100 + ["xor", "circle", "spiral", "blobs"].indexOf(cfg.data));
+    tr = makeData(cfg.data, NTR, dr); te = makeData(cfg.data, NTE, dr);
+    var sizes = [2]; for (var l = 0; l < cfg.layers; l++) sizes.push(cfg.units); sizes.push(1);
+    net = makeNet(sizes, cfg.act, V.rng(cfg.seed));
+    shufR = V.rng(cfg.seed + 7); shuffle(shufR);
+    stepN = 0; lastBatch = [];
+    var e0 = evalSet(net, tr.X, tr.Y), t0 = evalSet(net, te.X, te.Y);
+    hist = [{ ep: 0, tr: e0.loss, te: t0.loss, acc: t0.acc, tracc: e0.acc }];
+    buildNet(); drawPoints(); render(true);
+  }
+  function trainStep() {
+    if (pos + BATCH > NTR) shuffle(shufR);
+    var idx = order.slice(pos, pos + BATCH); pos += BATCH;
+    var g = grad(net, tr.X, tr.Y, idx);
+    apply(net, g, cfg.lr);
+    stepN++; lastBatch = idx;
+    if (stepN % (NTR / BATCH) === 0) {
+      var e = evalSet(net, tr.X, tr.Y), t = evalSet(net, te.X, te.Y);
+      hist.push({ ep: stepN / (NTR / BATCH), tr: e.loss, te: t.loss, acc: t.acc, tracc: e.acc });
+      if (hist.length > 2000) hist.splice(1, 1);
+    }
+  }
+
+  // ---- 격자 위 계산: 모든 뉴런의 값을 평면 위 40×40 점에서 ----
+  var G = 40, D = 1.15, grid = null;
+  function evalGrid() {
+    var L = net.W.length;
+    grid = []; for (var l = 1; l <= L; l++) grid.push(net.W[l - 1].map(function () { return new Float32Array(G * G); }));
+    for (var r = 0; r < G; r++) for (var c = 0; c < G; c++) {
+      var x = -D + 2 * D * (c + 0.5) / G, y = D - 2 * D * (r + 0.5) / G, F = fwd(net, [x, y]);
+      for (l = 1; l <= L; l++) for (var j = 0; j < F.A[l].length; j++) grid[l - 1][j][r * G + c] = F.A[l][j];
+    }
+  }
+  // 색표: −1 주황 … 0 바탕 … +1 보라 (밝기에 맞춰 V.signed에서 뽑는다)
+  var LUT = [];
+  function buildLUT() { LUT = []; for (var i = 0; i <= 100; i++) { var m = V.signed(i / 50 - 1, 1).match(/\d+/g); LUT.push([+m[0], +m[1], +m[2]]); } }
+  var cnv = document.createElement("canvas"); cnv.width = G; cnv.height = G;
+  var ctx = cnv.getContext("2d"), imd = ctx.createImageData(G, G);
+  function toURL(vals, norm) {
+    for (var k = 0; k < G * G; k++) {
+      var t = V.clamp(norm(vals[k]), -1, 1), c = LUT[Math.round((t + 1) * 50)];
+      imd.data[k * 4] = c[0]; imd.data[k * 4 + 1] = c[1]; imd.data[k * 4 + 2] = c[2]; imd.data[k * 4 + 3] = 255;
+    }
+    ctx.putImageData(imd, 0, 0);
+    return cnv.toDataURL();
+  }
+  function normFor(l, vals) {
+    if (l === net.W.length) return function (p) { return 2 * p - 1; };          // 출력 확률: 0.5가 가운데
+    if (net.act === "Tanh") return function (a) { return a; };
+    if (net.act === "Sigmoid") return function (a) { return 2 * a - 1; };
+    var m = 1e-9; for (var k = 0; k < vals.length; k++) if (vals[k] > m) m = vals[k];  // ReLU: 0 ~ 가장 큰 값
+    return function (a) { return a / m; };
+  }
+
+  // ---- 1. 망 그림 ----
+  var NW = 640, NH = 440;
+  var nv = V.svg(document.getElementById("net"), NW, NH, "입력 x₁, x₂에서 은닉층 뉴런들을 거쳐 출력까지 이어진 신경망. 선의 굵기와 색은 가중치, 각 뉴런 네모 안의 작은 그림은 그 뉴런이 평면 위 어디에서 켜지는지");
+  var gEd = V.s("g", null, nv), gNd = V.s("g", null, nv), gLb = V.s("g", null, nv);
+  var nodes = [], edges = [];
+  function nodePos(l, j, n, Ltot) {
+    // 은닉 네모는 뉴런 수가 적을수록 크게
+    var hs = Math.min(64, (NH - 70 - 9 * (cfg.units - 1)) / cfg.units);
+    var s = l === Ltot - 1 ? 64 : (l === 0 ? 44 : hs), gap = l === 0 ? 70 : hs + 9;
+    var x = 64 + l * (NW - 64 - 50) / (Ltot - 1);
+    var y = NH / 2 + 14 + (j - (n - 1) / 2) * gap;
+    return { x: x, y: y, s: s };
+  }
+  function buildNet() {
+    V.clear(gEd); V.clear(gNd); V.clear(gLb); nodes = []; edges = [];
+    var sz = net.sizes, Lt = sz.length;
+    for (var l = 0; l < Lt; l++) {
+      nodes.push([]);
+      var lab = l === 0 ? "입력" : l === Lt - 1 ? "출력 p" : "은닉 " + l;
+      V.s("text", { class: "t", x: nodePos(l, 0, 1, Lt).x, y: 24, "text-anchor": "middle", "font-weight": 700, text: lab }, gLb);
+      for (var j = 0; j < sz[l]; j++) {
+        var p = nodePos(l, j, sz[l], Lt), g = V.s("g", { style: "cursor:pointer" }, gNd);
+        var im = V.s("image", { x: p.x - p.s / 2, y: p.y - p.s / 2, width: p.s, height: p.s, preserveAspectRatio: "none" }, g);
+        var fr = V.s("rect", { x: p.x - p.s / 2, y: p.y - p.s / 2, width: p.s, height: p.s, rx: 4, fill: "none", stroke: "var(--muted)", "stroke-width": 1 }, g);
+        if (l === 0) V.s("text", { class: "t", x: p.x - p.s / 2 - 8, y: p.y + 5, "text-anchor": "end", "font-weight": 700, text: j ? "x₂" : "x₁" }, gLb);
+        var nd = { l: l, j: j, p: p, im: im, fr: fr };
+        (function (nd) {
+          g.addEventListener("mouseenter", function () { hot = nd; render(false); });
+          g.addEventListener("mouseleave", function () { hot = null; render(false); });
+          g.addEventListener("click", function () { hot = hot === nd ? null : nd; render(false); });
+        })(nd);
+        nodes[l].push(nd);
+      }
+    }
+    for (l = 1; l < Lt; l++) for (j = 0; j < sz[l]; j++) for (var i = 0; i < sz[l - 1]; i++) {
+      var a = nodes[l - 1][i].p, b = nodes[l][j].p, x1 = a.x + a.s / 2, x2 = b.x - b.s / 2, mx = (x1 + x2) / 2;
+      edges.push({ l: l, j: j, i: i, el: V.s("path", { d: "M" + x1 + " " + a.y + "C" + mx + " " + a.y + " " + mx + " " + b.y + " " + x2 + " " + b.y, fill: "none" }, gEd) });
+    }
+    // 입력 네모: x₁은 왼→오, x₂는 아래→위로 커진다 (한 번만 그린다)
+    var v1 = new Float32Array(G * G), v2 = new Float32Array(G * G);
+    for (var r = 0; r < G; r++) for (var c = 0; c < G; c++) { v1[r * G + c] = (-D + 2 * D * (c + 0.5) / G) / D; v2[r * G + c] = (D - 2 * D * (r + 0.5) / G) / D; }
+    inputVals = [v1, v2];
+    nodes[0][0].im.setAttribute("href", toURL(v1, function (a) { return a; }));
+    nodes[0][1].im.setAttribute("href", toURL(v2, function (a) { return a; }));
+  }
+  var inputVals;
+  function linked(e) { if (!hot) return true; return (e.l === hot.l && e.j === hot.j) || (e.l === hot.l + 1 && e.i === hot.j); }
+  function drawEdges() {
+    edges.forEach(function (e) {
+      var w = net.W[e.l - 1][e.j][e.i];
+      e.el.setAttribute("stroke", V.signed(w, 1.5));
+      e.el.setAttribute("stroke-width", (0.6 + Math.min(5, Math.abs(w) * 1.6)).toFixed(2));
+      e.el.setAttribute("opacity", linked(e) ? 1 : 0.1);
+    });
+    nodes.forEach(function (layer) { layer.forEach(function (nd) {
+      var on = hot === nd;
+      nd.fr.setAttribute("stroke", on ? "var(--text)" : "var(--muted)"); nd.fr.setAttribute("stroke-width", on ? 2.5 : 1);
+    }); });
+  }
+
+  // ---- 2. 큰 지도: 출력(또는 고른 뉴런)과 자료 ----
+  var BW = 440, BH = 440, BX = 20, BY = 34, BS = 400;
+  var bv = V.svg(document.getElementById("big"), BW, BH, "평면 위 모든 점에서 망이 낸 확률을 색으로 칠한 결정 경계와 학습 자료 200점. 학습하며 경계가 휜다");
+  var bImg = V.s("image", { x: BX, y: BY, width: BS, height: BS, preserveAspectRatio: "none" }, bv);
+  V.s("rect", { x: BX, y: BY, width: BS, height: BS, fill: "none", stroke: "var(--line)" }, bv);
+  var bLine = V.s("path", { fill: "none", stroke: "var(--text)", "stroke-width": 2, opacity: 0.8 }, bv);
+  var gPts = V.s("g", null, bv), bTitle = V.s("text", { class: "tb", x: BX, y: 22 }, bv);
+  var bNote = V.s("text", { class: "ts", x: BX + BS, y: 22, "text-anchor": "end" }, bv);
+  var ptEls = [];
+  function bx(x) { return BX + (x + D) / (2 * D) * BS; }
+  function by(y) { return BY + (D - y) / (2 * D) * BS; }
+  function drawPoints() {
+    V.clear(gPts); ptEls = [];
+    tr.X.forEach(function (p, k) {
+      ptEls.push(V.s("circle", { cx: bx(p[0]), cy: by(p[1]), r: 4.2, fill: V.signed(tr.Y[k] ? 1 : -1, 1), stroke: "var(--bg)", "stroke-width": 1.4 }, gPts));
+    });
+  }
+  // p = 0.5 경계선 (격자 칸마다 0.5를 건너는 변을 이어 선분으로)
+  function contour(vals) {
+    var d = "", cs = BS / G;
+    function cx(c) { return BX + (c + 0.5) * cs; } function cy(r) { return BY + (r + 0.5) * cs; }
+    for (var r = 0; r < G - 1; r++) for (var c = 0; c < G - 1; c++) {
+      var a = vals[r * G + c] - 0.5, b = vals[r * G + c + 1] - 0.5, e = vals[(r + 1) * G + c + 1] - 0.5, f = vals[(r + 1) * G + c] - 0.5, P = [];
+      if ((a > 0) !== (b > 0)) P.push([cx(c) + cs * a / (a - b), cy(r)]);
+      if ((b > 0) !== (e > 0)) P.push([cx(c + 1), cy(r) + cs * b / (b - e)]);
+      if ((f > 0) !== (e > 0)) P.push([cx(c) + cs * f / (f - e), cy(r + 1)]);
+      if ((a > 0) !== (f > 0)) P.push([cx(c), cy(r) + cs * a / (a - f)]);
+      for (var k = 0; k + 1 < P.length; k += 2) d += "M" + P[k][0].toFixed(1) + " " + P[k][1].toFixed(1) + "L" + P[k + 1][0].toFixed(1) + " " + P[k + 1][1].toFixed(1);
+    }
+    return d;
+  }
+
+  // ---- 3. 손실 곡선 ----
+  var LW = 1140, LH = 210, LX0 = 380, LX1 = 1120, LY0 = 20, LY1 = 170;
+  var lv = V.svg(document.getElementById("loss"), LW, LH, "에폭마다 학습 손실과 시험 손실이 줄어드는 곡선과 지금의 손실, 정확도");
+  var gLg = V.s("g", null, lv);
+  var trLine = V.s("polyline", { class: "ln-a", "stroke-width": 2.4 }, lv);
+  var teLine = V.s("polyline", { fill: "none", stroke: "var(--k)", "stroke-width": 2, "stroke-dasharray": "6 4" }, lv);
+  var stat = [];
+  [["에폭", "t"], ["걸음(미니배치)", "t"], ["학습 손실", "ta"], ["시험 손실", "tk"], ["시험 정확도", "t"]].forEach(function (a, k) {
+    var y = 34 + k * 34;
+    V.s("text", { class: "t", x: 16, y: y, text: a[0] }, lv);
+    stat.push(V.s("text", { class: a[1] + " mono", x: 300, y: y, "text-anchor": "end", "font-size": 18, "font-weight": 700 }, lv));
+  });
+  var lspan = 0, lmax = 0;
+  function drawLossGrid(span, ymax) {
+    V.clear(gLg);
+    for (var k = 0; k <= 4; k++) {
+      var v = ymax * k / 4, y = LY1 - (LY1 - LY0) * k / 4;
+      V.s("line", { class: "ln-g", x1: LX0, x2: LX1, y1: y, y2: y }, gLg);
+      V.s("text", { class: "ts mono", x: LX0 - 8, y: y + 4, "text-anchor": "end", text: V.fmt(v, 2) }, gLg);
+    }
+    for (k = 0; k <= 5; k++) {
+      var x = LX0 + (LX1 - LX0) * k / 5;
+      V.s("text", { class: "ts mono", x: x, y: LY1 + 18, "text-anchor": "middle", text: String(Math.round(span * k / 5)) }, gLg);
+    }
+    V.s("line", { class: "ln", x1: LX0, x2: LX1, y1: LY1, y2: LY1 }, gLg);
+    V.s("text", { class: "ts", x: (LX0 + LX1) / 2, y: LY1 + 36, "text-anchor": "middle", text: "에폭 (자료 200점을 한 번 다 보면 1)" }, gLg);
+    V.s("line", { class: "ln-a", x1: LX1 - 210, x2: LX1 - 186, y1: LY0 + 6, y2: LY0 + 6, "stroke-width": 2.4 }, gLg);
+    V.s("text", { class: "ts", x: LX1 - 180, y: LY0 + 10, text: "학습 손실" }, gLg);
+    V.s("line", { x1: LX1 - 100, x2: LX1 - 76, y1: LY0 + 6, y2: LY0 + 6, stroke: "var(--k)", "stroke-width": 2, "stroke-dasharray": "6 4" }, gLg);
+    V.s("text", { class: "ts", x: LX1 - 70, y: LY0 + 10, text: "시험 손실" }, gLg);
+  }
+  function drawLoss() {
+    var last = hist[hist.length - 1], ep = last.ep;
+    var span = ep <= 50 ? 50 : ep <= 100 ? 100 : ep <= 250 ? 250 : ep <= 500 ? 500 : ep <= 1000 ? 1000 : Math.ceil(ep / 1000) * 1000;
+    var ymax = Math.max(0.8, Math.ceil(hist[0].tr * 4) / 4, Math.ceil(hist[0].te * 4) / 4);
+    if (span !== lspan || ymax !== lmax) { lspan = span; lmax = ymax; drawLossGrid(span, ymax); }
+    function pts(key) {
+      return hist.map(function (h) { return (LX0 + (LX1 - LX0) * h.ep / span).toFixed(1) + "," + (LY1 - (LY1 - LY0) * Math.min(h[key], ymax) / ymax).toFixed(1); }).join(" ");
+    }
+    trLine.setAttribute("points", pts("tr")); teLine.setAttribute("points", pts("te"));
+    stat[0].textContent = String(Math.floor(stepN / (NTR / BATCH)));
+    stat[1].textContent = String(stepN);
+    stat[2].textContent = V.fmt(last.tr, 3);
+    stat[3].textContent = V.fmt(last.te, 3);
+    stat[4].textContent = Math.round(last.acc * 100) + "%";
+  }
+
+  // ---- 그리기 ----
+  var lastPaint = 0;
+  function render(full) {
+    var now = performance.now();
+    if (full || !running || now - lastPaint > 90) {
+      lastPaint = now;
+      evalGrid();
+      var L = net.W.length;
+      for (var l = 1; l <= L; l++) for (var j = 0; j < grid[l - 1].length; j++) {
+        if (l === L) continue;
+        nodes[l][j].im.setAttribute("href", toURL(grid[l - 1][j], normFor(l, grid[l - 1][j])));
+      }
+      var out = grid[L - 1][0], outURL = toURL(out, normFor(L));
+      nodes[L][0].im.setAttribute("href", outURL);
+      if (hot && hot.l > 0 && hot.l < L) {
+        var hv = grid[hot.l - 1][hot.j];
+        bImg.setAttribute("href", toURL(hv, normFor(hot.l, hv)));
+        bTitle.textContent = "은닉 " + hot.l + " · 뉴런 " + (hot.j + 1) + "이 켜지는 곳";
+        bNote.textContent = net.act === "ReLU" ? "보라 진할수록 큼 · 바탕 = 0" : "보라 = +, 주황 = −";
+        bLine.setAttribute("d", "");
+      } else if (hot && hot.l === 0) {
+        bImg.setAttribute("href", toURL(inputVals[hot.j], function (a) { return a; }));
+        bTitle.textContent = "입력 " + (hot.j ? "x₂ (세로 위치)" : "x₁ (가로 위치)");
+        bNote.textContent = "보라 = +, 주황 = −"; bLine.setAttribute("d", "");
+      } else {
+        bImg.setAttribute("href", outURL);
+        bTitle.textContent = "출력 p = 1일 확률";
+        bNote.textContent = "보라 p > 0.5 · 주황 p < 0.5 · 선 = 0.5";
+        bLine.setAttribute("d", contour(out));
+      }
+    }
+    drawEdges();
+    var showB = !running && lastBatch.length;
+    ptEls.forEach(function (c, k) {
+      var inB = showB && lastBatch.indexOf(k) >= 0;
+      c.setAttribute("r", inB ? 6.5 : 4.2); c.setAttribute("stroke", inB ? "var(--text)" : "var(--bg)"); c.setAttribute("stroke-width", inB ? 2.2 : 1.4);
+    });
+    drawLoss();
+  }
+
+  // ---- 손잡이 ----
+  var SAY = {
+    xor: "<b>XOR: 직선 하나로는 못 가른다.</b> 첫 은닉층 뉴런 하나하나는 평면을 직선 하나로 가르고(작은 네모), 다음 층이 그 조각을 합쳐 휜 경계를 만든다.",
+    circle: "<b>원: 안쪽과 바깥쪽.</b> 닫힌 경계에는 직선이 적어도 3개 필요하다. 은닉 1층에 뉴런 2개면 띠까지만 만든다.",
+    spiral: "<b>나선: 감긴 경계.</b> 뉴런 하나가 긋는 직선 조각이 많이 필요하다. 층과 뉴런을 늘리면 경계가 감긴다(예: 3층 × 8, Tanh, η 0.3 안팎).",
+    blobs: "<b>두 덩어리: 직선 하나면 갈린다.</b> 쉬운 문제라 첫 에폭부터 손실이 크게 떨어지고, 경계도 거의 곧다."
+  };
+  var pick = document.getElementById("pick");
+  V.seg(pick, [{ id: "xor", label: "XOR" }, { id: "circle", label: "원" }, { id: "spiral", label: "나선" }, { id: "blobs", label: "두 덩어리" }], cfg.data, function (v) { cfg.data = v; rebuild(); say(); });
+  V.seg(pick, ["ReLU", "Tanh", "Sigmoid"], cfg.act, function (v) { cfg.act = v; rebuild(); });
+  var lbox = V.h("span", "", null, pick); lbox.style.cssText = "display:inline-flex;align-items:center;gap:8px;font-size:.9rem;color:var(--muted)";
+  V.h("span", "", "은닉층", lbox);
+  V.seg(lbox, ["1", "2", "3"], String(cfg.layers), function (v) { cfg.layers = +v; rebuild(); });
+  var ubox = V.h("span", "", null, pick); ubox.style.cssText = lbox.style.cssText;
+  V.h("span", "", "층마다 뉴런", ubox);
+  V.seg(ubox, ["2", "3", "4", "6", "8"], String(cfg.units), function (v) { cfg.units = +v; rebuild(); });
+
+  var ctl = document.getElementById("ctl");
+  var playBtn = V.button(ctl, "▶ 학습", function () { setRun(!running); }, "primary");
+  V.button(ctl, "⏭ 미니배치 한 번", function () { setRun(false); trainStep(); render(true); });
+  V.button(ctl, "↺ 처음부터", function () { setRun(false); rebuild(); });
+  V.button(ctl, "다른 처음값", function () { setRun(false); cfg.seed += 1; rebuild(); });
+  V.slider(ctl, { label: "학습률 η", min: -2.5, max: 0, step: 0.05, value: Math.log10(cfg.lr),
+    fmt: function (v) { var x = Math.pow(10, v); return x < 0.01 ? x.toFixed(4) : x < 0.1 ? x.toFixed(3) : x.toFixed(2); },
+    onInput: function (v) { cfg.lr = Math.pow(10, v); } });
+  V.seg(ctl, [{ id: "20", label: "느리게" }, { id: "100", label: "보통" }, { id: "400", label: "빠르게" }], "100", function (v) { speed = +v; });
+  function setRun(on) { running = on; playBtn.textContent = on ? "⏸ 멈춤" : "▶ 학습"; playBtn.classList.toggle("primary", !on); render(true); }
+  var acc = 0;
+  V.loop(function (dt) {
+    if (!running) return;
+    acc += dt * speed;
+    var n = Math.min(60, Math.floor(acc)); acc -= Math.floor(acc);
+    for (var k = 0; k < n; k++) trainStep();
+    if (n) render(false);
+  });
+  function say() { document.getElementById("say").innerHTML = SAY[cfg.data]; }
+  V.onTheme.push(function () { hot = null; buildLUT(); buildNet(); drawPoints(); render(true); });
+  buildLUT(); rebuild(); say(); setRun(true);
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,300 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Softmax와 온도 · 움직이는 AI</title>
+<link rel="stylesheet" href="../style.css">
+</head>
+<body data-page="softmax">
+<main class="stage">
+<h1>Softmax = 점수를 나눠 갖는 비율로</h1>
+<p class="sub">p = e^(z/T) ÷ (모든 e^(z/T)의 합). e를 씌워 모두 양수로, 합으로 나눠 합 1로. 막대 끝을 끌어 점수를 바꾼다.</p>
+<div class="viz scroll" id="pipe"></div>
+<div class="ctrl" id="ctl"></div>
+<div class="row" style="margin-top:14px">
+  <div class="viz" id="temp"></div>
+  <div class="viz" id="cmp"></div>
+</div>
+<div class="ctrl" id="ctl2"></div>
+<p class="say" id="say"></p>
+<p class="more">이어 보기 · <a href="../../lab/decks/s15.html">덱 15 확률로 분류하다</a> · <a href="../../lab/decks/s20.html">덱 20 attention</a></p>
+</main>
+<script src="../js/pages.js"></script>
+<script src="../js/viz.js"></script>
+<script>
+(function () {
+  var NAMES = ["업무", "광고", "스팸", "기타"];
+  var COL = ["var(--accent)", "var(--q)", "var(--v)", "var(--k)"];
+  var N = 4;
+  var Z = [1.39, 0.69, 0, -0.5];     // 덱 15의 점수 ln 4, ln 2, 0 + 음수 하나
+  var T = 1, C = 0, hi = -1;
+
+  function calc(z, t) {               // 실제 식 그대로: e^(z/T), 합, 나누기
+    var zt = z.map(function (x) { return x / t; });
+    var e = zt.map(Math.exp);
+    var s = e.reduce(function (a, b) { return a + b; }, 0);
+    return { zt: zt, e: e, s: s, p: e.map(function (x) { return x / s; }) };
+  }
+  function big(x) {
+    if (x >= 10000) { var s = x.toExponential(2).split("e"); return s[0] + "e" + (+s[1]); }
+    if (x < 0.001) { var s2 = x.toExponential(1).split("e"); return s2[0] + "e" + s2[1].replace("-", "−"); }
+    return V.fmt(x, x >= 100 ? 1 : x >= 10 ? 2 : 3);
+  }
+
+  // ================= 1. 계산 흐름: 점수 → ÷T → e → 합 → ÷합 → 확률 =================
+  var PW = 1140, PH = 360;
+  var RY = [96, 158, 220, 282], BH = 26;
+  var ZX0 = 230, ZU = 25;               // 점수 축: 0 = 230, 1당 25px (−4~4)
+  var EX = 440, EL = 180;               // e 막대
+  var SX = 748, SW = 34, ST = RY[0] - BH / 2, SH = RY[3] + BH / 2 - ST;   // 합 기둥
+  var PX = 870, PL = 200;               // 확률 막대
+  var pv = V.svg(document.getElementById("pipe"), PW, PH,
+    "네 범주의 점수 막대를 끌면 온도로 나누고 e를 씌운 막대, 그 막대를 모두 쌓은 합 기둥, 합으로 나눈 확률 막대가 차례로 다시 계산된다");
+  var gBack = V.s("g", null, pv);
+  var heads = [
+    [ZX0, "점수 z", 1], [405, "÷ T", 1], [EX + 90, "e^(z/T)", 1], [SX + SW / 2, "더하기", 2], [832, "÷ 합", 3], [PX + 100, "확률 p", 4]
+  ].map(function (h) {
+    return { st: h[2], el: V.s("text", { class: "tb", x: h[0], y: 34, "text-anchor": "middle", text: h[1] }, gBack) };
+  });
+  V.s("text", { class: "ts", x: ZX0, y: 54, "text-anchor": "middle", text: "← 끌기 →" }, gBack);
+  V.s("line", { class: "ln dash", x1: ZX0, y1: ST - 8, x2: ZX0, y2: ST + SH + 8 }, gBack);
+  V.s("text", { class: "ts", x: ZX0, y: ST + SH + 24, "text-anchor": "middle", text: "0" }, gBack);
+  [-4, 4].forEach(function (v) { V.s("text", { class: "ts", x: ZX0 + v * ZU, y: ST + SH + 24, "text-anchor": "middle", text: V.fmt(v, 0) }, gBack); });
+  V.s("line", { class: "ln", x1: EX, y1: ST - 8, x2: EX, y2: ST + SH + 8 }, gBack);
+  V.s("line", { class: "ln", x1: PX, y1: ST - 8, x2: PX, y2: ST + SH + 8 }, gBack);
+  V.s("line", { class: "ln-g", x1: PX + PL, y1: ST - 8, x2: PX + PL, y2: ST + SH + 8 }, gBack);
+  V.s("text", { class: "ts", x: PX, y: ST + SH + 24, "text-anchor": "middle", text: "0" }, gBack);
+  V.s("text", { class: "ts", x: PX + PL, y: ST + SH + 24, "text-anchor": "middle", text: "1" }, gBack);
+  var sumLab = V.s("text", { class: "t mono", x: SX + SW / 2, y: ST + SH + 24, "text-anchor": "middle" }, gBack);
+  var p1Lab = V.s("text", { class: "ts mono", x: PX + PL / 2, y: ST + SH + 42, "text-anchor": "middle" }, gBack);
+
+  var rows = [], gRows = V.s("g", null, pv);
+  for (var i = 0; i < N; i++) {
+    var g = V.s("g", { style: "transition:opacity .2s" }, gRows), y = RY[i];
+    var r = {
+      g: g,
+      name: V.s("text", { class: "tb", x: 18, y: y + 5, text: NAMES[i] }, g),
+      dot: V.s("circle", { cx: 70, cy: y, r: 5, fill: COL[i] }, g),
+      zb: V.s("rect", { y: y - BH / 2, height: BH, rx: 4, fill: COL[i], opacity: 0.85 }, g),
+      zh: V.s("circle", { cy: y, r: 9, fill: "var(--bg)", stroke: COL[i], "stroke-width": 3, style: "cursor:ew-resize" }, g),
+      zt: V.s("text", { class: "t mono", y: y + 5, "font-size": 13 }, g),
+      zT: V.s("text", { class: "t mono", x: 405, y: y + 5, "text-anchor": "middle", "font-size": 13 }, g),
+      eb: V.s("rect", { x: EX, y: y - BH / 2, height: BH, rx: 4, fill: COL[i], opacity: 0.85 }, g),
+      et: V.s("text", { class: "t mono", y: y + 5, "font-size": 13 }, g),
+      c1: V.s("path", { fill: "none", stroke: COL[i], "stroke-width": 2, opacity: 0.7 }, g),
+      seg: V.s("rect", { x: SX, width: SW, fill: COL[i], stroke: "var(--bg)", "stroke-width": 1.5 }, g),
+      c2: V.s("path", { fill: "none", stroke: COL[i], "stroke-width": 2, opacity: 0.7 }, g),
+      pb: V.s("rect", { x: PX, y: y - BH / 2, height: BH, rx: 4, fill: COL[i], opacity: 0.85 }, g),
+      pt: V.s("text", { class: "tb mono", y: y + 5, "font-size": 14 }, g),
+      // 화면에 보이는 값(목표값을 따라 부드럽게 움직임)
+      de: 0, ds: 0, dsy: 0, dp: 0, dz: Z[i]
+    };
+    rows.push(r);
+    (function (k) {
+      g.addEventListener("pointerenter", function () { setHi(k); });
+      g.addEventListener("pointerleave", function () { setHi(-1); });
+    })(i);
+  }
+  V.s("text", { class: "ts", x: EX, y: PH - 8, text: "막대 길이: e는 가장 큰 값 기준, 확률은 0~1 그대로" }, gBack);
+
+  // 끌기
+  var drag = -1;
+  function toZ(ev) {
+    var b = pv.getBoundingClientRect();
+    var sx = (ev.clientX - b.left) * PW / b.width;
+    return V.clamp(Math.round((sx - ZX0) / ZU * 20) / 20, -4, 4);
+  }
+  function rowAt(ev) {
+    var b = pv.getBoundingClientRect(), sy = (ev.clientY - b.top) * PH / b.height, sx = (ev.clientX - b.left) * PW / b.width;
+    if (sx < 90 || sx > 350) return -1;
+    for (var k = 0; k < N; k++) if (Math.abs(sy - RY[k]) < 30) return k;
+    return -1;
+  }
+  pv.addEventListener("pointerdown", function (e) {
+    var k = rowAt(e); if (k < 0) return;
+    drag = k; pv.setPointerCapture(e.pointerId); Z[k] = toZ(e); update(); e.preventDefault();
+  });
+  pv.addEventListener("pointermove", function (e) { if (drag >= 0) { Z[drag] = toZ(e); update(); } });
+  pv.addEventListener("pointerup", function () { drag = -1; });
+  pv.style.touchAction = "pan-y";
+
+  // 단계 재생: s = 0(점수만) → 1(e) → 2(선이 합으로) → 3(합 기둥) → 4(확률)
+  var S = 4, playing = false;
+  var ctl = document.getElementById("ctl");
+  var bPlay = V.button(ctl, "▶ 한 단계씩 흘려 보기", function () { if (S >= 4) S = 0; playing = !playing; bPlay.textContent = playing ? "❚❚ 멈춤" : "▶ 이어서"; });
+  V.button(ctl, "⏭ 한 단계", function () { playing = false; bPlay.textContent = "▶ 이어서"; S = S >= 4 ? 1 : Math.floor(S) + 1; });
+  V.button(ctl, "↺ 처음으로", function () { playing = false; bPlay.textContent = "▶ 한 단계씩 흘려 보기"; S = 0; });
+  var tSl = V.slider(ctl, { label: "온도 T", min: -1, max: 1, step: 0.01, value: 0,
+    fmt: function (v) { return V.fmt(Math.pow(10, v), 2); }, onInput: function (v) { T = Math.pow(10, v); update(); } });
+  V.button(ctl, "점수 처음 값", function () { Z = [1.39, 0.69, 0, -0.5]; update(); });
+
+  var R;   // 현재 계산 결과
+  function setHi(k) {
+    hi = k;
+    rows.forEach(function (r, j) { r.g.style.opacity = hi < 0 || hi === j ? 1 : 0.28; });
+    tl.forEach(function (o, j) { o.style.opacity = hi < 0 || hi === j ? 1 : 0.2; });
+    cg.forEach(function (o, j) { o.style.opacity = hi < 0 || hi === j ? 1 : 0.25; });
+  }
+
+  V.loop(function (dt) {
+    if (playing) { S = Math.min(4, S + dt * 0.9); if (S >= 4) { playing = false; bPlay.textContent = "▶ 한 단계씩 흘려 보기"; } }
+    var k = 1 - Math.exp(-dt * 14);
+    var g1 = V.clamp(S, 0, 1), g2 = V.clamp(S - 1, 0, 1), g3 = V.clamp(S - 2, 0, 1), g4 = V.clamp(S - 3, 0, 1);
+    var emax = Math.max.apply(null, R.e), acc = ST;
+    heads.forEach(function (h) { h.el.setAttribute("class", S > h.st - 1 && S < h.st + 0.001 && S < 4 ? "tb ta" : "tb"); });
+    for (var i = 0; i < N; i++) {
+      var r = rows[i];
+      r.dz += (Z[i] - r.dz) * k;
+      r.de += (R.e[i] / emax - r.de) * k;
+      r.ds += (R.p[i] - r.ds) * k;
+      r.dp += (R.p[i] - r.dp) * k;
+      // 점수
+      var zx = ZX0 + r.dz * ZU;
+      r.zb.setAttribute("x", Math.min(ZX0, zx)); r.zb.setAttribute("width", Math.abs(zx - ZX0));
+      r.zh.setAttribute("cx", zx);
+      r.zt.textContent = V.fmt(Z[i], 2);
+      if (Z[i] >= 0) { r.zt.setAttribute("x", Math.max(zx, ZX0) + 14); r.zt.setAttribute("text-anchor", "start"); }
+      else { r.zt.setAttribute("x", zx - 14); r.zt.setAttribute("text-anchor", "end"); }
+      r.zT.textContent = V.fmt(R.zt[i], 2);
+      // e
+      r.eb.setAttribute("width", Math.max(0.5, r.de * EL * g1));
+      r.et.setAttribute("x", EX + EL + 8); r.et.textContent = big(R.e[i]); r.et.setAttribute("opacity", g1);
+      r.eb.setAttribute("opacity", 0.85 * (g1 > 0 ? 1 : 0));
+      // 합 기둥 조각
+      var hseg = r.ds * SH, y0 = acc; acc += hseg;
+      r.seg.setAttribute("y", y0); r.seg.setAttribute("height", Math.max(0, hseg * g3));
+      var mid = y0 + hseg / 2, y = RY[i];
+      var xa = EX + EL + 62, xb = xa + (SX - xa) * g2;
+      r.c1.setAttribute("d", "M" + xa + " " + y + " C" + (xa + 20) + " " + y + " " + (SX - 18) + " " + mid + " " + xb + " " + V.lerp(y, mid, g2));
+      r.c1.setAttribute("opacity", g2 > 0 ? 0.7 : 0);
+      var xc = SX + SW, xd = xc + (PX - xc) * g4;
+      r.c2.setAttribute("d", "M" + xc + " " + mid + " C" + (xc + 40) + " " + mid + " " + (PX - 40) + " " + y + " " + xd + " " + V.lerp(mid, y, g4));
+      r.c2.setAttribute("opacity", g4 > 0 && g3 >= 1 ? 0.7 : 0);
+      // 확률
+      r.pb.setAttribute("width", Math.max(0.5, r.dp * PL * g4)); r.pb.setAttribute("opacity", g4 > 0 ? 0.85 : 0);
+      r.pt.setAttribute("x", PX + r.dp * PL * g4 + 8); r.pt.textContent = V.fmt(R.p[i], 3); r.pt.setAttribute("opacity", g4);
+    }
+    sumLab.textContent = "합 = " + big(R.s); sumLab.setAttribute("opacity", g3);
+    p1Lab.textContent = "확률의 합 = " + V.fmt(R.p.reduce(function (a, b) { return a + b; }, 0), 3); p1Lab.setAttribute("opacity", g4);
+  });
+
+  // ================= 2. 온도: T를 바꾸면 확률이 어떻게 변하나 =================
+  var TW = 560, TH = 360, TX0 = 60, TX1 = 530, TY0 = 300, TY1 = 50;
+  function tx(t) { return TX0 + (Math.log10(t) + 1) / 2 * (TX1 - TX0); }
+  function ty(p) { return TY0 - p * (TY0 - TY1); }
+  var tv = V.svg(document.getElementById("temp"), TW, TH, "온도 T를 0.1부터 10까지 바꿀 때 네 범주의 확률 곡선. T가 작으면 가장 큰 점수가 1에 가깝고 T가 크면 모두 0.25로 모인다");
+  var tg = V.s("g", null, tv);
+  V.s("text", { class: "tb", x: 12, y: 22, text: "온도 T에 따른 확률" }, tg);
+  [0.1, 0.3, 1, 3, 10].forEach(function (t) {
+    V.s("line", { class: "ln-g", x1: tx(t), y1: TY1, x2: tx(t), y2: TY0 }, tg);
+    V.s("text", { class: "ts", x: tx(t), y: TY0 + 18, "text-anchor": "middle", text: String(t) }, tg);
+  });
+  [0, 0.5, 1].forEach(function (p) {
+    V.s("line", { class: "ln-g", x1: TX0, y1: ty(p), x2: TX1, y2: ty(p) }, tg);
+    V.s("text", { class: "ts", x: TX0 - 8, y: ty(p) + 4, "text-anchor": "end", text: V.fmt(p, 1) }, tg);
+  });
+  V.s("line", { class: "ln dash", x1: TX0, y1: ty(0.25), x2: TX1, y2: ty(0.25) }, tg);
+  V.s("text", { class: "ts", x: TX0 + 6, y: ty(0.25) - 6, text: "모두 같게 1/4" }, tg);
+  V.s("text", { class: "ts", x: (TX0 + TX1) / 2, y: TY0 + 38, "text-anchor": "middle", text: "온도 T (눈금은 10배씩)" }, tg);
+  V.s("text", { class: "ts", x: TX0, y: TY0 + 38, text: "← 뾰족" }, tg);
+  V.s("text", { class: "ts", x: TX1, y: TY0 + 38, "text-anchor": "end", text: "평평 →" }, tg);
+  var tl = [], tdots = [];
+  for (i = 0; i < N; i++) tl.push(V.s("path", { fill: "none", stroke: COL[i], "stroke-width": 2.5, style: "transition:opacity .2s" }, tv));
+  var tline = V.s("line", { class: "ln-a", y1: TY1 - 6, y2: TY0 }, tv);
+  var tlab = V.s("text", { class: "ta mono", y: TY1 - 12, "text-anchor": "middle", "font-size": 13, "font-weight": 700 }, tv);
+  for (i = 0; i < N; i++) tdots.push(V.s("circle", { r: 5.5, fill: COL[i], stroke: "var(--bg)", "stroke-width": 2 }, tv));
+  function drawTemp() {
+    var d = Z.map(function () { return ""; });
+    for (var s = 0; s <= 160; s++) {
+      var t = Math.pow(10, -1 + 2 * s / 160), p = calc(Z, t).p;
+      for (var j = 0; j < N; j++) d[j] += (s ? "L" : "M") + tx(t).toFixed(1) + " " + ty(p[j]).toFixed(1);
+    }
+    tl.forEach(function (el, j) { el.setAttribute("d", d[j]); });
+    tline.setAttribute("x1", tx(T)); tline.setAttribute("x2", tx(T));
+    tlab.setAttribute("x", V.clamp(tx(T), TX0 + 30, TX1 - 30)); tlab.textContent = "T = " + V.fmt(T, 2);
+    tdots.forEach(function (el, j) { el.setAttribute("cx", tx(T)); el.setAttribute("cy", ty(R.p[j])); });
+  }
+  var tdrag = false;
+  function setTfrom(ev) {
+    var b = tv.getBoundingClientRect(), sx = (ev.clientX - b.left) * TW / b.width;
+    var lg = V.clamp((sx - TX0) / (TX1 - TX0) * 2 - 1, -1, 1);
+    tSl.set(Math.round(lg * 100) / 100); T = Math.pow(10, tSl.get()); update();
+  }
+  tv.addEventListener("pointerdown", function (e) { tdrag = true; tv.setPointerCapture(e.pointerId); setTfrom(e); });
+  tv.addEventListener("pointermove", function (e) { if (tdrag) setTfrom(e); });
+  tv.addEventListener("pointerup", function () { tdrag = false; });
+  tv.style.touchAction = "pan-y";
+
+  // ================= 3. 그냥 합으로 나누면? =================
+  var CW = 560, CH = 380, CY0 = 235, CK = 100, CXL = 70, GW = 117;
+  function cy(v) { return CY0 - V.clamp(v, -0.8, 1.5) * CK; }
+  var cv = V.svg(document.getElementById("cmp"), CW, CH, "같은 점수를 그냥 합으로 나눈 값과 softmax 확률을 범주마다 나란히 놓은 막대. 점수에 같은 수를 더하면 softmax는 그대로이고 그냥 나눈 값은 바뀐다");
+  var cgb = V.s("g", null, cv);
+  V.s("text", { class: "tb", x: 12, y: 22, text: "e 없이 그냥 합으로 나누면?" }, cgb);
+  V.s("rect", { x: 300, y: 12, width: 12, height: 12, rx: 2, fill: "var(--muted)", opacity: 0.55 }, cgb);
+  V.s("text", { class: "ts", x: 318, y: 22, text: "(z+c) ÷ 합" }, cgb);
+  V.s("rect", { x: 412, y: 12, width: 12, height: 12, rx: 2, fill: "var(--accent)" }, cgb);
+  V.s("text", { class: "ts", x: 430, y: 22, text: "softmax" }, cgb);
+  [-0.5, 0, 0.5, 1, 1.5].forEach(function (v) {
+    V.s("line", { class: v === 0 ? "ln" : "ln-g", x1: CXL - 8, y1: cy(v), x2: CW - 12, y2: cy(v) }, cgb);
+    V.s("text", { class: "ts", x: CXL - 14, y: cy(v) + 4, "text-anchor": "end", text: V.fmt(v, 1) }, cgb);
+  });
+  var csum = V.s("text", { class: "t mono", x: 12, y: CH - 8, "font-size": 13 }, cgb);
+  var cg = [], cb = [];
+  for (i = 0; i < N; i++) {
+    var gg = V.s("g", { style: "transition:opacity .2s" }, cv), x0 = CXL + i * GW + 18;
+    var o = {
+      a: V.s("rect", { x: x0, width: 36, fill: "var(--muted)", opacity: 0.55, rx: 3 }, gg),
+      at: V.s("text", { class: "ts mono", x: x0 + 18, "text-anchor": "middle" }, gg),
+      b: V.s("rect", { x: x0 + 42, width: 36, fill: COL[i], rx: 3 }, gg),
+      bt: V.s("text", { class: "ts mono", x: x0 + 60, "text-anchor": "middle" }, gg),
+      clipA: null
+    };
+    V.s("text", { class: "t", x: x0 + 39, y: CH - 28, "text-anchor": "middle", text: NAMES[i] }, gg);
+    cg.push(gg); cb.push(o);
+    (function (k) {
+      gg.addEventListener("pointerenter", function () { setHi(k); });
+      gg.addEventListener("pointerleave", function () { setHi(-1); });
+    })(i);
+  }
+  function bar(rect, txt, v, up) {
+    var y1 = cy(v), yz = cy(0);
+    rect.setAttribute("y", Math.min(y1, yz)); rect.setAttribute("height", Math.max(0.5, Math.abs(y1 - yz)));
+    var o = v > 1.5 ? "▲" : v < -0.8 ? "▼" : "";
+    txt.textContent = o + (Math.abs(v) > 99 ? (v > 0 ? "≫1" : "≪0") : V.fmt(v, 2));
+    txt.setAttribute("y", v >= 0 ? y1 - 6 : y1 + 15);
+  }
+  var cSl;
+  function drawCmp() {
+    var z = Z.map(function (x) { return x + C; });
+    var s = z.reduce(function (a, b) { return a + b; }, 0);
+    var plain = z.map(function (x) { return Math.abs(s) < 1e-9 ? (x === 0 ? 0 : x * Infinity) : x / s; });
+    var sm = calc(z, 1).p;
+    for (var j = 0; j < N; j++) {
+      bar(cb[j].a, cb[j].at, plain[j]);
+      bar(cb[j].b, cb[j].bt, sm[j]);
+    }
+    csum.textContent = "(z+c)의 합 = " + V.fmt(s, 2) + "  ·  softmax는 c를 더해도 그대로";
+    return plain;
+  }
+  cSl = V.slider(document.getElementById("ctl2"), { label: "모든 점수에 더하기 c", min: -3, max: 3, step: 0.05, value: 0, onInput: function (v) { C = v; update(); } });
+
+  function say(plain) {
+    var am = 0; for (var j = 1; j < N; j++) if (R.p[j] > R.p[am]) am = j;
+    var bad = plain.some(function (x) { return x < 0 || x > 1 || !isFinite(x); });
+    var s = T < 0.5 ? "<b>온도를 낮추면 뾰족해진다.</b> 점수 차이가 T로 나뉘며 커져서, 1등 " + NAMES[am] + "이 " + V.fmt(R.p[am] * 100, 0) + "%를 가져간다."
+          : T > 2 ? "<b>온도를 높이면 평평해진다.</b> 점수 차이가 줄어 모두 1/4(25%)에 가까워진다. 지금 1등 " + NAMES[am] + "도 " + V.fmt(R.p[am] * 100, 0) + "%."
+          : "<b>e를 씌우면 점수 차이 1이 비율 약 2.7배가 된다.</b> 그 값을 모두 더한 합으로 나누면 합이 1. 지금 1등은 " + NAMES[am] + " " + V.fmt(R.p[am] * 100, 0) + "%.";
+    s += bad ? " 비교 그림: e 없이 그냥 나누면 음수나 1을 넘는 '확률'이 생긴다." : " 비교 그림: 점수가 모두 양수일 때만 그냥 나누기가 확률처럼 보인다. c를 움직여 보라.";
+    document.getElementById("say").innerHTML = s;
+  }
+
+  function update() { R = calc(Z, T); drawTemp(); say(drawCmp()); }
+  V.onTheme.push(function () { update(); });
+  update();
+  rows.forEach(function (r, j) { r.de = R.e[j] / Math.max.apply(null, R.e); r.ds = r.dp = R.p[j]; });
+})();
+</script>
+</body>
+</html>

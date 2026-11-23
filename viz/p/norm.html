@@ -1,0 +1,328 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>정규화와 Dropout · 움직이는 AI</title>
+<link rel="stylesheet" href="../style.css">
+</head>
+<body data-page="norm">
+<main class="stage">
+<h1>정규화 = 묶음마다 평균 0, 폭 1로</h1>
+<p class="sub">(x − μ) ÷ σ. LayerNorm은 샘플 하나의 특징끼리(가로), BatchNorm은 배치 안 같은 특징끼리(세로) 묶는다. γ = 1, β = 0으로 둔다.</p>
+<div class="ctrl" id="mode"></div>
+<div class="viz scroll" id="grid" style="margin-top:12px"></div>
+<div class="ctrl" id="ctl"></div>
+<div class="row" style="margin-top:14px">
+  <div class="viz" id="dist"></div>
+  <div class="viz" id="drop"></div>
+</div>
+<div class="ctrl" id="ctl2"></div>
+<p class="say" id="say"></p>
+<p class="more">이어 보기 · <a href="../../lab/decks/s19.html">덱 19 학습 코드와 안정화</a> · <a href="../../lab/decks/s21.html">덱 21 Transformer</a></p>
+</main>
+<script src="../js/pages.js"></script>
+<script src="../js/viz.js"></script>
+<script>
+(function () {
+  // ---- 배치 4 × 특징 6 (시드 11). 특징마다 평균·크기가 다르다 ----
+  var B = 4, F = 6;
+  var MU = [0.5, 4, -2, 8, 1.5, -5], SD = [0.4, 1.5, 0.8, 2.5, 0.6, 1.2];
+  var r = V.rng(11), X = [];
+  for (var i = 0; i < B; i++) { X.push([]); for (var j = 0; j < F; j++) X[i].push(Math.round((MU[j] + SD[j] * V.randn(r)) * 10) / 10); }
+  var EPS = 1e-5;
+  function stats(v) {
+    var m = v.reduce(function (a, b) { return a + b; }, 0) / v.length;
+    var va = v.reduce(function (a, b) { return a + (b - m) * (b - m); }, 0) / v.length;   // 모분산(÷n), 프레임워크와 같음
+    return { m: m, s: Math.sqrt(va + EPS) };
+  }
+  var mode = "LN", Y, ST;   // Y = 정규화 결과, ST[g] = 묶음 g의 μ, σ
+  function groups() { return mode === "LN" ? B : F; }
+  function members(g) { var o = []; if (mode === "LN") for (var j = 0; j < F; j++) o.push([g, j]); else for (var i = 0; i < B; i++) o.push([i, g]); return o; }
+  function compute() {
+    Y = X.map(function (row) { return row.slice(); }); ST = [];
+    for (var g = 0; g < groups(); g++) {
+      var mem = members(g), s = stats(mem.map(function (c) { return X[c[0]][c[1]]; }));
+      ST.push(s);
+      mem.forEach(function (c) { Y[c[0]][c[1]] = (X[c[0]][c[1]] - s.m) / s.s; });
+    }
+  }
+
+  // ================= 1. 격자: 어느 방향으로 묶어 평균을 내나 =================
+  var GW = 1140, GH = 360, CW = 58, CH = 42, LX = 110, RX = 736, TY = 74;
+  var gv = V.svg(document.getElementById("grid"), GW, GH,
+    "왼쪽은 배치 4개 샘플 × 특징 6개의 입력 숫자, 오른쪽은 정규화한 결과. 묶음 테두리가 행 또는 열을 감싸고, 그 묶음의 평균과 표준편차로 계산된 칸이 오른쪽으로 날아간다");
+  var g0 = V.s("g", null, gv), gL = V.s("g", null, gv), gR = V.s("g", null, gv), gS = V.s("g", null, gv), gO = V.s("g", null, gv), gF = V.s("g", null, gv);
+  V.s("text", { class: "tb", x: LX, y: 24, text: "입력 x" }, g0);
+  V.s("text", { class: "tb", x: RX, y: 24, text: "정규화 뒤 (x − μ) ÷ σ" }, g0);
+  [LX, RX].forEach(function (x0) {
+    for (var j = 0; j < F; j++) V.s("text", { class: "ts", x: x0 + j * CW + CW / 2, y: TY - 10, "text-anchor": "middle", text: "특징 " + (j + 1) }, g0);
+  });
+  for (i = 0; i < B; i++) V.s("text", { class: "ts", x: LX - 10, y: TY + i * CH + CH / 2 + 4, "text-anchor": "end", text: "샘플 " + (i + 1) }, g0);
+  function mkCell(par, x, y) {
+    var g = V.s("g", { style: "transition:opacity .25s" }, par);
+    var rc = V.s("rect", { x: x + 2, y: y + 2, width: CW - 4, height: CH - 4, rx: 6, class: "cell" }, g);
+    var tx = V.s("text", { class: "t mono", x: x + CW / 2, y: y + CH / 2 + 5, "text-anchor": "middle", "font-size": 13 }, g);
+    return { g: g, rc: rc, tx: tx };
+  }
+  var Lc = [], Rc = [];
+  for (i = 0; i < B; i++) { Lc.push([]); Rc.push([]); for (j = 0; j < F; j++) { Lc[i].push(mkCell(gL, LX + j * CW, TY + i * CH)); Rc[i].push(mkCell(gR, RX + j * CW, TY + i * CH)); } }
+  var outline = V.s("rect", { fill: "none", stroke: "var(--accent)", "stroke-width": 3, rx: 8, opacity: 0 }, gO);
+  var outlineR = V.s("rect", { fill: "none", stroke: "var(--accent)", "stroke-width": 3, rx: 8, opacity: 0, "stroke-dasharray": "6 4" }, gO);
+  var midK = V.s("text", { class: "ts", x: 645, y: 118, "text-anchor": "middle" }, gO);
+  var midM = V.s("text", { class: "t mono", x: 645, y: 146, "text-anchor": "middle", "font-size": 14 }, gO);
+  var midS = V.s("text", { class: "t mono", x: 645, y: 170, "text-anchor": "middle", "font-size": 14 }, gO);
+  V.s("text", { class: "ts", x: 645, y: 214, "text-anchor": "middle", text: "(x − μ) ÷ σ →" }, g0);
+  var check = V.s("text", { class: "t mono", x: LX, y: GH - 42, "font-size": 13 }, g0);
+  var note = V.s("text", { class: "ts", x: LX, y: GH - 16 }, g0);
+  var gStat = V.s("g", null, gS);
+  function groupRect(g, x0) {
+    return mode === "LN" ? { x: x0 - 3, y: TY + g * CH - 1, w: F * CW + 6, h: CH + 2 } : { x: x0 + g * CW - 1, y: TY - 3, w: CW + 2, h: B * CH + 6 };
+  }
+  function setRect(el, q) { el.setAttribute("x", q.x); el.setAttribute("y", q.y); el.setAttribute("width", q.w); el.setAttribute("height", q.h); }
+  var mL = 10, mR = 2;
+  function cellFill(c, v, m) { c.rc.setAttribute("fill", V.signed(v, m)); c.tx.setAttribute("fill", Math.abs(v) / m > 0.65 ? "#fff" : "var(--text)"); }
+  var done = 0, cur = -1, hiG = -1;
+  function drawGrid() {
+    mL = 0; X.forEach(function (row) { row.forEach(function (v) { mL = Math.max(mL, Math.abs(v)); }); }); mL *= 1.15;
+    for (var i = 0; i < B; i++) for (var j = 0; j < F; j++) {
+      var c = Lc[i][j]; cellFill(c, X[i][j], mL); c.tx.textContent = V.fmt(X[i][j], 1);
+      var g = mode === "LN" ? i : j, on = g < done;
+      var d = Rc[i][j];
+      if (on) { cellFill(d, Y[i][j], mR); d.tx.textContent = V.fmt(Y[i][j], 2); d.rc.setAttribute("stroke-dasharray", ""); }
+      else { d.rc.setAttribute("fill", "var(--bg)"); d.tx.textContent = ""; d.rc.setAttribute("stroke-dasharray", "4 3"); }
+      var focus = cur >= 0 ? cur : hiG;
+      c.g.style.opacity = focus < 0 || g === focus ? 1 : 0.35;
+    }
+    // 묶음마다 μ, σ (끝난 묶음과 지금 묶음)
+    V.clear(gStat);
+    for (var gg = 0; gg < groups(); gg++) {
+      if (gg > done || (gg === done && cur !== gg)) continue;
+      var s = ST[gg], col = gg === cur ? "ta" : "ts";
+      if (mode === "LN") {
+        V.s("text", { class: col + " mono", "font-size": 12, x: LX + F * CW + 10, y: TY + gg * CH + 18, text: "μ " + V.fmt(s.m, 2) }, gStat);
+        V.s("text", { class: col + " mono", "font-size": 12, x: LX + F * CW + 10, y: TY + gg * CH + 34, text: "σ " + V.fmt(s.s, 2) }, gStat);
+      } else {
+        V.s("text", { class: col + " mono", "font-size": 12, x: LX + gg * CW + CW / 2, y: TY + B * CH + 20, "text-anchor": "middle", text: "μ " + V.fmt(s.m, 1) }, gStat);
+        V.s("text", { class: col + " mono", "font-size": 12, x: LX + gg * CW + CW / 2, y: TY + B * CH + 38, "text-anchor": "middle", text: "σ " + V.fmt(s.s, 2) }, gStat);
+      }
+    }
+    // 끝난 묶음 점검: 정규화 뒤 평균·표준편차를 다시 계산
+    if (done > 0) {
+      var ms = [], ss = [];
+      for (gg = 0; gg < done; gg++) { var v = members(gg).map(function (c) { return Y[c[0]][c[1]]; }), st = stats(v); ms.push(st.m); ss.push(Math.sqrt(st.s * st.s - EPS)); }
+      check.textContent = "다시 재 보면 " + (mode === "LN" ? "행" : "열") + "마다 평균 " + ms.map(function (x) { return V.fmt(x, 2); }).join(" ") + " · 표준편차 " + ss.map(function (x) { return V.fmt(x, 2); }).join(" ");
+    } else check.textContent = "";
+    note.textContent = mode === "LN" ? "LayerNorm: 샘플마다(행) 특징 " + F + "개의 평균·표준편차 → 배치 크기와 상관없다" : "BatchNorm: 특징마다(열) 샘플 " + B + "개의 평균·표준편차 → 배치가 있어야 계산된다";
+    if (cur >= 0) {
+      var s2 = ST[cur];
+      midK.textContent = (mode === "LN" ? "샘플 " : "특징 ") + (cur + 1) + "의 " + (mode === "LN" ? F : B) + "칸";
+      midM.textContent = "μ = " + V.fmt(s2.m, 3); midS.textContent = "σ = " + V.fmt(s2.s, 3);
+    } else { midK.textContent = ""; midM.textContent = ""; midS.textContent = ""; }
+    drawDist();
+  }
+
+  // 차례로 한 묶음씩: 테두리 이동 → μ·σ → 칸이 날아가 바뀐다
+  var token = 0, playing = false;
+  async function doGroup(g, tk) {
+    cur = g; drawGrid();
+    var a = groupRect(g, LX), prev = outline.getAttribute("opacity") > 0 ? { x: +outline.getAttribute("x"), y: +outline.getAttribute("y"), w: +outline.getAttribute("width"), h: +outline.getAttribute("height") } : a;
+    outline.setAttribute("opacity", 1);
+    await V.tween(380, function (e) { setRect(outline, { x: V.lerp(prev.x, a.x, e), y: V.lerp(prev.y, a.y, e), w: V.lerp(prev.w, a.w, e), h: V.lerp(prev.h, a.h, e) }); });
+    if (tk !== token) return false;
+    await V.sleep(350); if (tk !== token) return false;
+    setRect(outlineR, groupRect(g, RX)); outlineR.setAttribute("opacity", 1);
+    var fl = members(g).map(function (c, k) {
+      var cl = mkCell(gF, 0, 0); cellFill(cl, X[c[0]][c[1]], mL); cl.tx.textContent = V.fmt(X[c[0]][c[1]], 1);
+      return { c: c, cl: cl, k: k, sw: false };
+    });
+    await V.tween(900, function (e, p) {
+      fl.forEach(function (o) {
+        var t = V.clamp(p * 1.4 - o.k * 0.4 / fl.length, 0, 1), u = V.ease(t);
+        var x0 = LX + o.c[1] * CW, y0 = TY + o.c[0] * CH, x1 = RX + o.c[1] * CW, y1 = TY + o.c[0] * CH;
+        var x = V.lerp(x0, x1, u), y = V.lerp(y0, y1, u) - Math.sin(u * Math.PI) * 40;
+        o.cl.g.setAttribute("transform", "translate(" + x + "," + y + ")");
+        if (t > 0.5 && !o.sw) { o.sw = true; cellFill(o.cl, Y[o.c[0]][o.c[1]], mR); o.cl.tx.textContent = V.fmt(Y[o.c[0]][o.c[1]], 2); }
+      });
+    });
+    fl.forEach(function (o) { o.cl.g.remove(); });
+    if (tk !== token) return false;
+    done = g + 1; drawGrid();
+    return true;
+  }
+  async function run(oneStep) {
+    var tk = ++token;
+    while (done < groups()) {
+      var ok = await doGroup(done, tk);
+      if (!ok || tk !== token) return;
+      if (oneStep) break;
+      await V.sleep(300); if (tk !== token) return;
+    }
+    cur = -1; outlineR.setAttribute("opacity", 0); drawGrid();
+    if (done >= groups()) { outline.setAttribute("opacity", 0); setPlay(false); }
+    else if (oneStep) setPlay(false);
+  }
+  function reset() { token++; done = 0; cur = -1; outline.setAttribute("opacity", 0); outlineR.setAttribute("opacity", 0); V.clear(gF); drawGrid(); }
+  var ctl = document.getElementById("ctl"), bP;
+  function setPlay(on) { playing = on; bP.textContent = on ? "❚❚ 멈춤" : (done >= groups() ? "▶ 다시 보기" : "▶ 이어서"); }
+  bP = V.button(ctl, "▶ 재생", function () {
+    if (playing) { token++; cur = -1; outlineR.setAttribute("opacity", 0); V.clear(gF); drawGrid(); setPlay(false); return; }
+    if (done >= groups()) reset();
+    setPlay(true); run(false);
+  });
+  V.button(ctl, "⏭ 한 묶음", function () { if (done >= groups()) reset(); token++; V.clear(gF); setPlay(false); run(true); });
+  V.button(ctl, "↺ 처음으로", function () { reset(); setPlay(false); });
+  V.button(ctl, "모두 한 번에", function () { token++; V.clear(gF); done = groups(); cur = -1; outline.setAttribute("opacity", 0); outlineR.setAttribute("opacity", 0); drawGrid(); setPlay(false); });
+  V.seg(document.getElementById("mode"), [{ id: "LN", label: "LayerNorm (가로로 묶기)" }, { id: "BN", label: "BatchNorm (세로로 묶기)" }], mode, function (m) {
+    mode = m; compute(); reset(); say(); setPlay(true); run(false);
+  });
+  // 칸에 마우스: 그 칸이 속한 묶음 강조
+  for (i = 0; i < B; i++) for (j = 0; j < F; j++) (function (i, j) {
+    Lc[i][j].g.addEventListener("pointerenter", function () { hiG = mode === "LN" ? i : j; if (cur < 0) drawGrid(); });
+    Lc[i][j].g.addEventListener("pointerleave", function () { hiG = -1; if (cur < 0) drawGrid(); });
+  })(i, j);
+
+  // ================= 2. 분포: 묶음마다 점 줄 =================
+  var DW = 560, DH = 360, DX0 = 70, DX1 = 540;
+  var dv = V.svg(document.getElementById("dist"), DW, DH, "묶음마다 값을 수직선 위 점으로 놓은 그림. 위는 정규화 전으로 묶음마다 중심과 폭이 다르고, 아래는 정규화 뒤로 모두 0 근처에 폭 1로 모인다");
+  var dg = V.s("g", null, dv);
+  function drawDist() {
+    V.clear(dg);
+    var lo = Infinity, hi = -Infinity;
+    X.forEach(function (row) { row.forEach(function (v) { lo = Math.min(lo, v); hi = Math.max(hi, v); }); });
+    lo = Math.floor(lo) - 1; hi = Math.ceil(hi) + 1;
+    var G = groups(), lane = mode === "LN" ? 26 : 18;
+    function panel(y0, title, a, b, getV, show, tickStep) {
+      var X0 = function (v) { return DX0 + (v - a) / (b - a) * (DX1 - DX0); };
+      V.s("text", { class: "tb", x: 12, y: y0 - 8, text: title }, dg);
+      var yb = y0 + G * lane + 6;
+      for (var t = Math.ceil(a / tickStep) * tickStep; t <= b; t += tickStep) {
+        V.s("line", { class: t === 0 ? "ln" : "ln-g", x1: X0(t), y1: y0, x2: X0(t), y2: yb }, dg);
+        V.s("text", { class: "ts", x: X0(t), y: yb + 15, "text-anchor": "middle", text: V.fmt(t, 0) }, dg);
+      }
+      for (var g = 0; g < G; g++) {
+        var y = y0 + g * lane + lane / 2, foc = (cur >= 0 ? cur : hiG);
+        var op = foc < 0 || foc === g ? 1 : 0.3;
+        V.s("text", { class: foc === g ? "ta" : "ts", "font-size": 12, "font-weight": foc === g ? 700 : 400, x: DX0 - 8, y: y + 4, "text-anchor": "end", opacity: op, text: (mode === "LN" ? "샘플 " : "특징 ") + (g + 1) }, dg);
+        V.s("line", { class: "ln-g", x1: DX0, y1: y, x2: DX1, y2: y }, dg);
+        if (!show(g)) continue;
+        var vs = members(g).map(function (c) { return getV(c[0], c[1]); }), s = stats(vs);
+        V.s("line", { x1: X0(s.m - s.s), y1: y, x2: X0(s.m + s.s), y2: y, stroke: "var(--accent)", "stroke-width": 3, opacity: 0.35 * op }, dg);
+        V.s("line", { x1: X0(s.m), y1: y - 8, x2: X0(s.m), y2: y + 8, stroke: "var(--accent)", "stroke-width": 2, opacity: op }, dg);
+        vs.forEach(function (v) { V.s("circle", { cx: X0(v), cy: y, r: 4.5, fill: V.signed(v, getV === gx ? mL : mR), stroke: "var(--text)", "stroke-width": 0.8, opacity: op }, dg); });
+      }
+    }
+    function gx(i, j) { return X[i][j]; }
+    function gy(i, j) { return Y[i][j]; }
+    var top = 46, bot = top + G * lane + 70;
+    panel(top, "정규화 전", lo, hi, gx, function () { return true; }, hi - lo > 14 ? 4 : 2);
+    panel(bot, "정규화 뒤", -2.5, 2.5, gy, function (g) { return g < done; }, 1);
+    V.s("text", { class: "ts", x: DX1, y: 22, "text-anchor": "end", text: "│ 평균 μ   ━ μ ± σ" }, dg);
+  }
+
+  // ================= 3. Dropout =================
+  var PW = 560, PH = 380, NN = 8, NX0 = 52, NS = 65;
+  var rh = V.rng(5), Hh = [];
+  for (i = 0; i < NN; i++) Hh.push(Math.round((0.3 + 1.2 * rh()) * 100) / 100);
+  var p = 0.5, train = true, rm = V.rng(21), mask = Hh.map(function () { return 1; }), n = 0, sumOut = Hh.map(function () { return 0; });
+  var pv = V.svg(document.getElementById("drop"), PW, PH, "뉴런 8개 중 일부가 단계마다 무작위로 꺼지고, 남은 값은 1/(1−p)배가 된다. 아래 막대는 원래 값, 이번 출력, 지금까지의 평균");
+  var pg = V.s("g", null, pv);
+  V.s("text", { class: "tb", x: 12, y: 22, text: "Dropout" }, pg);
+  var modeT = V.s("text", { class: "ta", x: PW - 12, y: 22, "text-anchor": "end", "font-weight": 700 }, pg);
+  V.s("text", { class: "ts", x: 12, y: 58, text: "값 h" }, pg);
+  V.s("text", { class: "ts", x: 12, y: 138, text: "출력" }, pg);
+  var scaleT = V.s("text", { class: "t mono", x: PW / 2, y: 176, "text-anchor": "middle", "font-size": 13 }, pg);
+  var BY = 304, BU = 26, BMAX = 4;   // 막대: 0~4, 1당 26px
+  [0, 1, 2, 3, 4].forEach(function (v) {
+    V.s("line", { class: "ln-g", x1: 40, y1: BY - v * BU, x2: PW - 12, y2: BY - v * BU }, pg);
+    V.s("text", { class: "ts", x: 34, y: BY - v * BU + 4, "text-anchor": "end", text: String(v) }, pg);
+  });
+  var NE = [];
+  for (i = 0; i < NN; i++) {
+    var x = NX0 + 30 + i * NS, g = V.s("g", null, pg);
+    var top = V.s("circle", { cx: x, cy: 54, r: 19, class: "box", "stroke-width": 1.5 }, g);
+    var topT = V.s("text", { class: "t mono", x: x, y: 59, "text-anchor": "middle", "font-size": 12, text: V.fmt(Hh[i], 2) }, g);
+    var link = V.s("line", { class: "ln", x1: x, y1: 74, x2: x, y2: 114 }, g);
+    var outC = V.s("circle", { cx: x, cy: 134, r: 19, "stroke-width": 1.5, style: "transition:opacity .25s" }, g);
+    var outT = V.s("text", { class: "t mono", x: x, y: 139, "text-anchor": "middle", "font-size": 12 }, g);
+    var cross = V.s("path", { d: "M" + (x - 9) + " 125L" + (x + 9) + " 143M" + (x + 9) + " 125L" + (x - 9) + " 143", stroke: "var(--muted)", "stroke-width": 2 }, g);
+    var bh = V.s("rect", { x: x - 20, width: 12, fill: "none", stroke: "var(--muted)", "stroke-width": 1.5, y: BY - Hh[i] * BU, height: Hh[i] * BU }, g);
+    var bo = V.s("rect", { x: x - 6, width: 12, fill: "var(--accent)", rx: 2 }, g);
+    var bm = V.s("rect", { x: x + 8, width: 12, fill: "var(--k)", rx: 2 }, g);
+    var clip = V.s("text", { class: "ta", x: x, y: BY - BMAX * BU - 6, "text-anchor": "middle", "font-size": 12 }, g);
+    NE.push({ outC: outC, outT: outT, cross: cross, link: link, bo: bo, bm: bm, clip: clip, d: 0, dm: 0 });
+  }
+  // 막대 이름
+  V.s("rect", { x: 40, y: PH - 46, width: 11, height: 11, fill: "none", stroke: "var(--muted)", "stroke-width": 1.5 }, pg);
+  V.s("text", { class: "ts", x: 56, y: PH - 36, text: "원래 h" }, pg);
+  V.s("rect", { x: 120, y: PH - 46, width: 11, height: 11, fill: "var(--accent)" }, pg);
+  V.s("text", { class: "ts", x: 136, y: PH - 36, text: "이번 출력" }, pg);
+  V.s("rect", { x: 210, y: PH - 46, width: 11, height: 11, fill: "var(--k)" }, pg);
+  var avgLab = V.s("text", { class: "ts", x: 226, y: PH - 36 }, pg);
+  var sumT = V.s("text", { class: "t mono", x: 40, y: PH - 10, "font-size": 12 }, pg);
+  function outs() { var k = train ? 1 / (1 - p) : 1; return Hh.map(function (h, i) { return train ? h * mask[i] * k : h; }); }
+  function dropStep() {
+    if (train) mask = Hh.map(function () { return rm() < p ? 0 : 1; });   // 확률 p로 끈다
+    else mask = Hh.map(function () { return 1; });
+    var o = outs(); n++;
+    o.forEach(function (v, i) { sumOut[i] += v; });
+    drawDrop();
+  }
+  function resetAvg() { n = 0; sumOut = Hh.map(function () { return 0; }); }
+  function drawDrop() {
+    var o = outs(), k = train ? 1 / (1 - p) : 1;
+    for (var i = 0; i < NN; i++) {
+      var e = NE[i], off = train && mask[i] === 0;
+      e.outC.setAttribute("fill", off ? "var(--grid)" : V.signed(o[i], 3));
+      e.outC.setAttribute("stroke", off ? "var(--line)" : "var(--accent)");
+      e.outT.textContent = off ? "" : V.fmt(o[i], 2);
+      e.outT.setAttribute("fill", !off && o[i] > 1.9 ? "#fff" : "var(--text)");
+      e.cross.setAttribute("opacity", off ? 1 : 0);
+      e.link.setAttribute("opacity", off ? 0.15 : 1);
+      e.link.setAttribute("class", off ? "ln dash" : "ln");
+      e.clip.textContent = o[i] > BMAX ? "▲" + V.fmt(o[i], 1) : "";
+    }
+    var on = mask.reduce(function (a, b) { return a + b; }, 0);
+    scaleT.textContent = train ? "켜진 칸 " + on + "/" + NN + " · 남은 값 × 1/(1 − " + V.fmt(p, 2) + ") = ×" + V.fmt(k, 2) : "평가: 끄지 않고 그대로 (×1)";
+    modeT.textContent = train ? "훈련 중" : "평가 중";
+    var sh = Hh.reduce(function (a, b) { return a + b; }, 0), so = o.reduce(function (a, b) { return a + b; }, 0);
+    var sm = n ? sumOut.reduce(function (a, b) { return a + b; }, 0) / n : 0;
+    sumT.textContent = "합: 원래 " + V.fmt(sh, 2) + " · 이번 " + V.fmt(so, 2) + " · 평균 " + V.fmt(sm, 2);
+    avgLab.textContent = n + "번 평균";
+    say();
+  }
+  var dplay = true, acc = 0;
+  V.loop(function (dt) {
+    if (dplay) { acc += dt; if (acc > 0.9) { acc = 0; dropStep(); } }
+    var o = outs(), kk = 1 - Math.exp(-dt * 12);
+    for (var i = 0; i < NN; i++) {
+      var e = NE[i], m = n ? sumOut[i] / n : 0;
+      e.d += (Math.min(o[i], BMAX) - e.d) * kk; e.dm += (Math.min(m, BMAX) - e.dm) * kk;
+      e.bo.setAttribute("y", BY - e.d * BU); e.bo.setAttribute("height", Math.max(0, e.d * BU));
+      e.bm.setAttribute("y", BY - e.dm * BU); e.bm.setAttribute("height", Math.max(0, e.dm * BU));
+    }
+  });
+  var ctl2 = document.getElementById("ctl2");
+  V.seg(ctl2, [{ id: "tr", label: "훈련 (model.train)" }, { id: "ev", label: "평가 (model.eval)" }], "tr", function (m) { train = m === "tr"; resetAvg(); dropStep(); });
+  V.slider(ctl2, { label: "끄는 확률 p", min: 0, max: 0.75, step: 0.05, value: p, onInput: function (v) { p = v; resetAvg(); drawDrop(); } });
+  var bD = V.button(ctl2, "❚❚ 멈춤", function () { dplay = !dplay; bD.textContent = dplay ? "❚❚ 멈춤" : "▶ 계속"; });
+  V.button(ctl2, "⏭ 한 번 더", function () { dplay = false; bD.textContent = "▶ 계속"; dropStep(); });
+  V.button(ctl2, "↺ 평균 지우기", function () { resetAvg(); drawDrop(); });
+
+  function say() {
+    var s = mode === "LN"
+      ? "<b>LayerNorm은 가로로 묶는다.</b> 샘플 하나 안의 특징끼리 평균·표준편차를 내니 배치가 1개여도 된다(Transformer가 쓰는 쪽)."
+      : "<b>BatchNorm은 세로로 묶는다.</b> 같은 특징을 배치의 여러 샘플에 걸쳐 평균 내니, 특징마다 크기가 달라도 맞춰진다. 배치가 작으면 μ·σ가 흔들린다.";
+    s += train
+      ? " Dropout: 훈련 때 확률 " + V.fmt(p, 2) + "로 끄고 남은 값을 ×" + V.fmt(1 / (1 - p), 2) + " 해서, 여러 번의 평균(분홍)이 원래 값에 가까워진다."
+      : " Dropout: 평가 때는 아무것도 끄지 않고 곱하지도 않는다.";
+    document.getElementById("say").innerHTML = s;
+  }
+
+  V.onTheme.push(function () { drawGrid(); drawDrop(); });
+  compute(); drawGrid(); dropStep(); say();
+  setPlay(true); run(false);
+})();
+</script>
+</body>
+</html>

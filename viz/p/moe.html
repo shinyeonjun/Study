@@ -1,0 +1,425 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mixture of Experts · 움직이는 AI</title>
+<link rel="stylesheet" href="../style.css">
+</head>
+<body data-page="moe">
+<main class="stage">
+<h1>MoE = 토큰마다 전문가 몇 명만 부른다</h1>
+<p class="sub">라우터가 토큰마다 전문가 확률을 내고 위 k명에게만 보낸다. 보낸 전문가의 출력을 확률 비율로 섞는다. 가중치는 많이 두고, 계산은 조금만.</p>
+<div class="ctrl" id="top"></div>
+<div class="viz scroll" id="flow" style="margin-top:12px"></div>
+<div class="ctrl" id="knobs"></div>
+<div class="row" style="margin-top:14px">
+  <div class="viz" id="load"></div>
+  <div class="viz" id="cost"></div>
+</div>
+<p class="say" id="say"></p>
+<p class="more">이어 보기 · <a href="../../lab/decks/s21.html">덱 21 Transformer (FFN 자리를 MoE로 바꾼다)</a> · <a href="../../lab/decks/s15.html">덱 15 softmax</a></p>
+</main>
+<script src="../js/pages.js"></script>
+<script src="../js/viz.js"></script>
+<script>
+(function () {
+  // ================= 1. 모형 (정해진 시드로 실제 값) =================
+  var E = 4, D = 4, H = 8, NT = 16;
+  var WORDS = ["고양이", "강아지", "학교", "달린다", "먹는다", "잔다", "3", "7", "12", ".", ",", "!"];
+  var rE = V.rng(11), EMB = WORDS.map(function (_, w) {   // 같은 무리(명사·동사·숫자·기호)는 가까운 곳에
+    var g = Math.floor(w / 3);
+    return [0, 1, 2, 3].map(function (k) { return (k === g ? 1.5 : 0) + 0.35 * V.randn(rE); });
+  });
+  function mat(r, n, m, s) { var A = []; for (var i = 0; i < n; i++) { A.push([]); for (var j = 0; j < m; j++) A[i].push(s * V.randn(r)); } return A; }
+  var rX = V.rng(13), EXP = [];
+  for (var e = 0; e < E; e++) EXP.push({ W1: mat(rX, D, H, 0.6), W2: mat(rX, H, D, 0.6) });
+  function expert(i, x) {   // FFN 4 → 8 → 4 (ReLU)
+    var h = V.matmul([x], EXP[i].W1)[0].map(function (v) { return Math.max(0, v); });
+    return V.matmul([h], EXP[i].W2)[0];
+  }
+  var Wr, br, LR = 0.5;
+  function initRouter() {
+    Wr = mat(V.rng(12), D, E, 0.5);
+    br = [3.2, 0.8, 0, -0.8];         // 처음 라우터: 전문가 1 쪽으로 쏠려 있다
+  }
+  var MAC_EXPERT = D * H + H * D, MAC_ROUTER = D * E;   // 곱셈 수 (편향 제외)
+
+  // 묶음 하나 계산: 라우터 → top-k → 용량 → 가중합 → 균형 손실과 기울기
+  function forward(ids, k, cf) {
+    var C = Math.max(1, Math.floor(cf * NT * k / E));
+    var toks = ids.map(function (w) {
+      var x = EMB[w], z = V.matmul([x], Wr)[0].map(function (v, j) { return v + br[j]; });
+      var p = V.softmax(z);
+      var ord = [0, 1, 2, 3].sort(function (a, b) { return p[b] - p[a] || a - b; }).slice(0, k);
+      var ps = ord.reduce(function (s, j) { return s + p[j]; }, 0);
+      var g = ord.map(function (j) { return p[j] / ps; });
+      return { w: w, x: x, z: z, p: p, ch: ord, g: g, keep: ord.map(function () { return false; }), y: [0, 0, 0, 0] };
+    });
+    // 용량: 첫째 선택을 모두 먼저, 그다음 둘째 선택 (앞 토큰부터)
+    var load = [0, 0, 0, 0], asked = [0, 0, 0, 0], order = [];
+    for (var r = 0; r < k; r++) toks.forEach(function (t, ti) {
+      var j = t.ch[r]; asked[j]++;
+      var ok = load[j] < C; if (ok) load[j]++;
+      t.keep[r] = ok; order.push({ t: ti, r: r, j: j, ok: ok, slot: ok ? load[j] - 1 : asked[j] - C - 1 });
+    });
+    var macs = 0;
+    toks.forEach(function (t) {
+      macs += MAC_ROUTER;
+      t.ch.forEach(function (j, r) {
+        if (!t.keep[r]) return;
+        macs += MAC_EXPERT;
+        var o = expert(j, t.x);
+        for (var d = 0; d < D; d++) t.y[d] += t.g[r] * o[d];
+      });
+    });
+    var f = asked.map(function (a) { return a / (NT * k); });
+    var P = [0, 1, 2, 3].map(function (j) { return toks.reduce(function (s, t) { return s + t.p[j]; }, 0) / NT; });
+    var L = E * V.dot(f, P);
+    return { toks: toks, C: C, load: load, asked: asked, order: order, f: f, P: P, L: L, macs: macs,
+             dropped: order.filter(function (o) { return !o.ok; }).length };
+  }
+  // 균형 손실 L = E·Σ fᵢ·Pᵢ. f(센 비율)는 미분이 안 되니 상수로 두고 P를 통해 라우터를 민다
+  function auxStep(res) {
+    var gW = [0, 1, 2, 3].map(function () { return [0, 0, 0, 0]; }), gb = [0, 0, 0, 0];
+    res.toks.forEach(function (t) {
+      var fp = V.dot(res.f, t.p);
+      for (var j = 0; j < E; j++) {
+        var dz = E / NT * t.p[j] * (res.f[j] - fp);
+        gb[j] += dz;
+        for (var i = 0; i < D; i++) gW[i][j] += t.x[i] * dz;
+      }
+    });
+    for (var j = 0; j < E; j++) { br[j] -= LR * gb[j]; for (var i = 0; i < D; i++) Wr[i][j] -= LR * gW[i][j]; }
+  }
+
+  // ================= 상태와 손잡이 =================
+  var K = 1, CF = 1.25, AUX = false, SPEED = 1;
+  var streamR, stepNo, hist, cur, busy = false, playing = false, hoverT = -1;
+  function nextIds() { var a = []; for (var i = 0; i < NT; i++) a.push(Math.floor(streamR() * WORDS.length)); return a; }
+  var top = document.getElementById("top");
+  var bPlay = V.button(top, "▶ 재생", function () { playing = !playing; bPlay.textContent = playing ? "❚❚ 멈춤" : "▶ 재생"; bPlay.classList.toggle("on", playing); if (playing) play(); });
+  V.button(top, "⏭ 한 묶음", function () { if (!busy) step(true); });
+  V.button(top, "⏩ 20묶음", function () { if (!busy) { for (var i = 0; i < 20; i++) step(false); } });
+  V.button(top, "↺ 처음으로", function () { if (!busy) reset(); });
+  V.seg(top, [{ id: "1", label: "top-1" }, { id: "2", label: "top-2" }], "1", function (v) { K = +v; redoCur(); });
+  V.seg(top, [{ id: "off", label: "균형 손실 끄기" }, { id: "on", label: "균형 손실 켜기" }], "off", function (v) { AUX = v === "on"; say(); });
+  var knobs = document.getElementById("knobs");
+  V.slider(knobs, { label: "용량 계수", min: 0.5, max: 2.5, step: 0.25, value: CF, onInput: function (v) { CF = v; redoCur(); } });
+  V.slider(knobs, { label: "속도", min: 0.5, max: 4, step: 0.5, value: SPEED, fmt: function (v) { return V.fmt(v, 1) + "×"; }, onInput: function (v) { SPEED = v; } });
+
+  // ================= 2. 흐름 그림 =================
+  var FW = 1140, FH = 560, RY0 = 70, RH = 27, EX0 = 530, EX1 = 790, OX = 930;
+  var fv = V.svg(document.getElementById("flow"), FW, FH, "토큰 16개가 라우터에서 전문가 네 명에 대한 확률을 받고, 위 k명에게 꾸러미로 보내진다. 전문가 상자에는 용량만큼 칸이 있고 넘친 꾸러미는 버려진다. 돌아온 출력은 확률 비율로 섞여 오른쪽 출력이 된다");
+  function rowY(t) { return RY0 + RH / 2 + t * RH; }
+  var EB_H = 104, EB_GAP = (NT * RH - E * EB_H) / (E - 1);
+  function boxY(j) { return RY0 + j * (EB_H + EB_GAP); }
+  var fHead = V.s("text", { class: "tb", x: 12, y: 22 }, fv);
+  V.s("text", { class: "ts", x: 55, y: 52, "text-anchor": "middle", text: "토큰" }, fv);
+  V.s("text", { class: "ts", x: 133, y: 52, "text-anchor": "middle", text: "x (4차원)" }, fv);
+  V.s("text", { class: "ts", x: 245, y: 52, "text-anchor": "middle", text: "라우터 softmax" }, fv);
+  for (var j0 = 0; j0 < E; j0++) V.s("text", { class: "ts mono", x: 200 + j0 * 30, y: 66, "text-anchor": "middle", "font-size": 10, text: "E" + (j0 + 1) }, fv);
+  V.s("text", { class: "ts", x: OX - 6, y: 52, text: "출력 y = Σ g·전문가(x)" }, fv);
+  var gPath = V.s("g", null, fv), gRow = V.s("g", null, fv), gBox = V.s("g", null, fv), gPk = V.s("g", null, fv);
+  var fRead = V.s("text", { class: "t", x: 12, y: FH - 14, "font-size": 13 }, fv);
+  var stepLab = V.s("text", { class: "ts", x: FW - 12, y: 22, "text-anchor": "end" }, fv);
+  var ROWS = [], BOXES = [], PATHS = [];
+  for (var t0 = 0; t0 < NT; t0++) (function (t) {
+    var y = rowY(t), o = { };
+    o.bg = V.s("rect", { x: 6, y: y - RH / 2 + 1, width: FW - 12, height: RH - 2, rx: 5, fill: "transparent" }, gRow);
+    o.chip = V.s("rect", { x: 14, y: y - 10, width: 82, height: 20, rx: 6, class: "box" }, gRow);
+    o.tw = V.s("text", { class: "t", x: 55, y: y + 5, "text-anchor": "middle", "font-size": 13 }, gRow);
+    o.xc = [0, 1, 2, 3].map(function (d) { return V.s("circle", { cx: 112 + d * 14, cy: y, r: 6, stroke: "var(--line)" }, gRow); });
+    o.pc = [0, 1, 2, 3].map(function (j) { return V.s("circle", { cx: 200 + j * 30, cy: y, r: 10, stroke: "var(--line)" }, gRow); });
+    o.yc = [0, 1, 2, 3].map(function (d) { return V.s("circle", { cx: OX + d * 16, cy: y, r: 6.5, stroke: "var(--line)" }, gRow); });
+    o.lab = V.s("text", { class: "ts", x: OX + 66, y: y + 4, "font-size": 11 }, gRow);
+    [o.bg, o.chip].forEach(function (el) { el.style.cursor = "pointer"; });
+    o.hit = V.s("rect", { x: 6, y: y - RH / 2 + 1, width: 300, height: RH - 2, fill: "transparent", style: "cursor:pointer" }, gRow);
+    o.hit2 = V.s("rect", { x: OX - 10, y: y - RH / 2 + 1, width: FW - OX + 4, height: RH - 2, fill: "transparent", style: "cursor:pointer" }, gRow);
+    [o.hit, o.hit2].forEach(function (el) {
+      el.addEventListener("pointerenter", function () { hoverT = t; hover(); });
+      el.addEventListener("pointerleave", function () { hoverT = -1; hover(); });
+    });
+    ROWS.push(o);
+  })(t0);
+  for (var b0 = 0; b0 < E; b0++) (function (j) {
+    var y = boxY(j), o = {};
+    o.rect = V.s("rect", { x: EX0, y: y, width: EX1 - EX0, height: EB_H, rx: 10, class: "box", "stroke-width": 1.6 }, gBox);
+    o.name = V.s("text", { class: "tb", x: EX0 + 12, y: y + 22, "font-size": 14, text: "전문가 " + (j + 1) }, gBox);
+    V.s("text", { class: "ts", x: EX0 + 12, y: y + 40, text: "FFN 4→8→4" }, gBox);
+    o.cnt = V.s("text", { class: "t mono", x: EX0 + 96, y: y + 22, "font-size": 13 }, gBox);
+    o.slots = V.s("g", null, gBox);
+    o.drop = V.s("text", { x: EX0 + 200, y: y + 22, "font-size": 12, fill: "var(--no)" }, gBox);
+    BOXES.push(o);
+  })(b0);
+  function slotXY(j, s) { var y = boxY(j); return { x: EX0 + 12 + (s % 10) * 18, y: y + 54 + Math.floor(s / 10) * 18 }; }
+  function dropXY(j, s) { var y = boxY(j); return { x: EX0 + 206 + (s % 4) * 13, y: y + 38 + Math.floor(s / 4) * 13 }; }
+  function drawSlots(C, filled) {
+    BOXES.forEach(function (b, j) {
+      V.clear(b.slots);
+      b.slotEls = [];
+      for (var s = 0; s < C; s++) {
+        var p = slotXY(j, s);
+        b.slotEls.push(V.s("rect", { x: p.x, y: p.y, width: 14, height: 14, rx: 3, fill: s < filled[j] ? "var(--accent)" : "var(--bg)", stroke: "var(--line)" }, b.slots));
+      }
+    });
+  }
+
+  function inPath(t, j) { var a = rowY(t), b = boxY(j) + EB_H / 2 + (t - (NT - 1) / 2) * 4; return "M312 " + a + "C430 " + a + ",420 " + b + "," + EX0 + " " + b; }
+  function outPath(t, j) { var a = boxY(j) + EB_H / 2 + (t - (NT - 1) / 2) * 4, b = rowY(t); return "M" + EX1 + " " + a + "C" + (EX1 + 70) + " " + a + "," + (OX - 70) + " " + b + "," + (OX - 10) + " " + b; }
+
+  // 결과를 화면에 칠하기 (애니메이션 없이 최종 상태)
+  function paintRows(res, showOut) {
+    res.toks.forEach(function (t, ti) {
+      var o = ROWS[ti];
+      o.tw.textContent = WORDS[t.w];
+      t.x.forEach(function (v, d) { o.xc[d].setAttribute("fill", V.signed(v, 2)); });
+      t.p.forEach(function (v, j) {
+        var c = t.ch.indexOf(j);
+        o.pc[j].setAttribute("fill", V.ramp(v));
+        o.pc[j].setAttribute("stroke", c >= 0 ? (t.keep[c] ? "var(--accent)" : "var(--no)") : "var(--line)");
+        o.pc[j].setAttribute("stroke-width", c >= 0 ? 2.6 : 1);
+      });
+      t.y.forEach(function (v, d) { o.yc[d].setAttribute("fill", showOut ? V.signed(v, 1.5) : "var(--bg)"); });
+      var nk = t.keep.filter(Boolean).length;
+      o.lab.textContent = !showOut ? "" : nk === 0 ? "버림 → 0" : t.ch.map(function (j, r) { return t.keep[r] ? "E" + (j + 1) + "×" + V.fmt(t.g[r], 2) : null; }).filter(Boolean).join(" + ");
+      o.lab.style.fill = nk === 0 && showOut ? "var(--no)" : "";
+    });
+  }
+  function drawPaths(res) {
+    V.clear(gPath); PATHS = [];
+    res.order.forEach(function (o) {
+      var t = res.toks[o.t], g = t.g[o.r];
+      var a = V.s("path", { d: inPath(o.t, o.j), fill: "none", stroke: o.ok ? "var(--accent)" : "var(--no)", "stroke-width": 1 + 4 * g, opacity: 0.3, "stroke-dasharray": o.ok ? null : "5 4" }, gPath);
+      var b = o.ok ? V.s("path", { d: outPath(o.t, o.j), fill: "none", stroke: "var(--v)", "stroke-width": 1 + 4 * g, opacity: 0.3 }, gPath) : null;
+      PATHS.push({ o: o, a: a, b: b });
+    });
+  }
+  function hover() {
+    PATHS.forEach(function (P) {
+      var on = hoverT < 0 || P.o.t === hoverT;
+      P.a.setAttribute("opacity", hoverT < 0 ? 0.3 : on ? 0.95 : 0.06);
+      if (P.b) P.b.setAttribute("opacity", hoverT < 0 ? 0.3 : on ? 0.95 : 0.06);
+    });
+    ROWS.forEach(function (o, t) { o.bg.setAttribute("fill", t === hoverT ? "var(--accent-soft)" : "transparent"); });
+    if (hoverT >= 0 && cur) {
+      var t = cur.toks[hoverT];
+      fRead.textContent = "「" + WORDS[t.w] + "」 로짓 z = [" + t.z.map(function (v) { return V.fmt(v, 2); }).join(", ") + "] → softmax [" +
+        t.p.map(function (v) { return V.fmt(v, 2); }).join(", ") + "] → " +
+        t.ch.map(function (j, r) { return "전문가 " + (j + 1) + " g=" + V.fmt(t.g[r], 2) + (t.keep[r] ? "" : "(넘쳐 버림)"); }).join(", ") +
+        " → y = [" + t.y.map(function (v) { return V.fmt(v, 2); }).join(", ") + "]";
+    } else fRead.textContent = "토큰 줄에 마우스를 올리면 그 토큰의 로짓·확률·출력 값";
+  }
+  function paintBoxes(res, filled, drops) {
+    drawSlots(res.C, filled);
+    BOXES.forEach(function (b, j) {
+      b.cnt.textContent = filled[j] + " / " + res.C;
+      b.rect.setAttribute("stroke", filled[j] >= res.C ? "var(--no)" : "var(--line)");
+      b.drop.textContent = drops[j] ? "넘침 " + drops[j] : "";
+    });
+  }
+
+  // ================= 3. 짐 패널 =================
+  var LW = 560, LH = 450, LB0 = 84, LB1 = 244, LBX = [60, 170, 280, 390];
+  var lv = V.svg(document.getElementById("load"), LW, LH, "전문가 네 명이 이번 묶음에서 받은 토큰 수 막대와 용량 선, 라우터 평균 확률, 그리고 묶음마다 균형 손실과 버린 비율이 어떻게 변했는지 선 그래프");
+  V.s("text", { class: "tb", x: 12, y: 22, text: "전문가별 짐 · 이번 묶음" }, lv);
+  V.s("rect", { x: 12, y: 34, width: 10, height: 10, fill: "var(--accent)" }, lv);
+  V.s("text", { class: "ts", x: 26, y: 43, text: "받음" }, lv);
+  V.s("rect", { x: 66, y: 34, width: 10, height: 10, fill: "var(--no)", opacity: 0.75 }, lv);
+  V.s("text", { class: "ts", x: 80, y: 43, text: "넘쳐 버림" }, lv);
+  V.s("rect", { x: 146, y: 34, width: 10, height: 10, fill: "var(--q)" }, lv);
+  V.s("text", { class: "ts", x: 160, y: 43, text: "라우터 평균 확률 P (×토큰 수)" }, lv);
+  var lL = V.s("text", { class: "t", x: LW - 12, y: 22, "text-anchor": "end", "font-size": 13 }, lv);
+  var lg = V.s("g", null, lv);
+  var LS = (LB1 - LB0) / NT;
+  function lY(n) { return LB1 - n * LS; }
+  var HX0 = 60, HX1 = LW - 50, HY0 = 330, HY1 = 420, NH = 60;
+  function drawLoad() {
+    V.clear(lg);
+    if (!cur) return;
+    var res = cur;
+    lL.textContent = "균형 손실 E·Σf·P = " + V.fmt(res.L, 3) + "  (고르면 1)";
+    V.s("line", { class: "ln", x1: 40, y1: LB1, x2: LW - 30, y2: LB1 }, lg);
+    for (var j = 0; j < E; j++) {
+      var x = LBX[j], kept = res.load[j], ask = res.asked[j];
+      V.s("rect", { x: x, y: lY(kept), width: 56, height: kept * LS, fill: "var(--accent)", rx: 2 }, lg);
+      if (ask > kept) V.s("rect", { x: x, y: lY(ask), width: 56, height: (ask - kept) * LS, fill: "var(--no)", opacity: 0.75, rx: 2 }, lg);
+      // 평균 라우터 확률 P (× 토큰 수로 같은 눈금에)
+      var pn = Math.min(NT, res.P[j] * NT * K);
+      V.s("rect", { x: x + 62, y: lY(pn), width: 10, height: pn * LS, fill: "var(--q)", rx: 2 }, lg);
+      V.s("text", { class: "t mono", x: x + 28, y: lY(ask) - 6, "text-anchor": "middle", "font-size": 13, text: ask + (ask > kept ? " (−" + (ask - kept) + ")" : "") }, lg);
+      V.s("text", { class: "tb", x: x + 28, y: LB1 + 20, "text-anchor": "middle", "font-size": 13, text: "E" + (j + 1) }, lg);
+      V.s("text", { class: "ts mono", x: x + 28, y: LB1 + 38, "text-anchor": "middle", text: "f " + V.fmt(res.f[j], 2) }, lg);
+      V.s("text", { class: "ts mono", x: x + 28, y: LB1 + 54, "text-anchor": "middle", style: "fill:var(--q)", text: "P " + V.fmt(res.P[j], 2) }, lg);
+    }
+    V.s("line", { x1: 40, y1: lY(res.C), x2: LW - 8, y2: lY(res.C), stroke: "var(--no)", "stroke-dasharray": "5 4", "stroke-width": 1.4 }, lg);
+    V.s("text", { x: LW - 8, y: lY(res.C) - 5, "text-anchor": "end", "font-size": 11, fill: "var(--no)", text: "용량 C=" + res.C }, lg);
+    V.s("line", { class: "ln-g", x1: 40, y1: lY(NT * K / E), x2: LW - 30, y2: lY(NT * K / E), "stroke-dasharray": "2 3", stroke: "var(--muted)" }, lg);
+    V.s("text", { class: "ts", x: 36, y: lY(NT * K / E) + 4, "text-anchor": "end", text: "고르게" }, lg);
+    // 지난 묶음들
+    V.s("text", { class: "ts", x: 12, y: HY0 - 12, text: "묶음마다" }, lg);
+    V.s("text", { class: "ts", x: HX0 + 50, y: HY0 - 12, style: "fill:var(--accent)", text: "━ 균형 손실" }, lg);
+    V.s("text", { class: "ts", x: HX0 + 150, y: HY0 - 12, style: "fill:var(--no)", text: "━ 버린 비율" }, lg);
+    V.s("rect", { x: HX0, y: HY0, width: HX1 - HX0, height: HY1 - HY0, fill: "none", stroke: "var(--line)" }, lg);
+    V.s("text", { class: "ts mono", x: HX0 - 6, y: HY0 + 8, "text-anchor": "end", text: "2" }, lg);
+    V.s("text", { class: "ts mono", x: HX0 - 6, y: HY1, "text-anchor": "end", text: "1" }, lg);
+    V.s("text", { class: "ts mono", x: HX1 + 6, y: HY0 + 8, style: "fill:var(--no)", text: "100%" }, lg);
+    V.s("text", { class: "ts mono", x: HX1 + 6, y: HY1, style: "fill:var(--no)", text: "0%" }, lg);
+    var hs = hist.slice(-NH), sL = "", sD = "";
+    hs.forEach(function (h, i) {
+      var x = HX0 + (HX1 - HX0) * (hs.length > 1 ? i / (NH - 1) : 0);
+      var yL = HY1 - V.clamp(h.L - 1, 0, 1) * (HY1 - HY0), yD = HY1 - V.clamp(h.d, 0, 1) * (HY1 - HY0);
+      sL += (i ? "L" : "M") + x.toFixed(1) + " " + yL.toFixed(1); sD += (i ? "L" : "M") + x.toFixed(1) + " " + yD.toFixed(1);
+    });
+    if (hs.length) {
+      V.s("path", { d: sD, fill: "none", stroke: "var(--no)", "stroke-width": 1.6 }, lg);
+      V.s("path", { d: sL, fill: "none", stroke: "var(--accent)", "stroke-width": 2 }, lg);
+    }
+    V.s("text", { class: "ts", x: HX1, y: HY1 + 18, "text-anchor": "end", text: "묶음 " + Math.max(1, stepNo - NH + 1) + " ~ " + stepNo }, lg);
+  }
+
+  // ================= 4. 계산량 패널 =================
+  var CW = 560, CH2 = 450;
+  var cv = V.svg(document.getElementById("cost"), CW, CH2, "Dense FFN 두 가지와 MoE의 가중치 수와 토큰 하나당 곱셈 수 막대 비교, 그리고 이번 묶음에서 실제로 한 곱셈 수");
+  var cg = V.s("g", null, cv);
+  function drawCost() {
+    V.clear(cg);
+    V.s("text", { class: "tb", x: 12, y: 22, text: "가중치는 많이, 계산은 조금" }, cg);
+    var models = [
+      { n: "Dense FFN 4→8→4", par: MAC_EXPERT, mac: MAC_EXPERT },
+      { n: "Dense FFN 4→32→4", par: D * H * E * 2, mac: D * H * E * 2 },
+      { n: "MoE 4명 × (4→8→4), top-" + K, par: E * MAC_EXPERT + MAC_ROUTER, mac: K * MAC_EXPERT + MAC_ROUTER, moe: true }
+    ];
+    var MX = 280, X0 = 190, X1 = CW - 70;
+    function bw(v) { return v / MX * (X1 - X0); }
+    [["저장하는 가중치 수", "par", 54], ["토큰 하나당 곱셈 수", "mac", 186]].forEach(function (sec) {
+      V.s("text", { class: "t", x: 12, y: sec[2], "font-size": 13, "font-weight": 700, text: sec[0] }, cg);
+      models.forEach(function (m, i) {
+        var y = sec[2] + 16 + i * 30;
+        V.s("text", { class: "ts", x: X0 - 8, y: y + 13, "text-anchor": "end", text: m.n }, cg);
+        V.s("rect", { x: X0, y: y, width: bw(m[sec[1]]), height: 18, rx: 3, fill: m.moe ? "var(--accent)" : "var(--muted)", opacity: m.moe ? 1 : 0.55 }, cg);
+        V.s("text", { class: "t mono", x: X0 + bw(m[sec[1]]) + 6, y: y + 14, "font-size": 12, text: m[sec[1]] }, cg);
+      });
+    });
+    V.s("text", { class: "ts", x: 12, y: 300, text: "곱셈 수: 라우터 4×4=16, 전문가 하나 4×8+8×4=64 (편향 제외)" }, cg);
+    if (cur) {
+      var dense = NT * D * H * E * 2, full = NT * (K * MAC_EXPERT + MAC_ROUTER);
+      V.s("text", { class: "t", x: 12, y: 336, "font-size": 13, "font-weight": 700, text: "이번 묶음 16토큰에서 실제로 한 곱셈" }, cg);
+      [["Dense 4→32→4", dense, "var(--muted)"], ["MoE (버린 것 빼고)", cur.macs, "var(--accent)"]].forEach(function (r, i) {
+        var y = 350 + i * 30, w = r[1] / dense * (X1 - X0);
+        V.s("text", { class: "ts", x: X0 - 8, y: y + 13, "text-anchor": "end", text: r[0] }, cg);
+        V.s("rect", { x: X0, y: y, width: w, height: 18, rx: 3, fill: r[2], opacity: i ? 1 : 0.55 }, cg);
+        V.s("text", { class: "t mono", x: X0 + w + 6, y: y + 14, "font-size": 12, text: r[1].toLocaleString("en-US") }, cg);
+      });
+      if (cur.macs < full) V.s("text", { class: "ts", x: 12, y: 418, style: "fill:var(--no)", text: "넘친 " + cur.dropped + "개는 전문가 계산을 건너뛰었다 (" + (full - cur.macs) + "번 덜 곱함)" }, cg);
+    }
+  }
+
+  // ================= 5. 한 묶음 =================
+  function dur(ms) { return ms / SPEED; }
+  function packetMove(pathEl, ms, dot) {
+    var L = pathEl.getTotalLength();
+    return function (e) { var p = pathEl.getPointAtLength(L * e); dot.setAttribute("cx", p.x.toFixed(1)); dot.setAttribute("cy", p.y.toFixed(1)); };
+  }
+  async function animate(res) {
+    busy = true;
+    var filled = [0, 0, 0, 0], drops = [0, 0, 0, 0];
+    V.clear(gPk); V.clear(gPath); PATHS = [];
+    paintBoxes(res, filled, drops);
+    // (1) 토큰과 라우터 확률이 차오른다
+    res.toks.forEach(function (t, ti) { ROWS[ti].tw.textContent = WORDS[t.w]; ROWS[ti].lab.textContent = ""; });
+    await V.tween(dur(350), function (e) {
+      res.toks.forEach(function (t, ti) {
+        var o = ROWS[ti];
+        t.x.forEach(function (v, d) { o.xc[d].setAttribute("fill", V.signed(v * e, 2)); });
+        t.p.forEach(function (v, j) { o.pc[j].setAttribute("fill", V.ramp(v * e)); o.pc[j].setAttribute("stroke", "var(--line)"); o.pc[j].setAttribute("stroke-width", 1); });
+        o.yc.forEach(function (c) { c.setAttribute("fill", "var(--bg)"); });
+      });
+    });
+    paintRows(res, false);
+    drawPaths(res);
+    PATHS.forEach(function (P) { P.a.setAttribute("opacity", 0); if (P.b) P.b.setAttribute("opacity", 0); });
+    // (2) 꾸러미가 전문가에게 간다 (첫째 선택 먼저, 앞 토큰부터)
+    var gap = dur(55), go = dur(600), n = PATHS.length;
+    var dots = PATHS.map(function (P) { return V.s("circle", { r: 5, fill: "var(--accent)", opacity: 0 }, gPk); });
+    var movers = PATHS.map(function (P, i) { return packetMove(P.a, go, dots[i]); });
+    var arrived = PATHS.map(function () { return false; });
+    await V.tween(gap * n + go, function (_, raw) {
+      var now = raw * (gap * n + go);
+      PATHS.forEach(function (P, i) {
+        var e = V.clamp((now - i * gap) / go, 0, 1);
+        if (e <= 0) return;
+        P.a.setAttribute("opacity", 0.3);
+        dots[i].setAttribute("opacity", 1);
+        movers[i](V.ease(e));
+        if (e >= 1 && !arrived[i]) {
+          arrived[i] = true;
+          var o = P.o;
+          if (o.ok) { filled[o.j]++; dots[i].setAttribute("opacity", 0); }
+          else { drops[o.j]++; var q = dropXY(o.j, drops[o.j] - 1); dots[i].setAttribute("fill", "var(--no)"); dots[i].setAttribute("cx", q.x); dots[i].setAttribute("cy", q.y); dots[i].setAttribute("r", 4.5); }
+          paintBoxes(res, filled, drops);
+        }
+      });
+    });
+    // (3) 전문가 출력이 g 비율로 돌아와 섞인다
+    var back = PATHS.filter(function (P) { return P.b; });
+    var bd = back.map(function (P) { return V.s("circle", { r: 4 + 3 * res.toks[P.o.t].g[P.o.r], fill: "var(--v)", opacity: 0 }, gPk); });
+    var bm = back.map(function (P, i) { return packetMove(P.b, go, bd[i]); });
+    await V.tween(dur(700), function (e) {
+      back.forEach(function (P, i) { P.b.setAttribute("opacity", 0.3); bd[i].setAttribute("opacity", e < 1 ? 1 : 0); bm[i](e); });
+    });
+    bd.forEach(function (c) { c.remove(); });
+    paintRows(res, true);
+    hover();
+    busy = false;
+  }
+  function record(res) {
+    hist.push({ L: res.L, d: res.dropped / (NT * K) });
+    if (hist.length > 400) hist.shift();
+  }
+  async function step(anim) {
+    stepNo++;
+    var ids = nextIds();
+    cur = forward(ids, K, CF); cur.ids = ids;
+    record(cur);
+    if (anim) { drawLoad(); drawCost(); stepLab.textContent = "묶음 #" + stepNo; await animate(cur); }
+    else { finish(); }
+    if (AUX) auxStep(cur);     // 이 묶음의 균형 손실로 라우터를 한 걸음 고친다 → 다음 묶음부터 반영
+    if (!anim) return;
+    say();
+  }
+  function finish() {   // 애니메이션 없이 현재 묶음을 다 칠한다
+    var filled = cur.load.slice(), drops = cur.asked.map(function (a, j) { return a - cur.load[j]; });
+    paintRows(cur, true); drawPaths(cur); paintBoxes(cur, filled, drops);
+    V.clear(gPk);
+    cur.order.forEach(function (o) { if (!o.ok) { var q = dropXY(o.j, o.slot); V.s("circle", { cx: q.x, cy: q.y, r: 4.5, fill: "var(--no)" }, gPk); } });
+    hover(); drawLoad(); drawCost(); say();
+    stepLab.textContent = "묶음 #" + stepNo;
+  }
+  function redoCur() {   // 손잡이를 바꾸면 같은 묶음을 그 설정으로 다시 계산
+    if (busy || !cur) { drawCost(); return; }
+    var ids = cur.ids; cur = forward(ids, K, CF); cur.ids = ids;
+    finish();
+  }
+  async function play() {
+    while (playing) { if (!busy) await step(true); await V.sleep(dur(300)); }
+  }
+  function reset() {
+    initRouter(); streamR = V.rng(14); stepNo = 0; hist = []; cur = null;
+    step(false);
+  }
+  function say() {
+    if (!cur) return;
+    var mx = Math.max.apply(null, cur.asked), j = cur.asked.indexOf(mx);
+    var s = "<b>top-" + K + ":</b> 토큰마다 전문가 " + K + "명만 계산한다(4명 중). 이번 묶음은 전문가 " + (j + 1) + "에게 " + mx + "개가 몰렸고 용량 " + cur.C + "을 넘친 " + cur.dropped + "개는 버려졌다.";
+    s += AUX ? " <b>균형 손실 켬:</b> 묶음마다 E·Σf·P를 줄이는 쪽으로 라우터 가중치를 고친다 → 확률이 고르게 퍼진다." : " <b>균형 손실 끔:</b> 라우터가 그대로라 쏠림이 남는다.";
+    document.getElementById("say").innerHTML = s;
+  }
+  V.onTheme.push(function () { if (cur && !busy) finish(); });
+  fHead.textContent = "토큰 16개 → 라우터 → 위 k명 → 가중합";
+  reset();
+  window.__moe = { forward: forward, state: function () { return { Wr: Wr.map(function (r) { return r.slice(); }), br: br.slice(), EMB: EMB, EXP: EXP, cur: cur, hist: hist.slice(), K: K, CF: CF }; } };
+})();
+</script>
+</body>
+</html>
