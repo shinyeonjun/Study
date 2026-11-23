@@ -37,6 +37,8 @@ learn/                  나의 공부 교재 (수학·코딩·데이터·AI·네
   notes/<분야>/          장 HTML. 예: notes/ar/ar04-2.html (장 id AR04-2)
 lab/                    슬라이드 교재 (2026-11-19). 빅분기 노트와 같은 뼈대(notes.js의 BDA_SUBJECTS = 공부 순서 단계, plan = 단계 안 묶음, 노트 = 덱)
   decks/sNN.html, quiz/SNN.js, js/deck.js, DECK_GUIDE.md
+viz/                    움직이는 AI (2026-11-24). AI 아키텍처·부품을 실제로 계산하며 움직이는 놀이터 화면 모음
+  index.html, p/<id>.html, js/viz.js(공통 도구), js/pages.js(목록·ready), tools/shot.py(헤드리스 검사)
 bigdata/                빅분기 노트 (시험 전용 책). 과목 → 출제 기준 항목 → 장
   index.html            홈 = 목차. 오늘 상태 한 줄, 과목별 장 목록. 공통 기초는 learn/으로 링크
   notes.js              과목·출제 기준 항목(plan)·장(area) 목록
@@ -52,6 +54,12 @@ bigdata/                빅분기 노트 (시험 전용 책). 과목 → 출제 
 - 작성 기준은 `lab/DECK_GUIDE.md`, 기준 덱은 `lab/decks/s01.html`. 넘기기·문제는 `lab/js/deck.js`(→·Space·탭·밀기, `.check[data-q]`는 quiz/SNN.js).
 - 작업 방식: Claude가 기준 덱과 기준 문서를 만들고, 나머지 덱은 GPT가 쓰고, Claude가 내용(정의·수치·그림·문제)을 확인한 뒤 올린다.
 - **외우기가 아니라 이해 (2026-11-19 사용자: "단순 지식 말고 understand 하고 싶다"):** 계산 절차보다 뜻이 먼저, 규칙은 뜻에서 끌어내고, 처음 나오는 말은 그 자리에서 뜻을 보인다. 기준은 DECK_GUIDE의 '이해하게 만들기', 본보기는 `decks/s02.html`(행렬 = 숫자를 바꾸는 기계).
+
+## 움직이는 AI (viz/, 2026-11-24 사용자 요청)
+
+- "CNN·RNN·Transformer·ReLU·MoE 등 모든 걸 최대한 움직이고 시각적으로, 바로 머리에 떠오르게." 주제마다 한 화면짜리 놀이터: 큰 움직이는 그림 + 손잡이(슬라이더·재생·한 단계), 글은 뜻 제목·한 줄만.
+- 화면의 숫자·색·움직임은 브라우저가 실제로 계산한 값(작은 모형, 고정 시드). 꾸민 숫자 금지. 외부 라이브러리 없이 SVG·Canvas(viz.js).
+- 본보기 `viz/p/act.html`. 새 화면은 pages.js에 넣고, 확인(수치 Python 대조, `python viz/tools/shot.py <id>`, 사진을 눈으로)을 마치면 `ready: true`.
 
 ## 두 책: 공부 교재(learn/)와 빅분기 노트(bigdata/)
 

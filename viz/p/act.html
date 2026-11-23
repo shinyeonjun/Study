@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>활성함수 · 움직이는 AI</title>
+<link rel="stylesheet" href="../style.css">
+</head>
+<body data-page="act">
+<main class="stage">
+<h1>활성함수 = 신호를 꺾는 곳</h1>
+<p class="sub">곱해서 더한 값 z를 그대로 넘기지 않고 꺾어서 넘긴다. 꺾지 않으면 층을 아무리 쌓아도 직선 하나(덱 17).</p>
+<div class="ctrl" id="pick"></div>
+<div class="row" style="margin-top:12px">
+  <div class="viz" id="curve"></div>
+  <div class="viz" id="flow"></div>
+</div>
+<div class="viz scroll" id="deep" style="margin-top:14px"></div>
+<div class="ctrl" id="ctl"></div>
+<p class="say" id="say"></p>
+<p class="more">이어 보기 · <a href="../../lab/decks/s17.html">덱 17 작은 신경망</a> · <a href="../../lab/decks/s19.html">덱 19 사라지는 기울기</a></p>
+</main>
+<script src="../js/pages.js"></script>
+<script src="../js/viz.js"></script>
+<script>
+(function () {
+  // ---- 함수와 도함수 (실제 식) ----
+  function sig(x) { return 1 / (1 + Math.exp(-x)); }
+  function erf(x) { // Abramowitz–Stegun 7.1.26, 오차 < 1.5e-7
+    var s = x < 0 ? -1 : 1; x = Math.abs(x);
+    var t = 1 / (1 + 0.3275911 * x);
+    var y = 1 - (((((1.061405429 * t - 1.453152027) * t) + 1.421413741) * t - 0.284496736) * t + 0.254829592) * t * Math.exp(-x * x);
+    return s * y;
+  }
+  function Phi(x) { return 0.5 * (1 + erf(x / Math.SQRT2)); }
+  function phi(x) { return Math.exp(-x * x / 2) / Math.sqrt(2 * Math.PI); }
+  var F = {
+    ReLU:    { f: function (x) { return Math.max(0, x); }, d: function (x) { return x > 0 ? 1 : 0; },
+               say: "<b>0보다 작으면 0, 크면 그대로.</b> 음수 쪽 기울기가 0이라 거기 걸린 뉴런은 배우지 못한다(죽은 ReLU). 양수 쪽 기울기는 늘 1이라 깊이 쌓아도 기울기가 줄지 않는다." },
+    "Leaky ReLU": { f: function (x) { return x > 0 ? x : 0.1 * x; }, d: function (x) { return x > 0 ? 1 : 0.1; },
+               say: "<b>음수 쪽을 0.1배로 살짝 남긴다.</b> 기울기가 0이 아니라 0.1이라 음수 쪽 뉴런도 조금씩 배운다." },
+    Sigmoid: { f: sig, d: function (x) { var s = sig(x); return s * (1 - s); },
+               say: "<b>어떤 값이든 0~1로 누른다.</b> 기울기는 가장 커도 0.25. 양 끝으로 가면 거의 0이 되어, 층마다 곱하면 기울기가 사라진다." },
+    Tanh:    { f: Math.tanh, d: function (x) { var t = Math.tanh(x); return 1 - t * t; },
+               say: "<b>−1~1로 누르고 0을 가운데에 둔다.</b> 0에서 기울기 1이지만 양 끝에서는 Sigmoid처럼 0으로 눕는다." },
+    GELU:    { f: function (x) { return x * Phi(x); }, d: function (x) { return Phi(x) + x * phi(x); },
+               say: "<b>x × (x가 정규분포에서 차지하는 아래쪽 비율).</b> ReLU를 부드럽게 만든 꼴. 음수 근처를 살짝 아래로 굽힌다. Transformer(BERT·GPT)의 FFN이 쓴다." },
+    SiLU:    { f: function (x) { return x * sig(x); }, d: function (x) { var s = sig(x); return s * (1 + x * (1 - s)); },
+               say: "<b>x × Sigmoid(x) (Swish).</b> GELU와 거의 같은 모양. 최근 언어 모델(LLaMA 등)의 FFN이 이 계열을 쓴다." }
+  };
+  var name = "ReLU", X = 1.2;
+  var pick = V.seg(document.getElementById("pick"), Object.keys(F), name, function (n) { name = n; drawCurve(); drawDeep(); say(); });
+
+  // ---- 1. 곡선: 점을 끌면 f(x), 기울기, 접선 ----
+  var W = 560, H = 380, X0 = 60, Y0 = 250, UX = 55, UY = 55;   // x: −4~4, y: −1.5~3.5
+  function px(x) { return X0 + (x + 4) * UX; }
+  function py(y) { return Y0 - y * UY; }
+  var cv = V.svg(document.getElementById("curve"), W, H, "선택한 활성함수의 곡선과 도함수, 끌 수 있는 점과 접선");
+  var gGrid = V.s("g", null, cv), gCurve = V.s("g", null, cv), gTop = V.s("g", null, cv);
+  for (var gx = -4; gx <= 4; gx++) {
+    V.s("line", { class: "ln-g", x1: px(gx), y1: py(-1.5), x2: px(gx), y2: py(3.5) }, gGrid);
+    V.s("text", { class: "ts", x: px(gx), y: py(-1.5) + 18, "text-anchor": "middle", text: V.fmt(gx, 0) }, gGrid);
+  }
+  for (var gy = -1; gy <= 3; gy++) {
+    V.s("line", { class: "ln-g", x1: px(-4), y1: py(gy), x2: px(4), y2: py(gy) }, gGrid);
+    V.s("text", { class: "ts", x: px(-4) - 8, y: py(gy) + 4, "text-anchor": "end", text: V.fmt(gy, 0) }, gGrid);
+  }
+  V.s("line", { class: "ln", x1: px(-4), y1: py(0), x2: px(4), y2: py(0) }, gGrid);
+  V.s("line", { class: "ln", x1: px(0), y1: py(-1.5), x2: px(0), y2: py(3.5) }, gGrid);
+  V.s("text", { class: "ts", x: px(4) + 6, y: py(0) + 4, text: "z" }, gGrid);
+  var path = V.s("path", { class: "ln-a", "stroke-width": 3 }, gCurve);
+  var dpath = V.s("path", { class: "ln dash", "stroke-width": 1.6 }, gCurve);
+  var tan = V.s("line", { stroke: "var(--k)", "stroke-width": 2.5 }, gTop);
+  var vline = V.s("line", { class: "ln dash" }, gTop);
+  var dot = V.s("circle", { r: 9, fill: "var(--accent)", stroke: "var(--bg)", "stroke-width": 3, style: "cursor:grab" }, gTop);
+  var rd = V.s("text", { class: "tb", x: px(-4) + 6, y: 26 }, gTop);
+  var rd2 = V.s("text", { class: "t", x: px(-4) + 6, y: 48 }, gTop);
+  V.s("text", { class: "ta", x: W - 14, y: 26, "text-anchor": "end", "font-size": 13, text: "━ f(z)" }, gTop);
+  V.s("text", { class: "ts", x: W - 14, y: 44, "text-anchor": "end", text: "┅ 기울기 f′(z)" }, gTop);
+  V.s("text", { x: W - 14, y: 62, "text-anchor": "end", "font-size": 12, fill: "var(--k)", text: "━ 접선" }, gTop);
+  function clipY(y) { return V.clamp(y, -1.5, 3.5); }
+  function drawCurve() {
+    var f = F[name].f, d = F[name].d, s = "", s2 = "";
+    // 그림 밖(y > 3.5)으로 나가는 부분은 그리지 않는다(눌러 평평하게 그리면 포화로 오해)
+    var in1 = false, in2 = false;
+    for (var i = 0; i <= 320; i++) {
+      var x = -4 + 8 * i / 320, y1 = f(x), y2 = d(x);
+      if (y1 >= -1.5 && y1 <= 3.5) { s += (in1 ? "L" : "M") + px(x).toFixed(1) + " " + py(y1).toFixed(1); in1 = true; } else in1 = false;
+      if (y2 >= -1.5 && y2 <= 3.5) { s2 += (in2 ? "L" : "M") + px(x).toFixed(1) + " " + py(y2).toFixed(1); in2 = true; } else in2 = false;
+    }
+    path.setAttribute("d", s); dpath.setAttribute("d", s2);
+    place();
+  }
+  function place() {
+    var f = F[name].f(X), d = F[name].d(X);
+    dot.setAttribute("cx", px(X)); dot.setAttribute("cy", py(clipY(f)));
+    vline.setAttribute("x1", px(X)); vline.setAttribute("x2", px(X)); vline.setAttribute("y1", py(0)); vline.setAttribute("y2", py(clipY(f)));
+    var h = 0.9 / Math.sqrt(1 + d * d);
+    tan.setAttribute("x1", px(X - h)); tan.setAttribute("y1", py(clipY(f - d * h)));
+    tan.setAttribute("x2", px(X + h)); tan.setAttribute("y2", py(clipY(f + d * h)));
+    rd.textContent = "z = " + V.fmt(X) + "   →   f(z) = " + V.fmt(f, 3);
+    rd2.textContent = "기울기 f′(z) = " + V.fmt(d, 3);
+    if (sl) sl.set(X);
+    drawDeep();
+  }
+  function toX(ev) {
+    var r = cv.getBoundingClientRect();
+    var sx = (ev.clientX - r.left) * W / r.width;
+    return V.clamp(Math.round(((sx - X0) / UX - 4) * 20) / 20, -4, 4);
+  }
+  var dragging = false;
+  cv.addEventListener("pointerdown", function (e) { dragging = true; cv.setPointerCapture(e.pointerId); X = toX(e); place(); });
+  cv.addEventListener("pointermove", function (e) { if (dragging) { X = toX(e); place(); } });
+  cv.addEventListener("pointerup", function () { dragging = false; });
+  cv.style.touchAction = "none";
+
+  // ---- 2. 흐름: 입력 알갱이가 함수를 지나며 꺾인다 ----
+  var FW = 560, FH = 380, LX = 70, RX = 440, FY0 = 250, FU = 55;
+  function fy(y) { return FY0 - y * FU; }
+  var fv = V.svg(document.getElementById("flow"), FW, FH, "정규분포에서 뽑은 입력 알갱이가 왼쪽 축에서 오른쪽 축으로 이동하며 활성함수 값으로 바뀌고, 오른쪽에 출력 분포가 쌓인다");
+  var fg = V.s("g", null, fv);
+  [[LX, "입력 z"], [RX, "출력 f(z)"]].forEach(function (a) {
+    V.s("line", { class: "ln", x1: a[0], y1: fy(-1.5), x2: a[0], y2: fy(3.5) }, fg);
+    V.s("text", { class: "ts", x: a[0], y: fy(3.5) - 10, "text-anchor": "middle", text: a[1] }, fg);
+    for (var t = -1; t <= 3; t++) {
+      V.s("line", { class: "ln", x1: a[0] - 4, y1: fy(t), x2: a[0] + 4, y2: fy(t) }, fg);
+      V.s("text", { class: "ts", x: a[0] - 8, y: fy(t) + 4, "text-anchor": "end", text: V.fmt(t, 0) }, fg);
+    }
+  });
+  V.s("line", { class: "ln-g", x1: LX, y1: fy(0), x2: RX, y2: fy(0) }, fg);
+  var GX1 = V.lerp(LX, RX, 0.4), GX2 = V.lerp(LX, RX, 0.6);
+  V.s("rect", { x: GX1, y: fy(3.5), width: GX2 - GX1, height: 5 * FU, rx: 8, fill: "var(--accent-soft)", opacity: 0.8 }, fg);
+  var gateLab = V.s("text", { class: "ta", x: (GX1 + GX2) / 2, y: fy(3.5) - 10, "text-anchor": "middle", "font-weight": 700, text: "f" }, fg);
+  var gp = V.s("g", null, fv), gh = V.s("g", null, fv);
+  V.s("text", { class: "ts", x: RX + 60, y: fy(-1.5) + 22, "text-anchor": "middle", text: "쌓인 출력" }, fg);
+  var bins = 25, hist = new Array(bins).fill(0), bars = [];
+  for (var b = 0; b < bins; b++) bars.push(V.s("rect", { x: RX + 12, height: 5 * FU / bins * 0.9, rx: 1, fill: "var(--accent)", opacity: 0.75 }, gh));
+  var r = V.rng(7), parts = [];
+  function spawn() { parts.push({ z: V.clamp(V.randn(r) * 1.4, -4, 3.4), t: 0, el: V.s("circle", { r: 4.5 }, gp) }); }
+  var spawnAcc = 0, decay = 0.995;
+  V.loop(function (dt) {
+    spawnAcc += dt * 26;
+    while (spawnAcc > 1) { spawnAcc -= 1; spawn(); }
+    var f = F[name].f;
+    for (var i = parts.length - 1; i >= 0; i--) {
+      var p = parts[i]; p.t += dt * 0.55;
+      // 0~0.4: 입력 높이 그대로 → 0.4~0.6: f 문을 지나며 꺾임 → 0.6~1: 출력 높이로
+      var e = V.ease(V.clamp((p.t - 0.4) / 0.2, 0, 1));
+      var out = clipY(f(p.z)), yin = V.clamp(p.z, -1.5, 3.5);
+      var x = V.lerp(LX, RX, p.t > 1 ? 1 : p.t), y = fy(V.lerp(yin, out, e));
+      p.el.setAttribute("cx", x); p.el.setAttribute("cy", y);
+      p.el.setAttribute("fill", V.signed(p.t < 1 ? V.lerp(p.z, f(p.z), e) : f(p.z), 2));
+      p.el.setAttribute("opacity", p.t < 1 ? 0.9 : Math.max(0, 1 - (p.t - 1) * 6));
+      if (p.t >= 1 && !p.counted) {
+        p.counted = true;
+        var k = Math.floor((out + 1.5) / 5 * bins); hist[V.clamp(k, 0, bins - 1)] += 1;
+      }
+      if (p.t > 1.2) { p.el.remove(); parts.splice(i, 1); }
+    }
+    var mx = 1;
+    for (var j = 0; j < bins; j++) { hist[j] *= decay; mx = Math.max(mx, hist[j]); }
+    for (j = 0; j < bins; j++) {
+      var yy = fy(-1.5 + (j + 1) * 5 / bins);
+      bars[j].setAttribute("y", yy); bars[j].setAttribute("width", hist[j] / mx * 95);
+    }
+  });
+
+  // ---- 3. 깊이 쌓으면: 값은 앞으로, 기울기는 층마다 곱해진다 ----
+  var DW = 1140, DH = 190, N = 8;
+  var dv = V.svg(document.getElementById("deep"), DW, DH, "같은 활성함수를 여덟 층 쌓았을 때 층마다 값과, 끝에서 첫 층까지 거꾸로 곱해진 기울기의 크기");
+  var dg = V.s("g", null, dv);
+  function drawDeep() {
+    if (!dv) return;
+    V.clear(dg);
+    var f = F[name].f, d = F[name].d, z = X, vals = [z], grads = [];
+    // 층마다 h = f(z), 다음 층 입력 z = h (가중치 1, 편향 0으로 단순화)
+    for (var i = 0; i < N; i++) { grads.push(d(z)); z = f(z); vals.push(z); }
+    var back = [1];
+    for (i = N - 1; i >= 0; i--) back.unshift(back[0] * grads[i]);
+    V.s("text", { class: "tb", x: 10, y: 22, text: "같은 함수를 " + N + "층 쌓으면" }, dg);
+    V.s("text", { class: "ts", x: 10, y: 40, text: "가중치 1, 편향 0으로 단순화" }, dg);
+    V.s("text", { class: "ts", x: 120, y: 82, "text-anchor": "end", text: "값 →" }, dg);
+    V.s("text", { class: "ts", x: 120, y: 152, "text-anchor": "end", text: "← 기울기" }, dg);
+    var step = (DW - 200) / N;
+    for (i = 0; i <= N; i++) {
+      var cx = 160 + i * step;
+      V.s("circle", { cx: cx, cy: 78, r: 20, fill: V.signed(vals[i], 3), stroke: "var(--line)" }, dg);
+      V.s("text", { class: "t mono", x: cx, y: 83, "text-anchor": "middle", "font-size": 12, text: V.fmt(vals[i], 2) }, dg);
+      var g = back[i], rr = 4 + 16 * Math.min(1, Math.sqrt(Math.abs(g)));
+      V.s("circle", { cx: cx, cy: 148, r: rr, fill: "var(--k)", opacity: 0.85 }, dg);
+      V.s("text", { class: "ts mono", x: cx, y: 182, "text-anchor": "middle", text: Math.abs(g) < 0.001 && g !== 0 ? g.toExponential(1).replace("-", "−") : V.fmt(g, 3) }, dg);
+      if (i < N) {
+        V.s("line", { class: "ln", x1: cx + 22, y1: 78, x2: cx + step - 22, y2: 78 }, dg);
+        V.s("text", { class: "ts", x: cx + step / 2, y: 70, "text-anchor": "middle", text: "f" }, dg);
+        V.s("text", { class: "ts mono", x: cx + step / 2, y: 120, "text-anchor": "middle", text: "×" + V.fmt(grads[i], 2) }, dg);
+      }
+    }
+    V.s("text", { class: "ts", x: 160, y: 182 - 0, "text-anchor": "end", dx: -26, text: "" }, dg);
+  }
+  var sl = V.slider(V.ctrl(document.getElementById("ctl")), { label: "입력 z", min: -4, max: 4, step: 0.05, value: X, onInput: function (v) { X = v; place(); } });
+  function say() { document.getElementById("say").innerHTML = F[name].say; }
+  V.onTheme.push(function () { drawCurve(); });
+  drawCurve(); say();
+})();
+</script>
+</body>
+</html>
