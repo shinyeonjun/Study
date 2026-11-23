@@ -1,0 +1,342 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>임베딩 공간 · 움직이는 AI</title>
+<link rel="stylesheet" href="../style.css">
+<style>
+  #plot svg { touch-action: none; cursor: crosshair; }
+  .viz svg { user-select: none; -webkit-user-select: none; }
+  #plot .wd { cursor: pointer; }
+  @media (max-width: 700px) { #arith svg { min-width: 900px; } }
+</style>
+</head>
+<body data-page="embed">
+<main class="stage">
+<h1>임베딩 = 단어를 점으로, 내적 = 가까움</h1>
+<p class="sub">단어마다 7칸 벡터(손으로 정한 특성 7칸 + 시드 잡음). 7차원은 못 그리니 가장 넓게 퍼진 두 방향(주성분)에 비춰 본다(덱 20).</p>
+<div class="ctrl" id="top"></div>
+<div class="row" style="margin-top:12px">
+  <div class="viz" id="plot"></div>
+  <div class="viz" id="rank"></div>
+</div>
+<div class="viz scroll" id="arith" style="margin-top:14px"></div>
+<div class="ctrl" id="actl"></div>
+<p class="say" id="say"></p>
+<p class="more">이어 보기 · <a href="../../lab/decks/s20.html">덱 20 무엇을 볼지 고르다: attention</a></p>
+</main>
+<script src="../js/pages.js"></script>
+<script src="../js/viz.js"></script>
+<script>
+(function () {
+  // ---- 단어 벡터: 특성 7칸 + 잡음 ----
+  var FEAT = ["사람", "동물", "과일", "성별", "어림", "왕족", "개↔고양이"];
+  var BASE = {
+    "왕": [1, 0, 0, 1, 0, 1, 0], "여왕": [1, 0, 0, -1, 0, 1, 0], "남자": [1, 0, 0, 1, 0, 0, 0], "여자": [1, 0, 0, -1, 0, 0, 0],
+    "왕자": [1, 0, 0, 1, 1, 1, 0], "공주": [1, 0, 0, -1, 1, 1, 0], "소년": [1, 0, 0, 1, 1, 0, 0], "소녀": [1, 0, 0, -1, 1, 0, 0],
+    "개": [0, 1, 0, 0, 0, 0, 1], "강아지": [0, 1, 0, 0, 1, 0, 1], "고양이": [0, 1, 0, 0, 0, 0, -1], "새끼고양이": [0, 1, 0, 0, 1, 0, -1],
+    "사과": [0, 0, 1, 0, 0, 0, 0], "배": [0, 0, 1, 0, 0, 0, 0], "포도": [0, 0, 1, 0, 0, 0, 0]
+  };
+  var WORDS = Object.keys(BASE), NW = WORDS.length, DE = FEAT.length;
+  var r = V.rng(11);
+  var E = WORDS.map(function (w) { return BASE[w].map(function (x) { return x + 0.12 * V.randn(r); }); });
+  function norm(a) { return Math.sqrt(V.dot(a, a)); }
+
+  // ---- 주성분: XᵀX의 고유벡터 (야코비 회전) ----
+  function jacobi(S0) {
+    var n = S0.length, A = S0.map(function (r) { return r.slice(); }), U = [];
+    for (var i = 0; i < n; i++) { U.push([]); for (var j = 0; j < n; j++) U[i].push(i === j ? 1 : 0); }
+    for (var sweep = 0; sweep < 60; sweep++) {
+      var off = 0;
+      for (var p = 0; p < n; p++) for (var q = p + 1; q < n; q++) off += A[p][q] * A[p][q];
+      if (off < 1e-24) break;
+      for (p = 0; p < n; p++) for (q = p + 1; q < n; q++) {
+        var apq = A[p][q]; if (Math.abs(apq) < 1e-15) continue;
+        var th = (A[q][q] - A[p][p]) / (2 * apq);
+        var t = (th >= 0 ? 1 : -1) / (Math.abs(th) + Math.sqrt(th * th + 1)), c = 1 / Math.sqrt(t * t + 1), s = t * c, k, x, y;
+        for (k = 0; k < n; k++) { x = A[k][p]; y = A[k][q]; A[k][p] = c * x - s * y; A[k][q] = s * x + c * y; }
+        for (k = 0; k < n; k++) { x = A[p][k]; y = A[q][k]; A[p][k] = c * x - s * y; A[q][k] = s * x + c * y; }
+        for (k = 0; k < n; k++) { x = U[k][p]; y = U[k][q]; U[k][p] = c * x - s * y; U[k][q] = s * x + c * y; }
+      }
+    }
+    var idx = A.map(function (_, i) { return i; }).sort(function (a, b) { return A[b][b] - A[a][a]; });
+    return idx.map(function (i) {
+      var v = U.map(function (row) { return row[i]; }), m = 0;
+      v.forEach(function (x) { if (Math.abs(x) > Math.abs(m)) m = x; });
+      if (m < 0) v = v.map(function (x) { return -x; });   // 부호를 하나로 정한다
+      return { val: A[i][i], vec: v };
+    });
+  }
+  var PCS = jacobi(V.matmul(V.T(E), E));
+  window.EMB = { words: WORDS, E: E, pcs: PCS };
+
+  var VIEWS = [{ id: "12", a: 0, b: 1, label: "주성분 1 · 2" }, { id: "13", a: 0, b: 2, label: "주성분 1 · 3" }, { id: "23", a: 1, b: 2, label: "주성분 2 · 3" }];
+  var view = VIEWS[0], measure = "cos";
+  function proj(v, vw) { vw = vw || view; return [V.dot(v, PCS[vw.a].vec), V.dot(v, PCS[vw.b].vec)]; }
+  function lift(x, y) { var u = PCS[view.a].vec, w = PCS[view.b].vec; return u.map(function (_, k) { return x * u[k] + y * w[k]; }); }
+
+  // q: 단어 하나이거나, 평면 위에서 끈 벡터
+  var qWord = "왕", qVec = E[WORDS.indexOf("왕")].slice();
+
+  var top = document.getElementById("top");
+  V.seg(top, VIEWS.map(function (v) { return { id: v.id, label: v.label }; }), "12", function (id) {
+    view = VIEWS.filter(function (v) { return v.id === id; })[0];
+    if (!qWord) { var p = proj(qVec); qVec = lift(p[0], p[1]); }
+    layoutPlot(); update(); drawArith(arStep);
+  });
+  V.seg(top, [{ id: "cos", label: "코사인 (방향만)" }, { id: "dot", label: "내적 (방향 + 길이)" }], "cos", function (m) { measure = m; update(); });
+
+  // ---- 1. 평면 그림 ----
+  var PW = 560, PH = 500, CX = 280, CY = 260, SC = 100;
+  var pv = V.svg(document.getElementById("plot"), PW, PH, "단어 열다섯 개를 주성분 두 방향에 비춘 점들과, 끌어서 움직이는 질문 벡터 q, q와 각 단어의 유사도를 굵기로 나타낸 선");
+  var arrowQ = V.arrowDef(pv, "embQ", "var(--q)");
+  var gAx = V.s("g", null, pv), gL = V.s("g", null, pv), gW = V.s("g", null, pv), gQ = V.s("g", null, pv);
+  var axLab = [V.s("text", { class: "ts", "text-anchor": "end" }, gAx), V.s("text", { class: "ts" }, gAx)];
+  var simLines = [], dots = [], labs = [];
+  for (var i = 0; i < NW; i++) {
+    simLines.push(V.s("line", { "stroke-linecap": "round" }, gL));
+    var gw = V.s("g", { class: "wd" }, gW);
+    dots.push(V.s("circle", { r: 5.5, fill: "var(--accent)", stroke: "var(--bg)", "stroke-width": 1.5 }, gw));
+    labs.push(V.s("text", { class: "t", "font-size": 13 }, gw));
+    (function (i) { gw.addEventListener("pointerdown", function (e) { e.stopPropagation(); qWord = WORDS[i]; qVec = E[i].slice(); update(); }); })(i);
+  }
+  var qLine = V.s("line", { stroke: "var(--q)", "stroke-width": 3, "marker-end": arrowQ }, gQ);
+  var qDot = V.s("circle", { r: 9, fill: "var(--q)", stroke: "var(--bg)", "stroke-width": 2, opacity: 0.9 }, gQ);
+  var qLab = V.s("text", { class: "tb tq", "text-anchor": "middle", text: "q" }, gQ);
+  var qRead = V.s("text", { class: "tb tq", x: 16, y: 26 }, gQ);
+  var qRead2 = V.s("text", { class: "ts mono", x: 16, y: 46 }, gQ);
+  // 원점(0)과 모든 점이 들어가게 맞춘다
+  function fit(pts, x0, y0, x1, y1) {
+    var a = 0, b = 0, c = 0, d = 0;
+    pts.forEach(function (p) { a = Math.min(a, p[0]); b = Math.max(b, p[0]); c = Math.min(c, p[1]); d = Math.max(d, p[1]); });
+    var sc = Math.min((x1 - x0) / (b - a || 1), (y1 - y0) / (d - c || 1));
+    return { sc: sc, cx: x0 + ((x1 - x0) - (b - a) * sc) / 2 - a * sc, cy: y0 + ((y1 - y0) - (d - c) * sc) / 2 + d * sc };
+  }
+  // 이름표 자리: 점과 다른 이름표를 피해서
+  function placeLabels(items, X0, Y0, X1, Y1, fs, extra) {
+    var boxes = items.map(function (it) { return [it.x - 7, it.y - 7, 14, 14]; }).concat(extra || []), out = [];
+    items.forEach(function (it) {
+      var w = it.t.length * fs * 1.02, h = fs + 2, x = it.x, y = it.y;
+      var cands = [[8, -h / 2], [-8 - w, -h / 2], [-w / 2, -h - 7], [-w / 2, 7], [8, -h - 4], [8, 4], [-8 - w, -h - 4], [-8 - w, 4], [-w / 2, -2 * h - 7], [-w / 2, h + 7], [14, h + 6], [-14 - w, h + 6]];
+      var best = null;
+      for (var c = 0; c < cands.length && !best; c++) {
+        var bx = x + cands[c][0], by = y + cands[c][1], ok = bx > X0 && bx + w < X1 && by > Y0 && by + h < Y1;
+        for (var k = 0; ok && k < boxes.length; k++) {
+          var o = boxes[k]; if (bx < o[0] + o[2] && bx + w > o[0] && by < o[1] + o[3] && by + h > o[1]) ok = false;
+        }
+        if (ok) best = [bx, by];
+      }
+      if (!best) best = [x + 8, y - h / 2];
+      boxes.push([best[0], best[1], w, h]);
+      out.push([best[0], best[1] + h - 3]);
+    });
+    return out;
+  }
+  function layoutPlot() {
+    V.clear(gAx);
+    var F = fit(E.map(function (v) { return proj(v); }), 50, 70, PW - 70, PH - 30);
+    SC = F.sc; CX = F.cx; CY = F.cy;
+    V.s("line", { class: "ln-g", x1: 14, y1: CY, x2: PW - 14, y2: CY }, gAx);
+    V.s("line", { class: "ln-g", x1: CX, y1: 60, x2: CX, y2: PH - 10 }, gAx);
+    var ax1 = V.s("text", { class: "ts", x: PW - 14, y: CY - 8, "text-anchor": "end", text: "주성분 " + (view.a + 1) + " →" }, gAx);
+    var ax2 = V.s("text", { class: "ts", x: CX + 8, y: 72, text: "↑ 주성분 " + (view.b + 1) }, gAx);
+    var extra = [[PW - 90, CY - 22, 80, 18], [CX + 4, 58, 80, 18], [CX - 18, CY + 2, 14, 16]];
+    V.s("circle", { cx: CX, cy: CY, r: 3, fill: "var(--muted)" }, gAx);
+    V.s("text", { class: "ts", x: CX - 6, y: CY + 16, "text-anchor": "end", text: "0" }, gAx);
+    var items = E.map(function (v, i) { var p = proj(v); return { x: CX + p[0] * SC, y: CY - p[1] * SC, t: WORDS[i] }; });
+    var pos = placeLabels(items, 2, 56, PW - 2, PH - 2, 13, extra);
+    items.forEach(function (it, i) {
+      dots[i].setAttribute("cx", it.x); dots[i].setAttribute("cy", it.y);
+      labs[i].setAttribute("x", pos[i][0]); labs[i].setAttribute("y", pos[i][1]); labs[i].textContent = WORDS[i];
+    });
+  }
+
+  function sims() {
+    return E.map(function (v) { var d = V.dot(qVec, v); return measure === "dot" ? d : d / (norm(qVec) * norm(v) || 1); });
+  }
+  function update() {
+    var p = proj(qVec), qx = CX + p[0] * SC, qy = CY - p[1] * SC;
+    var len = Math.hypot(qx - CX, qy - CY);
+    var sh = len > 12 ? (len - 9) / len : 1;
+    qLine.setAttribute("x1", CX); qLine.setAttribute("y1", CY);
+    qLine.setAttribute("x2", CX + (qx - CX) * sh); qLine.setAttribute("y2", CY + (qy - CY) * sh);
+    qDot.setAttribute("cx", qx); qDot.setAttribute("cy", qy);
+    qDot.setAttribute("opacity", qWord ? 0 : 0.9);
+    var nx = -(qy - CY) / (len || 1), ny = (qx - CX) / (len || 1);
+    qLab.setAttribute("x", (CX + qx) / 2 + nx * 14); qLab.setAttribute("y", (CY + qy) / 2 + ny * 14 + 5);
+    qLab.setAttribute("opacity", len > 40 && !qWord ? 1 : 0);
+    qRead.textContent = qWord ? "q = 「" + qWord + "」의 7칸 벡터" : "q = 평면 위에서 끈 벡터";
+    qRead2.textContent = "|q| = " + V.fmt(norm(qVec), 2);
+    var s = sims(), m = 0;
+    s.forEach(function (x) { m = Math.max(m, Math.abs(x)); });
+    var full = measure === "cos" ? 1 : m || 1;
+    for (var i = 0; i < NW; i++) {
+      var pp = proj(E[i]), wx = CX + pp[0] * SC, wy = CY - pp[1] * SC, a = s[i] / full;
+      var L = simLines[i];
+      L.setAttribute("x1", qx); L.setAttribute("y1", qy); L.setAttribute("x2", wx); L.setAttribute("y2", wy);
+      L.setAttribute("stroke", a >= 0 ? "var(--accent)" : "var(--neg)");
+      L.setAttribute("stroke-width", 0.4 + 7 * Math.abs(a));
+      L.setAttribute("stroke-dasharray", a >= 0 ? null : "4 4");
+      L.setAttribute("opacity", 0.15 + 0.6 * Math.abs(a));
+      dots[i].setAttribute("fill", V.signed(a, 1));
+      dots[i].setAttribute("stroke", WORDS[i] === qWord ? "var(--q)" : "var(--accent)");
+      dots[i].setAttribute("stroke-width", WORDS[i] === qWord ? 3 : 1.2);
+    }
+    drawRank(s, full);
+    say(s);
+  }
+  function toPlane(ev) {
+    var rc = pv.getBoundingClientRect();
+    return [((ev.clientX - rc.left) * PW / rc.width - CX) / SC, (CY - (ev.clientY - rc.top) * PH / rc.height) / SC];
+  }
+  var dragging = false;
+  pv.addEventListener("pointerdown", function (e) { dragging = true; pv.setPointerCapture(e.pointerId); var p = toPlane(e); qWord = null; qVec = lift(p[0], p[1]); update(); });
+  pv.addEventListener("pointermove", function (e) { if (!dragging) return; var p = toPlane(e); qWord = null; qVec = lift(p[0], p[1]); update(); });
+  pv.addEventListener("pointerup", function () { dragging = false; });
+
+  // ---- 2. 순위 막대 ----
+  var RW = 560, RH = 500, ROWH = 29, ZX = 330;
+  var rv = V.svg(document.getElementById("rank"), RW, RH, "질문 벡터 q와 단어 열다섯 개의 유사도를 큰 순서로 늘어놓은 막대");
+  var rTitle = V.s("text", { class: "tb", x: 16, y: 26 }, rv);
+  var rSub = V.s("text", { class: "ts", x: 16, y: 46 }, rv);
+  V.s("line", { class: "ln", x1: ZX, y1: 58, x2: ZX, y2: 58 + NW * ROWH }, rv);
+  var rows = WORDS.map(function (w, i) {
+    var g = V.s("g", null, rv);
+    var rank = V.s("text", { class: "ts mono", x: 30, "text-anchor": "end" }, g);
+    var name = V.s("text", { class: "t", x: 42, text: w }, g);
+    var bar = V.s("rect", { height: 18, rx: 3 }, g);
+    var val = V.s("text", { class: "t mono", "font-size": 12.5 }, g);
+    return { g: g, rank: rank, name: name, bar: bar, val: val, y: 72 + i * ROWH, ty: 72 + i * ROWH };
+  });
+  function placeRow(R) {
+    R.rank.setAttribute("y", R.y + 5); R.name.setAttribute("y", R.y + 5);
+    R.bar.setAttribute("y", R.y - 9); R.val.setAttribute("y", R.y + 5);
+  }
+  rows.forEach(placeRow);
+  // 순위가 바뀌면 줄이 새 자리로 미끄러진다
+  V.loop(function (dt) {
+    var k = 1 - Math.exp(-dt * 12);
+    rows.forEach(function (R) { if (Math.abs(R.ty - R.y) > 0.05) { R.y += (R.ty - R.y) * k; placeRow(R); } });
+  });
+  function drawRank(s, full) {
+    rTitle.textContent = (measure === "cos" ? "코사인" : "내적") + " 순위";
+    rSub.textContent = measure === "cos" ? "q·w ÷ (|q| |w|) · 7차원 전체로 계산" : "q·w = 칸끼리 곱해 더하기 · 7차원 전체로 계산";
+    var order = s.map(function (_, i) { return i; }).sort(function (a, b) { return s[b] - s[a]; });
+    var half = 170;
+    order.forEach(function (i, k) {
+      var R = rows[i], a = s[i] / full, w = Math.abs(a) * half;
+      R.ty = 72 + k * ROWH;
+      R.rank.textContent = k + 1;
+      R.name.setAttribute("font-weight", WORDS[i] === qWord ? 700 : 400);
+      R.bar.setAttribute("x", a >= 0 ? ZX : ZX - w); R.bar.setAttribute("width", Math.max(0.5, w));
+      R.bar.setAttribute("fill", V.signed(a, 1));
+      R.bar.setAttribute("stroke", a >= 0 ? "var(--accent)" : "var(--neg)"); R.bar.setAttribute("stroke-width", 0.8);
+      R.val.textContent = V.fmt(s[i], 2);
+      R.val.setAttribute("x", a >= 0 ? ZX + w + 6 : ZX + 6);
+      R.val.setAttribute("text-anchor", "start");
+      if (a < 0) { R.val.setAttribute("x", ZX - w - 6); R.val.setAttribute("text-anchor", "end"); }
+    });
+  }
+
+  // ---- 3. 벡터 산수: a − b + c ----
+  var PRESET = [["왕", "남자", "여자"], ["왕자", "소년", "소녀"], ["강아지", "개", "고양이"], ["소년", "남자", "여자"]];
+  var pre = PRESET[0], arStep = 3;
+  var AW = 1140, AH = 330;
+  var av = V.svg(document.getElementById("arith"), AW, AH, "벡터 산수: 단어 a에서 b를 빼고 c를 더한 화살표가 평면에서 이어지고, 7칸 벡터의 값과 가장 가까운 단어가 오른쪽에 나온다");
+  var arA = V.arrowDef(av, "embA", "var(--accent)"), arK = V.arrowDef(av, "embK", "var(--neg)"), arV = V.arrowDef(av, "embV", "var(--v)");
+  var ag = V.s("g", null, av);
+  function ix(w) { return WORDS.indexOf(w); }
+  function addv(a, b, s) { return a.map(function (x, k) { return x + s * b[k]; }); }
+  function result() {
+    var a = E[ix(pre[0])], b = E[ix(pre[1])], c = E[ix(pre[2])];
+    var rr = addv(addv(a, b, -1), c, 1);
+    var cs = E.map(function (v, i) { return { i: i, c: V.dot(rr, v) / (norm(rr) * norm(v)) }; })
+      .filter(function (o) { return pre.indexOf(WORDS[o.i]) < 0; }).sort(function (x, y) { return y.c - x.c; });
+    return { a: a, b: b, c: c, r: rr, best: cs };
+  }
+  function drawArith(step, part) {
+    V.clear(ag);
+    if (part == null) part = 1;
+    var R = result();
+    // 작은 평면 (같은 보기)
+    var F = fit(E.map(function (v) { return proj(v); }).concat([proj(R.r)]), 40, 50, 400, AH - 30), ox = F.cx, oy = F.cy, sc = F.sc;
+    function P(v) { var p = proj(v); return [ox + p[0] * sc, oy - p[1] * sc]; }
+    V.s("text", { class: "tb", x: 16, y: 26, text: pre[0] + " − " + pre[1] + " + " + pre[2] + " = ?" }, ag);
+    V.s("line", { class: "ln-g", x1: 20, y1: oy, x2: 420, y2: oy }, ag);
+    V.s("line", { class: "ln-g", x1: ox, y1: 40, x2: ox, y2: AH - 24 }, ag);
+    var hotI = [];
+    E.forEach(function (v, i) {
+      var p = P(v), hot = pre.indexOf(WORDS[i]) >= 0 || (step >= 3 && i === R.best[0].i);
+      V.s("circle", { cx: p[0], cy: p[1], r: hot ? 5 : 3, fill: hot ? "var(--accent)" : "var(--muted)", opacity: hot ? 1 : 0.45 }, ag);
+      if (hot) hotI.push(i);
+    });
+    var its = E.map(function (v, i) { var p = P(v); return { x: p[0], y: p[1], t: hotI.indexOf(i) >= 0 ? WORDS[i] : "" }; });
+    var lp = placeLabels(its.filter(function (o) { return o.t; }).concat([]), 16, 34, 430, AH - 22, 12);
+    its.filter(function (o) { return o.t; }).forEach(function (o, k) { V.s("text", { class: "t", "font-size": 12, x: lp[k][0], y: lp[k][1], text: o.t }, ag); });
+    var p0 = [ox, oy], pa = P(R.a), pab = P(addv(R.a, R.b, -1)), pr = P(R.r);
+    function arrow(f, t, col, mk, frac) {
+      if (frac <= 0) return;
+      V.s("line", { x1: f[0], y1: f[1], x2: V.lerp(f[0], t[0], frac), y2: V.lerp(f[1], t[1], frac), stroke: col, "stroke-width": 2.6, "marker-end": mk }, ag);
+    }
+    arrow(p0, pa, "var(--accent)", arA, step > 0 ? 1 : (step === 0 ? part : 0));
+    arrow(pa, pab, "var(--neg)", arK, step > 1 ? 1 : (step === 1 ? part : 0));
+    arrow(pab, pr, "var(--v)", arV, step > 2 ? 1 : (step === 2 ? part : 0));
+    if (step >= 3) {
+      V.s("circle", { cx: pr[0], cy: pr[1], r: 8, fill: "none", stroke: "var(--v)", "stroke-width": 2.5 }, ag);
+    }
+    V.s("text", { class: "ts", x: 30, y: AH - 10, text: "평면은 그림자일 뿐 · 계산은 7차원" }, ag);
+
+    // 7칸 벡터 줄
+    var X0 = 590, PX = 66, vm = 1.3;
+    FEAT.forEach(function (f, k) { V.s("text", { class: "ts", x: X0 + k * PX, y: 52, "text-anchor": "middle", text: f }, ag); });
+    var lines = [
+      ["a = " + pre[0], R.a, 0, "var(--accent)"],
+      ["− b = " + pre[1], R.b.map(function (x) { return -x; }), 1, "var(--neg)"],
+      ["+ c = " + pre[2], R.c, 2, "var(--v)"],
+      ["= 결과", R.r, 3, "var(--text)"],
+      ["가장 가까운 「" + WORDS[R.best[0].i] + "」", E[R.best[0].i], 3, "var(--q)"]
+    ];
+    lines.forEach(function (L, n) {
+      var y = 84 + n * 46, on = step >= L[2];
+      V.s("text", { x: X0 - 34, y: y + 5, "text-anchor": "end", "font-size": 13.5, "font-weight": 700, fill: L[3], opacity: on ? 1 : 0.25, text: L[0] }, ag);
+      L[1].forEach(function (v, k) {
+        var tt = V.clamp(Math.abs(v) / vm, 0, 1);
+        V.s("circle", { cx: X0 + k * PX, cy: y, r: 17, fill: on ? V.signed(v, vm) : "none", stroke: "var(--line)", opacity: on ? 1 : 0.4 }, ag);
+        if (on) V.s("text", { class: "mono", x: X0 + k * PX, y: y + 4, "text-anchor": "middle", "font-size": 11, fill: tt > 0.55 ? "#fff" : "var(--text)", text: V.fmt(v, 2) }, ag);
+      });
+      if (n === 3) V.s("line", { class: "ln", x1: X0 - 24, y1: y - 24, x2: X0 + 6 * PX + 24, y2: y - 24 }, ag);
+    });
+    if (step >= 3) {
+      var b3 = R.best.slice(0, 3).map(function (o) { return WORDS[o.i] + " " + V.fmt(o.c, 3); }).join(" · ");
+      V.s("text", { class: "t mono", x: X0 - 34 + 0, y: AH - 10, "font-size": 13, text: "결과와 코사인 (a·b·c 빼고): " + b3 }, ag);
+    }
+  }
+  var actl = document.getElementById("actl"), atok = 0;
+  V.seg(actl, PRESET.map(function (p, k) { return { id: "" + k, label: p[0] + " − " + p[1] + " + " + p[2] }; }), "0", function (k) { pre = PRESET[+k]; runArith(); });
+  V.button(actl, "▶ 한 단계씩 보기", function () { runArith(); }, "primary");
+  async function runArith() {
+    var my = ++atok;
+    for (var s = 0; s < 3; s++) {
+      await V.tween(700, function (e) { if (my === atok) drawArith(s, e); });
+      if (my !== atok) return;
+      await V.sleep(250);
+    }
+    arStep = 3; drawArith(3);
+  }
+
+  function say(s) {
+    var order = s.map(function (_, i) { return i; }).sort(function (a, b) { return s[b] - s[a]; });
+    var first = order.filter(function (i) { return WORDS[i] !== qWord; })[0];
+    var el = document.getElementById("say");
+    var name = qWord ? "「" + qWord + "」" : "끌어 놓은 q";
+    el.innerHTML = "<b>" + name + "에 가장 가까운 단어: 「" + WORDS[first] + "」 (" + (measure === "cos" ? "코사인 " : "내적 ") + V.fmt(s[first], 2) + ").</b> " +
+      (measure === "cos" ? "길이로 나눠 방향만 잰다. 직각이면 0." : "길이가 긴 벡터일수록 점수가 커진다.");
+  }
+
+  V.onTheme.push(function () { update(); drawArith(arStep); });
+  layoutPlot(); update(); drawArith(3);
+})();
+</script>
+</body>
+</html>

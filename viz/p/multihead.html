@@ -1,0 +1,253 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Multi-Head · 움직이는 AI</title>
+<link rel="stylesheet" href="../style.css">
+</head>
+<body data-page="multihead">
+<main class="stage">
+<h1>Multi-Head = 같은 문장을 여러 눈으로 따로 보기</h1>
+<p class="sub">d_model 12칸을 헤드 h개가 d_head = 12 ÷ h칸씩 나눠 맡는다. 헤드마다 W_Q·W_K가 달라서 보는 곳이 다르다.</p>
+<div class="ctrl" id="ctl"></div>
+<div class="viz scroll" id="heads" style="margin-top:12px"></div>
+<div class="row" style="margin-top:14px">
+  <div class="viz scroll" id="arcs"></div>
+  <div class="viz scroll" id="cat"></div>
+</div>
+<p class="say" id="say"></p>
+<p class="more">이어 보기 · <a href="../../lab/decks/s20.html">덱 20 attention</a> · <a href="../../lab/decks/s21.html">덱 21 Transformer</a></p>
+</main>
+<script src="../js/pages.js"></script>
+<script src="../js/viz.js"></script>
+<script>
+(function () {
+  // ================= 1. 손으로 만든 작은 모형 =================
+  // 토큰 벡터 12칸 = 단어 칸 5(원핫) + 위치 칸 4(빠른·느린 바늘 cos·sin) + 늘 1인 칸 1 + 잡음 2 (시드 20)
+  var TOK = ["<시작>", "개", "가", "개", "를", "쫓는다"], WID = [0, 1, 2, 1, 3, 4], T = TOK.length, D = 12;
+  var TH1 = Math.PI / 4, TH2 = Math.PI / 12, ALPHA = 6;
+  var rg = V.rng(20);
+  var X = TOK.map(function (_, p) {
+    var x = [0, 0, 0, 0, 0]; x[WID[p]] = 1;
+    return x.concat([Math.cos(TH1 * p), Math.sin(TH1 * p), Math.cos(TH2 * p), Math.sin(TH2 * p), 1, V.randn(rg) * 0.3, V.randn(rg) * 0.3]);
+  });
+  function mat(n, m, s) { var A = []; for (var i = 0; i < n; i++) { var r = []; for (var j = 0; j < m; j++) r.push(V.randn(rg) * s); A.push(r); } return A; }
+  var WV = mat(D, D, 1 / Math.sqrt(D)), WO = mat(D, D, 1 / Math.sqrt(D));
+  function e(i) { var v = new Array(D).fill(0); v[i] = 1; return v; }
+  function lin(a, ca, b, cb) { var v = new Array(D).fill(0); v[a] += ca; v[b] += cb; return v; }
+  // 점수 = Σ (x_i·q)(x_j·k). 위치 바늘을 sh칸 돌려 맞추면 cos(θ(p_i + sh − p_j)) → p_j = p_i + sh에서 가장 크다
+  function rot(a, b, th, sh) { var c = Math.cos(th * sh), s = Math.sin(th * sh); return [[lin(a, c, b, -s), e(a)], [lin(a, s, b, c), e(b)]]; }
+  var PAT = [
+    { name: "이전 토큰", comps: rot(5, 6, TH1, -1).concat(rot(7, 8, TH2, -1)) },
+    { name: "같은 단어", comps: [1, 2, 3, 4, 0].map(function (w) { return [e(w), e(w)]; }) },
+    { name: "첫 토큰", comps: [[e(9), e(0)]] },
+    { name: "다음 토큰", comps: rot(5, 6, TH1, 1).concat(rot(7, 8, TH2, 1)) },
+    { name: "자기 자신", comps: [5, 6, 7, 8].map(function (k) { return [e(k), e(k)]; }) },
+    { name: "고르게", comps: [] }
+  ];
+  var HCOL = ["var(--accent)", "var(--q)", "var(--k)", "var(--v)", "var(--neg)", "var(--muted)"];
+  var HS = [1, 2, 3, 4, 6];
+
+  function build(h) {
+    var dh = D / h, WQ = mat0(), WK = mat0(), heads = [];
+    function mat0() { return X[0].map(function () { return new Array(D).fill(0); }); }
+    for (var i = 0; i < h; i++) {
+      var comps = PAT[i].comps.slice(0, dh);
+      comps.forEach(function (c, k) {   // √d_head로 나누는 만큼 미리 키워 두어 헤드 수와 상관없이 같은 세기
+        for (var a = 0; a < D; a++) { WQ[a][i * dh + k] = ALPHA * Math.sqrt(dh) * c[0][a]; WK[a][i * dh + k] = c[1][a]; }
+      });
+      heads.push({ pat: PAT[i], used: comps.length, need: PAT[i].comps.length });
+    }
+    var Q = V.matmul(X, WQ), K = V.matmul(X, WK), Vv = V.matmul(X, WV), cat = X.map(function () { return []; });
+    heads.forEach(function (H, i) {
+      var sl = function (M) { return M.map(function (r) { return r.slice(i * dh, (i + 1) * dh); }); };
+      var q = sl(Q), k = sl(K), v = sl(Vv);
+      H.A = q.map(function (qi) { return V.softmax(k.map(function (kj) { return V.dot(qi, kj) / Math.sqrt(dh); })); });
+      H.O = V.matmul(H.A, v);
+      H.O.forEach(function (r, t) { cat[t] = cat[t].concat(r); });
+    });
+    return { h: h, dh: dh, heads: heads, WQ: WQ, WK: WK, cat: cat, out: V.matmul(cat, WO) };
+  }
+  window.MH = { X: X, WV: WV, WO: WO, build: build };   // 검증용
+
+  // ================= 2. 상태와 손잡이 =================
+  var h = 3, M = build(h), phase = 8, qSel = 3, tok = 0, playing = false;
+  var ctl = document.getElementById("ctl");
+  var bPlay = V.button(ctl, "▶ 재생", function () { playing ? stop() : play(); }, "primary");
+  V.button(ctl, "⏭ 한 단계", function () { stop(); if (phase >= 8) setPhase(0, false); setPhase(phase + 1, true); });
+  V.button(ctl, "↺ 처음으로", function () { stop(); setPhase(0, false); });
+  V.slider(ctl, { label: "헤드 수 h", min: 0, max: HS.length - 1, step: 1, value: HS.indexOf(h), fmt: function (v) { return HS[v] + "개"; },
+    onInput: function (v) { stop(); h = HS[v]; M = build(h); drawAll(); setPhase(8, false); } });
+
+  // ================= 3. 헤드마다 attention 격자 =================
+  var GW = 1140, GH = 390;
+  var gs = V.svg(document.getElementById("heads"), GW, GH, "헤드마다 6×6 attention 비율 격자를 나란히 놓았다. 헤드마다 이전 토큰, 같은 단어, 첫 토큰처럼 서로 다른 무늬가 나온다");
+  var gG = V.s("g", null, gs), cells = [], rowHi = [];
+  function drawGrids() {
+    V.clear(gG); cells = []; rowHi = [];
+    var c = Math.min(44, Math.floor((GW - 70 - 20 - (h - 1) * 28) / (T * h))), top = 92;
+    M.heads.forEach(function (H, i) {
+      var x0 = 70 + i * (T * c + 28), col = HCOL[i];
+      V.s("rect", { x: x0, y: 12, width: 5, height: 28, rx: 2, fill: col }, gG);
+      V.s("text", { class: "tb", x: x0 + 12, y: 26, "font-size": c < 30 ? 13 : 15, text: "헤드 " + (i + 1) + " · " + H.pat.name }, gG);
+      V.s("text", { class: "ts", x: x0 + 12, y: 42, text: "d_head " + M.dh + " · 쓴 칸 " + H.used + "/" + M.dh + (H.used < H.need ? " (모자람)" : "") }, gG);
+      TOK.forEach(function (t, j) {
+        var stag = c < 40 && j % 2 ? 0 : (c < 40 ? -14 : 0);
+        V.s("text", { class: "ts", x: x0 + j * c + c / 2, y: top - 8 + stag, "text-anchor": "middle", "font-size": 11, text: t }, gG);
+      });
+      var hr = V.s("rect", { x: x0 - 3, y: 0, width: T * c + 6, height: c, rx: 6, fill: "var(--accent-soft)", opacity: 0 }, gG);
+      rowHi.push(hr);
+      var row = [];
+      H.A.forEach(function (r, a) {
+        var cr = [];
+        r.forEach(function (w, b) {
+          V.s("rect", { x: x0 + b * c + 1, y: top + a * c + 1, width: c - 2, height: c - 2, rx: 4, fill: "none", stroke: "var(--grid)" }, gG);
+          var ci = V.s("circle", { cx: x0 + b * c + c / 2, cy: top + a * c + c / 2, r: 0, fill: V.ramp(w) }, gG);
+          V.s("title", { text: TOK[a] + " → " + TOK[b] + ": " + V.fmt(w, 3) }, ci);
+          cr.push({ el: ci, r: 2 + Math.sqrt(w) * (c / 2 - 3) });
+        });
+        row.push(cr);
+        var hit = V.s("rect", { x: x0, y: top + a * c, width: T * c, height: c, fill: "transparent", style: "cursor:pointer" }, gG);
+        hit.addEventListener("mouseenter", function () { setQ(a); });
+        hit.addEventListener("click", function () { setQ(a); });
+      });
+      cells.push(row);
+    });
+    TOK.forEach(function (t, a) { V.s("text", { class: "ts", x: 62, y: top + a * c + c / 2 + 4, "text-anchor": "end", text: t }, gG); });
+    V.s("text", { class: "ts", x: 70, y: top + T * c + 24, text: "줄 = 묻는 토큰(Q) · 칸 = 보는 토큰(K) · 원 크기·색 = 비율 (줄마다 합 1)" }, gG);
+    drawGrids.c = c; drawGrids.top = top;
+    gs.setAttribute("viewBox", "0 0 " + GW + " " + (top + T * c + 40));
+  }
+
+  // ================= 4. 토큰 하나가 헤드마다 어디를 보나 =================
+  var AW = 560, AH = 340, TY = 306;
+  var as = V.svg(document.getElementById("arcs"), AW, AH, "고른 토큰에서 다른 토큰으로 헤드마다 다른 색의 호를 그렸다. 호의 굵기는 attention 비율");
+  var gA = V.s("g", null, as);
+  function tx(i) { return 55 + i * 90; }
+  function drawArcs() {
+    V.clear(gA);
+    M.heads.forEach(function (H, i) {
+      var lx = 16 + (i % 3) * 180, ly = 20 + Math.floor(i / 3) * 20;
+      V.s("rect", { x: lx, y: ly - 9, width: 14, height: 4, rx: 2, fill: HCOL[i] }, gA);
+      V.s("text", { class: "ts", x: lx + 20, y: ly - 3, text: "헤드 " + (i + 1) + " " + H.pat.name }, gA);
+    });
+    var shown = phase > qSel;
+    M.heads.forEach(function (H, i) {
+      if (!shown) return;
+      H.A[qSel].forEach(function (w, j) {
+        if (w < 0.03) return;
+        var x1 = tx(qSel), x2 = tx(j), sw = 1 + 11 * w, op = 0.25 + 0.75 * w;
+        if (j === qSel) {
+          var rr = 9 + 5 * i;
+          V.s("circle", { cx: x1, cy: TY - 22 - rr, r: rr, fill: "none", stroke: HCOL[i], "stroke-width": sw, opacity: op }, gA);
+        } else {
+          var hh = 26 + 16 * i + 0.3 * Math.abs(x2 - x1);
+          V.s("path", { d: "M" + x1 + " " + (TY - 20) + " C" + x1 + " " + (TY - 20 - hh) + " " + x2 + " " + (TY - 20 - hh) + " " + x2 + " " + (TY - 20), fill: "none", stroke: HCOL[i], "stroke-width": sw, opacity: op, "stroke-linecap": "round" }, gA);
+        }
+      });
+    });
+    TOK.forEach(function (t, j) {
+      var on = j === qSel, g = V.s("g", { style: "cursor:pointer" }, gA);
+      V.s("rect", { x: tx(j) - 34, y: TY - 16, width: 68, height: 28, rx: 8, fill: on ? "var(--accent)" : "var(--bg)", stroke: on ? "var(--accent)" : "var(--line)" }, g);
+      V.s("text", { x: tx(j), y: TY + 3, "text-anchor": "middle", "font-size": 13, fill: on ? "#fff" : "var(--text)", text: t }, g);
+      g.addEventListener("click", function () { setQ(j); });
+    });
+    if (!shown) V.s("text", { class: "ts", x: AW / 2, y: 150, "text-anchor": "middle", text: "이 토큰의 줄은 아직 계산 전" }, gA);
+  }
+  function setQ(a) {
+    qSel = a;
+    var c = drawGrids.c, top = drawGrids.top;
+    rowHi.forEach(function (r) { r.setAttribute("y", top + a * c); r.setAttribute("opacity", 1); });
+    drawArcs(); say();
+  }
+
+  // ================= 5. 이어 붙이기 → × W_O =================
+  var CW = 600, CH = 360, CC = 18, CX = 66, CY = 74;
+  var cs = V.svg(document.getElementById("cat"), CW, CH, "헤드마다 나온 6×d_head 조각을 옆으로 이어 붙여 6×12를 만들고 W_O를 곱해 6×12 출력을 만든다");
+  var gC = V.s("g", null, cs), strips = [], outG;
+  function drawCat() {
+    V.clear(gC); strips = [];
+    V.s("text", { class: "tb", x: 16, y: 24, text: "헤드 출력 이어 붙이기 → × W_O" }, gC);
+    TOK.forEach(function (t, a) { V.s("text", { class: "ts", x: CX - 8, y: CY + a * CC + CC / 2 + 4, "text-anchor": "end", "font-size": 11, text: t }, gC); });
+    var m = 0; M.cat.forEach(function (r) { r.forEach(function (v) { m = Math.max(m, Math.abs(v)); }); });
+    M.heads.forEach(function (H, i) {
+      var g = V.s("g", null, gC), rows = [], els = [];   // 움직일 때 x를 직접 바꾼다(dx = 조각 안 위치)
+      els.push([V.s("rect", { y: CY - 10, width: M.dh * CC - 1, height: 5, rx: 2, fill: HCOL[i] }, g), 0]);
+      H.O.forEach(function (r, a) {
+        var rg2 = V.s("g", { opacity: 0 }, g);
+        r.forEach(function (v, k) { var c = V.s("rect", { y: CY + a * CC, width: CC - 1, height: CC - 1, rx: 2, fill: V.signed(v, m) }, rg2); V.s("title", { text: V.fmt(v, 3) }, c); els.push([c, k * CC]); });
+        rows.push(rg2);
+      });
+      els.push([V.s("text", { class: "ts", y: CY + T * CC + 14, "text-anchor": "middle", "font-size": 11, text: String(i + 1) }, g), M.dh * CC / 2]);
+      strips.push({ g: g, rows: rows, els: els, sep: CX + i * (M.dh * CC + 10), join: CX + i * M.dh * CC });
+    });
+    V.s("text", { class: "ts", x: CX, y: CY + T * CC + 32, text: "헤드 번호 · 이어 붙인 모양 6 × " + D }, gC);
+    outG = V.s("g", { opacity: 0 }, gC);
+    var ox = 378;
+    V.s("text", { class: "t", x: 354, y: CY + T * CC / 2 - 8, "text-anchor": "middle", "font-size": 12.5, text: "× W_O" }, outG);
+    V.s("text", { class: "ts", x: 354, y: CY + T * CC / 2 + 22, "text-anchor": "middle", "font-size": 11, text: "12×12" }, outG);
+    V.s("path", { d: "M336 " + (CY + T * CC / 2) + "h36", class: "ln", "marker-end": ARR }, outG);
+    var mo = 0; M.out.forEach(function (r) { r.forEach(function (v) { mo = Math.max(mo, Math.abs(v)); }); });
+    M.out.forEach(function (r, a) { r.forEach(function (v, k) { var c = V.s("rect", { x: ox + k * CC, y: CY + a * CC, width: CC - 1, height: CC - 1, rx: 2, fill: V.signed(v, mo) }, outG); V.s("title", { text: V.fmt(v, 3) }, c); }); });
+    V.s("text", { class: "ts", x: ox, y: CY - 10, text: "출력 6 × 12" }, outG);
+    // 칸 나누기 식
+    var y = 262;
+    [["12", 70, "d_model"], ["=", 130], [String(h), 185, "헤드 수 h"], ["×", 245], [String(M.dh), 300, "d_head"]].forEach(function (p) {
+      V.s("text", { x: p[1], y: y, "text-anchor": "middle", "font-size": 34, "font-weight": 800, fill: p[2] ? "var(--accent)" : "var(--muted)", text: p[0] }, gC);
+      if (p[2]) V.s("text", { class: "ts", x: p[1], y: y + 22, "text-anchor": "middle", text: p[2] }, gC);
+    });
+    V.s("text", { class: "t", x: 16, y: 322, "font-size": 13, text: "W_Q·W_K·W_V·W_O는 늘 12×12 → 매개변수 4 × 144 = 576개, h와 무관" }, gC);
+    V.s("text", { class: "ts", x: 16, y: 344, text: "헤드 하나의 점수 = q·k ÷ √" + M.dh + " (q, k는 d_head = " + M.dh + "칸)" }, gC);
+  }
+  var ARR = V.arrowDef(cs, "mh-arr", "var(--muted)");
+
+  // ================= 6. 단계: 1~6 = 줄마다 계산, 7 = 이어 붙이기, 8 = × W_O =================
+  function placeStrips(e) { strips.forEach(function (s) { var x = V.lerp(s.sep, s.join, e); s.els.forEach(function (p) { p[0].setAttribute("x", (x + p[1]).toFixed(1)); }); }); }
+  function setPhase(p, anim) {
+    var t = ++tok, prev = phase; phase = p;
+    cells.forEach(function (H) { H.forEach(function (row, a) { row.forEach(function (c) {
+      var show = a < p, grow = anim && a === p - 1 && prev < p;
+      if (grow) V.tween(450, function (e) { if (t === tok) c.el.setAttribute("r", (c.r * e).toFixed(2)); });
+      else c.el.setAttribute("r", show ? c.r : 0);
+    }); }); });
+    strips.forEach(function (s) { s.rows.forEach(function (r, a) { r.setAttribute("opacity", a < p ? 1 : 0); }); });
+    if (p >= 7 && anim && prev === 6) { placeStrips(0); V.tween(700, function (e) { if (t === tok) placeStrips(e); }); }
+    else placeStrips(p >= 7 ? 1 : 0);
+    if (p >= 8 && anim && prev === 7) V.tween(500, function (e) { if (t === tok) outG.setAttribute("opacity", e); });
+    else outG.setAttribute("opacity", p >= 8 ? 1 : 0);
+    drawArcs(); say();
+  }
+  function stop() { playing = false; bPlay.textContent = "▶ 재생"; }
+  function play() {
+    if (phase >= 8) setPhase(0, false);
+    playing = true; bPlay.textContent = "⏸ 멈춤";
+    (function next() {
+      if (!playing) return;
+      if (phase >= 8) { stop(); return; }
+      setPhase(phase + 1, true);
+      V.sleep(phase === 7 ? 1000 : 650).then(next);
+    })();
+  }
+  function say() {
+    var t;
+    if (phase === 0) t = "<b>재생</b>을 누르면 헤드 " + h + "개가 같은 줄을 동시에, 따로 계산한다.";
+    else if (phase <= 6) t = "<b>" + phase + "번째 토큰 '" + TOK[phase - 1] + "'의 줄</b>: 헤드마다 다른 곳을 본다. 계산은 헤드끼리 서로 기다리지 않는다.";
+    else if (phase === 7) t = "<b>이어 붙이기</b>: 헤드마다 " + M.dh + "칸씩 나온 조각을 옆으로 붙이면 다시 12칸.";
+    else {
+      var short = M.heads.filter(function (H) { return H.used < H.need; });
+      t = h === 1 ? "<b>헤드 1개 = softmax 1번</b>: 한 토큰이 한 번에 한 가지 관계(" + M.heads[0].pat.name + ")만 본다."
+        : "<b>헤드 " + h + "개 × " + M.dh + "칸 = 12칸.</b> 같은 비용으로 " + h + "가지 관계를 동시에 본다.";
+      if (short.length) t += " 대신 d_head가 " + M.dh + "칸뿐이라 '" + short.map(function (H) { return H.pat.name; }).join("', '") + "' 헤드는 필요한 " + short[0].need + "칸을 다 못 써 무늬가 흐려진다.";
+    }
+    var q = phase > qSel ? " · '" + TOK[qSel] + "'(" + (qSel + 1) + "번) → " + M.heads.map(function (H, i) { var r = H.A[qSel], k = r.indexOf(Math.max.apply(null, r)); return "헤드" + (i + 1) + " " + TOK[k] + "(" + (k + 1) + ") " + V.fmt(r[k], 2); }).join(", ") : "";
+    document.getElementById("say").innerHTML = t + "<span class=\"mono\" style=\"color:var(--muted);font-size:.9rem\">" + q + "</span>";
+  }
+  function drawAll() { drawGrids(); drawCat(); setQ(qSel); }
+  V.onTheme.push(function () { drawAll(); setPhase(phase, false); });
+  drawAll(); setPhase(0, false);
+  setTimeout(play, 500);
+})();
+</script>
+</body>
+</html>

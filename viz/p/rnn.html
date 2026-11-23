@@ -1,0 +1,341 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RNN · 움직이는 AI</title>
+<link rel="stylesheet" href="../style.css">
+</head>
+<body data-page="rnn">
+<main class="stage">
+<h1>RNN = 같은 칸이 기억을 넘겨받으며 한 단어씩</h1>
+<p class="sub">칸은 하나, 가중치 W도 한 벌. 바뀌는 것은 다음 단계로 넘겨지는 숨은 상태 h뿐이다. 기울기는 그 길을 거꾸로 거슬러 간다.</p>
+<div class="ctrl" id="top"></div>
+<div class="viz scroll" id="unroll" style="margin-top:12px"></div>
+<div class="row" style="margin-top:14px">
+  <div class="viz" id="inside"></div>
+  <div class="viz" id="grad"></div>
+</div>
+<div class="ctrl" id="ctl"></div>
+<p class="say" id="say"></p>
+<p class="more">이어 보기 · <a href="../../learn/notes/dl/dl06-1.html">DL06·1 순환 상태와 BPTT</a> · <a href="../../lab/decks/s19.html">덱 19 사라지는 기울기</a></p>
+</main>
+<script src="../js/pages.js"></script>
+<script src="../js/viz.js"></script>
+<script>
+(function () {
+  // ---- 모형: 단어 6개, 입력 3차원, 숨은 상태 4차원, 시드 11 ----
+  // hₜ = tanh(Wₓ·xₜ + Wₕ·hₜ₋₁),  h₀ = 0,  Wₕ = ρ·Q (Q = 회전 행렬: 길이를 바꾸지 않는다)
+  // 손실 L = u·h₆ (u는 길이 1) → ∂L/∂h₆ = u,  ∂L/∂hₜ₋₁ = Wₕᵀ (∂L/∂hₜ ⊙ (1 − hₜ²))
+  var T = 6, H = 4, F = 3;
+  var TOK = ["나는", "어제", "본", "영화가", "정말", "좋았다"];
+  var SUB = ["₀", "₁", "₂", "₃", "₄", "₅", "₆"];
+  var r = V.rng(11), i, j, k;
+  var X = [], Wx = [], A = [], Q = [], u = [];
+  for (i = 0; i < T; i++) { X.push([]); for (j = 0; j < F; j++) X[i].push(V.randn(r) * 0.3); }
+  for (i = 0; i < H; i++) { Wx.push([]); for (j = 0; j < F; j++) Wx[i].push(V.randn(r) * 0.6); }
+  for (i = 0; i < H; i++) { A.push([]); for (j = 0; j < H; j++) A[i].push(V.randn(r)); }
+  for (i = 0; i < H; i++) u.push(V.randn(r));
+  // 그람-슈미트로 열을 서로 직교·길이 1로
+  var cols = [];
+  for (j = 0; j < H; j++) {
+    var v = A.map(function (row) { return row[j]; });
+    for (k = 0; k < j; k++) { var p = V.dot(cols[k], A.map(function (row) { return row[j]; })); v = v.map(function (x, n) { return x - p * cols[k][n]; }); }
+    var nv = Math.sqrt(V.dot(v, v)); cols.push(v.map(function (x) { return x / nv; }));
+  }
+  for (i = 0; i < H; i++) { Q.push([]); for (j = 0; j < H; j++) Q[i].push(cols[j][i]); }
+  var nu = Math.sqrt(V.dot(u, u)); u = u.map(function (x) { return x / nu; });
+  function mv(M, x) { return M.map(function (row) { return V.dot(row, x); }); }
+  function mtv(M, x) { return M[0].map(function (_, c) { var s = 0; for (var q = 0; q < M.length; q++) s += M[q][c] * x[q]; return s; }); }
+  function norm(x) { return Math.sqrt(V.dot(x, x)); }
+
+  var rho = 0.8, S = null;
+  function compute() {
+    var Wh = Q.map(function (row) { return row.map(function (x) { return rho * x; }); });
+    var hs = [[0, 0, 0, 0]], ax = [null], bh = [null], zs = [null];
+    for (var t = 1; t <= T; t++) {
+      var a = mv(Wx, X[t - 1]), b = mv(Wh, hs[t - 1]), z = a.map(function (x, n) { return x + b[n]; });
+      ax.push(a); bh.push(b); zs.push(z); hs.push(z.map(Math.tanh));
+    }
+    var ds = []; ds[T] = u.slice();
+    for (t = T; t >= 2; t--) ds[t - 1] = mtv(Wh, ds[t].map(function (d, n) { return d * (1 - hs[t][n] * hs[t][n]); }));
+    S = { Wh: Wh, hs: hs, ax: ax, bh: bh, zs: zs, ds: ds, gn: ds.map(function (d) { return d ? norm(d) : 0; }) };
+  }
+  compute();
+
+  var cur = 0;      // 계산을 마친 단계 수 (0~6)
+  var bt = T + 1;   // 기울기를 보여 준 가장 앞 단계 (T+1 = 아직 안 보냄)
+  var m = 0;        // 0 = 펼친 그림, 1 = 접은 그림
+  var hov = 0, busy = false, playing = false, pend = 0;
+
+  // ---- 1. 펼친 그림 / 접은 그림 ----
+  var W = 1140, HH = 362, CX = 640;
+  function cx(t) { return 300 + (t - 1) * 140; }
+  function hx(t) { return t === 0 ? cx(1) - 70 : cx(t) + 70; }
+  var sv = V.svg(document.getElementById("unroll"), W, HH, "같은 RNN 칸이 단어 여섯 개를 차례로 처리하며 숨은 상태 h를 다음 칸으로 넘기는 펼친 그림. 왼쪽의 가중치 한 벌이 모든 칸에 연결되어 있고, 기울기가 오른쪽 끝에서 왼쪽으로 거슬러 간다");
+  var AR = V.arrowDef(sv, "rn-ar", "var(--muted)"), ARA = V.arrowDef(sv, "rn-ara", "var(--accent)"), ARK = V.arrowDef(sv, "rn-ark", "var(--k)");
+  var gBus = V.s("g", null, sv), gW = V.s("g", null, sv), gCols = V.s("g", null, sv), gTop = V.s("g", null, sv);
+  // 가중치 한 벌
+  V.s("text", { class: "tb", x: 14, y: 26, text: "가중치 한 벌" }, gW);
+  var whC = [], wxC = [];
+  for (i = 0; i < H; i++) for (j = 0; j < H; j++) whC.push(V.s("circle", { cx: 34 + j * 22, cy: 54 + i * 22, r: 9, class: "cell" }, gW));
+  for (i = 0; i < H; i++) for (j = 0; j < F; j++) wxC.push(V.s("circle", { cx: 34 + j * 22, cy: 176 + i * 22, r: 9, class: "cell" }, gW));
+  V.s("text", { class: "ta", x: 112, y: 64, "font-weight": 700, text: "Wₕ" }, gW);
+  V.s("text", { class: "ts", x: 112, y: 82, text: "4×4" }, gW);
+  V.s("text", { class: "ta", x: 92, y: 210, "font-weight": 700, text: "Wₓ" }, gW);
+  V.s("text", { class: "ts", x: 92, y: 228, text: "4×3" }, gW);
+  V.s("text", { class: "ts", x: 14, y: 270, text: "h 기억 → 기억" }, gW);
+  V.s("text", { class: "ts", x: 14, y: 288, text: "x 입력 → 기억" }, gW);
+  V.s("path", { class: "ln dash", d: "M140 87 H162 M162 87 V231 M140 231 H162" }, gBus);
+  var bus = [];
+  for (var t = 1; t <= T; t++) bus.push(V.s("path", { class: "ln dash" }, gBus));
+
+  var G = [];   // 단계별 묶음
+  for (t = 0; t <= T; t++) {
+    var g = V.s("g", null, gCols), o = { g: g, t: t, h: [], d: [], x: [] };
+    var X0 = hx(t);
+    if (t > 0) {
+      var c = cx(t);
+      o.hit = V.s("rect", { x: c - 48, y: 40, width: 140, height: 280, fill: "transparent" }, g);
+      for (j = 0; j < F; j++) o.x.push(V.s("rect", { x: c - 24 + j * 16, y: 262, width: 16, height: 16, class: "cell" }, g));
+      V.s("line", { class: "ln", x1: c, y1: 258, x2: c, y2: 230, "marker-end": AR }, g);
+      o.tok = V.s("text", { class: "t", x: c, y: 304, "text-anchor": "middle", text: TOK[t - 1] }, g);
+      V.s("text", { class: "ts", x: c + 32, y: 275, text: "x" + SUB[t] }, g);
+      o.box = V.s("rect", { x: c - 38, y: 165, width: 76, height: 60, rx: 10, class: "box" }, g);
+      V.s("text", { class: "t", x: c, y: 200, "text-anchor": "middle", text: "tanh" }, g);
+      V.s("line", { class: "ln", x1: c + 38, y1: 195, x2: X0 - 12, y2: 195, "marker-end": AR }, g);
+      if (t < T) o.next = V.s("line", { class: "ln", x1: X0 + 10, y1: 195, x2: cx(t + 1) - 42, y2: 195, "marker-end": AR }, g);
+      o.dg = V.s("g", null, g);
+      for (i = 0; i < H; i++) o.d.push(V.s("rect", { x: X0 - 8, y: 62 + i * 16, width: 16, height: 16, class: "cell", fill: "var(--k)" }, o.dg));
+      o.dn = V.s("text", { class: "ts mono tk", x: X0, y: 54, "text-anchor": "middle" }, o.dg);
+      if (t > 1) o.back = V.s("line", { stroke: "var(--k)", "stroke-width": 2, class: "dash", x1: X0 - 12, y1: 94, x2: hx(t - 1) + 12, y2: 94, "marker-end": ARK }, o.dg);
+    } else {
+      V.s("line", { class: "ln", x1: X0 + 10, y1: 195, x2: cx(1) - 42, y2: 195, "marker-end": AR }, g);
+    }
+    for (i = 0; i < H; i++) o.h.push(V.s("rect", { x: X0 - 8, y: 163 + i * 16, width: 16, height: 16, class: "cell" }, g));
+    V.s("text", { class: "ts", x: X0, y: 157, "text-anchor": "middle", text: "h" + SUB[t] }, g);
+    G.push(o);
+  }
+  var dLab = V.s("text", { class: "ts tk", x: 345, y: 98, "text-anchor": "end", text: "기울기 ∂L/∂hₜ" }, gCols);
+  var lLab = V.s("text", { class: "ts tk", x: W - 10, y: 30, "text-anchor": "end", text: "L = u·h₆" }, gCols);
+  // 접은 그림의 고리와 입력 줄
+  var gRoll = V.s("g", { opacity: 0 }, gTop);
+  V.s("path", { class: "ln-a", "stroke-width": 2.4, d: loopD(), "marker-end": ARA }, gRoll);
+  V.s("text", { class: "ta", x: CX, y: 86, "text-anchor": "middle", "font-size": 13, text: "hₜ를 같은 칸에 다시 넣는다" }, gRoll);
+  var qT = [];
+  V.s("text", { class: "ts", x: 300, y: 346, "text-anchor": "end", text: "들어오는 순서" }, gRoll);
+  for (i = 0; i < T; i++) qT.push(V.s("text", { class: "t", x: 340 + i * 86, y: 346, "text-anchor": "middle", text: TOK[i] }, gRoll));
+  function loopD() { return "M" + (CX + 80) + " 195 C" + (CX + 150) + " 195 " + (CX + 150) + " 100 " + (CX + 60) + " 100 L" + (CX - 60) + " 100 C" + (CX - 150) + " 100 " + (CX - 150) + " 195 " + (CX - 44) + " 195"; }
+  var gPk = V.s("g", null, gTop);
+
+  function visStep() { return Math.max(1, pend || cur); }
+  function layout() {
+    var vs = visStep();
+    for (var t = 0; t <= T; t++) {
+      var o = G[t], dx = t === 0 ? 0 : (CX - cx(t)) * m;
+      o.g.setAttribute("transform", "translate(" + dx + ",0)");
+      var op = t === 0 ? 1 - m : V.lerp(1, t === vs ? 1 : 0, m);
+      if (hov && m === 0 && t !== hov) op *= 0.3;
+      o.g.setAttribute("opacity", op);
+      o.g.style.pointerEvents = op < 0.5 ? "none" : "";
+      if (o.next) o.next.setAttribute("opacity", 1 - m);
+      if (o.dg) o.dg.setAttribute("opacity", 1 - m);
+      if (t > 0) {
+        var bx = cx(t) + dx;
+        bus[t - 1].setAttribute("d", "M162 142 H" + (bx - 18) + " Q" + bx + " 142 " + bx + " 160");
+        bus[t - 1].setAttribute("opacity", op);
+      }
+    }
+    dLab.setAttribute("opacity", (1 - m) * (bt <= T ? 1 : 0));
+    lLab.setAttribute("opacity", 1 - m);
+    gRoll.setAttribute("opacity", m);
+    qT.forEach(function (e, n) {
+      e.setAttribute("fill", n + 1 === vs && cur > 0 ? "var(--accent)" : n < cur ? "var(--muted)" : "var(--text)");
+      e.setAttribute("font-weight", n + 1 === vs && cur > 0 ? 700 : 400);
+    });
+  }
+  function render() {
+    for (var t = 0; t <= T; t++) {
+      var o = G[t], on = t <= cur;
+      o.h.forEach(function (e, n) {
+        e.setAttribute("fill", on ? V.signed(S.hs[t][n], 1) : "var(--bg)");
+        e.setAttribute("stroke-dasharray", on ? "" : "3 2");
+      });
+      if (t > 0) {
+        o.x.forEach(function (e, n) { e.setAttribute("fill", V.signed(X[t - 1][n], 0.6)); });
+        var shown = t >= bt;
+        o.d.forEach(function (e, n) { e.setAttribute("fill-opacity", shown ? V.clamp(Math.abs(S.ds[t][n]) / 0.6, 0.03, 1) : 0); e.setAttribute("opacity", shown ? 1 : 0.25); });
+        o.dn.textContent = shown ? gfmt(S.gn[t]) : "";
+        if (o.back) o.back.setAttribute("visibility", t >= bt && t - 1 >= bt ? "visible" : "hidden");
+      }
+    }
+    whC.forEach(function (e, n) { e.setAttribute("fill", V.signed(S.Wh[Math.floor(n / H)][n % H], 1.6)); });
+    wxC.forEach(function (e, n) { e.setAttribute("fill", V.signed(Wx[Math.floor(n / F)][n % F], 1.6)); });
+    layout(); drawInside(); drawGrad(); say();
+  }
+  function gfmt(x) { return x >= 0.01 ? V.fmt(x, x >= 10 ? 1 : 3) : x.toExponential(1).replace("-", "−"); }
+
+  G.forEach(function (o) {
+    if (!o.hit) return;
+    o.g.addEventListener("pointerenter", function () { if (busy || m) return; hov = o.t; layout(); drawInside(); });
+    o.g.addEventListener("pointerleave", function () { if (hov === o.t) { hov = 0; layout(); drawInside(); } });
+  });
+
+  // 알갱이: 벡터 하나가 길을 따라 이동
+  function travel(d, vals, col, ms) {
+    var p = V.s("path", { d: d, fill: "none" }, gPk), len = p.getTotalLength();
+    var g = V.s("g", null, gPk);
+    vals.forEach(function (x, n) {
+      V.s("rect", { x: -6, y: -26 + n * 13, width: 12, height: 12, rx: 2, fill: col ? col : V.signed(x, 1), "fill-opacity": col ? V.clamp(Math.abs(x) / 0.6, 0.15, 1) : 1, stroke: "var(--text)", "stroke-width": 0.8 }, g);
+    });
+    return V.tween(ms, function (e) {
+      var q = p.getPointAtLength(e * len);
+      g.setAttribute("transform", "translate(" + q.x + "," + q.y + ")");
+    }).then(function () { p.remove(); g.remove(); });
+  }
+  function flash(el) {
+    return V.tween(380, function (e) { var s = Math.sin(e * Math.PI); el.setAttribute("stroke", s > 0.05 ? "var(--accent)" : "var(--line)"); el.setAttribute("stroke-width", 1.2 + 2.4 * s); })
+      .then(function () { el.setAttribute("stroke", "var(--line)"); el.setAttribute("stroke-width", 1.2); });
+  }
+
+  async function stepFwd() {
+    if (cur >= T) return;
+    var k = cur + 1, o = G[k];
+    if (m === 1 && cur > 0) await travel(loopD(), S.hs[cur], null, 650);
+    pend = k; layout();
+    if (m === 0) await travel("M" + hx(k - 1) + " 205 L" + (cx(k) - 40) + " 205", S.hs[k - 1], null, 420);
+    var c = cx(k) + (CX - cx(k)) * m;
+    await travel("M" + c + " 292 L" + c + " 230", X[k - 1], null, 360);
+    await flash(o.box);
+    cur = k; pend = 0; render();
+    o.h.forEach(function (e) { e.setAttribute("fill", "var(--bg)"); });
+    await travel("M" + (c + 38) + " 205 L" + (c + 70) + " 205", S.hs[k], null, 320);
+    render();
+  }
+  async function stepBack() {
+    if (bt <= 1) return;
+    if (bt === T + 1) { bt = T; render(); await V.sleep(250); return; }
+    var k = bt;
+    await travel("M" + hx(k) + " 94 C" + (hx(k) - 60) + " 94 " + (hx(k - 1) + 60) + " 94 " + hx(k - 1) + " 94", S.ds[k], "var(--k)", 520);
+    bt = k - 1; render();
+  }
+  async function toggleRoll(target) {
+    if (m === target) return;
+    hov = 0;
+    var a = m;
+    await V.tween(750, function (e) { m = V.lerp(a, target, e); layout(); });
+    m = target; layout();
+  }
+  async function run(fn) { if (busy) return; busy = true; try { await fn(); } finally { busy = false; } }
+
+  // ---- 2. 칸 안에서 ----
+  var IW = 560, IH = 330;
+  var iv = V.svg(document.getElementById("inside"), IW, IH, "선택한 단계에서 칸 안의 계산: Wₓ·xₜ와 Wₕ·hₜ₋₁를 더해 z, tanh를 거쳐 hₜ, 그리고 기울기에 곱해지는 1−hₜ²");
+  var ig = V.s("g", null, iv);
+  var ICOL = [62, 162, 262, 382, 494], IHEAD = ["Wₓ·xₜ", "Wₕ·hₜ₋₁", "z", "hₜ = tanh z", "1 − hₜ²"];
+  function drawInside() {
+    V.clear(ig);
+    var s = hov && hov <= cur ? hov : visStep(), on = s <= cur;
+    V.s("text", { class: "tb", x: 14, y: 26, text: "칸 안에서 · " + s + "단계 「" + TOK[s - 1] + "」" }, ig);
+    V.s("text", { class: "ts", x: 14, y: 46, text: on ? "모든 단계가 같은 Wₓ, Wₕ를 쓴다" : "아직 계산 전" }, ig);
+    IHEAD.forEach(function (hd, n) { V.s("text", { class: n === 3 ? "ta" : "ts", x: ICOL[n], y: 76, "text-anchor": "middle", "font-weight": n === 3 ? 700 : 400, text: hd }, ig); });
+    [["+", 112], ["=", 212], ["→", 322]].forEach(function (a) { V.s("text", { class: "tb", x: a[1], y: 156, "text-anchor": "middle", text: a[0] }, ig); });
+    for (var q = 0; q < H; q++) {
+      var vals = on ? [S.ax[s][q], S.bh[s][q], S.zs[s][q], S.hs[s][q], 1 - S.hs[s][q] * S.hs[s][q]] : null;
+      for (var n = 0; n < 5; n++) {
+        var y = 88 + q * 44;
+        V.s("rect", { x: ICOL[n] - 36, y: y, width: 72, height: 34, rx: 6, class: "cell", fill: on ? (n === 4 ? V.ramp(vals[n] * 0.6) : V.signed(vals[n], 2.6)) : "var(--bg)" }, ig);
+        V.s("text", { class: "t mono", x: ICOL[n], y: y + 22, "text-anchor": "middle", "font-size": 13, text: on ? V.fmt(vals[n], 3) : "·" }, ig);
+      }
+    }
+    V.s("text", { class: "t", x: 14, y: 284, text: "hₜ = tanh(Wₓ·xₜ + Wₕ·hₜ₋₁)" }, ig);
+    V.s("text", { class: "ts", x: 14, y: 302, text: "Wₕ = ρ × 회전 행렬, ρ = " + V.fmt(rho, 2) + " · h₀ = 0" }, ig);
+  }
+
+  // ---- 3. 기울기 크기 (로그 눈금) ----
+  var GW = 560, GH = 330, PX0 = 96, PDX = 82, PY0 = 50, PYH = 200, LMIN = -3, LMAX = 2;
+  function gx(t) { return PX0 + (t - 1) * PDX; }
+  function gy(v) { var l = V.clamp(Math.log10(Math.max(v, 1e-12)), LMIN, LMAX); return PY0 + (LMAX - l) / (LMAX - LMIN) * PYH; }
+  var gv = V.svg(document.getElementById("grad"), GW, GH, "단계별 기울기 크기를 로그 눈금으로: 실제 RNN(tanh 포함)의 값과, tanh 없이 Wₕ만 곱했을 때의 ρ의 거듭제곱");
+  var gg = V.s("g", null, gv), gd = V.s("g", null, gv);
+  V.s("text", { class: "tb", x: 14, y: 24, text: "기울기 크기 ‖∂L/∂hₜ‖" }, gg);
+  V.s("circle", { cx: 360, cy: 18, r: 5, fill: "var(--k)" }, gg);
+  V.s("text", { class: "ts", x: 370, y: 22, text: "실제 (tanh 포함)" }, gg);
+  V.s("line", { class: "ln dash", x1: 352, y1: 36, x2: 368, y2: 36 }, gg);
+  V.s("text", { class: "ts", x: 372, y: 40, text: "Wₕ만 곱하면 ρᵏ" }, gg);
+  for (var l = LMIN; l <= LMAX; l++) {
+    V.s("line", { class: l === 0 ? "ln" : "ln-g", x1: PX0 - 20, y1: gy(Math.pow(10, l)), x2: gx(T) + 20, y2: gy(Math.pow(10, l)) }, gg);
+    V.s("text", { class: "ts mono", x: PX0 - 28, y: gy(Math.pow(10, l)) + 4, "text-anchor": "end", text: ["0.001", "0.01", "0.1", "1", "10", "100"][l - LMIN] }, gg);
+  }
+  for (t = 1; t <= T; t++) V.s("text", { class: "ts", x: gx(t), y: PY0 + PYH + 26, "text-anchor": "middle", text: "h" + SUB[t] }, gg);
+  V.s("text", { class: "ts tk", x: gx(T), y: PY0 + PYH + 70, "text-anchor": "end", text: "← 기울기가 가는 쪽" }, gg);
+  function drawGrad() {
+    V.clear(gd);
+    var ref = "", act = "";
+    for (var t = T; t >= 1; t--) {
+      var rv = Math.pow(rho, T - t);
+      ref += (t === T ? "M" : "L") + gx(t) + " " + gy(rv).toFixed(1);
+    }
+    V.s("path", { class: "ln dash", d: ref }, gd);
+    for (t = T; t >= Math.max(1, bt); t--) act += (t === T ? "M" : "L") + gx(t) + " " + gy(S.gn[t]).toFixed(1);
+    if (bt <= T) V.s("path", { d: act, fill: "none", stroke: "var(--k)", "stroke-width": 2.5 }, gd);
+    for (t = T; t >= 1; t--) {
+      if (t < bt) continue;
+      var v = S.gn[t], low = Math.log10(v) < LMIN;
+      V.s("circle", { cx: gx(t), cy: gy(v), r: 6, fill: "var(--k)", stroke: "var(--bg)", "stroke-width": 2 }, gd);
+      if (low) V.s("text", { class: "ts tk", x: gx(t), y: gy(v) + 20, "text-anchor": "middle", text: "↓" }, gd);
+    }
+    // 값 줄
+    for (t = 1; t <= T; t++) {
+      if (t < bt) continue;
+      V.s("text", { class: "mono", x: gx(t), y: PY0 + PYH + 42, "text-anchor": "middle", "font-size": 12, fill: "var(--k)", "font-weight": 700, text: gfmt(S.gn[t]) }, gd);
+    }
+  }
+
+  // ---- 손잡이 ----
+  var top = document.getElementById("top");
+  var segV = V.seg(top, [{ id: "u", label: "펼친 그림" }, { id: "r", label: "접은 그림 (고리)" }], "u", function (id) {
+    run(function () { return toggleRoll(id === "r" ? 1 : 0); });
+  });
+  var bPlay = V.button(top, "▶ 재생", function () {
+    if (playing) { playing = false; bPlay.textContent = "▶ 재생"; return; }
+    if (busy) return;
+    if (cur >= T) { cur = 0; bt = T + 1; render(); }
+    playing = true; bPlay.textContent = "❚❚ 멈춤";
+    run(async function () {
+      while (playing && cur < T) { await stepFwd(); await V.sleep(180); }
+      playing = false; bPlay.textContent = "▶ 재생";
+    });
+  }, "primary");
+  V.button(top, "⏭ 한 단계", function () { run(stepFwd); });
+  V.button(top, "◀ 기울기 거꾸로", function () {
+    run(async function () {
+      if (m) { segV.set("u"); await toggleRoll(0); }
+      if (cur < T) { cur = T; render(); await V.sleep(200); }
+      if (bt <= 1) { bt = T + 1; render(); await V.sleep(200); }
+      while (bt > 1) await stepBack();
+    });
+  });
+  V.button(top, "↺ 처음으로", function () { if (busy) return; playing = false; cur = 0; bt = T + 1; render(); });
+  V.slider(V.ctrl(document.getElementById("ctl")), { label: "순환 가중치 크기 ρ", min: 0.2, max: 2.5, step: 0.05, value: rho,
+    onInput: function (x) { rho = x; compute(); render(); } });
+
+  function say() {
+    var e = document.getElementById("say"), g1 = S.gn[1];
+    if (bt > T) {
+      e.innerHTML = cur < T
+        ? "<b>칸이 늘어나는 게 아니다.</b> 같은 tanh 칸, 같은 Wₓ·Wₕ에 단어만 바꿔 넣고, 나온 h를 다음 단계로 넘긴다. 지금 " + cur + " / " + T + "단계."
+        : "<b>h₆에는 여섯 단어가 모두 섞여 있다.</b> 그렇다면 첫 단어 「나는」은 손실 L에 얼마나 책임이 있을까? 기울기를 거꾸로 보내 본다.";
+      return;
+    }
+    var k = T - 1;
+    if (g1 < 0.2) e.innerHTML = "<b>사라진다.</b> 한 단계 거슬러 갈 때마다 Wₕᵀ(크기 ρ = " + V.fmt(rho, 2) + ")와 1−h²(1 이하)를 곱한다. " + k + "번 곱하면 h₁의 기울기는 " + gfmt(g1) + " → 첫 단어는 거의 배우지 못한다.";
+    else if (g1 > 3) e.innerHTML = "<b>터진다.</b> ρ = " + V.fmt(rho, 2) + "이 1보다 커서 곱할수록 커진다. h₁의 기울기는 " + gfmt(g1) + "배 → 한 걸음이 너무 커져 학습이 튄다(기울기 자르기로 막는다).";
+    else e.innerHTML = "<b>겨우 유지된다.</b> ρ = " + V.fmt(rho, 2) + "와 1−h²를 곱한 값이 1 근처라 크기가 크게 변하지 않는다. h₁의 기울기 " + gfmt(g1) + ". 단어가 더 길어지면 이 균형은 쉽게 깨진다.";
+  }
+  V.onTheme.push(render);
+  render();
+})();
+</script>
+</body>
+</html>

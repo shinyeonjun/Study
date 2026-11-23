@@ -1,0 +1,486 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Transformer 전체 · 움직이는 AI</title>
+<link rel="stylesheet" href="../style.css">
+</head>
+<body data-page="transformer">
+<main class="stage">
+<h1>Transformer = 섞기·바꾸기 블록을 N번 쌓은 길</h1>
+<p class="sub">논문 그림을 실제로 돌린다. 토큰마다 8칸 벡터(작은 색 막대 묶음)가 블록을 하나씩 지나며 바뀐다. 블록을 누르면 그 자리의 실제 값.</p>
+<div class="ctrl" id="ctl"></div>
+<div class="row" style="margin-top:12px">
+  <div class="viz scroll" id="arch" style="flex:1 1 520px"></div>
+  <div class="viz scroll" id="insp" style="flex:1 1 440px"></div>
+</div>
+<p class="say" id="say"></p>
+<p class="more">이어 보기 · <a href="../../lab/decks/s21.html">덱 21 Transformer</a> · <a href="../../lab/decks/s20.html">덱 20 attention</a></p>
+</main>
+<script src="../js/pages.js"></script>
+<script src="../js/viz.js"></script>
+<script>
+(function () {
+  // ================= 1. 작은 모형 (시드 2017, 실제 계산) =================
+  // d_model 8, 헤드 2 (d_head 4), FFN 8→16→8, 블록 최대 6. 편향 0. 원 논문처럼 더한 뒤 정규화(Post-LN).
+  var D = 8, NH = 2, DH = 4, DF = 16, NMAX = 6;
+  var SRC = ["I", "like", "the", "rain", "."];
+  var VOC = ["<시작>", "나는", "비가", "좋다", "<끝>", "너는", "눈이", "싫다"];
+  var TIN = [0, 1, 2, 3], TOUT = [1, 2, 3, 4];
+  var rg = V.rng(2017);
+  function mat(n, m, s) { var A = []; for (var i = 0; i < n; i++) { var r = []; for (var j = 0; j < m; j++) r.push(V.randn(rg) * s); A.push(r); } return A; }
+  var sc = 1 / Math.sqrt(D), sf = 1 / Math.sqrt(DF);
+  var Es = mat(5, D, 1), Et = mat(8, D, 1);
+  function att() { return { q: mat(D, D, sc), k: mat(D, D, sc), v: mat(D, D, sc), o: mat(D, D, sc) }; }
+  var ENC = [], DEC = [];
+  for (var l = 0; l < NMAX; l++) ENC.push({ a: att(), w1: mat(D, DF, sc), w2: mat(DF, D, sf) });
+  for (l = 0; l < NMAX; l++) DEC.push({ s: att(), c: att(), w1: mat(D, DF, sc), w2: mat(DF, D, sf) });
+
+  function add(A, B) { return A.map(function (r, i) { return r.map(function (x, j) { return x + B[i][j]; }); }); }
+  function pe(T) {
+    var P = [];
+    for (var p = 0; p < T; p++) { var r = []; for (var i = 0; i < D; i++) { var w = Math.pow(10000, (i - i % 2) / D); r.push(i % 2 ? Math.cos(p / w) : Math.sin(p / w)); } P.push(r); }
+    return P;
+  }
+  function mean(r) { return r.reduce(function (a, b) { return a + b; }, 0) / r.length; }
+  function sd(r) { var m = mean(r); return Math.sqrt(mean(r.map(function (x) { return (x - m) * (x - m); }))); }
+  function ln(X) { return X.map(function (r) { var m = mean(r), s = Math.sqrt(sd(r) * sd(r) + 1e-5); return r.map(function (x) { return (x - m) / s; }); }); }
+  function cols(A, a, b) { return A.map(function (r) { return r.slice(a, b); }); }
+  function mha(Xq, Xkv, W, mask) {
+    var Q = V.matmul(Xq, W.q), K = V.matmul(Xkv, W.k), Vv = V.matmul(Xkv, W.v), heads = [], cat = Xq.map(function () { return []; });
+    for (var h = 0; h < NH; h++) {
+      var q = cols(Q, h * DH, (h + 1) * DH), k = cols(K, h * DH, (h + 1) * DH), v = cols(Vv, h * DH, (h + 1) * DH);
+      var A = q.map(function (qi, i) { return V.softmax(k.map(function (kj, j) { return mask && j > i ? -Infinity : V.dot(qi, kj) / Math.sqrt(DH); })); });
+      heads.push(A);
+      V.matmul(A, v).forEach(function (r, i) { cat[i] = cat[i].concat(r); });
+    }
+    return { out: V.matmul(cat, W.o), A: heads };
+  }
+  function ffn(X, W) { var h = V.matmul(X, W.w1).map(function (r) { return r.map(function (x) { return Math.max(0, x); }); }); return { hid: h, out: V.matmul(h, W.w2) }; }
+  // 마지막 Linear만 이 문장에 맞춰 경사하강 (교차 엔트로피, 학습률 0.5, 80번)
+  var STEPS = 80, LR = 0.5;
+  function train(Y) {
+    var W = Y[0].map(function () { return VOC.map(function () { return 0; }); }), b = VOC.map(function () { return 0; }), loss0 = 0, loss = 0, T = Y.length;
+    for (var it = 0; it <= STEPS; it++) {
+      var P = V.matmul(Y, W).map(function (r) { return V.softmax(r.map(function (x, j) { return x + b[j]; })); });
+      loss = -mean(P.map(function (p, i) { return Math.log(p[TOUT[i]]); }));
+      if (it === 0) loss0 = loss;
+      if (it === STEPS) break;
+      var G = P.map(function (p, i) { return p.map(function (x, j) { return (x - (j === TOUT[i] ? 1 : 0)) / T; }); });
+      for (var a = 0; a < D; a++) for (var j = 0; j < VOC.length; j++) { var g = 0; for (var i = 0; i < T; i++) g += Y[i][a] * G[i][j]; W[a][j] -= LR * g; }
+      for (j = 0; j < VOC.length; j++) { var gb = 0; for (i = 0; i < T; i++) gb += G[i][j]; b[j] -= LR * gb; }
+    }
+    return { W: W, b: b, loss0: loss0, loss1: loss };
+  }
+
+  // 단계 목록: 패킷이 지나는 곳마다 그 자리의 실제 텐서
+  function build(mode, N) {
+    var S = [], x, ed = mode === "ed", mem = null;
+    var tin = TIN.map(function (t) { return VOC[t]; }), dims = [0, 1, 2, 3, 4, 5, 6, 7].map(String);
+    function sub(side, L, X, Xkv, W, mask, blkA, blkN, title, rows, colsL) {
+      var a = mha(X, Xkv, W, mask);
+      S.push({ blk: blkA, side: side, L: L, kind: "attn", title: title, out: a.out, A: a.A, rows: rows, acols: colsL, mask: mask, cross: Xkv !== X, inp: X });
+      var s = add(X, a.out), y = ln(s);
+      S.push({ blk: blkN, side: side, L: L, kind: "res", title: "Add & Norm", out: y, x: X, F: a.out, sum: s, rows: rows, from: blkA });
+      return y;
+    }
+    function ff(side, L, X, W, blkF, blkN, rows) {
+      var f = ffn(X, W);
+      S.push({ blk: blkF, side: side, L: L, kind: "ffn", title: "Feed Forward", out: f.out, hid: f.hid, inp: X, rows: rows });
+      var s = add(X, f.out), y = ln(s);
+      S.push({ blk: blkN, side: side, L: L, kind: "res", title: "Add & Norm", out: y, x: X, F: f.out, sum: s, rows: rows, from: blkF });
+      return y;
+    }
+    if (ed) {
+      var e = SRC.map(function (_, i) { return Es[i].slice(); });
+      S.push({ blk: "eemb", side: "e", L: -1, kind: "emb", title: "입력 임베딩", out: e, rows: SRC, table: Es, tabRows: SRC, used: [0, 1, 2, 3, 4] });
+      x = add(e, pe(5));
+      S.push({ blk: "epe", side: "e", L: -1, kind: "pe", title: "위치 인코딩 더하기", out: x, emb: e, pe: pe(5), rows: SRC });
+      for (var l = 0; l < N; l++) {
+        x = sub("e", l, x, x, ENC[l].a, false, "emha", "ean1", "Multi-Head Attention", SRC, SRC);
+        x = ff("e", l, x, ENC[l], "effn", "ean2", SRC);
+      }
+      mem = x;
+    }
+    var d = TIN.map(function (t) { return Et[t].slice(); });
+    S.push({ blk: "demb", side: "d", L: -1, kind: "emb", title: "출력 임베딩", out: d, rows: tin, table: Et, tabRows: VOC, used: TIN });
+    x = add(d, pe(4));
+    S.push({ blk: "dpe", side: "d", L: -1, kind: "pe", title: "위치 인코딩 더하기", out: x, emb: d, pe: pe(4), rows: tin });
+    for (l = 0; l < N; l++) {
+      x = sub("d", l, x, x, DEC[l].s, true, "dmmha", "dan1", "Masked Multi-Head Attention", tin, tin);
+      if (ed) x = sub("d", l, x, mem, DEC[l].c, false, "dxmha", "dan2", "Multi-Head Attention (인코더 참고)", tin, SRC);
+      x = ff("d", l, x, DEC[l], "dffn", "dan3", tin);
+    }
+    var tr = train(x);
+    var logits = V.matmul(x, tr.W).map(function (r) { return r.map(function (v, j) { return v + tr.b[j]; }); });
+    S.push({ blk: "lin", side: "d", L: -1, kind: "lin", title: "Linear", out: logits, inp: x, rows: tin, tr: tr });
+    S.push({ blk: "soft", side: "d", L: -1, kind: "soft", title: "Softmax", out: logits.map(function (r) { return V.softmax(r); }), rows: tin, tr: tr });
+    S.mem = mem; S.dims = dims;
+    return S;
+  }
+  window.TF = { Es: Es, Et: Et, ENC: ENC, DEC: DEC, build: build, pe: pe };   // 검증용
+
+  // ================= 2. 손잡이 =================
+  var mode = "ed", N = 2, speed = 1, S = build(mode, N), cur = -1, tok = 0, playing = false;
+  var ctl = document.getElementById("ctl");
+  var bPlay = V.button(ctl, "▶ 재생", function () { playing ? stop() : play(); }, "primary");
+  V.button(ctl, "⏭ 한 단계", function () { stop(); if (cur < S.length - 1) goTo(cur + 1, true); });
+  V.button(ctl, "↺ 처음으로", function () { stop(); goTo(0, false); });
+  V.seg(ctl, [{ id: "ed", label: "인코더-디코더 (원 논문)" }, { id: "gpt", label: "디코더만 (GPT)" }], mode, function (m) { mode = m; rebuild(); });
+  V.slider(ctl, { label: "블록 수 N", min: 1, max: NMAX, step: 1, value: N, fmt: function (v) { return v + "×"; }, onInput: function (v) { N = v; rebuild(); } });
+  V.slider(ctl, { label: "빠르기", min: 0.5, max: 3, step: 0.25, value: 1, fmt: function (v) { return V.fmt(v, 2) + "배"; }, onInput: function (v) { speed = v; } });
+
+  // ================= 3. 구조도 (논문 그림) =================
+  var AW = 720, AH = 900, EX = 190, CELL = 6, HW = 4 * CELL;
+  var arch = V.svg(document.getElementById("arch"), AW, AH, "Transformer 구조도: 인코더와 디코더 블록, 임베딩과 위치 인코딩, attention, Add & Norm, Feed Forward, Linear, Softmax 사이로 토큰 벡터 묶음이 한 블록씩 이동한다");
+  var ARR = V.arrowDef(arch, "tf-arr", "var(--muted)");
+  var gBase = V.s("g", null, arch), gPk = V.s("g", null, arch);
+  var COL = { attn: "var(--neg)", an: "var(--v)", ffn: "var(--q)", emb: "var(--k)", lin: "var(--accent)", soft: "var(--ok)", pe: "var(--muted)" };
+  var Lay, boxEl = {}, resEl = {}, crossEl = [], layTxt = {}, chipEls = [], memG, memLab;
+
+  function layout(m) {
+    var ed = m === "ed", DX = ed ? 520 : 330, B = {}, R = [], F = {};
+    function box(id, side, cx, y, kind, label, w) { B[id] = { id: id, side: side, x: cx, y: y, w: w || 200, h: 32, kind: kind, label: label }; }
+    function pec(id, side, cx) { B[id] = { id: id, side: side, x: cx, y: 778, w: 24, h: 24, kind: "pe", label: "" }; }
+    if (ed) {
+      box("eemb", "e", EX, 828, "emb", "입력 임베딩", 170); pec("epe", "e", EX);
+      box("emha", "e", EX, 712, "attn", "Multi-Head Attention"); box("ean1", "e", EX, 664, "an", "Add & Norm");
+      box("effn", "e", EX, 610, "ffn", "Feed Forward"); box("ean2", "e", EX, 562, "an", "Add & Norm");
+      R.push(["emha", "ean1", 742], ["effn", "ean2", 637]);
+      F.e = { top: 534, bot: 752, cx: EX };
+    }
+    box("demb", "d", DX, 828, "emb", "출력 임베딩", 170); pec("dpe", "d", DX);
+    box("dmmha", "d", DX, 712, "attn", "Masked Multi-Head Attention"); box("dan1", "d", DX, 664, "an", "Add & Norm");
+    R.push(["dmmha", "dan1", 742]);
+    if (ed) {
+      box("dxmha", "d", DX, 490, "attn", "Multi-Head Attention"); box("dan2", "d", DX, 442, "an", "Add & Norm");
+      box("dffn", "d", DX, 388, "ffn", "Feed Forward"); box("dan3", "d", DX, 340, "an", "Add & Norm");
+      box("lin", "d", DX, 286, "lin", "Linear", 170); box("soft", "d", DX, 244, "soft", "Softmax", 170);
+      R.push(["dxmha", "dan2", 600], ["dffn", "dan3", 415]);
+    } else {
+      box("dffn", "d", DX, 610, "ffn", "Feed Forward"); box("dan3", "d", DX, 562, "an", "Add & Norm");
+      box("lin", "d", DX, 506, "lin", "Linear", 170); box("soft", "d", DX, 462, "soft", "Softmax", 170);
+      R.push(["dffn", "dan3", 637]);
+    }
+    F.d = { top: B.dan3.y - 28, bot: 752, cx: DX };
+    var res = {};
+    R.forEach(function (r) {
+      var s = B[r[0]], a = B[r[1]], cx = s.x, rx = s.side === "e" ? cx - 114 : cx + 114, ex = s.side === "e" ? cx - 100 : cx + 100;
+      res[r[0]] = { sub: r[0], an: r[1], pts: [[cx, r[2]], [rx, r[2]], [rx, a.y], [ex, a.y]] };
+    });
+    return { ed: ed, DX: DX, B: B, res: res, F: F, chipsY: B.soft.y - 74 };
+  }
+  function line(pts, cls, parent, arrow) {
+    var d = pts.map(function (p, i) { return (i ? "L" : "M") + p[0] + " " + p[1]; }).join("");
+    return V.s("path", { d: d, class: cls || "ln", "marker-end": arrow === false ? null : ARR }, parent);
+  }
+  function drawArch() {
+    V.clear(gBase); boxEl = {}; resEl = {}; crossEl = []; layTxt = {}; chipEls = [];
+    var L = Lay = layout(mode), B = L.B, g = gBase, y0 = L.chipsY - 46;
+    arch.setAttribute("viewBox", "0 " + y0 + " " + AW + " " + (AH - y0));
+    // 블록 틀(N장 겹침)
+    Object.keys(L.F).forEach(function (sd) {
+      var f = L.F[sd], dir = sd === "e" ? -1 : 1;
+      for (var k = N - 1; k >= 0; k--)
+        V.s("rect", { x: f.cx - 125 + dir * 3 * k, y: f.top - 4 * k, width: 250, height: f.bot - f.top, rx: 12, fill: k ? "var(--panel)" : "var(--bg)", stroke: "var(--line)", "stroke-width": 1.2 }, g);
+      var lx = sd === "e" ? 32 : f.cx + 125 + 3 * (NMAX - 1) + 24, ly = (f.top + f.bot) / 2;
+      V.s("text", { class: "tb", x: lx, y: ly, "text-anchor": "middle", "font-size": 18, text: N + "×" }, g);
+      layTxt[sd] = V.s("text", { class: "ts ta", x: lx, y: ly + 20, "text-anchor": "middle", text: "" }, g);
+      V.s("text", { class: "ts", x: lx, y: ly - 24, "text-anchor": "middle", text: sd === "e" ? "인코더" : "디코더" }, g);
+    });
+    // 굵은 길(아래 → 위)
+    function chain(ids, side) {
+      for (var i = 0; i + 1 < ids.length; i++) {
+        var a = B[ids[i]], b = B[ids[i + 1]];
+        if (!a || !b) continue;
+        line([[a.x, a.y - a.h / 2], [b.x, b.y + b.h / 2 + 1]], "ln", g);
+      }
+    }
+    if (L.ed) chain(["eemb", "epe", "emha", "ean1", "effn", "ean2"]);
+    chain(L.ed ? ["demb", "dpe", "dmmha", "dan1", "dxmha", "dan2", "dffn", "dan3", "lin", "soft"] : ["demb", "dpe", "dmmha", "dan1", "dffn", "dan3", "lin", "soft"]);
+    line([[L.DX, B.soft.y - 16], [L.DX, L.chipsY + 15]], "ln", g);
+    // 인코더 출력 → 디코더 가운데 attention (K, V)
+    if (L.ed) {
+      var DX = L.DX, top = B.ean2.y - 16;
+      crossEl.push(line([[EX, top], [EX, 528], [DX - 40, 528], [DX - 40, 507]], "ln", g));
+      crossEl.push(line([[DX - 75, 528], [DX - 75, 507]], "ln", g));
+      V.s("text", { class: "ts", x: DX - 81, y: 523, "text-anchor": "end", text: "V" }, g);
+      V.s("text", { class: "ts", x: DX - 46, y: 523, "text-anchor": "end", text: "K" }, g);
+      V.s("text", { class: "ts", x: DX - 6, y: 523, "text-anchor": "end", text: "Q" }, g);
+    }
+    // 잔차 지름길
+    Object.keys(L.res).forEach(function (k) { resEl[k] = line(L.res[k].pts, "ln", g); });
+    // 상자
+    Object.keys(B).forEach(function (id) {
+      var b = B[id], bg = V.s("g", { style: "cursor:pointer" }, g);
+      if (b.kind === "pe") {
+        V.s("circle", { cx: b.x, cy: b.y, r: 12, fill: "var(--bg)", stroke: "var(--muted)", "stroke-width": 1.4 }, bg);
+        V.s("path", { d: "M" + (b.x - 6) + " " + b.y + "h12M" + b.x + " " + (b.y - 6) + "v12", class: "ln", "stroke-width": 1.6 }, bg);
+        var ix = b.side === "e" ? b.x - 48 : b.x + 48;
+        V.s("circle", { cx: ix, cy: b.y, r: 13, fill: "var(--bg)", stroke: "var(--muted)" }, bg);
+        var w = ""; for (var t = 0; t <= 20; t++) w += (t ? "L" : "M") + (ix - 9 + t * 0.9).toFixed(1) + " " + (b.y - 6 * Math.sin(t / 20 * 2 * Math.PI)).toFixed(1);
+        V.s("path", { d: w, class: "ln" }, bg);
+        line([[b.side === "e" ? ix + 13 : ix - 13, b.y], [b.side === "e" ? b.x - 13 : b.x + 13, b.y]], "ln", bg);
+        V.s("text", { class: "ts", x: b.side === "e" ? ix - 18 : ix + 18, y: b.y + 4, "text-anchor": b.side === "e" ? "end" : "start", text: "위치 인코딩" }, bg);
+        boxEl[id] = { g: bg, r: bg.firstChild };
+      } else {
+        var r = V.s("rect", { x: b.x - b.w / 2, y: b.y - b.h / 2, width: b.w, height: b.h, rx: 7, fill: COL[b.kind], "fill-opacity": 0.18, stroke: COL[b.kind], "stroke-width": 1.4 }, bg);
+        V.s("text", { class: "t", x: b.x, y: b.y + 5, "text-anchor": "middle", "font-size": 13, text: b.label }, bg);
+        boxEl[id] = { g: bg, r: r };
+      }
+      bg.addEventListener("mouseenter", function () { var i = stageFor(id); if (i >= 0) showInsp(S[i], true); });
+      bg.addEventListener("mouseleave", function () { if (cur >= 0) showInsp(S[cur]); });
+      bg.addEventListener("click", function () { var i = stageFor(id); if (i >= 0) { stop(); goTo(i, true); } });
+    });
+    // 입력 토큰
+    function toks(list, cx, lab) {
+      var sp = list.length > 4 ? 40 : 56;
+      list.forEach(function (t, i) { V.s("text", { class: "t mono", x: cx + (i - (list.length - 1) / 2) * sp, y: 866, "text-anchor": "middle", "font-size": 12, text: t }, gBase); });
+      V.s("text", { class: "ts", x: cx, y: 890, "text-anchor": "middle", text: lab }, gBase);
+    }
+    if (L.ed) toks(SRC, EX, "입력 (영어 5토큰)");
+    toks(TIN.map(function (t) { return VOC[t]; }), L.DX, L.ed ? "디코더 입력 = 정답을 한 칸 민 것" : "입력 = 지금까지의 토큰");
+    // 출력 칩: 자리마다 가장 높은 확률의 다음 토큰
+    var P = S[S.length - 1].out;
+    V.s("text", { class: "ts", x: L.DX, y: L.chipsY - 24, "text-anchor": "middle", text: "출력 확률 → 자리마다 1등" }, gBase);
+    P.forEach(function (p, i) {
+      var k = p.indexOf(Math.max.apply(null, p)), cx = L.DX + (i - 1.5) * 76, cg = V.s("g", { opacity: 0.3 }, gBase);
+      V.s("rect", { x: cx - 35, y: L.chipsY - 13, width: 70, height: 26, rx: 13, fill: "var(--accent-soft)", stroke: k === TOUT[i] ? "var(--ok)" : "var(--no)" }, cg);
+      V.s("text", { class: "t", x: cx, y: L.chipsY + 4, "text-anchor": "middle", "font-size": 11.5, text: VOC[k] + " " + V.fmt(p[k], 2) }, cg);
+      chipEls.push(cg);
+    });
+    // 인코더 출력(메모리) 이름표
+    memLab = L.ed ? V.s("text", { class: "ts", x: EX - 8, y: 512, "text-anchor": "end", opacity: 0, text: "인코더 출력" }, gBase) : null;
+  }
+
+  // ---- 패킷: 토큰 T개 × 8칸 색 막대 ----
+  function packet(parent) {
+    var g = V.s("g", { "pointer-events": "none" }, parent);
+    return { g: g, x: 0, y: 0, T: 0, fill: function (M, prob) {
+      V.clear(g); this.T = M.length;
+      var m = 0; M.forEach(function (r) { r.forEach(function (v) { m = Math.max(m, Math.abs(v)); }); });
+      M.forEach(function (r, i) { r.forEach(function (v, j) {
+        V.s("rect", { x: j * CELL, y: i * CELL, width: CELL - 0.6, height: CELL - 0.6, fill: prob ? V.ramp(v) : V.signed(v, Math.max(1.5, m * 0.8)) }, g);
+      }); });
+      V.s("rect", { x: -1.5, y: -1.5, width: M[0].length * CELL + 2.4, height: M.length * CELL + 2.4, rx: 2, fill: "none", stroke: "var(--accent)", "stroke-width": 1.4 }, g);
+    }, at: function (x, y) { this.x = x; this.y = y; g.setAttribute("transform", "translate(" + x.toFixed(1) + "," + y.toFixed(1) + ")"); } };
+  }
+  var pk = packet(gPk), ghost = packet(gPk), mg = packet(gPk);
+  ghost.g.setAttribute("opacity", 0); mg.g.setAttribute("opacity", 0);
+  var memPk = packet(gPk);
+
+  function park(id, T) {
+    var b = Lay.B[id], ph = T * CELL;
+    return b.side === "e" ? { x: EX + 132, y: b.y - ph / 2 } : { x: Lay.DX - 125 - 8 - 2 * HW, y: b.y - ph / 2 };
+  }
+  function along(pts, t) {   // 꺾은선 위의 t(0~1) 지점
+    var segs = [], tot = 0;
+    for (var i = 0; i + 1 < pts.length; i++) { var d = Math.hypot(pts[i + 1][0] - pts[i][0], pts[i + 1][1] - pts[i][1]); segs.push(d); tot += d; }
+    var s = t * tot;
+    for (i = 0; i < segs.length; i++) { if (s <= segs[i] || i === segs.length - 1) { var u = segs[i] ? Math.min(1, s / segs[i]) : 0; return [V.lerp(pts[i][0], pts[i + 1][0], u), V.lerp(pts[i][1], pts[i + 1][1], u)]; } s -= segs[i]; }
+  }
+  function stageFor(id) {
+    var c = cur >= 0 ? S[cur] : null, L0 = c && c.L >= 0 && c.side === (Lay.B[id] || {}).side ? c.L : 0, first = -1;
+    for (var i = 0; i < S.length; i++) if (S[i].blk === id) { if (first < 0) first = i; if (S[i].L === L0 || S[i].L < 0) return i; }
+    return first;
+  }
+
+  // ---- 강조 ----
+  var lit = [], dashOff = 0;
+  function setLit(paths) {
+    lit.forEach(function (p) { p.setAttribute("class", "ln"); p.removeAttribute("stroke-dasharray"); p.setAttribute("marker-end", ARR); });
+    lit = paths.filter(Boolean);
+    lit.forEach(function (p) { p.setAttribute("class", "ln-a"); p.setAttribute("stroke-width", 2.6); p.setAttribute("stroke-dasharray", "7 5"); });
+  }
+  V.loop(function (dt) { dashOff -= dt * 30; lit.forEach(function (p) { p.setAttribute("stroke-dashoffset", dashOff.toFixed(1)); }); });
+  function highlight(s) {
+    Object.keys(boxEl).forEach(function (id) {
+      var on = id === s.blk, r = boxEl[id].r;
+      if (Lay.B[id].kind === "pe") { r.setAttribute("stroke", on ? "var(--accent)" : "var(--muted)"); r.setAttribute("stroke-width", on ? 3 : 1.4); }
+      else { r.setAttribute("stroke-width", on ? 3 : 1.4); r.setAttribute("fill-opacity", on ? 0.45 : 0.18); r.setAttribute("stroke", on ? "var(--accent)" : COL[Lay.B[id].kind]); }
+    });
+    ["e", "d"].forEach(function (sd) { if (layTxt[sd]) layTxt[sd].textContent = s.side === sd && s.L >= 0 ? "지금 " + (s.L + 1) + "층" : ""; });
+    var p = [];
+    if (s.kind === "attn" || s.kind === "ffn") p.push(resEl[s.blk]);
+    if (s.kind === "res") p.push(resEl[s.from]);
+    if (s.kind === "attn" && s.cross) p = p.concat(crossEl);
+    setLit(p);
+    var ki = S.indexOf(s), memOn = Lay.ed && S.mem && ki >= S.map(function (q) { return q.blk; }).indexOf("demb");
+    memPk.g.setAttribute("opacity", memOn ? 1 : 0); if (memLab) memLab.setAttribute("opacity", memOn ? 1 : 0);
+    chipEls.forEach(function (c) { c.setAttribute("opacity", s.kind === "soft" ? 1 : 0.3); });
+  }
+
+  // ---- 한 단계 이동 ----
+  function goTo(i, anim) {
+    var t = ++tok, prev = cur >= 0 ? S[cur] : null, s = S[i];
+    cur = i;
+    highlight(s); showInsp(s); say(s);
+    var p1 = park(s.blk, s.out.length), dur = 650 / speed;
+    if (!anim || !prev) { pk.fill(s.out, s.kind === "soft"); pk.at(p1.x, p1.y); ghost.g.setAttribute("opacity", 0); mg.g.setAttribute("opacity", 0); return Promise.resolve(); }
+    var p0 = { x: pk.x, y: pk.y }, jump = prev.side !== s.side;
+    pk.fill(prev.out, prev.kind === "soft");
+    var tasks = [];
+    // 잔차: 들어가기 전 값 x가 지름길로 돌아간다
+    if ((s.kind === "attn" || s.kind === "ffn") && Lay.res[s.blk]) {
+      var rp = Lay.res[s.blk].pts, ph = prev.out.length * CELL / 2;
+      ghost.fill(prev.out); ghost.g.setAttribute("opacity", 0.9);
+      var gp = [[p0.x + HW, p0.y + ph]].concat(rp.slice(0, 3));
+      tasks.push(V.tween(dur * 1.4, function (e) { if (t !== tok) return; var q = along(gp, e); ghost.at(q[0] - HW, q[1] - ph); }));
+    } else if (s.kind === "res" && prev.blk === s.from) {
+      var q0 = { x: ghost.x, y: ghost.y };
+      tasks.push(V.tween(dur, function (e) { if (t !== tok) return; ghost.at(V.lerp(q0.x, p1.x, e), V.lerp(q0.y, p1.y, e)); ghost.g.setAttribute("opacity", 0.9 * (1 - e)); }));
+    } else ghost.g.setAttribute("opacity", 0);
+    // 교차 attention: 인코더 출력이 K·V로 건너온다
+    if (s.kind === "attn" && s.cross) {
+      mg.fill(S.mem); mg.g.setAttribute("opacity", 0.9);
+      var cp = [[EX + 30, 510], [EX, 528], [Lay.DX - 40, 528], [Lay.DX - 40, 500]];
+      tasks.push(V.tween(dur * 1.3, function (e) { if (t !== tok) return; var q = along(cp, e); mg.at(q[0] - HW, q[1] - 15); mg.g.setAttribute("opacity", e > 0.85 ? 0.9 * (1 - (e - 0.85) / 0.15) : 0.9); }));
+    } else mg.g.setAttribute("opacity", 0);
+    if (jump) { // 인코더 끝 → 디코더 시작: 인코더 출력은 메모리로 남는다
+      if (S.mem) { memPk.fill(S.mem); memPk.at(EX + 6, 528 - 6 - S.mem.length * CELL); }
+      pk.fill(s.out, s.kind === "soft"); pk.at(p1.x, p1.y);
+      return Promise.all(tasks);
+    }
+    tasks.push(V.tween(dur, function (e) { if (t !== tok) return; pk.at(V.lerp(p0.x, p1.x, e), V.lerp(p0.y, p1.y, e)); }).then(function () { if (t === tok) pk.fill(s.out, s.kind === "soft"); }));
+    return Promise.all(tasks);
+  }
+  function stop() { playing = false; bPlay.textContent = "▶ 재생"; }
+  function play() {
+    if (cur >= S.length - 1) goTo(0, false);
+    playing = true; bPlay.textContent = "⏸ 멈춤";
+    (function next() {
+      if (!playing) return;
+      if (cur >= S.length - 1) { stop(); return; }
+      goTo(cur + 1, true).then(function () { return V.sleep(450 / speed); }).then(next);
+    })();
+  }
+  function rebuild() {
+    stop(); tok++;
+    S = build(mode, N); cur = -1;
+    drawArch();
+    if (S.mem) { memPk.fill(S.mem); memPk.at(EX + 6, 528 - 6 - S.mem.length * CELL); }
+    goTo(0, false);
+  }
+
+  // ================= 4. 들여다보기 패널 =================
+  var IW = 560, IH = 600;
+  var insp = V.svg(document.getElementById("insp"), IW, IH, "고른 블록의 출력 텐서 모양과 실제 값 열지도, attention 비율 격자");
+  var gi = V.s("g", null, insp);
+  function maxabs(M) { var m = 0; M.forEach(function (r) { r.forEach(function (v) { m = Math.max(m, Math.abs(v)); }); }); return m || 1; }
+  function hm(g, M, x0, y0, cw, ch, o) {
+    o = o || {};
+    var m = o.scale || maxabs(M);
+    M.forEach(function (r, i) { r.forEach(function (v, j) {
+      var f = o.prob ? V.ramp(v) : V.signed(v, m);
+      var rc = V.s("rect", { x: x0 + j * cw, y: y0 + i * ch, width: cw - 1, height: ch - 1, rx: 2, fill: f }, g);
+      V.s("title", { text: V.fmt(v, 3) }, rc);
+      if (o.nums) V.s("text", { class: "mono", x: x0 + j * cw + cw / 2, y: y0 + i * ch + ch / 2 + 4, "text-anchor": "middle", "font-size": 10.5,
+        fill: (o.prob ? v > 0.55 : Math.abs(v) / m > 0.55) ? "var(--bg)" : "var(--text)", text: V.fmt(v, 2) }, g);
+    }); });
+    if (o.rows) o.rows.forEach(function (t, i) { V.s("text", { class: "ts", x: x0 - 6, y: y0 + i * ch + ch / 2 + 4, "text-anchor": "end", text: t }, g); });
+    if (o.cols) o.cols.forEach(function (t, j) { V.s("text", { class: "ts", x: x0 + j * cw + cw / 2, y: y0 - 6, "text-anchor": "middle", text: t }, g); });
+    if (o.lab) V.s("text", { class: "t", x: x0, y: y0 - (o.cols ? 22 : 8), "font-size": 12.5, "font-weight": 700, text: o.lab }, g);
+    return { w: M[0].length * cw, h: M.length * ch };
+  }
+  function sym(g, x, y, s) { V.s("text", { class: "tb", x: x, y: y, "text-anchor": "middle", "font-size": 18, text: s }, g); }
+  function where(s) { return s.L >= 0 ? (s.side === "e" ? " · 인코더 " : " · 디코더 ") + (s.L + 1) + "층" : ""; }
+  function showInsp(s, preview) {
+    V.clear(gi);
+    var g = gi, T = s.out.length, C = s.out[0].length;
+    V.s("text", { class: "tb", x: 16, y: 26, text: s.title + where(s) }, g);
+    if (preview) V.s("text", { class: "ts", x: IW - 14, y: 26, "text-anchor": "end", text: "미리 보기" }, g);
+    V.s("text", { class: "ta", x: 16, y: 66, "font-size": 26, "font-weight": 800, text: T + " × " + C }, g);
+    V.s("text", { class: "ts", x: 106, y: 64, text: s.kind === "lin" ? "토큰 " + T + "개 × 어휘 " + C + "개 점수" : s.kind === "soft" ? "토큰 " + T + "개 × 어휘 " + C + "개 확률 (줄마다 합 1)" : "토큰 " + T + "개 × 칸 " + C + " (d_model)" }, g);
+    var oy = 430, dims = S.dims;
+    if (s.kind === "emb") {
+      V.s("text", { class: "ts", x: 16, y: 104, text: "어휘 표 (" + s.table.length + " × 8) 에서 토큰마다 한 줄씩 꺼낸다" }, g);
+      var tb = hm(g, s.table, 90, 128, 22, 20, { rows: s.tabRows, scale: 2.5 });
+      s.used.forEach(function (k) { V.s("rect", { x: 89, y: 128 + k * 20 - 1, width: tb.w + 1, height: 20, fill: "none", stroke: "var(--accent)", "stroke-width": 2 }, g); });
+      V.s("text", { class: "ts ta", x: 90 + tb.w + 14, y: 128 + 14, text: "← 쓰인 줄 " + s.used.length + "개" }, g);
+      oy = 128 + s.table.length * 20 + 84;
+    } else if (s.kind === "pe") {
+      var a1 = hm(g, s.emb, 64, 132, 15, 15, { rows: s.rows, lab: "임베딩", scale: 2.5 });
+      sym(g, 64 + a1.w + 22, 132 + a1.h / 2 + 6, "+");
+      hm(g, s.pe, 64 + a1.w + 44, 132, 15, 15, { lab: "위치 (sin·cos)", scale: 2.5 });
+      sym(g, 64 + 2 * a1.w + 66, 132 + a1.h / 2 + 6, "=");
+      hm(g, s.out, 64 + 2 * a1.w + 88, 132, 15, 15, { lab: "합", scale: 2.5 });
+      V.s("text", { class: "ts", x: 16, y: 132 + a1.h + 34, text: "앞 칸은 자리마다 빨리, 뒤 칸은 천천히 바뀐다(위치 칸 0·1 대 6·7)." }, g);
+      oy = 132 + a1.h + 110;
+    } else if (s.kind === "attn") {
+      V.s("text", { class: "ts", x: 16, y: 102, text: "헤드 " + NH + "개 × d_head " + DH + " · 비율 = softmax(QKᵀ ÷ √" + DH + ")" + (s.mask ? " · 미래 칸은 가림" : "") + (s.cross ? " · Q는 디코더, K·V는 인코더" : "") }, g);
+      var cw = 38, gx = [70, 70 + s.acols.length * cw + 40];
+      s.A.forEach(function (A, h) {
+        var x0 = gx[h], y0 = 154;
+        V.s("text", { class: "t", x: x0, y: y0 - 26, "font-size": 12.5, "font-weight": 700, text: "헤드 " + (h + 1) }, g);
+        s.acols.forEach(function (t, j) { V.s("text", { class: "ts", x: x0 + j * cw + cw / 2, y: y0 - 6, "text-anchor": "middle", "font-size": 11, text: t }, g); });
+        if (h === 0) s.rows.forEach(function (t, i) { V.s("text", { class: "ts", x: x0 - 6, y: y0 + i * cw + cw / 2 + 4, "text-anchor": "end", text: t }, g); });
+        A.forEach(function (r, i) { r.forEach(function (a, j) {
+          if (s.mask && j > i) { V.s("rect", { x: x0 + j * cw + 2, y: y0 + i * cw + 2, width: cw - 4, height: cw - 4, rx: 4, fill: "var(--grid)" }, g); return; }
+          var c = V.s("circle", { cx: x0 + j * cw + cw / 2, cy: y0 + i * cw + cw / 2, r: 3 + Math.sqrt(a) * (cw / 2 - 4), fill: V.ramp(a) }, g);
+          V.s("title", { text: s.rows[i] + " → " + s.acols[j] + ": " + V.fmt(a, 3) }, c);
+        }); });
+      });
+      V.s("text", { class: "ts", x: 16, y: 154 + T * cw + 24, text: "줄 = 묻는 토큰(Q), 칸 = 보는 토큰(K), 원 크기·색 = 비율 (줄마다 합 1)" }, g);
+    } else if (s.kind === "res") {
+      V.s("text", { class: "ts", x: 16, y: 102, text: "y = LayerNorm(x + F(x)) · F = 바로 아래 " + (s.from.indexOf("ffn") >= 0 ? "Feed Forward" : "attention") }, g);
+      var cw2 = 12, y2 = 150, xs = [48, 186, 324, 462];
+      hm(g, s.x, xs[0], y2, cw2, cw2, { lab: "x (지름길)", scale: 3 });
+      sym(g, xs[1] - 21, y2 + T * cw2 / 2 + 6, "+");
+      hm(g, s.F, xs[1], y2, cw2, cw2, { lab: "F(x)", scale: 3 });
+      sym(g, xs[2] - 21, y2 + T * cw2 / 2 + 6, "=");
+      hm(g, s.sum, xs[2], y2, cw2, cw2, { lab: "더한 값", scale: 3 });
+      sym(g, xs[3] - 21, y2 + T * cw2 / 2 + 6, "→");
+      hm(g, s.out, xs[3], y2, cw2, cw2, { lab: "LayerNorm", scale: 3 });
+      var r0 = s.sum[0], r1 = s.out[0];
+      V.s("text", { class: "t", x: 16, y: y2 + T * cw2 + 40, "font-size": 13, text: "토큰 1(" + s.rows[0] + "): 더한 값 평균 " + V.fmt(mean(r0)) + ", 표준편차 " + V.fmt(sd(r0)) + "  →  평균 " + V.fmt(mean(r1)) + ", 표준편차 " + V.fmt(sd(r1)) }, g);
+      oy = y2 + T * cw2 + 110;
+    } else if (s.kind === "ffn") {
+      var zeros = 0; s.hid.forEach(function (r) { r.forEach(function (v) { if (v === 0) zeros++; }); });
+      V.s("text", { class: "ts", x: 16, y: 102, text: "토큰마다 따로: 8칸 → ×W₁ → ReLU → 16칸 → ×W₂ → 8칸" }, g);
+      var y3 = 150;
+      hm(g, s.inp, 40, y3, 12, 12, { lab: "들어온 값 " + T + "×8", scale: 3 });
+      sym(g, 160, y3 + T * 6 + 6, "→");
+      hm(g, s.hid, 184, y3, 12, 12, { lab: "ReLU 뒤 " + T + "×16", scale: 2 });
+      sym(g, 400, y3 + T * 6 + 6, "→");
+      hm(g, s.out, 424, y3, 12, 12, { lab: "F(x) " + T + "×8", scale: 3 });
+      V.s("text", { class: "t", x: 16, y: y3 + T * 12 + 40, "font-size": 13, text: "16칸 중 ReLU가 0으로 만든 칸: " + zeros + " / " + T * 16 }, g);
+      oy = y3 + T * 12 + 110;
+    } else if (s.kind === "lin" || s.kind === "soft") {
+      oy = 150;
+      V.s("text", { class: "ts", x: 16, y: 102, text: s.kind === "lin" ? "8칸 → 어휘 8개 점수 (가중치 8×8 + 편향)" : "줄마다 softmax · 초록 테두리 = 정답 다음 토큰" }, g);
+      var cw3 = 54;
+      hm(g, s.out, 76, oy, cw3, 34, { nums: true, rows: s.rows, cols: VOC, prob: s.kind === "soft" });
+      if (s.kind === "soft") TOUT.forEach(function (k, i) { V.s("rect", { x: 76 + k * cw3 - 1, y: oy + i * 34 - 1, width: cw3 + 1, height: 35, rx: 3, fill: "none", stroke: "var(--ok)", "stroke-width": 2.4 }, g); });
+      var y4 = oy + T * 34 + 40;
+      V.s("text", { class: "t", x: 16, y: y4, "font-size": 13, text: "Linear만 이 문장에 맞춰 경사하강 " + STEPS + "번: 손실 " + V.fmt(s.tr.loss0, 3) + " → " + V.fmt(s.tr.loss1, 3) }, g);
+      V.s("text", { class: "ts", x: 16, y: y4 + 22, text: "나머지 가중치는 시드 2017 무작위 그대로 (학습 전)" }, g);
+      return;
+    }
+    V.s("text", { class: "t", x: 16, y: oy - 34, "font-size": 12.5, "font-weight": 700, text: "이 블록의 출력 → 다음 블록으로" }, g);
+    hm(g, s.out, 76, oy, 52, 28, { nums: true, rows: s.rows, cols: dims.map(function (d) { return "칸 " + d; }) });
+  }
+  function say(s) {
+    var t = {
+      emb: "<b>임베딩</b> = 토큰마다 어휘 표에서 8칸짜리 줄을 꺼낸다.",
+      pe: "<b>위치 인코딩</b>을 더한다. 같은 단어라도 자리마다 다른 벡터가 된다. 모양은 그대로.",
+      attn: s.cross ? "<b>인코더를 참고하는 attention</b>: 디코더 토큰이 묻고(Q), 영어 문장의 인코더 출력이 답한다(K·V)."
+        : s.mask ? "<b>가린 attention</b>: 토큰끼리 섞되 자기와 앞 칸만 본다. 다음 토큰을 미리 보면 안 되니까."
+        : "<b>Multi-Head Attention</b>: 토큰끼리 섞는다. 헤드 2개가 4칸씩 따로 보고, 이어 붙여 다시 8칸.",
+      res: "<b>Add & Norm</b>: 지름길로 돌아온 x에 F(x)를 더하고(잔차), 토큰마다 평균 0·표준편차 1로 맞춘다.",
+      ffn: "<b>Feed Forward</b>: 토큰 하나 안에서 바꾼다. 8 → 16 → 8, 모든 토큰에 같은 작은 신경망.",
+      lin: "<b>Linear</b>: 마지막 8칸을 어휘 8개 점수로 바꾼다.",
+      soft: "<b>Softmax</b>: 점수 → 확률. 자리마다 다음 토큰을 맞힌다."
+    }[s.kind];
+    document.getElementById("say").innerHTML = t + " <span class=\"mono\" style=\"color:var(--muted)\">(" + (cur + 1) + " / " + S.length + ")</span>";
+  }
+  V.onTheme.push(function () { var c = cur; drawArch(); if (S.mem) memPk.fill(S.mem); if (c >= 0) { highlight(S[c]); showInsp(S[c]); pk.fill(S[c].out, S[c].kind === "soft"); } });
+
+  drawArch();
+  if (S.mem) { memPk.fill(S.mem); memPk.at(EX + 6, 528 - 6 - S.mem.length * CELL); }
+  goTo(0, false);
+  setTimeout(play, 600);
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,273 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>위치 인코딩 · 움직이는 AI</title>
+<link rel="stylesheet" href="../style.css">
+<style>
+  @media (max-width: 700px) { #heat svg { min-width: 900px; } #perm svg { min-width: 900px; } }
+  #heat svg { touch-action: none; cursor: pointer; }
+</style>
+</head>
+<body data-page="posenc">
+<main class="stage">
+<h1>위치 인코딩 = 빠른 바늘과 느린 바늘</h1>
+<p class="sub">PE(p, 2i) = sin(p·ωᵢ), PE(p, 2i+1) = cos(p·ωᵢ), ωᵢ = 1 ÷ 10000^(2i/d). 여기서 d = 16, 바늘(쌍) 8개(덱 21).</p>
+<div class="viz scroll" id="heat"></div>
+<div class="ctrl" id="ctl"></div>
+<div class="row" style="margin-top:12px">
+  <div class="viz" id="clocks"></div>
+  <div class="viz" id="rot"></div>
+</div>
+<div class="viz scroll" id="perm" style="margin-top:14px"></div>
+<div class="ctrl" id="pctl"></div>
+<p class="say" id="say"></p>
+<p class="more">이어 보기 · <a href="../../lab/decks/s21.html">덱 21 Transformer = 블록을 쌓아 다음 토큰 맞히기</a> · <a href="../../lab/decks/s20.html">덱 20 attention</a></p>
+</main>
+<script src="../js/pages.js"></script>
+<script src="../js/viz.js"></script>
+<script>
+(function () {
+  var D = 16, NP = D / 2, MAXP = 63;
+  var OM = []; for (var i = 0; i < NP; i++) OM.push(1 / Math.pow(10000, 2 * i / D));
+  function pe(p, d) { // d칸 위치 벡터: [sin pω0, cos pω0, sin pω1, cos pω1, …]
+    d = d || D; var v = [];
+    for (var i = 0; i < d / 2; i++) { var w = 1 / Math.pow(10000, 2 * i / d); v.push(Math.sin(p * w), Math.cos(p * w)); }
+    return v;
+  }
+  var P = 12, K = 3;
+  function omLab(w) { return w >= 0.1 ? V.fmt(w, w === 1 ? 0 : (w >= 0.3 ? 3 : 2)) : w.toExponential(1).replace("e-", "e−"); }
+
+  // ---- 1. 열 지도: 위치 × 칸 ----
+  var HW = 1140, HH = 300, X0 = 170, CW = 15, Y0 = 46, CH = 13;
+  var hv = V.svg(document.getElementById("heat"), HW, HH, "위치 0부터 63까지 가로, 위치 벡터의 16칸을 세로로 놓은 열 지도. 위쪽 칸은 빠르게 바뀌고 아래쪽 칸은 거의 그대로다");
+  var hg = V.s("g", null, hv), hTop = V.s("g", null, hv);
+  var cellsH = [];
+  for (var c = 0; c < D; c++) {
+    var row = [];
+    for (var p = 0; p <= MAXP; p++) row.push(V.s("rect", { x: X0 + p * CW, y: Y0 + c * CH, width: CW - 1, height: CH - 1 }, hg));
+    cellsH.push(row);
+    V.s("text", { class: "ts", x: X0 - 8, y: Y0 + c * CH + 10, "text-anchor": "end", "font-size": 10.5, text: c % 2 ? "cos" : "sin" }, hg);
+  }
+  for (i = 0; i < NP; i++) V.s("text", { class: "ts mono", x: X0 - 40, y: Y0 + i * 2 * CH + 17, "text-anchor": "end", text: "ω = " + omLab(OM[i]) }, hg);
+  for (p = 0; p <= MAXP; p += 8) V.s("text", { class: "ts mono", x: X0 + p * CW + CW / 2, y: Y0 + D * CH + 16, "text-anchor": "middle", text: p }, hg);
+  V.s("text", { class: "ts", x: X0 + (MAXP + 1) * CW, y: Y0 + D * CH + 16, "text-anchor": "end", text: "위치 p →" }, hg);
+  V.s("text", { class: "tb", x: 16, y: 26, text: "위치 벡터 PE(p)" }, hg);
+  V.s("text", { class: "ts", x: 16, y: Y0 + 8, text: "빠름 ↑" }, hg);
+  V.s("text", { class: "ts", x: 16, y: Y0 + D * CH - 2, text: "느림 ↓" }, hg);
+  var lgx = HW - 220;
+  V.s("text", { class: "ts mono", x: lgx - 6, y: 26, "text-anchor": "end", text: "−1" }, hg);
+  var lgr = []; for (var q = 0; q < 20; q++) lgr.push(V.s("rect", { x: lgx + q * 5, y: 17, width: 5, height: 10 }, hg));
+  V.s("text", { class: "ts mono", x: lgx + 106, y: 26, text: "1" }, hg);
+  var colP = V.s("rect", { y: Y0 - 4, width: CW + 2, height: D * CH + 6, rx: 3, fill: "none", stroke: "var(--accent)", "stroke-width": 2.5 }, hTop);
+  var colK = V.s("rect", { y: Y0 - 4, width: CW + 2, height: D * CH + 6, rx: 3, fill: "none", stroke: "var(--q)", "stroke-width": 2.5, "stroke-dasharray": "4 3" }, hTop);
+  var labP = V.s("text", { class: "ta", y: Y0 - 10, "text-anchor": "middle", "font-weight": 700 }, hTop);
+  var labK = V.s("text", { class: "tq", y: Y0 - 10, "text-anchor": "middle", "font-weight": 700 }, hTop);
+  function paintHeat() {
+    for (var p = 0; p <= MAXP; p++) { var v = pe(p); for (var c = 0; c < D; c++) cellsH[c][p].setAttribute("fill", V.signed(v[c], 1)); }
+    lgr.forEach(function (r, q) { r.setAttribute("fill", V.signed(-1 + 2 * (q + 0.5) / 20, 1)); });
+  }
+  function placeCols() {
+    var pk = P + K;
+    colP.setAttribute("x", X0 + P * CW - 1.5); labP.setAttribute("x", X0 + P * CW + CW / 2); labP.textContent = "p";
+    colK.setAttribute("opacity", K > 0 && pk <= MAXP ? 1 : 0); labK.setAttribute("opacity", K > 0 && pk <= MAXP ? 1 : 0);
+    colK.setAttribute("x", X0 + pk * CW - 1.5); labK.setAttribute("x", X0 + pk * CW + CW / 2); labK.textContent = "p+k";
+    if (K > 0 && K < 2) labK.setAttribute("y", Y0 + D * CH + 30); else labK.setAttribute("y", Y0 - 10);
+  }
+  hv.addEventListener("pointerdown", function (e) {
+    var rc = hv.getBoundingClientRect(), x = (e.clientX - rc.left) * HW / rc.width;
+    var p = Math.round((x - X0 - CW / 2) / CW);
+    if (p >= 0 && p <= MAXP) { stopPlay(); P = p; slP.set(P); render(); }
+  });
+
+  // ---- 손잡이 ----
+  var ctl = document.getElementById("ctl"), playing = null;
+  var slP = V.slider(ctl, { label: "위치 p", min: 0, max: MAXP, step: 1, value: P, fmt: function (x) { return V.fmt(x, Number.isInteger(x) ? 0 : 1); }, onInput: function (v) { stopPlay(); P = v; render(); } });
+  var slK = V.slider(ctl, { label: "옮길 칸 k", min: 0, max: 20, step: 1, value: K, fmt: function (x) { return V.fmt(x, 0); }, onInput: function (v) { K = v; render(); } });
+  var bPlay = V.button(ctl, "▶ 위치 올리기", function () { if (playing) stopPlay(); else startPlay(); }, "primary");
+  V.button(ctl, "↺ p = 0", function () { stopPlay(); P = 0; slP.set(0); render(); });
+  function startPlay() {
+    bPlay.textContent = "❚❚ 멈춤";
+    playing = V.loop(function (dt) {
+      P += dt * 1.5; if (P > MAXP - K) P = 0;
+      slP.set(Math.round(P * 10) / 10); render();
+    });
+  }
+  function stopPlay() { if (playing) { playing(); playing = null; } P = Math.round(P); bPlay.textContent = "▶ 위치 올리기"; }
+
+  // ---- 2. 시계 8개 ----
+  var CWW = 560, CHH = 430, R = 46;
+  var cv = V.svg(document.getElementById("clocks"), CWW, CHH, "위치 벡터의 쌍 여덟 개를 시계 바늘로 그린 그림. 위치 p의 바늘은 실선, p+k의 바늘은 점선이고, 둘 사이 호가 돌아간 각이다");
+  var cTitle = V.s("text", { class: "tb", x: 16, y: 26 }, cv);
+  var clocks = [];
+  for (i = 0; i < NP; i++) {
+    var cx = 74 + (i % 4) * 137, cy = 124 + Math.floor(i / 4) * 196, g = V.s("g", null, cv);
+    V.s("text", { class: "ts mono", x: cx, y: cy - R - 12, "text-anchor": "middle", text: "쌍 " + i + " · ω = " + omLab(OM[i]) }, g);
+    V.s("circle", { cx: cx, cy: cy, r: R, class: "box" }, g);
+    for (var tk = 0; tk < 12; tk++) {
+      var a = tk * Math.PI / 6;
+      V.s("line", { x1: cx + Math.sin(a) * (R - 5), y1: cy - Math.cos(a) * (R - 5), x2: cx + Math.sin(a) * R, y2: cy - Math.cos(a) * R, class: "ln", "stroke-width": 1 }, g);
+    }
+    var arc = V.s("path", { fill: "none", stroke: "var(--q)", "stroke-width": 5, opacity: 0.45, "stroke-linecap": "round" }, g);
+    var hk = V.s("line", { x1: cx, y1: cy, stroke: "var(--q)", "stroke-width": 3.2, "stroke-dasharray": "5 3", "stroke-linecap": "round" }, g);
+    var hp = V.s("line", { x1: cx, y1: cy, stroke: "var(--accent)", "stroke-width": 3.5, "stroke-linecap": "round" }, g);
+    V.s("circle", { cx: cx, cy: cy, r: 3.5, fill: "var(--text)" }, g);
+    var t1 = V.s("text", { class: "t mono", x: cx, y: cy + R + 20, "text-anchor": "middle", "font-size": 12 }, g);
+    var t2 = V.s("text", { class: "tq mono", x: cx, y: cy + R + 38, "text-anchor": "middle", "font-size": 12 }, g);
+    clocks.push({ cx: cx, cy: cy, hp: hp, hk: hk, arc: arc, t1: t1, t2: t2 });
+  }
+  function hand(cx, cy, th, len) { return [cx + Math.sin(th) * len, cy - Math.cos(th) * len]; }
+  function drawClocks() {
+    cTitle.textContent = "바늘 끝 = (sin, cos) · 실선 p = " + V.fmt(P, Number.isInteger(P) ? 0 : 1) + " · 점선 p+k";
+    clocks.forEach(function (C, i) {
+      var a = P * OM[i], b = (P + K) * OM[i], e1 = hand(C.cx, C.cy, a, R - 8), e2 = hand(C.cx, C.cy, b, R - 12);
+      C.hp.setAttribute("x2", e1[0]); C.hp.setAttribute("y2", e1[1]);
+      C.hk.setAttribute("x2", e2[0]); C.hk.setAttribute("y2", e2[1]);
+      C.hk.setAttribute("opacity", K > 0 ? 1 : 0);
+      var span = K * OM[i], ar = R * 0.42, d = "";
+      if (K > 0 && span > 1e-4) {
+        var full = span >= 2 * Math.PI - 1e-6, s = hand(C.cx, C.cy, a, ar), t = hand(C.cx, C.cy, full ? a + 2 * Math.PI - 0.01 : b, ar);
+        var sw = (full ? 2 * Math.PI - 0.01 : span % (2 * Math.PI));
+        d = "M" + s[0] + " " + s[1] + "A" + ar + " " + ar + " 0 " + (sw > Math.PI ? 1 : 0) + " 1 " + t[0] + " " + t[1];
+      }
+      C.arc.setAttribute("d", d);
+      C.t1.textContent = "(" + V.fmt(Math.sin(a), 2) + ", " + V.fmt(Math.cos(a), 2) + ")";
+      C.t2.textContent = K > 0 ? "돌린 각 " + (span < 0.01 ? span.toFixed(4) : V.fmt(span, 2)) + " rad" : "";
+    });
+  }
+
+  // ---- 3. p → p+k = 회전 ----
+  var RW = 560, RH = 430;
+  var rv = V.svg(document.getElementById("rot"), RW, RH, "p에서 k칸 옮기기는 쌍마다 회전 행렬을 곱하는 것이고, 그 행렬에 p가 없다. 아래 곡선은 PE(p)와 PE(p+k)의 내적을 k에 따라 그린 것으로 p를 바꿔도 그대로다");
+  var rg = V.s("g", null, rv), rCurve = V.s("path", { class: "ln-a", "stroke-width": 2.5 }, rv), rCurve0 = V.s("path", { fill: "none", stroke: "var(--muted)", "stroke-width": 6, opacity: 0.25 }, rv);
+  var rMark = V.s("circle", { r: 6, fill: "var(--q)", stroke: "var(--bg)", "stroke-width": 2 }, rv);
+  var GX0 = 60, GX1 = 530, GY0 = 250, GY1 = 400, KMAX = 40, YMIN = -2, YMAX = 8;
+  function gxk(k) { return GX0 + (GX1 - GX0) * k / KMAX; }
+  function gyv(v) { return GY1 - (GY1 - GY0) * (v - YMIN) / (YMAX - YMIN); }
+  function drawRot() {
+    V.clear(rg);
+    V.s("text", { class: "tb", x: 16, y: 26, text: "p → p+k = 쌍마다 k·ω만큼 돌리기" }, rg);
+    // 쌍 0의 회전 행렬 (p가 없다)
+    var w = OM[0], ph = K * w, a = P * w;
+    var bx = 30, by = 86;
+    V.s("text", { class: "ts", x: 16, y: 50, text: "쌍 0 (ω = 1), k = " + K }, rg);
+    function mat2(x, y, m, cls) {
+      V.s("path", { class: "ln", d: "M" + (x + 6) + " " + (y - 16) + "h-6v52h6M" + (x + 112) + " " + (y - 16) + "h6v52h-6" }, rg);
+      V.s("text", { class: cls + " mono", x: x + 30, y: y + 4, "text-anchor": "middle", "font-size": 13, text: V.fmt(m[0][0]) }, rg);
+      V.s("text", { class: cls + " mono", x: x + 88, y: y + 4, "text-anchor": "middle", "font-size": 13, text: V.fmt(m[0][1]) }, rg);
+      V.s("text", { class: cls + " mono", x: x + 30, y: y + 28, "text-anchor": "middle", "font-size": 13, text: V.fmt(m[1][0]) }, rg);
+      V.s("text", { class: cls + " mono", x: x + 88, y: y + 28, "text-anchor": "middle", "font-size": 13, text: V.fmt(m[1][1]) }, rg);
+    }
+    function vec2(x, y, v, cls) {
+      V.s("path", { class: "ln", d: "M" + (x + 6) + " " + (y - 16) + "h-6v52h6M" + (x + 56) + " " + (y - 16) + "h6v52h-6" }, rg);
+      V.s("text", { class: cls + " mono", x: x + 31, y: y + 4, "text-anchor": "middle", "font-size": 13, text: V.fmt(v[0]) }, rg);
+      V.s("text", { class: cls + " mono", x: x + 31, y: y + 28, "text-anchor": "middle", "font-size": 13, text: V.fmt(v[1]) }, rg);
+    }
+    vec2(bx, by, [Math.sin(a + ph), Math.cos(a + ph)], "tq");
+    V.s("text", { class: "t", x: bx + 82, y: by + 16, text: "=" }, rg);
+    mat2(bx + 104, by, [[Math.cos(ph), Math.sin(ph)], [-Math.sin(ph), Math.cos(ph)]], "t");
+    V.s("text", { class: "t", x: bx + 236, y: by + 16, text: "×" }, rg);
+    vec2(bx + 254, by, [Math.sin(a), Math.cos(a)], "ta");
+    V.s("text", { class: "ts", x: bx + 31, y: by + 58, "text-anchor": "middle", text: "PE(p+k)" }, rg);
+    V.s("text", { class: "ts", x: bx + 165, y: by + 58, "text-anchor": "middle", text: "회전 R(k·ω): p 없음" }, rg);
+    V.s("text", { class: "ts", x: bx + 285, y: by + 58, "text-anchor": "middle", text: "PE(p)" }, rg);
+    // 모든 p, 모든 쌍에서 확인
+    var md = 0;
+    for (var p = 0; p + K <= MAXP; p++) for (var i = 0; i < NP; i++) {
+      var ww = OM[i], f = K * ww, s = Math.sin(p * ww), c = Math.cos(p * ww);
+      md = Math.max(md, Math.abs(Math.cos(f) * s + Math.sin(f) * c - Math.sin((p + K) * ww)), Math.abs(-Math.sin(f) * s + Math.cos(f) * c - Math.cos((p + K) * ww)));
+    }
+    V.s("text", { class: "t mono", x: 16, y: 176, "font-size": 12.5, text: "p = 0~" + (MAXP - K) + ", 쌍 8개 모두: 최대 차이 " + (md === 0 ? "0" : md.toExponential(1).replace("e-", "e−")) }, rg);
+    V.s("text", { class: "ts", x: 16, y: 196, text: "(차이 = 컴퓨터 반올림 크기)" }, rg);
+    // 내적 곡선
+    V.s("text", { class: "t", x: 16, y: 232, "font-size": 13, text: "PE(p) · PE(p+k)  (p = " + V.fmt(P, Number.isInteger(P) ? 0 : 1) + "에서 잼)" }, rg);
+    for (var yv = YMIN; yv <= YMAX; yv += 2) {
+      V.s("line", { class: "ln-g", x1: GX0, y1: gyv(yv), x2: GX1, y2: gyv(yv) }, rg);
+      V.s("text", { class: "ts mono", x: GX0 - 8, y: gyv(yv) + 4, "text-anchor": "end", text: V.fmt(yv, 0) }, rg);
+    }
+    for (var kk = 0; kk <= KMAX; kk += 10) V.s("text", { class: "ts mono", x: gxk(kk), y: GY1 + 16, "text-anchor": "middle", text: kk }, rg);
+    V.s("text", { class: "ts", x: GX1 - 30, y: GY1 + 16, "text-anchor": "end", text: "k →" }, rg);
+    var s1 = "", s0 = "", e0 = pe(0), ep = pe(P);
+    for (kk = 0; kk <= KMAX; kk += 0.5) {
+      s1 += (kk ? "L" : "M") + gxk(kk).toFixed(1) + " " + gyv(V.dot(ep, pe(P + kk))).toFixed(1);
+      s0 += (kk ? "L" : "M") + gxk(kk).toFixed(1) + " " + gyv(V.dot(e0, pe(kk))).toFixed(1);
+    }
+    rCurve.setAttribute("d", s1); rCurve0.setAttribute("d", s0);
+    var dk = V.dot(ep, pe(P + K));
+    rMark.setAttribute("cx", gxk(K)); rMark.setAttribute("cy", gyv(dk));
+    V.s("text", { class: "tq mono", x: gxk(K) + 10, y: gyv(dk) - 10, "font-size": 12, text: V.fmt(dk, 2) }, rg);
+    V.s("text", { class: "ts", x: GX1, y: 232, "text-anchor": "end", text: "옅은 띠 = p = 0에서" }, rg);
+  }
+
+  // ---- 4. 위치가 없으면: 순서를 바꿔도 출력은 자리만 바뀐다 ----
+  var WORDS = ["개", "물다", "사람"], S1 = [0, 1, 2], S2 = [2, 1, 0], DD = 4;
+  var rr = V.rng(21);
+  function mat(n, m, s) { var A = []; for (var i = 0; i < n; i++) { var row = []; for (var j = 0; j < m; j++) row.push(V.randn(rr) * s); A.push(row); } return A; }
+  var EMB = mat(3, DD, 1), WQ = mat(DD, DD, 0.8), WK = mat(DD, DD, 0.8), WV = mat(DD, DD, 0.8);
+  var usePos = false;
+  function attend(seq) {
+    var X = seq.map(function (w, p) { var e = EMB[w].slice(); if (usePos) { var q = pe(p, DD); e = e.map(function (x, k) { return x + q[k]; }); } return e; });
+    var Q = V.matmul(X, WQ), Kk = V.matmul(X, WK), Vv = V.matmul(X, WV);
+    var A = V.matmul(Q, V.T(Kk)).map(function (r) { return V.softmax(r.map(function (x) { return x / Math.sqrt(DD); })); });
+    return { X: X, A: A, O: V.matmul(A, Vv) };
+  }
+  var PW = 1140, PH = 300;
+  var pv = V.svg(document.getElementById("perm"), PW, PH, "개 물다 사람과 사람 물다 개, 두 순서의 attention 출력. 위치를 더하지 않으면 같은 단어의 출력이 똑같고 자리만 바뀐다");
+  var pg = V.s("g", null, pv);
+  function drawPerm() {
+    V.clear(pg);
+    var r1 = attend(S1), r2 = attend(S2);
+    window.PE_PERM = { emb: EMB, WQ: WQ, WK: WK, WV: WV, usePos: usePos, a: r1, b: r2 };
+    var m = 0; [r1, r2].forEach(function (r) { r.O.forEach(function (row) { row.forEach(function (x) { m = Math.max(m, Math.abs(x)); }); }); });
+    V.s("text", { class: "tb", x: 16, y: 26, text: usePos ? "위치를 더하면: 입력 = 토큰 벡터 + PE(p)  (d = 4)" : "위치가 없으면: 입력 = 토큰 벡터만" }, pg);
+    V.s("text", { class: "ts", x: 16, y: 46, text: "마스크 없는 attention 한 번, 시드로 정한 W_Q · W_K · W_V" }, pg);
+    var TX = [200, 470, 740], ROWY = [104, 236];
+    function where(seq, w) { return seq.indexOf(w); }
+    // 같은 단어끼리 잇는 선
+    WORDS.forEach(function (_, w) {
+      var x1 = TX[where(S1, w)] + 66, x2 = TX[where(S2, w)] + 66;
+      V.s("path", { d: "M" + x1 + " " + (ROWY[0] + 22) + "C" + x1 + " " + 170 + " " + x2 + " " + 150 + " " + x2 + " " + (ROWY[1] - 46), fill: "none", stroke: "var(--line)", "stroke-width": 2 }, pg);
+    });
+    [[S1, r1, "(가)"], [S2, r2, "(나)"]].forEach(function (L, n) {
+      var y = ROWY[n];
+      V.s("text", { class: "tb", x: 40, y: y + 5, text: L[2] }, pg);
+      V.s("text", { class: "ts", x: 40, y: y + 23, text: L[0].map(function (w) { return WORDS[w]; }).join(" ") }, pg);
+      L[0].forEach(function (w, p) {
+        var x = TX[p];
+        V.s("text", { class: "t", x: x, y: y - 26, "font-weight": 700, text: WORDS[w] }, pg);
+        V.s("text", { class: "ts", x: x + 132, y: y - 26, "text-anchor": "end", text: "p = " + p }, pg);
+        L[1].O[p].forEach(function (v, k) {
+          var tt = V.clamp(Math.abs(v) / m, 0, 1);
+          V.s("circle", { cx: x + 15 + k * 34, cy: y, r: 15, fill: V.signed(v, m), stroke: "var(--line)" }, pg);
+          V.s("text", { class: "mono", x: x + 15 + k * 34, y: y + 4, "text-anchor": "middle", "font-size": 10.5, fill: tt > 0.55 ? "#fff" : "var(--text)", text: V.fmt(v, 2) }, pg);
+        });
+      });
+    });
+    // 같은 단어의 출력 차이
+    V.s("text", { class: "tb", x: 920, y: 84, text: "같은 단어의 출력 차이" }, pg);
+    V.s("text", { class: "ts", x: 920, y: 102, text: "|(가) − (나)| 의 가장 큰 칸" }, pg);
+    WORDS.forEach(function (_, w) {
+      var o1 = r1.O[where(S1, w)], o2 = r2.O[where(S2, w)], d = 0;
+      o1.forEach(function (x, k) { d = Math.max(d, Math.abs(x - o2[k])); });
+      var y = 136 + w * 30;
+      V.s("text", { class: "t", x: 920, y: y, text: WORDS[w] }, pg);
+      V.s("text", { class: "t mono", x: 1110, y: y, "text-anchor": "end", "font-weight": 700, fill: d < 1e-9 ? "var(--ok)" : "var(--neg)", text: d < 1e-12 ? "0" : (d < 1e-6 ? d.toExponential(1).replace("e-", "e−") : V.fmt(d, 3)) }, pg);
+    });
+    V.s("text", { class: "ts", x: 920, y: 236, text: usePos ? "→ 순서가 출력에 들어간다" : "→ 순서를 몰라 자리만 바뀐다" }, pg);
+  }
+  V.seg(document.getElementById("pctl"), [{ id: "no", label: "위치 없음" }, { id: "yes", label: "위치 더함" }], "no", function (v) { usePos = v === "yes"; drawPerm(); say(); });
+
+  function say() {
+    var el = document.getElementById("say");
+    el.innerHTML = "<b>빠른 바늘(쌍 0)은 1칸에 1 rad, 느린 바늘(쌍 7)은 1칸에 " + omLab(OM[NP - 1]) + " rad.</b> " +
+      "k칸 옮기기 = 바늘마다 정해진 각만큼 돌리기라서, 두 위치의 내적은 p가 아니라 거리 k로 정해진다." +
+      (usePos ? " 위치를 더하니 같은 「개」라도 자리에 따라 출력이 달라진다." : "");
+  }
+  function render() { placeCols(); drawClocks(); drawRot(); }
+  V.onTheme.push(function () { paintHeat(); drawPerm(); });
+  paintHeat(); render(); drawPerm(); say();
+})();
+</script>
+</body>
+</html>

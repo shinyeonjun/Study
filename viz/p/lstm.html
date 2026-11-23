@@ -1,0 +1,354 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LSTM · 움직이는 AI</title>
+<link rel="stylesheet" href="../style.css">
+</head>
+<body data-page="lstm">
+<main class="stage">
+<h1>LSTM = 밸브 세 개가 달린 기억 띠</h1>
+<p class="sub">기억 c는 띠를 타고 흘러가며 곱하기(f) 한 번, 더하기(i⊙g) 한 번만 만난다. 밸브의 열림 정도는 σ가 매 단계 0~1로 정한다. 위 그림의 가중치는 손으로 정했다.</p>
+<div class="ctrl" id="top"></div>
+<div class="viz scroll" id="belt" style="margin-top:12px"></div>
+<div class="row" style="margin-top:14px">
+  <div class="viz" id="tl"></div>
+  <div class="viz" id="cmpv"></div>
+</div>
+<div class="ctrl" id="ctl"></div>
+<p class="say" id="say"></p>
+<p class="more">이어 보기 · <a href="../../learn/notes/dl/dl06-2.html">DL06·2 LSTM과 GRU</a> · <a href="../../learn/notes/dl/dl06-1.html">DL06·1 RNN과 BPTT</a> · <a href="../../lab/decks/s19.html">덱 19 사라지는 기울기</a></p>
+</main>
+<script src="../js/pages.js"></script>
+<script src="../js/viz.js"></script>
+<script>
+(function () {
+  function sig(x) { return 1 / (1 + Math.exp(-x)); }
+  function mv(M, x) { return M.map(function (row) { return V.dot(row, x); }); }
+  function add(a, b) { return a.map(function (x, n) { return x + b[n]; }); }
+  function zeros(r, c) { var M = []; for (var i = 0; i < r; i++) { M.push([]); for (var j = 0; j < c; j++) M[i].push(0); } return M; }
+  function lstmStep(P, x, h, c) {
+    // PyTorch nn.LSTM 식: i, f, o = σ(Wₓx + Wₕh + b), g = tanh(…), c = f⊙c + i⊙g, h = o⊙tanh(c)
+    function pre(k) { return add(add(mv(P[k].Wx, x), mv(P[k].Wh, h)), P[k].b); }
+    var i = pre("i").map(sig), f = pre("f").map(sig), g = pre("g").map(Math.tanh), o = pre("o").map(sig);
+    var cn = c.map(function (cv, n) { return f[n] * cv + i[n] * g[n]; });
+    var hn = cn.map(function (cv, n) { return o[n] * Math.tanh(cv); });
+    return { i: i, f: f, g: g, o: o, c: cn, h: hn, cp: c, hp: h, kept: c.map(function (cv, n) { return f[n] * cv; }), wr: i.map(function (iv, n) { return iv * g[n]; }) };
+  }
+
+  // ---- 1. 손으로 정한 작은 LSTM: 칸 2개(기억 칸, 최근 칸), 입력 x = [값 v, 저장 신호, 질문 신호] ----
+  var P = { i: { Wx: [[0, 10, 0], [0, 0, 0]], Wh: zeros(2, 2), b: [-5, 4] },
+            f: { Wx: [[0, -10, 0], [0, 0, 0]], Wh: zeros(2, 2), b: [5, -4] },
+            g: { Wx: [[2, 0, 0], [2, 0, 0]], Wh: [[0, 0], [0, 0.5]], b: [0, 0] },
+            o: { Wx: [[0, 0, 10], [0, 0, 0]], Wh: zeros(2, 2), b: [-5, 4] } };
+  var bit = 1, SEQ, R, T = 6;
+  var LANE = ["기억 칸", "최근 칸"];
+  function build() {
+    SEQ = [{ lab: "저장 " + (bit > 0 ? "+1" : "−1"), x: [bit, 1, 0] }, { lab: "잡음 0.7", x: [0.7, 0, 0] }, { lab: "잡음 −0.4", x: [-0.4, 0, 0] },
+           { lab: "잡음 0.9", x: [0.9, 0, 0] }, { lab: "잡음 −0.8", x: [-0.8, 0, 0] }, { lab: "질문 ?", x: [0, 0, 1] }];
+    R = [null];
+    var h = [0, 0], c = [0, 0];
+    for (var t = 0; t < T; t++) { var s = lstmStep(P, SEQ[t].x, h, c); R.push(s); h = s.h; c = s.c; }
+  }
+  build();
+  var cur = 0, busy = false, playing = false;
+
+  // ---- 그림 1: 기억 띠 ----
+  var W = 1140, HH = 420, BY = 64, BH = 72, L0 = 86, L1 = 114;
+  var X_PREV = 220, X_F = 330, X_KEPT = 432, X_PLUS = 560, X_CT = 720, X_READ = 900, X_END = 1090;
+  var sv = V.svg(document.getElementById("belt"), W, HH, "LSTM 셀을 기억 띠로 그린 그림. 위쪽 띠를 따라 셀 상태 c가 흐르고, 잊기 게이트 f가 곱해지고, 넣기 게이트 i가 연 만큼 후보 g가 더해지고, 내보내기 게이트 o가 연 만큼 tanh(c)가 h로 나간다");
+  var ARM = V.arrowDef(sv, "ls-ar", "var(--muted)");
+  var gBase = V.s("g", null, sv), gMov = V.s("g", null, sv);
+  // 띠
+  V.s("rect", { x: 160, y: BY, width: X_END - 160, height: BH, rx: 14, fill: "var(--accent-soft)", stroke: "var(--line)" }, gBase);
+  var beltDash = V.s("line", { x1: 172, y1: BY + BH / 2, x2: X_END - 12, y2: BY + BH / 2, stroke: "var(--accent)", "stroke-width": 1, "stroke-dasharray": "2 10", opacity: 0.5 }, gBase);
+  V.s("text", { class: "tb", x: 150, y: 50, "text-anchor": "end", text: "기억 띠 c" }, gBase);
+  V.s("text", { class: "ts", x: 150, y: L0 + 4, "text-anchor": "end", text: LANE[0] }, gBase);
+  V.s("text", { class: "ts", x: 150, y: L1 + 4, "text-anchor": "end", text: LANE[1] }, gBase);
+  V.s("text", { class: "ts", x: X_END, y: BY + BH + 18, "text-anchor": "end", text: "cₜ → 다음 단계" }, gBase);
+  // 파이프 (선)
+  function pipe(d, mk) { return V.s("path", { class: "ln", d: d, "stroke-width": 1.6, "marker-end": mk ? ARM : null }, gBase); }
+  var BOXY = 280, BUSY = 370;
+  pipe("M" + X_F + " " + BOXY + " V" + (BY + BH + 20), true);                  // f → 띠
+  pipe("M470 " + BOXY + " V210 H" + (X_PLUS - 18), true);                       // i → ⊗
+  pipe("M650 " + BOXY + " V210 H" + (X_PLUS + 18), true);                       // g → ⊗
+  pipe("M" + X_PLUS + " 194 V" + (BY + BH + 2), true);                          // ⊗ → ⊕
+  pipe("M" + X_READ + " " + (BY + BH) + " V156", true);                         // 띠 → tanh
+  pipe("M" + X_READ + " 184 V" + 207, true);                                    // tanh → ⊗
+  pipe("M800 " + BOXY + " V225 H" + (X_READ - 18), true);                       // o → ⊗
+  pipe("M" + X_READ + " 241 V300 H" + 975, true);                               // ⊗ → h
+  V.s("path", { class: "ln dash", d: "M1010 322 V402 H40 V" + BUSY + " H60" }, gBase);
+  var bus = V.s("path", { class: "ln", "stroke-width": 1.6, d: "M40 " + BUSY + " H800 M" + X_F + " " + BUSY + " V320 M470 " + BUSY + " V320 M650 " + BUSY + " V320 M800 " + BUSY + " V320" }, gBase);
+  // 게이트 상자
+  var boxes = {};
+  [["f", X_F, 100, "σ → f 잊기"], ["i", 470, 100, "σ → i 넣기"], ["g", 650, 120, "tanh → g 후보"], ["o", 800, 120, "σ → o 내보내기"]].forEach(function (a) {
+    boxes[a[0]] = V.s("rect", { x: a[1] - a[2] / 2, y: BOXY, width: a[2], height: 40, rx: 8, class: "box" }, gBase);
+    V.s("text", { class: "t", x: a[1], y: BOXY + 25, "text-anchor": "middle", "font-size": 13, text: a[3] }, gBase);
+  });
+  V.s("rect", { x: X_READ - 32, y: 156, width: 64, height: 28, rx: 6, class: "box" }, gBase);
+  V.s("text", { class: "t", x: X_READ, y: 175, "text-anchor": "middle", "font-size": 13, text: "tanh" }, gBase);
+  // ⊗ ⊕
+  function node(x, y, sym) {
+    var c = V.s("circle", { cx: x, cy: y, r: 16, fill: "var(--bg)", stroke: "var(--muted)", "stroke-width": 1.6 }, gBase);
+    V.s("text", { class: "tb", x: x, y: y + 5, "text-anchor": "middle", text: sym }, gBase);
+    return c;
+  }
+  var nF = node(X_F, BY + BH / 2, "×"), nI = node(X_PLUS, 210, "×"), nP = node(X_PLUS, BY + BH / 2, "+"), nO = node(X_READ, 225, "×");
+  // 게이트 눈금(밸브 열림): 막대 두 개(왼쪽 기억 칸, 오른쪽 최근 칸)
+  function gauge(x, y, name) {
+    var o = { bars: [], nums: [] };
+    V.s("text", { class: "ta", x: x - 6, y: y + 22, "text-anchor": "end", "font-weight": 700, text: name }, gBase);
+    for (var k = 0; k < 2; k++) {
+      V.s("rect", { x: x + k * 15, y: y, width: 12, height: 34, rx: 2, fill: "var(--bg)", stroke: "var(--line)" }, gBase);
+      o.bars.push(V.s("rect", { x: x + k * 15, width: 12, rx: 2, fill: "var(--accent)" }, gBase));
+      o.nums.push(V.s("text", { class: "ts mono", x: x + 34, y: y + 13 + k * 16, text: "" }, gBase));
+    }
+    o.set = function (v) {
+      for (var k = 0; k < 2; k++) {
+        var hgt = v ? 34 * v[k] : 0;
+        o.bars[k].setAttribute("y", y + 34 - hgt); o.bars[k].setAttribute("height", hgt);
+        o.nums[k].textContent = v ? V.fmt(v[k], 2) : "";
+      }
+    };
+    return o;
+  }
+  var gF = gauge(X_F - 14, 14, "f"), gI = gauge(436, 150, "i"), gO = gauge(X_READ + 40, 208, "o");
+  // 띠 위의 값 꾸러미
+  function packet(parent, w, hgt) {
+    var g = V.s("g", null, parent), o = { g: g, r: [], t: [] };
+    for (var k = 0; k < 2; k++) {
+      o.r.push(V.s("rect", { x: -w / 2, y: -hgt + k * hgt, width: w, height: hgt - 2, rx: 4, stroke: "var(--line)" }, g));
+      o.t.push(V.s("text", { class: "t mono", x: 0, y: -hgt + k * hgt + hgt / 2 + 3, "text-anchor": "middle", "font-size": 12 }, g));
+    }
+    o.at = function (x, y) { g.setAttribute("transform", "translate(" + x + "," + y + ")"); return o; };
+    o.set = function (v) {
+      for (var k = 0; k < 2; k++) {
+        o.r[k].setAttribute("fill", v ? V.signed(v[k], 1.6) : "var(--bg)");
+        o.r[k].setAttribute("stroke-dasharray", v ? "" : "3 2");
+        o.t[k].textContent = v ? V.fmt(v[k], 2) : "";
+      }
+      return o;
+    };
+    return o;
+  }
+  var gRest = V.s("g", null, sv);
+  var pPrev = packet(gRest, 54, 26).at(X_PREV, BY + BH / 2), pKept = packet(gRest, 54, 26).at(X_KEPT, BY + BH / 2), pCt = packet(gRest, 54, 26).at(X_CT, BY + BH / 2);
+  var pW = packet(gRest, 50, 20).at(X_PLUS, 166), pG = packet(gRest, 50, 20).at(650, 245), pH = packet(gRest, 54, 22).at(1010, 300);
+  function lab(x, y, s, anchor) { return V.s("text", { class: "ts", x: x, y: y, "text-anchor": anchor || "middle", text: s }, gBase); }
+  lab(X_PREV, BY - 8, "cₜ₋₁");
+  lab(X_KEPT, BY - 8, "f⊙cₜ₋₁ (남긴 것)");
+  lab(X_CT, BY - 8, "cₜ = f⊙cₜ₋₁ + i⊙g");
+  lab(X_PLUS + 32, 170, "i⊙g (새로 쓸 것)", "start");
+  lab(682, 249, "g", "start");
+  lab(1010, 270, "hₜ = o⊙tanh(cₜ)");
+  var tokT = V.s("text", { class: "tb", x: 60, y: BUSY - 10 }, gBase);
+  var hpT = V.s("text", { class: "ts mono", x: 60, y: BUSY + 22 }, gBase);
+  lab(520, 396, "hₜ → 다음 단계의 입력");
+  V.s("text", { class: "ts", x: 14, y: BUSY - 30, text: "입력 xₜ" }, gBase);
+
+  var hovT = 0;
+  function viewStep() { return hovT && hovT <= cur ? hovT : cur; }
+  function render() {
+    var vs = viewStep(), s = R[vs];
+    tokT.textContent = vs ? vs + "단계 · " + SEQ[vs - 1].lab : "시작 전";
+    hpT.textContent = vs ? "hₜ₋₁ = [" + V.fmt(s.hp[0]) + ", " + V.fmt(s.hp[1]) + "]" : "";
+    pPrev.set(s && s.cp); pKept.set(s && s.kept); pCt.set(s && s.c); pW.set(s && s.wr); pG.set(s && s.g); pH.set(s && s.h);
+    gF.set(s && s.f); gI.set(s && s.i); gO.set(s && s.o);
+    [[nF, "f"], [nI, "i"], [nO, "o"]].forEach(function (a) {
+      var v = s ? (s[a[1]][0] + s[a[1]][1]) / 2 : 0;
+      a[0].setAttribute("stroke", s ? "var(--accent)" : "var(--muted)"); a[0].setAttribute("stroke-width", 1.2 + 3 * v);
+    });
+    drawTL(); say();
+  }
+  // 움직이는 꾸러미: 길을 따라 가며 값이 바뀐다
+  function move(d, from, to, ms, at, w, hgt) {
+    var p = V.s("path", { d: d, fill: "none" }, gMov), len = p.getTotalLength();
+    var pk = packet(gMov, w || 54, hgt || 26).set(from), q0 = p.getPointAtLength(0);
+    pk.at(q0.x, q0.y);
+    return V.tween(ms, function (e) {
+      var q = p.getPointAtLength(e * len); pk.at(q.x, q.y);
+      var k = V.clamp((e - at) / 0.12, 0, 1);
+      pk.set(from.map(function (v, n) { return V.lerp(v, to[n], k); }));
+      beltDash.setAttribute("stroke-dashoffset", -e * 60);
+    }).then(function () { p.remove(); pk.g.remove(); });
+  }
+  function flash(el) {
+    return V.tween(420, function (e) { var s = Math.sin(e * Math.PI); el.setAttribute("stroke", s > 0.05 ? "var(--accent)" : "var(--line)"); el.setAttribute("stroke-width", 1.2 + 2.4 * s); })
+      .then(function () { el.setAttribute("stroke", "var(--line)"); el.setAttribute("stroke-width", 1.2); });
+  }
+  async function step() {
+    if (cur >= T) return;
+    hovT = 0;
+    var k = cur + 1, s = R[k], prev = R[cur];
+    tokT.textContent = k + "단계 · " + SEQ[k - 1].lab;
+    hpT.textContent = "hₜ₋₁ = [" + V.fmt(s.hp[0]) + ", " + V.fmt(s.hp[1]) + "]";
+    [pPrev, pKept, pCt, pW, pG, pH].forEach(function (p) { p.set(null); });
+    pPrev.set(s.cp);
+    // ① 게이트: 입력과 hₜ₋₁로 네 상자가 동시에 계산되고 밸브가 열림 정도를 바꾼다
+    var f0 = prev ? prev.f : [0, 0], i0 = prev ? prev.i : [0, 0], o0 = prev ? prev.o : [0, 0];
+    await Promise.all([flash(boxes.f), flash(boxes.i), flash(boxes.g), flash(boxes.o),
+      V.tween(520, function (e) {
+        function mix(a, b) { return a.map(function (v, n) { return V.lerp(v, b[n], e); }); }
+        gF.set(mix(f0, s.f)); gI.set(mix(i0, s.i)); gO.set(mix(o0, s.o));
+      })]);
+    pG.set(s.g);
+    // ② 잊기 + 후보: 띠의 c는 f를 지나고, g는 i를 지난다
+    await Promise.all([
+      move("M" + X_PREV + " 100 H" + X_KEPT, s.cp, s.kept, 800, 0.42),
+      move("M650 245 V210 H" + X_PLUS + " V166", s.g, s.wr, 800, 0.6, 50, 20)
+    ]);
+    pPrev.set(s.cp); pKept.set(s.kept); pW.set(s.wr);
+    // ③ 더하기: 남긴 것 + 새로 쓸 것 = cₜ
+    await Promise.all([
+      move("M" + X_KEPT + " 100 H" + X_CT, s.kept, s.c, 700, 0.45),
+      move("M" + X_PLUS + " 166 V100", s.wr, s.wr, 300, 2, 50, 20)
+    ]);
+    pCt.set(s.c);
+    // ④ 읽기: tanh(cₜ)가 o를 지나 hₜ
+    var tc = s.c.map(Math.tanh);
+    await move("M" + X_READ + " 100 V170", s.c, tc, 380, 0.6, 54, 26);
+    await move("M" + X_READ + " 170 V300 H1010", tc, s.h, 600, 0.12, 54, 22);
+    cur = k; render();
+  }
+  async function run(fn) { if (busy) return; busy = true; try { await fn(); } finally { busy = false; } }
+
+  // ---- 그림 2: 단계마다 기록 ----
+  var TW = 560, TH = 360, TX0 = 150, TDX = 66, TY0 = 84, TDY = 40;
+  var tv = V.svg(document.getElementById("tl"), TW, TH, "여섯 단계 동안 잊기·넣기·후보·기억·내보내기·출력 값을 기억 칸과 최근 칸 두 원으로 기록한 표");
+  var tg = V.s("g", null, tv);
+  var ROWS = [["f", "f 잊기", 1], ["i", "i 넣기", 1], ["g", "g 후보", 0], ["c", "c 기억 띠", 0], ["o", "o 내보내기", 1], ["h", "h 출력", 0]];
+  function drawTL() {
+    V.clear(tg);
+    V.s("text", { class: "tb", x: 14, y: 24, text: "단계마다 기록" }, tg);
+    V.s("text", { class: "ts", x: 14, y: 42, text: "원 두 개 = 왼쪽 기억 칸 · 오른쪽 최근 칸" }, tg);
+    var vs = viewStep();
+    if (vs) V.s("rect", { x: TX0 + (vs - 1) * TDX - 31, y: TY0 - 30, width: 62, height: TDY * 6 + 18, rx: 8, fill: "var(--accent-soft)" }, tg);
+    for (var t = 1; t <= T; t++) {
+      var x = TX0 + (t - 1) * TDX, lb = SEQ[t - 1].lab.split(" ");
+      V.s("text", { class: t === vs ? "ta" : "ts", x: x, y: TY0 - 14, "text-anchor": "middle", "font-weight": t === vs ? 700 : 400, text: lb[lb.length - 1] }, tg);
+      ROWS.forEach(function (rw, n) {
+        for (var k = 0; k < 2; k++) {
+          var on = t <= cur, v = on ? R[t][rw[0]][k] : 0;
+          V.s("circle", { cx: x - 12 + k * 24, cy: TY0 + 8 + n * TDY, r: 10, class: "cell", fill: on ? (rw[2] ? V.ramp(v) : V.signed(v, 1)) : "var(--bg)", "stroke-dasharray": on ? null : "3 2" }, tg);
+        }
+      });
+    }
+    ROWS.forEach(function (rw, n) { V.s("text", { class: rw[2] ? "ta" : "t", x: 14, y: TY0 + 13 + n * TDY, "font-size": 13, text: rw[1] }, tg); });
+    var ly = TY0 + 6 * TDY + 10;
+    V.s("text", { class: "ts", x: 14, y: ly, text: "게이트 0" }, tg);
+    for (var q = 0; q <= 10; q++) V.s("rect", { x: 70 + q * 9, y: ly - 10, width: 9, height: 12, fill: V.ramp(q / 10) }, tg);
+    V.s("text", { class: "ts", x: 174, y: ly, text: "1" }, tg);
+    V.s("text", { class: "ts", x: 250, y: ly, text: "값 −1" }, tg);
+    for (q = 0; q <= 10; q++) V.s("rect", { x: 290 + q * 9, y: ly - 10, width: 9, height: 12, fill: V.signed(-1 + q / 5, 1) }, tg);
+    V.s("text", { class: "ts", x: 394, y: ly, text: "+1" }, tg);
+  }
+
+  var tHit = V.s("g", null, tv);
+  for (var ht = 1; ht <= T; ht++) (function (t) {
+    var e = V.s("rect", { x: TX0 + (t - 1) * TDX - 33, y: TY0 - 32, width: 66, height: TDY * 6 + 22, fill: "transparent" }, tHit);
+    e.addEventListener("pointerenter", function () { if (busy || t > cur || hovT === t) return; hovT = t; render(); });
+    e.addEventListener("pointerleave", function () { if (hovT === t) { hovT = 0; if (!busy) render(); } });
+  })(ht);
+
+  // ---- 그림 3: 긴 순서에서 RNN과 LSTM (무작위 가중치, 시드 2) ----
+  // 입력 x = [첫 단계에만 비트 ±1, 둘째 단계부터 잡음 N(0,1)], 숨은 상태 4칸, 40단계.
+  // 첫 비트만 +1 ↔ −1로 바꿔 두 번 돌리고, 같은 단계의 상태 차이 ‖Δ‖를 잰다 (RNN은 h, LSTM은 c).
+  var CT = 40, CH = 4, CF = 2, rr = V.rng(2), noise = [], i, j;
+  for (i = 0; i < CT; i++) noise.push(V.randn(rr));
+  function rmat(r, c, s) { var M = []; for (var a = 0; a < r; a++) { M.push([]); for (var b = 0; b < c; b++) M[a].push(V.randn(rr) * s); } return M; }
+  var RWx = rmat(CH, CF, 1), RWh = rmat(CH, CH, 0.5 / Math.sqrt(CH)), LP = {};
+  "ifgo".split("").forEach(function (k) { LP[k] = { Wx: rmat(CH, CF, 1), Wh: rmat(CH, CH, 0.5 / Math.sqrt(CH)), b: [0, 0, 0, 0] }; });
+  var bf = 4, CMP;
+  function cmpRun() {
+    LP.f.b = [bf, bf, bf, bf];
+    function xs(b, t) { return [t === 0 ? b : 0, t === 0 ? 0 : noise[t]]; }
+    function runR(b) { var h = [0, 0, 0, 0], out = []; for (var t = 0; t < CT; t++) { h = add(mv(RWx, xs(b, t)), mv(RWh, h)).map(Math.tanh); out.push(h); } return out; }
+    function runL(b) { var h = [0, 0, 0, 0], c = [0, 0, 0, 0], out = [], fs = 0; for (var t = 0; t < CT; t++) { var s = lstmStep(LP, xs(b, t), h, c); h = s.h; c = s.c; out.push(s.c); fs += (s.f[0] + s.f[1] + s.f[2] + s.f[3]) / 4; } out.fm = fs / CT; return out; }
+    var ra = runR(1), rb = runR(-1), la = runL(1), lb = runL(-1);
+    function diff(a, b) { return a.map(function (v, t) { return v.map(function (x, n) { return x - b[t][n]; }); }); }
+    var dr = diff(ra, rb), dl = diff(la, lb);
+    CMP = { dr: dr, dl: dl, nr: dr.map(function (d) { return Math.sqrt(V.dot(d, d)); }), nl: dl.map(function (d) { return Math.sqrt(V.dot(d, d)); }), fm: la.fm };
+  }
+  cmpRun();
+  var CW = 560, CHh = 360, tc = CT;
+  var cv = V.svg(document.getElementById("cmpv"), CW, CHh, "첫 입력 하나만 바꿨을 때 40단계 동안 상태에 남은 차이: 위는 RNN의 h, 아래는 LSTM의 c를 칸마다 색으로, 그 아래는 차이의 크기를 로그 눈금 선으로");
+  var cg = V.s("g", null, cv);
+  var HX0 = 96, HDX = 11, CELL = 10;
+  function cy(v) { var l = V.clamp(Math.log10(Math.max(v, 1e-12)), -6, 1); return 230 + (1 - l) / 7 * 92; }
+  function drawCmp() {
+    V.clear(cg);
+    V.s("text", { class: "tb", x: 14, y: 24, text: "40단계 뒤에도 남아 있나" }, cg);
+    V.s("text", { class: "ts", x: 14, y: 42, text: "첫 입력만 +1 ↔ −1로 바꿨을 때 상태의 차이 (무작위 가중치, 시드 2)" }, cg);
+    [["RNN h", CMP.dr, 62, "var(--neg)"], ["LSTM c", CMP.dl, 128, "var(--accent)"]].forEach(function (a) {
+      V.s("text", { x: 14, y: a[2] + 26, "font-size": 13, "font-weight": 700, fill: a[3], text: a[0] }, cg);
+      for (var t = 0; t < CT; t++) for (var n = 0; n < CH; n++) {
+        V.s("rect", { x: HX0 + t * HDX, y: a[2] + n * (CELL + 2) + 4, width: CELL, height: CELL, rx: 1.5, fill: t < tc ? V.signed(a[1][t][n], 0.8) : "var(--bg)", stroke: "var(--line)", "stroke-width": 0.5 }, cg);
+      }
+    });
+    [1, 10, 20, 30, 40].forEach(function (t) { V.s("text", { class: "ts", x: HX0 + (t - 1) * HDX + CELL / 2, y: 194, "text-anchor": "middle", text: t }, cg); });
+    // 로그 눈금 선
+    for (var l = -6; l <= 0; l += 2) {
+      V.s("line", { class: "ln-g", x1: HX0, y1: cy(Math.pow(10, l)), x2: HX0 + CT * HDX, y2: cy(Math.pow(10, l)) }, cg);
+      V.s("text", { class: "ts mono", x: HX0 - 8, y: cy(Math.pow(10, l)) + 4, "text-anchor": "end", text: ["10⁻⁶", "10⁻⁴", "0.01", "1"][(l + 6) / 2] }, cg);
+    }
+    V.s("text", { class: "ts", x: 14, y: 236, text: "‖Δ‖" }, cg);
+    [[CMP.nr, "var(--neg)"], [CMP.nl, "var(--accent)"]].forEach(function (a) {
+      var d = "";
+      for (var t = 0; t < tc; t++) d += (t ? "L" : "M") + (HX0 + t * HDX + CELL / 2) + " " + cy(a[0][t]).toFixed(1);
+      if (d) V.s("path", { d: d, fill: "none", stroke: a[1], "stroke-width": 2.4 }, cg);
+    });
+    var last = Math.max(0, tc - 1);
+    V.s("text", { class: "t", x: 14, y: 350, "font-size": 13, text: tc + "단계 차이 · " }, cg);
+    V.s("text", { x: 106, y: 350, "font-size": 13, "font-weight": 700, fill: "var(--neg)", text: "RNN " + nf(CMP.nr[last]) }, cg);
+    V.s("text", { x: 236, y: 350, "font-size": 13, "font-weight": 700, fill: "var(--accent)", text: "LSTM " + nf(CMP.nl[last]) }, cg);
+    V.s("text", { class: "ts", x: 370, y: 350, text: "평균 f = " + V.fmt(CMP.fm, 3) }, cg);
+  }
+  function nf(v) { return v === 0 ? "0" : v >= 0.01 ? V.fmt(v, 2) : v.toExponential(1).replace("-", "−"); }
+
+  // ---- 손잡이 ----
+  var top = document.getElementById("top");
+  V.seg(top, [{ id: "1", label: "저장할 값 +1" }, { id: "-1", label: "−1" }], "1", function (id) {
+    if (busy) return; bit = +id; build(); render();
+  });
+  var bPlay = V.button(top, "▶ 재생", function () {
+    if (playing) { playing = false; bPlay.textContent = "▶ 재생"; return; }
+    if (busy) return;
+    if (cur >= T) { cur = 0; render(); }
+    playing = true; bPlay.textContent = "❚❚ 멈춤";
+    run(async function () {
+      while (playing && cur < T) { await step(); await V.sleep(350); }
+      playing = false; bPlay.textContent = "▶ 재생";
+    });
+  }, "primary");
+  V.button(top, "⏭ 한 단계", function () { run(step); });
+  V.button(top, "↺ 처음으로", function () { if (busy) return; playing = false; cur = 0; render(); });
+  var ctl = document.getElementById("ctl");
+  var flowing = false;
+  V.button(ctl, "▶ 40단계 흘리기", function () {
+    if (flowing) return; flowing = true; tc = 1; drawCmp();
+    var prog = 1;
+    V.loop(function (dt) {
+      prog = Math.min(CT, prog + dt * 14);
+      var k = Math.ceil(prog);
+      if (k !== tc) { tc = k; drawCmp(); }
+      if (prog >= CT) { flowing = false; return false; }
+    });
+  });
+  V.slider(ctl, { label: "잊기 편향 b_f (LSTM)", min: 0, max: 6, step: 0.5, value: bf, fmt: function (x) { return V.fmt(x, 1); },
+    onInput: function (x) { bf = x; cmpRun(); drawCmp(); say(); } });
+
+  function say() {
+    var e = document.getElementById("say"), s = R[cur];
+    if (!cur) { e.innerHTML = "<b>c는 띠를 따라 흘러간다.</b> 거치는 것은 f 곱하기 한 번, i⊙g 더하기 한 번뿐. RNN처럼 매 단계 tanh(W·)를 통째로 다시 지나지 않는다."; return; }
+    if (cur === 1) e.innerHTML = "<b>쓰기.</b> 저장 신호가 기억 칸의 i를 " + V.fmt(s.i[0], 3) + "로 열고 f를 " + V.fmt(s.f[0], 3) + "로 닫는다 → 기억 칸에 " + V.fmt(s.c[0], 2) + "이 새로 쓰인다. o는 " + V.fmt(s.o[0], 3) + "이라 아직 밖으로는 거의 안 나간다.";
+    else if (cur < T) e.innerHTML = "<b>지키기.</b> 기억 칸은 f = " + V.fmt(s.f[0], 3) + ", i = " + V.fmt(s.i[0], 3) + " → 잡음이 거의 못 들어오고 c = " + V.fmt(s.c[0], 2) + "이 그대로 흐른다. 최근 칸은 f = " + V.fmt(s.f[1], 3) + "이라 매번 새 입력으로 바뀐다(c = " + V.fmt(s.c[1], 2) + ").";
+    else e.innerHTML = "<b>읽기.</b> 질문 신호가 기억 칸의 o를 " + V.fmt(s.o[0], 3) + "로 연다 → h = " + V.fmt(s.h[0], 2) + ". 다섯 단계 전에 쓴 " + (bit > 0 ? "+1" : "−1") + "의 부호가 그대로 나온다.";
+    e.innerHTML += " <span style=\"color:var(--muted)\">긴 순서(오른쪽): 40단계 뒤 RNN " + nf(CMP.nr[CT - 1]) + " · LSTM " + nf(CMP.nl[CT - 1]) + ".</span>";
+  }
+  V.onTheme.push(function () { render(); drawCmp(); });
+  drawCmp(); render();
+})();
+</script>
+</body>
+</html>

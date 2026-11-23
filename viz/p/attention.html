@@ -1,0 +1,332 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Self-Attention · 움직이는 AI</title>
+<link rel="stylesheet" href="../style.css">
+<style>
+  @media (max-width: 700px) { #main svg { min-width: 1000px; } #detail svg { min-width: 900px; } }
+  #main .hit { cursor: pointer; }
+  .viz svg { user-select: none; -webkit-user-select: none; }
+</style>
+</head>
+<body data-page="attention">
+<main class="stage">
+<h1>Self-Attention = 질문마다 다른 토큰을 골라 섞기</h1>
+<p class="sub">softmax(Q·Kᵀ ÷ √d) · V. 토큰 6개, d = 4, 시드로 정한 W_Q · W_K · W_V로 브라우저가 직접 계산한다(덱 20).</p>
+<div class="viz scroll" id="main"></div>
+<div class="ctrl" id="ctl"></div>
+<div class="viz scroll" id="detail" style="margin-top:14px"></div>
+<p class="say" id="say"></p>
+<p class="more">이어 보기 · <a href="../../lab/decks/s20.html">덱 20 무엇을 볼지 고르다: attention</a> · <a href="../../lab/decks/s21.html">덱 21 Transformer</a></p>
+</main>
+<script src="../js/pages.js"></script>
+<script src="../js/viz.js"></script>
+<script>
+(function () {
+  // ---- 모형: 토큰 6개, 임베딩 6칸, d = 4 ----
+  var TOK = ["나는", "시장에서", "배를", "사서", "깎아", "먹었다"], N = 6, DM = 6, DK = 4, P_DROP = 0.2;
+  var r = V.rng(20);
+  function mat(n, m, s) { var A = []; for (var i = 0; i < n; i++) { var row = []; for (var j = 0; j < m; j++) row.push(V.randn(r) * s); A.push(row); } return A; }
+  var X = mat(N, DM, 1), WQ = mat(DM, DK, 0.8), WK = mat(DM, DK, 0.8), WV = mat(DM, DK, 0.6);
+  var Q = V.matmul(X, WQ), K = V.matmul(X, WK), Vv = V.matmul(X, WV);
+  var rd = V.rng(7), DROP = [];
+  for (var i0 = 0; i0 < N; i0++) { DROP.push([]); for (var j0 = 0; j0 < N; j0++) DROP[i0].push(rd() >= P_DROP); }
+  var mask = true, drop = false, D, S, A, O;
+  function compute() {
+    D = V.matmul(Q, V.T(K));
+    S = D.map(function (row, i) { return row.map(function (x, j) { return mask && j > i ? -Infinity : x / Math.sqrt(DK); }); });
+    A = S.map(function (row, i) {
+      var a = V.softmax(row);
+      return drop ? a.map(function (x, j) { return DROP[i][j] ? x / (1 - P_DROP) : 0; }) : a;
+    });
+    O = V.matmul(A, Vv);
+    window.ATTN = { tokens: TOK, X: X, WQ: WQ, WK: WK, WV: WV, Q: Q, K: K, V: Vv, D: D, S: S, A: A, O: O, mask: mask, drop: drop, DROP: DROP };
+  }
+  compute();
+
+  // ---- 1. 큰 그림 ----
+  var W = 1140, H = 560;
+  var sv = V.svg(document.getElementById("main"), W, H,
+    "왼쪽에 토큰 여섯 개가 키(분홍), 질문(파랑), 값(초록)으로 세 번 놓이고, 곡선이 원 격자인 내적 행렬, 나누기와 마스크, softmax로 이어지며, 값의 띠가 오른쪽 출력으로 합쳐진다");
+  var defs = V.s("defs", null, sv);
+  var gr1 = V.s("linearGradient", { id: "attRamp" }, defs);
+  var st0 = V.s("stop", { offset: "0" }, gr1), st1 = V.s("stop", { offset: "1" }, gr1);
+  var gr2 = V.s("linearGradient", { id: "attSigned" }, defs);
+  var ss0 = V.s("stop", { offset: "0" }, gr2), ss1 = V.s("stop", { offset: ".5" }, gr2), ss2 = V.s("stop", { offset: "1" }, gr2);
+  function themeStops() {
+    st0.setAttribute("stop-color", V.ramp(0)); st1.setAttribute("stop-color", V.ramp(1));
+    ss0.setAttribute("stop-color", V.signed(-1, 1)); ss1.setAttribute("stop-color", V.signed(0, 1)); ss2.setAttribute("stop-color", V.signed(1, 1));
+  }
+  themeStops();
+
+  function yk(j) { return 56 + j * 22; }
+  function yq(i) { return 226 + i * 22; }
+  function yv(j) { return 406 + j * 22; }
+  function gy(i) { return 212 + i * 26; }
+  var GX = { D: 330, S: 556, A: 782, O: 990 };
+  function gx(g, j) { return GX[g] + j * 26; }
+  function yb(j) { return 446 + j * 9; }
+
+  var gCurves = V.s("g", null, sv), gGrid = V.s("g", null, sv), gLab = V.s("g", null, sv);
+  // 세 무리 이름
+  V.s("text", { class: "tb tk", x: 20, y: 30, text: "키 K" }, gLab);
+  V.s("text", { class: "tb tq", x: 20, y: 200, text: "질문 Q" }, gLab);
+  V.s("text", { class: "tb tv", x: 20, y: 380, text: "값 V" }, gLab);
+  V.s("text", { class: "ts", x: 74, y: 30, text: "= x·W_K" }, gLab);
+  V.s("text", { class: "ts", x: 84, y: 200, text: "= x·W_Q" }, gLab);
+  V.s("text", { class: "ts", x: 66, y: 380, text: "= x·W_V" }, gLab);
+  var qLab = [], kLab = [], vLab = [];
+  function vecDots(vec, x, y, parent) {
+    var m = 0; vec.forEach(function (v) { m = Math.max(m, Math.abs(v)); });
+    vec.forEach(function (v, c) { V.s("circle", { class: "vd", cx: x + c * 13, cy: y - 4, r: 5, "data-v": v, stroke: "var(--line)" }, parent); });
+  }
+  var vecMax = 0;
+  [Q, K, Vv].forEach(function (M) { M.forEach(function (row) { row.forEach(function (v) { vecMax = Math.max(vecMax, Math.abs(v)); }); }); });
+  for (var t = 0; t < N; t++) {
+    kLab.push(V.s("text", { class: "t tk", x: 20, y: yk(t), text: TOK[t] }, gLab)); vecDots(K[t], 96, yk(t), gLab);
+    qLab.push(V.s("text", { class: "t tq hit", x: 20, y: yq(t), text: TOK[t], "font-weight": 700 }, gLab)); vecDots(Q[t], 96, yq(t), gLab);
+    vLab.push(V.s("text", { class: "t tv", x: 20, y: yv(t), text: TOK[t] }, gLab)); vecDots(Vv[t], 96, yv(t), gLab);
+  }
+  function paintVecDots() {
+    sv.querySelectorAll(".vd").forEach(function (c) { c.setAttribute("fill", V.signed(+c.getAttribute("data-v"), vecMax)); });
+  }
+  paintVecDots();
+
+  // 곡선
+  var kC = [], qC = [], vS = [];
+  for (t = 0; t < N; t++) {
+    var cx = gx("D", t);
+    kC.push(V.s("path", { d: "M148 " + (yk(t) - 4) + "C260 " + (yk(t) - 4) + " " + cx + " 110 " + cx + " 198", fill: "none", stroke: "var(--k)", "stroke-width": 1.6, "stroke-linecap": "round" }, gCurves));
+    qC.push(V.s("path", { d: "M148 " + (yq(t) - 4) + "C240 " + (yq(t) - 4) + " 240 " + gy(t) + " 326 " + gy(t), fill: "none", stroke: "var(--q)", "stroke-width": 1.6, "stroke-linecap": "round" }, gCurves));
+    vS.push(V.s("path", { fill: "none", stroke: "var(--v)", "stroke-linecap": "butt", opacity: 0.55 }, gCurves));
+  }
+  function strandPath(j, i) {
+    var y0 = yv(j) - 4, y1 = yb(j), y2 = gy(i);
+    return "M148 " + y0 + "C260 " + y0 + " 280 " + y1 + " 380 " + y1 + "L924 " + y1 + "C968 " + y1 + " 944 " + y2 + " 978 " + y2;
+  }
+  // 격자 사이 연산 이름
+  [[508, "÷ √4", "마스크"], [734, "softmax", ""], [951, "× V", ""]].forEach(function (a) {
+    V.s("text", { class: "ts", x: a[0], y: 196, "text-anchor": "middle", text: a[1], "font-weight": 700 }, gLab);
+    if (a[2]) V.s("text", { class: "ts", x: a[0], y: 180, "text-anchor": "middle", text: a[2] }, gLab);
+  });
+  var opArrows = [[472, 544], [698, 770]].map(function (a) {
+    return V.s("path", { d: "M" + a[0] + " 205L" + a[1] + " 205", class: "ln", "marker-end": V.arrowDef(sv, "attA" + a[0], "var(--muted)") }, gLab);
+  });
+
+  // 원 격자
+  var cells = { D: [], S: [], A: [], O: [] };
+  var gridInfo = [["D", "내적 Q·Kᵀ", N], ["S", "÷ √d · 마스크", N], ["A", "softmax 비율", N], ["O", "출력", DK]];
+  var legends = {};
+  gridInfo.forEach(function (gi) {
+    var g = gi[0], cols = gi[2];
+    var x0 = GX[g], x1 = gx(g, cols - 1), mid = (x0 + x1) / 2;
+    for (var i = 0; i < N; i++) {
+      var row = [];
+      for (var j = 0; j < cols; j++) {
+        var c = V.s("circle", { cx: gx(g, j), cy: gy(i), r: 9.5, "stroke-width": 1, class: "hit" }, gGrid);
+        (function (i, j) {
+          c.addEventListener("pointerenter", function () { hover(i, j, g); });
+          c.addEventListener("pointerdown", function () { hover(i, j, g); });
+        })(i, j);
+        row.push(c);
+      }
+      cells[g].push(row);
+    }
+    var title = V.s("text", { class: "tb", x: mid, y: 376, "text-anchor": "middle", "font-size": 14, text: gi[1] }, gLab);
+    var lo = V.s("text", { class: "ts mono", x: mid - 40, y: 398, "text-anchor": "end" }, gLab);
+    V.s("rect", { x: mid - 34, y: 390, width: 68, height: 9, rx: 3, fill: g === "O" ? "url(#attSigned)" : "url(#attRamp)" }, gLab);
+    var hi = V.s("text", { class: "ts mono", x: mid + 40, y: 398 }, gLab);
+    legends[g] = { lo: lo, hi: hi, title: title };
+  });
+  var maskNote = V.s("text", { class: "ts", x: (GX.S + gx("S", 5)) / 2, y: 418, "text-anchor": "middle", text: "회색 = 가림(−∞)" }, gLab);
+  var outLab = [];
+  for (t = 0; t < N; t++) outLab.push(V.s("text", { class: "ts", x: gx("O", DK - 1) + 16, y: gy(t) + 4, text: TOK[t] }, gLab));
+  var readout = V.s("text", { class: "t mono", x: W - 20, y: 30, "text-anchor": "end" }, gLab);
+  var stageLab = V.s("text", { class: "ta", x: W - 20, y: 60, "text-anchor": "end", "font-size": 15, "font-weight": 700 }, gLab);
+
+  // ---- 상태: 몇 줄까지 계산했나 ----
+  var ORDER = ["D", "S", "A", "O"];
+  var rev = { D: 0, S: 0, A: 0, O: 0 };   // 0~N, 소수점 = 그 줄을 채우는 중
+  var stage = 0;                           // 끝난 단계 수(0~4)
+  var sel = 4, hovG = null, hovJ = null;
+  var STAGE_NAME = ["", "① 내적 Q·Kᵀ", "② ÷ √d · 마스크", "③ softmax", "④ 비율 × V = 출력"];
+  function shown(g, i, j, cols) { return rev[g] >= i + (j + 1) / cols - 1e-9; }
+  function range(g) {
+    var M = g === "D" ? D : g === "S" ? S : g === "A" ? A : O, lo = Infinity, hi = -Infinity;
+    M.forEach(function (row) { row.forEach(function (x) { if (isFinite(x)) { lo = Math.min(lo, x); hi = Math.max(hi, x); } }); });
+    if (g === "A") lo = 0;
+    return [lo, hi];
+  }
+  function paint() {
+    var oMax = 0; O.forEach(function (row) { row.forEach(function (x) { oMax = Math.max(oMax, Math.abs(x)); }); });
+    ORDER.forEach(function (g) {
+      var M = g === "D" ? D : g === "S" ? S : g === "A" ? A : O, cols = g === "O" ? DK : N, rg = range(g);
+      for (var i = 0; i < N; i++) for (var j = 0; j < cols; j++) {
+        var c = cells[g][i][j], v = M[i][j], on = shown(g, i, j, cols);
+        var masked = mask && j > i && (g === "S" || g === "A");
+        var dropped = drop && g === "A" && !masked && !DROP[i][j];
+        c.removeAttribute("fill-opacity");
+        if (!on) { c.setAttribute("fill", "none"); c.setAttribute("stroke", "var(--line)"); c.setAttribute("stroke-dasharray", "2 2"); }
+        else if (masked) { c.setAttribute("fill", "var(--muted)"); c.setAttribute("fill-opacity", 0.55); c.setAttribute("stroke", "none"); c.removeAttribute("stroke-dasharray"); }
+        else if (dropped) { c.setAttribute("fill", "var(--bg)"); c.setAttribute("stroke", "var(--muted)"); c.setAttribute("stroke-dasharray", "2 2"); }
+        else {
+          c.setAttribute("fill", g === "O" ? V.signed(v, oMax) : V.ramp((v - rg[0]) / (rg[1] - rg[0] || 1)));
+          c.setAttribute("stroke", "var(--line)"); c.removeAttribute("stroke-dasharray");
+        }
+        c.setAttribute("opacity", i === sel ? 1 : 0.38);
+        if (on && hovG === g && hovJ === j && i === sel) { c.setAttribute("stroke", "var(--text)"); c.setAttribute("stroke-width", 2.2); } else c.setAttribute("stroke-width", 1);
+      }
+      var done = rev[g] > 0;
+      legends[g].lo.textContent = done ? V.fmt(g === "O" ? -oMax : rg[0], g === "A" ? 2 : 1) : "";
+      legends[g].hi.textContent = done ? V.fmt(g === "O" ? oMax : rg[1], g === "A" ? 2 : 1) : "";
+    });
+    legends.A.title.textContent = drop ? "softmax · Dropout" : "softmax 비율";
+    maskNote.setAttribute("opacity", mask ? 1 : 0);
+    // 곡선 굵기: 고른 질문 줄이 각 키를 얼마나 보나
+    var haveA = rev.A > sel;
+    for (var j = 0; j < N; j++) {
+      var a = A[sel][j], blocked = mask && j > sel;
+      kC[j].setAttribute("stroke-width", haveA ? 1 + 7 * a : 1.6);
+      kC[j].setAttribute("opacity", blocked ? 0.12 : (haveA && a === 0 ? 0.2 : 0.95));
+      qC[j].setAttribute("opacity", j === sel ? 1 : 0.18);
+      qC[j].setAttribute("stroke-width", j === sel ? 3 : 1.4);
+      qLab[j].setAttribute("opacity", j === sel ? 1 : 0.5);
+      kLab[j].setAttribute("opacity", blocked ? 0.35 : 1);
+      vLab[j].setAttribute("opacity", blocked ? 0.35 : 1);
+      outLab[j].setAttribute("fill", j === sel ? "var(--text)" : "var(--muted)");
+      var haveO = rev.O > sel;
+      vS[j].setAttribute("d", strandPath(j, sel));
+      vS[j].setAttribute("stroke-width", haveO ? Math.max(0.0001, 26 * a) : 5);
+      vS[j].setAttribute("opacity", haveO ? (a > 0 ? 0.6 : 0) : 0.18);
+    }
+    stageLab.textContent = STAGE_NAME[Math.min(4, stage + (running ? 1 : 0))] || "";
+    drawRead();
+    drawDetail();
+    say();
+  }
+  function drawRead() {
+    var i = sel;
+    if (hovG && hovG !== "O" && hovJ != null) {
+      var j = hovJ;
+      readout.textContent = "질문 " + TOK[i] + " · 키 " + TOK[j] + ":  q·k = " + V.fmt(D[i][j]) +
+        "  → ÷2 = " + (mask && j > i ? "−∞ (가림)" : V.fmt(D[i][j] / 2)) + "  → 비율 " + V.fmt(A[i][j], 3);
+    } else if (hovG === "O" && hovJ != null) {
+      readout.textContent = TOK[i] + "의 출력 " + (hovJ + 1) + "번 칸 = Σ 비율 × v = " + V.fmt(O[i][hovJ], 3);
+    } else readout.textContent = "질문 " + TOK[i] + " 줄";
+  }
+  function hover(i, j, g) { sel = i; hovG = g; hovJ = j; paint(); }
+  qLab.forEach(function (l, i) {
+    l.addEventListener("pointerenter", function () { hover(i, null, null); });
+    l.addEventListener("pointerdown", function () { hover(i, null, null); });
+  });
+
+  // 흐르는 점선: 고른 줄의 질문 곡선, 키 곡선, 값 띠
+  var flowOff = 0;
+  V.loop(function (dt) {
+    flowOff -= dt * 30;
+    for (var j = 0; j < N; j++) {
+      kC[j].setAttribute("stroke-dasharray", "7 5"); kC[j].setAttribute("stroke-dashoffset", flowOff);
+      vS[j].setAttribute("stroke-dasharray", "16 3"); vS[j].setAttribute("stroke-dashoffset", flowOff);
+    }
+    qC[sel].setAttribute("stroke-dasharray", "7 5"); qC[sel].setAttribute("stroke-dashoffset", flowOff);
+  });
+
+  // ---- 단계별 움직임 ----
+  var running = false, token = 0;
+  function runStage(k, my) {
+    var g = ORDER[k];
+    running = true;
+    return V.tween(1700, function (e, p) {
+      if (my !== token) return;
+      rev[g] = p * N; sel = Math.min(N - 1, Math.floor(p * N)); hovG = null; paint();
+    }).then(function () {
+      if (my !== token) return false;
+      rev[g] = N; stage = k + 1; running = false; paint(); return true;
+    });
+  }
+  async function play(all) {
+    var my = ++token;
+    if (stage >= 4) reset(true), my = ++token;
+    do {
+      var ok = await runStage(stage, my);
+      if (!ok) return;
+      if (all && stage < 4) await V.sleep(350);
+      if (my !== token) return;
+    } while (all && stage < 4);
+    btnPlay.textContent = "▶ 재생";
+  }
+  function reset(silent) {
+    token++; running = false; stage = 0;
+    ORDER.forEach(function (g) { rev[g] = 0; });
+    sel = 4; hovG = null;
+    if (!silent) paint();
+  }
+  var ctl = document.getElementById("ctl");
+  var btnPlay = V.button(ctl, "▶ 재생", function () { play(true); }, "primary");
+  V.button(ctl, "⏭ 한 단계", function () { if (!running) play(false); });
+  V.button(ctl, "↺ 처음으로", function () { reset(); });
+  V.seg(ctl, [{ id: "on", label: "인과 마스크 켬" }, { id: "off", label: "끔" }], "on", function (v) { mask = v === "on"; compute(); paint(); });
+  V.seg(ctl, [{ id: "off", label: "Dropout 끔" }, { id: "on", label: "켬 (p = 0.2, 학습 때만)" }], "off", function (v) { drop = v === "on"; compute(); paint(); });
+
+  // ---- 2. 고른 질문 한 줄 자세히 ----
+  var DW = 1140, DH = 300;
+  var dv = V.svg(document.getElementById("detail"), DW, DH, "고른 질문 토큰 한 줄의 점수, 나눈 점수, 비율 막대, 값 벡터, 비율을 곱한 값과 그 합인 출력");
+  var dg = V.s("g", null, dv);
+  function ry(j) { return 82 + j * 30; }
+  function numCircle(x, y, v, m, parent, bold) {
+    var tt = V.clamp(Math.abs(v) / (m || 1), 0, 1);
+    V.s("circle", { cx: x, cy: y, r: 15, fill: V.signed(v, m), stroke: bold ? "var(--accent)" : "var(--line)", "stroke-width": bold ? 2 : 1 }, parent);
+    V.s("text", { x: x, y: y + 4, "text-anchor": "middle", "font-size": 10.5, class: "mono", fill: tt > 0.55 ? "#fff" : "var(--text)", text: V.fmt(v, 2) }, parent);
+  }
+  function drawDetail() {
+    V.clear(dg);
+    var i = sel, haveD = rev.D > i, haveS = rev.S > i, haveA = rev.A > i, haveO = rev.O > i;
+    V.s("text", { class: "tb", x: 20, y: 26, text: "질문 「" + TOK[i] + "」 한 줄" }, dg);
+    V.s("text", { class: "ts", x: 20, y: 46, text: "q = (" + Q[i].map(function (x) { return V.fmt(x); }).join(", ") + ")" }, dg);
+    var hx = [[24, "키", "start"], [190, "q · k", "end"], [270, "÷ √4", "end"], [300, "비율 (softmax" + (drop ? " · Dropout)" : ")"), "start"],
+      [660, "값 v", "middle"], [900, "비율 × v", "middle"]];
+    hx.forEach(function (h) { V.s("text", { class: "ts", x: h[0], y: 64, "text-anchor": h[2], text: h[1] }, dg); });
+    var vm = 0; Vv.forEach(function (row) { row.forEach(function (x) { vm = Math.max(vm, Math.abs(x)); }); });
+    for (var j = 0; j < N; j++) {
+      var y = ry(j), blocked = mask && j > i;
+      V.s("text", { class: "t tk", x: 24, y: y + 5, text: TOK[j], opacity: blocked ? 0.45 : 1 }, dg);
+      V.s("text", { class: "t mono", x: 190, y: y + 5, "text-anchor": "end", text: haveD ? V.fmt(D[i][j]) : "·" }, dg);
+      V.s("text", { class: "t mono", x: 270, y: y + 5, "text-anchor": "end", text: haveS ? (blocked ? "−∞" : V.fmt(S[i][j])) : "·" }, dg);
+      V.s("rect", { x: 300, y: y - 8, width: 200, height: 16, rx: 3, fill: "var(--grid)" }, dg);
+      if (haveA) {
+        var a = A[i][j];
+        V.s("rect", { x: 300, y: y - 8, width: Math.min(200, 200 * a), height: 16, rx: 3, fill: "var(--accent)", opacity: 0.85 }, dg);
+        V.s("text", { class: "t mono", x: 510, y: y + 5, text: blocked ? "0 (가림)" : (drop && !DROP[i][j] ? "0 (끔)" : V.fmt(a, 3)) }, dg);
+      }
+      for (var c = 0; c < DK; c++) {
+        numCircle(600 + c * 40, y, Vv[j][c], vm, dg);
+        if (haveO) numCircle(840 + c * 40, y, A[i][j] * Vv[j][c], vm, dg);
+      }
+      V.s("text", { class: "ts", x: 768, y: y + 4, "text-anchor": "middle", text: haveA ? "× " + V.fmt(A[i][j], 2) : "" }, dg);
+    }
+    V.s("line", { class: "ln", x1: 820, y1: ry(N - 1) + 20, x2: 980, y2: ry(N - 1) + 20 }, dg);
+    V.s("text", { class: "tb", x: 812, y: ry(N) + 18, "text-anchor": "end", text: "합 = 「" + TOK[i] + "」의 출력" }, dg);
+    if (haveO) for (c = 0; c < DK; c++) numCircle(840 + c * 40, ry(N) + 14, O[i][c], vm, dg, true);
+    var sum = A[i].reduce(function (p, x) { return p + x; }, 0);
+    if (haveA) V.s("text", { class: "ts mono", x: 300, y: ry(N) + 18, text: "비율의 합 = " + V.fmt(sum, 3) + (drop ? " (Dropout: 남은 칸 ÷ 0.8)" : "") }, dg);
+  }
+
+  function say() {
+    var i = sel, el = document.getElementById("say");
+    if (rev.A <= i) { el.innerHTML = "<b>점수 = 질문 q와 키 k의 내적.</b> 큰 점수 = 그 키를 많이 볼 후보."; return; }
+    var idx = A[i].map(function (a, j) { return j; }).sort(function (a, b) { return A[i][b] - A[i][a]; });
+    var top = idx.slice(0, 2).filter(function (j) { return A[i][j] > 0; }).map(function (j) { return "「" + TOK[j] + "」 " + Math.round(A[i][j] * 100) + "%"; });
+    var hid = mask ? N - 1 - i : 0;
+    el.innerHTML = "<b>「" + TOK[i] + "」의 새 표현 = 값 V를 " + top.join(" · ") + " …로 섞은 것.</b>" +
+      (hid > 0 ? " 뒤 토큰 " + hid + "개는 마스크로 0%." : "") + (drop ? " Dropout은 학습 때만 일부 비율을 끈다." : "");
+  }
+
+  V.onTheme.push(function () { themeStops(); paintVecDots(); paint(); });
+  paint();
+  setTimeout(function () { play(true); }, 400);
+})();
+</script>
+</body>
+</html>
